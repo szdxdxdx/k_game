@@ -10,8 +10,4 @@ struct k_game_window {
 
 extern struct k_game_window * const k_window;
 
-int k_create_window(void);
-
-void k_destroy_window(void);
-
 #endif

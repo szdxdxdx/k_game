@@ -1,17 +1,24 @@
-#include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
+
+#include "k/game.h"
+
+static int setup(void) {
+
+    printf("hello\n");
+
+    return 0;
+}
 
 #if 1
 
 int main(int argc, char **argv) {
-    system("chcp 65001");
-    setbuf(stdout, NULL);
-    setbuf(stderr, NULL);
 
-    printf("hello world");
+    struct k_game_config config;
+    config.fn_game_setup = setup;
+
+    k_run_game(&config);
+
     return 0;
 }
 
 #endif
-
