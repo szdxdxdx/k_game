@@ -1,5 +1,5 @@
-#ifndef K_MEM_ALLOC_H
-#define K_MEM_ALLOC_H
+#ifndef K_ALLOC_H
+#define K_ALLOC_H
 
 #include <stdlib.h>
 

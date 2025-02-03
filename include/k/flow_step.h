@@ -13,7 +13,9 @@ struct k_flow_step {
 };
 
 size_t k_execute_forward_flow(const struct k_flow_step *steps, size_t steps_num, void *global_data);
+
 void k_execute_backward_flow(const struct k_flow_step *steps, size_t steps_num, void *global_data);
+
 size_t k_execute_flow(const struct k_flow_step *steps, size_t steps_num, void *global_data);
 
 #endif

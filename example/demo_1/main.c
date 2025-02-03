@@ -2,9 +2,24 @@
 
 #include "k/game.h"
 
-static int setup(void) {
+static void create_room(const struct k_room_context *room) {
 
-    printf("hello\n");
+    printf("create room\n");
+}
+
+static void room_step(const struct k_room_context *room) {
+
+}
+
+static int setup_game(void) {
+
+    struct k_room_config config = K_ROOM_CONFIG_INIT;
+    config.name = "tmp room";
+    config.fn_create_event = create_room;
+    config.fn_step_event = room_step;
+    size_t room_idx = k_create_room(&config);
+
+    k_goto_room(room_idx);
 
     return 0;
 }
@@ -13,8 +28,9 @@ static int setup(void) {
 
 int main(int argc, char **argv) {
 
-    struct k_game_config config;
-    config.fn_game_setup = setup;
+    struct k_game_config config = K_GAME_CONFIG_INIT;
+    config.window_h = 640;
+    config.fn_setup_game = setup_game;
 
     k_run_game(&config);
 
