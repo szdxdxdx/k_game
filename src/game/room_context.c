@@ -22,9 +22,8 @@ size_t k_create_room(const struct k_room_config *config) {
 
     struct k_room *room = k_malloc(sizeof(*room));
     if (NULL == room)
-        goto err;
+        return SIZE_MAX;
 
-    room->name             = config->name;
     room->fn_destroy_event = config->fn_destroy_event;
     room->fn_entry_event   = config->fn_entry_event;
     room->fn_leave_event   = config->fn_leave_event;
@@ -35,16 +34,14 @@ size_t k_create_room(const struct k_room_config *config) {
     room->ctx.current_time = 0;
     room->ctx.delta_ms     = 0;
 
-    size_t room_idx = k_room_registry_add(room);
-    if (SIZE_MAX == room_idx)
-        goto err;
+    room->registry_node.name = config->name;
+    if (0 != k_room_registry_add(&room->registry_node)) {
+        k_free(room);
+        return SIZE_MAX;
+    }
 
     if (NULL != config->fn_create_event)
         config->fn_create_event(&room->ctx);
 
-    return 0;
-
-err:
-    k_free(room);
-    return SIZE_MAX;
+    return room->registry_node.idx;
 }

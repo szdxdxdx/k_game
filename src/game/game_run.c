@@ -248,7 +248,7 @@ static int init_game(const struct k_game_config *config) {
         return -1;
 
     size_t steps_num = array_len(steps_to_init);
-    size_t inited_num = k_execute_forward_flow(steps_to_init, steps_num, (void *)config);
+    size_t inited_num = k_execute_flow_forward(steps_to_init, steps_num, (void *)config);
 
     if (inited_num != steps_num) {
         k_log_error("Failed to initialize game");
@@ -258,18 +258,31 @@ static int init_game(const struct k_game_config *config) {
     return 0;
 
 err:
-    k_execute_backward_flow(steps_to_init, inited_num, NULL);
+    k_execute_flow_backward(steps_to_init, inited_num, NULL);
     return -1;
 }
 
 static void deinit_game(void) {
-    k_execute_backward_flow(steps_to_init, array_len(steps_to_init), NULL);
+    k_execute_flow_backward(steps_to_init, array_len(steps_to_init), NULL);
+}
+
+static void run_room(void) {
+
+    struct k_room *room = k_room_stack_get_top();
+    if (NULL == room) {
+        k_log_error("No room to run");
+        return;
+    }
+
+    k_run_room(room);
 }
 
 int k_run_game(const struct k_game_config *config) {
 
     if (0 != init_game(config))
         return -1;
+
+    run_room();
 
     deinit_game();
     return 0;

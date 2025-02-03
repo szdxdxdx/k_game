@@ -4,10 +4,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-struct k_game_config;
-struct k_room_config;
+/* region [game] */
 
-struct k_room_context;
+struct k_game_config;
 
 int k_run_game(const struct k_game_config *config);
 
@@ -21,9 +20,16 @@ struct k_game_config {
 
 extern const struct k_game_config K_GAME_CONFIG_INIT;
 
+/* endregion */
+
+/* region [room] */
+
+struct k_room_config;
+struct k_room_context;
+
 size_t k_create_room(const struct k_room_config *config);
 
-size_t k_get_room_idx_by_name(const char *name);
+size_t k_find_room_by_name(const char *name);
 
 struct k_room_config {
 
@@ -47,6 +53,8 @@ struct k_room_context {
     int delta_ms;
 };
 
-void k_goto_room(size_t room_idx);
+int k_goto_room(size_t room_idx);
+
+/* endregion */
 
 #endif

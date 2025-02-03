@@ -27,6 +27,7 @@ static int setup_game(void) {
 #if 1
 
 int main(int argc, char **argv) {
+    setbuf(stdout, NULL);
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_h = 640;

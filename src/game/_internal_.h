@@ -5,6 +5,11 @@
 
 #include "k/list.h"
 
+#ifndef container_of
+#define container_of(ptr, type, member) \
+    ((type *)((char *)(ptr) - offsetof(type, member)))
+#endif
+
 /* region [game] */
 
 struct k_game_context {
@@ -30,11 +35,24 @@ extern struct k_game_window * const k_window;
 
 /* endregion */
 
-/* region [room] */
+/* region [room_registry] */
+
+struct k_room;
 
 struct k_room_registry {
 
+    size_t idx_counter;
+
     struct k_list iter_list;
+};
+
+struct k_room_registry_node {
+
+    struct k_list_node iter_list_node;
+
+    const char *name;
+
+    size_t idx;
 };
 
 extern struct k_room_registry * const k_room_registry;
@@ -43,11 +61,19 @@ int k_init_room_registry(void);
 
 void k_deinit_room_registry(void);
 
-struct k_room_context;
+int k_room_registry_add(struct k_room_registry_node *node);
+
+void k_room_registry_del(size_t room_idx);
+
+struct k_room_registry_node *k_room_registry_get(size_t room_idx);
+
+/* endregion */
+
+/* region [room] */
 
 struct k_room {
 
-    const char *name;
+    struct k_room_registry_node registry_node;
 
     void (*fn_destroy_event)(const struct k_room_context *room);
     int (*fn_entry_event)(const struct k_room_context *room);
@@ -62,7 +88,19 @@ struct k_room {
     struct k_room_context ctx;
 };
 
-size_t k_room_registry_add(struct k_room *room);
+void k_run_room(struct k_room *room);
+
+/* endregion */
+
+/* region [room_stack] */
+
+int k_room_stack_push(struct k_room *room);
+
+void k_room_stack_pop(void);
+
+struct k_room *k_room_stack_get_top(void);
+
+void k_room_stack_clear(void);
 
 /* endregion */
 

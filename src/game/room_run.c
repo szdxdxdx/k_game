@@ -5,12 +5,7 @@
 #include "k/game.h"
 #include "_internal_.h"
 
-static int  run_entry_event(struct k_room *room);
-static void run_leave_event(struct k_room *room);
-static void run_step_event (struct k_room *room);
-static void run_draw_event (struct k_room *room);
-
-static int run_entry_event(struct k_room *room) {
+static int entry_room(struct k_room *room) {
 
     /* 开启游戏循环，在 entry_event 回调中也能退出循环 */
     room->game_loop = 1;
@@ -34,7 +29,7 @@ static int run_entry_event(struct k_room *room) {
     return 0;
 }
 
-static void run_leave_event(struct k_room *room) {
+static void leave_room(struct k_room *room) {
 
     if (NULL != room->fn_leave_event) {
         k_log_debug("Executing leave callback...");
@@ -102,13 +97,10 @@ static void process_SDL_events(struct k_room *room) {
     }
 }
 
-static void run_step_event(struct k_room *room) {
+static void room_step(struct k_room *room) {
 
     if (NULL != room->fn_step_event)
         room->fn_step_event(&room->ctx);
-}
-
-static void run_draw_event(struct k_room *room) {
 
     // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
     // SDL_RenderClear(room->renderer);
@@ -120,13 +112,13 @@ static void run_draw_event(struct k_room *room) {
 }
 
 void k_run_room(struct k_room *room) {
-    k_log_info("Entering room");
+    k_log_debug("Entering room");
 
-    if (0 != run_entry_event(room))
+    if (0 != entry_room(room))
         return;
 
     if (room->game_loop) {
-        k_log_info("Game loop started...");
+        k_log_debug("Game loop started...");
 
         room->ctx.current_time = SDL_GetTicks();
         while (room->game_loop) {
@@ -135,14 +127,13 @@ void k_run_room(struct k_room *room) {
                 process_SDL_events(room);
             } while (frame_delay(room));
 
-            run_step_event(room);
-            run_draw_event(room);
+            room_step(room);
         }
 
         k_log_debug("Ended game loop");
     }
 
-    run_leave_event(room);
+    leave_room(room);
 
-    k_log_info("Left room");
+    k_log_debug("Left room");
 }
