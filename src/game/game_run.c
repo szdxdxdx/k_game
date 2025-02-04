@@ -58,13 +58,7 @@ static int init_room_registry(void *game_config, void *unused) {
     (void)game_config;
     (void)unused;
 
-    if (0 != k__init_room_registry(game_config)) {
-        k_log_error("Failed to initialize game room registry");
-        return -1;
-    }
-
-    k_log_trace("Game room registry initialized");
-    return 0;
+    return 0 == k__init_room_registry(game_config) ? 0 : -1;
 }
 
 static void deinit_room_registry(void *game_config, void *unused) {
@@ -72,8 +66,6 @@ static void deinit_room_registry(void *game_config, void *unused) {
     (void)unused;
 
     k__deinit_room_registry();
-
-    k_log_trace("Game room registry deinitialized");
 }
 
 static int run_setup_callback(void *game_config, void *unused) {

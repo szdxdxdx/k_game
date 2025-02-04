@@ -18,10 +18,15 @@ int k__init_room_stack(const struct k_game_config *config) {
     (void)config;
 
     room_stack.top = 0;
+
+    k_log_trace("Room stack initialized");
+    return 0;
 }
 
 void k__deinit_stack(void) {
     room_stack.top = 0;
+
+    k_log_trace("Room stack deinitialized");
 }
 
 int k_room_stack_push(struct k__room *room) {
@@ -34,6 +39,7 @@ int k_room_stack_push(struct k__room *room) {
     room_stack.rooms[room_stack.top] = room;
     room_stack.top += 1;
 
+    k_log_trace("Pushed room { .name=\"%s\", .id=%zu } to stack", room->name, room->id);
     return 0;
 }
 
@@ -78,6 +84,6 @@ int k_goto_room(size_t room_idx) {
     return 0;
 
 err:
-    k_log_error("Failed to goto room with id %zu", room_idx);
+    k_log_error("Failed to goto room { .id=%zu }", room_idx);
     return -1;
 }
