@@ -25,7 +25,7 @@ int k__init_room_registry(const struct k_game_config *config) {
     registry->room_id_counter = 0;
     k_init_list(&registry->rooms_iter_list);
 
-    k_log_debug("Room registry initialized");
+    k_log_trace("Room registry initialized");
     return 0;
 }
 
@@ -33,7 +33,7 @@ void k__deinit_room_registry(void) {
 
     /* TODO */
 
-    k_log_debug("Room registry deinitialized");
+    k_log_trace("Room registry deinitialized");
 }
 
 static size_t registry_add(struct k__room *room) {

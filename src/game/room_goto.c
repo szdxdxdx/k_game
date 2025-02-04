@@ -1,4 +1,3 @@
-#include <assert.h>
 #include "k/log.h"
 
 #include "k/game.h"
@@ -13,7 +12,17 @@ struct room_stack {
     size_t top;
 };
 
-static struct room_stack room_stack = { .top = 0 };
+static struct room_stack room_stack;
+
+int k__init_room_stack(const struct k_game_config *config) {
+    (void)config;
+
+    room_stack.top = 0;
+}
+
+void k__deinit_stack(void) {
+    room_stack.top = 0;
+}
 
 int k_room_stack_push(struct k__room *room) {
 

@@ -63,13 +63,17 @@ static int init_room_registry(void *game_config, void *unused) {
         return -1;
     }
 
+    k_log_trace("Game room registry initialized");
     return 0;
 }
 
 static void deinit_room_registry(void *game_config, void *unused) {
     (void)game_config;
     (void)unused;
+
     k__deinit_room_registry();
+
+    k_log_trace("Game room registry deinitialized");
 }
 
 static int run_setup_callback(void *game_config, void *unused) {

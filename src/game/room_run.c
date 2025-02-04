@@ -11,7 +11,7 @@ static int entry_room(struct k__room *room) {
     room->game_loop = 1;
 
     if (NULL != room->fn_entry_event) {
-        k_log_debug("Executing entry event callback...");
+        k_log_trace("Executing entry event callback...");
 
         int callback_result = room->fn_entry_event(&room->ctx);
         if (0 != callback_result) {
@@ -20,7 +20,7 @@ static int entry_room(struct k__room *room) {
             return -1;
         }
 
-        k_log_debug("Entry event callback completed");
+        k_log_trace("Entry event callback completed");
     }
 
     room->ctx.current_time = SDL_GetTicks();
@@ -32,11 +32,11 @@ static int entry_room(struct k__room *room) {
 static void leave_room(struct k__room *room) {
 
     if (NULL != room->fn_leave_event) {
-        k_log_debug("Executing leave callback...");
+        k_log_trace("Executing leave callback...");
 
         room->fn_leave_event(&room->ctx);
 
-        k_log_debug("Leave event callback completed");
+        k_log_trace("Leave event callback completed");
     }
 }
 
@@ -101,13 +101,13 @@ static void room_step(struct k__room *room) {
 }
 
 void k__run_room(struct k__room *room) {
-    k_log_debug("Entering room");
+    k_log_trace("Entering room");
 
     if (0 != entry_room(room))
         return;
 
     if (room->game_loop) {
-        k_log_debug("Game loop started...");
+        k_log_trace("Game loop started...");
 
         room->ctx.current_time = SDL_GetTicks();
         while (room->game_loop) {
@@ -119,10 +119,10 @@ void k__run_room(struct k__room *room) {
             room_step(room);
         }
 
-        k_log_debug("Game loop Ended");
+        k_log_trace("Game loop Ended");
     }
 
     leave_room(room);
 
-    k_log_debug("Left room");
+    k_log_trace("Left room");
 }
