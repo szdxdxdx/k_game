@@ -5,7 +5,7 @@
 #include "k/game.h"
 #include "_internal_.h"
 
-static int entry_room(struct k_room *room) {
+static int entry_room(struct k__room *room) {
 
     /* 开启游戏循环，在 entry_event 回调中也能退出循环 */
     room->game_loop = 1;
@@ -29,7 +29,7 @@ static int entry_room(struct k_room *room) {
     return 0;
 }
 
-static void leave_room(struct k_room *room) {
+static void leave_room(struct k__room *room) {
 
     if (NULL != room->fn_leave_event) {
         k_log_debug("Executing leave callback...");
@@ -40,7 +40,7 @@ static void leave_room(struct k_room *room) {
     }
 }
 
-static inline int frame_delay(struct k_room *room) {
+static inline int frame_delay(struct k__room *room) {
 
     Uint32 current_time = SDL_GetTicks();
     Uint32 elapsed_time = current_time - room->ctx.current_time;
@@ -69,27 +69,16 @@ static inline int frame_delay(struct k_room *room) {
     return 0;
 }
 
-static void process_SDL_events(struct k_room *room) {
+static void process_SDL_events(struct k__room *room) {
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
 
             case SDL_QUIT:
-                k_game->quit_game = 1;
+                k__game->quit_game = 1;
                 room->game_loop = 0;
                 break;
-
-            case SDL_WINDOWEVENT:
-                switch (event.window.event) {
-                    case SDL_WINDOWEVENT_RESIZED: {
-                        k_window->window_w = event.window.data1;
-                        k_window->window_h = event.window.data2;
-                        break;
-                    }
-                    default:
-                        break;
-                }
 
             default:
                 break;
@@ -97,7 +86,7 @@ static void process_SDL_events(struct k_room *room) {
     }
 }
 
-static void room_step(struct k_room *room) {
+static void room_step(struct k__room *room) {
 
     if (NULL != room->fn_step_event)
         room->fn_step_event(&room->ctx);
@@ -108,10 +97,10 @@ static void room_step(struct k_room *room) {
     if (NULL != room->fn_draw_event)
         room->fn_draw_event(&room->ctx);
 
-    SDL_RenderPresent(k_window->renderer);
+    SDL_RenderPresent(k__game->renderer);
 }
 
-void k_run_room(struct k_room *room) {
+void k__run_room(struct k__room *room) {
     k_log_debug("Entering room");
 
     if (0 != entry_room(room))
@@ -130,7 +119,7 @@ void k_run_room(struct k_room *room) {
             room_step(room);
         }
 
-        k_log_debug("Ended game loop");
+        k_log_debug("Game loop Ended");
     }
 
     leave_room(room);

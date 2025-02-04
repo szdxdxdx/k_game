@@ -29,8 +29,6 @@ struct k_room_context;
 
 size_t k_create_room(const struct k_room_config *config);
 
-size_t k_find_room_by_name(const char *name);
-
 struct k_room_config {
 
     const char *name;

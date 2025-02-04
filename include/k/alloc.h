@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+#include "k/log.h"
+
 static inline void *k_malloc(size_t size) {
     void *p = malloc(size);
 

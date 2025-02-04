@@ -10,70 +10,41 @@
     ((type *)((char *)(ptr) - offsetof(type, member)))
 #endif
 
+/* region [SDL] */
+
+int k__init_SDL(const struct k_game_config *config);
+
+void k__deinit_SDL(void);
+
+/* endregion */
+
 /* region [game] */
 
-struct k_game_context {
-    unsigned int quit_game;
-};
-
-extern struct k_game_context * const k_game;
-
-/* endregion */
-
-/* region [window] */
-
-struct k_game_window {
+struct k__game_context {
 
     SDL_Window *window;
-    int window_w;
-    int window_h;
 
     SDL_Renderer *renderer;
+
+    unsigned int quit_game;
+
+    struct k__room *current_room;
 };
 
-extern struct k_game_window * const k_window;
-
-/* endregion */
-
-/* region [room_registry] */
-
-struct k_room;
-
-struct k_room_registry {
-
-    size_t idx_counter;
-
-    struct k_list iter_list;
-};
-
-struct k_room_registry_node {
-
-    struct k_list_node iter_list_node;
-
-    const char *name;
-
-    size_t idx;
-};
-
-extern struct k_room_registry * const k_room_registry;
-
-int k_init_room_registry(void);
-
-void k_deinit_room_registry(void);
-
-int k_room_registry_add(struct k_room_registry_node *node);
-
-void k_room_registry_del(size_t room_idx);
-
-struct k_room_registry_node *k_room_registry_get(size_t room_idx);
+extern struct k__game_context * const k__game;
 
 /* endregion */
 
 /* region [room] */
 
-struct k_room {
+int k__init_room_registry(const struct k_game_config *config);
 
-    struct k_room_registry_node registry_node;
+void k__deinit_room_registry(void);
+
+struct k__room {
+
+    size_t id;
+    const char *name;
 
     void (*fn_destroy_event)(const struct k_room_context *room);
     int (*fn_entry_event)(const struct k_room_context *room);
@@ -88,17 +59,19 @@ struct k_room {
     struct k_room_context ctx;
 };
 
-void k_run_room(struct k_room *room);
+struct k__room *k__get_room(size_t room_id);
+
+void k__run_room(struct k__room *room);
 
 /* endregion */
 
 /* region [room_stack] */
 
-int k_room_stack_push(struct k_room *room);
+int k_room_stack_push(struct k__room *room);
 
 void k_room_stack_pop(void);
 
-struct k_room *k_room_stack_get_top(void);
+struct k__room *k_room_stack_get_top(void);
 
 void k_room_stack_clear(void);
 
