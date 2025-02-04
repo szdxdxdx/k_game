@@ -37,8 +37,6 @@ static int init_SDL(void) {
     }
 
     context.is_inited_SDL = 1;
-
-    k_log_trace("SDL initialized");
     return 0;
 }
 
@@ -49,8 +47,6 @@ static void deinit_SDL(void) {
 
     SDL_Quit();
     context.is_inited_SDL = 0;
-
-    k_log_trace("SDL closed");
 }
 
 static int init_SDL_img(void) {
@@ -62,8 +58,6 @@ static int init_SDL_img(void) {
     }
 
     context.is_inited_SDL_img = 1;
-
-    k_log_trace("SDL_image initialized");
     return 0;
 }
 
@@ -74,8 +68,6 @@ static void deinit_SDL_img(void) {
 
     IMG_Quit();
     context.is_inited_SDL_img = 0;
-
-    k_log_trace("SDL_image closed");
 }
 
 static int init_SDL_mix(void) {
@@ -95,8 +87,6 @@ static int init_SDL_mix(void) {
     Mix_AllocateChannels(32);
 
     context.is_inited_SDL_mix = 1;
-
-    k_log_trace("SDL_mixer initialized");
     return 0;
 }
 
@@ -108,8 +98,6 @@ static void deinit_SDL_mix(void) {
     Mix_CloseAudio();
     Mix_Quit();
     context.is_inited_SDL_mix = 0;
-
-    k_log_trace("SDL_mixer closed");
 }
 
 static int init_SDL_ttf(void) {
@@ -120,8 +108,6 @@ static int init_SDL_ttf(void) {
     }
 
     context.is_inited_SDL_ttf = 1;
-
-    k_log_trace("SDL_ttf initialized");
     return 0;
 }
 
@@ -132,8 +118,6 @@ static void deinit_SDL_ttf(void) {
 
     TTF_Quit();
     context.is_inited_SDL_ttf = 0;
-
-    k_log_trace("SDL_ttf closed");
 }
 
 static int create_window(const struct k_game_config *config) {
@@ -151,8 +135,6 @@ static int create_window(const struct k_game_config *config) {
     }
 
     context.is_created_window = 1;
-
-    k_log_trace("Game window created");
     return 0;
 }
 
@@ -164,8 +146,6 @@ static void destroy_window(void) {
     SDL_DestroyWindow(k__game->window);
     k__game->window = NULL;
     context.is_created_window = 0;
-
-    k_log_trace("Game window destroyed");
 }
 
 static int create_renderer(void) {
@@ -178,8 +158,6 @@ static int create_renderer(void) {
     }
 
     context.is_created_renderer = 1;
-
-    k_log_trace("Game window renderer created");
     return 0;
 }
 
@@ -192,8 +170,6 @@ static void destroy_renderer(void) {
     k__game->renderer = NULL;
 
     context.is_created_renderer = 0;
-
-    k_log_trace("Game window renderer destroyed");
 }
 
 static void deinit_module(void) {
@@ -214,8 +190,6 @@ int k__init_SDL(const struct k_game_config *config) {
         k_log_error("SDL is already initialized");
         return -1;
     }
-
-    k_log_trace("Initializing SDL...");
 
     int r = init_SDL()
          || init_SDL_img()
@@ -242,9 +216,6 @@ void k__deinit_SDL(void) {
     if ( ! context.is_inited_module)
         return;
 
-    k_log_trace("Closing SDL...");
-
     deinit_module();
-
     k_log_trace("SDL closed");
 }

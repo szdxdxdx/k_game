@@ -43,7 +43,7 @@ void k__deinit_room_registry(void);
 
 int k__init_room_stack(const struct k_game_config *config);
 
-void k__deinit_stack(void);
+void k__deinit_room_stack(void);
 
 struct k__room {
 

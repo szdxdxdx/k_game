@@ -23,7 +23,7 @@ int k__init_room_stack(const struct k_game_config *config) {
     return 0;
 }
 
-void k__deinit_stack(void) {
+void k__deinit_room_stack(void) {
     room_stack.top = 0;
 
     k_log_trace("Room stack deinitialized");
@@ -81,6 +81,7 @@ int k_goto_room(size_t room_idx) {
     if (0 != k_room_stack_push(room))
         goto err;
 
+    k_log_trace("Next room set to { .name=\"%s\", .id=%zu }", room->name, room->id);
     return 0;
 
 err:

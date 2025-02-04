@@ -68,29 +68,43 @@ static void deinit_room_registry(void *game_config, void *unused) {
     k__deinit_room_registry();
 }
 
-static int run_setup_callback(void *game_config, void *unused) {
+static int init_room_stack(void *game_config, void *unused) {
+    (void)game_config;
     (void)unused;
 
-    const struct k_game_config *config = game_config;
+    return 0 == k__init_room_stack(game_config) ? 0 : -1;
+}
+
+static void deinit_room_stack(void *game_config, void *unused) {
+    (void)game_config;
+    (void)unused;
+
+    k__deinit_room_stack();
+}
+
+static int run_setup_callback(const struct k_game_config *config) {
+    k_log_info("Invoking game fn_setup_game() callback...");
 
     int result = config->fn_setup_game();
     if (0 != result) {
-        k_log_error("fn_setup_game() return %d", result);
+        k_log_error("Failed to start game. fn_setup_game() return %d", result);
         return -1;
     }
 
+    k_log_info("game fn_setup_game() callback completed");
     return 0;
 }
 
 static const struct k_flow_step steps_to_init[] = {
     { NULL, init_SDL,           deinit_SDL           },
     { NULL, init_room_registry, deinit_room_registry },
-    { NULL, run_setup_callback, NULL                 },
+    { NULL, init_room_stack,    deinit_room_stack    },
 };
 
 #define array_len(x) (sizeof(x) / sizeof(x[0]))
 
 static int init_game(const struct k_game_config *config) {
+    k_log_info("Initializing Game...");
 
     if (0 != check_game_config(config))
         return -1;
@@ -103,6 +117,10 @@ static int init_game(const struct k_game_config *config) {
         goto err;
     }
 
+    if (0 != run_setup_callback(config))
+        goto err;
+
+    k_log_info("Game initialized. Game started...");
     return 0;
 
 err:
@@ -111,7 +129,11 @@ err:
 }
 
 static void deinit_game(void) {
+    k_log_info("Deinitializing Game...");
+
     k_execute_flow_backward(steps_to_init, array_len(steps_to_init), NULL);
+
+    k_log_info("Game deinitialized");
 }
 
 static void run_room(void) {

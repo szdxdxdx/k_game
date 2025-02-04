@@ -29,6 +29,8 @@ struct k_room_context;
 
 size_t k_create_room(const struct k_room_config *config);
 
+void k_destroy_room(size_t room_id);
+
 struct k_room_config {
 
     const char *name;
