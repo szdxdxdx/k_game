@@ -89,10 +89,23 @@ static struct k__room *registry_get(size_t room_id) {
     return NULL;
 }
 
+/* endregion */
+
+/* region [init] */
+
+static int is_initialized = 0;
+
 int k__init_room_registry(const struct k_game_config *config) {
     (void)config;
 
+    if (is_initialized) {
+        k_log_error("Room registry already initialized");
+        return -1;
+    }
+
     registry_init();
+
+    is_initialized = 1;
 
     k_log_trace("Room registry initialized");
     return 0;
@@ -100,7 +113,11 @@ int k__init_room_registry(const struct k_game_config *config) {
 
 void k__deinit_room_registry(void) {
 
+    if ( ! is_initialized)
+        return;
+
     registry_deinit();
+    is_initialized = 0;
 
     k_log_trace("Room registry deinitialized");
 }
