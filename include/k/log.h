@@ -11,6 +11,7 @@
 #define K_LOG_LEVEL_WARN  3
 #define K_LOG_LEVEL_ERROR 4
 #define K_LOG_LEVEL_FATAL 5
+#define K_LOG_LEVEL_OFF   6
 
 #ifndef K_LOG_LEVEL
 #define K_LOG_LEVEL K_LOG_LEVEL_TRACE
