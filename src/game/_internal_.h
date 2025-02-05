@@ -37,16 +37,6 @@ extern struct k__game_context * const k__game;
 
 /* region [room_create] */
 
-struct k__room_registry_node {
-    struct k_list_node iter_node;
-    struct k__room *room;
-};
-
-struct k__room_registry {
-    size_t room_id_counter;
-    struct k_list rooms_iter_list;
-};
-
 int k__init_room_registry(const struct k_game_config *config);
 
 void k__deinit_room_registry(void);

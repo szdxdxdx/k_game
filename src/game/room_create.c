@@ -9,6 +9,16 @@
 
 /* region [room registry] */
 
+struct k__room_registry {
+    size_t room_id_counter;
+    struct k_list rooms_iter_list;
+};
+
+struct k__room_registry_node {
+    struct k_list_node iter_node;
+    struct k__room *room;
+};
+
 static void destroy_room(struct k__room *room);
 
 static struct k__room_registry *registry = &(struct k__room_registry){};
