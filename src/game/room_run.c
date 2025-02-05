@@ -7,6 +7,9 @@
 
 static int entry_room(struct k__room *room) {
 
+    room->room.current_time = SDL_GetTicks();
+    room->room.delta_ms = 0;
+
     /* 开启游戏循环，在 entry_event 回调中也能退出循环 */
     room->game_loop = 1;
 
@@ -22,13 +25,13 @@ static int entry_room(struct k__room *room) {
         k_log_info("Room fn_entry_event() callback completed");
     }
 
-    room->room.current_time = SDL_GetTicks();
-    room->room.delta_ms = 0;
-
     return 0;
 }
 
 static void leave_room(struct k__room *room) {
+
+    room->room.current_time = SDL_GetTicks();
+    room->room.delta_ms = 0;
 
     if (NULL != room->fn_leave_event) {
         k_log_info("Invoking room fn_leave_event() callback...");

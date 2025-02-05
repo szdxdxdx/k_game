@@ -35,6 +35,8 @@ struct k_room_config {
 
     const char *room_name;
 
+    size_t data_size;
+
     int steps_per_second;
 
     int (*fn_create_event)(const struct k_room *room);
@@ -50,7 +52,10 @@ extern const struct k_room_config K_ROOM_CONFIG_INIT;
 struct k_room {
 
     uint32_t current_time;
+
     int delta_ms;
+
+    void *data;
 };
 
 int k_goto_room(size_t room_idx);

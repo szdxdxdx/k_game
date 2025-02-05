@@ -14,11 +14,6 @@ struct k__room_registry {
     struct k_list rooms_iter_list;
 };
 
-struct k__room_registry_node {
-    struct k_list_node iter_node;
-    struct k__room *room;
-};
-
 static void destroy_room(struct k__room *room);
 
 static struct k__room_registry *registry = &(struct k__room_registry){};
@@ -30,15 +25,11 @@ static void room_registry_init(void) {
 
 static void room_registry_deinit(void) {
 
-    struct k__room_registry_node *room_node;
+    struct k__room *room;
 
     struct k_list_node *iter, *next;
     for(k_list_for_each_s(&registry->rooms_iter_list, iter, next)) {
-        room_node = container_of(iter, struct k__room_registry_node, iter_node);
-
-        struct k__room *room = room_node->room;
-        k_list_del(&room_node->iter_node);
-        k_free(room_node);
+        room = container_of(iter, struct k__room, room_node);
 
         destroy_room(room);
     }
@@ -46,57 +37,53 @@ static void room_registry_deinit(void) {
     registry->room_id_counter = 0;
 }
 
-static size_t room_registry_add(struct k__room *room) {
-
-    struct k__room_registry_node *node = k_malloc(sizeof(*node));
-    if (NULL == node)
-        return SIZE_MAX;
-
-    size_t room_idx = registry->room_id_counter;
-
-    node->room = room;
-    k_list_add_tail(&registry->rooms_iter_list, &node->iter_node);
-
-    return room_idx;
-}
-
-static struct k__room *room_registry_del(size_t room_id) {
-
-    if (SIZE_MAX == room_id)
-        goto err;
-
-    struct k__room_registry_node *room_node;
-    struct k_list_node *iter;
-    for(k_list_for_each(&registry->rooms_iter_list, iter)) {
-        room_node = container_of(iter, struct k__room_registry_node, iter_node);
-
-        if (room_node->room->id == room_id) {
-            struct k__room *room = room_node->room;
-
-            k_list_del(&room_node->iter_node);
-            k_free(room_node);
-
-            return room;
-        }
-    }
-
-err:
-    k_log_error("Room { .id=%zu } not found", room_id);
-    return NULL;
-}
-
 static struct k__room *room_registry_get(size_t room_id) {
 
-    struct k__room_registry_node *room_node;
+    if (SIZE_MAX == room_id)
+        return NULL;
+
     struct k_list_node *iter;
     for(k_list_for_each(&registry->rooms_iter_list, iter)) {
-        room_node = container_of(iter, struct k__room_registry_node, iter_node);
+        struct k__room *room = container_of(iter, struct k__room, room_node);
 
-        if (room_node->room->id == room_id)
-            return room_node->room;
+        if (room->id == room_id)
+            return room;
     }
 
     return NULL;
+}
+
+static struct k__room *room_registry_find_by_name(const char *room_name) {
+
+    struct k_list_node *iter;
+    for(k_list_for_each(&registry->rooms_iter_list, iter)) {
+        struct k__room *room = container_of(iter, struct k__room, room_node);
+
+        if (0 == strcmp(room->name, room_name))
+            return room;
+    }
+
+    return NULL;
+}
+
+static int room_registry_add(struct k__room *room) {
+
+    if (NULL != room_registry_find_by_name(room->name)) {
+        k_log_error("The room named \"%s\" already exists", room->name);
+        return -1;
+    }
+
+    struct k__room_registry_node *room_node = &room->room_node;
+
+    k_list_add_tail(&registry->rooms_iter_list, &room_node->iter_node);
+
+    room->id = ++registry->room_id_counter;
+    return 0;
+}
+
+static void room_registry_del(struct k__room *room) {
+    struct k__room_registry_node *room_node = &room->room_node;
+    k_list_del(&room_node->iter_node);
 }
 
 /* endregion */
@@ -137,7 +124,8 @@ void k__deinit_room_registry(void) {
 
 const struct k_room_config K_ROOM_CONFIG_INIT = {
     .room_name        = NULL,
-    .steps_per_second = 60,
+    .data_size   = 0,
+    .steps_per_second = 120,
     .fn_create_event  = NULL,
     .fn_destroy_event = NULL,
     .fn_entry_event   = NULL,
@@ -163,40 +151,33 @@ static int check_config(const struct k_room_config *config) {
     #undef K__ROOM_CONFIG_ASSERT
 
     if (NULL == config->room_name || '\0' == config->room_name[0]) {
-        k_log_error("Invalid room config, room name can not be empty");
+        k_log_error("Invalid room config. The room name cannot be empty");
         return -1;
     }
 
     return 0;
 }
 
-static int run_room_create_event(struct k__room *room) {
+size_t k_create_room(const struct k_room_config *config) {
+    k_log_info("> Creating room { .name=\"%s\" }...", config->room_name);
 
-    if (NULL == room->fn_create_event)
-        return 0;
-
-    k_log_info("Invoking room fn_create_event() callback...");
-
-    int result = room->fn_create_event(&room->room);
-    if (0 != result) {
-        k_log_error("Room fn_create_event() callback returned %d", result);
-        return -1;
-    }
-
-    k_log_info("Room fn_create_event() callback completed");
-    return 0;
-}
-
-static struct k__room *create_room(const struct k_room_config *config) {
+    if (0 != (check_config(config)))
+        goto err_invalid_config;
 
     struct k__room *room = k_malloc(sizeof(struct k__room));
     if (NULL == room)
-        goto err;
+        goto err_malloc_room;
 
     room->name = config->room_name;
-    room->id   = room_registry_add(room);
-    if (SIZE_MAX == room->id)
-        goto err;
+    if (0 != room_registry_add(room))
+        goto err_registry_add;
+
+    if (0 == config->data_size)
+        room->room.data = NULL;
+    else {
+        if (NULL == (room->room.data = k_malloc(config->data_size)))
+            goto err_malloc_room_data;
+    }
 
     room->fn_create_event   = config->fn_create_event;
     room->fn_destroy_event  = config->fn_destroy_event;
@@ -209,40 +190,34 @@ static struct k__room *create_room(const struct k_room_config *config) {
     room->room.delta_ms     = 0;
     room->room.current_time = 0;
 
-    if (0 != run_room_create_event(room))
-        goto err;
+    if (NULL != room->fn_create_event) {
+        k_log_info("Invoking room fn_create_event() callback...");
 
-    return room;
+        int result = room->fn_create_event(&room->room);
+        if (0 != result) {
+            k_log_error("Room fn_create_event() callback returned %d", result);
+            goto err_run_create_event;
+        }
 
-err:
-    if (NULL != room) {
-
-        if (SIZE_MAX != room->id)
-            room_registry_del(room->id);
-
-        /* ... */
-
-        k_free(room);
+        k_log_info("Room fn_create_event() callback completed");
     }
 
-    return NULL;
-}
-
-size_t k_create_room(const struct k_room_config *config) {
-    k_log_info("Creating room { .name=\"%s\" }...", config->room_name);
-
-    if (0 != (check_config(config)))
-        goto err;
-
-    struct k__room *room = create_room(config);
-    if (NULL == room)
-        goto err;
-
-    k_log_info("Room { .name=\"%s\", .id=%zu } created", room->name, room->id);
+    k_log_info("< Room { .name=\"%s\", .id=%zu } created", room->name, room->id);
     return room->id;
 
-err:
-    k_log_error("Failed to create room { .name=\"%s\" }", config->room_name);
+err_run_create_event:
+    k_free(room->room.data);
+
+err_malloc_room_data:
+    room_registry_del(room);
+
+err_registry_add:
+    k_free(room);
+
+err_malloc_room:
+err_invalid_config:
+
+    k_log_error("< Failed to create room { .name=\"%s\" }", config->room_name);
     return SIZE_MAX;
 }
 
@@ -250,37 +225,35 @@ err:
 
 /* region [destroy room] */
 
-static void run_room_destroy_event(struct k__room *room) {
-
-    if (NULL == room->fn_destroy_event)
-        return;
-
-    k_log_info("Invoking room fn_destroy_event() callback...");
-
-    room->fn_destroy_event(&room->room);
-
-    k_log_info("Room fn_destroy_event() callback completed");
-}
-
 static void destroy_room(struct k__room *room) {
+    k_log_info("> Destroying room { .name=\"%s\", .id=%zu }", room->name, room->id);
 
-    run_room_destroy_event(room);
+    if (NULL != room->fn_destroy_event) {
+        k_log_info("Invoking room fn_destroy_event() callback...");
 
+        room->fn_destroy_event(&room->room);
+
+        k_log_info("Room fn_destroy_event() callback completed");
+    }
+
+    /* ... */
+
+    room_registry_del(room);
+    k_free(room->room.data);
     k_free(room);
+
+    k_log_info("< Room destroyed");
 }
 
 void k_destroy_room(size_t room_id) {
-    k_log_info("Destroying room { .id=%zu }", room_id);
 
-    struct k__room *room = room_registry_del(room_id);
+    struct k__room *room = room_registry_get(room_id);
     if (NULL == room) {
-        k_log_error("Failed to destroy room { .id=%zu }", room_id);
+        k_log_error("Failed to destroy room { .id=%zu }. Room not found", room_id);
         return;
     }
 
     destroy_room(room);
-
-    k_log_info("Room { .id=%zu } destroyed", room_id);
 }
 
 /* endregion */

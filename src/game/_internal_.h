@@ -41,7 +41,13 @@ int k__init_room_registry(const struct k_game_config *config);
 
 void k__deinit_room_registry(void);
 
+struct k__room_registry_node {
+    struct k_list_node iter_node;
+};
+
 struct k__room {
+
+    struct k__room_registry_node room_node;
 
     size_t id;
     const char *name;

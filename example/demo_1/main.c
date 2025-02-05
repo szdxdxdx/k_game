@@ -2,28 +2,26 @@
 
 #include "k/game.h"
 
-static int create_room(const struct k_room *room) {
+struct my_room {
+    uint32_t timer;
+    int count;
+};
 
-    printf("\ncreate my room\n\n");
-    return 3;
-}
-
-static void destroy_room(const struct k_room *room) {
-
-    printf("\ndestroy my room\n\n");
+static int entry_room(const struct k_room *room) {
+    printf("\nentry_room my room\n\n");
+    return 0;
 }
 
 static void room_step(const struct k_room *room) {
-
 }
 
 static int setup_game(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.room_name = "tmp room";
-    config.fn_create_event  = create_room;
-    config.fn_destroy_event = destroy_room;
-    config.fn_step_event    = room_step;
+    config.data_size = sizeof(struct my_room);
+    config.fn_entry_event = entry_room;
+    config.fn_step_event  = room_step;
     size_t room_idx = k_create_room(&config);
 
     k_goto_room(room_idx);
