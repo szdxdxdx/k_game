@@ -132,17 +132,6 @@ static void deinit_game(void) {
 
 /* endregion */
 
-static void run_room(void) {
-
-    struct k__room *room = k_room_stack_get_top();
-    if (NULL == room) {
-        k_log_error("No room to run");
-        return;
-    }
-
-    k__run_room(room);
-}
-
 int k_run_game(const struct k_game_config *config) {
     k_log_info("Initializing Game...");
 
@@ -156,8 +145,15 @@ int k_run_game(const struct k_game_config *config) {
 
     k_log_info("Game initialized. Game started...");
 
-    run_room();
+    struct k__room *room = k_room_stack_get_top();
+    if (NULL == room) {
+        k_log_error("No room to run");
+        goto end;
+    }
 
+    k__run_room(room);
+
+end:
     k_log_info("Deinitializing Game...");
 
     deinit_game();

@@ -4,13 +4,13 @@
 
 static int create_room(const struct k_room *room) {
 
-    printf("\ncreate room\n\n");
-    return 01;
+    printf("\ncreate my room\n\n");
+    return 0;
 }
 
 static void destroy_room(const struct k_room *room) {
 
-    printf("\ndestroy room\n\n");
+    printf("\ndestroy my room\n\n");
 }
 
 static void room_step(const struct k_room *room) {
