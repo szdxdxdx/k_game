@@ -24,7 +24,7 @@ const struct k_game_config K_GAME_CONFIG_INIT = {
 
 static int check_game_config(const struct k_game_config *config) {
 
-    #define GAME_CONFIG_ASSERT(cond) \
+    #define K__GAME_CONFIG_ASSERT(cond) \
         do { \
             if ( ! (cond)) { \
                 k_log_error("Invalid game config, assert( " #cond " )"); \
@@ -32,12 +32,12 @@ static int check_game_config(const struct k_game_config *config) {
             } \
         } while(0)
 
-    GAME_CONFIG_ASSERT(NULL != config);
-    GAME_CONFIG_ASSERT(0 < config->window_h);
-    GAME_CONFIG_ASSERT(0 < config->window_w);
-    GAME_CONFIG_ASSERT(NULL != config->fn_setup_game);
+    K__GAME_CONFIG_ASSERT(NULL != config);
+    K__GAME_CONFIG_ASSERT(0 < config->window_h);
+    K__GAME_CONFIG_ASSERT(0 < config->window_w);
+    K__GAME_CONFIG_ASSERT(NULL != config->fn_setup_game);
 
-    #undef GAME_CONFIG_ASSERT
+    #undef K__GAME_CONFIG_ASSERT
     return 0;
 }
 

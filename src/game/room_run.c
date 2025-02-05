@@ -13,7 +13,7 @@ static int entry_room(struct k__room *room) {
     if (NULL != room->fn_entry_event) {
         k_log_info("Invoking room fn_entry_event() callback...");
 
-        int callback_result = room->fn_entry_event(&room->ctx);
+        int callback_result = room->fn_entry_event(&room->room);
         if (0 != callback_result) {
             k_log_error("Failed to enter room. room fn_entry_event() callback returned %d", callback_result);
             return -1;
@@ -22,8 +22,8 @@ static int entry_room(struct k__room *room) {
         k_log_info("Room fn_entry_event() callback completed");
     }
 
-    room->ctx.current_time = SDL_GetTicks();
-    room->ctx.delta_ms = 0;
+    room->room.current_time = SDL_GetTicks();
+    room->room.delta_ms = 0;
 
     return 0;
 }
@@ -33,7 +33,7 @@ static void leave_room(struct k__room *room) {
     if (NULL != room->fn_leave_event) {
         k_log_info("Invoking room fn_leave_event() callback...");
 
-        room->fn_leave_event(&room->ctx);
+        room->fn_leave_event(&room->room);
 
         k_log_info("Room fn_leave_event() callback completed");
     }
@@ -42,7 +42,7 @@ static void leave_room(struct k__room *room) {
 static inline int frame_delay(struct k__room *room) {
 
     Uint32 current_time = SDL_GetTicks();
-    Uint32 elapsed_time = current_time - room->ctx.current_time;
+    Uint32 elapsed_time = current_time - room->room.current_time;
 
 #if 1
     /* 若已到新一帧的时间，则函数返回 0，否则返回非 0。
@@ -63,8 +63,8 @@ static inline int frame_delay(struct k__room *room) {
     }
 #endif
 
-    room->ctx.delta_ms = (int)elapsed_time;
-    room->ctx.current_time = current_time;
+    room->room.delta_ms = (int)elapsed_time;
+    room->room.current_time = current_time;
     return 0;
 }
 
@@ -88,13 +88,13 @@ static void process_SDL_events(struct k__room *room) {
 static void room_step(struct k__room *room) {
 
     if (NULL != room->fn_step_event)
-        room->fn_step_event(&room->ctx);
+        room->fn_step_event(&room->room);
 
     // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
     // SDL_RenderClear(room->renderer);
 
     if (NULL != room->fn_draw_event)
-        room->fn_draw_event(&room->ctx);
+        room->fn_draw_event(&room->room);
 
     SDL_RenderPresent(k__game->renderer);
 }
@@ -108,7 +108,7 @@ void k__run_room(struct k__room *room) {
     if (room->game_loop) {
         k_log_trace("Game loop started...");
 
-        room->ctx.current_time = SDL_GetTicks();
+        room->room.current_time = SDL_GetTicks();
         while (room->game_loop) {
 
             do {

@@ -25,7 +25,7 @@ extern const struct k_game_config K_GAME_CONFIG_INIT;
 /* region [room] */
 
 struct k_room_config;
-struct k_room_context;
+struct k_room;
 
 size_t k_create_room(const struct k_room_config *config);
 
@@ -33,21 +33,21 @@ void k_destroy_room(size_t room_id);
 
 struct k_room_config {
 
-    const char *name;
+    const char *room_name;
 
     int steps_per_second;
 
-    void (*fn_create_event)(const struct k_room_context *room);
-    void (*fn_destroy_event)(const struct k_room_context *room);
-    int (*fn_entry_event)(const struct k_room_context *room);
-    void (*fn_leave_event)(const struct k_room_context *room);
-    void (*fn_step_event)(const struct k_room_context *room);
-    void (*fn_draw_event)(const struct k_room_context *room);
+    int (*fn_create_event)(const struct k_room *room);
+    void (*fn_destroy_event)(const struct k_room *room);
+    int (*fn_entry_event)(const struct k_room *room);
+    void (*fn_leave_event)(const struct k_room *room);
+    void (*fn_step_event)(const struct k_room *room);
+    void (*fn_draw_event)(const struct k_room *room);
 };
 
 extern const struct k_room_config K_ROOM_CONFIG_INIT;
 
-struct k_room_context {
+struct k_room {
 
     uint32_t current_time;
     int delta_ms;
