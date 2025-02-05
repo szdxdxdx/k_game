@@ -13,12 +13,12 @@ static void destroy_room(struct k__room *room);
 
 static struct k__room_registry *registry = &(struct k__room_registry){};
 
-static void registry_init(void) {
+static void room_registry_init(void) {
     registry->room_id_counter = 0;
     k_init_list(&registry->rooms_iter_list);
 }
 
-static void registry_deinit(void) {
+static void room_registry_deinit(void) {
 
     struct k__room_registry_node *room_node;
 
@@ -36,7 +36,7 @@ static void registry_deinit(void) {
     registry->room_id_counter = 0;
 }
 
-static size_t registry_add(struct k__room *room) {
+static size_t room_registry_add(struct k__room *room) {
 
     struct k__room_registry_node *node = k_malloc(sizeof(*node));
     if (NULL == node)
@@ -50,7 +50,7 @@ static size_t registry_add(struct k__room *room) {
     return room_idx;
 }
 
-static struct k__room *registry_del(size_t room_id) {
+static struct k__room *room_registry_del(size_t room_id) {
 
     if (SIZE_MAX == room_id)
         goto err;
@@ -75,7 +75,7 @@ err:
     return NULL;
 }
 
-static struct k__room *registry_get(size_t room_id) {
+static struct k__room *room_registry_get(size_t room_id) {
 
     struct k__room_registry_node *room_node;
     struct k_list_node *iter;
@@ -103,8 +103,7 @@ int k__init_room_registry(const struct k_game_config *config) {
         return -1;
     }
 
-    registry_init();
-
+    room_registry_init();
     is_initialized = 1;
 
     k_log_trace("Room registry initialized");
@@ -116,7 +115,7 @@ void k__deinit_room_registry(void) {
     if ( ! is_initialized)
         return;
 
-    registry_deinit();
+    room_registry_deinit();
     is_initialized = 0;
 
     k_log_trace("Room registry deinitialized");
@@ -185,7 +184,7 @@ static struct k__room *create_room(const struct k_room_config *config) {
         goto err;
 
     room->name = config->room_name;
-    room->id   = registry_add(room);
+    room->id   = room_registry_add(room);
     if (SIZE_MAX == room->id)
         goto err;
 
@@ -209,7 +208,7 @@ err:
     if (NULL != room) {
 
         if (SIZE_MAX != room->id)
-            registry_del(room->id);
+            room_registry_del(room->id);
 
         /* ... */
 
@@ -263,7 +262,7 @@ static void destroy_room(struct k__room *room) {
 void k_destroy_room(size_t room_id) {
     k_log_info("Destroying room { .id=%zu }", room_id);
 
-    struct k__room *room = registry_del(room_id);
+    struct k__room *room = room_registry_del(room_id);
     if (NULL == room) {
         k_log_error("Failed to destroy room { .id=%zu }", room_id);
         return;
@@ -280,7 +279,7 @@ void k_destroy_room(size_t room_id) {
 
 struct k__room *k__get_room(size_t room_id) {
 
-    struct k__room *room = registry_get(room_id);
+    struct k__room *room = room_registry_get(room_id);
 
     if (NULL == room)
         k_log_error("Room { .id=%zu } not found", room_id);
