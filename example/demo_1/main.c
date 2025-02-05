@@ -5,7 +5,7 @@
 static int create_room(const struct k_room *room) {
 
     printf("\ncreate my room\n\n");
-    return 0;
+    return 3;
 }
 
 static void destroy_room(const struct k_room *room) {
