@@ -8,26 +8,6 @@
 #include "k/game.h"
 #include "_internal_.h"
 
-struct k_SDL_context {
-    unsigned int is_inited_SDL       : 1;
-    unsigned int is_inited_SDL_img   : 1;
-    unsigned int is_inited_SDL_mix   : 1;
-    unsigned int is_inited_SDL_ttf   : 1;
-    unsigned int is_created_window   : 1;
-    unsigned int is_created_renderer : 1;
-    unsigned int is_inited_module    : 1;
-};
-
-static struct k_SDL_context context = {
-    .is_inited_SDL       = 0,
-    .is_inited_SDL_img   = 0,
-    .is_inited_SDL_mix   = 0,
-    .is_inited_SDL_ttf   = 0,
-    .is_created_window   = 0,
-    .is_created_renderer = 0,
-    .is_inited_module    = 0,
-};
-
 static int init_SDL(void) {
 
     Uint32 flags = SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_AUDIO;
@@ -36,17 +16,11 @@ static int init_SDL(void) {
         return -1;
     }
 
-    context.is_inited_SDL = 1;
     return 0;
 }
 
 static void deinit_SDL(void) {
-
-    if ( ! context.is_inited_SDL)
-        return;
-
     SDL_Quit();
-    context.is_inited_SDL = 0;
 }
 
 static int init_SDL_img(void) {
@@ -57,17 +31,11 @@ static int init_SDL_img(void) {
         return -1;
     }
 
-    context.is_inited_SDL_img = 1;
     return 0;
 }
 
 static void deinit_SDL_img(void) {
-
-    if ( ! context.is_inited_SDL_img)
-        return;
-
     IMG_Quit();
-    context.is_inited_SDL_img = 0;
 }
 
 static int init_SDL_mix(void) {
@@ -86,18 +54,12 @@ static int init_SDL_mix(void) {
 
     Mix_AllocateChannels(32);
 
-    context.is_inited_SDL_mix = 1;
     return 0;
 }
 
 static void deinit_SDL_mix(void) {
-
-    if ( ! context.is_inited_SDL_mix)
-        return;
-
     Mix_CloseAudio();
     Mix_Quit();
-    context.is_inited_SDL_mix = 0;
 }
 
 static int init_SDL_ttf(void) {
@@ -107,17 +69,11 @@ static int init_SDL_ttf(void) {
         return -1;
     }
 
-    context.is_inited_SDL_ttf = 1;
     return 0;
 }
 
 static void deinit_SDL_ttf(void) {
-
-    if ( ! context.is_inited_SDL_ttf)
-        return;
-
     TTF_Quit();
-    context.is_inited_SDL_ttf = 0;
 }
 
 static int create_window(const struct k_game_config *config) {
@@ -134,18 +90,12 @@ static int create_window(const struct k_game_config *config) {
         return -1;
     }
 
-    context.is_created_window = 1;
     return 0;
 }
 
 static void destroy_window(void) {
-
-    if ( ! context.is_created_window)
-        return;
-
     SDL_DestroyWindow(k__game->window);
     k__game->window = NULL;
-    context.is_created_window = 0;
 }
 
 static int create_renderer(void) {
@@ -157,65 +107,110 @@ static int create_renderer(void) {
         return -1;
     }
 
-    context.is_created_renderer = 1;
     return 0;
 }
 
 static void destroy_renderer(void) {
-
-    if ( ! context.is_created_renderer)
-        return;
-
     SDL_DestroyRenderer(k__game->renderer);
     k__game->renderer = NULL;
-
-    context.is_created_renderer = 0;
 }
+
+struct k__SDL_init_flags {
+    unsigned int is_inited_SDL       : 1;
+    unsigned int is_inited_SDL_img   : 1;
+    unsigned int is_inited_SDL_mix   : 1;
+    unsigned int is_inited_SDL_ttf   : 1;
+    unsigned int is_created_window   : 1;
+    unsigned int is_created_renderer : 1;
+    unsigned int is_inited_module    : 1;
+};
+
+static struct k__SDL_init_flags init_flags = {
+    .is_inited_SDL       = 0,
+    .is_inited_SDL_img   = 0,
+    .is_inited_SDL_mix   = 0,
+    .is_inited_SDL_ttf   = 0,
+    .is_created_window   = 0,
+    .is_created_renderer = 0,
+    .is_inited_module    = 0,
+};
 
 static void deinit_module(void) {
 
-    destroy_renderer();
-    destroy_window();
-    deinit_SDL_ttf();
-    deinit_SDL_mix();
-    deinit_SDL_img();
-    deinit_SDL();
+    if (init_flags.is_created_renderer)
+        destroy_renderer();
+    if (init_flags.is_created_window)
+        destroy_window();
+    if (init_flags.is_inited_SDL_ttf)
+        deinit_SDL_ttf();
+    if (init_flags.is_inited_SDL_mix)
+        deinit_SDL_mix();
+    if (init_flags.is_inited_SDL_img)
+        deinit_SDL_img();
+    if (init_flags.is_inited_SDL)
+        deinit_SDL();
 
-    context.is_inited_module = 0;
+    init_flags.is_inited_module = 0;
 }
 
 int k__init_SDL(const struct k_game_config *config) {
 
-    if (context.is_inited_module) {
-        k_log_error("SDL is already initialized");
-        return -1;
-    }
+    if (init_flags.is_inited_module)
+        goto done;
 
-    int r = init_SDL()
-         || init_SDL_img()
-         || init_SDL_mix()
-         || init_SDL_ttf()
-         || create_window(config)
-         || create_renderer();
-
-    if (0 != r) {
+    if (0 != init_SDL()) {
         k_log_error("Failed to initialize SDL");
-
-        deinit_module();
-        return -1;
+        goto err;
     }
+    init_flags.is_inited_SDL = 1;
 
-    context.is_inited_module = 1;
+    if (0 != init_SDL_img()) {
+        k_log_error("Failed to initialize SDL_img");
+        goto err;
+    }
+    init_flags.is_inited_SDL_img = 1;
 
+    if (0 != init_SDL_mix()) {
+        k_log_error("Failed to initialize SDL_mix");
+        goto err;
+    }
+    init_flags.is_inited_SDL_mix = 1;
+
+    if (0 != init_SDL_ttf()) {
+        k_log_error("Failed to initialize SDL_ttf");
+        goto err;
+    }
+    init_flags.is_inited_SDL_ttf = 1;
+
+    if (0 != create_window(config)) {
+        k_log_error("Failed to create window");
+        goto err;
+    }
+    init_flags.is_created_window = 1;
+
+    if (0 != create_renderer()) {
+        k_log_error("Failed to create renderer");
+        goto err;
+    }
+    init_flags.is_created_renderer = 1;
+
+    init_flags.is_inited_module = 1;
+
+done:
     k_log_trace("SDL initialized");
     return 0;
+
+err:
+    k_log_error("Failed to initialize SDL");
+
+    deinit_module();
+    return -1;
 }
 
 void k__deinit_SDL(void) {
 
-    if ( ! context.is_inited_module)
-        return;
+    if (init_flags.is_inited_module)
+        deinit_module();
 
-    deinit_module();
     k_log_trace("SDL closed");
 }
