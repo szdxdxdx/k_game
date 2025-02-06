@@ -28,7 +28,7 @@ struct k__game_context {
 
     unsigned int quit_game;
 
-    struct k__room *current_room;
+    struct k_room *current_room;
 };
 
 extern struct k__game_context * const k__game;
@@ -41,34 +41,37 @@ int k__init_room_registry(const struct k_game_config *config);
 
 void k__deinit_room_registry(void);
 
-struct k__room_registry_node {
+struct k__room_node {
     struct k_list_node iter_node;
 };
 
-struct k__room {
+struct k_room {
 
-    struct k__room_registry_node room_node;
+    struct k__room_node room_node;
 
-    size_t id;
     const char *name;
 
-    int (*fn_create_event)(const struct k_room *room);
-    void (*fn_destroy_event)(const struct k_room *room);
-    int (*fn_entry_event)(const struct k_room *room);
-    void (*fn_leave_event)(const struct k_room *room);
-    void (*fn_step_event)(const struct k_room *room);
-    void (*fn_draw_event)(const struct k_room *room);
+    int  (*fn_create) (const struct k_room *room);
+    void (*fn_destroy)(const struct k_room *room);
+    int  (*fn_enter)  (const struct k_room *room);
+    void (*fn_leave)  (const struct k_room *room);
+    void (*fn_update) (const struct k_room *room);
+    void (*fn_draw)   (const struct k_room *room);
 
     Uint32 frame_interval;
 
     unsigned int game_loop;
 
-    struct k_room room;
+    uint32_t current_time;
+
+    int delta_ms;
+
+    void *data;
 };
 
-struct k__room *k__get_room(size_t room_id);
+struct k_room *k__get_room(size_t room_id);
 
-void k__run_room(struct k__room *room);
+void k__run_room(struct k_room *room);
 
 /* endregion */
 
@@ -78,11 +81,11 @@ int k__init_room_stack(const struct k_game_config *config);
 
 void k__deinit_room_stack(void);
 
-int k_room_stack_push(struct k__room *room);
+int k_room_stack_push(struct k_room *room);
 
 void k_room_stack_pop(void);
 
-struct k__room *k_room_stack_get_top(void);
+struct k_room *k_room_stack_get_top(void);
 
 void k_room_stack_clear(void);
 

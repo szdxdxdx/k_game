@@ -10,7 +10,7 @@
 /* region [room stack] */
 
 struct room_stack {
-    struct k__room *rooms[32];
+    struct k_room *rooms[32];
     size_t top;
 };
 
@@ -28,7 +28,7 @@ static inline int room_stack_is_empty(void) {
     return 0 == room_stack.top;
 }
 
-static inline void room_stack_push(struct k__room *room) {
+static inline void room_stack_push(struct k_room *room) {
     room_stack.rooms[room_stack.top++] = room;
 }
 
@@ -36,7 +36,7 @@ static inline void room_stack_pop(void) {
     room_stack.top--;
 }
 
-static inline struct k__room *room_stack_get_top(void) {
+static inline struct k_room *room_stack_get_top(void) {
     return room_stack.rooms[room_stack.top - 1];
 }
 
@@ -49,15 +49,12 @@ static int is_initialized = 0;
 int k__init_room_stack(const struct k_game_config *config) {
     (void)config;
 
-    if (is_initialized) {
-        k_log_error("Room stack is already initialized");
+    if (is_initialized)
         return -1;
-    }
 
     room_stack_clear();
-    is_initialized = 1;
 
-    k_log_trace("Room stack initialized");
+    is_initialized = 1;
     return 0;
 }
 
@@ -67,38 +64,34 @@ void k__deinit_room_stack(void) {
         return;
 
     room_stack_clear();
-    is_initialized = 0;
 
-    k_log_trace("Room stack deinitialized");
+    is_initialized = 0;
 }
 
 /* endregion */
 
 /* region [room goto] */
 
-struct k__room *k_room_stack_get_top(void) {
+struct k_room *k_room_stack_get_top(void) {
     return room_stack_is_empty() ? NULL : room_stack_get_top();
 }
 
-int k_goto_room(size_t room_idx) {
+int k_goto_room(struct k_room *room) {
 
-    struct k__room *room = k__get_room(room_idx);
-    if (NULL == room)
-        goto err;
+    if (NULL == room) {
+        k_log_error("Failed to goto room. Room is NULL");
+        return -1;
+    }
 
     if (room_stack_is_full()) {
-        k_log_error("Failed to goto room { .id=%zu }. Room stack is full", room_idx);
-        goto err;
+        k_log_error("Failed to goto room { .name=\"%s\" }. Room stack is full", room->name);
+        return -1;
     }
 
     room_stack_push(room);
 
-    k_log_trace("Next room set to { .name=\"%s\", .id=%zu }", room->name, room->id);
+    k_log_trace("Next room set to { .name=\"%s\" }", room->name);
     return 0;
-
-err:
-    k_log_error("Failed to goto room { .id=%zu }", room_idx);
-    return -1;
 }
 
 /* endregion */

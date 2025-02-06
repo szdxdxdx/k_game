@@ -9,7 +9,8 @@ struct my_room {
 
 static int create_room(const struct k_room *room) {
     printf("\ncreate my room\n\n");
-    return 3;
+
+    return 0;
 }
 
 static int entry_room(const struct k_room *room) {
@@ -20,17 +21,17 @@ static int entry_room(const struct k_room *room) {
 static void room_step(const struct k_room *room) {
 }
 
-static int setup_game(void) {
+static int init_game(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.room_name = "tmp room";
     config.data_size = sizeof(struct my_room);
-    config.fn_create_event = create_room;
-    config.fn_entry_event  = entry_room;
-    config.fn_step_event   = room_step;
-    size_t room_idx = k_create_room(&config);
+    config.fn_create = create_room;
+    config.fn_enter  = entry_room;
+    config.fn_update   = room_step;
+    struct k_room *tmp_room = k_create_room(&config);
 
-    k_goto_room(room_idx);
+    k_goto_room(tmp_room);
 
     return 0;
 }
@@ -41,7 +42,7 @@ int main(int argc, char **argv) {
     setbuf(stdout, NULL);
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
-    config.fn_setup_game = setup_game;
+    config.fn_init = init_game;
 
     k_run_game(&config);
 

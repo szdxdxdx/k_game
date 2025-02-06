@@ -151,10 +151,8 @@ static int is_initialized = 0;
 
 int k__init_SDL(const struct k_game_config *config) {
 
-    if (is_initialized) {
-        k_log_error("SDL already initialized");
+    if (is_initialized)
         return -1;
-    }
 
     if (0 != init_or_deinit_SDL(config, 1)) {
         k_log_error("Failed to initialize SDL");
@@ -173,8 +171,8 @@ void k__deinit_SDL(void) {
         return;
 
     init_or_deinit_SDL(NULL, 0);
-    is_initialized = 0;
 
+    is_initialized = 0;
     k_log_trace("SDL closed");
 }
 

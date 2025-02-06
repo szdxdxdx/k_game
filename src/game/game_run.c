@@ -18,9 +18,10 @@ struct k__game_context * const k__game = &(struct k__game_context) {
 /* region [game config] */
 
 const struct k_game_config K_GAME_CONFIG_INIT = {
-    .window_h = 480,
-    .window_w = 640,
-    .fn_setup_game = NULL
+    .window_h    = 480,
+    .window_w    = 640,
+    .fn_init     = NULL,
+    .fn_shutdown = NULL,
 };
 
 static int check_game_config(const struct k_game_config *config) {
@@ -36,7 +37,7 @@ static int check_game_config(const struct k_game_config *config) {
     K__GAME_CONFIG_ASSERT(NULL != config);
     K__GAME_CONFIG_ASSERT(0 < config->window_h);
     K__GAME_CONFIG_ASSERT(0 < config->window_w);
-    K__GAME_CONFIG_ASSERT(NULL != config->fn_setup_game);
+    K__GAME_CONFIG_ASSERT(NULL != config->fn_init);
 
     #undef K__GAME_CONFIG_ASSERT
     return 0;
@@ -46,106 +47,61 @@ static int check_game_config(const struct k_game_config *config) {
 
 /* region [init && deinit] */
 
-static int init_SDL(void *game_config, void *unused) {
-    (void)unused;
+static int init_or_deinit_game(const struct k_game_config *config, int is_init) {
 
-    return 0 == k__init_SDL(game_config) ? 0 : -1;
-}
+    if ( ! is_init)
+        goto deinit;
 
-static void deinit_SDL(void *game_config, void *unused) {
-    (void)game_config;
-    (void)unused;
+    if (0 != k__init_SDL(config))
+        goto err_init_SDL;
 
-    k__deinit_SDL();
-}
+    if (0 != k__init_room_registry(config))
+        goto err_init_room_registry;
 
-static int init_room_registry(void *game_config, void *unused) {
-    (void)game_config;
-    (void)unused;
+    if (0 != k__init_room_stack(config))
+        goto err_init_room_stack;
 
-    return 0 == k__init_room_registry(game_config) ? 0 : -1;
-}
-
-static void deinit_room_registry(void *game_config, void *unused) {
-    (void)game_config;
-    (void)unused;
-
-    k__deinit_room_registry();
-}
-
-static int init_room_stack(void *game_config, void *unused) {
-    (void)game_config;
-    (void)unused;
-
-    return 0 == k__init_room_stack(game_config) ? 0 : -1;
-}
-
-static void deinit_room_stack(void *game_config, void *unused) {
-    (void)game_config;
-    (void)unused;
-
-    k__deinit_room_stack();
-}
-
-static int run_setup_callback(void *game_config, void *unused) {
-    (void)unused;
-
-    k_log_info("> Invoking game fn_setup_game() callback...");
-
-    const struct k_game_config *config = game_config;
-
-    int result = config->fn_setup_game();
+    int result = config->fn_init();
     if (0 != result) {
-        k_log_error("< Failed to start game. fn_setup_game() return %d", result);
-        return -1;
-    }
-
-    k_log_info("< game fn_setup_game() callback completed");
-    return 0;
-}
-
-static const struct k_flow_step steps_to_init[] = {
-    { NULL, init_SDL,           deinit_SDL           },
-    { NULL, init_room_registry, deinit_room_registry },
-    { NULL, init_room_stack,    deinit_room_stack    },
-    { NULL, run_setup_callback, NULL                 },
-};
-
-#define array_len(x) (sizeof(x) / sizeof(x[0]))
-
-static int init_game(const struct k_game_config *config) {
-
-    size_t steps_num = array_len(steps_to_init);
-    size_t inited_num = k_execute_flow_forward(steps_to_init, steps_num, (void *)config);
-
-    if (inited_num != steps_num) {
-        k_execute_flow_backward(steps_to_init, inited_num, NULL);
-        return -1;
+        k_log_error("Failed to start game. Game fn_init() callback return %d", result);
+        goto err_fn_init;
     }
 
     return 0;
-}
 
-static void deinit_game(void) {
-    k_execute_flow_backward(steps_to_init, array_len(steps_to_init), NULL);
+deinit:
+    if (NULL != config->fn_shutdown)
+        config->fn_shutdown();
+
+err_fn_init:
+    k__deinit_room_stack();
+
+err_init_room_stack:
+    k__deinit_room_registry();
+
+err_init_room_registry:
+    k__deinit_SDL();
+
+err_init_SDL:
+    return is_init ? -1 : 0;
 }
 
 /* endregion */
 
 int k_run_game(const struct k_game_config *config) {
-    k_log_info("> Initializing Game...");
+    k_log_trace("Initializing Game...");
 
     if (0 != check_game_config(config))
         return -1;
 
-    if (0 != init_game(config)) {
-        k_log_error("< Failed to initialize game");
+    if (0 != init_or_deinit_game(config, 1)) {
+        k_log_error("Failed to initialize game");
         return -1;
     }
 
-    k_log_info("< Game initialized. Game started...");
+    k_log_trace("Game initialized. Game started...");
 
-    struct k__room *room = k_room_stack_get_top();
+    struct k_room *room = k_room_stack_get_top();
     if (NULL == room) {
         k_log_error("No room to run");
         goto end;
@@ -154,10 +110,10 @@ int k_run_game(const struct k_game_config *config) {
     k__run_room(room);
 
 end:
-    k_log_info("> Game end. Deinitializing Game...");
+    k_log_trace("Game end. Deinitializing Game...");
 
-    deinit_game();
+    init_or_deinit_game(config, 0);
 
-    k_log_info("< Game deinitialized");
+    k_log_trace("Game deinitialized");
     return 0;
 }

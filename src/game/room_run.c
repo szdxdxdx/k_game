@@ -5,47 +5,39 @@
 #include "k/game.h"
 #include "_internal_.h"
 
-static int entry_room(struct k__room *room) {
+static int enter_room(struct k_room *room) {
 
-    room->room.current_time = SDL_GetTicks();
-    room->room.delta_ms = 0;
+    room->current_time = SDL_GetTicks();
+    room->delta_ms = 0;
 
     /* 开启游戏循环，在 entry_event 回调中也能退出循环 */
     room->game_loop = 1;
 
-    if (NULL != room->fn_entry_event) {
-        k_log_info("Invoking room fn_entry_event() callback...");
+    if (NULL != room->fn_enter) {
 
-        int callback_result = room->fn_entry_event(&room->room);
-        if (0 != callback_result) {
-            k_log_error("Failed to enter room. room fn_entry_event() callback returned %d", callback_result);
+        int result = room->fn_enter(room);
+        if (0 != result) {
+            k_log_error("Failed to enter room. room fn_entry() callback returned %d", result);
             return -1;
         }
-
-        k_log_info("Room fn_entry_event() callback completed");
     }
 
     return 0;
 }
 
-static void leave_room(struct k__room *room) {
+static void leave_room(struct k_room *room) {
 
-    room->room.current_time = SDL_GetTicks();
-    room->room.delta_ms = 0;
+    room->current_time = SDL_GetTicks();
+    room->delta_ms = 0;
 
-    if (NULL != room->fn_leave_event) {
-        k_log_info("Invoking room fn_leave_event() callback...");
-
-        room->fn_leave_event(&room->room);
-
-        k_log_info("Room fn_leave_event() callback completed");
-    }
+    if (NULL != room->fn_leave)
+        room->fn_leave(room);
 }
 
-static inline int frame_delay(struct k__room *room) {
+static inline int frame_delay(struct k_room *room) {
 
     Uint32 current_time = SDL_GetTicks();
-    Uint32 elapsed_time = current_time - room->room.current_time;
+    Uint32 elapsed_time = current_time - room->current_time;
 
 #if 1
     /* 若已到新一帧的时间，则函数返回 0，否则返回非 0。
@@ -66,12 +58,12 @@ static inline int frame_delay(struct k__room *room) {
     }
 #endif
 
-    room->room.delta_ms = (int)elapsed_time;
-    room->room.current_time = current_time;
+    room->delta_ms = (int)elapsed_time;
+    room->current_time = current_time;
     return 0;
 }
 
-static void process_SDL_events(struct k__room *room) {
+static void process_SDL_events(struct k_room *room) {
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -88,30 +80,30 @@ static void process_SDL_events(struct k__room *room) {
     }
 }
 
-static void room_step(struct k__room *room) {
+static void room_step(struct k_room *room) {
 
-    if (NULL != room->fn_step_event)
-        room->fn_step_event(&room->room);
+    if (NULL != room->fn_update)
+        room->fn_update(room);
 
     // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
     // SDL_RenderClear(room->renderer);
 
-    if (NULL != room->fn_draw_event)
-        room->fn_draw_event(&room->room);
+    if (NULL != room->fn_draw)
+        room->fn_draw(room);
 
     SDL_RenderPresent(k__game->renderer);
 }
 
-void k__run_room(struct k__room *room) {
-    k_log_info("Entering room { .name=\"%s\", .id=%zu }", room->name, room->id);
+void k__run_room(struct k_room *room) {
+    k_log_trace("Entering room { .name=\"%s\" }", room->name);
 
-    if (0 != entry_room(room))
+    if (0 != enter_room(room))
         return;
 
     if (room->game_loop) {
         k_log_trace("Game loop started...");
 
-        room->room.current_time = SDL_GetTicks();
+        room->current_time = SDL_GetTicks();
         while (room->game_loop) {
 
             do {
@@ -126,5 +118,5 @@ void k__run_room(struct k__room *room) {
 
     leave_room(room);
 
-    k_log_info("Left room { .name=\"%s\", .id=%zu}", room->name, room->id);
+    k_log_trace("Left room { .name=\"%s\" }", room->name);
 }
