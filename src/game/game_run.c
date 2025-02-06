@@ -90,17 +90,17 @@ static void deinit_room_stack(void *game_config, void *unused) {
 static int run_setup_callback(void *game_config, void *unused) {
     (void)unused;
 
-    k_log_info("Invoking game fn_setup_game() callback...");
+    k_log_info("> Invoking game fn_setup_game() callback...");
 
     const struct k_game_config *config = game_config;
 
     int result = config->fn_setup_game();
     if (0 != result) {
-        k_log_error("Failed to start game. fn_setup_game() return %d", result);
+        k_log_error("< Failed to start game. fn_setup_game() return %d", result);
         return -1;
     }
 
-    k_log_info("game fn_setup_game() callback completed");
+    k_log_info("< game fn_setup_game() callback completed");
     return 0;
 }
 
@@ -133,17 +133,17 @@ static void deinit_game(void) {
 /* endregion */
 
 int k_run_game(const struct k_game_config *config) {
-    k_log_info("Initializing Game...");
+    k_log_info("> Initializing Game...");
 
     if (0 != check_game_config(config))
         return -1;
 
     if (0 != init_game(config)) {
-        k_log_error("Failed to initialize game");
+        k_log_error("< Failed to initialize game");
         return -1;
     }
 
-    k_log_info("Game initialized. Game started...");
+    k_log_info("< Game initialized. Game started...");
 
     struct k__room *room = k_room_stack_get_top();
     if (NULL == room) {
@@ -154,10 +154,10 @@ int k_run_game(const struct k_game_config *config) {
     k__run_room(room);
 
 end:
-    k_log_info("Deinitializing Game...");
+    k_log_info("> Game end. Deinitializing Game...");
 
     deinit_game();
 
-    k_log_info("Game deinitialized");
+    k_log_info("< Game deinitialized");
     return 0;
 }

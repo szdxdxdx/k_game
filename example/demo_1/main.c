@@ -7,8 +7,13 @@ struct my_room {
     int count;
 };
 
+static int create_room(const struct k_room *room) {
+    printf("\ncreate my room\n\n");
+    return 3;
+}
+
 static int entry_room(const struct k_room *room) {
-    printf("\nentry_room my room\n\n");
+    printf("\nentry my room\n\n");
     return 0;
 }
 
@@ -20,8 +25,9 @@ static int setup_game(void) {
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.room_name = "tmp room";
     config.data_size = sizeof(struct my_room);
-    config.fn_entry_event = entry_room;
-    config.fn_step_event  = room_step;
+    config.fn_create_event = create_room;
+    config.fn_entry_event  = entry_room;
+    config.fn_step_event   = room_step;
     size_t room_idx = k_create_room(&config);
 
     k_goto_room(room_idx);

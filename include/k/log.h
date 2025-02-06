@@ -17,6 +17,10 @@
 #define K_LOG_LEVEL K_LOG_LEVEL_TRACE
 #endif
 
+#ifndef K_LOG_COLOR
+#define K_LOG_COLOR 1
+#endif
+
 void k__log(int level, const char *file, int line, const char *func, const char *fmt, ...);
 
 #define k_log_trace(fmt, ...) k__log(K_LOG_LEVEL_TRACE, K__FILE_PATH, __LINE__, __func__, fmt, ##__VA_ARGS__)

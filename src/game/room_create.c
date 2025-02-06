@@ -124,7 +124,7 @@ void k__deinit_room_registry(void) {
 
 const struct k_room_config K_ROOM_CONFIG_INIT = {
     .room_name        = NULL,
-    .data_size   = 0,
+    .data_size        = 0,
     .steps_per_second = 120,
     .fn_create_event  = NULL,
     .fn_destroy_event = NULL,
@@ -191,15 +191,15 @@ size_t k_create_room(const struct k_room_config *config) {
     room->room.current_time = 0;
 
     if (NULL != room->fn_create_event) {
-        k_log_info("Invoking room fn_create_event() callback...");
+        k_log_info("> Invoking room fn_create_event() callback...");
 
         int result = room->fn_create_event(&room->room);
         if (0 != result) {
-            k_log_error("Room fn_create_event() callback returned %d", result);
+            k_log_error("< Room fn_create_event() callback returned %d", result);
             goto err_run_create_event;
         }
 
-        k_log_info("Room fn_create_event() callback completed");
+        k_log_info("< Room fn_create_event() callback completed");
     }
 
     k_log_info("< Room { .name=\"%s\", .id=%zu } created", room->name, room->id);
