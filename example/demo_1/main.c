@@ -33,7 +33,7 @@ static int init_game(void) {
 
     k_goto_room(tmp_room);
 
-    return 0;
+    return 1;
 }
 
 #if 1

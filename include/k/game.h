@@ -16,7 +16,7 @@ struct k_game_config {
     int window_h;
 
     int (*fn_init)(void);
-    void (*fn_shutdown)(void);
+    void (*fn_cleanup)(void);
 };
 
 extern const struct k_game_config K_GAME_CONFIG_INIT;

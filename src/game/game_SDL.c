@@ -127,53 +127,62 @@ static int init_or_deinit_SDL(const struct k_game_config *config, int is_init) {
     if ( ! is_init)
         goto deinit;
 
-    if (0 != init_SDL())            goto err_init_SDL;
-    if (0 != init_SDL_img())        goto err_init_SDL_img;
-    if (0 != init_SDL_mix())        goto err_init_SDL_mix;
-    if (0 != init_SDL_ttf())        goto err_init_SDL_ttf;
-    if (0 != create_window(config)) goto err_create_window;
-    if (0 != create_renderer())     goto err_create_renderer;
+    if (0 != init_SDL())
+        goto init_SDL_failed;
+
+    if (0 != init_SDL_img())
+        goto init_SDL_img_failed;
+
+    if (0 != init_SDL_mix())
+        goto init_SDL_mix_failed;
+
+    if (0 != init_SDL_ttf())
+        goto init_SDL_ttf_failed;
+
+    if (0 != create_window(config))
+        goto create_window_failed;
+
+    if (0 != create_renderer())
+        goto create_renderer_failed;
 
     return 0;
 
-deinit:              destroy_renderer();
-err_create_renderer: destroy_window();
-err_create_window:   deinit_SDL_ttf();
-err_init_SDL_ttf:    deinit_SDL_mix();
-err_init_SDL_mix:    deinit_SDL_img();
-err_init_SDL_img:    deinit_SDL();
-err_init_SDL:
+deinit:
+    destroy_renderer();
 
-    return is_init ? -1 : 0;
-}
+create_renderer_failed:
+    destroy_window();
 
-static int is_initialized = 0;
+create_window_failed:
+    deinit_SDL_ttf();
 
-int k__init_SDL(const struct k_game_config *config) {
+init_SDL_ttf_failed:
+    deinit_SDL_mix();
 
-    if (is_initialized)
-        return -1;
+init_SDL_mix_failed:
+    deinit_SDL_img();
 
-    if (0 != init_or_deinit_SDL(config, 1)) {
+init_SDL_img_failed:
+    deinit_SDL();
+
+init_SDL_failed:
+
+    if (is_init) {
         k_log_error("Failed to initialize SDL");
         return -1;
     }
+    else {
+        k_log_trace("SDL closed");
+        return 0;
+    }
+}
 
-    is_initialized = 1;
-
-    k_log_trace("SDL initialized");
-    return 0;
+int k__init_SDL(const struct k_game_config *config) {
+    return 0 == init_or_deinit_SDL(config, 1) ? 0 : -1;
 }
 
 void k__deinit_SDL(void) {
-
-    if ( ! is_initialized)
-        return;
-
     init_or_deinit_SDL(NULL, 0);
-
-    is_initialized = 0;
-    k_log_trace("SDL closed");
 }
 
 /* endregion */

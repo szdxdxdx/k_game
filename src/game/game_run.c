@@ -18,10 +18,10 @@ struct k__game_context * const k__game = &(struct k__game_context) {
 /* region [game config] */
 
 const struct k_game_config K_GAME_CONFIG_INIT = {
-    .window_h    = 480,
-    .window_w    = 640,
-    .fn_init     = NULL,
-    .fn_shutdown = NULL,
+    .window_h   = 480,
+    .window_w   = 640,
+    .fn_init    = NULL,
+    .fn_cleanup = NULL,
 };
 
 static int check_game_config(const struct k_game_config *config) {
@@ -52,54 +52,58 @@ static int init_or_deinit_game(const struct k_game_config *config, int is_init) 
     if ( ! is_init)
         goto deinit;
 
+    k_log_trace("Initializing Game...");
+
     if (0 != k__init_SDL(config))
-        goto err_init_SDL;
+        goto SDL_init_failed;
 
     if (0 != k__init_room_registry(config))
-        goto err_init_room_registry;
+        goto room_registry_init_failed;
 
     if (0 != k__init_room_stack(config))
-        goto err_init_room_stack;
+        goto room_stack_init_failed;
 
     int result = config->fn_init();
     if (0 != result) {
-        k_log_error("Failed to start game. Game fn_init() callback return %d", result);
-        goto err_fn_init;
+        k_log_error("fn_init() callback return %d", result);
+        goto fn_init_error;
     }
 
+
+    k_log_trace("Game initialized");
     return 0;
 
 deinit:
-    if (NULL != config->fn_shutdown)
-        config->fn_shutdown();
+    k_log_trace("Deinitializing Game...");
 
-err_fn_init:
+    if (NULL != config->fn_cleanup)
+        config->fn_cleanup();
+
+fn_init_error:
     k__deinit_room_stack();
 
-err_init_room_stack:
+room_stack_init_failed:
     k__deinit_room_registry();
 
-err_init_room_registry:
+room_registry_init_failed:
     k__deinit_SDL();
 
-err_init_SDL:
-    return is_init ? -1 : 0;
+SDL_init_failed:
+
+    if (is_init) {
+        k_log_error("Failed to initialize game");
+        return -1;
+    }
+    else {
+        k_log_trace("Game deinitialized");
+        return 0;
+    }
 }
 
 /* endregion */
 
-int k_run_game(const struct k_game_config *config) {
-    k_log_trace("Initializing Game...");
-
-    if (0 != check_game_config(config))
-        return -1;
-
-    if (0 != init_or_deinit_game(config, 1)) {
-        k_log_error("Failed to initialize game");
-        return -1;
-    }
-
-    k_log_trace("Game initialized. Game started...");
+static void run_game(const struct k_game_config *config) {
+    k_log_info("Game started...");
 
     struct k_room *room = k_room_stack_get_top();
     if (NULL == room) {
@@ -110,10 +114,19 @@ int k_run_game(const struct k_game_config *config) {
     k__run_room(room);
 
 end:
-    k_log_trace("Game end. Deinitializing Game...");
+    k_log_trace("Game end");
+}
+
+int k_run_game(const struct k_game_config *config) {
+
+    if (0 != check_game_config(config))
+        return -1;
+
+    if (0 != init_or_deinit_game(config, 1))
+        return -1;
+
+    run_game(config);
 
     init_or_deinit_game(config, 0);
-
-    k_log_trace("Game deinitialized");
     return 0;
 }
