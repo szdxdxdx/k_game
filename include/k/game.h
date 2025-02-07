@@ -62,7 +62,7 @@ struct k_image;
 
 struct k_image *k_load_image(const char *path);
 
-void k_draw_image(struct k_image *img, int x, int y);
+int k_draw_image(struct k_image *img, int x, int y);
 
 /* endregion */
 
