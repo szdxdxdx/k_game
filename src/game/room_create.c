@@ -62,27 +62,13 @@ static void room_registry_del(struct k_room *room) {
 
 /* region [init] */
 
-static int is_initialized = 0;
-
 int k__init_room_registry(const struct k_game_config *config) {
-
-    if (is_initialized)
-        return -1;
-
     room_registry_init();
-
-    is_initialized = 1;
     return 0;
 }
 
 void k__deinit_room_registry(void) {
-
-    if ( ! is_initialized)
-        return;
-
     room_registry_deinit();
-
-    is_initialized = 0;
 }
 
 /* endregion */
@@ -93,12 +79,12 @@ const struct k_room_config K_ROOM_CONFIG_INIT = {
     .room_name        = NULL,
     .data_size        = 0,
     .steps_per_second = 120,
-    .fn_create  = NULL,
-    .fn_destroy = NULL,
-    .fn_enter   = NULL,
-    .fn_leave   = NULL,
-    .fn_update    = NULL,
-    .fn_draw    = NULL,
+    .fn_create        = NULL,
+    .fn_destroy       = NULL,
+    .fn_enter         = NULL,
+    .fn_leave         = NULL,
+    .fn_step          = NULL,
+    .fn_draw          = NULL,
 };
 
 static int check_config(const struct k_room_config *config) {
@@ -129,28 +115,28 @@ struct k_room *k_create_room(const struct k_room_config *config) {
     k_log_trace("Creating room { .name=\"%s\" }...", config->room_name);
 
     if (0 != (check_config(config)))
-        goto err_invalid_config;
+        goto invalid_config;
 
     struct k_room *room = k_malloc(sizeof(struct k_room));
     if (NULL == room)
-        goto err_malloc_room;
+        goto malloc_room_failed;
 
     room->name = config->room_name;
     if (0 != room_registry_add(room))
-        goto err_registry_add;
+        goto registry_add_failed;
 
     if (0 == config->data_size)
         room->data = NULL;
     else {
         if (NULL == (room->data = k_malloc(config->data_size)))
-            goto err_malloc_room_data;
+            goto malloc_room_data_failed;
     }
 
     room->fn_create      = config->fn_create;
     room->fn_destroy     = config->fn_destroy;
     room->fn_enter       = config->fn_enter;
     room->fn_leave       = config->fn_leave;
-    room->fn_update      = config->fn_update;
+    room->fn_step        = config->fn_step;
     room->fn_draw        = config->fn_draw;
     room->frame_interval = (Uint32)(1000 / config->steps_per_second);
     room->game_loop      = 0;
@@ -161,26 +147,26 @@ struct k_room *k_create_room(const struct k_room_config *config) {
         int result = room->fn_create(room);
         if (0 != result) {
             k_log_error("Room fn_create() callback returned %d", result);
-            goto err_fn_create;
+            goto fn_create_error;
         }
     }
 
     k_log_trace("Room { .name=\"%s\" } created", room->name);
     return room;
 
-err_fn_create:
+fn_create_error:
     k_free(room->data);
 
-err_malloc_room_data:
+malloc_room_data_failed:
     room_registry_del(room);
 
-err_registry_add:
+registry_add_failed:
     k_free(room);
 
-err_malloc_room:
-err_invalid_config:
-
+malloc_room_failed:
+invalid_config:
     k_log_error("Failed to create room { .name=\"%s\" }", config->room_name);
+
     return NULL;
 }
 

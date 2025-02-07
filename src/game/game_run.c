@@ -1,4 +1,3 @@
-#include "k/flow_step.h"
 #include "k/log.h"
 
 #include "k/game.h"
@@ -65,7 +64,7 @@ static int init_or_deinit_game(const struct k_game_config *config, int is_init) 
 
     int result = config->fn_init();
     if (0 != result) {
-        k_log_error("fn_init() callback return %d", result);
+        k_log_error("fn_init() callback returned %d", result);
         goto fn_init_error;
     }
 
@@ -114,7 +113,7 @@ static void run_game(const struct k_game_config *config) {
     k__run_room(room);
 
 end:
-    k_log_trace("Game end");
+    k_log_info("Game end");
 }
 
 int k_run_game(const struct k_game_config *config) {

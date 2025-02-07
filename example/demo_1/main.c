@@ -28,7 +28,7 @@ static int init_game(void) {
     config.data_size = sizeof(struct my_room);
     config.fn_create = create_room;
     config.fn_enter  = entry_room;
-    config.fn_update   = room_step;
+    config.fn_step   = room_step;
     struct k_room *tmp_room = k_create_room(&config);
 
     k_goto_room(tmp_room);

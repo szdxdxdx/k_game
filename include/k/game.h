@@ -12,6 +12,8 @@ int k_run_game(const struct k_game_config *config);
 
 struct k_game_config {
 
+    const char *window_title;
+
     int window_w;
     int window_h;
 
@@ -44,7 +46,7 @@ struct k_room_config {
     void (*fn_destroy)(const struct k_room *room);
     int  (*fn_enter)  (const struct k_room *room);
     void (*fn_leave)  (const struct k_room *room);
-    void (*fn_update) (const struct k_room *room);
+    void (*fn_step)   (const struct k_room *room);
     void (*fn_draw)   (const struct k_room *room);
 };
 

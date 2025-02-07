@@ -1,6 +1,5 @@
 #include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
 
 #include "k/log.h"
 
@@ -14,44 +13,41 @@
 #define C_CYAN    "\033[36m"
 #define C_WHITE   "\033[37m"
 #else
-#define C_RESET   ""
-#define C_RED     ""
-#define C_GREEN   ""
-#define C_YELLOW  ""
-#define C_BLUE    ""
-#define C_MAGENTA ""
-#define C_CYAN    ""
-#define C_WHITE   ""
+#define C_RESET
+#define C_RED
+#define C_GREEN
+#define C_YELLOW
+#define C_BLUE
+#define C_MAGENTA
+#define C_CYAN
+#define C_WHITE
 #endif
-
-#define LEVEL_STR_TRACE C_MAGENTA "T"
-#define LEVEL_STR_DEBUG C_MAGENTA "D"
-#define LEVEL_STR_INFO  C_CYAN    "I"
-#define LEVEL_STR_WARN  C_YELLOW  "W"
-#define LEVEL_STR_ERROR C_RED     "E"
-#define LEVEL_STR_FATAL C_RED     "F"
 
 static inline const char *level_str(int level) {
 
-    static const char *level_s[] = {
-        LEVEL_STR_TRACE,
-        LEVEL_STR_DEBUG,
-        LEVEL_STR_INFO ,
-        LEVEL_STR_WARN ,
-        LEVEL_STR_ERROR,
-        LEVEL_STR_FATAL,
-    };
-
     switch(level) {
-        case K_LOG_LEVEL_TRACE: return LEVEL_STR_TRACE;
-        case K_LOG_LEVEL_DEBUG: return LEVEL_STR_DEBUG;
-        case K_LOG_LEVEL_INFO : return LEVEL_STR_INFO;
-        case K_LOG_LEVEL_WARN : return LEVEL_STR_WARN;
-        case K_LOG_LEVEL_ERROR: return LEVEL_STR_ERROR;
-        case K_LOG_LEVEL_FATAL: return LEVEL_STR_FATAL;
-        default:                return LEVEL_STR_INFO;
+        case K_LOG_LEVEL_TRACE: return C_MAGENTA "T";
+        case K_LOG_LEVEL_DEBUG: return C_MAGENTA "D";
+        case K_LOG_LEVEL_INFO : return C_CYAN    "I";
+        case K_LOG_LEVEL_WARN : return C_YELLOW  "W";
+        case K_LOG_LEVEL_ERROR: return C_RED     "E";
+        case K_LOG_LEVEL_FATAL: return C_RED     "F";
+        default:                return C_CYAN    "I";
     }
 }
+
+/* region [v1] */
+
+void log_v1(int level, const char *fmt, va_list args) {
+
+    char buf[512];
+    snprintf(buf, sizeof(buf), "%s" C_RESET " %s\n", level_str(level), fmt);
+    vfprintf(stdout, buf, args);
+}
+
+/* endregion */
+
+/* region [v2] */
 
 static inline int is_k_fn_name(const char *fn) {
     return fn[0] == 'k' && fn[1] == '_' && fn[2] != '_';
@@ -65,11 +61,10 @@ static inline int is_sub_indent(const char *fmt) {
     return '<' == fmt[0] && ' ' == fmt[1];
 }
 
-static const char *indent_str = "| | | | | | | | | | | | | | | | | | | | | | ";
+void log_v2(int level, const char *file, int line, const char *func, const char *fmt, va_list args) {
 
-static int indent = 0;
-
-void k__log(int level, const char *file, int line, const char *func, const char *fmt, ...) {
+    static const char *indent_str = "| | | | | | | | | | | | | | | | | | | | | | ";
+    static int indent = 0;
 
     char str_buf[512];
 
@@ -83,16 +78,23 @@ void k__log(int level, const char *file, int line, const char *func, const char 
     }
 
     if (is_k_fn_name(func))
-        snprintf(str_buf, sizeof(str_buf), "%s %.*s%s() "C_RESET"%s    %s:%d\n", level_str(level), indent, indent_str, func, fmt_skip_indent, file, line);
+        snprintf(str_buf, sizeof(str_buf), "%s %.*s%s() "C_RESET"%s  %s:%d\n", level_str(level), indent, indent_str, func, fmt_skip_indent, file, line);
     else
-        snprintf(str_buf, sizeof(str_buf), "%s %.*s"C_RESET"%s    %s:%d\n", level_str(level), indent, indent_str, fmt_skip_indent, file, line);
+        snprintf(str_buf, sizeof(str_buf), "%s %.*s"C_RESET"%s  %s:%d\n", level_str(level), indent, indent_str, fmt_skip_indent, file, line);
 
     if (is_add_indent(fmt)) {
         indent += 2;
     }
 
+    vfprintf(stdout, str_buf, args);
+}
+
+/* endregion */
+
+void k__log(int level, const char *file, int line, const char *func, const char *fmt, ...) {
+
     va_list args;
     va_start(args, fmt);
-    vfprintf(stdout, str_buf, args);
+    log_v1(level, fmt, args);
     va_end(args);
 }

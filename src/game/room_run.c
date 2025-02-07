@@ -17,7 +17,8 @@ static int enter_room(struct k_room *room) {
 
         int result = room->fn_enter(room);
         if (0 != result) {
-            k_log_error("Failed to enter room. room fn_entry() callback returned %d", result);
+            k_log_error("Failed to enter room { .name=\"%s\" }. "
+                        "Room fn_entry() callback returned %d", room->name, result);
             return -1;
         }
     }
@@ -82,8 +83,8 @@ static void process_SDL_events(struct k_room *room) {
 
 static void room_step(struct k_room *room) {
 
-    if (NULL != room->fn_update)
-        room->fn_update(room);
+    if (NULL != room->fn_step)
+        room->fn_step(room);
 
     // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
     // SDL_RenderClear(room->renderer);

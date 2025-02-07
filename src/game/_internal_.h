@@ -20,6 +20,8 @@ void k__deinit_SDL(void);
 
 /* region [game] */
 
+typedef struct k__game_context k__game_context;
+
 struct k__game_context {
 
     SDL_Window *window;
@@ -55,7 +57,7 @@ struct k_room {
     void (*fn_destroy)(const struct k_room *room);
     int  (*fn_enter)  (const struct k_room *room);
     void (*fn_leave)  (const struct k_room *room);
-    void (*fn_update) (const struct k_room *room);
+    void (*fn_step)   (const struct k_room *room);
     void (*fn_draw)   (const struct k_room *room);
 
     Uint32 frame_interval;

@@ -81,7 +81,7 @@ static void deinit_SDL_ttf(void) {
 
 static int create_window(const struct k_game_config *config) {
 
-    const char *title = "k/game"; /* <- tmp */
+    const char *title = config->window_title;
     int x = SDL_WINDOWPOS_CENTERED;
     int y = SDL_WINDOWPOS_CENTERED;
     int w = config->window_w;
