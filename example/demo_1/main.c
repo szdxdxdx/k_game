@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
     setbuf(stdout, NULL);
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
+
     config.fn_init = init_game;
 
     k_run_game(&config);

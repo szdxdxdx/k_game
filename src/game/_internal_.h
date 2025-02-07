@@ -39,7 +39,7 @@ extern struct k__game_context * const k__game;
 
 /* region [room_create] */
 
-int k__init_room_registry(const struct k_game_config *config);
+int k__init_room_registry(void);
 
 void k__deinit_room_registry(void);
 
@@ -79,7 +79,7 @@ void k__run_room(struct k_room *room);
 
 /* region [room_goto] */
 
-int k__init_room_stack(const struct k_game_config *config);
+int k__init_room_stack(void);
 
 void k__deinit_room_stack(void);
 

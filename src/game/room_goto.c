@@ -9,12 +9,12 @@
 
 /* region [room stack] */
 
-struct room_stack {
+struct k__room_stack {
     struct k_room *rooms[32];
     size_t top;
 };
 
-static struct room_stack room_stack;
+static struct k__room_stack room_stack;
 
 static inline void room_stack_clear(void) {
     room_stack.top = 0;
@@ -44,28 +44,13 @@ static inline struct k_room *room_stack_get_top(void) {
 
 /* region [init] */
 
-static int is_initialized = 0;
-
-int k__init_room_stack(const struct k_game_config *config) {
-    (void)config;
-
-    if (is_initialized)
-        return -1;
-
+int k__init_room_stack(void) {
     room_stack_clear();
-
-    is_initialized = 1;
     return 0;
 }
 
 void k__deinit_room_stack(void) {
-
-    if ( ! is_initialized)
-        return;
-
     room_stack_clear();
-
-    is_initialized = 0;
 }
 
 /* endregion */

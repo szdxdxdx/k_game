@@ -56,10 +56,10 @@ static int init_or_deinit_game(const struct k_game_config *config, int is_init) 
     if (0 != k__init_SDL(config))
         goto SDL_init_failed;
 
-    if (0 != k__init_room_registry(config))
+    if (0 != k__init_room_registry())
         goto room_registry_init_failed;
 
-    if (0 != k__init_room_stack(config))
+    if (0 != k__init_room_stack())
         goto room_stack_init_failed;
 
     int result = config->fn_init();

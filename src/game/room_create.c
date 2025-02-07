@@ -62,7 +62,7 @@ static void room_registry_del(struct k_room *room) {
 
 /* region [init] */
 
-int k__init_room_registry(const struct k_game_config *config) {
+int k__init_room_registry(void) {
     room_registry_init();
     return 0;
 }
@@ -175,6 +175,10 @@ invalid_config:
 /* region [destroy room] */
 
 void k_destroy_room(struct k_room *room) {
+
+    if (NULL == room)
+        return;
+
     k_log_trace("Destroying room { .name=\"%s\" }", room->name);
 
     if (NULL != room->fn_destroy)
