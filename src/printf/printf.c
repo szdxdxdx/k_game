@@ -202,7 +202,7 @@ static void printf_callback_c_std_spec_n(struct k_printf_buf *buf, const struct 
  */
 static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
 
-    /* 将格式说明符交回给 C `printf` 处理，之后按需消耗掉变长参数列表的实参 */
+    /* 将格式说明符交回给 C `printf` 处理，之后按需消耗掉不定长参数列表的实参 */
 
     char fmt_buf[80];
     char *fmt = fmt_buf;
