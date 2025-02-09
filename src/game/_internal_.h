@@ -64,7 +64,7 @@ struct k_room {
 
     unsigned int game_loop;
 
-    uint32_t current_time;
+    uint64_t current_time;
 
     int delta_ms;
 

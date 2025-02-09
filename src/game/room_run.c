@@ -37,8 +37,10 @@ static void leave_room(struct k_room *room) {
 
 static inline int frame_delay(struct k_room *room) {
 
-    Uint32 current_time = SDL_GetTicks();
-    Uint32 elapsed_time = current_time - room->current_time;
+    /* TODO: 使用 uint64_t 记录时间，保留 int 记录帧间隔时间 */
+
+    Uint64 current_time = SDL_GetTicks64();
+    Uint64 elapsed_time = current_time - room->current_time;
 
 #if 1
     /* 若已到新一帧的时间，则函数返回 0，否则返回非 0。

@@ -43,12 +43,21 @@ malloc_failed:
 
 int k_draw_image(struct k_image *img, int x, int y) {
 
+    if (NULL == img) {
+        static int is_logged = 0;
+        if ( ! is_logged) {
+            is_logged = 1;
+            k_log_error("Image is NULL");
+        }
+        return -1;
+    }
+
     SDL_Rect dst = { .x = x, .y = y, .w = img->w, .h = img->h, };
 
-    int result = SDL_RenderCopy(k__game->renderer, img->texture, NULL, &dst);
-    if (0 == result)
-        return 0;
+    if (0 != SDL_RenderCopy(k__game->renderer, img->texture, NULL, &dst)) {
+        k_log_error("SDL_RenderCopy() failed: %s", IMG_GetError());
+        return -1;
+    }
 
-    k_log_error("SDL_RenderCopy() failed: %s", IMG_GetError());
-    return -1;
+    return 0;
 }
