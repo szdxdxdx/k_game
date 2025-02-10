@@ -5,7 +5,7 @@
 
 /* region [game context] */
 
-struct k__game_context * const k__game = &(struct k__game_context) {
+struct k__game_context k__game = {
     .window       = NULL,
     .renderer     = NULL,
     .quit_game    = 0,

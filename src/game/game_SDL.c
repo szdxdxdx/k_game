@@ -88,7 +88,7 @@ static int create_window(const struct k_game_config *config) {
     int h = config->window_h;
     Uint32 flags = SDL_WINDOW_SHOWN;
 
-    if (NULL == (k__game->window = SDL_CreateWindow(title, x, y, w, h, flags))) {
+    if (NULL == (k__game.window = SDL_CreateWindow(title, x, y, w, h, flags))) {
         k_log_error("Failed to create game window: %s", SDL_GetError());
         return -1;
     }
@@ -97,15 +97,15 @@ static int create_window(const struct k_game_config *config) {
 }
 
 static void destroy_window(void) {
-    SDL_DestroyWindow(k__game->window);
-    k__game->window = NULL;
+    SDL_DestroyWindow(k__game.window);
+    k__game.window = NULL;
 }
 
 static int create_renderer(void) {
 
     Uint32 flags = SDL_RENDERER_ACCELERATED;
 
-    if (NULL == (k__game->renderer = SDL_CreateRenderer(k__game->window, -1, flags))) {
+    if (NULL == (k__game.renderer = SDL_CreateRenderer(k__game.window, -1, flags))) {
         k_log_error("Failed to create game window renderer: %s", SDL_GetError());
         return -1;
     }
@@ -114,8 +114,8 @@ static int create_renderer(void) {
 }
 
 static void destroy_renderer(void) {
-    SDL_DestroyRenderer(k__game->renderer);
-    k__game->renderer = NULL;
+    SDL_DestroyRenderer(k__game.renderer);
+    k__game.renderer = NULL;
 }
 
 /* endregion */

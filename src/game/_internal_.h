@@ -33,7 +33,7 @@ struct k__game_context {
     struct k_room *current_room;
 };
 
-extern struct k__game_context * const k__game;
+extern struct k__game_context k__game;
 
 /* endregion */
 

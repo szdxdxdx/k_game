@@ -20,7 +20,7 @@ struct k_image *k_load_image(const char *path) {
     if (NULL == img)
         goto malloc_failed;
 
-    img->texture = IMG_LoadTexture(k__game->renderer, path);
+    img->texture = IMG_LoadTexture(k__game.renderer, path);
     if (NULL == img->texture) {
         k_log_error("IMG_LoadTexture() failed: %s", IMG_GetError());
         goto load_img_failed;
@@ -54,7 +54,7 @@ int k_draw_image(struct k_image *img, int x, int y) {
 
     SDL_Rect dst = { .x = x, .y = y, .w = img->w, .h = img->h, };
 
-    if (0 != SDL_RenderCopy(k__game->renderer, img->texture, NULL, &dst)) {
+    if (0 != SDL_RenderCopy(k__game.renderer, img->texture, NULL, &dst)) {
         k_log_error("SDL_RenderCopy() failed: %s", IMG_GetError());
         return -1;
     }

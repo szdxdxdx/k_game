@@ -11,16 +11,16 @@ struct k__room_registry {
     struct k_list rooms_list;
 };
 
-static struct k__room_registry *registry = &(struct k__room_registry){};
+static struct k__room_registry registry;
 
 static void room_registry_init(void) {
-    k_init_list(&registry->rooms_list);
+    k_init_list(&registry.rooms_list);
 }
 
 static void room_registry_deinit(void) {
 
     struct k_list_node *iter, *next;
-    for(k_list_for_each_s(&registry->rooms_list, iter, next)) {
+    for(k_list_for_each_s(&registry.rooms_list, iter, next)) {
         struct k_room *room = container_of(iter, struct k_room, room_node);
 
         k_destroy_room(room);
@@ -30,7 +30,7 @@ static void room_registry_deinit(void) {
 static struct k_room *room_registry_find_by_name(const char *room_name) {
 
     struct k_list_node *iter;
-    for(k_list_for_each(&registry->rooms_list, iter)) {
+    for(k_list_for_each(&registry.rooms_list, iter)) {
         struct k_room *room = container_of(iter, struct k_room, room_node);
 
         if (0 == strcmp(room->name, room_name))
@@ -49,7 +49,7 @@ static int room_registry_add(struct k_room *room) {
 
     struct k__room_node *room_node = &room->room_node;
 
-    k_list_add_tail(&registry->rooms_list, &room_node->iter_node);
+    k_list_add_tail(&registry.rooms_list, &room_node->iter_node);
     return 0;
 }
 

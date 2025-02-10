@@ -73,7 +73,7 @@ static void process_SDL_events(struct k_room *room) {
         switch (event.type) {
 
             case SDL_QUIT:
-                k__game->quit_game = 1;
+                k__game.quit_game = 1;
                 room->game_loop = 0;
                 break;
 
@@ -94,7 +94,7 @@ static void room_step(struct k_room *room) {
     if (NULL != room->fn_draw)
         room->fn_draw(room);
 
-    SDL_RenderPresent(k__game->renderer);
+    SDL_RenderPresent(k__game.renderer);
 }
 
 void k__run_room(struct k_room *room) {
