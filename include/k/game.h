@@ -4,9 +4,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/* region [game] */
+struct k_rect {
+    int x, y, w, h;
+};
 
+struct k_image;
 struct k_game_config;
+struct k_game_context;
+struct k_room_config;
+struct k_room;
+
+/* region [game] */
 
 int k_run_game(const struct k_game_config *config);
 
@@ -23,12 +31,16 @@ struct k_game_config {
 
 extern const struct k_game_config K_GAME_CONFIG_INIT;
 
+struct k_game_context {
+    struct k_room *current_room;
+    float delta_time;
+};
+
+extern const struct k_game_context * const k_game;
+
 /* endregion */
 
 /* region [room] */
-
-struct k_room_config;
-struct k_room;
 
 struct k_room *k_create_room(const struct k_room_config *config);
 
@@ -40,12 +52,12 @@ struct k_room_config {
 
     int steps_per_second;
 
-    int  (*fn_create) (const struct k_room *room);
-    void (*fn_destroy)(const struct k_room *room);
-    int  (*fn_enter)  (const struct k_room *room);
-    void (*fn_leave)  (const struct k_room *room);
-    void (*fn_step)   (const struct k_room *room);
-    void (*fn_draw)   (const struct k_room *room);
+    int  (*fn_create) (void);
+    void (*fn_destroy)(void);
+    int  (*fn_enter)  (void);
+    void (*fn_leave)  (void);
+    void (*fn_step)   (void);
+    void (*fn_draw)   (void);
 };
 
 extern const struct k_room_config K_ROOM_CONFIG_INIT;
@@ -58,11 +70,30 @@ int k_goto_room(struct k_room *room);
 
 /* region [image] */
 
-struct k_image;
+struct k_image *k_load_image(const char *filepath);
 
-struct k_image *k_load_image(const char *path);
+int k_put_image(struct k_image *image, int x, int y);
 
-int k_draw_image(struct k_image *img, int x, int y);
+/* endregion */
+
+/* region [sprite] */
+
+struct k_sprite_frame {
+    struct k_image *image;
+    struct k_rect rect;
+    int origin_x;
+    int origin_y;
+    int delay;
+};
+
+struct k_sprite {
+    struct k_sprite_frame *frames;
+    size_t frames_num;
+};
+
+struct k_sprite *k_create_sprite(size_t frames_num);
+
+int k_sprite_set_frame(struct k_sprite *sprite, int frame_index, struct k_sprite_frame *frame);
 
 /* endregion */
 

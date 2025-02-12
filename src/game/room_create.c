@@ -144,7 +144,7 @@ struct k_room *k_create_room(const struct k_room_config *config) {
     room->current_time   = 0;
 
     if (NULL != room->fn_create) {
-        int result = room->fn_create(room);
+        int result = room->fn_create();
         if (0 != result) {
             k_log_error("Room fn_create() callback returned %d", result);
             goto fn_create_error;
@@ -182,7 +182,7 @@ void k_destroy_room(struct k_room *room) {
     k_log_trace("Destroying room { .name=\"%s\" }", room->name);
 
     if (NULL != room->fn_destroy)
-        room->fn_destroy(room);
+        room->fn_destroy();
 
     /* ... */
 

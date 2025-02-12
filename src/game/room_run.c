@@ -15,7 +15,7 @@ static int enter_room(struct k_room *room) {
 
     if (NULL != room->fn_enter) {
 
-        int result = room->fn_enter(room);
+        int result = room->fn_enter();
         if (0 != result) {
             k_log_error("Failed to enter room { .name=\"%s\" }. "
                         "Room fn_entry() callback returned %d", room->name, result);
@@ -32,7 +32,7 @@ static void leave_room(struct k_room *room) {
     room->delta_ms = 0;
 
     if (NULL != room->fn_leave)
-        room->fn_leave(room);
+        room->fn_leave();
 }
 
 static inline int frame_delay(struct k_room *room) {
@@ -61,6 +61,7 @@ static inline int frame_delay(struct k_room *room) {
     }
 #endif
 
+    k__game.k_game.delta_time = (float)(elapsed_time) / 1000.0f;
     room->delta_ms = (int)elapsed_time;
     room->current_time = current_time;
     return 0;
@@ -86,13 +87,13 @@ static void process_SDL_events(struct k_room *room) {
 static void room_step(struct k_room *room) {
 
     if (NULL != room->fn_step)
-        room->fn_step(room);
+        room->fn_step();
 
     // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
     // SDL_RenderClear(room->renderer);
 
     if (NULL != room->fn_draw)
-        room->fn_draw(room);
+        room->fn_draw();
 
     SDL_RenderPresent(k__game.renderer);
 }

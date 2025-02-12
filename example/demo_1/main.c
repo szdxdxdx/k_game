@@ -4,24 +4,24 @@
 
 struct k_image *img;
 
-static int entry_room(const struct k_room *room) {
-    printf("\nentry my room\n\n");
-
+static int create_room(void) {
     img = k_load_image("assets/tmp.png");
 
     return 0;
 }
 
-static void room_step(const struct k_room *room) {
+static void room_step(void) {
 
-    k_draw_image(img, 10, 10);
+    k_put_image(img, 10, 10);
+
 }
 
 static int init_game(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
+    config.steps_per_second = 60;
     config.room_name = "tmp room";
-    config.fn_enter  = entry_room;
+    config.fn_create = create_room;
     config.fn_step   = room_step;
     struct k_room *tmp_room = k_create_room(&config);
 

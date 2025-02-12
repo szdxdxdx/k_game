@@ -8,19 +8,13 @@
 #include "k/game.h"
 #include "_internal_.h"
 
-struct k_image {
-    struct k_list_node iter_node;
-    SDL_Texture *texture;
-    int w, h;
-};
-
-struct k_image *k_load_image(const char *path) {
+struct k_image *k_load_image(const char *filepath) {
 
     struct k_image *img = k_malloc(sizeof(struct k_image));
     if (NULL == img)
         goto malloc_failed;
 
-    img->texture = IMG_LoadTexture(k__game.renderer, path);
+    img->texture = IMG_LoadTexture(k__game.renderer, filepath);
     if (NULL == img->texture) {
         k_log_error("IMG_LoadTexture() failed: %s", IMG_GetError());
         goto load_img_failed;
@@ -41,9 +35,9 @@ malloc_failed:
     return NULL;
 }
 
-int k_draw_image(struct k_image *img, int x, int y) {
+int k_put_image(struct k_image *image, int x, int y) {
 
-    if (NULL == img) {
+    if (NULL == image) {
         static int is_logged = 0;
         if ( ! is_logged) {
             is_logged = 1;
@@ -52,9 +46,9 @@ int k_draw_image(struct k_image *img, int x, int y) {
         return -1;
     }
 
-    SDL_Rect dst = { .x = x, .y = y, .w = img->w, .h = img->h, };
+    SDL_Rect dst = { .x = x, .y = y, .w = image->w, .h = image->h, };
 
-    if (0 != SDL_RenderCopy(k__game.renderer, img->texture, NULL, &dst)) {
+    if (0 != SDL_RenderCopy(k__game.renderer, image->texture, NULL, &dst)) {
         k_log_error("SDL_RenderCopy() failed: %s", IMG_GetError());
         return -1;
     }

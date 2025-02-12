@@ -6,11 +6,14 @@
 /* region [game context] */
 
 struct k__game_context k__game = {
-    .window       = NULL,
-    .renderer     = NULL,
-    .quit_game    = 0,
-    .current_room = NULL,
+    .k_game.current_room = NULL,
+    .k_game.delta_time   = 0.0f,
+    .window    = NULL,
+    .renderer  = NULL,
+    .quit_game = 0
 };
+
+const struct k_game_context * const k_game = &(k__game.k_game);
 
 /* endregion */
 

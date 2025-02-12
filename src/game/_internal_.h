@@ -24,13 +24,13 @@ typedef struct k__game_context k__game_context;
 
 struct k__game_context {
 
+    struct k_game_context k_game;
+
     SDL_Window *window;
 
     SDL_Renderer *renderer;
 
     unsigned int quit_game;
-
-    struct k_room *current_room;
 };
 
 extern struct k__game_context k__game;
@@ -53,12 +53,12 @@ struct k_room {
 
     const char *name;
 
-    int  (*fn_create) (const struct k_room *room);
-    void (*fn_destroy)(const struct k_room *room);
-    int  (*fn_enter)  (const struct k_room *room);
-    void (*fn_leave)  (const struct k_room *room);
-    void (*fn_step)   (const struct k_room *room);
-    void (*fn_draw)   (const struct k_room *room);
+    int  (*fn_create) (void);
+    void (*fn_destroy)(void);
+    int  (*fn_enter)  (void);
+    void (*fn_leave)  (void);
+    void (*fn_step)   (void);
+    void (*fn_draw)   (void);
 
     Uint32 frame_interval;
 
@@ -90,6 +90,16 @@ void k_room_stack_pop(void);
 struct k_room *k_room_stack_get_top(void);
 
 void k_room_stack_clear(void);
+
+/* endregion */
+
+/* region [image] */
+
+struct k_image {
+    struct k_list_node iter_node;
+    SDL_Texture *texture;
+    int w, h;
+};
 
 /* endregion */
 
