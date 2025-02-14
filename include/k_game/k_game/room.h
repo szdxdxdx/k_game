@@ -7,10 +7,27 @@ struct k_room;
 
 struct k_room_config {
 
+    /**
+     * \brief 房间的名字
+     *
+     * 房间名字是可选的。若不需要名字，你可以传递空字符串 "" 或 NULL。
+     *
+     * 若指定了名字，你需要保证该名字是唯一的。房间名字被用于建立房间索引。
+     * 若你指定了房间名字，之后可以使用 `k_get_room_by_name()` 根据名字找到房间。
+     *
+     * 在创建房间时，程序不会分配内存来复制房间名字。因此，传递的字符串必须始终有效，
+     * 建议使用字符串字面量作为房间名字，它们的内存会在程序生命周期内保持有效。
+     */
     const char *room_name;
 
+    /**
+     * \brief 房间的宽高
+     */
     int room_w, room_h;
 
+    /**
+     * \brief 房间的运行速度
+     */
     int steps_per_second;
 
     size_t data_size;

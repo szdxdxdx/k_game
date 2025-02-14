@@ -9,7 +9,7 @@ const struct k_room_config K_ROOM_CONFIG_INIT = {
     .room_name        = NULL,
     .room_w           = 600,
     .room_h           = 480,
-    .steps_per_second = 120,
+    .steps_per_second = 60,
     .data_size        = 0,
     .fn_create        = NULL,
     .fn_destroy       = NULL,
@@ -30,11 +30,6 @@ static int check_config(const struct k_room_config *config) {
 
     #undef K__ROOM_CONFIG_ASSERT
 
-    if (NULL == config->room_name || '\0' == config->room_name[0]) {
-        k_log_error("Invalid room config. The room name cannot be empty");
-        return -1;
-    }
-
     return 0;
 }
 
@@ -48,8 +43,7 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
     if (NULL == room)
         goto malloc_room_failed;
 
-    room->room_node.room_name = config->room_name;
-    if (0 != k_room_registry_add(&room->room_node))
+    if (0 != k_room_registry_add(&room->room_node, config->room_name))
         goto registry_add_failed;
 
     if (0 == config->data_size)

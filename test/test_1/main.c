@@ -27,7 +27,9 @@ static int init_game(void) {
     config.steps_per_second = 60;
     config.room_name = "tmp room";
     config.fn_create = create_room;
-    struct k_room *tmp_room = k_create_room(&config, NULL);
+    k_create_room(&config, NULL);
+
+    struct k_room *tmp_room = k_get_room_by_name("tmp room");
 
     k_goto_room(tmp_room);
 
