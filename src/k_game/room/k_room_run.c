@@ -95,7 +95,7 @@ static void room_step(struct k_room *room) {
     /* 执行 step end callbacks */
 }
 
-void k_room_run(struct k_room *room) {
+void k_run_room(struct k_room *room) {
     k_log_trace("Entering room { .name=\"%s\" }", k_room_get_name(room));
 
     enter_room(room);

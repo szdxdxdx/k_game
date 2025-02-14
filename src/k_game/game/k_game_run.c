@@ -2,10 +2,11 @@
 
 #include "k_log.h"
 
+#include "k_game/room.h"
 #include "k_game/game.h"
 #include "./k_game_SDL.h"
-#include "../room/k_room_goto.h"
 #include "../room/k_room_registry.h"
+#include "../room/k_room_goto.h"
 #include "../room/k_room_run.h"
 
 /* region [game config] */
@@ -97,7 +98,7 @@ static void run_game(const struct k_game_config *config) {
         goto end;
     }
 
-    k_room_run(room);
+    k_run_room(room);
 
 end:
     k_log_info("Game end");

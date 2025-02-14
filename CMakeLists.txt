@@ -21,7 +21,7 @@ include_directories(
 
 file(GLOB_RECURSE SRC_FILES
     "${CMAKE_SOURCE_DIR}/docs/api/*.h"
-    "${CMAKE_SOURCE_DIR}/test/demo_1/*.c"
+    "${CMAKE_SOURCE_DIR}/test/test_2/*.c"
     "${CMAKE_SOURCE_DIR}/src/*.c")
 
 link_directories(

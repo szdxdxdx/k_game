@@ -3,7 +3,7 @@
 
 #include "SDL.h"
 
-struct k__game_context {
+struct k_game_context {
 
     SDL_Window *window;
 
@@ -14,6 +14,6 @@ struct k__game_context {
     float delta_time;
 };
 
-extern struct k__game_context k_game;
+extern struct k_game_context k_game;
 
 #endif

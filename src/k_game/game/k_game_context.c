@@ -1,6 +1,6 @@
 #include "./k_game_context.h"
 
-struct k__game_context k_game = {
+struct k_game_context k_game = {
     .window     = NULL,
     .renderer   = NULL,
     .quit_game  = 0,

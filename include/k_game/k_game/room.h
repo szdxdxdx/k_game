@@ -48,6 +48,8 @@ void k_room_set_speed(struct k_room *room, int steps_per_second);
 
 int k_goto_room(struct k_room *room);
 
+struct k_room *k_room_stack_get_top(void);
+
 /* ------------------------------------------------------------------------ */
 
 struct k_room_enter_callback;
