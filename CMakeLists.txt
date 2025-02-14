@@ -6,7 +6,13 @@ project(k_game C)
 set(CMAKE_C_STANDARD 11)
 
 include_directories(
-    "${CMAKE_SOURCE_DIR}/include"
+    "${CMAKE_SOURCE_DIR}/include/k_game"
+    "${CMAKE_SOURCE_DIR}/include/k_list"
+    "${CMAKE_SOURCE_DIR}/include/k_log"
+    "${CMAKE_SOURCE_DIR}/include/k_printf"
+    "${CMAKE_SOURCE_DIR}/include/k_utils")
+
+include_directories(
     "${CMAKE_SOURCE_DIR}/libs/SDL2-devel-2.30.11-mingw/SDL2-2.30.11/x86_64-w64-mingw32/include/SDL2"
     "${CMAKE_SOURCE_DIR}/libs/SDL2_image-devel-2.8.4-mingw/SDL2_image-2.8.4/x86_64-w64-mingw32/include/SDL2"
     "${CMAKE_SOURCE_DIR}/libs/SDL2_mixer-devel-2.8.0-mingw/SDL2_mixer-2.8.0/x86_64-w64-mingw32/include/SDL2"
@@ -15,7 +21,7 @@ include_directories(
 
 file(GLOB_RECURSE SRC_FILES
     "${CMAKE_SOURCE_DIR}/docs/api/*.h"
-    "${CMAKE_SOURCE_DIR}/example/demo_1/*.c"
+    "${CMAKE_SOURCE_DIR}/test/demo_1/*.c"
     "${CMAKE_SOURCE_DIR}/src/*.c")
 
 link_directories(
