@@ -16,12 +16,12 @@ struct k_str_map_node {
 
 struct k_str_map {
 
-    struct k_hash_list *hash_lists;
+    struct k_hash_list *lists;
 
     size_t lists_num;
 };
 
-void k_init_str_map(struct k_str_map *map, struct k_hash_list *hash_lists, size_t lists_num);
+void k_str_map_init(struct k_str_map *map, struct k_hash_list *lists, size_t lists_num);
 
 int k_str_map_add(struct k_str_map *map, const char *key, struct k_str_map_node *node);
 
@@ -29,6 +29,6 @@ struct k_str_map_node *k_str_map_get(struct k_str_map *map, const char *key);
 
 void k_str_map_del(struct k_str_map *map, struct k_str_map_node *node);
 
-struct k_hash_list *k_str_map_rehash(struct k_str_map *map, struct k_hash_list *new_hash_lists, size_t new_lists_num);
+struct k_hash_list *k_str_map_rehash(struct k_str_map *map, struct k_hash_list *new_lists, size_t new_lists_num);
 
 #endif

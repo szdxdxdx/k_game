@@ -12,14 +12,14 @@ struct k_hash_list {
     struct k_hash_list_node *first;
 };
 
-static inline void k_init_hash_list(struct k_hash_list *list) {
+static inline void k_hash_list_init(struct k_hash_list *list) {
     list->first = NULL;
 }
 
-static inline void k_init_hash_lists(struct k_hash_list *lists, size_t lists_num) {
+static inline void k_hash_list_init_all(struct k_hash_list *lists, size_t lists_num) {
     size_t i = 0;
     for (; i < lists_num; i++)
-        k_init_hash_list(&lists[i]);
+        k_hash_list_init(&lists[i]);
 }
 
 static inline void k_hash_list_add(struct k_hash_list *list, struct k_hash_list_node *node) {
@@ -38,6 +38,10 @@ static inline void k_hash_list_del(struct k_hash_list_node *node) {
     *(node->pprev) = node->next;
 }
 
+static inline int k_hash_list_is_empty(struct k_hash_list *list) {
+    return NULL == list->first;
+}
+
 #define k_hash_list_for_each(list_, node_) \
     node_ = (list_)->first; \
     NULL != node_; \
@@ -47,9 +51,5 @@ static inline void k_hash_list_del(struct k_hash_list_node *node) {
     node_ = (list_)->first, next_ = NULL != node_ ? node_->next : NULL; \
     node_ != NULL; \
     node_ = next_, next_ = NULL != node_ ? node_->next : NULL
-
-static inline int k_hash_list_is_empty(struct k_hash_list *list) {
-    return NULL == list->first;
-}
 
 #endif

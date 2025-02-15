@@ -14,10 +14,10 @@ static struct k_room_registry registry;
 
 void k_room_registry_init(void) {
 
-    k_init_list(&registry.rooms_list);
+    k_list_init(&registry.rooms_list);
 
     static struct k_hash_list name_map_buckets[8];
-    k_init_str_map(&registry.name_map, name_map_buckets, 8);
+    k_str_map_init(&registry.name_map, name_map_buckets, 8);
 }
 
 void k_room_registry_deinit(void) {
