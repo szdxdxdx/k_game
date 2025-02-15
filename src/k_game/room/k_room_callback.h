@@ -1,6 +1,7 @@
 #ifndef K_GAME__ROOM_CALLBACK_H
 #define K_GAME__ROOM_CALLBACK_H
 
+#include "./k_room_callback_alarm.h"
 #include "./k_room_callback_step.h"
 #include "./k_room_callback_draw.h"
 

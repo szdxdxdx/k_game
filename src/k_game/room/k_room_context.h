@@ -18,11 +18,9 @@ struct k_room {
 
     unsigned int game_loop;
 
-    uint64_t current_time;
-
-    int delta_ms;
-
     void *data;
+
+    struct k_room_alarm_callbacks_storage alarm_callbacks;
 
     struct k_room_step_callbacks_storage step_callbacks;
 

@@ -21,7 +21,7 @@ struct k_sprite_config {
 
     struct k_int_point *frames;
 
-    float *frame_delays;
+    int *frame_delays;
 };
 
 struct k_sprite *k_create_sprite(const struct k_sprite_config *config);

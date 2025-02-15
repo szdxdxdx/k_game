@@ -37,9 +37,9 @@ void k_room_clean_draw_callbacks_storage(struct k_room *room) {
     struct k_room_draw_callback_depth_list *depth_list;
     struct k_room_draw_callback *callback;
 
-    struct k_list_node *depth_iterator, *next_;
-    for (k_list_for_each_s(&storage->depth_lists, depth_iterator, next_)) {
-        depth_list = container_of(depth_iterator, struct k_room_draw_callback_depth_list, iter_node);
+    struct k_list_node *depth_iter, *next_;
+    for (k_list_for_each_s(&storage->depth_lists, depth_iter, next_)) {
+        depth_list = container_of(depth_iter, struct k_room_draw_callback_depth_list, iter_node);
 
         struct k_list_node *callback_iterator, *next;
         for (k_list_for_each_s(&depth_list->callbacks_list, callback_iterator, next)) {
@@ -58,13 +58,13 @@ void k_room_exec_draw_callbacks(struct k_room *room) {
     struct k_room_draw_callback_depth_list *depth_list;
     struct k_room_draw_callback *callback;
 
-    struct k_list_node *depth_iterator, *next_;
-    for (k_list_for_each_s(&storage->depth_lists, depth_iterator, next_)) {
-        depth_list = container_of(depth_iterator, struct k_room_draw_callback_depth_list, iter_node);
+    struct k_list_node *depth_iter, *next_;
+    for (k_list_for_each_s(&storage->depth_lists, depth_iter, next_)) {
+        depth_list = container_of(depth_iter, struct k_room_draw_callback_depth_list, iter_node);
 
-        struct k_list_node *callback_iterator, *next;
-        for (k_list_for_each_s(&depth_list->callbacks_list, callback_iterator, next)) {
-            callback = container_of(callback_iterator, struct k_room_draw_callback, iter_node);
+        struct k_list_node *callback_iter, *next;
+        for (k_list_for_each_s(&depth_list->callbacks_list, callback_iter, next)) {
+            callback = container_of(callback_iter, struct k_room_draw_callback, iter_node);
 
             callback->fn_callback(callback->data);
         }
@@ -92,9 +92,9 @@ struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_
 
     struct k_room_draw_callback_depth_list *depth_list = NULL;
 
-    struct k_list_node *depth_iterator;
-    for (k_list_for_each(&storage->depth_lists, depth_iterator)) {
-        depth_list = container_of(depth_iterator, struct k_room_draw_callback_depth_list, iter_node);
+    struct k_list_node *depth_iter;
+    for (k_list_for_each(&storage->depth_lists, depth_iter)) {
+        depth_list = container_of(depth_iter, struct k_room_draw_callback_depth_list, iter_node);
 
         if (depth == depth_list->depth)
             goto add_callback;
@@ -103,18 +103,15 @@ struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_
             break;
     }
 
-    struct k_room_draw_callback_depth_list *new_depth_list;
-    new_depth_list = k_malloc(sizeof(struct k_room_draw_callback_depth_list));
-    if (NULL == new_depth_list) {
+    depth_list = k_malloc(sizeof(struct k_room_draw_callback_depth_list));
+    if (NULL == depth_list) {
         k_free(callback);
         return NULL;
     }
 
-    new_depth_list->depth = depth;
-    k_list_init(&new_depth_list->callbacks_list);
-    k_list_add(depth_iterator->prev, &new_depth_list->iter_node);
-
-    depth_list = new_depth_list;
+    depth_list->depth = depth;
+    k_list_init(&depth_list->callbacks_list);
+    k_list_add(depth_iter->prev, &depth_list->iter_node);
 
 add_callback:
     k_list_add_tail(&depth_list->callbacks_list, &callback->iter_node);
