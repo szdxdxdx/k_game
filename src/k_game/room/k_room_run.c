@@ -55,7 +55,7 @@ static inline int frame_delay(struct k_room *room) {
 #endif
 
     k_game.delta_time = (float)(elapsed_time) / 1000.0f;
-    k_game.delta_ms = (int)elapsed_time;
+    k_game.delta_ms   = (int)elapsed_time;
     k_game.current_ms = current_time;
     return 0;
 }
@@ -81,21 +81,21 @@ static void room_step(struct k_room *room) {
 
     /* 执行 step begin callbacks */
 
-    k_room_exec_alarm_callbacks(room);
+    k__room_exec_alarm_callbacks(room);
 
-    k_room_exec_step_callbacks(room);
+    k__room_exec_step_callbacks(room);
 
     // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
     // SDL_RenderClear(room->renderer);
 
-    k_room_exec_draw_callbacks(room);
+    k__room_exec_draw_callbacks(room);
 
     SDL_RenderPresent(k_game.renderer);
 
     /* 执行 step end callbacks */
 }
 
-void k_run_room(struct k_room *room) {
+void k__room_run(struct k_room *room) {
     k_log_trace("Entering room { .name=\"%s\" }", k_room_get_name(room));
 
     k_game.current_room = room;
@@ -114,7 +114,7 @@ void k_run_room(struct k_room *room) {
             room_step(room);
         }
 
-        k_log_trace("Game loop Ended");
+        k_log_trace("Game loop ended");
     }
 
     leave_room(room);

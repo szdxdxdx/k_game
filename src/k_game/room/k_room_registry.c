@@ -13,43 +13,43 @@ struct k_room_registry {
 
 static struct k_room_registry registry;
 
-void k_room_registry_init(void) {
+void k__room_registry_init(void) {
     k_list_init(&registry.rooms_list);
 
     static struct k_hash_list buckets[8];
     k_str_map_init(&registry.name_map, buckets, 8);
 }
 
-void k_room_registry_deinit(void) {
+void k__room_registry_deinit(void) {
 
     struct k_list_node *iter, *next;
     for(k_list_for_each_s(&registry.rooms_list, iter, next)) {
         struct k_room_registry_node *room_node = container_of(iter, struct k_room_registry_node, iter_node);
         struct k_room *room = container_of(room_node, struct k_room, room_node);
 
-        k_destroy_room(room);
+        k__destroy_room(room);
     }
 }
 
-int k_room_registry_add(struct k_room_registry_node *node, const char *room_name) {
+int k__room_registry_add(struct k_room_registry_node *node, const char *room_name) {
 
     if (NULL == room_name || '\0' == room_name[0]) {
+
+        /* 始终不往 map 里添加空字符串 "" 的 key，不为没有名字的房间建立索引 */
         node->name_map_node.key = NULL;
     }
     else {
-        if (NULL != k_str_map_get(&registry.name_map, room_name)) {
+        if (0 != k_str_map_add(&registry.name_map, room_name, &node->name_map_node)) {
             k_log_error("The room named \"%s\" already exists", room_name);
             return -1;
         }
-
-        k_str_map_add(&registry.name_map, room_name, &node->name_map_node);
     }
 
     k_list_add_tail(&registry.rooms_list, &node->iter_node);
     return 0;
 }
 
-void k_room_registry_del(struct k_room_registry_node *node) {
+void k__room_registry_del(struct k_room_registry_node *node) {
 
     if (NULL != node->name_map_node.key)
         k_str_map_del(&registry.name_map, &node->name_map_node);
@@ -58,6 +58,9 @@ void k_room_registry_del(struct k_room_registry_node *node) {
 }
 
 struct k_room *k_get_room_by_name(const char *room_name) {
+
+    if (NULL == room_name || '\0' == room_name[0])
+        return NULL;
 
     struct k_str_map_node *map_node = k_str_map_get(&registry.name_map, room_name);
     if (NULL == map_node)

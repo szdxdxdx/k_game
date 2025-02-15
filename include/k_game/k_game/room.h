@@ -10,12 +10,12 @@ struct k_room_config {
     /**
      * \brief 房间的名字
      *
-     * 房间名字是可选的。若不需要名字，你可以传递空字符串 "" 或 NULL。
+     * 名字是可选的，传递空字符串 "" 或 NULL 表示不使用名字。
      *
-     * 若指定了名字，你需要保证该名字是唯一的。房间名字被用于建立房间索引。
-     * 若你指定了房间名字，之后可以使用 `k_get_room_by_name()` 根据名字找到房间。
+     * 若指定名字，需保证其唯一性。程序会基于该名字为房间创建索引，
+     * 之后你可以通过 `k_get_room_by_name()` 查找房间。
      *
-     * 在创建房间时，程序不会分配内存来复制房间名字。因此，传递的字符串必须始终有效，
+     * 在创建房间时，程序不会分配内存来复制名字。因此，传递的字符串必须始终有效，
      * 建议使用字符串字面量作为房间名字，它们的内存会在程序生命周期内保持有效。
      */
     const char *room_name;
@@ -45,6 +45,16 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params);
 
 struct k_room *k_get_current_room(void);
 
+/**
+ * \brief 通过房间名字查找对应的房间
+ *
+ * 当创建房间时，如果给定了房间名字，程序会基于该名字为房间创建索引。
+ * 本函数能根据房间名字查找对应的房间。
+ *
+ * \param room_name 房间的名字
+ * \return 若找到，函数返回房间指针，否则返回 NULL。
+ *         若传入的名字为空字符串 "" 或 NULL，则函数返回 NULL。
+ */
 struct k_room *k_get_room_by_name(const char *room_name);
 
 const char *k_room_get_name(struct k_room *room);

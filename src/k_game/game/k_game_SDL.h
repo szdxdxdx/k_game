@@ -3,8 +3,8 @@
 
 #include "k_game/game.h"
 
-int k_game_SDL_init(const struct k_game_config *config);
+int k__game_SDL_init(const struct k_game_config *config);
 
-void k_game_SDL_deinit(void);
+void k__game_SDL_deinit(void);
 
 #endif

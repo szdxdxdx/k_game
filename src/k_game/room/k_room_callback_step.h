@@ -10,10 +10,10 @@ struct k_room_step_callbacks_storage {
     struct k_list list;
 };
 
-void k_room_init_step_callbacks_storage(struct k_room *room);
+void k__room_init_step_callbacks_storage(struct k_room *room);
 
-void k_room_clean_step_callbacks_storage(struct k_room *room);
+void k__room_clean_step_callbacks_storage(struct k_room *room);
 
-void k_room_exec_step_callbacks(struct k_room *room);
+void k__room_exec_step_callbacks(struct k_room *room);
 
 #endif

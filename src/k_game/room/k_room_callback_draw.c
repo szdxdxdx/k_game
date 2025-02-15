@@ -25,13 +25,13 @@ struct k_room_draw_callback {
     void (*fn_callback)(void *data);
 };
 
-void k_room_init_draw_callbacks_storage(struct k_room *room) {
+void k__room_init_draw_callbacks_storage(struct k_room *room) {
     struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
 
     k_list_init(&storage->depth_lists);
 }
 
-void k_room_clean_draw_callbacks_storage(struct k_room *room) {
+void k__room_clean_draw_callbacks_storage(struct k_room *room) {
     struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback_depth_list *depth_list;
@@ -52,7 +52,7 @@ void k_room_clean_draw_callbacks_storage(struct k_room *room) {
     }
 }
 
-void k_room_exec_draw_callbacks(struct k_room *room) {
+void k__room_exec_draw_callbacks(struct k_room *room) {
     struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback_depth_list *depth_list;

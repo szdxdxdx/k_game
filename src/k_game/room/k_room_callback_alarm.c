@@ -17,13 +17,13 @@ struct k_room_alarm_callback {
     uint64_t timeout;
 };
 
-void k_room_init_alarm_callbacks_storage(struct k_room *room) {
+void k__room_init_alarm_callbacks_storage(struct k_room *room) {
     struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
 
     k_list_init(&storage->list);
 }
 
-void k_room_clean_alarm_callbacks_storage(struct k_room *room) {
+void k__room_clean_alarm_callbacks_storage(struct k_room *room) {
     struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
 
     struct k_list_node *node, *next;
@@ -34,7 +34,7 @@ void k_room_clean_alarm_callbacks_storage(struct k_room *room) {
     }
 }
 
-void k_room_exec_alarm_callbacks(struct k_room *room) {
+void k__room_exec_alarm_callbacks(struct k_room *room) {
     struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
 
     const uint64_t current_ms = k_game.current_ms;

@@ -29,7 +29,6 @@ static int check_game_config(const struct k_game_config *config) {
             } \
         } while(0)
 
-    K__GAME_CONFIG_ASSERT(NULL != config);
     K__GAME_CONFIG_ASSERT(0 < config->window_h);
     K__GAME_CONFIG_ASSERT(0 < config->window_w);
     K__GAME_CONFIG_ASSERT(NULL != config->fn_init);
@@ -47,42 +46,45 @@ static int init_or_deinit_game(const struct k_game_config *config, int is_init) 
     if ( ! is_init)
         goto deinit;
 
-    k_log_trace("Initializing Game...");
+    k_log_info("Initializing Game...");
 
-    if (0 != k_game_SDL_init(config))
+    if (0 != check_game_config(config))
+        goto invalid_config;
+
+    if (0 != k__game_SDL_init(config))
         goto SDL_init_failed;
 
-    k_room_registry_init();
-    k_room_stack_init();
+    k__room_registry_init();
+    k__room_stack_init();
 
     int result = config->fn_init();
     if (0 != result) {
-        k_log_error("fn_init() callback returned %d", result);
+        k_log_error("Game fn_init() callback returned %d", result);
         goto fn_init_failed;
     }
 
-    k_log_trace("Game initialized");
+    k_log_info("Game initialized");
     return 0;
 
 deinit:
-    k_log_trace("Deinitializing Game...");
+    k_log_info("Deinitializing Game...");
 
     if (NULL != config->fn_cleanup)
         config->fn_cleanup();
 
 fn_init_failed:
-    k_room_stack_deinit();
-    k_room_registry_deinit();
-
-    k_game_SDL_deinit();
+    k__room_stack_deinit();
+    k__room_registry_deinit();
+    k__game_SDL_deinit();
 
 SDL_init_failed:
+invalid_config:
     if (is_init) {
         k_log_error("Failed to initialize game");
         return -1;
     }
     else {
-        k_log_trace("Game deinitialized");
+        k_log_info("Game deinitialized");
         return 0;
     }
 }
@@ -98,7 +100,7 @@ static void run_game(const struct k_game_config *config) {
         goto end;
     }
 
-    k_run_room(room);
+    k__room_run(room);
 
 end:
     k_log_info("Game end");
@@ -106,8 +108,10 @@ end:
 
 int k_run_game(const struct k_game_config *config) {
 
-    if (0 != check_game_config(config))
+    if (NULL == config) {
+        k_log_error("Invalid game config. Config is NULL");
         return -1;
+    }
 
     if (0 != init_or_deinit_game(config, 1))
         return -1;

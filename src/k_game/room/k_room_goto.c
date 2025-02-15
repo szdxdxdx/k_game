@@ -46,11 +46,11 @@ static inline struct k_room *room_stack_get_top(void) {
 
 /* region [init] */
 
-void k_room_stack_init(void) {
+void k__room_stack_init(void) {
     room_stack_clear();
 }
 
-void k_room_stack_deinit(void) {
+void k__room_stack_deinit(void) {
     room_stack_clear();
 }
 

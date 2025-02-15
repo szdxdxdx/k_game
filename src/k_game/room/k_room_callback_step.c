@@ -14,13 +14,13 @@ struct k_room_step_callback {
     void (*fn_callback)(void *data);
 };
 
-void k_room_init_step_callbacks_storage(struct k_room *room) {
+void k__room_init_step_callbacks_storage(struct k_room *room) {
     struct k_room_step_callbacks_storage *storage = &room->step_callbacks;
 
     k_list_init(&storage->list);
 }
 
-void k_room_clean_step_callbacks_storage(struct k_room *room) {
+void k__room_clean_step_callbacks_storage(struct k_room *room) {
     struct k_room_step_callbacks_storage *storage = &room->step_callbacks;
 
     struct k_list_node *iter_node, *next;
@@ -33,7 +33,7 @@ void k_room_clean_step_callbacks_storage(struct k_room *room) {
     }
 }
 
-void k_room_exec_step_callbacks(struct k_room *room) {
+void k__room_exec_step_callbacks(struct k_room *room) {
     struct k_room_step_callbacks_storage *storage = &room->step_callbacks;
 
     struct k_list_node *iter_node, *next;

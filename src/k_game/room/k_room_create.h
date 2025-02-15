@@ -3,6 +3,6 @@
 
 struct k_room;
 
-void k_destroy_room(struct k_room *room);
+void k__destroy_room(struct k_room *room);
 
 #endif

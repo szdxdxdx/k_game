@@ -10,10 +10,10 @@ struct k_room_draw_callbacks_storage {
     struct k_list depth_lists;
 };
 
-void k_room_init_draw_callbacks_storage(struct k_room *room);
+void k__room_init_draw_callbacks_storage(struct k_room *room);
 
-void k_room_clean_draw_callbacks_storage(struct k_room *room);
+void k__room_clean_draw_callbacks_storage(struct k_room *room);
 
-void k_room_exec_draw_callbacks(struct k_room *room);
+void k__room_exec_draw_callbacks(struct k_room *room);
 
 #endif
