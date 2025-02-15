@@ -33,8 +33,8 @@ void k_room_clean_step_callbacks_storage(struct k_room *room) {
 void k_room_exec_step_callbacks(struct k_room *room) {
     struct k_room_step_callbacks_storage *storage = &room->step_callbacks;
 
-    struct k_list_node *node;
-    for (k_list_for_each(&storage->list, node)) {
+    struct k_list_node *node, *next;
+    for (k_list_for_each_s(&storage->list, node, next)) {
         struct k_room_step_callback *callback = container_of(node, struct k_room_step_callback, list_node);
 
         callback->fn_callback(callback->data);

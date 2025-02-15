@@ -4,17 +4,21 @@
 
 struct k_image *img;
 
-int g_data;
+struct k_room_callback *callback_print_num;
 
-static void step(void *data) {
+static void print_num(void *data) {
+    int *num = data;
 
-    printf("%d\n", ++(*(int *)data));
-    k_draw_image(img, NULL, 10, 10);
+    printf("%d\n", ++(*num));
+
+    if (*num > 200)
+        k_room_del_callback(callback_print_num);
 }
 
 static int create_room(struct k_room *room, void *unused) {
 
-    k_room_add_step_callback(room, step, &g_data);
+    static int g_data;
+    callback_print_num = k_room_add_step_callback(room, print_num, &g_data);
 
     return 0;
 }
