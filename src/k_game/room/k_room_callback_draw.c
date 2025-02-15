@@ -1,0 +1,127 @@
+#include "k_game/alloc.h"
+
+#include "./k_room_callback_draw.h"
+#include "./k_room_context.h"
+
+struct k_room_draw_callback_depth_list {
+
+    struct k_list_node iter_node;
+
+    struct k_list callbacks_list;
+
+    int depth;
+};
+
+struct k_room_draw_callback {
+
+    struct k_room_callback impl;
+
+    struct k_room_draw_callback_depth_list *depth_list;
+
+    struct k_list_node iter_node;
+
+    void *data;
+
+    void (*fn_callback)(void *data);
+};
+
+void k_room_init_draw_callbacks_storage(struct k_room *room) {
+    struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
+
+    k_list_init(&storage->depth_lists);
+}
+
+void k_room_clean_draw_callbacks_storage(struct k_room *room) {
+    struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
+
+    struct k_room_draw_callback_depth_list *depth_list;
+    struct k_room_draw_callback *callback;
+
+    struct k_list_node *depth_iterator, *next_;
+    for (k_list_for_each_s(&storage->depth_lists, depth_iterator, next_)) {
+        depth_list = container_of(depth_iterator, struct k_room_draw_callback_depth_list, iter_node);
+
+        struct k_list_node *callback_iterator, *next;
+        for (k_list_for_each_s(&depth_list->callbacks_list, callback_iterator, next)) {
+            callback = container_of(callback_iterator, struct k_room_draw_callback, iter_node);
+
+            k_free(callback);
+        }
+
+        k_free(depth_list);
+    }
+}
+
+void k_room_exec_draw_callbacks(struct k_room *room) {
+    struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
+
+    struct k_room_draw_callback_depth_list *depth_list;
+    struct k_room_draw_callback *callback;
+
+    struct k_list_node *depth_iterator, *next_;
+    for (k_list_for_each_s(&storage->depth_lists, depth_iterator, next_)) {
+        depth_list = container_of(depth_iterator, struct k_room_draw_callback_depth_list, iter_node);
+
+        struct k_list_node *callback_iterator, *next;
+        for (k_list_for_each_s(&depth_list->callbacks_list, callback_iterator, next)) {
+            callback = container_of(callback_iterator, struct k_room_draw_callback, iter_node);
+
+            callback->fn_callback(callback->data);
+        }
+    }
+}
+
+static void fn_del_self(struct k_room_callback *self) {
+    struct k_room_draw_callback *callback = container_of(self, struct k_room_draw_callback, impl);
+
+    struct k_room_draw_callback_depth_list *depth_list = callback->depth_list;
+
+    k_list_del(&callback->iter_node);
+    k_free(callback);
+
+    if (k_list_is_empty(&depth_list->callbacks_list))
+        k_list_del(&depth_list->iter_node);
+}
+
+struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int depth) {
+    struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
+
+    struct k_room_draw_callback *callback = k_malloc(sizeof(struct k_room_draw_callback));
+    if (NULL == callback)
+        return NULL;
+
+    struct k_room_draw_callback_depth_list *depth_list = NULL;
+
+    struct k_list_node *depth_iterator;
+    for (k_list_for_each(&storage->depth_lists, depth_iterator)) {
+        depth_list = container_of(depth_iterator, struct k_room_draw_callback_depth_list, iter_node);
+
+        if (depth == depth_list->depth)
+            goto add_callback;
+
+        if (depth_list->depth < depth)
+            break;
+    }
+
+    struct k_room_draw_callback_depth_list *new_depth_list;
+    new_depth_list = k_malloc(sizeof(struct k_room_draw_callback_depth_list));
+    if (NULL == new_depth_list) {
+        k_free(callback);
+        return NULL;
+    }
+
+    new_depth_list->depth = depth;
+    k_list_init(&new_depth_list->callbacks_list);
+    k_list_add(depth_iterator->prev, &new_depth_list->iter_node);
+
+    depth_list = new_depth_list;
+
+add_callback:
+    k_list_add_tail(&depth_list->callbacks_list, &callback->iter_node);
+    callback->impl.fn_del_self = fn_del_self;
+    callback->depth_list = depth_list;
+    callback->data = data;
+    callback->fn_callback = fn_callback;
+
+    return &callback->impl;
+}

@@ -1,5 +1,6 @@
 #include "k_game/alloc.h"
 
+#include "./k_room_callback_step.h"
 #include "./k_room_context.h"
 
 struct k_room_step_callback {

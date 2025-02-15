@@ -88,7 +88,7 @@ static void room_step(struct k_room *room) {
     // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
     // SDL_RenderClear(room->renderer);
 
-    /* 执行 draw callbacks */
+    k_room_exec_draw_callbacks(room);
 
     SDL_RenderPresent(k_game.renderer);
 

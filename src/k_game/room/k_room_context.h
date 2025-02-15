@@ -25,6 +25,8 @@ struct k_room {
     void *data;
 
     struct k_room_step_callbacks_storage step_callbacks;
+
+    struct k_room_draw_callbacks_storage draw_callbacks;
 };
 
 #endif

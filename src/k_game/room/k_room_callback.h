@@ -2,6 +2,7 @@
 #define K_GAME__ROOM_CALLBACK_H
 
 #include "./k_room_callback_step.h"
+#include "./k_room_callback_draw.h"
 
 struct k_room_callback {
 

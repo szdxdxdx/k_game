@@ -6,6 +6,10 @@ struct k_image *img;
 
 struct k_room_callback *callback_print_num;
 
+static void step(void *unused) {
+    printf("step\n");
+}
+
 static void print_num(void *data) {
     int *num = data;
 
@@ -15,10 +19,31 @@ static void print_num(void *data) {
         k_room_del_callback(callback_print_num);
 }
 
+static void draw_img(void *unused) {
+    k_draw_image(img, NULL, 0, 0);
+    printf("draw img\n");
+}
+
+static void draw(void *data) {
+    int *num = data;
+    printf("draw %d\n", *num);
+}
+
 static int create_room(struct k_room *room, void *unused) {
+
+    k_room_add_step_callback(room, step, NULL);
 
     static int g_data;
     callback_print_num = k_room_add_step_callback(room, print_num, &g_data);
+
+    k_room_add_draw_callback(room, draw_img, NULL, -1);
+
+    static int draw_data[4] = { -2, 0, 2, 3 };
+    k_room_add_draw_callback(room, draw, &draw_data[2], draw_data[2]);
+    k_room_add_draw_callback(room, draw, &draw_data[3], draw_data[3]);
+    k_room_add_draw_callback(room, draw, &draw_data[0], draw_data[0]);
+    k_room_add_draw_callback(room, draw, &draw_data[1], draw_data[1]);
+    k_room_add_draw_callback(room, draw, &draw_data[2], draw_data[2]);
 
     return 0;
 }
@@ -31,7 +56,7 @@ static int init_game(void) {
     }
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.steps_per_second = 60;
+    config.steps_per_second = 30;
     config.room_name = "tmp room";
     config.fn_create = create_room;
     struct k_room *tmp_room = k_create_room(&config, NULL);
