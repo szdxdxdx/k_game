@@ -35,7 +35,7 @@ int k__room_registry_add(struct k_room_registry_node *node, const char *room_nam
 
     if (NULL == room_name || '\0' == room_name[0]) {
 
-        /* 始终不往 map 里添加空字符串 "" 的 key，不为没有名字的房间建立索引 */
+        /* 不为没有名字的房间建立索引，不往 map 里添加空字符串 "" 或 NULL 的 key */
         node->name_map_node.key = NULL;
     }
     else {
@@ -69,4 +69,8 @@ struct k_room *k_get_room_by_name(const char *room_name) {
     struct k_room_registry_node *room_node = container_of(map_node, struct k_room_registry_node, name_map_node);
     struct k_room *room = container_of(room_node, struct k_room, room_node);
     return room;
+}
+
+const char *k_room_get_name(struct k_room *room) {
+    return room->room_node.name_map_node.key;
 }

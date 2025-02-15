@@ -30,8 +30,6 @@ static void leave_room(struct k_room *room) {
 
 static inline int frame_delay(struct k_room *room) {
 
-    /* TODO: 使用 uint64_t 记录时间，保留 int 记录帧间隔时间 */
-
     Uint64 current_time = SDL_GetTicks64();
     Uint64 elapsed_time = current_time - k_game.current_ms;
 
