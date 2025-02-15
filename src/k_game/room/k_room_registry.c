@@ -1,23 +1,23 @@
 #include "k_log.h"
-#include "k_container_of.h"
 
 #include "./k_room_registry.h"
 #include "./k_room_create.h"
 #include "./k_room_context.h"
 
 struct k_room_registry {
+
     struct k_list rooms_list;
+
     struct k_str_map name_map;
 };
 
 static struct k_room_registry registry;
 
 void k_room_registry_init(void) {
-
     k_list_init(&registry.rooms_list);
 
-    static struct k_hash_list name_map_buckets[8];
-    k_str_map_init(&registry.name_map, name_map_buckets, 8);
+    static struct k_hash_list buckets[8];
+    k_str_map_init(&registry.name_map, buckets, 8);
 }
 
 void k_room_registry_deinit(void) {

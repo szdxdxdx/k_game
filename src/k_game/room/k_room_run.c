@@ -83,7 +83,7 @@ static void room_step(struct k_room *room) {
 
     /* 执行 alarm callbacks */
 
-    /* 执行 step callbacks */
+    k_room_exec_step_callbacks(room);
 
     // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
     // SDL_RenderClear(room->renderer);

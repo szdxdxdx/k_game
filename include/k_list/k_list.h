@@ -3,6 +3,11 @@
 
 #include <stddef.h>
 
+#ifndef container_of
+#define container_of(ptr, type, member) \
+    ((type *)((char *)(ptr) - offsetof(type, member)))
+#endif
+
 struct k_list_node {
     struct k_list_node *next;
     struct k_list_node *prev;

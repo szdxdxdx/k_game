@@ -60,6 +60,8 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
     room->delta_ms       = 0;
     room->current_time   = 0;
 
+    k_room_init_step_callbacks_storage(room);
+
     if (NULL != room->fn_create) {
         int result = room->fn_create(room, params);
         if (0 != result) {
@@ -72,6 +74,7 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
     return room;
 
 fn_create_error:
+    k_room_clean_step_callbacks_storage(room);
     k_free(room->data);
 
 malloc_room_data_failed:
@@ -99,6 +102,7 @@ void k_destroy_room(struct k_room *room) {
 
     /* ... */
 
+    k_room_clean_step_callbacks_storage(room);
     k_room_registry_del(&room->room_node);
     k_free(room->data);
     k_free(room);

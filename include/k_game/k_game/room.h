@@ -69,60 +69,22 @@ struct k_room *k_room_stack_get_top(void);
 
 /* ------------------------------------------------------------------------ */
 
-struct k_room_enter_callback;
+struct k_room_callback;
 
-struct k_room_enter_callback *k_room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
-void k_room_del_enter_callback(struct k_room_enter_callback *callback);
+struct k_room_callback *k_room_add_leave_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
-/* ------------------------------------------------------------------------ */
+struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
-struct k_room_leave_callback;
+struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, float timeout), void *data, float delay);
 
-struct k_room_leave_callback *k_room_add_leave_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+struct k_room_callback *k_room_add_step_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
-void k_room_del_leave_callback(struct k_room_leave_callback *callback);
+struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int depth);
 
-/* ------------------------------------------------------------------------ */
+struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
-struct k_room_step_begin_callback;
-
-struct k_room_step_begin_callback *k_room_add_step_begin_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
-
-void k_room_del_step_begin_callback(struct k_room_step_begin_callback *callback);
-
-/* ------------------------------------------------------------------------ */
-
-struct k_room_alarm_callback;
-
-struct k_room_alarm_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, float timeout), void *data, float delay);
-
-void k_room_del_alarm_callback(struct k_room_alarm_callback *callback);
-
-/* ------------------------------------------------------------------------ */
-
-struct k_room_step_callback;
-
-struct k_room_step_callback *k_room_add_step_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
-
-void k_room_del_step_callback(struct k_room_step_callback *callback);
-
-/* ------------------------------------------------------------------------ */
-
-struct k_room_draw_callback;
-
-struct k_room_draw_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int depth);
-
-void k_room_del_draw_callback(struct k_room_draw_callback *callback);
-
-void k_room_draw_callback_set_depth(struct k_room_draw_callback *callback, int depth);
-
-/* ------------------------------------------------------------------------ */
-
-struct k_room_step_end_callback;
-
-struct k_room_step_end_callback *k_room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
-
-void k_room_del_step_end_callback(struct k_room_step_end_callback *callback);
+void k_room_del_callback(struct k_room_callback *callback);
 
 #endif

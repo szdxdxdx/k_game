@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "./k_room_registry.h"
+#include "./k_room_callback.h"
 
 struct k_room {
 
@@ -22,6 +23,8 @@ struct k_room {
     int delta_ms;
 
     void *data;
+
+    struct k_room_step_callbacks_storage step_callbacks;
 };
 
 #endif

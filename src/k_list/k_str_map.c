@@ -2,11 +2,6 @@
 
 #include "k_str_map.h"
 
-#ifndef container_of
-#define container_of(ptr, type, member) \
-    ((type *)((char *)(ptr) - offsetof(type, member)))
-#endif
-
 static size_t str_hash(const char *str) {
 
     size_t hash = 5381;

@@ -4,32 +4,33 @@
 
 struct k_image *img;
 
+int g_data;
+
+static void step(void *data) {
+
+    printf("%d\n", ++(*(int *)data));
+    k_draw_image(img, NULL, 10, 10);
+}
+
 static int create_room(struct k_room *room, void *unused) {
 
-    struct k_image_config config = {
-        .image_name = "image_name",
-        .filepath = "assets/tmp.png",
-    };
-
-    img = k_load_image(&config);
+    k_room_add_step_callback(room, step, &g_data);
 
     return 0;
 }
 
-static void room_step(void) {
-
-    k_draw_image(img, NULL, 10, 10);
-}
-
 static int init_game(void) {
+
+    {
+        struct k_image_config config = { "", "assets/tmp.png", };
+        img = k_load_image(&config);
+    }
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.steps_per_second = 60;
     config.room_name = "tmp room";
     config.fn_create = create_room;
-    k_create_room(&config, NULL);
-
-    struct k_room *tmp_room = k_get_room_by_name("tmp room");
+    struct k_room *tmp_room = k_create_room(&config, NULL);
 
     k_goto_room(tmp_room);
 
