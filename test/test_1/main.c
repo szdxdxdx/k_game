@@ -6,6 +6,10 @@ struct k_image *img;
 
 struct k_room_callback *callback_print_num;
 
+static void enter(void *unused) {
+    printf("enter\n");
+}
+
 static void timer_1000ms(void *unused, int timeout_diff) {
     printf("timer 1000ms, diff %d\n", timeout_diff);
 
@@ -50,10 +54,12 @@ static void draw(void *data) {
 
 static int create_room(struct k_room *room, void *unused) {
 
+    k_room_add_enter_callback(room, enter, NULL);
+
     // k_room_add_step_callback(room, step, NULL);
 
-    static int g_data;
-    callback_print_num = k_room_add_step_callback(room, print_num, &g_data);
+    // static int g_data;
+    // callback_print_num = k_room_add_step_callback(room, print_num, &g_data);
 
     // k_room_add_draw_callback(room, draw_img, NULL, -1);
 

@@ -1,5 +1,6 @@
 #include "k_game/alloc.h"
 
+#include "./k_room_callback.h"
 #include "./k_room_callback_alarm.h"
 #include "./k_room_context.h"
 #include "../game/k_game_context.h"

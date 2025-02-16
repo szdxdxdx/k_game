@@ -16,6 +16,7 @@ static int enter_room(struct k_room *room) {
     room->game_loop = 1;
 
     /* 执行 enter callbacks */
+    k__room_exec_enter_callbacks(room);
 
     return 0;
 }

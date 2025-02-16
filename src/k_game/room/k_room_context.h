@@ -4,7 +4,10 @@
 #include <stdint.h>
 
 #include "./k_room_registry.h"
-#include "./k_room_callback.h"
+#include "./k_room_callback_enter.h"
+#include "./k_room_callback_alarm.h"
+#include "./k_room_callback_step.h"
+#include "./k_room_callback_draw.h"
 
 struct k_room {
 
@@ -19,6 +22,8 @@ struct k_room {
     unsigned int game_loop;
 
     void *data;
+
+    struct k_room_enter_callbacks_storage enter_callbacks;
 
     struct k_room_alarm_callbacks_storage alarm_callbacks;
 

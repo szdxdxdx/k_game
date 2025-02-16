@@ -62,6 +62,7 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
     room->frame_interval = (uint32_t)(1000 / config->steps_per_second);
     room->game_loop      = 0;
 
+    k__room_init_enter_callbacks_storage(room);
     k__room_init_alarm_callbacks_storage(room);
     k__room_init_step_callbacks_storage(room);
     k__room_init_draw_callbacks_storage(room);
@@ -81,6 +82,7 @@ fn_create_error:
     k__room_clean_draw_callbacks_storage(room);
     k__room_clean_step_callbacks_storage(room);
     k__room_clean_alarm_callbacks_storage(room);
+    k__room_clean_enter_callbacks_storage(room);
     k_free(room->data);
 malloc_room_data_failed:
     k__room_registry_del(&room->room_node);
@@ -109,6 +111,7 @@ void k__destroy_room(struct k_room *room) {
     k__room_clean_draw_callbacks_storage(room);
     k__room_clean_step_callbacks_storage(room);
     k__room_clean_alarm_callbacks_storage(room);
+    k__room_clean_enter_callbacks_storage(room);
     k_free(room->data);
     k__room_registry_del(&room->room_node);
     k_free(room);
