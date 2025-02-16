@@ -4,10 +4,9 @@
 #include <stdint.h>
 
 #include "./k_room_registry.h"
-#include "./k_room_callback_enter.h"
-#include "./k_room_callback_alarm.h"
-#include "./k_room_callback_step.h"
+#include "./k_room_callback.h"
 #include "./k_room_callback_draw.h"
+#include "./k_room_callback_alarm.h"
 
 struct k_room {
 
@@ -23,11 +22,17 @@ struct k_room {
 
     void *data;
 
-    struct k_room_enter_callbacks_storage enter_callbacks;
+    struct k_room_generic_callback_list enter_callbacks;
+
+    struct k_room_generic_callback_list leave_callbacks;
+
+    struct k_room_generic_callback_list step_begin_callbacks;
+
+    struct k_room_generic_callback_list step_callbacks;
+
+    struct k_room_generic_callback_list step_end_callbacks;
 
     struct k_room_alarm_callbacks_storage alarm_callbacks;
-
-    struct k_room_step_callbacks_storage step_callbacks;
 
     struct k_room_draw_callbacks_storage draw_callbacks;
 };

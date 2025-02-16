@@ -12,7 +12,7 @@ struct k_room_draw_callbacks_storage {
 
 void k__room_init_draw_callbacks_storage(struct k_room *room);
 
-void k__room_clean_draw_callbacks_storage(struct k_room *room);
+void k__room_del_all_draw_callbacks(struct k_room *room);
 
 void k__room_exec_draw_callbacks(struct k_room *room);
 

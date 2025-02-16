@@ -1,9 +1,7 @@
 #include "k_game/alloc.h"
-
-#include "./k_room_callback.h"
+#include "../game/k_game_context.h"
 #include "./k_room_callback_alarm.h"
 #include "./k_room_context.h"
-#include "../game/k_game_context.h"
 
 struct k_room_alarm_callback {
 
@@ -24,7 +22,7 @@ void k__room_init_alarm_callbacks_storage(struct k_room *room) {
     k_list_init(&storage->list);
 }
 
-void k__room_clean_alarm_callbacks_storage(struct k_room *room) {
+void k__room_del_all_alarm_callbacks(struct k_room *room) {
     struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
 
     struct k_list_node *node, *next;
