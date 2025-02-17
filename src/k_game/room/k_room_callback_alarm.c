@@ -54,7 +54,7 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
     }
 }
 
-static void fn_del_self(struct k_room_callback *self) {
+static void alarm_callback_del_self(struct k_room_callback *self) {
     struct k_room_alarm_callback *callback = container_of(self, struct k_room_alarm_callback, impl);
 
     k_list_del(&callback->iter_node);
@@ -82,7 +82,7 @@ struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn
     }
 
     k_list_add(iter_node->prev, &callback->iter_node);
-    callback->impl.fn_del_self = fn_del_self;
+    callback->impl.fn_del_self = alarm_callback_del_self;
     callback->data = data;
     callback->fn_callback = fn_callback;
     callback->timeout = timeout;

@@ -22,15 +22,15 @@ struct k_room {
 
     void *data;
 
-    struct k_room_generic_callback_list enter_callbacks;
+    struct k_room_callback_list enter_callbacks;
 
-    struct k_room_generic_callback_list leave_callbacks;
+    struct k_room_callback_list leave_callbacks;
 
-    struct k_room_generic_callback_list step_begin_callbacks;
+    struct k_room_callback_list step_begin_callbacks;
 
-    struct k_room_generic_callback_list step_callbacks;
+    struct k_room_callback_list step_callbacks;
 
-    struct k_room_generic_callback_list step_end_callbacks;
+    struct k_room_callback_list step_end_callbacks;
 
     struct k_room_alarm_callbacks_storage alarm_callbacks;
 

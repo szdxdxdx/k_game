@@ -70,7 +70,7 @@ void k__room_exec_draw_callbacks(struct k_room *room) {
     }
 }
 
-static void fn_del_self(struct k_room_callback *self) {
+static void draw_callback_del_self(struct k_room_callback *self) {
     struct k_room_draw_callback *callback = container_of(self, struct k_room_draw_callback, impl);
 
     struct k_room_draw_callback_depth_list *depth_list = callback->depth_list;
@@ -114,7 +114,7 @@ struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_
 
 add_callback:
     k_list_add_tail(&depth_list->callbacks_list, &callback->iter_node);
-    callback->impl.fn_del_self = fn_del_self;
+    callback->impl.fn_del_self = draw_callback_del_self;
     callback->depth_list = depth_list;
     callback->data = data;
     callback->fn_callback = fn_callback;
