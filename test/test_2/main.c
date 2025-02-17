@@ -58,7 +58,7 @@ void test(void) {
 
     struct k_hash_list *hash_lists = malloc(sizeof(struct k_hash_list) * 8);
     struct k_str_map map;
-    k_init_str_map(&map, hash_lists, 8);
+    k_str_map_init(&map, hash_lists, 8);
 
     char input[128];
     while (1) {
@@ -112,7 +112,7 @@ void test(void) {
         }
     }
 
-    free(map.hash_lists);
+    free(map.lists);
 }
 
 #if 1

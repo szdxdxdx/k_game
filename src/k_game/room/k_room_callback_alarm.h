@@ -7,6 +7,9 @@ struct k_room;
 
 struct k_room_alarm_callbacks_storage {
 
+    /* TODO: 数据结构改用优先队列
+     *
+     */
     struct k_list list;
 };
 

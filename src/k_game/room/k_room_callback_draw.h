@@ -7,6 +7,9 @@ struct k_room;
 
 struct k_room_draw_callbacks_storage {
 
+    /* TODO: 存储结构改用二叉平衡树
+     *
+     */
     struct k_list depth_lists;
 };
 

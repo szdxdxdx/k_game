@@ -7,7 +7,7 @@ struct k_room_alarm_callback {
 
     struct k_room_callback impl;
 
-    struct k_list_node iter_node;
+    struct k_list_node list_node;
 
     void *data;
 
@@ -27,7 +27,7 @@ void k__room_del_all_alarm_callbacks(struct k_room *room) {
 
     struct k_list_node *node, *next;
     for (k_list_for_each_s(&storage->list, node, next)) {
-        struct k_room_alarm_callback *callback = container_of(node, struct k_room_alarm_callback, iter_node);
+        struct k_room_alarm_callback *callback = container_of(node, struct k_room_alarm_callback, list_node);
 
         k_free(callback);
     }
@@ -41,14 +41,14 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
     struct k_room_alarm_callback *callback;
     struct k_list_node *iter_node, *next;
     for (k_list_for_each_s(&storage->list, iter_node, next)) {
-        callback = container_of(iter_node, struct k_room_alarm_callback, iter_node);
+        callback = container_of(iter_node, struct k_room_alarm_callback, list_node);
 
         if (callback->timeout <= current_ms) {
 
             int timeout_diff = (int)(current_ms - callback->timeout);
             callback->fn_callback(callback->data, timeout_diff);
 
-            k_list_del(&callback->iter_node);
+            k_list_del(&callback->list_node);
             k_free(callback);
         }
     }
@@ -57,7 +57,7 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
 static void alarm_callback_del_self(struct k_room_callback *self) {
     struct k_room_alarm_callback *callback = container_of(self, struct k_room_alarm_callback, impl);
 
-    k_list_del(&callback->iter_node);
+    k_list_del(&callback->list_node);
     k_free(callback);
 }
 
@@ -75,13 +75,13 @@ struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn
 
     struct k_list_node *iter_node;
     for (k_list_for_each(&storage->list, iter_node)) {
-        struct k_room_alarm_callback *callback_in_list = container_of(iter_node, struct k_room_alarm_callback, iter_node);
+        struct k_room_alarm_callback *callback_in_list = container_of(iter_node, struct k_room_alarm_callback, list_node);
 
         if (callback_in_list->timeout < timeout)
             break;
     }
 
-    k_list_add(iter_node->prev, &callback->iter_node);
+    k_list_add(iter_node->prev, &callback->list_node);
     callback->impl.fn_del_self = alarm_callback_del_self;
     callback->data = data;
     callback->fn_callback = fn_callback;

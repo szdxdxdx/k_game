@@ -7,9 +7,14 @@
 
 #include "k_printf.h"
 
+#ifndef container_of
+#define container_of(ptr, type, member) \
+    ((type *)((char *)(ptr) - offsetof(type, member)))
+#endif
+
 /* region [str_buf] */
 
-struct str_buf {
+struct k_printf_str_buf {
     struct k_printf_buf impl;
     char *buffer;
     int str_len;
@@ -20,7 +25,7 @@ static void str_buf_puts(struct k_printf_buf *buf, const char *str, size_t len) 
     if (-1 == buf->n)
         return;
 
-    struct str_buf *str_buf = (struct str_buf *)buf;
+    struct k_printf_str_buf *str_buf = (struct k_printf_str_buf *)buf;
 
     int remain_capacity = str_buf->max_len - str_buf->str_len;
 
@@ -53,7 +58,7 @@ static void str_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list a
     if (-1 == buf->n)
         return;
 
-    struct str_buf *str_buf = (struct str_buf *)buf;
+    struct k_printf_str_buf *str_buf = (struct k_printf_str_buf *)buf;
 
     int remain_len = str_buf->max_len - str_buf->str_len;
     int r = vsnprintf(&str_buf->buffer[str_buf->str_len], remain_len + 1, fmt, args);
@@ -81,7 +86,7 @@ static void str_buf_printf(struct k_printf_buf *buf, const char *fmt, ...) {
     va_end(args);
 }
 
-static void init_str_buf(struct str_buf *str_buf, char *buf, size_t capacity) {
+static void init_str_buf(struct k_printf_str_buf *str_buf, char *buf, size_t capacity) {
 
     static char buf_[1] = { '\0' };
 
@@ -107,7 +112,7 @@ static void init_str_buf(struct str_buf *str_buf, char *buf, size_t capacity) {
 
 /* region [file_buf] */
 
-struct file_buf {
+struct k_printf_file_buf {
     struct k_printf_buf impl;
     FILE *file;
 };
@@ -116,7 +121,7 @@ static void file_buf_puts(struct k_printf_buf *buf, const char *str, size_t len)
     if (-1 == buf->n)
         return;
 
-    struct file_buf *file_buf = (struct file_buf *)buf;
+    struct k_printf_file_buf *file_buf = (struct k_printf_file_buf *)buf;
 
     size_t r = fwrite(str, sizeof(char), len, file_buf->file);
     if (INT_MAX < r) {
@@ -133,7 +138,7 @@ static void file_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list 
     if (-1 == buf->n)
         return;
 
-    struct file_buf *file_buf = (struct file_buf *)buf;
+    struct k_printf_file_buf *file_buf = (struct k_printf_file_buf *)buf;
 
     int r = vfprintf(file_buf->file, fmt, args);
     if (r < 0) {
@@ -153,7 +158,7 @@ static void file_buf_printf(struct k_printf_buf *buf, const char *fmt, ...) {
     va_end(args);
 }
 
-static void init_file_buf(struct file_buf *buf, FILE *file) {
+static void init_file_buf(struct k_printf_file_buf *buf, FILE *file) {
 
     buf->impl.fn_puts    = file_buf_puts,
     buf->impl.fn_printf  = file_buf_printf,
@@ -166,7 +171,7 @@ static void init_file_buf(struct file_buf *buf, FILE *file) {
 
 /* region [c_std_spec] */
 
-/* 处理 C `printf` 中 `%n` 一族的格式说明符
+/* 处理 C printf 中 `%n` 一族的格式说明符
  *
  * 函数假定传入的格式说明符类型是正确的。
  */
@@ -200,13 +205,13 @@ static void printf_callback_c_std_spec_n(struct k_printf_buf *buf, const struct 
     }
 }
 
-/* 处理 C `printf` 中除了 `%n` 一族以外所有的格式说明符
+/* 处理 C printf 中除了 `%n` 一族以外所有的格式说明符
  *
  * 函数假定传入的格式说明符类型是正确的。
  */
 static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
 
-    /* 将格式说明符交回给 C `printf` 处理，之后按需消耗掉不定长参数列表的实参 */
+    /* 将格式说明符交回给 C printf 处理，之后按需消耗掉不定长参数列表的实参 */
 
     char fmt_buf[80];
     char *fmt = fmt_buf;
@@ -296,13 +301,13 @@ static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_
     }
 }
 
-/* 匹配 C `printf` 格式说明符，若匹配成功则移动字符串指针，并返回对应的回调
+/* 匹配 C printf 格式说明符，若匹配成功则移动字符串指针，并返回对应的回调
  *
- * C `printf` 支持的格式说明符详见：https://zh.cppreference.com/w/c/io/fprintf
+ * C printf 支持的格式说明符详见：https://zh.cppreference.com/w/c/io/fprintf
  */
 static k_printf_callback_fn match_c_std_spec(const char **str) {
 
-    /* 通过打表的方式，给每个 C `printf` 格式说明符分配回调 */
+    /* 通过打表的方式，给每个 C printf 格式说明符分配回调 */
 
     switch ((*str)[0]) {
         case 'a': case 'A': case 'c': case 'd':
@@ -424,7 +429,7 @@ k_printf_callback_fn k_printf_match_spec_helper(const struct k_printf_spec_callb
 
 /* region [x_printf] */
 
-/* 提取字符串开头的非负 int 值（若超过上限则返回 INT_MAX），并移动字符串指针跳过数字
+/* 提取字符串开头的非负整数值（最大返回 `INT_MAX`），并移动字符串指针跳过数字
  *
  * 函数假定字符串开头存在非负的数字。
  */
@@ -521,7 +526,7 @@ static k_printf_callback_fn extract_spec(const struct k_printf_config *config, c
 
 /* 格式化写入字符串到缓冲区，并返回格式化后的字符串长度
  *
- * 本函数为 `k_printf` 家族所有函数的核心实现。
+ * 本函数为 k_printf 家族所有函数的核心实现。
  */
 static int x_printf(const struct k_printf_config *config, struct k_printf_buf *buf, const char *fmt, va_list args) {
 
@@ -587,7 +592,7 @@ int k_vfprintf(const struct k_printf_config *config, FILE *file, const char *fmt
     if (NULL == config)
         return vfprintf(file, fmt, args);
 
-    struct file_buf file_buf;
+    struct k_printf_file_buf file_buf;
     init_file_buf(&file_buf, file);
 
     return x_printf(config, (struct k_printf_buf *)&file_buf, fmt, args);
@@ -621,7 +626,7 @@ int k_vsnprintf(const struct k_printf_config *config, char *buf, size_t n, const
     if (NULL == config)
         return vsnprintf(buf, n, fmt, args);
 
-    struct str_buf str_buf;
+    struct k_printf_str_buf str_buf;
     init_str_buf(&str_buf, buf, n);
 
     return x_printf(config, (struct k_printf_buf *)&str_buf, fmt, args);
