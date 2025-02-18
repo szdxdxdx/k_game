@@ -1,6 +1,6 @@
 #include "k_game/alloc.h"
-#include "./k_room_callback_draw.h"
-#include "./k_room_context.h"
+
+#include "./k_room.h"
 
 struct k_room_draw_callback_depth_list {
 

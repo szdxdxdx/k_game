@@ -2,10 +2,8 @@
 
 #include "k_log.h"
 
-#include "k_game/room.h"
-#include "../game/k_game_context.h"
-#include "../room/k_room_context.h"
-#include "./k_room_run.h"
+#include "../game/k_game.h"
+#include "./k_room.h"
 
 static int enter_room(struct k_room *room) {
 
@@ -37,7 +35,7 @@ static inline int frame_delay(struct k_room *room) {
     /* 若已到新一帧的时间，则函数返回 0，否则返回非 0。
      * 不执行 SDL_Delay() 控制帧率。
      */
-    if (elapsed_time < room->frame_interval)
+    if (elapsed_time < room->step_interval_ms)
         return 1;
 #else
     if (elapsed_time < room->frame_interval) {

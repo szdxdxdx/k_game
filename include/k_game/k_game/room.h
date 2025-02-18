@@ -10,13 +10,13 @@ struct k_room_config {
     /**
      * \brief 房间的名字
      *
-     * 名字是可选的，传递空字符串 "" 或 NULL 表示不使用名字。
+     * 名字是可选的，传递空字符串 "" 或 `NULL` 表示不使用名字。
      *
      * 若指定名字，需保证其唯一性。k_game 会基于该名字为房间创建索引，
      * 之后你可以通过 `k_get_room_by_name()` 查找房间。
      *
      * 在创建房间时，k_game 不会分配内存来复制名字。
-     * 因此，传递的字符串必须始终有效，建议使用字符串字面量。
+     * 因此，传递的字符串的内存段必须始终有效，建议使用字符串字面量。
      */
     const char *room_name;
 
@@ -48,12 +48,13 @@ struct k_room *k_get_current_room(void);
 /**
  * \brief 通过房间名字查找对应的房间
  *
- * 当创建房间时，如果给定了房间名字，程序会基于该名字为房间创建索引。
- * 本函数能根据房间名字查找对应的房间。
+ * 当创建房间时，若给定了房间名字，k_game 会基于该名字为房间创建索引。
+ * 本函数能根据房间名字查找到对应的房间。
+ *
+ * 本函数找不到没用名字（名字为空字符串 "" 或 `NULL`）的房间。
  *
  * \param room_name 房间的名字
- * \return 若找到，函数返回房间指针，否则返回 NULL。
- *         若传入的名字为空字符串 "" 或 NULL，则函数返回 NULL。
+ * \return 若找到，函数返回房间指针，否则返回 `NULL`。
  */
 struct k_room *k_get_room_by_name(const char *room_name);
 
@@ -63,13 +64,9 @@ int k_room_get_width(struct k_room *room);
 
 int k_room_get_height(struct k_room *room);
 
-float k_room_get_speed(struct k_room *room);
-
 void *k_room_get_data(struct k_room *room);
 
 void *k_get_current_room_data(void);
-
-void k_room_set_speed(struct k_room *room, int steps_per_second);
 
 /* ------------------------------------------------------------------------ */
 
@@ -79,15 +76,27 @@ struct k_room *k_room_stack_get_top(void);
 
 /* ------------------------------------------------------------------------ */
 
+/**
+ * \brief 房间回调结点
+ *
+ */
 struct k_room_callback;
 
+/**
+ * \brief 为房间添加“进入事件”回调
+ *
+ * \param room        房间
+ * \param fn_callback 回调函数
+ * \param data        回调函数的参数
+ * \return 若添加成功，函数返回该回调结点的指针，否则返回 `NULL`。
+ */
 struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
 struct k_room_callback *k_room_add_leave_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
 struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
-struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay);
+struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms);
 
 struct k_room_callback *k_room_add_step_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 

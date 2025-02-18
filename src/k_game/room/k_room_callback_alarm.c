@@ -1,7 +1,7 @@
 #include "k_game/alloc.h"
-#include "../game/k_game_context.h"
-#include "./k_room_callback_alarm.h"
-#include "./k_room_context.h"
+
+#include "../game/k_game.h"
+#include "./k_room.h"
 
 struct k_room_alarm_callback {
 
@@ -61,17 +61,17 @@ static void alarm_callback_del_self(struct k_room_callback *self) {
     k_free(callback);
 }
 
-struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay) {
+struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms) {
     struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
 
-    if (delay < 0)
-        delay = 0;
+    if (delay_ms < 0)
+        delay_ms = 0;
 
     struct k_room_alarm_callback *callback = k_malloc(sizeof(struct k_room_alarm_callback));
     if (NULL == callback)
         return NULL;
 
-    uint64_t timeout = k_game.current_ms + delay;
+    uint64_t timeout = k_game.current_ms + delay_ms;
 
     struct k_list_node *iter_node;
     for (k_list_for_each(&storage->list, iter_node)) {

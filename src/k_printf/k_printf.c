@@ -86,7 +86,7 @@ static void str_buf_printf(struct k_printf_buf *buf, const char *fmt, ...) {
     va_end(args);
 }
 
-static void init_str_buf(struct k_printf_str_buf *str_buf, char *buf, size_t capacity) {
+static void str_buf_init(struct k_printf_str_buf *str_buf, char *buf, size_t capacity) {
 
     static char buf_[1] = { '\0' };
 
@@ -158,7 +158,7 @@ static void file_buf_printf(struct k_printf_buf *buf, const char *fmt, ...) {
     va_end(args);
 }
 
-static void init_file_buf(struct k_printf_file_buf *buf, FILE *file) {
+static void file_buf_init(struct k_printf_file_buf *buf, FILE *file) {
 
     buf->impl.fn_puts    = file_buf_puts,
     buf->impl.fn_printf  = file_buf_printf,
@@ -374,7 +374,7 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
             }
             break;
         }
-        case 'L':
+        case 'L': {
             switch ((*str)[1]) {
                 case 'a': case 'A': case 'e': case 'E':
                 case 'f': case 'F': case 'g': case 'G':
@@ -382,8 +382,8 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                     return printf_callback_c_std_spec;
             }
             break;
-
-        case 'j': case 't': case 'z':
+        }
+        case 'j': case 't': case 'z': {
             switch ((*str)[1]) {
                 case 'd': case 'i':
                 case 'o': case 'u':
@@ -395,6 +395,7 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                     return printf_callback_c_std_spec_n;
             }
             break;
+        }
     }
 
     return NULL;
@@ -412,6 +413,7 @@ k_printf_callback_fn k_printf_match_spec_helper(const struct k_printf_spec_callb
         const char *p_str  = *str;
         const char *p_spec = spec->spec_type;
         for (; '\0' != *p_spec; ++p_str, ++p_spec) {
+
             if (*p_str != *p_spec)
                 goto next_spec;
         }
@@ -593,7 +595,7 @@ int k_vfprintf(const struct k_printf_config *config, FILE *file, const char *fmt
         return vfprintf(file, fmt, args);
 
     struct k_printf_file_buf file_buf;
-    init_file_buf(&file_buf, file);
+    file_buf_init(&file_buf, file);
 
     return x_printf(config, (struct k_printf_buf *)&file_buf, fmt, args);
 }
@@ -627,7 +629,7 @@ int k_vsnprintf(const struct k_printf_config *config, char *buf, size_t n, const
         return vsnprintf(buf, n, fmt, args);
 
     struct k_printf_str_buf str_buf;
-    init_str_buf(&str_buf, buf, n);
+    str_buf_init(&str_buf, buf, n);
 
     return x_printf(config, (struct k_printf_buf *)&str_buf, fmt, args);
 }

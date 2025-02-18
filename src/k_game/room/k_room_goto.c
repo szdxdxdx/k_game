@@ -2,8 +2,7 @@
 
 #include "k_log.h"
 
-#include "k_game/room.h"
-#include "./k_room_goto.h"
+#include "./k_room.h"
 
 #ifndef K_ROOM_STACK_MAX_SIZE
 #define K_ROOM_STACK_MAX_SIZE 32

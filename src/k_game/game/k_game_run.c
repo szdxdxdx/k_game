@@ -2,12 +2,8 @@
 
 #include "k_log.h"
 
-#include "k_game/room.h"
-#include "k_game/game.h"
-#include "./k_game_SDL.h"
-#include "../room/k_room_registry.h"
-#include "../room/k_room_goto.h"
-#include "../room/k_room_run.h"
+#include "../room/k_room.h"
+#include "./k_game.h"
 
 /* region [game config] */
 
@@ -91,7 +87,7 @@ invalid_config:
 
 /* endregion */
 
-static void run_game(const struct k_game_config *config) {
+static void run_game(void) {
     k_log_info("Game started...");
 
     struct k_room *room = k_room_stack_get_top();
@@ -116,7 +112,7 @@ int k_run_game(const struct k_game_config *config) {
     if (0 != init_or_deinit_game(config, 1))
         return -1;
 
-    run_game(config);
+    run_game();
 
     init_or_deinit_game(config, 0);
     return 0;

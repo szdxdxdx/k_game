@@ -1,4 +1,5 @@
-#include "./k_game_context.h"
+#include "./k_game.h"
+#include "../room/k_room.h"
 
 struct k_game_context k_game = {
     .window     = NULL,
@@ -9,4 +10,8 @@ struct k_game_context k_game = {
 
 struct k_room *k_get_current_room(void) {
     return k_game.current_room;
+}
+
+void *k_get_current_room_data(void) {
+    return k_game.current_room->data;
 }

@@ -2,8 +2,8 @@
 #include "k_list.h"
 
 #include "k_game/alloc.h"
-#include "k_game/room.h"
-#include "./k_room_context.h"
+
+#include "./k_room.h"
 
 const struct k_room_config K_ROOM_CONFIG_INIT = {
     .room_name        = NULL,
@@ -57,10 +57,10 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
             goto malloc_room_data_failed;
     }
 
-    room->fn_create      = config->fn_create;
-    room->fn_destroy     = config->fn_destroy;
-    room->frame_interval = (uint32_t)(1000 / config->steps_per_second);
-    room->game_loop      = 0;
+    room->fn_create  = config->fn_create;
+    room->fn_destroy = config->fn_destroy;
+    room->game_loop  = 0;
+    room->step_interval_ms = (uint32_t)(1000 / config->steps_per_second);
 
     k__room_callback_list_init(&room->enter_callbacks);
     k__room_callback_list_init(&room->leave_callbacks);
