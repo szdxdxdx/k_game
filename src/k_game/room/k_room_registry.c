@@ -2,13 +2,6 @@
 
 #include "./k_room.h"
 
-struct k_room_registry {
-
-    struct k_list rooms_list;
-
-    struct k_str_map name_map;
-};
-
 static struct k_room_registry room_registry;
 
 void k__room_registry_init(void) {

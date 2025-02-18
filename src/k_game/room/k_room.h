@@ -10,8 +10,19 @@
 
 /* region [room_registry] */
 
-struct k_room_registry;
+/* 房间注册表
+ *
+ */
+struct k_room_registry {
 
+    struct k_list rooms_list;
+
+    struct k_str_map name_map;
+};
+
+/* 用于房间注册表的结点结构
+ *
+ */
 struct k_room_registry_node {
 
     struct k_list_node iter_node;
@@ -133,7 +144,16 @@ void k__destroy_room(struct k_room *room);
 
 /* region [room_stack] */
 
-struct k_room_stack;
+#ifndef K_ROOM_STACK_MAX_SIZE
+#define K_ROOM_STACK_MAX_SIZE 32
+#endif
+
+struct k_room_stack {
+
+    struct k_room *rooms[32];
+
+    size_t top;
+};
 
 void k__room_stack_init(void);
 

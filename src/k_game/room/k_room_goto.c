@@ -4,16 +4,7 @@
 
 #include "./k_room.h"
 
-#ifndef K_ROOM_STACK_MAX_SIZE
-#define K_ROOM_STACK_MAX_SIZE 32
-#endif
-
 /* region [room stack] */
-
-struct k_room_stack {
-    struct k_room *rooms[32];
-    size_t top;
-};
 
 static struct k_room_stack room_stack;
 
