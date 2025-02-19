@@ -65,9 +65,9 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
 
     k__room_callback_list_init(&room->enter_callbacks);
     k__room_callback_list_init(&room->leave_callbacks);
-    k__room_callback_list_init(&room->step_begin_callbacks);
-    k__room_callback_list_init(&room->step_callbacks);
-    k__room_callback_list_init(&room->step_end_callbacks);
+    k__room_init_step_callbacks_list(&room->step_begin_callbacks);
+    k__room_init_step_callbacks_list(&room->step_callbacks);
+    k__room_init_step_callbacks_list(&room->step_end_callbacks);
     k__room_init_alarm_callbacks_storage(room);
     k__room_init_draw_callbacks_storage(room);
 
@@ -85,9 +85,9 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
 fn_create_failed:
     k__room_callback_list_clean(&room->enter_callbacks);
     k__room_callback_list_clean(&room->leave_callbacks);
-    k__room_callback_list_clean(&room->step_begin_callbacks);
-    k__room_callback_list_clean(&room->step_callbacks);
-    k__room_callback_list_clean(&room->step_end_callbacks);
+    k__room_cleanup_step_callbacks_list(&room->step_begin_callbacks);
+    k__room_cleanup_step_callbacks_list(&room->step_callbacks);
+    k__room_cleanup_step_callbacks_list(&room->step_end_callbacks);
     k__room_del_all_alarm_callbacks(room);
     k__room_del_all_draw_callbacks(room);
 
@@ -118,9 +118,9 @@ void k__destroy_room(struct k_room *room) {
 
     k__room_callback_list_clean(&room->enter_callbacks);
     k__room_callback_list_clean(&room->leave_callbacks);
-    k__room_callback_list_clean(&room->step_begin_callbacks);
-    k__room_callback_list_clean(&room->step_callbacks);
-    k__room_callback_list_clean(&room->step_end_callbacks);
+    k__room_cleanup_step_callbacks_list(&room->step_begin_callbacks);
+    k__room_cleanup_step_callbacks_list(&room->step_callbacks);
+    k__room_cleanup_step_callbacks_list(&room->step_end_callbacks);
     k__room_del_all_alarm_callbacks(room);
     k__room_del_all_draw_callbacks(room);
 

@@ -1,6 +1,9 @@
+#include "SDL_render.h"
+
 #include "k_game/alloc.h"
 
 #include "./k_room_context.h"
+#include "../game/k_game_context.h"
 
 void k__room_init_draw_callbacks_storage(struct k_room *room) {
     struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
@@ -30,6 +33,10 @@ void k__room_del_all_draw_callbacks(struct k_room *room) {
 }
 
 void k__room_exec_draw_callbacks(struct k_room *room) {
+
+    // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
+    // SDL_RenderClear(room->renderer);
+
     struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback_depth_list *depth_list;
@@ -46,6 +53,8 @@ void k__room_exec_draw_callbacks(struct k_room *room) {
             callback->fn_callback(callback->data);
         }
     }
+
+    SDL_RenderPresent(k_game.renderer);
 }
 
 static void draw_callback_del_self(struct k_room_callback *self) {
