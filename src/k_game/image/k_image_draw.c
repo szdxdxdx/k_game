@@ -4,8 +4,8 @@
 #include "k_log.h"
 
 #include "k_game/image.h"
-#include "../game/k_game.h"
-#include "./k_image.h"
+#include "../game/k_game_context.h"
+#include "./k_image_load.h"
 
 int k_draw_image(struct k_image *image, const struct k_int_rect *rect, int x, int y) {
 

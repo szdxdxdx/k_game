@@ -1,28 +1,6 @@
 #include "k_game/alloc.h"
 
-#include "./k_room.h"
-
-struct k_room_draw_callback_depth_list {
-
-    struct k_list_node list_node;
-
-    struct k_list callbacks_list;
-
-    int depth;
-};
-
-struct k_room_draw_callback {
-
-    struct k_room_callback impl;
-
-    struct k_room_draw_callback_depth_list *depth_list;
-
-    struct k_list_node list_node;
-
-    void *data;
-
-    void (*fn_callback)(void *data);
-};
+#include "./k_room_context.h"
 
 void k__room_init_draw_callbacks_storage(struct k_room *room) {
     struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;

@@ -2,7 +2,8 @@
 
 #include "k_log.h"
 
-#include "./k_room.h"
+#include "k_game/room.h"
+#include "./k_room_goto.h"
 
 /* region [room stack] */
 
@@ -48,7 +49,7 @@ void k__room_stack_deinit(void) {
 
 /* region [room goto] */
 
-struct k_room *k_room_stack_get_top(void) {
+struct k_room *k__room_stack_get_top(void) {
     return room_stack_is_empty() ? NULL : room_stack_get_top();
 }
 

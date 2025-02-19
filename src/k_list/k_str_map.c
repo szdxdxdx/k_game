@@ -2,7 +2,7 @@
 
 #include "k_str_map.h"
 
-static size_t str_hash(const char *str) {
+static inline size_t str_hash(const char *str) {
 
     size_t hash = 5381;
     for (; '\0' != *str; str++) {

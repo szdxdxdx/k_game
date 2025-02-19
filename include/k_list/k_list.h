@@ -14,6 +14,13 @@ struct k_list_node {
 };
 
 struct k_list {
+
+    /**
+     * \brief 链表头节点
+     *
+     * 头节点不存储数据。链表的第一个有效节点是 `head.next`，
+     * 最后一个有效结点是 `head.prev`。
+     */
     struct k_list_node head;
 };
 
@@ -60,27 +67,5 @@ static inline int k_list_is_empty(struct k_list *list) {
     node_ = (list_)->head.next, next_ = node_->next; \
     node_ != &((list_)->head); \
     node_ = next_, next_ = node_->next
-
-static inline struct k_list_node *k_list_get_nth(struct k_list *list, size_t n) {
-
-    struct k_list_node *node;
-    for (k_list_for_each(list, node)) {
-        if (0 == n--)
-            return node;
-    }
-
-    return NULL;
-}
-
-static inline struct k_list_node *k_list_reversed_get_nth(struct k_list *list, size_t n) {
-
-    struct k_list_node *node;
-    for (k_list_reversed_for_each(list, node)) {
-        if (0 == n--)
-            return node;
-    }
-
-    return NULL;
-}
 
 #endif

@@ -2,8 +2,9 @@
 
 #include "k_log.h"
 
-#include "../game/k_game.h"
-#include "./k_room.h"
+#include "k_game/room.h"
+#include "../game/k_game_context.h"
+#include "./k_room_context.h"
 
 static int enter_room(struct k_room *room) {
 

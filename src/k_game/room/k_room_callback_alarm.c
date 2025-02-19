@@ -1,20 +1,7 @@
 #include "k_game/alloc.h"
 
-#include "../game/k_game.h"
-#include "./k_room.h"
-
-struct k_room_alarm_callback {
-
-    struct k_room_callback impl;
-
-    struct k_list_node list_node;
-
-    void *data;
-
-    void (*fn_callback)(void *data, int timeout_diff);
-
-    uint64_t timeout;
-};
+#include "../game/k_game_context.h"
+#include "./k_room_context.h"
 
 void k__room_init_alarm_callbacks_storage(struct k_room *room) {
     struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;

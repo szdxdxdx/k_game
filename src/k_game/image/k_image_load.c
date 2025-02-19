@@ -5,8 +5,8 @@
 
 #include "k_game/alloc.h"
 #include "k_game/image.h"
-#include "../game/k_game.h"
-#include "./k_image.h"
+#include "../game/k_game_context.h"
+#include "./k_image_load.h"
 
 struct k_image *k_load_image(const struct k_image_config *config) {
 

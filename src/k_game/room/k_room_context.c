@@ -1,4 +1,5 @@
-#include "./k_room.h"
+#include "k_game/room.h"
+#include "./k_room_context.h"
 
 int k_room_get_width(struct k_room *room) {
     return room->room_w;

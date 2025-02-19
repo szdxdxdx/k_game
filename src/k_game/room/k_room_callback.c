@@ -1,6 +1,6 @@
 #include "k_game/alloc.h"
 
-#include "./k_room.h"
+#include "./k_room_context.h"
 
 /* region [callback_list] */
 

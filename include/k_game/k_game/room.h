@@ -48,16 +48,19 @@ struct k_room *k_get_current_room(void);
 /**
  * \brief 通过房间名字查找对应的房间
  *
- * 当创建房间时，若给定了房间名字，k_game 会基于该名字为房间创建索引。
- * 本函数能根据房间名字查找到对应的房间。
+ * 当创建房间时，若指定了房间的名字，k_game 会基于该名字为房间创建索引。
  *
- * 本函数找不到没用名字（名字为空字符串 "" 或 `NULL`）的房间。
- *
- * \param room_name 房间的名字
- * \return 若找到，函数返回房间指针，否则返回 `NULL`。
+ * 本函数能根据名字查找到对应的房间。
+ * 若找到，函数返回房间指针，否则返回 `NULL`。
  */
 struct k_room *k_get_room_by_name(const char *room_name);
 
+/**
+ * \brief 获取房间的名字
+ *
+ * 若创建该房间时指定了名字，则函数返回该房间的名字，
+ * 否则函数返回空字符串 ""。
+ */
 const char *k_room_get_name(struct k_room *room);
 
 int k_room_get_width(struct k_room *room);
@@ -72,24 +75,10 @@ void *k_get_current_room_data(void);
 
 int k_goto_room(struct k_room *room);
 
-struct k_room *k_room_stack_get_top(void);
-
 /* ------------------------------------------------------------------------ */
 
-/**
- * \brief 房间回调结点
- *
- */
 struct k_room_callback;
 
-/**
- * \brief 为房间添加“进入事件”回调
- *
- * \param room        房间
- * \param fn_callback 回调函数
- * \param data        回调函数的参数
- * \return 若添加成功，函数返回该回调结点的指针，否则返回 `NULL`。
- */
 struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
 struct k_room_callback *k_room_add_leave_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);

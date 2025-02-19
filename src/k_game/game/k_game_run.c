@@ -2,8 +2,11 @@
 
 #include "k_log.h"
 
-#include "../room/k_room.h"
-#include "./k_game.h"
+#include "../room/k_room_goto.h"
+#include "../room/k_room_registry.h"
+#include "../room/k_room_context.h"
+#include "k_game/game.h"
+#include "./k_game_SDL.h"
 
 /* region [game config] */
 
@@ -90,7 +93,7 @@ invalid_config:
 static void run_game(void) {
     k_log_info("Game started...");
 
-    struct k_room *room = k_room_stack_get_top();
+    struct k_room *room = k__room_stack_get_top();
     if (NULL == room) {
         k_log_error("No room to run");
         goto end;

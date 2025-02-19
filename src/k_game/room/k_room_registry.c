@@ -1,6 +1,8 @@
 #include "k_log.h"
 
-#include "./k_room.h"
+#include "./k_room_registry.h"
+#include "./k_room_create.h"
+#include "./k_room_context.h"
 
 static struct k_room_registry room_registry;
 
@@ -26,8 +28,8 @@ int k__room_registry_add(struct k_room_registry_node *node, const char *room_nam
 
     if (NULL == room_name || '\0' == room_name[0]) {
 
-        /* 不为没有名字的房间建立索引，不往 map 里添加空字符串 "" 或 `NULL` 的 key */
-        node->name_map_node.key = NULL;
+        /* 不为没有名字的房间建立索引，不往 map 里添加空字符串 "" 的 key */
+        node->name_map_node.key = "";
     }
     else {
         if (0 != k_str_map_add(&room_registry.name_map, room_name, &node->name_map_node)) {

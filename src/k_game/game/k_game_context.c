@@ -1,5 +1,6 @@
-#include "./k_game.h"
-#include "../room/k_room.h"
+#include "k_game/room.h"
+#include "./k_game_context.h"
+#include "../room/k_room_context.h"
 
 struct k_game_context k_game = {
     .window     = NULL,

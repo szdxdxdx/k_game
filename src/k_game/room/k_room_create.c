@@ -3,7 +3,8 @@
 
 #include "k_game/alloc.h"
 
-#include "./k_room.h"
+#include "k_game/room.h"
+#include "./k_room_context.h"
 
 const struct k_room_config K_ROOM_CONFIG_INIT = {
     .room_name        = NULL,

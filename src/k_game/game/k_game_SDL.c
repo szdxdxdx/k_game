@@ -5,7 +5,8 @@
 
 #include "k_log.h"
 
-#include "./k_game.h"
+#include "k_game/game.h"
+#include "./k_game_context.h"
 
 /* region [SDL] */
 

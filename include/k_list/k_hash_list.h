@@ -49,7 +49,7 @@ static inline int k_hash_list_is_empty(struct k_hash_list *list) {
 
 #define k_hash_list_for_each(list_, node_) \
     node_ = (list_)->first; \
-    NULL != node_; \
+    node_ != NULL; \
     node_ = node_->next
 
 #define k_hash_list_for_each_s(list_, node_, next_) \

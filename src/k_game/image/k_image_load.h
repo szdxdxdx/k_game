@@ -1,5 +1,5 @@
-#ifndef K_GAME__IMAGE_H
-#define K_GAME__IMAGE_H
+#ifndef K_GAME__IMAGE_LOAD_H
+#define K_GAME__IMAGE_LOAD_H
 
 #include "SDL.h"
 

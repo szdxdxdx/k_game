@@ -1,11 +1,9 @@
-#ifndef K_GAME__GAME_H
-#define K_GAME__GAME_H
+#ifndef K_GAME__GAME_CONTEXT_H
+#define K_GAME__GAME_CONTEXT_H
 
 #include <stdint.h>
 
 #include "SDL.h"
-
-#include "k_game/game.h"
 
 struct k_room;
 
@@ -30,9 +28,5 @@ struct k_game_context {
 };
 
 extern struct k_game_context k_game;
-
-int k__game_SDL_init(const struct k_game_config *config);
-
-void k__game_SDL_deinit(void);
 
 #endif
