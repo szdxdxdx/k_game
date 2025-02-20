@@ -4,6 +4,7 @@
 
 #include "k_game/room.h"
 #include "../game/k_game_context.h"
+#include "../game/k_game_SDL_event.h"
 #include "./k_room_context.h"
 
 static int enter_room(struct k_room *room) {
@@ -51,27 +52,9 @@ static inline int frame_delay(struct k_room *room) {
     }
 #endif
 
-    k_game.delta_time = (float)(elapsed_time) / 1000.0f;
     k_game.delta_ms   = (int)elapsed_time;
     k_game.current_ms = current_time;
     return 0;
-}
-
-static void process_SDL_events(struct k_room *room) {
-
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-
-            case SDL_QUIT:
-                k_game.quit_game = 1;
-                room->game_loop = 0;
-                break;
-
-            default:
-                break;
-        }
-    }
 }
 
 static void room_step(struct k_room *room) {
@@ -92,6 +75,10 @@ static void room_step(struct k_room *room) {
     k__room_callback_list_exec_all(&room->step_end_callbacks);
 }
 
+static void game_loop(struct k_room *room) {
+
+}
+
 void k__room_run(struct k_room *room) {
     k_log_trace("Entering room { .name=\"%s\" }", k_room_get_name(room));
 
@@ -105,7 +92,7 @@ void k__room_run(struct k_room *room) {
         while (room->game_loop) {
 
             do {
-                process_SDL_events(room);
+                k__game_process_SDL_events();
             } while (frame_delay(room));
 
             room_step(room);

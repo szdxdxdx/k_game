@@ -154,7 +154,7 @@ static int create_room(struct k_room *room, void *unused) {
 static int init_game(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.steps_per_second = 60;
+    config.room_speed = 1;
     config.room_name = "tmp room";
     config.fn_create = create_room;
     struct k_room *tmp_room = k_create_room(&config, NULL);
@@ -164,7 +164,7 @@ static int init_game(void) {
     return 0;
 }
 
-#if 1
+#if 0
 
 int main(int argc, char **argv) {
     setbuf(stdout, NULL);

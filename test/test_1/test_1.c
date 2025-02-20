@@ -81,7 +81,7 @@ static int init_game(void) {
     }
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.steps_per_second = 60;
+    config.room_speed = 60;
     config.room_name = "tmp room";
     config.fn_create = create_room;
     struct k_room *tmp_room = k_create_room(&config, NULL);

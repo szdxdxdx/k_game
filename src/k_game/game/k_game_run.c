@@ -6,7 +6,7 @@
 #include "../room/k_room_registry.h"
 #include "../room/k_room_context.h"
 #include "k_game/game.h"
-#include "./k_game_SDL.h"
+#include "./k_game_SDL_init.h"
 
 /* region [game config] */
 

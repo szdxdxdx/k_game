@@ -15,9 +15,6 @@ struct k_game_context {
 
     unsigned int quit_game;
 
-    /** \brief 记录两帧间的时间差，单位：秒 */
-    float delta_time;
-
     /** \brief 记录两帧间的时间差，单位：毫秒 */
     int delta_ms;
 

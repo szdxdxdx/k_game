@@ -16,19 +16,15 @@ struct k_room_config {
      * 之后你可以通过 `k_get_room_by_name()` 查找房间。
      *
      * 在创建房间时，k_game 不会分配内存来复制名字。
-     * 因此，传递的字符串的内存段必须始终有效，建议使用字符串字面量。
+     * 传递的字符串的内存段必须始终有效，建议使用字符串字面量。
      */
     const char *room_name;
 
-    /**
-     * \brief 房间的宽高
-     */
+    /** \brief 房间的宽高 */
     int room_w, room_h;
 
-    /**
-     * \brief 房间的运行速度
-     */
-    int steps_per_second;
+    /** \brief 房间的运行速度，单位：步/秒（帧/秒） */
+    int room_speed;
 
     size_t data_size;
 

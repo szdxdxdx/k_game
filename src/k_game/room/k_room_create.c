@@ -5,12 +5,13 @@
 
 #include "k_game/room.h"
 #include "./k_room_context.h"
+#include "../game/k_game_context.h"
 
 const struct k_room_config K_ROOM_CONFIG_INIT = {
     .room_name        = NULL,
     .room_w           = 600,
     .room_h           = 480,
-    .steps_per_second = 60,
+    .room_speed = 60,
     .data_size        = 0,
     .fn_create        = NULL,
     .fn_destroy       = NULL,
@@ -26,7 +27,7 @@ static int check_config(const struct k_room_config *config) {
             } \
         } while(0)
 
-    K__ROOM_CONFIG_ASSERT(0 < config->steps_per_second);
+    K__ROOM_CONFIG_ASSERT(0 < config->room_speed);
 
     #undef K__ROOM_CONFIG_ASSERT
 
@@ -61,7 +62,7 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
     room->fn_create  = config->fn_create;
     room->fn_destroy = config->fn_destroy;
     room->game_loop  = 0;
-    room->step_interval_ms = (uint32_t)(1000 / config->steps_per_second);
+    room->step_interval_ms = (uint32_t)(1000 / config->room_speed);
 
     k__room_callback_list_init(&room->enter_callbacks);
     k__room_callback_list_init(&room->leave_callbacks);
@@ -72,7 +73,12 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
     k__room_init_draw_callbacks_storage(room);
 
     if (NULL != room->fn_create) {
+
+        struct k_room *tmp = k_game.current_room;
+        k_game.current_room = room;
         int result = room->fn_create(room, params);
+        k_game.current_room = tmp;
+
         if (0 != result) {
             k_log_error("Room fn_create() callback returned %d", result);
             goto fn_create_failed;
@@ -111,8 +117,12 @@ void k__destroy_room(struct k_room *room) {
 
     k_log_trace("Destroying room { .name=\"%s\" }", k_room_get_name(room));
 
-    if (NULL != room->fn_destroy)
+    if (NULL != room->fn_destroy) {
+        struct k_room *tmp = k_game.current_room;
+        k_game.current_room = room;
         room->fn_destroy(room);
+        k_game.current_room = tmp;
+    }
 
     /* ... */
 
