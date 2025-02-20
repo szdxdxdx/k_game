@@ -5,7 +5,6 @@
 
 #include "./k_room_registry.h"
 #include "./k_room_callback_alarm.h"
-#include "./k_room_callback_step.h"
 #include "./k_room_callback_draw.h"
 
 struct k_room {
@@ -28,11 +27,11 @@ struct k_room {
 
     struct k_room_callback_list leave_callbacks;
 
-    struct k_room_step_callbacks_list step_begin_callbacks;
+    struct k_room_callback_list step_begin_callbacks;
 
-    struct k_room_step_callbacks_list step_callbacks;
+    struct k_room_callback_list step_callbacks;
 
-    struct k_room_step_callbacks_list step_end_callbacks;
+    struct k_room_callback_list step_end_callbacks;
 
     struct k_room_alarm_callbacks_storage alarm_callbacks;
 

@@ -34,9 +34,6 @@ void k__room_del_all_draw_callbacks(struct k_room *room) {
 
 void k__room_exec_draw_callbacks(struct k_room *room) {
 
-    // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
-    // SDL_RenderClear(room->renderer);
-
     struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback_depth_list *depth_list;
@@ -53,8 +50,6 @@ void k__room_exec_draw_callbacks(struct k_room *room) {
             callback->fn_callback(callback->data);
         }
     }
-
-    SDL_RenderPresent(k_game.renderer);
 }
 
 static void draw_callback_del_self(struct k_room_callback *self) {

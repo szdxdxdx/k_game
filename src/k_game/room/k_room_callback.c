@@ -43,7 +43,7 @@ void k__room_callback_list_exec_all(struct k_room_callback_list *list) {
     }
 }
 
-static void callback_list_item_del_self(struct k_room_callback *self) {
+static void k__room_callback_list_item_del_self(struct k_room_callback *self) {
 
     struct k_room_callback_list_item *callback;
     callback = container_of(self, struct k_room_callback_list_item, impl);
@@ -59,7 +59,7 @@ static struct k_room_callback *k__room_callback_list_add(struct k_room_callback_
         return NULL;
 
     k_list_add_tail(&list->list, &callback->list_node);
-    callback->impl.fn_del_self = callback_list_item_del_self;
+    callback->impl.fn_del_self = k__room_callback_list_item_del_self;
     callback->data = data;
     callback->fn_callback = fn_callback;
 
@@ -80,4 +80,16 @@ struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void (*fn
 
 struct k_room_callback *k_room_add_leave_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
     return k__room_callback_list_add(&room->leave_callbacks, fn_callback, data);
+}
+
+struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
+    return k__room_callback_list_add(&room->step_begin_callbacks, fn_callback, data);
+}
+
+struct k_room_callback *k_room_add_step_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
+    return k__room_callback_list_add(&room->step_callbacks, fn_callback, data);
+}
+
+struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
+    return k__room_callback_list_add(&room->step_end_callbacks, fn_callback, data);
 }

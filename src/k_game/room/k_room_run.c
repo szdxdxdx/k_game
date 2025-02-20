@@ -76,19 +76,20 @@ static void process_SDL_events(struct k_room *room) {
 
 static void room_step(struct k_room *room) {
 
-    k__room_flush_pending_step_callbacks(&room->step_begin_callbacks);
-    k__room_flush_pending_step_callbacks(&room->step_callbacks);
-    k__room_flush_pending_step_callbacks(&room->step_end_callbacks);
+    k__room_callback_list_exec_all(&room->step_begin_callbacks);
 
-    k__room_exec_step_callbacks(&room->step_begin_callbacks);
     k__room_exec_alarm_callbacks(room);
-    k__room_exec_step_callbacks(&room->step_callbacks);
-    k__room_exec_draw_callbacks(room);
-    k__room_exec_step_callbacks(&room->step_end_callbacks);
 
-    k__room_cleanup_recycled_step_callbacks(&room->step_begin_callbacks);
-    k__room_cleanup_recycled_step_callbacks(&room->step_callbacks);
-    k__room_cleanup_recycled_step_callbacks(&room->step_end_callbacks);
+    k__room_callback_list_exec_all(&room->step_callbacks);
+
+    // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
+    // SDL_RenderClear(room->renderer);
+
+    k__room_exec_draw_callbacks(room);
+
+    SDL_RenderPresent(k_game.renderer);
+
+    k__room_callback_list_exec_all(&room->step_end_callbacks);
 }
 
 void k__room_run(struct k_room *room) {
