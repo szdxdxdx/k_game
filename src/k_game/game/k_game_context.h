@@ -3,15 +3,9 @@
 
 #include <stdint.h>
 
-#include "SDL.h"
-
 struct k_room;
 
 struct k_game_context {
-
-    SDL_Window *window;
-
-    SDL_Renderer *renderer;
 
     unsigned int quit_game;
 
@@ -24,6 +18,6 @@ struct k_game_context {
     struct k_room *current_room;
 };
 
-extern struct k_game_context k_game;
+extern struct k_game_context k__game;
 
 #endif

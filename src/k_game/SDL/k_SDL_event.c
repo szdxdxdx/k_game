@@ -2,19 +2,19 @@
 
 #include "SDL.h"
 
-#include "./k_game_context.h"
+#include "../game/k_game_context.h"
 #include "../room/k_room_context.h"
-#include "./k_game_SDL_event.h"
+#include "./k_SDL_event.h"
 
-void k__game_process_SDL_events(void) {
+void k__poll_SDL_events(void) {
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
 
             case SDL_QUIT:
-                k_game.quit_game = 1;
-                k_game.current_room->game_loop = 0;
+                k__game.quit_game = 1;
+                k__game.current_room->game_loop = 0;
                 break;
 
             case SDL_MOUSEMOTION:
@@ -45,5 +45,4 @@ void k__game_process_SDL_events(void) {
                 break;
         }
     }
-
 }

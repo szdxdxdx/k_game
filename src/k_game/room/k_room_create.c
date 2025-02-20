@@ -74,10 +74,10 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
 
     if (NULL != room->fn_create) {
 
-        struct k_room *tmp = k_game.current_room;
-        k_game.current_room = room;
+        struct k_room *tmp = k__game.current_room;
+        k__game.current_room = room;
         int result = room->fn_create(room, params);
-        k_game.current_room = tmp;
+        k__game.current_room = tmp;
 
         if (0 != result) {
             k_log_error("Room fn_create() callback returned %d", result);
@@ -118,10 +118,10 @@ void k__destroy_room(struct k_room *room) {
     k_log_trace("Destroying room { .name=\"%s\" }", k_room_get_name(room));
 
     if (NULL != room->fn_destroy) {
-        struct k_room *tmp = k_game.current_room;
-        k_game.current_room = room;
+        struct k_room *tmp = k__game.current_room;
+        k__game.current_room = room;
         room->fn_destroy(room);
-        k_game.current_room = tmp;
+        k__game.current_room = tmp;
     }
 
     /* ... */

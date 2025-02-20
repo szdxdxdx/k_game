@@ -6,7 +6,7 @@
 #include "k_log.h"
 
 #include "k_game/game.h"
-#include "./k_game_context.h"
+#include "./k_SDL_window.h"
 
 /* region [SDL] */
 
@@ -88,7 +88,7 @@ static int create_window(const struct k_game_config *config) {
     int h = config->window_h;
     Uint32 flags = SDL_WINDOW_SHOWN;
 
-    if (NULL == (k_game.window = SDL_CreateWindow(title, x, y, w, h, flags))) {
+    if (NULL == (k__window.window = SDL_CreateWindow(title, x, y, w, h, flags))) {
         k_log_error("Failed to create game window: %s", SDL_GetError());
         return -1;
     }
@@ -97,15 +97,15 @@ static int create_window(const struct k_game_config *config) {
 }
 
 static void destroy_window(void) {
-    SDL_DestroyWindow(k_game.window);
-    k_game.window = NULL;
+    SDL_DestroyWindow(k__window.window);
+    k__window.window = NULL;
 }
 
 static int create_renderer(void) {
 
     Uint32 flags = SDL_RENDERER_ACCELERATED;
 
-    if (NULL == (k_game.renderer = SDL_CreateRenderer(k_game.window, -1, flags))) {
+    if (NULL == (k__window.renderer = SDL_CreateRenderer(k__window.window, -1, flags))) {
         k_log_error("Failed to create game window renderer: %s", SDL_GetError());
         return -1;
     }
@@ -114,15 +114,15 @@ static int create_renderer(void) {
 }
 
 static void destroy_renderer(void) {
-    SDL_DestroyRenderer(k_game.renderer);
-    k_game.renderer = NULL;
+    SDL_DestroyRenderer(k__window.renderer);
+    k__window.renderer = NULL;
 }
 
 /* endregion */
 
 /* region [init] */
 
-static int init_or_deinit_SDL(const struct k_game_config *config, int is_init) {
+static int init_or_close_SDL(const struct k_game_config *config, int is_init) {
 
     if ( ! is_init)
         goto deinit;
@@ -149,9 +149,9 @@ init_SDL_failed:
 
 /* endregion */
 
-int k__game_SDL_init(const struct k_game_config *config) {
+int k__init_SDL(const struct k_game_config *config) {
 
-    if (0 != init_or_deinit_SDL(config, 1)) {
+    if (0 != init_or_close_SDL(config, 1)) {
         k_log_error("Failed to initialize SDL");
         return -1;
     }
@@ -161,7 +161,7 @@ int k__game_SDL_init(const struct k_game_config *config) {
     }
 }
 
-void k__game_SDL_deinit(void) {
-    init_or_deinit_SDL(NULL, 0);
+void k__close_SDL(void) {
+    init_or_close_SDL(NULL, 0);
     k_log_trace("SDL closed");
 }

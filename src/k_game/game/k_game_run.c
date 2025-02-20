@@ -2,11 +2,11 @@
 
 #include "k_log.h"
 
+#include "../SDL/k_SDL_init.h"
 #include "../room/k_room_goto.h"
 #include "../room/k_room_registry.h"
 #include "../room/k_room_context.h"
 #include "k_game/game.h"
-#include "./k_game_SDL_init.h"
 
 /* region [game config] */
 
@@ -50,7 +50,7 @@ static int init_or_deinit_game(const struct k_game_config *config, int is_init) 
     if (0 != check_game_config(config))
         goto invalid_config;
 
-    if (0 != k__game_SDL_init(config))
+    if (0 != k__init_SDL(config))
         goto SDL_init_failed;
 
     k__room_registry_init();
@@ -74,7 +74,7 @@ deinit:
 fn_init_failed:
     k__room_stack_deinit();
     k__room_registry_deinit();
-    k__game_SDL_deinit();
+    k__close_SDL();
 
 SDL_init_failed:
 invalid_config:

@@ -1,10 +1,10 @@
-#include "SDL.h"
 #include "SDL_image.h"
 
 #include "k_log.h"
 
 #include "k_game/image.h"
 #include "../game/k_game_context.h"
+#include "../SDL/k_SDL_window.h"
 #include "./k_image_load.h"
 
 int k_draw_image(struct k_image *image, const struct k_int_rect *rect, int x, int y) {
@@ -33,7 +33,7 @@ int k_draw_image(struct k_image *image, const struct k_int_rect *rect, int x, in
     dst.w = src.w;
     dst.h = src.h;
 
-    if (0 != SDL_RenderCopy(k_game.renderer, image->texture, &src, &dst)) {
+    if (0 != SDL_RenderCopy(k__window.renderer, image->texture, &src, &dst)) {
         k_log_error("SDL_RenderCopy() failed: %s", IMG_GetError());
         return -1;
     }
