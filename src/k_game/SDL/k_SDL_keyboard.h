@@ -7,6 +7,8 @@
 
 void k__refresh_keyboard(void);
 
-enum k_keyboard_key k__SDL_key_map(SDL_Keycode SDL_key_code);
+void k__set_key_down(SDL_Keycode SDL_key_code);
+
+void k__set_key_up(SDL_Keycode SDL_key_code);
 
 #endif

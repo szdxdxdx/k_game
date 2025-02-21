@@ -1,4 +1,3 @@
-#include "SDL.h"
 #include "SDL_image.h"
 
 #include "k_log.h"
@@ -6,6 +5,7 @@
 #include "k_game/alloc.h"
 #include "k_game/image.h"
 #include "../game/k_game_context.h"
+#include "../SDL/k_SDL_window.h"
 #include "./k_image_load.h"
 
 struct k_image *k_load_image(const struct k_image_config *config) {
@@ -14,7 +14,7 @@ struct k_image *k_load_image(const struct k_image_config *config) {
     if (NULL == img)
         goto malloc_failed;
 
-    img->texture = IMG_LoadTexture(k__game.renderer, config->filepath);
+    img->texture = IMG_LoadTexture(k__window.renderer, config->filepath);
     if (NULL == img->texture) {
         k_log_error("IMG_LoadTexture() failed: %s", IMG_GetError());
         goto load_img_failed;

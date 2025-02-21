@@ -6,6 +6,7 @@
 #include "../SDL/k_SDL_window.h"
 #include "../game/k_game_context.h"
 #include "./k_room_context.h"
+#include "../SDL/k_SDL_keyboard.h"
 
 static int enter_room(struct k_room *room) {
 
@@ -50,33 +51,29 @@ static inline int frame_delay(struct k_room *room) {
     return 0;
 }
 
-static void room_step(struct k_room *room) {
-
-    k__room_callback_list_exec_all(&room->step_begin_callbacks);
-
-    k__room_exec_alarm_callbacks(room);
-
-    k__room_callback_list_exec_all(&room->step_callbacks);
-
-    // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
-    // SDL_RenderClear(room->renderer);
-
-    k__room_exec_draw_callbacks(room);
-
-    SDL_RenderPresent(k__window.renderer);
-
-    k__room_callback_list_exec_all(&room->step_end_callbacks);
-}
-
 static void game_loop(struct k_room *room) {
     k_log_trace("Game loop started...");
 
     while (room->game_loop) {
-        do {
-            k__poll_SDL_events();
-        } while (frame_delay(room));
 
-        room_step(room);
+        k__refresh_keyboard();
+
+        do k__poll_SDL_events(); while (frame_delay(room));
+
+        k__room_callback_list_exec_all(&room->step_begin_callbacks);
+
+        k__room_exec_alarm_callbacks(room);
+
+        k__room_callback_list_exec_all(&room->step_callbacks);
+
+        // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
+        // SDL_RenderClear(room->renderer);
+
+        k__room_exec_draw_callbacks(room);
+
+        SDL_RenderPresent(k__window.renderer);
+
+        k__room_callback_list_exec_all(&room->step_end_callbacks);
     }
 
     k_log_trace("Game loop ended");
