@@ -110,7 +110,6 @@ void k__refresh_keyboard(void) {
 
     size_t i = 0;
     for (; i < K_KEY_ENUM_END; i++) {
-        // key_state[i] = (key_state[i] & 0b11) << 2 | key_state[i] & 0b10000;
         switch (key_state[i] & 0b11) {
             case 0b00: key_state[i] &= 0b100; break;
             case 0b01: key_state[i]  = 0b000; break;
@@ -122,12 +121,12 @@ void k__refresh_keyboard(void) {
 
 void k__set_key_down(SDL_Keycode SDL_key_code) {
     enum k_keyboard_key k_key = SDL_key_to_k_key(SDL_key_code);
-    key_state[k_key] |= 0b10;
+    key_state[k_key] |= 0b010;
 }
 
 void k__set_key_up(SDL_Keycode SDL_key_code) {
     enum k_keyboard_key k_key = SDL_key_to_k_key(SDL_key_code);
-    key_state[k_key] |= 0b01;
+    key_state[k_key] |= 0b001;
 }
 
 int k_is_key_pressed(enum k_keyboard_key key) {

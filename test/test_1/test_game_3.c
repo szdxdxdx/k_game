@@ -4,10 +4,10 @@
 
 static void step(void *unused) {
 
-    int pressed = k_is_key_pressed(K_KEY_SPACE);
+    int pressed  = k_is_key_pressed(K_KEY_SPACE);
     int released = k_is_key_released(K_KEY_SPACE);
-    int held = k_is_key_held(K_KEY_SPACE);
-    int idle = k_is_key_idle(K_KEY_SPACE);
+    int held     = k_is_key_held(K_KEY_SPACE);
+    int idle     = k_is_key_idle(K_KEY_SPACE);
 
     printf("%2s\t%2s\t%2s\t%2s\n",
         pressed  ? "按下" : "",
@@ -20,7 +20,7 @@ static void step(void *unused) {
 static int init_game(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_speed = 30;
+    config.room_speed = 60;
     config.room_name = "tmp room";
     struct k_room *tmp_room = k_create_room(&config, NULL);
     k_room_add_step_callback(tmp_room, step, NULL);
