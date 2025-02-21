@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "./k_SDL_keyboard.h"
 
 static unsigned int key_state[K_KEY_ENUM_END + 1];
@@ -111,56 +110,38 @@ void k__refresh_keyboard(void) {
 
     size_t i = 0;
     for (; i < K_KEY_ENUM_END; i++) {
-        key_state[i] = (key_state[i] & 0b11) << 2 | key_state[i] & 0b10000;
+        // key_state[i] = (key_state[i] & 0b11) << 2 | key_state[i] & 0b10000;
+        switch (key_state[i] & 0b11) {
+            case 0b00: key_state[i] &= 0b100; break;
+            case 0b01: key_state[i]  = 0b000; break;
+            case 0b10: key_state[i]  = 0b100; break;
+            case 0b11: key_state[i]  = 0b000; break;
+        }
     }
 }
 
 void k__set_key_down(SDL_Keycode SDL_key_code) {
     enum k_keyboard_key k_key = SDL_key_to_k_key(SDL_key_code);
-
-    key_state[k_key] |= 0b10010;
+    key_state[k_key] |= 0b10;
 }
 
 void k__set_key_up(SDL_Keycode SDL_key_code) {
     enum k_keyboard_key k_key = SDL_key_to_k_key(SDL_key_code);
-
     key_state[k_key] |= 0b01;
-    key_state[k_key] &= 0b01111;
 }
 
 int k_is_key_pressed(enum k_keyboard_key key) {
-    unsigned int n = key_state[key] & 0b1111;
-
-    return n == 0b0010
-        || n == 0b0011
-        || n == 0b0110
-        || n == 0b0111
-        || n == 0b1110
-        || n == 0b1111;
+    return 0b010 == (key_state[key] & 0b110);
 }
 
 int k_is_key_released(enum k_keyboard_key key) {
-    unsigned int n = key_state[key] & 0b1111;
-
-    return n == 0b0001
-        || n == 0b0011
-        || n == 0b0111
-        || n == 0b1001
-        || n == 0b1011
-        || n == 0b1111;
+    return 0b001 == (key_state[key] & 0b001);
 }
 
 int k_is_key_held(enum k_keyboard_key key) {
-    unsigned int n = key_state[key] & 0b1111;
-
-    return n == 0b1000
-        || n == 0b1010;
+    return 0b100 == (key_state[key] & 0b101);
 }
 
 int k_is_key_idle(enum k_keyboard_key key) {
-    unsigned int n = key_state[key] & 0b1111;
-
-    return n == 0b0000
-        || n == 0b0100
-        || n == 0b1100;
+    return 0b000 == key_state[key];
 }
