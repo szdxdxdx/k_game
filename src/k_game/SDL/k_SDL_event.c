@@ -1,11 +1,7 @@
-#include <stdio.h>
-
-#include "SDL.h"
-
 #include "../game/k_game_context.h"
 #include "../room/k_room_context.h"
 #include "./k_SDL_event.h"
-#include "k_SDL_keyboard.h"
+#include "./k_SDL_keyboard.h"
 
 void k__poll_SDL_events(void) {
 
@@ -34,14 +30,12 @@ void k__poll_SDL_events(void) {
                 //printf("mouse wheel x=%d, y=%d\n", event.wheel.x, event.wheel.y);
                 break;
 
-            case SDL_KEYDOWN:
-                //printf("key down %s\n", SDL_GetKeyName(event.key.keysym.sym));
-                k__set_key_down(event.key.keysym.sym);
-                break;
 
-            case SDL_KEYUP:
-                k__set_key_up(event.key.keysym.sym);
-                break;
+            /* TODO: 键位冲突
+             * 同时按下多个按键时，SDL 可能无法识别所有按键
+             */
+            case SDL_KEYDOWN: k__handle_SDL_key_down_event(&event.key); break;
+            case SDL_KEYUP:   k__handle_SDL_key_up_event(&event.key);   break;
 
             default:
                 break;

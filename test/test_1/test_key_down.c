@@ -4,21 +4,18 @@
 
 static void step_1(void *unused) {
 
-    printf("%2s\t%2s\t%2s\t%2s\t%2s\t%2s\n",
+    printf("空格：\t%2s\t%2s\t%2s\t%2s\t%2s\t%2s\n",
         k_is_key_pressed (K_KEY_SPACE) ? "按下" : "",
-        k_is_key_released(K_KEY_SPACE) ? "保持" : "",
-        k_is_key_held    (K_KEY_SPACE) ? "松开" : "",
+        k_is_key_held    (K_KEY_SPACE) ? "保持" : "",
+        k_is_key_released(K_KEY_SPACE) ? "松开" : "",
         k_is_key_idle    (K_KEY_SPACE) ? "空闲" : "",
         k_is_key_down    (K_KEY_SPACE) ? "DOWN" : "",
         k_is_key_up      (K_KEY_SPACE) ? "UP"   : ""
     );
+}
 
-    if (k_is_key_held(K_KEY_LEFT_CTRL)) {
-        if (k_is_key_pressed('A')) {
+void step_2(void *unused) {
 
-            printf("ctrl + A\n");
-        }
-    }
 }
 
 static int init_game(void) {
@@ -42,7 +39,8 @@ int main(int argc, char **argv) {
     setbuf(stderr, NULL);
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
-
+    config.window_w = 260;
+    config.window_h = 180;
     config.fn_init = init_game;
 
     k_run_game(&config);

@@ -3,33 +3,45 @@
 
 enum k_keyboard_key;
 
+/* 按下按键 */
 int k_is_key_pressed(enum k_keyboard_key key);
 
+/* 松开按键 */
 int k_is_key_released(enum k_keyboard_key key);
 
+/* 按住按键 */
 int k_is_key_held(enum k_keyboard_key key);
 
+/* 按键空闲 */
 int k_is_key_idle(enum k_keyboard_key key);
 
+/* 按下或按住 */
 int k_is_key_down(enum k_keyboard_key key);
 
+/* 没有按下，也没有按住 */
 int k_is_key_up(enum k_keyboard_key key);
 
 /**
- * \brief
+ * \brief 键盘按键的键码
  *
- * `K_KEY__RESERVED_XXX` 表示该键码仅用作占位，不对应任何按键。
+ * 字母键、符号键的键码与该字符的 ASCII 码相同。
+ *
+ * 需要修饰符来修改按键的行为的字符，对应的键码不可用。
+ * 例如，k_game 不会直接识别出 `#`，而是识别出 `shift` 和 `3`。
+ *
+ * `K_KEY__UNUSED_XXX` 一类的键码仅用作占位，不对应任何按键。
+ * `K_KEY_ENUM_END` 仅表示枚举值的个数，不对应任何按键。
  */
 enum k_keyboard_key {
 
-    K_KEY__RESERVED_0   ,
-    K_KEY__RESERVED_1   ,
-    K_KEY__RESERVED_2   ,
-    K_KEY__RESERVED_3   ,
-    K_KEY__RESERVED_4   ,
-    K_KEY__RESERVED_5   ,
-    K_KEY__RESERVED_6   ,
-    K_KEY__RESERVED_7   ,
+    K_KEY__UNUSED_0     ,
+    K_KEY__UNUSED_1     ,
+    K_KEY__UNUSED_2     ,
+    K_KEY__UNUSED_3     ,
+    K_KEY__UNUSED_4     ,
+    K_KEY__UNUSED_5     ,
+    K_KEY__UNUSED_6     ,
+    K_KEY__UNUSED_7     ,
 
     K_KEY_BACKSPACE     = '\b',
     K_KEY_TAB           = '\t',
@@ -39,9 +51,9 @@ enum k_keyboard_key {
     K_KEY_DELETE        ,
     K_KEY_PRINT_SCREEN  ,
 
-    K_KEY__RESERVED_14  ,
-    K_KEY__RESERVED_15  ,
-    K_KEY__RESERVED_16  ,
+    K_KEY__UNUSED_14    ,
+    K_KEY__UNUSED_15    ,
+    K_KEY__UNUSED_16    ,
 
     K_KEY_LEFT_CTRL     ,
     K_KEY_LEFT_SHIFT    ,
@@ -50,10 +62,10 @@ enum k_keyboard_key {
     K_KEY_RIGHT_SHIFT   ,
     K_KEY_RIGHT_ALT     ,
 
-    K_KEY__RESERVED_23  ,
-    K_KEY__RESERVED_24  ,
-    K_KEY__RESERVED_25  ,
-    K_KEY__RESERVED_26  ,
+    K_KEY__UNUSED_23    ,
+    K_KEY__UNUSED_24    ,
+    K_KEY__UNUSED_25    ,
+    K_KEY__UNUSED_26    ,
 
     K_KEY_ESCAPE        = '\x1B',
 
@@ -159,7 +171,7 @@ enum k_keyboard_key {
     K_KEY_F11           ,
     K_KEY_F12           ,
 
-    K_KEY_ENUM_END, /* <- 仅表示 `k_keyboard_key` 枚举的个数，不表示任何一个按键 */
+    K_KEY_ENUM_END,
 };
 
 #endif

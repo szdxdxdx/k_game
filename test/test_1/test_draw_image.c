@@ -2,9 +2,9 @@
 
 #include "k_game.h"
 
-struct k_image *img;
+static struct k_image *img;
 
-struct k_room_callback *callback_print_num;
+static struct k_room_callback *callback_print_num;
 
 static void enter(void *unused) {
     printf("enter\n");
