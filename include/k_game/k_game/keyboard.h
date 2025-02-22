@@ -11,37 +11,53 @@ int k_is_key_held(enum k_keyboard_key key);
 
 int k_is_key_idle(enum k_keyboard_key key);
 
+int k_is_key_down(enum k_keyboard_key key);
+
+int k_is_key_up(enum k_keyboard_key key);
+
 enum k_keyboard_key {
 
-    K_KEY_BACKSPACE     = '\b', // ascii
+    K_KEY__RESERVED_0   ,
+    K_KEY__RESERVED_1   ,
+    K_KEY__RESERVED_2   ,
+    K_KEY__RESERVED_3   ,
+    K_KEY__RESERVED_4   ,
+    K_KEY__RESERVED_5   ,
+    K_KEY__RESERVED_6   ,
+    K_KEY__RESERVED_7   ,
+
+    K_KEY_BACKSPACE     = '\b',
     K_KEY_TAB           = '\t',
     K_KEY_RETURN        = '\n',
 
-    K_KEY_LEFT_CTRL     = 11, // not ascii
-    K_KEY_LEFT_SHIFT    = 12,
-    K_KEY_LEFT_ALT      = 13,
-    K_KEY_RIGHT_CTRL    = 14,
-    K_KEY_RIGHT_SHIFT   = 15,
-    K_KEY_RIGHT_ALT     = 16,
-    K_KEY_KP_0          = 17,
-    K_KEY_KP_1          = 18,
-    K_KEY_KP_2          = 19,
-    K_KEY_KP_3          = 20,
-    K_KEY_KP_4          = 21,
-    K_KEY_KP_5          = 22,
-    K_KEY_KP_6          = 23,
-    K_KEY_KP_7          = 24,
-    K_KEY_KP_8          = 25,
-    K_KEY_KP_9          = 26,
+    K_KEY_CAPSLOCK      ,
+    K_KEY_DELETE        ,
+    K_KEY_PRINT_SCREEN  ,
 
-    K_KEY_ESCAPE        = 27, // ascii
+    K_KEY__RESERVED_14  ,
+    K_KEY__RESERVED_15  ,
+    K_KEY__RESERVED_16  ,
 
-    K_KEY_RIGHT         = 28, // not ascii
-    K_KEY_LEFT          = 29,
-    K_KEY_DOWN          = 30,
-    K_KEY_UP            = 31,
+    K_KEY_LEFT_CTRL     ,
+    K_KEY_LEFT_SHIFT    ,
+    K_KEY_LEFT_ALT      ,
+    K_KEY_RIGHT_CTRL    ,
+    K_KEY_RIGHT_SHIFT   ,
+    K_KEY_RIGHT_ALT     ,
 
-    K_KEY_SPACE         = ' ', // ascii
+    K_KEY__RESERVED_23  ,
+    K_KEY__RESERVED_24  ,
+    K_KEY__RESERVED_25  ,
+    K_KEY__RESERVED_26  ,
+
+    K_KEY_ESCAPE        = '\x1B',
+
+    K_KEY_RIGHT         ,
+    K_KEY_LEFT          ,
+    K_KEY_DOWN          ,
+    K_KEY_UP            ,
+
+    K_KEY_SPACE         = ' ',
     K_KEY_EXCLAIM       = '!',
     K_KEY_QUOTE_DBL     = '"',
     K_KEY_HASH          = '#',
@@ -107,7 +123,38 @@ enum k_keyboard_key {
     K_KEY_UNDERSCORE    = '_',
     K_KEY_BACK_QUOTE    = '`',
 
-    K_KEY_ENUM_END,
+    K_KEY_NUM_LOCK_CLEAR,
+    K_KEY_KP_DIVIDE     ,
+    K_KEY_KP_MULTIPLY   ,
+    K_KEY_KP_MINUS      ,
+    K_KEY_KP_PLUS       ,
+    K_KEY_KP_ENTER      ,
+    K_KEY_KP_0          ,
+    K_KEY_KP_1          ,
+    K_KEY_KP_2          ,
+    K_KEY_KP_3          ,
+    K_KEY_KP_4          ,
+    K_KEY_KP_5          ,
+    K_KEY_KP_6          ,
+    K_KEY_KP_7          ,
+    K_KEY_KP_8          ,
+    K_KEY_KP_9          ,
+    K_KEY_KP_PERIOD     ,
+
+    K_KEY_F1            ,
+    K_KEY_F2            ,
+    K_KEY_F3            ,
+    K_KEY_F4            ,
+    K_KEY_F5            ,
+    K_KEY_F6            ,
+    K_KEY_F7            ,
+    K_KEY_F8            ,
+    K_KEY_F9            ,
+    K_KEY_F10           ,
+    K_KEY_F11           ,
+    K_KEY_F12           ,
+
+    K_KEY_ENUM_END, /* <- 仅表示 `k_keyboard_key` 枚举的个数，不表示任何一个按键 */
 };
 
 #endif

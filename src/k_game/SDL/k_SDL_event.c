@@ -35,6 +35,7 @@ void k__poll_SDL_events(void) {
                 break;
 
             case SDL_KEYDOWN:
+                //printf("key down %s\n", SDL_GetKeyName(event.key.keysym.sym));
                 k__set_key_down(event.key.keysym.sym);
                 break;
 
