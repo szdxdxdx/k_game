@@ -4,28 +4,19 @@
 
 static void step_1(void *unused) {
 
-    int pressed  = k_is_key_pressed(K_KEY_SPACE);
-    int released = k_is_key_released(K_KEY_SPACE);
-    int held     = k_is_key_held(K_KEY_SPACE);
-    int idle     = k_is_key_idle(K_KEY_SPACE);
-    int down     = k_is_key_down(K_KEY_SPACE);
-    int up       = k_is_key_up(K_KEY_SPACE);
-
     printf("%2s\t%2s\t%2s\t%2s\t%2s\t%2s\n",
-        pressed  ? "按下" : "",
-        held     ? "保持" : "",
-        released ? "松开" : "",
-        idle     ? "空闲" : "",
-        down     ? "DOWN" : "",
-        up       ? "UP"   : ""
+        k_is_key_pressed (K_KEY_SPACE) ? "按下" : "",
+        k_is_key_released(K_KEY_SPACE) ? "保持" : "",
+        k_is_key_held    (K_KEY_SPACE) ? "松开" : "",
+        k_is_key_idle    (K_KEY_SPACE) ? "空闲" : "",
+        k_is_key_down    (K_KEY_SPACE) ? "DOWN" : "",
+        k_is_key_up      (K_KEY_SPACE) ? "UP"   : ""
     );
-}
 
-static void step_2(void *unused) {
+    if (k_is_key_held(K_KEY_LEFT_CTRL)) {
+        if (k_is_key_pressed('A')) {
 
-    if (k_is_key_held(K_KEY_LEFT_SHIFT)) {
-        if (k_is_key_pressed(K_KEY_A)) {
-            printf("shift + A\n");
+            printf("ctrl + A\n");
         }
     }
 }
@@ -33,11 +24,10 @@ static void step_2(void *unused) {
 static int init_game(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_speed = 4;
+    config.room_speed = 12;
     config.room_name = "tmp room";
     struct k_room *tmp_room = k_create_room(&config, NULL);
-    // k_room_add_step_callback(tmp_room, step_1, NULL);
-    // k_room_add_step_callback(tmp_room, step_2, NULL);
+    k_room_add_step_callback(tmp_room, step_1, NULL);
 
     k_goto_room(tmp_room);
 

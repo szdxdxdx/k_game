@@ -15,6 +15,11 @@ int k_is_key_down(enum k_keyboard_key key);
 
 int k_is_key_up(enum k_keyboard_key key);
 
+/**
+ * \brief
+ *
+ * `K_KEY__RESERVED_XXX` 表示该键码仅用作占位，不对应任何按键。
+ */
 enum k_keyboard_key {
 
     K_KEY__RESERVED_0   ,

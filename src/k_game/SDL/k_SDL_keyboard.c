@@ -197,9 +197,11 @@ int k_is_key_idle(enum k_keyboard_key key) {
 }
 
 int k_is_key_down(enum k_keyboard_key key) {
-    return 0;
+    return 0b010 == (key_state[key] & 0b110)
+        || 0b100 == (key_state[key] & 0b101);
 }
 
 int k_is_key_up(enum k_keyboard_key key) {
-    return 0; /* TODO */
+    return 0b010 != (key_state[key] & 0b110)
+        && 0b100 != (key_state[key] & 0b101);
 }
