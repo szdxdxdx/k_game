@@ -108,6 +108,21 @@ static int step_configure_room(void *data) {
     return 0;
 }
 
+static int step_init_object_pool(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+
+    k__init_object_pool(&room->object_pool);
+    return 0;
+}
+
+static void step_deinit_object_pool(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+
+    k__deinit_object_pool(&room->object_pool);
+}
+
 static int step_init_callbacks_storage(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
@@ -175,6 +190,7 @@ static const struct k_seq_step room_creation_steps[] = {
     { step_registry_add,           step_registry_del              },
     { step_malloc_room_data,       step_free_room_data            },
     { step_configure_room,         NULL                           },
+    { step_init_object_pool,       step_deinit_object_pool        },
     { step_init_callbacks_storage, step_cleanup_callbacks_storage },
     { step_call_fn_create,         step_call_fn_destroy           },
 };
