@@ -5,14 +5,7 @@
 
 struct k_image;
 
-struct k_image_config {
-
-    const char *image_name;
-
-    const char *filepath;
-};
-
-struct k_image *k_load_image(const struct k_image_config *config);
+struct k_image *k_load_image(const char *image_name, const char *filepath);
 
 int k_image_get_width(struct k_image *image);
 

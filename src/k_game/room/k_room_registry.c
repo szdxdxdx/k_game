@@ -9,7 +9,7 @@ static struct k_room_registry room_registry;
 void k__room_registry_init(void) {
     k_list_init(&room_registry.rooms_list);
 
-    static struct k_hash_list buckets[8];
+    static struct k_hash_list buckets[8]; /* <- 使用 8 个哈希桶应该足够，且不需动态扩容 */
     k_str_map_init(&room_registry.name_map, buckets, 8);
 }
 
@@ -27,8 +27,6 @@ void k__room_registry_deinit(void) {
 int k__room_registry_add(struct k_room_registry_node *node, const char *room_name) {
 
     if (NULL == room_name || '\0' == room_name[0]) {
-
-        /* 不为没有名字的房间建立索引，不往 map 里添加空字符串 "" 的 key */
         node->name_map_node.key = "";
     }
     else {
@@ -44,7 +42,7 @@ int k__room_registry_add(struct k_room_registry_node *node, const char *room_nam
 
 void k__room_registry_del(struct k_room_registry_node *node) {
 
-    if (NULL != node->name_map_node.key)
+    if ('\0' != node->name_map_node.key[0])
         k_str_map_del(&room_registry.name_map, &node->name_map_node);
 
     k_list_del(&node->iter_node);

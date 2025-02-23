@@ -150,65 +150,60 @@ static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
     }
 }
 
-/* 记录键盘按键状态
+/* 记录键盘按键的状态
+ *
+ * 每个按键用 3 个 bit 记录状态：
+ * - 0b001 表示在上一帧到这一帧之间，该按键有被按下
+ * - 0b010 表示在上一帧到这一帧之间，该按键有抬起
+ * - 0b100 表示在上一帧结束时，该按键被按下或按住
  */
-struct k_key_state {
-
-    /* 用 3 个 bit 记录状态：
-     * - 0b001 表示在上一帧到这一帧之间，该按键有被按下
-     * - 0b010 表示在上一帧到这一帧之间，该按键有抬起
-     * - 0b100 表示在上一帧结束时，该按键被按下或按住
-     */
-    uint8_t state;
-};
-
-static struct k_key_state key_state[K_KEY_ENUM_END + 1];
+static uint8_t key_state[K_KEY_ENUM_END + 1];
 
 void k__refresh_keyboard(void) {
 
     size_t i = 0;
     for (; i < K_KEY_ENUM_END; i++) {
-        switch (key_state[i].state & 0b11) {
-            case 0b00: key_state[i].state &= 0b100; break;
-            case 0b01: key_state[i].state  = 0b000; break;
-            case 0b10: key_state[i].state  = 0b100; break;
-            case 0b11: key_state[i].state  = 0b000; break;
+        switch (key_state[i] & 0b11) {
+            case 0b00: key_state[i] &= 0b100; break;
+            case 0b01: key_state[i]  = 0b000; break;
+            case 0b10: key_state[i]  = 0b100; break;
+            case 0b11: key_state[i]  = 0b000; break;
         }
     }
 }
 
 void k__handle_SDL_key_down_event(SDL_KeyboardEvent *event) {
     enum k_keyboard_key k_key = SDL_key_to_k_key(event->keysym.sym);
-    key_state[k_key].state |= 0b010;
+    key_state[k_key] |= 0b010;
 }
 
 void k__handle_SDL_key_up_event(SDL_KeyboardEvent *event) {
     enum k_keyboard_key k_key = SDL_key_to_k_key(event->keysym.sym);
-    key_state[k_key].state |= 0b001;
+    key_state[k_key] |= 0b001;
 }
 
 int k_is_key_pressed(enum k_keyboard_key key) {
-    return 0b010 == (key_state[key].state & 0b110);
+    return 0b010 == (key_state[key] & 0b110);
 }
 
 int k_is_key_released(enum k_keyboard_key key) {
-    return 0b001 == (key_state[key].state & 0b001);
+    return 0b001 == (key_state[key] & 0b001);
 }
 
 int k_is_key_held(enum k_keyboard_key key) {
-    return 0b100 == (key_state[key].state & 0b101);
+    return 0b100 == (key_state[key] & 0b101);
 }
 
 int k_is_key_idle(enum k_keyboard_key key) {
-    return 0b000 == key_state[key].state;
+    return 0b000 == key_state[key];
 }
 
 int k_is_key_down(enum k_keyboard_key key) {
-    return 0b010 == (key_state[key].state & 0b110)
-        || 0b100 == (key_state[key].state & 0b101);
+    return 0b010 == (key_state[key] & 0b110)
+        || 0b100 == (key_state[key] & 0b101);
 }
 
 int k_is_key_up(enum k_keyboard_key key) {
-    return 0b010 != (key_state[key].state & 0b110)
-        && 0b100 != (key_state[key].state & 0b101);
+    return 0b010 != (key_state[key] & 0b110)
+        && 0b100 != (key_state[key] & 0b101);
 }

@@ -18,10 +18,7 @@ static int create_room(struct k_room *room, void *unused) {
 
 static int init_game(void) {
 
-    {
-        struct k_image_config config = { "", "assets/tmp.png", };
-        img = k_load_image(&config);
-    }
+    img = k_load_image("", "assets/tmp.png");
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.room_speed = 30;

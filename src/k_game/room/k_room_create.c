@@ -8,13 +8,13 @@
 #include "../game/k_game_context.h"
 
 const struct k_room_config K_ROOM_CONFIG_INIT = {
-    .room_name        = NULL,
-    .room_w           = 600,
-    .room_h           = 480,
+    .room_name  = NULL,
+    .room_w     = 600,
+    .room_h     = 480,
     .room_speed = 60,
-    .data_size        = 0,
-    .fn_create        = NULL,
-    .fn_destroy       = NULL,
+    .data_size  = 0,
+    .fn_create  = NULL,
+    .fn_destroy = NULL,
 };
 
 static int check_config(const struct k_room_config *config) {

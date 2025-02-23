@@ -8,13 +8,13 @@
 #include "../SDL/k_SDL_window.h"
 #include "./k_image_load.h"
 
-struct k_image *k_load_image(const struct k_image_config *config) {
+struct k_image *k_load_image(const char *image_name, const char *filepath) {
 
     struct k_image *img = k_malloc(sizeof(struct k_image));
     if (NULL == img)
         goto malloc_failed;
 
-    img->texture = IMG_LoadTexture(k__window.renderer, config->filepath);
+    img->texture = IMG_LoadTexture(k__window.renderer, filepath);
     if (NULL == img->texture) {
         k_log_error("IMG_LoadTexture() failed: %s", IMG_GetError());
         goto load_img_failed;
