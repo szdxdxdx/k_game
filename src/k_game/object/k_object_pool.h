@@ -13,8 +13,12 @@ struct k_object_pool_node {
     struct k_list_node iter_node;
 };
 
-void k__init_object_pool(struct k_object_pool *object_pool);
+void k__init_object_pool(struct k_object_pool *pool);
 
-void k__deinit_object_pool(struct k_object_pool *object_pool);
+void k__deinit_object_pool(struct k_object_pool *pool);
+
+void k__object_pool_add(struct k_object_pool *pool, struct k_object_pool_node *node);
+
+void k__object_pool_del(struct k_object_pool_node *node);
 
 #endif

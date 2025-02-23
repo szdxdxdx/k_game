@@ -9,22 +9,14 @@ struct k_object;
 
 struct k_object_config {
 
-    struct k_room *room;
-
     size_t data_size;
-
-    void (*fn_create)(struct k_object *object);
-
-    void (*fn_destroy)(struct k_object *object);
-
-    void (*fn_step)(struct k_object *object);
-
-    void (*fn_draw)(struct k_object *object);
 };
 
-struct k_object *k_create_object(const struct k_object_config *config);
+struct k_object *k_create_object_v2(const struct k_object_config *config);
 
-void k_destroy_object(struct k_object_config *object);
+struct k_object *k_create_object(size_t data_size);
+
+void k_destroy_object(struct k_object *object);
 
 void *k_object_get_data(struct k_object *object);
 
