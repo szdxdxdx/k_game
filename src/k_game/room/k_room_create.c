@@ -1,8 +1,8 @@
 #include "k_log.h"
 #include "k_list.h"
+#include "k_seq_step.h"
 
 #include "k_game/alloc.h"
-
 #include "k_game/room.h"
 #include "./k_room_context.h"
 #include "../game/k_game_context.h"
@@ -17,52 +17,100 @@ const struct k_room_config K_ROOM_CONFIG_INIT = {
     .fn_destroy = NULL,
 };
 
-static int check_config(const struct k_room_config *config) {
+/* region [steps] */
 
-    #define K__ROOM_CONFIG_ASSERT(cond) \
-        do { \
-            if ( ! (cond)) { \
-                k_log_error("Invalid room config, assert( " #cond " )"); \
-                return -1; \
-            } \
-        } while(0)
+struct k_room_creation_context {
+    const struct k_room_config *config;
+    void *params;
+    struct k_room *room;
+};
 
-    K__ROOM_CONFIG_ASSERT(0 < config->room_speed);
+static int step_check_config(void *data) {
+    struct k_room_creation_context *ctx = data;
+    const struct k_room_config *config = ctx->config;
 
-    #undef K__ROOM_CONFIG_ASSERT
+    if (NULL == config) {
+        k_log_error("Invalid room config, assert( NULL != config )");
+        return -1;
+    }
+
+    if (config->room_speed <= 0) {
+        k_log_error("Invalid room config, assert( 0 < room_speed )");
+        return -1;
+    }
 
     return 0;
 }
 
-struct k_room *k_create_room(const struct k_room_config *config, void *params) {
+static int step_malloc_room(void *data) {
+    struct k_room_creation_context *ctx = data;
 
-    if (NULL == config)
-        goto null_config;
+    if (NULL == (ctx->room = k_malloc(sizeof(struct k_room))))
+        return -1;
+    else
+        return 0;
+}
 
-    k_log_trace("Creating room { .name=\"%s\" }...", config->room_name);
+static void step_free_room(void *data) {
+    struct k_room_creation_context *ctx = data;
 
-    if (0 != (check_config(config)))
-        goto invalid_config;
+    k_free(ctx->room);
+}
 
-    struct k_room *room = k_malloc(sizeof(struct k_room));
-    if (NULL == room)
-        goto malloc_room_failed;
+static int step_registry_add(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+    const struct k_room_config *config = ctx->config;
 
-    if (0 != k__room_registry_add(&room->room_node, config->room_name))
-        goto registry_add_failed;
+    return k__room_registry_add(&room->room_node, config->room_name);
+}
+
+static void step_registry_del(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+
+    k__room_registry_del(&room->room_node);
+}
+
+static int step_malloc_room_data(void *data) {
+    struct k_room_creation_context *ctx = data;
+    const struct k_room_config *config = ctx->config;
+    struct k_room *room = ctx->room;
 
     if (0 == config->data_size) {
         room->data = NULL;
     } else {
         room->data = k_malloc(config->data_size);
         if (NULL == room->data)
-            goto malloc_room_data_failed;
+            return -1;
     }
+
+    return 0;
+}
+
+static void step_free_room_data(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+
+    k_free(room->data);
+}
+
+static int step_configure_room(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+    const struct k_room_config *config = ctx->config;
 
     room->fn_create  = config->fn_create;
     room->fn_destroy = config->fn_destroy;
     room->game_loop  = 0;
     room->step_interval_ms = (uint32_t)(1000 / config->room_speed);
+
+    return 0;
+}
+
+static int step_init_callbacks_storage(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
 
     k__room_callback_list_init(&room->enter_callbacks);
     k__room_callback_list_init(&room->leave_callbacks);
@@ -72,71 +120,90 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params) {
     k__room_init_alarm_callbacks_storage(room);
     k__room_init_draw_callbacks_storage(room);
 
+    return 0;
+}
+
+static void step_cleanup_callbacks_storage(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+
+    k__room_callback_list_clean(&room->enter_callbacks);
+    k__room_callback_list_clean(&room->leave_callbacks);
+    k__room_callback_list_clean(&room->step_begin_callbacks);
+    k__room_callback_list_clean(&room->step_callbacks);
+    k__room_callback_list_clean(&room->step_end_callbacks);
+    k__room_del_all_alarm_callbacks(room);
+    k__room_del_all_draw_callbacks(room);
+}
+
+static int step_call_fn_create(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+    void *params = ctx->params;
+
     if (NULL != room->fn_create) {
 
         struct k_room *tmp = k__game.current_room;
         k__game.current_room = room;
         int result = room->fn_create(room, params);
-        k__game.current_room = tmp;
+        k__game.current_room = tmp; /* TODO: fn_create() 可能销毁了 tmp 指向的房间？ */
 
         if (0 != result) {
             k_log_error("Room fn_create() callback returned %d", result);
-            goto fn_create_failed;
+            return -1;
         }
     }
 
-    k_log_info("Room { .name=\"%s\" } created", k_room_get_name(room));
-    return room;
-
-fn_create_failed:
-    k__room_callback_list_clean(&room->enter_callbacks);
-    k__room_callback_list_clean(&room->leave_callbacks);
-    k__room_callback_list_clean(&room->step_begin_callbacks);
-    k__room_callback_list_clean(&room->step_callbacks);
-    k__room_callback_list_clean(&room->step_end_callbacks);
-    k__room_del_all_alarm_callbacks(room);
-    k__room_del_all_draw_callbacks(room);
-
-    k_free(room->data);
-malloc_room_data_failed:
-    k__room_registry_del(&room->room_node);
-registry_add_failed:
-    k_free(room);
-
-malloc_room_failed:
-invalid_config:
-    k_log_error("Failed to create room { .name=\"%s\" }", config->room_name);
-    return NULL;
-
-null_config:
-    k_log_error("Failed to create room. Room config is NULL");
-    return NULL;
+    return 0;
 }
 
-void k__destroy_room(struct k_room *room) {
-
-    k_log_trace("Destroying room { .name=\"%s\" }", k_room_get_name(room));
+static void step_call_fn_destroy(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
 
     if (NULL != room->fn_destroy) {
         struct k_room *tmp = k__game.current_room;
         k__game.current_room = room;
         room->fn_destroy(room);
-        k__game.current_room = tmp;
+        k__game.current_room = tmp; /* TODO: fn_destroy() 可能销毁了 tmp 指向的房间？ */
+    }
+}
+
+static const struct k_seq_step room_creation_steps[] = {
+    { step_check_config,           NULL                           },
+    { step_malloc_room,            step_free_room                 },
+    { step_registry_add,           step_registry_del              },
+    { step_malloc_room_data,       step_free_room_data            },
+    { step_configure_room,         NULL                           },
+    { step_init_callbacks_storage, step_cleanup_callbacks_storage },
+    { step_call_fn_create,         step_call_fn_destroy           },
+};
+
+/* endregion */
+
+struct k_room *k_create_room(const struct k_room_config *config, void *params) {
+
+    struct k_room_creation_context ctx;
+    ctx.config = config;
+    ctx.params = params;
+    ctx.room   = NULL;
+
+    size_t steps_num = k_array_len(room_creation_steps);
+    size_t completed_count = k_execute_steps_forward(room_creation_steps, steps_num, &ctx);
+    if (completed_count != steps_num) {
+        k_execute_steps_backward(room_creation_steps, completed_count, &ctx);
+        return NULL;
     }
 
-    /* ... */
+    return ctx.room;
+}
 
-    k__room_callback_list_clean(&room->enter_callbacks);
-    k__room_callback_list_clean(&room->leave_callbacks);
-    k__room_callback_list_clean(&room->step_begin_callbacks);
-    k__room_callback_list_clean(&room->step_callbacks);
-    k__room_callback_list_clean(&room->step_end_callbacks);
-    k__room_del_all_alarm_callbacks(room);
-    k__room_del_all_draw_callbacks(room);
+void k__destroy_room(struct k_room *room) {
 
-    k_free(room->data);
-    k__room_registry_del(&room->room_node);
-    k_free(room);
+    struct k_room_creation_context ctx;
+    ctx.config = NULL;
+    ctx.params = NULL;
+    ctx.room   = room;
 
-    k_log_trace("Room destroyed");
+    k_execute_steps_backward(room_creation_steps, k_array_len(room_creation_steps), &ctx);
 }

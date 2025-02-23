@@ -13,4 +13,8 @@ struct k_object {
     struct k_list_node object_pool_node;
 };
 
+void k__init_object_pool(struct k_object_pool *object_pool);
+
+void k__deinit_object_pool(struct k_object_pool *object_pool);
+
 #endif

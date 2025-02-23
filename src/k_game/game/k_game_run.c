@@ -1,14 +1,13 @@
 #include <stddef.h>
 
 #include "k_log.h"
+#include "k_seq_step.h"
 
+#include "k_game/game.h"
 #include "../SDL/k_SDL_init.h"
 #include "../room/k_room_goto.h"
 #include "../room/k_room_registry.h"
 #include "../room/k_room_context.h"
-#include "k_game/game.h"
-
-/* region [game config] */
 
 const struct k_game_config K_GAME_CONFIG_INIT = {
     .window_title = "k_game",
@@ -18,79 +17,113 @@ const struct k_game_config K_GAME_CONFIG_INIT = {
     .fn_cleanup = NULL,
 };
 
-static int check_game_config(const struct k_game_config *config) {
+/* region [init && deinit] */
 
-    #define K__GAME_CONFIG_ASSERT(cond) \
-        do { \
-            if ( ! (cond)) { \
-                k_log_error("Invalid game config, assert( " #cond " )"); \
-                return -1; \
-            } \
-        } while(0)
+static int step_check_config(void *data) {
+    const struct k_game_config *config = data;
 
-    K__GAME_CONFIG_ASSERT(0 < config->window_h);
-    K__GAME_CONFIG_ASSERT(0 < config->window_w);
-    K__GAME_CONFIG_ASSERT(NULL != config->fn_init);
+    if (NULL == config) {
+        k_log_error("Invalid game config. Config is NULL");
+        return -1;
+    }
 
-    #undef K__GAME_CONFIG_ASSERT
+    if (config->window_h <= 0) {
+        k_log_error("Invalid game config, assert( 0 < window_h )");
+        return -1;
+    }
+
+    if (config->window_w <= 0) {
+        k_log_error("Invalid game config, assert( 0 < window_w )");
+        return -1;
+    }
+
+    if (NULL == config->fn_init) {
+        k_log_error("Invalid game config, assert( NULL != fn_init )");
+        return -1;
+    }
+
     return 0;
 }
 
-/* endregion */
+static int step_init_SDL(void *data) {
+    const struct k_game_config *config = data;
+    return k__init_SDL(config);
+}
 
-/* region [init && deinit] */
+static void step_close_SDL(void *data) {
+    (void)data;
+    k__close_SDL();
+}
 
-static int init_or_deinit_game(const struct k_game_config *config, int is_init) {
-
-    if ( ! is_init)
-        goto deinit;
-
-    k_log_info("Initializing Game...");
-
-    if (0 != check_game_config(config))
-        goto invalid_config;
-
-    if (0 != k__init_SDL(config))
-        goto SDL_init_failed;
+static int step_init_room_modules(void *data) {
+    (void)data;
 
     k__room_registry_init();
     k__room_stack_init();
 
+    return 0;
+}
+
+static void step_deinit_room_modules(void *data) {
+    (void)data;
+
+    k__room_stack_deinit();
+    k__room_registry_deinit();
+}
+
+static int step_call_fn_init(void *data) {
+    const struct k_game_config *config = data;
+
     int result = config->fn_init();
     if (0 != result) {
         k_log_error("Game fn_init() callback returned %d", result);
-        goto fn_init_failed;
+        return -1;
     }
+
+    return 0;
+}
+
+static void step_call_fn_cleanup(void *data) {
+    const struct k_game_config *config = data;
+
+    if (NULL != config->fn_cleanup)
+        config->fn_cleanup();
+}
+
+static const struct k_seq_step game_initialization_steps[] = {
+    { step_check_config,      NULL                     },
+    { step_init_SDL,          step_close_SDL           },
+    { step_init_room_modules, step_deinit_room_modules },
+    { step_call_fn_init,      step_call_fn_cleanup     },
+};
+
+/* endregion */
+
+static int init_game(const struct k_game_config *config) {
+
+    size_t steps_num = k_array_len(game_initialization_steps);
+    size_t completed_count = k_execute_steps_forward(game_initialization_steps, steps_num, (void *)config);
+    if (completed_count != steps_num)
+        goto err;
 
     k_log_info("Game initialized");
     return 0;
 
-deinit:
-    k_log_info("Deinitializing Game...");
-
-    if (NULL != config->fn_cleanup)
-        config->fn_cleanup();
-
-fn_init_failed:
-    k__room_stack_deinit();
-    k__room_registry_deinit();
-    k__close_SDL();
-
-SDL_init_failed:
-invalid_config:
-    if (is_init) {
-        k_log_error("Failed to initialize game");
-        return -1;
-    }
-    else {
-        k_log_info("Game deinitialized");
-        return 0;
-    }
+err:
+    k_execute_steps_backward(game_initialization_steps, completed_count, (void *)config);
+    k_log_error("Failed to initialize game");
+    return -1;
 }
 
-/* endregion */
+static void deinit_game(const struct k_game_config *config) {
 
-static void run_game(void) {
+    size_t steps_num = k_array_len(game_initialization_steps);
+    k_execute_steps_backward(game_initialization_steps, steps_num, (void *)config);
+
+    k_log_info("Game deinitialized");
+}
+
+static void run_game() {
     k_log_info("Game started...");
 
     struct k_room *room = k__room_stack_get_top();
@@ -107,16 +140,11 @@ end:
 
 int k_run_game(const struct k_game_config *config) {
 
-    if (NULL == config) {
-        k_log_error("Invalid game config. Config is NULL");
-        return -1;
-    }
-
-    if (0 != init_or_deinit_game(config, 1))
+    if (0 != init_game(config))
         return -1;
 
     run_game();
 
-    init_or_deinit_game(config, 0);
+    deinit_game(config);
     return 0;
 }
