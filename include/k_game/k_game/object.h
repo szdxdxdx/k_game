@@ -22,22 +22,26 @@ void *k_object_get_data(struct k_object *object);
 
 /* ------------------------------------------------------------------------ */
 
+struct k_object_callback;
+
+struct k_object_callback *k_object_add_step_begin_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
+
+struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay);
+
+struct k_object_callback *k_object_add_step_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
+
+struct k_object_callback *k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object), int depth);
+
+struct k_object_callback *k_object_add_step_end_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
+
+void k_object_del_callback(struct k_object_callback *callback);
+
+/* ------------------------------------------------------------------------ */
+
 // int k_object_add_component(struct k_object *object, size_t component_id, void *params);
 
 // int k_object_del_component(struct k_object *object, size_t component_id);
 
 // void *k_object_get_component_data(struct k_object *object, size_t component_id);
-
-/* ------------------------------------------------------------------------ */
-
-int k_object_add_step_begin_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
-
-int k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, float timeout), float delay);
-
-int k_object_add_step_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
-
-int k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
-
-int k_object_add_step_end_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
 
 #endif

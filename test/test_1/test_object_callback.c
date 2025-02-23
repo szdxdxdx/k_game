@@ -4,30 +4,56 @@
 
 #include "k_game.h"
 
+/* region [my_object] */
+
 struct my_object {
-    int data_1;
-    int data_2;
+    struct k_object_callback *callback;
+    int count;
 };
+
+static void object_step(struct k_object *object) {
+    struct my_object *my_object = k_object_get_data(object);
+
+    my_object->count++;
+    k_log_info("count: %d", my_object->count);
+
+    if (my_object->count >= 50)
+        k_object_del_callback(my_object->callback);
+}
+
+/* endregion */
+
+/* region [room] */
 
 static int create_room(struct k_room *room, void *params) {
 
-    k_create_object(sizeof(struct my_object));
+    struct k_object *object = k_create_object(sizeof(struct my_object));
+
+    struct my_object *my_object = k_object_get_data(object);
+
+    my_object->count = 0;
+    my_object->callback = k_object_add_step_callback(object, object_step);
 
     return 0;
 }
+
+/* endregion */
+
+/* region [game] */
 
 static int init(void) {
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     room_config.room_name = "room";
     room_config.fn_create = create_room;
+
     struct k_room *room = k_create_room(&room_config, NULL);
 
     k_goto_room(room);
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");
@@ -45,3 +71,5 @@ int main(int argc, char **argv) {
 }
 
 #endif
+
+/* endregion */

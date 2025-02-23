@@ -3,7 +3,21 @@
 
 #include "k_list.h"
 
+struct k_room_callback;
 struct k_object;
+
+struct k_object_callback {
+
+    struct k_list_node iter_node;
+
+    struct k_room_callback *room_callback;
+
+    struct k_object *object;
+
+    union {
+        void (*fn_step)(struct k_object *object);
+    };
+};
 
 struct k_object_callbacks_list {
 

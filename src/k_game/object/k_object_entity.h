@@ -10,6 +10,8 @@ struct k_object {
 
     struct k_object_callbacks_list callbacks_list;
 
+    struct k_room *room;
+
     void *data;
 };
 
