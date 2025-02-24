@@ -18,6 +18,8 @@
 #include "./k_game/keyboard.h"
 #include "./k_game/room.h"
 
+#include "./k_game/time.h"
+
 #include "./k_game/game.h"
 
 #endif

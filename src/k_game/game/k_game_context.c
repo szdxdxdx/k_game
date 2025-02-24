@@ -1,4 +1,5 @@
 #include "k_game/room.h"
+#include "k_game/time.h"
 #include "./k_game_context.h"
 #include "../room/k_room_context.h"
 
@@ -13,4 +14,16 @@ struct k_room *k_get_current_room(void) {
 
 void *k_get_current_room_data(void) {
     return k__game.current_room->data;
+}
+
+uint64_t k_get_current_step_time(void) {
+    return k__game.current_ms;
+}
+
+int k_get_step_delta_ms(void) {
+    return k__game.delta_ms;
+}
+
+float k_get_step_delta(void) {
+    return (float)k__game.delta_ms / 1000.0f;
 }

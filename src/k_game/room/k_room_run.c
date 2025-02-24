@@ -67,8 +67,8 @@ static void game_loop(struct k_room *room) {
 
         k__room_callback_list_exec_all(&room->step_callbacks);
 
-        // SDL_SetRenderDrawColor(room->renderer, 0, 0, 0, 255);
-        // SDL_RenderClear(room->renderer);
+        SDL_SetRenderDrawColor(k__window.renderer, 0, 0, 0, 255);
+        SDL_RenderClear(k__window.renderer);
 
         k__room_exec_draw_callbacks(room);
 

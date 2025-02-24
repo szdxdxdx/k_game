@@ -78,7 +78,7 @@ struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_
         if (depth == depth_list->depth)
             goto add_callback;
 
-        if (depth_list->depth < depth)
+        if (depth < depth_list->depth)
             break;
     }
 
