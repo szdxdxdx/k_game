@@ -15,7 +15,7 @@ static void object_step(struct k_object *object) {
     struct my_object *my_object = k_object_get_data(object);
 
     my_object->count++;
-    k_log_info("count: %d", my_object->count);
+    printf("count: %d\n", my_object->count);
 
     if (my_object->count >= 50)
         k_object_del_callback(my_object->callback);

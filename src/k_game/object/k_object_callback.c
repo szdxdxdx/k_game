@@ -65,13 +65,13 @@ void k_object_del_callback(struct k_object_callback *callback) {
     }
 }
 
-struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay) {
+struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
 
     struct k_object_callback *object_callback = k_malloc(sizeof(struct k_object_callback));
     if (NULL == object_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k_room_add_alarm_callback(object->room, room_alarm_callback_wrapper, object_callback, delay);
+    struct k_room_callback *room_callback = k_room_add_alarm_callback(object->room, room_alarm_callback_wrapper, object_callback, delay_ms);
     if (NULL == room_callback) {
         k_free(object_callback);
         return NULL;
@@ -105,13 +105,13 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
     return object_callback;
 }
 
-struct k_object_callback *k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object), int depth) {
+struct k_object_callback *k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object), int z_index) {
 
     struct k_object_callback *object_callback = k_malloc(sizeof(struct k_object_callback));
     if (NULL == object_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k_room_add_draw_callback(object->room, room_draw_callback_wrapper, object_callback, depth);
+    struct k_room_callback *room_callback = k_room_add_draw_callback(object->room, room_draw_callback_wrapper, object_callback, z_index);
     if (NULL == room_callback) {
         k_free(object_callback);
         return NULL;

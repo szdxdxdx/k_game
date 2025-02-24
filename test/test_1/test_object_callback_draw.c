@@ -58,7 +58,7 @@ static void object_draw(struct k_object *object) {
     }
 }
 
-static void create_my_object(float x, float y, int depth) {
+static void create_my_object(float x, float y, int z_index) {
     struct k_object *object = k_create_object(sizeof(struct obj_player));
 
     struct obj_player *player = k_object_get_data(object);
@@ -68,7 +68,7 @@ static void create_my_object(float x, float y, int depth) {
     player->current_frame = 0;
 
     k_object_add_step_callback(object, object_step);
-    k_object_add_draw_callback(object, object_draw, depth);
+    k_object_add_draw_callback(object, object_draw, z_index);
 }
 
 /* endregion */

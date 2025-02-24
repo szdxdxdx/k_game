@@ -1,10 +1,6 @@
 #ifndef K_GAME_H
 #define K_GAME_H
 
-#include <stddef.h>
-
-#include "k_log.h"
-
 #include "./k_game/alloc.h"
 
 #include "./k_game/rect.h"

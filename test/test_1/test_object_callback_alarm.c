@@ -1,6 +1,5 @@
 #include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "k_game.h"
 
@@ -14,7 +13,7 @@ struct my_object {
 static void object_alarm_##x (struct k_object *object, int timeout_diff) { \
     struct my_object *my_object = k_object_get_data(object); \
     my_object->count[ x ]++; \
-    k_log_info("count[" #x "]: %d", my_object->count[x]); \
+    printf("count[" #x "]: %d\n", my_object->count[x]); \
 }
 
 object_alarm_X(0)
