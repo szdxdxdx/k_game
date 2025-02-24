@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include "k_log.h"
+
 #include "./k_game/alloc.h"
 
 #include "./k_game/rect.h"
