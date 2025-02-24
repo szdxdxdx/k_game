@@ -49,7 +49,7 @@ static void object_draw(struct k_object *object) {
 
     k_draw_image(img, &rect, (int)player->x, (int)player->y);
 
-    uint64_t current_ms = k_get_current_step_time();
+    uint64_t current_ms = k_get_step_timestamp();
     if (player->spr_timer <= current_ms) {
         player->spr_timer += 150;
 

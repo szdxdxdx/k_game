@@ -47,8 +47,9 @@ static inline int frame_delay(struct k_room *room) {
     }
 #endif
 
-    k__game.delta_ms = (int)elapsed_time;
     k__game.current_ms = current_time;
+    k__game.step_delta_ms = (int)elapsed_time;
+    k__game.step_delta = (float)elapsed_time / 1000.0f;
     return 0;
 }
 

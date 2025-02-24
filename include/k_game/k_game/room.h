@@ -39,18 +39,6 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params);
 
 /* ------------------------------------------------------------------------ */
 
-struct k_room *k_get_current_room(void);
-
-/**
- * \brief 通过房间名字查找对应的房间
- *
- * 当创建房间时，若指定了房间的名字，k_game 会基于该名字为房间创建索引。
- * 本函数能根据名字查找到对应的房间。
- *
- * \return 若找到，函数返回房间指针，否则返回 `NULL`。
- */
-struct k_room *k_get_room_by_name(const char *room_name);
-
 /**
  * \brief 获取房间的名字
  *
@@ -70,6 +58,18 @@ void *k_get_current_room_data(void);
 /* ------------------------------------------------------------------------ */
 
 int k_goto_room(struct k_room *room);
+
+/**
+ * \brief 通过房间名字查找对应的房间
+ *
+ * 当创建房间时，若指定了房间的名字，k_game 会基于该名字为房间创建索引。
+ * 本函数能根据名字查找到对应的房间。
+ *
+ * \return 若找到，函数返回房间指针，否则返回 `NULL`。
+ */
+struct k_room *k_get_room_by_name(const char *room_name);
+
+struct k_room *k_get_current_room(void);
 
 /* ------------------------------------------------------------------------ */
 

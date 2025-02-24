@@ -16,14 +16,14 @@ void *k_get_current_room_data(void) {
     return k__game.current_room->data;
 }
 
-uint64_t k_get_current_step_time(void) {
-    return k__game.current_ms;
+float k_get_step_delta(void) {
+    return k__game.step_delta;
 }
 
 int k_get_step_delta_ms(void) {
-    return k__game.delta_ms;
+    return k__game.step_delta_ms;
 }
 
-float k_get_step_delta(void) {
-    return (float)k__game.delta_ms / 1000.0f;
+uint64_t k_get_step_timestamp(void) {
+    return k__game.current_ms;
 }
