@@ -12,9 +12,10 @@ void k__room_init_alarm_callbacks_storage(struct k_room *room) {
 void k__room_del_all_alarm_callbacks(struct k_room *room) {
     struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
 
+    struct k_room_alarm_callback *callback;
     struct k_list_node *node, *next;
     for (k_list_for_each_s(&storage->list, node, next)) {
-        struct k_room_alarm_callback *callback = container_of(node, struct k_room_alarm_callback, list_node);
+        callback = container_of(node, struct k_room_alarm_callback, list_node);
 
         k_free(callback);
     }
@@ -31,8 +32,13 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
         callback = container_of(iter_node, struct k_room_alarm_callback, list_node);
 
         if (callback->timeout <= current_ms) {
-
             int timeout_diff = (int)(current_ms - callback->timeout);
+
+            /* TODO alarm_callback 结点应何时删除？
+             *
+             * alarm callback 不应该用 `k_room_del_callback()` 删除自身？
+             */
+
             callback->fn_callback(callback->data, timeout_diff);
 
             k_list_del(&callback->list_node);
@@ -60,9 +66,10 @@ struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn
 
     uint64_t timeout = k__game.current_ms + delay_ms;
 
+    struct k_room_alarm_callback *callback_in_list;
     struct k_list_node *iter_node;
     for (k_list_for_each(&storage->list, iter_node)) {
-        struct k_room_alarm_callback *callback_in_list = container_of(iter_node, struct k_room_alarm_callback, list_node);
+        callback_in_list = container_of(iter_node, struct k_room_alarm_callback, list_node);
 
         if (callback_in_list->timeout < timeout)
             break;

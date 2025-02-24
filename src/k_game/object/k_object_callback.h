@@ -6,6 +6,11 @@
 struct k_room_callback;
 struct k_object;
 
+struct k_object_callbacks_list {
+
+    struct k_list list;
+};
+
 struct k_object_callback {
 
     struct k_list_node iter_node;
@@ -15,13 +20,12 @@ struct k_object_callback {
     struct k_object *object;
 
     union {
-        void (*fn_step)(struct k_object *object);
+        void (*fn_step_begin_callback)(struct k_object *object);
+        void (*fn_alarm_callback)     (struct k_object *object, int timeout_diff);
+        void (*fn_step_callback)      (struct k_object *object);
+        void (*fn_draw_callback)      (struct k_object *object);
+        void (*fn_step_end_callback)  (struct k_object *object);
     };
-};
-
-struct k_object_callbacks_list {
-
-    struct k_list list;
 };
 
 void k__object_init_callbacks_list(struct k_object *object);

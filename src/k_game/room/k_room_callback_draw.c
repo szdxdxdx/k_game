@@ -1,5 +1,3 @@
-#include "SDL_render.h"
-
 #include "k_game/alloc.h"
 
 #include "./k_room_context.h"
