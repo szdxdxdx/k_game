@@ -10,7 +10,7 @@
 int k_draw_image(struct k_image *image, const struct k_int_rect *rect, int x, int y) {
 
     if (NULL == image) {
-        k_log_error_once("Image is NULL");
+        k_log_error_once("Failed to draw image. Image is NULL");
         return -1;
     }
 

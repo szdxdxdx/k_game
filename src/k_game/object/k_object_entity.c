@@ -36,7 +36,12 @@ struct k_object *k_create_object(size_t data_size) {
 
 void k_destroy_object(struct k_object *object) {
 
-    /* TODO */
+    if (NULL != object) {
+        k__object_cleanup_callbacks_list(object);
+        k__object_pool_del(&object->object_node);
+        k_free(object->data);
+        k_free(object);
+    }
 }
 
 void *k_object_get_data(struct k_object *object) {

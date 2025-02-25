@@ -1,11 +1,14 @@
+#include <assert.h>
+
 #include "k_log.h"
 #include "k_list.h"
 #include "k_seq_step.h"
 
 #include "k_game/alloc.h"
 #include "k_game/room.h"
-#include "./k_room_context.h"
 #include "../game/k_game_context.h"
+#include "./k_room_context.h"
+#include "./k_room_create.h"
 
 const struct k_room_config K_ROOM_CONFIG_INIT = {
     .room_name  = NULL,
@@ -190,8 +193,8 @@ static const struct k_seq_step room_creation_steps[] = {
     { step_registry_add,           step_registry_del              },
     { step_malloc_room_data,       step_free_room_data            },
     { step_configure_room,         NULL                           },
-    { step_init_object_pool,       step_deinit_object_pool        },
     { step_init_callbacks_storage, step_cleanup_callbacks_storage },
+    { step_init_object_pool,       step_deinit_object_pool        },
     { step_call_fn_create,         step_call_fn_destroy           },
 };
 

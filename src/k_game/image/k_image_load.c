@@ -4,7 +4,6 @@
 
 #include "k_game/alloc.h"
 #include "k_game/image.h"
-#include "../game/k_game_context.h"
 #include "../SDL/k_SDL_window.h"
 #include "./k_image_load.h"
 
@@ -17,18 +16,20 @@ struct k_image *k_load_image(const char *image_name, const char *filepath) {
     img->texture = IMG_LoadTexture(k__window.renderer, filepath);
     if (NULL == img->texture) {
         k_log_error("IMG_LoadTexture() failed: %s", IMG_GetError());
-        goto load_img_failed;
+        goto load_failed;
     }
 
     if (0 != SDL_QueryTexture(img->texture, NULL, NULL, &img->w, &img->h)) {
         k_log_error("SDL_QueryTexture() failed: %s", IMG_GetError());
-        goto query_img_failed;
+        goto query_failed;
     }
 
     return img;
 
-query_img_failed:
-load_img_failed:
+query_failed:
+    SDL_DestroyTexture(img->texture);
+
+load_failed:
     k_free(img);
 
 malloc_failed:

@@ -1,8 +1,27 @@
-
 #include "k_game/alloc.h"
 #include "k_game/object.h"
 #include "k_game/room.h"
+#include "../room/k_room_callback.h"
 #include "./k_object_entity.h"
+
+/* region [del_callback] */
+
+static inline void k__object_del_callback(struct k_object_callback *callback) {
+
+    /* TODO inline ? */
+
+    k_room_del_callback(callback->room_callback);
+    k_list_del(&callback->iter_node);
+    k_free(callback);
+}
+
+void k_object_del_callback(struct k_object_callback *callback) {
+
+    if (NULL != callback)
+        k__object_del_callback(callback);
+}
+
+/* endregion */
 
 /* region [object_callbacks_list] */
 
@@ -15,27 +34,12 @@ void k__object_init_callbacks_list(struct k_object *object) {
 void k__object_cleanup_callbacks_list(struct k_object *object) {
     struct k_object_callbacks_list *callbacks_list = &object->callbacks_list;
 
-    /* TODO foreach callbacks_list : del callback */
-}
+    struct k_object_callback *callback = NULL;
+    struct k_list_node *iter_node, *next;
+    for (k_list_for_each_s(&callbacks_list->list, iter_node, next)) {
+        callback = container_of(iter_node, struct k_object_callback, iter_node);
 
-static inline void object_callbacks_list_add(struct k_object_callbacks_list *list, struct k_object_callback *callback) {
-    k_list_add_tail(&list->list, &callback->iter_node);
-}
-
-static inline void object_callbacks_list_del(struct k_object_callback *callback) {
-    k_list_del(&callback->iter_node);
-}
-
-/* endregion */
-
-/* region [del_callback] */
-
-void k_object_del_callback(struct k_object_callback *callback) {
-
-    if (NULL != callback) {
-        k_room_del_callback(callback->room_callback);
-        object_callbacks_list_del(callback);
-        k_free(callback);
+        k__object_del_callback(callback);
     }
 }
 
@@ -52,9 +56,8 @@ static void room_alarm_callback_wrapper(void *data, int timeout_diff) {
      */
 
     callback->fn_alarm_callback(callback->object, timeout_diff);
-
-    object_callbacks_list_del(callback);
-    k_free(callback);
+    callback->room_callback = NULL;
+    k__object_del_callback(callback);
 }
 
 struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
@@ -72,7 +75,7 @@ struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, v
     object_callback->fn_alarm_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    object_callbacks_list_add(&object->callbacks_list, object_callback);
+    k_list_add_tail(&object->callbacks_list.list, &object_callback->iter_node);
 
     return object_callback;
 }
@@ -101,7 +104,7 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
     object_callback->fn_step_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    object_callbacks_list_add(&object->callbacks_list, object_callback);
+    k_list_add_tail(&object->callbacks_list.list, &object_callback->iter_node);
 
     return object_callback;
 }
@@ -130,7 +133,7 @@ struct k_object_callback *k_object_add_draw_callback(struct k_object *object, vo
     object_callback->fn_draw_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    object_callbacks_list_add(&object->callbacks_list, object_callback);
+    k_list_add_tail(&object->callbacks_list.list, &object_callback->iter_node);
 
     return object_callback;
 }
