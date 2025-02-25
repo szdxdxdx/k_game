@@ -115,7 +115,7 @@ static int step_init_object_pool(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    k__init_object_pool(&room->object_pool);
+    k__room_init_object_pool(room);
     return 0;
 }
 
@@ -123,7 +123,7 @@ static void step_deinit_object_pool(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    k__deinit_object_pool(&room->object_pool);
+    k__room_cleanup_object_pool(room);
 }
 
 static int step_init_callbacks_storage(void *data) {

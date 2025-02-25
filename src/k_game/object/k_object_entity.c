@@ -13,35 +13,13 @@ struct k_object *k_create_object(size_t data_size) {
         return NULL;
     }
 
-    struct k_object *object = k_malloc(sizeof(struct k_object));
-    if (NULL == object)
-        return NULL;
-
-    if (0 == data_size) {
-        object->data = 0;
-    }
-    else {
-        if (NULL == (object->data = k_malloc(data_size))) {
-            k_free(object);
-            return NULL;
-        }
-    }
-
-    object->room = room;
-    k__object_pool_add(&room->object_pool, &object->object_node);
-    k__object_init_callbacks_list(object);
-
-    return object;
+    return k__room_object_pool_new(room, data_size);
 }
 
 void k_destroy_object(struct k_object *object) {
 
-    if (NULL != object) {
-        k__object_cleanup_callbacks_list(object);
-        k__object_pool_del(&object->object_node);
-        k_free(object->data);
-        k_free(object);
-    }
+    if (NULL != object)
+        k__room_object_pool_del(object);
 }
 
 void *k_object_get_data(struct k_object *object) {
