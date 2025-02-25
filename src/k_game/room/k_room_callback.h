@@ -28,16 +28,11 @@ struct k_room_callback_list {
     struct k_list list;
 };
 
-/* 房间回调链表的结点
- */
+/* 房间回调链表的结点 */
 struct k_room_callback_list_item {
-
     struct k_list_node list_node;
-
     struct k_room_callback impl;
-
     void *data;
-
     void (*fn_callback)(void *data);
 };
 

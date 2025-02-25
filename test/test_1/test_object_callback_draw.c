@@ -7,6 +7,7 @@
 /* region [img] */
 
 static struct k_image *img;
+static struct k_object *players[3];
 
 /* endregion */
 
@@ -58,8 +59,11 @@ static void object_draw(struct k_object *object) {
     }
 }
 
-static void create_my_object(float x, float y, int z_index) {
+static struct k_object *create_player(float x, float y, int z_index) {
+
     struct k_object *object = k_create_object(sizeof(struct obj_player));
+    if (NULL == object)
+        return NULL;
 
     struct obj_player *player = k_object_get_data(object);
     player->x = x;
@@ -69,24 +73,43 @@ static void create_my_object(float x, float y, int z_index) {
 
     k_object_add_step_callback(object, object_step);
     k_object_add_draw_callback(object, object_draw, z_index);
+
+    return object;
+}
+
+static void destroy_player(struct k_object *obj_player) {
+
+    if (NULL != obj_player) {
+        k_destroy_object(obj_player);
+        printf("destroy player\n");
+    }
 }
 
 /* endregion */
 
 /* region [game && room] */
 
+static void destroy_player_from_room(void *unused) {
+
+    if (k_is_key_pressed('1')) { destroy_player(players[0]); players[0] = NULL; }
+    if (k_is_key_pressed('2')) { destroy_player(players[1]); players[1] = NULL; }
+    if (k_is_key_pressed('3')) { destroy_player(players[2]); players[2] = NULL; }
+}
+
 static int create_room(struct k_room *room, void *params) {
-    create_my_object(30, 30, 1);
-    create_my_object(35, 35, 2);
-    create_my_object(40, 40, 3);
+    create_player(30, 30, 1);
+    create_player(35, 35, 2);
+    create_player(40, 40, 3);
 
-    create_my_object(130, 30, 3);
-    create_my_object(135, 35, 2);
-    create_my_object(140, 40, 1);
+    players[0] = create_player(130, 30, 3);
+    players[1] = create_player(135, 35, 2);
+    players[2] = create_player(140, 40, 1);
 
-    create_my_object(230, 30, 2);
-    create_my_object(235, 35, 3);
-    create_my_object(240, 40, 1);
+    create_player(230, 30, 2);
+    create_player(235, 35, 3);
+    create_player(240, 40, 1);
+
+    k_room_add_step_callback(room, destroy_player_from_room, NULL);
     return 0;
 }
 
