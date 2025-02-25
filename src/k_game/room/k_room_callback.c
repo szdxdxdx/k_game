@@ -55,11 +55,17 @@ static struct k_room_callback *room_callback_list_add(struct k_room_callback_lis
 
 /* endregion */
 
+/* region [del_callback] */
+
 void k_room_del_callback(struct k_room_callback *callback) {
 
     if (NULL != callback)
         callback->fn_del_self(callback);
 }
+
+/* endregion */
+
+/* region [add_callback] */
 
 struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
     return room_callback_list_add(&room->enter_callbacks, fn_callback, data);
@@ -80,3 +86,5 @@ struct k_room_callback *k_room_add_step_callback(struct k_room *room, void (*fn_
 struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
     return room_callback_list_add(&room->step_end_callbacks, fn_callback, data);
 }
+
+/* endregion */
