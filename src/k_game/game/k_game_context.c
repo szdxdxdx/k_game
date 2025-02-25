@@ -25,5 +25,5 @@ int k_get_step_delta_ms(void) {
 }
 
 uint64_t k_get_step_timestamp(void) {
-    return k__game.current_ms;
+    return k__game.step_timestamp;
 }

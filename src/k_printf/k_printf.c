@@ -7,11 +7,6 @@
 
 #include "k_printf.h"
 
-#ifndef container_of
-#define container_of(ptr, type, member) \
-    ((type *)((char *)(ptr) - offsetof(type, member)))
-#endif
-
 /* region [str_buf] */
 
 struct k_printf_str_buf {
@@ -307,8 +302,6 @@ static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_
  */
 static k_printf_callback_fn match_c_std_spec(const char **str) {
 
-    /* 通过打表的方式，给每个 C printf 格式说明符分配回调 */
-
     switch ((*str)[0]) {
         case 'a': case 'A': case 'c': case 'd':
         case 'e': case 'E': case 'f': case 'F':
@@ -332,7 +325,7 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                 case 'n':
                     *str += 2;
                     return printf_callback_c_std_spec_n;
-                case 'h':
+                case 'h': {
                     switch ((*str)[2]) {
                         case 'd': case 'i':
                         case 'o': case 'u':
@@ -344,6 +337,7 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                             return printf_callback_c_std_spec_n;
                     }
                     break;
+                }
             }
             break;
         }
@@ -359,7 +353,7 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                 case 'n':
                     *str += 2;
                     return printf_callback_c_std_spec_n;
-                case 'l':
+                case 'l': {
                     switch ((*str)[2]) {
                         case 'd': case 'i':
                         case 'o': case 'u':
@@ -371,9 +365,11 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                             return printf_callback_c_std_spec_n;
                     }
                     break;
+                }
             }
             break;
         }
+
         case 'L': {
             switch ((*str)[1]) {
                 case 'a': case 'A': case 'e': case 'E':
@@ -383,6 +379,7 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
             }
             break;
         }
+
         case 'j': case 't': case 'z': {
             switch ((*str)[1]) {
                 case 'd': case 'i':

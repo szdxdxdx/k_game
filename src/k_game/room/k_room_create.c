@@ -103,7 +103,7 @@ static int step_configure_room(void *data) {
     room->fn_create  = config->fn_create;
     room->fn_destroy = config->fn_destroy;
     room->game_loop  = 0;
-    room->step_interval_ms = (uint32_t)(1000 / config->room_speed);
+    room->step_interval_ms = (uint64_t)(1000 / config->room_speed);
 
     return 0;
 }

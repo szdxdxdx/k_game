@@ -28,7 +28,20 @@ static inline void object_callbacks_list_del(struct k_object_callback *callback)
 
 /* endregion */
 
-/* region [room_callback_wrapper] */
+/* region [del_callback] */
+
+void k_object_del_callback(struct k_object_callback *callback) {
+
+    if (NULL != callback) {
+        k_room_del_callback(callback->room_callback);
+        object_callbacks_list_del(callback);
+        k_free(callback);
+    }
+}
+
+/* endregion */
+
+/* region [add_alarm_callback] */
 
 static void room_alarm_callback_wrapper(void *data, int timeout_diff) {
     struct k_object_callback *callback = data;
@@ -42,27 +55,6 @@ static void room_alarm_callback_wrapper(void *data, int timeout_diff) {
 
     object_callbacks_list_del(callback);
     k_free(callback);
-}
-
-static void room_step_callback_wrapper(void *data) {
-    struct k_object_callback *callback = data;
-    callback->fn_step_callback(callback->object);
-}
-
-static void room_draw_callback_wrapper(void *data) {
-    struct k_object_callback *callback = data;
-    callback->fn_draw_callback(callback->object);
-}
-
-/* endregion */
-
-void k_object_del_callback(struct k_object_callback *callback) {
-
-    if (NULL != callback) {
-        k_room_del_callback(callback->room_callback);
-        object_callbacks_list_del(callback);
-        k_free(callback);
-    }
 }
 
 struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
@@ -85,6 +77,15 @@ struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, v
     return object_callback;
 }
 
+/* endregion */
+
+/* region [add_step_callback] */
+
+static void room_step_callback_wrapper(void *data) {
+    struct k_object_callback *callback = data;
+    callback->fn_step_callback(callback->object);
+}
+
 struct k_object_callback *k_object_add_step_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
 
     struct k_object_callback *object_callback = k_malloc(sizeof(struct k_object_callback));
@@ -103,6 +104,15 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
     object_callbacks_list_add(&object->callbacks_list, object_callback);
 
     return object_callback;
+}
+
+/* endregion */
+
+/* region [add_draw_callback] */
+
+static void room_draw_callback_wrapper(void *data) {
+    struct k_object_callback *callback = data;
+    callback->fn_draw_callback(callback->object);
 }
 
 struct k_object_callback *k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object), int z_index) {
@@ -124,3 +134,5 @@ struct k_object_callback *k_object_add_draw_callback(struct k_object *object, vo
 
     return object_callback;
 }
+
+/* endregion */

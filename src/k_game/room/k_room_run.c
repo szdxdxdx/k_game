@@ -26,28 +26,17 @@ static void leave_room(struct k_room *room) {
 static inline int frame_delay(struct k_room *room) {
 
     uint64_t current_time = SDL_GetTicks64();
-    uint64_t elapsed_time = current_time - k__game.current_ms;
+    uint64_t elapsed_time = current_time - k__game.step_timestamp;
 
-#if 1
-    /* 若已到新一帧的时间，则函数返回 0，否则返回非 0。
-     * 不执行 SDL_Delay() 控制帧率。
+    /* 若已到新一帧的时间，则函数返回 0，否则返回非 0
+     *
+     * 不使用 `SDL_Delay()` 来控制帧率，因为 delay 期间不执行窗口消息循环，窗口无法响应操作。
+     * 例如，若极端地将帧率设为 1 秒 1 帧时，用户能明显感觉到拖动窗口的响应卡顿。
      */
     if (elapsed_time < room->step_interval_ms)
         return 1;
-#else
-    if (elapsed_time < room->frame_interval) {
 
-        /* 执行 SDL_Delay() 期间会暂停执行窗口消息循环，窗口无法响应用户的操作。
-         * 若极端地将 fps 设置为很小的数（比如设为 1），用户能明显感觉到拖动窗口的响应卡顿。
-         */
-        SDL_Delay(room->frame_interval - elapsed_time);
-
-        current_time = k__get_ticks();
-        elapsed_time = current_time - room->ctx.current_time;
-    }
-#endif
-
-    k__game.current_ms = current_time;
+    k__game.step_timestamp = current_time;
     k__game.step_delta_ms = (int)elapsed_time;
     k__game.step_delta = (float)elapsed_time / 1000.0f;
     return 0;

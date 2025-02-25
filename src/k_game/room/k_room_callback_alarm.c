@@ -1,5 +1,5 @@
 #include "k_game/alloc.h"
-
+#include "k_game/time.h"
 #include "../game/k_game_context.h"
 #include "./k_room_context.h"
 
@@ -24,7 +24,7 @@ void k__room_del_all_alarm_callbacks(struct k_room *room) {
 void k__room_exec_alarm_callbacks(struct k_room *room) {
     struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
 
-    const uint64_t current_ms = k__game.current_ms;
+    const uint64_t current_ms = k__game.step_timestamp;
 
     struct k_room_alarm_callback *callback;
     struct k_list_node *iter_node, *next;
@@ -64,7 +64,7 @@ struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn
     if (NULL == callback)
         return NULL;
 
-    uint64_t timeout = k__game.current_ms + delay_ms;
+    uint64_t timeout = k__game.step_timestamp + delay_ms;
 
     struct k_room_alarm_callback *callback_in_list;
     struct k_list_node *iter_node;

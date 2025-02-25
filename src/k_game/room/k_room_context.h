@@ -34,7 +34,7 @@ struct k_room {
 
     void (*fn_destroy)(struct k_room *room);
 
-    uint32_t step_interval_ms;
+    uint64_t step_interval_ms;
 
     unsigned int game_loop;
 
