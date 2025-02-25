@@ -8,7 +8,7 @@
 
 static inline void k__object_del_callback(struct k_object_callback *callback) {
 
-    /* TODO inline ? */
+    /* [?] inline? */
 
     k_room_del_callback(callback->room_callback);
     k_list_del(&callback->iter_node);
@@ -56,7 +56,7 @@ static void room_alarm_callback_wrapper(void *data, int timeout_diff) {
      */
 
     callback->fn_alarm_callback(callback->object, timeout_diff);
-    callback->room_callback = NULL;
+    callback->room_callback = NULL; /* <- 确保不重复删除房间回调 */
     k__object_del_callback(callback);
 }
 
@@ -85,6 +85,9 @@ struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, v
 /* region [add_step_callback] */
 
 static void room_step_callback_wrapper(void *data) {
+
+    /* [?] fn_wrapper? */
+
     struct k_object_callback *callback = data;
     callback->fn_step_callback(callback->object);
 }
