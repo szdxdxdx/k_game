@@ -3,11 +3,63 @@
 #include <stdlib.h>
 
 #include "k_game.h"
+#include "k_seq_step.h"
 
 /* region [img] */
 
 static struct k_image *img;
-static struct k_object *players[3];
+
+/* endregion */
+
+/* region [movement_component] */
+
+struct comp_movement {
+    struct k_component_callback *alarm_3;
+    struct k_component_callback *alarm_6;
+    float x;
+    float y;
+};
+
+void comp_create(struct k_component *component, void *params) {
+
+}
+
+void comp_alarm_3(struct k_component *comp, int timeout_diff) {
+
+}
+
+void comp_alarm_6(struct k_component *comp, int timeout_diff) {
+
+}
+
+void comp_step(struct k_component *comp) {
+
+}
+
+void comp_draw(struct k_component *comp) {
+
+}
+
+void define_movement_component(void) {
+
+    struct k_component_type_config config;
+    config.component_type_name = "my_component";
+    config.data_size = sizeof(struct comp_movement);
+    config.fn_create = comp_create;
+    config.fn_destroy = NULL;
+    struct k_component_callback_config callbacks[] = {
+        { offsetof(struct comp_movement, alarm_3), K_EVENT_ALARM, .alarm_callback = { comp_alarm_3, 6000 } },
+        { offsetof(struct comp_movement, alarm_6), K_EVENT_ALARM, .alarm_callback = { comp_alarm_6, 3000 } },
+        { SIZE_MAX,                                K_EVENT_STEP,  .step_callback  = { comp_step          } },
+        { SIZE_MAX,                                K_EVENT_DRAW,  .draw_callback  = { comp_draw, 3       } },
+    };
+    config.callbacks = callbacks;
+    config.callbacks_num = k_array_len(callbacks);
+
+    struct k_component_type *component_type = k_define_component_type(&config);
+
+    (void)component_type;
+}
 
 /* endregion */
 
@@ -89,27 +141,8 @@ static void destroy_player(struct k_object *obj_player) {
 
 /* region [game && room] */
 
-static void destroy_player_from_room(void *unused) {
-
-    if (k_is_key_pressed('1')) { destroy_player(players[0]); players[0] = NULL; }
-    if (k_is_key_pressed('2')) { destroy_player(players[1]); players[1] = NULL; }
-    if (k_is_key_pressed('3')) { destroy_player(players[2]); players[2] = NULL; }
-}
-
 static int create_room(struct k_room *room, void *params) {
-    create_player(30, 30, 1);
-    create_player(35, 35, 2);
-    create_player(40, 40, 3);
-
-    players[0] = create_player(130, 30, 3);
-    players[1] = create_player(135, 35, 2);
-    players[2] = create_player(140, 40, 1);
-
-    create_player(230, 30, 2);
-    create_player(235, 35, 3);
-    create_player(240, 40, 1);
-
-    k_room_add_step_callback(room, destroy_player_from_room, NULL);
+    create_player(60, 60, 1);
     return 0;
 }
 
@@ -128,7 +161,7 @@ static int init(void) {
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");
