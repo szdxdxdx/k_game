@@ -29,7 +29,6 @@ void k__room_del_all_draw_callbacks(struct k_room *room) {
 }
 
 void k__room_exec_draw_callbacks(struct k_room *room) {
-
     struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback_z_list *z_list;

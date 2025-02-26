@@ -10,7 +10,7 @@
 
 struct k_room {
 
-    struct k_room_registry_node room_node;
+    struct k_room_registry_node registry_node;
 
     struct k_room_callback_list enter_callbacks;
 

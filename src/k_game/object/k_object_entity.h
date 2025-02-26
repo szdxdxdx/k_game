@@ -3,18 +3,19 @@
 
 #include "./k_object_pool.h"
 #include "./k_object_callback.h"
+#include "./k_object_component.h"
 
 struct k_object {
 
     struct k_object_pool_node object_node;
 
-    struct k_object_callbacks_list callbacks_list;
-
     struct k_room *room;
+
+    struct k_object_callbacks_list callbacks;
+
+    struct k_object_component_list components;
 
     void *data;
 };
-
-void k__destroy_object(struct k_object *object);
 
 #endif

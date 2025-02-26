@@ -29,30 +29,29 @@ struct k_object *k__room_object_pool_new(struct k_room *room, size_t object_data
 
     if (0 == object_data_size) {
         object->data = 0;
-    }
-    else {
+    } else {
         if (NULL == (object->data = k_malloc(object_data_size))) {
             k_free(object);
             return NULL;
         }
     }
 
-    object->room = room;
-    k_list_add_tail(&pool->objects_list, &object->object_node.iter_node);
     k__object_init_callbacks_list(object);
+    k__object_init_components_list(object);
+
+    k_list_add_tail(&pool->objects_list, &object->object_node.iter_node);
+    object->room = room;
 
     return object;
 }
 
 void k__room_object_pool_del(struct k_object *object) {
 
-    /* 将 object 从 object pool 中摘除 */
     k_list_del(&object->object_node.iter_node);
 
-    /* 删除 object 携带的 callback */
+    k__object_cleanup_components_list(object);
     k__object_cleanup_callbacks_list(object);
 
-    /* 释放 object 所占的内存 */
     k_free(object->data);
     k_free(object);
 }

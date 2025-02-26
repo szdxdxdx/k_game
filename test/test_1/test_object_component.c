@@ -47,14 +47,23 @@ void define_movement_component(void) {
     config.data_size = sizeof(struct comp_movement);
     config.fn_create = comp_create;
     config.fn_destroy = NULL;
-    struct k_component_callback_config callbacks[] = {
-        { offsetof(struct comp_movement, alarm_3), K_EVENT_ALARM, .alarm_callback = { comp_alarm_3, 6000 } },
-        { offsetof(struct comp_movement, alarm_6), K_EVENT_ALARM, .alarm_callback = { comp_alarm_6, 3000 } },
-        { SIZE_MAX,                                K_EVENT_STEP,  .step_callback  = { comp_step          } },
-        { SIZE_MAX,                                K_EVENT_DRAW,  .draw_callback  = { comp_draw, 3       } },
-    };
-    config.callbacks = callbacks;
-    config.callbacks_num = k_array_len(callbacks);
+    // struct k_component_callback_config callbacks[] = {
+    //     {
+    //         K_EVENT_ALARM, offsetof(struct comp_movement, alarm_3),
+    //         .alarm_callback = { comp_alarm_3, 6000 }
+    //     }, {
+    //         K_EVENT_ALARM, offsetof(struct comp_movement, alarm_6),
+    //         .alarm_callback = { comp_alarm_6, 3000 }
+    //     }, {
+    //         K_EVENT_STEP, SIZE_MAX,
+    //         .step_callback  = { comp_step }
+    //     }, {
+    //         K_EVENT_DRAW, SIZE_MAX,
+    //         .draw_callback  = { comp_draw, 3 }
+    //     },
+    // };
+    // config.callbacks = callbacks;
+    // config.callbacks_num = k_array_len(callbacks);
 
     struct k_component_type *component_type = k_define_component_type(&config);
     (void)component_type;

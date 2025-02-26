@@ -33,12 +33,12 @@ static int step_check_config(void *data) {
     const struct k_room_config *config = ctx->config;
 
     if (NULL == config) {
-        k_log_error("Invalid room config, assert( NULL != config )");
+        k_log_error("Invalid room config: assert( NULL != config )");
         return -1;
     }
 
     if (config->room_speed <= 0) {
-        k_log_error("Invalid room config, assert( 0 < room_speed )");
+        k_log_error("Invalid room config: assert( 0 < room_speed )");
         return -1;
     }
 
@@ -65,14 +65,14 @@ static int step_registry_add(void *data) {
     struct k_room *room = ctx->room;
     const struct k_room_config *config = ctx->config;
 
-    return k__room_registry_add(&room->room_node, config->room_name);
+    return k__room_registry_add(&room->registry_node, config->room_name);
 }
 
 static void step_registry_del(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    k__room_registry_del(&room->room_node);
+    k__room_registry_del(&room->registry_node);
 }
 
 static int step_malloc_room_data(void *data) {

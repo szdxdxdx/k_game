@@ -8,6 +8,7 @@
 #include "../room/k_room_goto.h"
 #include "../room/k_room_registry.h"
 #include "../room/k_room_context.h"
+#include "../component/k_component_registry.h"
 
 const struct k_game_config K_GAME_CONFIG_INIT = {
     .window_title = "k_game",
@@ -23,22 +24,22 @@ static int step_check_config(void *data) {
     const struct k_game_config *config = data;
 
     if (NULL == config) {
-        k_log_error("Invalid game config. Config is NULL");
+        k_log_error("Invalid game config: Config is NULL");
         return -1;
     }
 
     if (config->window_h <= 0) {
-        k_log_error("Invalid game config, assert( 0 < window_h )");
+        k_log_error("Invalid game config: assert( 0 < window_h )");
         return -1;
     }
 
     if (config->window_w <= 0) {
-        k_log_error("Invalid game config, assert( 0 < window_w )");
+        k_log_error("Invalid game config: assert( 0 < window_w )");
         return -1;
     }
 
     if (NULL == config->fn_init) {
-        k_log_error("Invalid game config, assert( NULL != fn_init )");
+        k_log_error("Invalid game config: assert( NULL != fn_init )");
         return -1;
     }
 
@@ -60,7 +61,6 @@ static int step_init_room_modules(void *data) {
 
     k__room_registry_init();
     k__room_stack_init();
-
     return 0;
 }
 
@@ -69,6 +69,19 @@ static void step_deinit_room_modules(void *data) {
 
     k__room_stack_deinit();
     k__room_registry_deinit();
+}
+
+static int step_init_component_modules(void *data) {
+    (void)data;
+
+    k__component_registry_init();
+    return 0;
+}
+
+static void step_deinit_component_modules(void *data) {
+    (void)data;
+
+    k__component_registry_deinit();
 }
 
 static int step_call_fn_init(void *data) {
@@ -91,10 +104,11 @@ static void step_call_fn_cleanup(void *data) {
 }
 
 static const struct k_seq_step game_initialization_steps[] = {
-    { step_check_config,      NULL                     },
-    { step_init_SDL,          step_close_SDL           },
-    { step_init_room_modules, step_deinit_room_modules },
-    { step_call_fn_init,      step_call_fn_cleanup     },
+    { step_check_config,           NULL                          },
+    { step_init_SDL,               step_close_SDL                },
+    { step_init_room_modules,      step_deinit_room_modules      },
+    { step_init_component_modules, step_deinit_component_modules },
+    { step_call_fn_init,           step_call_fn_cleanup          },
 };
 
 /* endregion */

@@ -26,13 +26,13 @@ void k_object_del_callback(struct k_object_callback *callback) {
 /* region [object_callbacks_list] */
 
 void k__object_init_callbacks_list(struct k_object *object) {
-    struct k_object_callbacks_list *callbacks_list = &object->callbacks_list;
+    struct k_object_callbacks_list *callbacks_list = &object->callbacks;
 
     k_list_init(&callbacks_list->list);
 }
 
 void k__object_cleanup_callbacks_list(struct k_object *object) {
-    struct k_object_callbacks_list *callbacks_list = &object->callbacks_list;
+    struct k_object_callbacks_list *callbacks_list = &object->callbacks;
 
     struct k_object_callback *callback;
     struct k_list_node *iter, *next;
@@ -75,7 +75,7 @@ struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, v
     object_callback->fn_alarm_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    k_list_add_tail(&object->callbacks_list.list, &object_callback->iter_node);
+    k_list_add_tail(&object->callbacks.list, &object_callback->iter_node);
 
     return object_callback;
 }
@@ -107,7 +107,7 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
     object_callback->fn_step_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    k_list_add_tail(&object->callbacks_list.list, &object_callback->iter_node);
+    k_list_add_tail(&object->callbacks.list, &object_callback->iter_node);
 
     return object_callback;
 }
@@ -136,7 +136,7 @@ struct k_object_callback *k_object_add_draw_callback(struct k_object *object, vo
     object_callback->fn_draw_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    k_list_add_tail(&object->callbacks_list.list, &object_callback->iter_node);
+    k_list_add_tail(&object->callbacks.list, &object_callback->iter_node);
 
     return object_callback;
 }

@@ -25,33 +25,35 @@ struct k_component_type_config {
 
     void (*fn_destroy)(struct k_component *component);
 
-    struct k_component_callback_config {
-
-        size_t callback_storage_offset;
-
-        enum k_event_type callback_type;
-
-        union {
-            struct {
-                void (*fn_callback)(struct k_component *component);
-            } step_callback;
-
-            struct {
-                void (*fn_callback)(struct k_component *component);
-                int z_index;
-            } draw_callback;
-
-            struct {
-                void (*fn_callback)(struct k_component *component, int timeout_diff);
-                int delay_ms;
-            } alarm_callback;
-        };
-    } *callbacks;
-
-    size_t callbacks_num;
+//     struct k_component_callback_config {
+//
+//         enum k_event_type callback_type;
+//
+//         size_t callback_storage_offset;
+//
+//         union {
+//             struct {
+//                 void (*fn_callback)(struct k_component *component);
+//             } step_callback;
+//
+//             struct {
+//                 void (*fn_callback)(struct k_component *component);
+//                 int z_index;
+//             } draw_callback;
+//
+//             struct {
+//                 void (*fn_callback)(struct k_component *component, int timeout_diff);
+//                 int delay_ms;
+//             } alarm_callback;
+//         };
+//     } *callbacks;
+//
+//     size_t callbacks_num;
 };
 
 struct k_component_type *k_define_component_type(const struct k_component_type_config *config);
+
+struct k_component_type *k_get_component_type_by_name(const char *component_type_name);
 
 /* ------------------------------------------------------------------------ */
 
