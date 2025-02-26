@@ -12,9 +12,9 @@ void k__room_init_object_pool(struct k_room *room) {
 void k__room_cleanup_object_pool(struct k_room *room) {
     struct k_object_pool *pool = &room->object_pool;
 
-    struct k_list_node *iter_node, *next;
-    for (k_list_for_each_s(&pool->objects_list, iter_node, next)) {
-        struct k_object *object = container_of(iter_node, struct k_object, object_node);
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(&pool->objects_list, iter, next)) {
+        struct k_object *object = container_of(iter, struct k_object, object_node);
 
         k_destroy_object(object);
     }

@@ -57,7 +57,6 @@ void define_movement_component(void) {
     config.callbacks_num = k_array_len(callbacks);
 
     struct k_component_type *component_type = k_define_component_type(&config);
-
     (void)component_type;
 }
 

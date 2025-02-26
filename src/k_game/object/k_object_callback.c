@@ -34,10 +34,10 @@ void k__object_init_callbacks_list(struct k_object *object) {
 void k__object_cleanup_callbacks_list(struct k_object *object) {
     struct k_object_callbacks_list *callbacks_list = &object->callbacks_list;
 
-    struct k_object_callback *callback = NULL;
-    struct k_list_node *iter_node, *next;
-    for (k_list_for_each_s(&callbacks_list->list, iter_node, next)) {
-        callback = container_of(iter_node, struct k_object_callback, iter_node);
+    struct k_object_callback *callback;
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(&callbacks_list->list, iter, next)) {
+        callback = container_of(iter, struct k_object_callback, iter_node);
 
         k_object_del_callback(callback);
     }

@@ -15,10 +15,12 @@ void k__room_registry_init(void) {
 
 void k__room_registry_deinit(void) {
 
+    struct k_room_registry_node *registry_node;
+    struct k_room *room;
     struct k_list_node *iter, *next;
     for(k_list_for_each_s(&room_registry.rooms_list, iter, next)) {
-        struct k_room_registry_node *room_node = container_of(iter, struct k_room_registry_node, iter_node);
-        struct k_room *room = container_of(room_node, struct k_room, room_node);
+        registry_node = container_of(iter, struct k_room_registry_node, iter_node);
+        room = container_of(registry_node, struct k_room, room_node);
 
         k__destroy_room(room);
     }
@@ -57,8 +59,8 @@ struct k_room *k_get_room_by_name(const char *room_name) {
     if (NULL == map_node)
         return NULL;
 
-    struct k_room_registry_node *room_node = container_of(map_node, struct k_room_registry_node, name_map_node);
-    struct k_room *room = container_of(room_node, struct k_room, room_node);
+    struct k_room_registry_node *registry_node = container_of(map_node, struct k_room_registry_node, name_map_node);
+    struct k_room *room = container_of(registry_node, struct k_room, room_node);
     return room;
 }
 

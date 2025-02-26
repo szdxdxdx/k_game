@@ -14,10 +14,10 @@ static inline size_t str_hash(const char *str) {
 
 static inline struct k_str_map_node *find(struct k_hash_list *list, const char *key, size_t hash) {
 
-    struct k_hash_list_node *list_node;
-    for (k_hash_list_for_each(list, list_node)) {
-
-        struct k_str_map_node *map_node = container_of(list_node, struct k_str_map_node, list_node);
+    struct k_str_map_node *map_node;
+    struct k_hash_list_node *iter;
+    for (k_hash_list_for_each(list, iter)) {
+        map_node = container_of(iter, struct k_str_map_node, list_node);
 
         if (map_node->hash == hash) {
             if (strcmp(map_node->key, key) == 0)
@@ -71,10 +71,11 @@ struct k_hash_list *k_str_map_rehash(struct k_str_map *map, struct k_hash_list *
     struct k_hash_list *old_list = old_lists;
     for (; old_list < old_lists + old_lists_num; old_list++) {
 
-        struct k_hash_list_node *list_node, *next;
-        for (k_hash_list_for_each_s(old_list, list_node, next)) {
+        struct k_str_map_node *map_node;
+        struct k_hash_list_node *iter, *next;
+        for (k_hash_list_for_each_s(old_list, iter, next)) {
+            map_node = container_of(iter, struct k_str_map_node, list_node);
 
-            struct k_str_map_node *map_node = container_of(list_node, struct k_str_map_node, list_node);
             struct k_hash_list *new_list = &(new_lists[map_node->hash % new_lists_num]);
             k_hash_list_add(new_list, &map_node->list_node);
         }
