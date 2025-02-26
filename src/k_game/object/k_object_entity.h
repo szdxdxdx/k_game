@@ -3,7 +3,7 @@
 
 #include "./k_object_pool.h"
 #include "./k_object_callback.h"
-#include "./k_object_component.h"
+#include "../component/k_component_create.h"
 
 struct k_object {
 

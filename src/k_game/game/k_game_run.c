@@ -8,7 +8,7 @@
 #include "../room/k_room_goto.h"
 #include "../room/k_room_registry.h"
 #include "../room/k_room_context.h"
-#include "../component/k_component_registry.h"
+#include "../component/k_component_type.h"
 
 const struct k_game_config K_GAME_CONFIG_INIT = {
     .window_title = "k_game",
