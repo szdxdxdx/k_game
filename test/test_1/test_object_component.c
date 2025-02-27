@@ -21,7 +21,6 @@ struct my_movement_component_config {
 };
 
 struct my_movement_component {
-    struct k_component_callback *alarm_3;
     struct k_component_callback *alarm_6;
     float x;
     float y;
@@ -34,10 +33,18 @@ struct my_movement_component {
 
 void comp_alarm_3(struct k_component *comp, int timeout_diff) {
 
+    printf("3\n");
+    if (k_is_key_down('B')) {
+        struct my_movement_component *movement = k_component_get_data(comp);
+        k_component_del_callback(movement->alarm_6);
+    }
 }
 
 void comp_alarm_6(struct k_component *comp, int timeout_diff) {
 
+    struct my_movement_component *movement = k_component_get_data(comp);
+    movement->alarm_6 = NULL;
+    printf("6\n");
 }
 
 void comp_step(struct k_component *comp) {
@@ -66,7 +73,7 @@ int comp_create(struct k_component *component, void *params) {
     movement->right_key = config->right_key;
     movement->speed = config->speed;
 
-    movement->alarm_3 = k_component_add_alarm_callback(component, comp_alarm_3, 3000);
+    k_component_add_alarm_callback(component, comp_alarm_3, 3000);
     movement->alarm_6 = k_component_add_alarm_callback(component, comp_alarm_6, 6000);
     k_component_add_step_callback(component, comp_step);
 
