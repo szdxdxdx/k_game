@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "k_game.h"
-#include "k_seq_step.h"
 
 /* region [img] */
 
@@ -13,16 +12,25 @@ static struct k_image *img;
 
 /* region [movement_component] */
 
-struct comp_movement {
+struct my_movement_component_config {
+    int up_key;
+    int down_key;
+    int left_key;
+    int right_key;
+    float speed;
+};
+
+struct my_movement_component {
     struct k_component_callback *alarm_3;
     struct k_component_callback *alarm_6;
     float x;
     float y;
+    int up_key;
+    int down_key;
+    int left_key;
+    int right_key;
+    float speed;
 };
-
-void comp_create(struct k_component *component, void *params) {
-
-}
 
 void comp_alarm_3(struct k_component *comp, int timeout_diff) {
 
@@ -33,37 +41,45 @@ void comp_alarm_6(struct k_component *comp, int timeout_diff) {
 }
 
 void comp_step(struct k_component *comp) {
+    struct my_movement_component *movement = k_component_get_data(comp);
+    float delta_ms = k_get_step_delta();
 
+    if (k_is_key_down(movement->up_key))
+        movement->y -= movement->speed * delta_ms;
+    if (k_is_key_down(movement->left_key))
+        movement->x -= movement->speed * delta_ms;
+    if (k_is_key_down(movement->right_key))
+        movement->x += movement->speed * delta_ms;
+    if (k_is_key_down(movement->down_key))
+        movement->y += movement->speed * delta_ms;
 }
 
-void comp_draw(struct k_component *comp) {
+int comp_create(struct k_component *component, void *params) {
+    struct my_movement_component *movement = k_component_get_data(component);
+    struct my_movement_component_config *config = params;
+    movement->x = 0;
+    movement->y = 0;
 
+    movement->up_key = config->up_key;
+    movement->down_key = config->down_key;
+    movement->left_key = config->left_key;
+    movement->right_key = config->right_key;
+    movement->speed = config->speed;
+
+    movement->alarm_3 = k_component_add_alarm_callback(component, comp_alarm_3, 3000);
+    movement->alarm_6 = k_component_add_alarm_callback(component, comp_alarm_6, 6000);
+    k_component_add_step_callback(component, comp_step);
+
+    return 0;
 }
 
 void define_movement_component(void) {
 
     struct k_component_type_config config;
-    config.component_type_name = "my_component";
-    config.data_size = sizeof(struct comp_movement);
+    config.component_type_name = "my_movement";
+    config.data_size = sizeof(struct my_movement_component);
     config.fn_create = comp_create;
     config.fn_destroy = NULL;
-    // struct k_component_callback_config callbacks[] = {
-    //     {
-    //         K_EVENT_ALARM, offsetof(struct comp_movement, alarm_3),
-    //         .alarm_callback = { comp_alarm_3, 6000 }
-    //     }, {
-    //         K_EVENT_ALARM, offsetof(struct comp_movement, alarm_6),
-    //         .alarm_callback = { comp_alarm_6, 3000 }
-    //     }, {
-    //         K_EVENT_STEP, SIZE_MAX,
-    //         .step_callback  = { comp_step }
-    //     }, {
-    //         K_EVENT_DRAW, SIZE_MAX,
-    //         .draw_callback  = { comp_draw, 3 }
-    //     },
-    // };
-    // config.callbacks = callbacks;
-    // config.callbacks_num = k_array_len(callbacks);
 
     struct k_component_type *component_type = k_define_component_type(&config);
     (void)component_type;
@@ -74,27 +90,10 @@ void define_movement_component(void) {
 /* region [obj_player] */
 
 struct obj_player {
-    float x;
-    float y;
-
+    struct k_component *movement;
     uint64_t spr_timer;
     int current_frame;
 };
-
-static void object_step(struct k_object *object) {
-    struct obj_player *player = k_object_get_data(object);
-    float delta_ms = k_get_step_delta();
-    float speed = 100.0f;
-
-    if (k_is_key_down('W'))
-        player->y -= speed * delta_ms;
-    if (k_is_key_down('A'))
-        player->x -= speed * delta_ms;
-    if (k_is_key_down('D'))
-        player->x += speed * delta_ms;
-    if (k_is_key_down('S'))
-        player->y += speed * delta_ms;
-}
 
 static void object_draw(struct k_object *object) {
     struct obj_player *player = k_object_get_data(object);
@@ -108,7 +107,8 @@ static void object_draw(struct k_object *object) {
     rect.w = w;
     rect.h = h;
 
-    k_draw_image(img, &rect, (int)player->x, (int)player->y);
+    struct my_movement_component *movement = k_component_get_data(player->movement);
+    k_draw_image(img, &rect, (int)movement->x, (int)movement->y);
 
     uint64_t current_ms = k_get_step_timestamp();
     if (player->spr_timer <= current_ms) {
@@ -119,20 +119,25 @@ static void object_draw(struct k_object *object) {
     }
 }
 
-static struct k_object *create_player(float x, float y, int z_index) {
+static struct k_object *create_player(int up_key, int down_key, int left_key, int right_key, float speed) {
 
     struct k_object *object = k_create_object(sizeof(struct obj_player));
     if (NULL == object)
         return NULL;
 
     struct obj_player *player = k_object_get_data(object);
-    player->x = x;
-    player->y = y;
     player->spr_timer = 0;
     player->current_frame = 0;
 
-    k_object_add_step_callback(object, object_step);
-    k_object_add_draw_callback(object, object_draw, z_index);
+    struct my_movement_component_config movement_config;
+    movement_config.up_key = up_key;
+    movement_config.down_key = down_key;
+    movement_config.left_key = left_key;
+    movement_config.right_key = right_key;
+    movement_config.speed = speed;
+    player->movement = k_object_add_component(object, k_get_component_type_by_name("my_movement"), &movement_config);
+
+    k_object_add_draw_callback(object, object_draw, 0);
 
     return object;
 }
@@ -150,7 +155,8 @@ static void destroy_player(struct k_object *obj_player) {
 /* region [game && room] */
 
 static int create_room(struct k_room *room, void *params) {
-    create_player(60, 60, 1);
+    create_player('W', 'S', 'A', 'D', 100.0f);
+    create_player('I', 'K', 'J', 'L', 150.0f);
     return 0;
 }
 
@@ -158,6 +164,8 @@ static int init(void) {
 
     img = k_load_image("", "assets/tmp.png");
     (void)img;
+
+    define_movement_component();
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     room_config.room_name = "room";

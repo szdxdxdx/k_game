@@ -29,10 +29,15 @@ void k_object_del_callback(struct k_object_callback *callback);
 
 /* ------------------------------------------------------------------------ */
 
-int k_object_add_component(struct k_object *object, size_t component_id, void *params);
+struct k_component_type;
+struct k_component;
 
-void k_object_del_component(struct k_object *object, size_t component_id);
+struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
 
-void *k_object_get_component_data(struct k_object *object, size_t component_id);
+void k_object_del_component(struct k_object *object, struct k_component *component);
+
+struct k_component *k_object_get_component(struct k_object *object, struct k_component_type *component_type);
+
+void *k_object_get_component_data(struct k_object *object, struct k_component_type *component_type);
 
 #endif

@@ -6,11 +6,6 @@
 struct k_room_callback;
 struct k_object;
 
-struct k_object_callbacks_list {
-
-    struct k_list list;
-};
-
 struct k_object_callback {
 
     struct k_list_node iter_node;

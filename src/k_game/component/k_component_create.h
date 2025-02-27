@@ -7,7 +7,7 @@ struct k_object;
 
 struct k_object_component_list {
 
-    struct k_list *list;
+    struct k_list list;
 };
 
 void k__object_init_components_list(struct k_object *object);
@@ -18,15 +18,15 @@ struct k_component_type;
 
 struct k_component {
 
-    struct k_list_node *iter_node;
+    struct k_list_node iter_node;
+
+    struct k_component_type *type;
 
     struct k_object *object;
 
+    struct k_list callbacks;
+
     void *data;
 };
-
-struct k_component *k__create_component(struct k_component_type *component_type, struct k_object *object, void *params);
-
-struct k_component *k__destroy_component(struct k_component *component);
 
 #endif

@@ -11,7 +11,7 @@ struct k_object {
 
     struct k_room *room;
 
-    struct k_object_callbacks_list callbacks;
+    struct k_list callbacks;
 
     struct k_object_component_list components;
 

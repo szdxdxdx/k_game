@@ -32,7 +32,7 @@ struct k_component_type {
 
     size_t data_size;
 
-    void (*fn_create)(struct k_component *component, void *params);
+    int (*fn_create)(struct k_component *component, void *params);
 
     void (*fn_destroy)(struct k_component *component);
 };

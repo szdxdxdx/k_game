@@ -11,12 +11,11 @@ static struct k_component_registry component_registry;
 void k__component_registry_init(void) {
     k_list_init(&component_registry.components_list);
 
-    static struct k_hash_list buckets[32]; /* <- 使用 32 个哈希桶应该足够。有必要动态扩容吗？ */
+    static struct k_hash_list buckets[32]; /* <- 使用 32 个哈希桶应该足够。或许有必要动态扩容 */
     k_str_map_init(&component_registry.name_map, buckets, 32);
 }
 
 int k__component_registry_add(struct k_component_registry_node *node, const char *component_type_name) {
-    /* TODO */
 
     if (NULL == component_type_name || '\0' == component_type_name[0]) {
         node->name_map_node.key = "";
@@ -92,7 +91,7 @@ struct k_component_type *k_define_component_type(const struct k_component_type_c
         return NULL;
 
     struct k_component_type *component_type = k_malloc(sizeof(struct k_component_type));
-    if (NULL != component_type)
+    if (NULL == component_type)
         return NULL;
 
     if (0 != k__component_registry_add(&component_type->registry_node, config->component_type_name)) {
