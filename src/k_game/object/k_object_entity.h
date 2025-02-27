@@ -13,7 +13,7 @@ struct k_object {
 
     struct k_list callbacks;
 
-    struct k_object_component_list components;
+    struct k_list components;
 
     void *data;
 };

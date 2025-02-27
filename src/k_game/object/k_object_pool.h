@@ -8,7 +8,7 @@ struct k_object;
 
 struct k_object_pool {
 
-    struct k_list objects_list;
+    struct k_list object_list;
 };
 
 struct k_object_pool_node {

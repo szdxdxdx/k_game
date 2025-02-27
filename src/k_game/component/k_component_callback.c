@@ -7,11 +7,12 @@
 /* region [component_callback_list_add] */
 
 static inline void component_callback_list_add(struct k_component *component, struct k_component_callback *callback) {
-    k_list_add_tail(&component->callbacks, &callback->iter_node);
+    struct k_list *callback_list = &component->callbacks;
+    k_list_add_tail(callback_list, &callback->callback_list_node);
 }
 
 static inline void component_callback_list_del(struct k_component_callback *callback) {
-    k_list_del(&callback->iter_node);
+    k_list_del(&callback->callback_list_node);
 }
 
 /* endregion */
@@ -39,11 +40,12 @@ void k__component_init_callback_list(struct k_component *component) {
 }
 
 void k__component_cleanup_callback_list(struct k_component *component) {
+    struct k_list *callback_list = &component->callbacks;
 
     struct k_component_callback *callback;
     struct k_list_node *iter, *next;
-    for (k_list_for_each_s(&component->callbacks, iter, next)) {
-        callback = container_of(iter, struct k_component_callback, iter_node);
+    for (k_list_for_each_s(callback_list, iter, next)) {
+        callback = container_of(iter, struct k_component_callback, callback_list_node);
 
         del_callback(callback);
     }
@@ -55,8 +57,9 @@ void k__component_cleanup_callback_list(struct k_component *component) {
 
 static void alarm_callback_wrapper(void *data, int timeout_diff) {
    struct k_component_callback *callback = data;
-   callback->fn_alarm_callback(callback->component, timeout_diff);
    callback->room_callback = NULL; /* <- 确保不重复删除房间回调 */
+
+   callback->fn_alarm_callback(callback->component, timeout_diff);
    del_callback(callback);
 }
 
