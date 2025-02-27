@@ -20,7 +20,7 @@ struct k_component {
 
     struct k_list_node iter_node;
 
-    struct k_component_type *type;
+    const struct k_component_type *type;
 
     struct k_object *object;
 

@@ -31,8 +31,9 @@ static struct k_component *create_component(const struct k_component_type *compo
             goto malloc_data_failed;
     }
 
+    component->type = component_type;
     component->data = data;
-    k__component_init_callbacks_list(component);
+    k__component_init_callback_list(component);
 
     component->object = object;
     object_component_list_add(object, component);
@@ -53,11 +54,11 @@ malloc_failed:
 
 static inline void destroy_component(struct k_component *component) {
 
-    if (NULL != component->type)
+    if (component->type->fn_destroy != NULL)
         component->type->fn_destroy(component);
 
     object_component_list_del(component);
-    k__component_cleanup_callbacks_list(component);
+    k__component_cleanup_callback_list(component);
     k_free(component->data);
     k_free(component);
 }

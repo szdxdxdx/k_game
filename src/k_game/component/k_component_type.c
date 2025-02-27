@@ -99,8 +99,9 @@ struct k_component_type *k_define_component_type(const struct k_component_type_c
         return NULL;
     }
 
-    component_type->data_size = config->data_size;
-    component_type->fn_create = config->fn_create;
+    component_type->data_size  = config->data_size;
+    component_type->fn_create  = config->fn_create;
+    component_type->fn_destroy = config->fn_destroy;
 
     return component_type;
 }

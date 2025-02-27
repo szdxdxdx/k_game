@@ -3,11 +3,23 @@
 #include "k_game/room.h"
 #include "./k_object_entity.h"
 
+/* region [object_callback_list_add] */
+
+static inline void object_callback_list_add(struct k_object *object, struct k_object_callback *callback) {
+    k_list_add_tail(&object->callbacks, &callback->iter_node);
+}
+
+static inline void object_callback_list_del(struct k_object_callback *callback) {
+    k_list_del(&callback->iter_node);
+}
+
+/* endregion */
+
 /* region [del_callback] */
 
 static inline void del_object_callback(struct k_object_callback *callback) {
     k_room_del_callback(callback->room_callback);
-    k_list_del(&callback->iter_node);
+    object_callback_list_del(callback);
     k_free(callback);
 }
 
@@ -19,7 +31,7 @@ void k_object_del_callback(struct k_object_callback *callback) {
 
 /* endregion */
 
-/* region [object_callbacks_list] */
+/* region [object_callbacks_list_init] */
 
 void k__object_init_callbacks_list(struct k_object *object) {
     k_list_init(&object->callbacks);
@@ -68,7 +80,7 @@ struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, v
     object_callback->fn_alarm_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    k_list_add_tail(&object->callbacks, &object_callback->iter_node);
+    object_callback_list_add(object, object_callback);
 
     return object_callback;
 }
@@ -97,7 +109,7 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
     object_callback->fn_step_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    k_list_add_tail(&object->callbacks, &object_callback->iter_node);
+    object_callback_list_add(object, object_callback);
 
     return object_callback;
 }
@@ -126,7 +138,7 @@ struct k_object_callback *k_object_add_draw_callback(struct k_object *object, vo
     object_callback->fn_draw_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    k_list_add_tail(&object->callbacks, &object_callback->iter_node);
+    object_callback_list_add(object, object_callback);
 
     return object_callback;
 }

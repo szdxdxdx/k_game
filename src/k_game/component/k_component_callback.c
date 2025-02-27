@@ -4,12 +4,23 @@
 #include "../object/k_object_entity.h"
 #include "./k_component_callback.h"
 
+/* region [component_callback_list_add] */
+
+static inline void component_callback_list_add(struct k_component *component, struct k_component_callback *callback) {
+    k_list_add_tail(&component->callbacks, &callback->iter_node);
+}
+
+static inline void component_callback_list_del(struct k_component_callback *callback) {
+    k_list_del(&callback->iter_node);
+}
+
+/* endregion */
+
 /* region [del_callback] */
 
 static inline void del_callback(struct k_component_callback *callback) {
-
     k_room_del_callback(callback->room_callback);
-    k_list_del(&callback->iter_node);
+    component_callback_list_del(callback);
     k_free(callback);
 }
 
@@ -21,13 +32,13 @@ void k_component_del_callback(struct k_component_callback *callback) {
 
 /* endregion */
 
-/* region [component_callbacks_list] */
+/* region [component_callback_list_init] */
 
-void k__component_init_callbacks_list(struct k_component *component) {
+void k__component_init_callback_list(struct k_component *component) {
     k_list_init(&component->callbacks);
 }
 
-void k__component_cleanup_callbacks_list(struct k_component *component) {
+void k__component_cleanup_callback_list(struct k_component *component) {
 
     struct k_component_callback *callback;
     struct k_list_node *iter, *next;
@@ -64,7 +75,7 @@ struct k_component_callback *k_component_add_alarm_callback(struct k_component *
     component_callback->component = component;
     component_callback->room_callback = room_callback;
     component_callback->fn_alarm_callback = fn_callback;
-    k_list_add_tail(&component->callbacks, &component_callback->iter_node);
+    component_callback_list_add(component, component_callback);
 
     return component_callback;
 }
@@ -93,7 +104,7 @@ struct k_component_callback *k_component_add_step_callback(struct k_component *c
     component_callback->component = component;
     component_callback->room_callback = room_callback;
     component_callback->fn_step_callback = fn_callback;
-    k_list_add_tail(&component->callbacks, &component_callback->iter_node);
+    component_callback_list_add(component, component_callback);
 
     return component_callback;
 }
@@ -122,7 +133,7 @@ struct k_component_callback *k_component_add_draw_callback(struct k_component *c
     component_callback->component = component;
     component_callback->room_callback = room_callback;
     component_callback->fn_draw_callback = fn_callback;
-    k_list_add_tail(&component->callbacks, &component_callback->iter_node);
+    component_callback_list_add(component, component_callback);
 
     return component_callback;
 }
