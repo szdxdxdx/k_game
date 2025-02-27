@@ -12,34 +12,42 @@ struct k_object *k_create_object(size_t data_size) {
     struct k_room *room = k_get_current_room();
     if (NULL == room) {
         k_log_error("Currently not in any room, unable to create object");
-        return NULL;
+        goto not_in_room;
     }
 
-    struct k_object *object = k__room_object_pool_alloc(room);
+    struct k_object *object = k_malloc(sizeof(struct k_object));
+    if (NULL == object)
+        goto malloc_object_failed;
 
-    if (0 == data_size) {
-        object->data = 0;
-    } else {
-        if (NULL == (object->data = k_malloc(data_size))) {
-            k_free(object);
-            return NULL;
-        }
+    void *data = NULL;
+    if (0 != data_size) {
+        if (NULL == (data = k_malloc(data_size)))
+            goto malloc_data_failed;
     }
 
+    object->data = data;
+    object->room = room;
     k__object_init_callbacks_list(object);
-    k__object_init_components_list(object);
+    k__object_init_component_list(object);
+    k__room_object_pool_add(room, object);
 
     return object;
+
+malloc_data_failed:
+    k_free(object);
+malloc_object_failed:
+not_in_room:
+    return NULL;
 }
 
 void k__destroy_object(struct k_object *object) {
 
-    k__object_cleanup_components_list(object);
+    k__object_cleanup_component_list(object);
     k__object_cleanup_callbacks_list(object);
+    k__room_object_pool_del(object);
 
     k_free(object->data);
-
-    k__room_object_pool_free(object);
+    k_free(object);
 }
 
 void k_destroy_object(struct k_object *object) {

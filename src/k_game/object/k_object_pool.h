@@ -20,11 +20,8 @@ void k__room_init_object_pool(struct k_room *room);
 
 void k__room_deinit_object_pool(struct k_room *room);
 
-/* 从 object pool 中取出一个 object，且取出的 object 已和 room 建立关联
- * 若成功，函数返回 object 的指针，否则返回 `NULL`。
- */
-struct k_object *k__room_object_pool_alloc(struct k_room *room);
+void k__room_object_pool_add(struct k_room *room, struct k_object *object);
 
-void k__room_object_pool_free(struct k_object *object);
+void k__room_object_pool_del(struct k_object *object);
 
 #endif

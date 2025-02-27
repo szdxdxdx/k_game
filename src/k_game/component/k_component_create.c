@@ -5,9 +5,21 @@
 #include "./k_component_type.h"
 #include "./k_component_callback.h"
 
+/* region [object_component_list_add] */
+
+static inline void object_component_list_add(struct k_object *object, struct k_component *component) {
+    k_list_add_tail(&object->components.list, &component->iter_node);
+}
+
+static inline void object_component_list_del(struct k_component *component) {
+    k_list_del(&component->iter_node);
+}
+
+/* endregion */
+
 /* region [create_component] */
 
-static struct k_component *k__create_component(const struct k_component_type *component_type, struct k_object *object, void *params) {
+static struct k_component *create_component(const struct k_component_type *component_type, struct k_object *object, void *params) {
 
     struct k_component *component = k_malloc(sizeof(struct k_component));
     if (NULL == component)
@@ -20,10 +32,10 @@ static struct k_component *k__create_component(const struct k_component_type *co
     }
 
     component->data = data;
-    component->object = object;
     k__component_init_callbacks_list(component);
 
-    k_list_add_tail(&object->components.list, &component->iter_node);
+    component->object = object;
+    object_component_list_add(object, component);
 
     if (0 != component_type->fn_create(component, params))
         goto fn_create_failed;
@@ -39,50 +51,64 @@ malloc_failed:
     return NULL;
 }
 
-static void k__destroy_component(struct k_component *component) {
+static inline void destroy_component(struct k_component *component) {
 
     if (NULL != component->type)
         component->type->fn_destroy(component);
 
+    object_component_list_del(component);
     k__component_cleanup_callbacks_list(component);
-
-    k_list_del(&component->iter_node);
     k_free(component->data);
     k_free(component);
 }
 
 /* endregion */
 
-/* region [component_entity] */
+/* region [object_component_list_init] */
 
-void *k_component_get_data(struct k_component *component) {
-    return component->data;
+void k__object_init_component_list(struct k_object *object) {
+    struct k_object_component_list *components_list = &object->components;
+
+    k_list_init(&components_list->list);
+}
+
+void k__object_cleanup_component_list(struct k_object *object) {
+    struct k_object_component_list *components_list = &object->components;
+
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(&components_list->list, iter, next)) {
+        struct k_component *component = container_of(iter, struct k_component, iter_node);
+
+        destroy_component(component);
+    }
+    /* TODO */
 }
 
 /* endregion */
 
 /* region [object_add_component] */
 
-void k__object_init_components_list(struct k_object *object) {
-    struct k_object_component_list *components_list = &object->components;
-
-    k_list_init(&components_list->list);
-}
-
-void k__object_cleanup_components_list(struct k_object *object) {
-    struct k_object_component_list *components_list = &object->components;
-
-    /* TODO */
-}
-
 struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params) {
-    /* TODO assert NULL != object */
-    return k__create_component(component_type, object, params);
+    /* TODO assert(NULL != object && NULL == component_type) */
+    return create_component(component_type, object, params);
 }
 
-void k_object_del_component(struct k_object *object, struct k_component *component) {
-    /* TODO assert NULL != object */
-    k__destroy_component(component);
+void k_object_del_component(struct k_component *component) {
+
+    if (NULL != component)
+        destroy_component(component);
+}
+
+/* endregion */
+
+/* region [component_entity] */
+
+struct k_object *k_component_get_object(struct k_component *component) {
+    return component->object;
+}
+
+void *k_component_get_data(struct k_component *component) {
+    return component->data;
 }
 
 /* endregion */

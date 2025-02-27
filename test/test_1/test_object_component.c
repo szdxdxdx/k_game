@@ -35,6 +35,7 @@ void comp_alarm_3(struct k_component *comp, int timeout_diff) {
 
     printf("3\n");
     if (k_is_key_down('B')) {
+        printf("remove alarm callback 6\n");
         struct my_movement_component *movement = k_component_get_data(comp);
         k_component_del_callback(movement->alarm_6);
     }

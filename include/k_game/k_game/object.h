@@ -34,7 +34,7 @@ struct k_component;
 
 struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
 
-void k_object_del_component(struct k_object *object, struct k_component *component);
+void k_object_del_component(struct k_component *component);
 
 struct k_component *k_object_get_component(struct k_object *object, struct k_component_type *component_type);
 

@@ -10,9 +10,9 @@ struct k_object_component_list {
     struct k_list list;
 };
 
-void k__object_init_components_list(struct k_object *object);
+void k__object_init_component_list(struct k_object *object);
 
-void k__object_cleanup_components_list(struct k_object *object);
+void k__object_cleanup_component_list(struct k_object *object);
 
 struct k_component_type;
 
