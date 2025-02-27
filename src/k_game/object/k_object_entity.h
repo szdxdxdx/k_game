@@ -7,7 +7,7 @@
 
 struct k_object {
 
-    struct k_object_pool_node object_node;
+    struct k_object_pool_node pool_node;
 
     struct k_room *room;
 
@@ -17,5 +17,7 @@ struct k_object {
 
     void *data;
 };
+
+void k__destroy_object(struct k_object *object);
 
 #endif

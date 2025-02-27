@@ -1,7 +1,7 @@
 #ifndef K_GAME__ROOM_CALLBACK_H
 #define K_GAME__ROOM_CALLBACK_H
 
-#include "k_list.h"
+struct k_room;
 
 /* 房间回调结点的基础结构
  *
@@ -18,28 +18,5 @@ struct k_room_callback {
      */
     void (*fn_del_self)(struct k_room_callback *self);
 };
-
-/* 存储房间回调的链表容器
- *
- * 链表这一数据结构足以应对绝大多数场景，
- * enter、step 等类型的房间回调都使用链表存储。
- */
-struct k_room_callback_list {
-    struct k_list list;
-};
-
-/* 房间回调链表的结点 */
-struct k_room_callback_list_item {
-    struct k_list_node list_node;
-    struct k_room_callback impl;
-    void *data;
-    void (*fn_callback)(void *data);
-};
-
-void k__room_callback_list_init(struct k_room_callback_list *list);
-
-void k__room_callback_list_clean(struct k_room_callback_list *list);
-
-void k__room_callback_list_exec_all(struct k_room_callback_list *list);
 
 #endif
