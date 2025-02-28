@@ -10,17 +10,15 @@
 #include "./k_room_context.h"
 #include "./k_room_run.h"
 
-static int enter_room(struct k_room *room) {
+static inline int enter_room(struct k_room *room) {
 
-    /* 开启游戏循环，在 entry_event 回调中也能退出循环 */
-    room->game_loop = 1;
+    room->game_loop = 1; /* <- 标记游戏循环开启，在 entry 回调中也能退出循环 */
 
     k__room_callback_list_exec_all(&room->enter_callbacks);
-
     return 0;
 }
 
-static void leave_room(struct k_room *room) {
+static inline void leave_room(struct k_room *room) {
     k__room_callback_list_exec_all(&room->leave_callbacks);
 }
 

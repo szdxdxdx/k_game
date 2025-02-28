@@ -128,8 +128,8 @@ static int step_init_callbacks(void *data) {
     k__room_callback_list_init(&room->step_begin_callbacks);
     k__room_callback_list_init(&room->step_callbacks);
     k__room_callback_list_init(&room->step_end_callbacks);
-    k__room_init_alarm_callbacks_storage(room);
-    k__room_init_draw_callbacks_storage(room);
+    k__room_init_alarm_callback_storage(room);
+    k__room_init_draw_callback_storage(room);
 
     return 0;
 }
@@ -143,8 +143,8 @@ static void step_cleanup_callbacks(void *data) {
     k__room_callback_list_clean(&room->step_begin_callbacks);
     k__room_callback_list_clean(&room->step_callbacks);
     k__room_callback_list_clean(&room->step_end_callbacks);
-    k__room_del_all_alarm_callbacks(room);
-    k__room_del_all_draw_callbacks(room);
+    k__room_cleanup_alarm_callback_storage(room);
+    k__room_cleanup_draw_callback_storage(room);
 }
 
 static int step_call_fn_create(void *data) {

@@ -3,8 +3,6 @@
 #include "./k_object_create.h"
 #include "./k_object_entity.h"
 
-/* region [object_pool] */
-
 void k__room_init_object_pool(struct k_room *room) {
     struct k_object_pool *pool = &room->object_pool;
 
@@ -30,5 +28,3 @@ void k__room_object_pool_add(struct k_room *room, struct k_object *object) {
 void k__room_object_pool_del(struct k_object *object) {
     k_list_del(&object->pool_node.iter_node);
 }
-
-/* endregion */

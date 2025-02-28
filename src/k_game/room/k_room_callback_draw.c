@@ -2,14 +2,14 @@
 
 #include "./k_room_context.h"
 
-void k__room_init_draw_callbacks_storage(struct k_room *room) {
-    struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
+void k__room_init_draw_callback_storage(struct k_room *room) {
+    struct k_room_draw_callback_storage *storage = &room->draw_callbacks;
 
     k_list_init(&storage->z_lists);
 }
 
-void k__room_del_all_draw_callbacks(struct k_room *room) {
-    struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
+void k__room_cleanup_draw_callback_storage(struct k_room *room) {
+    struct k_room_draw_callback_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback_z_list *z_list;
     struct k_list_node *iter, *next;
@@ -29,7 +29,7 @@ void k__room_del_all_draw_callbacks(struct k_room *room) {
 }
 
 void k__room_exec_draw_callbacks(struct k_room *room) {
-    struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
+    struct k_room_draw_callback_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback_z_list *z_list;
     struct k_list_node *iter, *next;
@@ -61,7 +61,7 @@ static void draw_callback_del_self(struct k_room_callback *self) {
 }
 
 struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int z_index) {
-    struct k_room_draw_callbacks_storage *storage = &room->draw_callbacks;
+    struct k_room_draw_callback_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback *callback = k_malloc(sizeof(struct k_room_draw_callback));
     if (NULL == callback)

@@ -23,9 +23,9 @@ struct k_room {
 
     struct k_room_callback_list step_end_callbacks;
 
-    struct k_room_alarm_callbacks_storage alarm_callbacks;
+    struct k_room_alarm_callback_storage alarm_callbacks;
 
-    struct k_room_draw_callbacks_storage draw_callbacks;
+    struct k_room_draw_callback_storage draw_callbacks;
 
     struct k_object_pool object_pool;
 

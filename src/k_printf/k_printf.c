@@ -65,8 +65,7 @@ static void str_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list a
     if (r <= remain_len) {
         str_buf->str_len += r;
         buf->n += r;
-    }
-    else {
+    } else {
         str_buf->str_len = str_buf->max_len;
         buf->n += r;
         if (buf->n < 0)

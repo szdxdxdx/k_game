@@ -12,8 +12,11 @@ void room_step(void *data) {
 int init_game(void) {
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
+    room_config.room_name = "room_1";
     struct k_room *room = k_create_room(&room_config, NULL);
     k_room_add_step_callback(room, room_step, NULL);
+
+    k_create_room(&room_config, NULL);
 
     k_goto_room(room);
     return 0;

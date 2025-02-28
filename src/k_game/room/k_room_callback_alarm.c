@@ -2,14 +2,14 @@
 #include "../game/k_game_context.h"
 #include "./k_room_context.h"
 
-void k__room_init_alarm_callbacks_storage(struct k_room *room) {
-    struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
+void k__room_init_alarm_callback_storage(struct k_room *room) {
+    struct k_room_alarm_callback_storage *storage = &room->alarm_callbacks;
 
     k_list_init(&storage->list);
 }
 
-void k__room_del_all_alarm_callbacks(struct k_room *room) {
-    struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
+void k__room_cleanup_alarm_callback_storage(struct k_room *room) {
+    struct k_room_alarm_callback_storage *storage = &room->alarm_callbacks;
 
     struct k_room_alarm_callback *callback;
     struct k_list_node *iter, *next;
@@ -21,7 +21,7 @@ void k__room_del_all_alarm_callbacks(struct k_room *room) {
 }
 
 void k__room_exec_alarm_callbacks(struct k_room *room) {
-    struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
+    struct k_room_alarm_callback_storage *storage = &room->alarm_callbacks;
 
     const uint64_t current_ms = k__game.step_timestamp;
 
@@ -54,7 +54,7 @@ static void alarm_callback_del_self(struct k_room_callback *self) {
 }
 
 struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms) {
-    struct k_room_alarm_callbacks_storage *storage = &room->alarm_callbacks;
+    struct k_room_alarm_callback_storage *storage = &room->alarm_callbacks;
 
     if (delay_ms < 0)
         delay_ms = 0;

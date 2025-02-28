@@ -22,7 +22,7 @@ struct k_room_alarm_callback {
     uint64_t timeout;
 };
 
-struct k_room_alarm_callbacks_storage {
+struct k_room_alarm_callback_storage {
 
     /* TODO: 数据结构改用优先队列
      *
@@ -30,9 +30,9 @@ struct k_room_alarm_callbacks_storage {
     struct k_list list;
 };
 
-void k__room_init_alarm_callbacks_storage(struct k_room *room);
+void k__room_init_alarm_callback_storage(struct k_room *room);
 
-void k__room_del_all_alarm_callbacks(struct k_room *room);
+void k__room_cleanup_alarm_callback_storage(struct k_room *room);
 
 void k__room_exec_alarm_callbacks(struct k_room *room);
 

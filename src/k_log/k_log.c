@@ -26,13 +26,13 @@
 static inline const char *level_str(int level) {
 
     switch(level) {
-        case K_LOG_LEVEL_TRACE: return C_MAGENTA "T" C_RESET;
-        case K_LOG_LEVEL_DEBUG: return C_MAGENTA "D" C_RESET;
-        case K_LOG_LEVEL_INFO : return C_CYAN    "I" C_RESET;
-        case K_LOG_LEVEL_WARN : return C_YELLOW  "W";
-        case K_LOG_LEVEL_ERROR: return C_RED     "E";
-        case K_LOG_LEVEL_FATAL: return C_RED     "F";
-        default:                return C_CYAN    "I" C_RESET;
+        case K_LOG_LEVEL_TRACE: return C_MAGENTA "TRACE" C_RESET;
+        case K_LOG_LEVEL_DEBUG: return C_MAGENTA "DEBUG" C_RESET;
+        case K_LOG_LEVEL_INFO : return C_CYAN    "INFO " C_RESET;
+        case K_LOG_LEVEL_WARN : return C_YELLOW  "WARN " C_RESET;
+        case K_LOG_LEVEL_ERROR: return C_RED     "ERROR" C_RESET;
+        case K_LOG_LEVEL_FATAL: return C_RED     "FATAL" C_RESET;
+        default:                return C_CYAN    "INFO " C_RESET;
     }
 }
 
@@ -41,7 +41,7 @@ static inline const char *level_str(int level) {
 void log_v1(int level, const char *fmt, va_list args) {
 
     char buf[512];
-    snprintf(buf, sizeof(buf), "%s %s\n"C_RESET, level_str(level), fmt);
+    snprintf(buf, sizeof(buf), "%s %s\n", level_str(level), fmt);
     vfprintf(stdout, buf, args);
 }
 
@@ -52,7 +52,7 @@ void log_v1(int level, const char *fmt, va_list args) {
 void log_v2(int level, const char *fmt, const char *file, int line, va_list args) {
 
     char buf[512];
-    snprintf(buf, sizeof(buf), "%s %s   %s:%d\n"C_RESET, level_str(level), fmt, file, line);
+    snprintf(buf, sizeof(buf), "%s %s   %s:%d\n", level_str(level), fmt, file, line);
     vfprintf(stdout, buf, args);
 }
 

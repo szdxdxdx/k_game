@@ -5,7 +5,7 @@
 #include "k_game/room.h"
 #include "./k_room_goto.h"
 
-/* region [room stack] */
+/* region [room_stack] */
 
 static struct k_room_stack room_stack;
 
@@ -33,10 +33,6 @@ static inline struct k_room *room_stack_get_top(void) {
     return room_stack.rooms[room_stack.top - 1];
 }
 
-/* endregion */
-
-/* region [init] */
-
 void k__room_stack_init(void) {
     room_stack_clear();
 }
@@ -47,7 +43,7 @@ void k__room_stack_deinit(void) {
 
 /* endregion */
 
-/* region [room goto] */
+/* region [room_goto] */
 
 struct k_room *k__room_stack_get_top(void) {
     return room_stack_is_empty() ? NULL : room_stack_get_top();

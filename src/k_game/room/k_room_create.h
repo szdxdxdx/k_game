@@ -3,16 +3,15 @@
 
 struct k_room;
 
+void k__destroy_room(struct k_room *room);
+
 /**
- * \brief 销毁房间
+ * \brief 销毁房间【此 API 暂未公布】
  *
- * 【 此 API 暂未公布 】销毁房间是一件很危险的事。
- *
- * 在游戏运行过程中途销毁房间可能导致不可预期的错误，
+ * 销毁房间是一件很危险的事，
+ * 在游戏运行过程中途销毁房间可能导致不可预期的错误。
  * 建议将房间交由 k_game 在游戏结束时统一销毁。
  */
 void k_destroy_room(struct k_room *room);
-
-void k__destroy_room(struct k_room *room);
 
 #endif

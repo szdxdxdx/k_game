@@ -29,7 +29,7 @@ struct k_room_draw_callback_z_list {
     int z_index;
 };
 
-struct k_room_draw_callbacks_storage {
+struct k_room_draw_callback_storage {
 
     /* TODO: 存储结构改用二叉平衡树
      *
@@ -37,9 +37,9 @@ struct k_room_draw_callbacks_storage {
     struct k_list z_lists;
 };
 
-void k__room_init_draw_callbacks_storage(struct k_room *room);
+void k__room_init_draw_callback_storage(struct k_room *room);
 
-void k__room_del_all_draw_callbacks(struct k_room *room);
+void k__room_cleanup_draw_callback_storage(struct k_room *room);
 
 void k__room_exec_draw_callbacks(struct k_room *room);
 
