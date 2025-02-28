@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <stddef.h>
 
 #include "k_log.h"
@@ -6,45 +5,43 @@
 
 #include "k_game/game.h"
 #include "../SDL/k_SDL_init.h"
+#include "../component/k_component_type.h"
 #include "../room/k_room_goto.h"
 #include "../room/k_room_registry.h"
 #include "../room/k_room_context.h"
-#include "../component/k_component_type.h"
 
-const struct k_game_config K_GAME_CONFIG_INIT = {
-    .window_title = "k_game",
-    .window_h   = 480,
-    .window_w   = 640,
-    .fn_init    = NULL,
-    .fn_cleanup = NULL,
-};
-
-/* region [init && deinit] */
+/* region [game_initialization_steps] */
 
 static int step_check_config(void *data) {
     const struct k_game_config *config = data;
 
+    const char *err_msg;
+
     if (NULL == config) {
-        k_log_error("Invalid game config: Config is NULL");
-        return -1;
+        err_msg = "assert( NULL != config )";
+        goto err;
     }
 
     if (config->window_h <= 0) {
-        k_log_error("Invalid game config: assert( 0 < window_h )");
-        return -1;
+        err_msg = "assert( 0 < window_h )";
+        goto err;
     }
 
     if (config->window_w <= 0) {
-        k_log_error("Invalid game config: assert( 0 < window_w )");
-        return -1;
+        err_msg = "assert( 0 < window_w )";
+        goto err;
     }
 
     if (NULL == config->fn_init) {
-        k_log_error("Invalid game config: assert( NULL != fn_init )");
-        return -1;
+        err_msg = "assert( NULL != fn_init )";
+        goto err;
     }
 
     return 0;
+
+err:
+    k_log_error("Invalid game config: %s", err_msg);
+    return -1;
 }
 
 static int step_init_SDL(void *data) {

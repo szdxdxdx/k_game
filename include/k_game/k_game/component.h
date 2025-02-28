@@ -22,9 +22,11 @@ struct k_component_type_config {
 
 struct k_component_type *k_define_component_type(const struct k_component_type_config *config);
 
-struct k_component_type *k_get_component_type_by_name(const char *type_name);
+const char *k_component_type_get_name(struct k_component_type *component_type);
 
 void *k_component_get_data(struct k_component *component);
+
+struct k_component_type *k_get_component_type_by_name(const char *type_name);
 
 struct k_component_callback;
 

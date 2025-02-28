@@ -83,14 +83,14 @@ struct k_component_callback *k_component_add_alarm_callback(struct k_component *
     return component_callback;
 }
 
+/* endregion */
+
+/* region [add_step_callback] */
+
 static void step_callback_wrapper(void *data) {
     struct k_component_callback *callback = data;
     callback->fn_step_callback(callback->component);
 }
-
-/* endregion */
-
-/* region [add_step_callback] */
 
 struct k_component_callback *k_component_add_step_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
 

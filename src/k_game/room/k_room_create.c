@@ -7,7 +7,7 @@
 #include "../game/k_game_context.h"
 #include "./k_room_context.h"
 
-/* region [steps] */
+/* region [room_creation_steps] */
 
 struct k_room_creation_context {
     const struct k_room_config *config;
