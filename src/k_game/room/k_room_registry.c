@@ -26,28 +26,30 @@ void k__room_registry_deinit(void) {
     }
 }
 
-int k__room_registry_add(struct k_room_registry_node *node, const char *room_name) {
+int k__room_registry_add(struct k_room *room, const char *room_name) {
+    struct k_room_registry_node *registry_node = &room->registry_node;
 
     if (NULL == room_name || '\0' == room_name[0]) {
-        node->name_map_node.key = "";
+        registry_node->name_map_node.key = "";
     }
     else {
-        if (0 != k_str_map_add(&room_registry.name_map, room_name, &node->name_map_node)) {
+        if (0 != k_str_map_add(&room_registry.name_map, room_name, &registry_node->name_map_node)) {
             k_log_error("The room named \"%s\" already exists", room_name);
             return -1;
         }
     }
 
-    k_list_add_tail(&room_registry.rooms_list, &node->iter_node);
+    k_list_add_tail(&room_registry.rooms_list, &registry_node->iter_node);
     return 0;
 }
 
-void k__room_registry_del(struct k_room_registry_node *node) {
+void k__room_registry_del(struct k_room *room) {
+    struct k_room_registry_node *registry_node = &room->registry_node;
 
-    if ('\0' != node->name_map_node.key[0])
-        k_str_map_del(&room_registry.name_map, &node->name_map_node);
+    if ('\0' != registry_node->name_map_node.key[0])
+        k_str_map_del(&room_registry.name_map, &registry_node->name_map_node);
 
-    k_list_del(&node->iter_node);
+    k_list_del(&registry_node->iter_node);
 }
 
 struct k_room *k_get_room_by_name(const char *room_name) {

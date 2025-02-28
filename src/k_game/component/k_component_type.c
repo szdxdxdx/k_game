@@ -15,28 +15,30 @@ void k__component_registry_init(void) {
     k_str_map_init(&component_registry.name_map, buckets, 32);
 }
 
-int k__component_registry_add(struct k_component_registry_node *node, const char *component_type_name) {
+static int component_registry_add(struct k_component_type *component_type, const char *component_type_name) {
+    struct k_component_registry_node *registry_node = &component_type->registry_node;
 
     if (NULL == component_type_name || '\0' == component_type_name[0]) {
-        node->name_map_node.key = "";
+        registry_node->name_map_node.key = "";
     }
     else {
-        if (0 != k_str_map_add(&component_registry.name_map, component_type_name, &node->name_map_node)) {
+        if (0 != k_str_map_add(&component_registry.name_map, component_type_name, &registry_node->name_map_node)) {
             k_log_error("The component type named \"%s\" already exists", component_type_name);
             return -1;
         }
     }
 
-    k_list_add_tail(&component_registry.components_list, &node->iter_node);
+    k_list_add_tail(&component_registry.components_list, &registry_node->iter_node);
     return 0;
 }
 
-static void k__component_registry_del(struct k_component_registry_node *node) {
+static void component_registry_del(struct k_component_type *component_type) {
+    struct k_component_registry_node *registry_node = &component_type->registry_node;
 
-    if ('\0' != node->name_map_node.key[0])
-        k_str_map_del(&component_registry.name_map, &node->name_map_node);
+    if ('\0' != registry_node->name_map_node.key[0])
+        k_str_map_del(&component_registry.name_map, &registry_node->name_map_node);
 
-    k_list_del(&node->iter_node);
+    k_list_del(&registry_node->iter_node);
 }
 
 void k__component_registry_deinit(void) {
@@ -48,7 +50,7 @@ void k__component_registry_deinit(void) {
         registry_node = container_of(iter, struct k_component_registry_node, iter_node);
         component_type = container_of(registry_node, struct k_component_type, registry_node);
 
-        k__component_registry_del(&component_type->registry_node);
+        component_registry_del(component_type);
     }
 }
 
@@ -94,7 +96,7 @@ struct k_component_type *k_define_component_type(const struct k_component_type_c
     if (NULL == component_type)
         return NULL;
 
-    if (0 != k__component_registry_add(&component_type->registry_node, config->component_type_name)) {
+    if (0 != component_registry_add(component_type, config->component_type_name)) {
         k_free(component_type);
         return NULL;
     }

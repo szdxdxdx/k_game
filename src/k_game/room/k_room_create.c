@@ -1,5 +1,3 @@
-#include <assert.h>
-
 #include "k_log.h"
 #include "k_list.h"
 #include "k_seq_step.h"
@@ -65,14 +63,14 @@ static int step_registry_add(void *data) {
     struct k_room *room = ctx->room;
     const struct k_room_config *config = ctx->config;
 
-    return k__room_registry_add(&room->registry_node, config->room_name);
+    return k__room_registry_add(room, config->room_name);
 }
 
 static void step_registry_del(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    k__room_registry_del(&room->registry_node);
+    k__room_registry_del(room);
 }
 
 static int step_malloc_room_data(void *data) {

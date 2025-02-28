@@ -4,6 +4,8 @@
 #include "k_list.h"
 #include "k_str_map.h"
 
+struct k_room;
+
 /* 房间注册表
  *
  */
@@ -28,8 +30,8 @@ void k__room_registry_init(void);
 
 void k__room_registry_deinit(void);
 
-int k__room_registry_add(struct k_room_registry_node *node, const char *room_name);
+int k__room_registry_add(struct k_room *room, const char *room_name);
 
-void k__room_registry_del(struct k_room_registry_node *node);
+void k__room_registry_del(struct k_room *room);
 
 #endif
