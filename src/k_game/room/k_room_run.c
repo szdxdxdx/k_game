@@ -8,6 +8,7 @@
 #include "../SDL/k_SDL_keyboard.h"
 #include "../game/k_game_context.h"
 #include "./k_room_context.h"
+#include "./k_room_run.h"
 
 static int enter_room(struct k_room *room) {
 

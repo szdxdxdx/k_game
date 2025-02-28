@@ -1,9 +1,11 @@
 #ifndef K_GAME__OBJECT_ENTITY_H
 #define K_GAME__OBJECT_ENTITY_H
 
+#include "k_list.h"
+
 #include "./k_object_pool.h"
-#include "./k_object_callback.h"
-#include "../component/k_component_create.h"
+
+struct k_room;
 
 struct k_object {
 
@@ -17,7 +19,5 @@ struct k_object {
 
     void *data;
 };
-
-void k__destroy_object(struct k_object *object);
 
 #endif

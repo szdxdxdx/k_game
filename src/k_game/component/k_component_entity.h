@@ -1,5 +1,5 @@
-#ifndef K_GAME__COMPONENT_CREATE_H
-#define K_GAME__COMPONENT_CREATE_H
+#ifndef K_GAME__COMPONENT_ENTITY_H
+#define K_GAME__COMPONENT_ENTITY_H
 
 #include "k_list.h"
 

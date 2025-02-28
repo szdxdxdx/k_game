@@ -42,6 +42,4 @@ struct k_room {
     void *data;
 };
 
-void k__room_run(struct k_room *room);
-
 #endif

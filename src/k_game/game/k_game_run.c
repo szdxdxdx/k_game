@@ -8,7 +8,7 @@
 #include "../component/k_component_type.h"
 #include "../room/k_room_goto.h"
 #include "../room/k_room_registry.h"
-#include "../room/k_room_context.h"
+#include "../room/k_room_run.h"
 
 /* region [game_initialization_steps] */
 

@@ -1,6 +1,5 @@
 #include "k_log.h"
 
-#include "./k_room_registry.h"
 #include "./k_room_create.h"
 #include "./k_room_context.h"
 

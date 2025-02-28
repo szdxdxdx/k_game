@@ -2,6 +2,7 @@
 #include "k_game/object.h"
 #include "k_game/room.h"
 #include "./k_object_entity.h"
+#include "./k_object_callback.h"
 
 /* region [object_callback_list_add] */
 

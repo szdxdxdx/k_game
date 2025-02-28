@@ -1,5 +1,6 @@
 #include "k_game/alloc.h"
 #include "../room/k_room_context.h"
+#include "./k_object_create.h"
 #include "./k_object_entity.h"
 
 /* region [object_pool] */
