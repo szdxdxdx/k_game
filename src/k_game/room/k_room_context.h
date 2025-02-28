@@ -31,9 +31,9 @@ struct k_room {
 
     int room_w, room_h;
 
-    int (*fn_create)(struct k_room *room, void *params);
+    int (*fn_init)(struct k_room *room, void *params);
 
-    void (*fn_destroy)(struct k_room *room);
+    void (*fn_cleanup)(struct k_room *room);
 
     uint64_t step_interval_ms;
 

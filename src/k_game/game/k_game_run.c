@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stddef.h>
 
 #include "k_log.h"

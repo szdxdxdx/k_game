@@ -23,7 +23,7 @@ static int init_game(void) {
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.room_speed = 30;
     config.room_name = "tmp room";
-    config.fn_create = create_room;
+    config.fn_init = create_room;
     struct k_room *tmp_room = k_create_room(&config, NULL);
 
     k_goto_room(tmp_room);

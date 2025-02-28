@@ -5,12 +5,13 @@
 
 struct k_room;
 
+/** \brief 创建房间所需的配置参数 */
 struct k_room_config {
 
     /**
      * \brief 房间的名字
      *
-     * 名字是可选的，传递空字符串 "" 或 `NULL` 表示不使用名字。
+     * 名字是可选的，指定值为空字符串 "" 或 `NULL` 表示不使用名字。
      *
      * 若指定名字，需保证其唯一性。k_game 会基于该名字为房间创建索引，
      * 之后你可以通过 `k_get_room_by_name()` 查找房间。
@@ -26,15 +27,70 @@ struct k_room_config {
     /** \brief 房间的运行速度，单位：步/秒（帧/秒） */
     int room_speed;
 
+    /**
+     * \brief 自定义数据结构体的大小，单位：字节
+     *
+     * 在此指定为房间附加的自定义数据结的构体大小。
+     *
+     * 创建房间时，k_game 会为自定义的数据段分配内存，
+     * 之后你可以通过 `k_room_get_data()` 访问该数据。
+     *
+     * 附加数据是可选的，若不需要可指定该值为 0。
+     */
     size_t data_size;
 
-    int (*fn_create)(struct k_room *room, void *params);
+    /**
+     * \brief 创建房间时的初始化回调
+     *
+     * 在此回调中，你可以对房间执行你所需的初始化工作：
+     * - 初始化该房间自定义数据段的内存
+     * - 加载特定资源
+     * - 为房间添加事件回调
+     * - 在房间中创建对象
+     * - ...
+     *
+     * 房间初始化失败，也意味着房间创建失败。
+     * 你将通过函数的返回值告诉 k_game 你的初始化是否成功，
+     * 若成功，函数应返回 0，否则应返回非 0。
+     *
+     * 此回调是可选的，指定值为 `NULL` 则不执行回调。
+     */
+    int (*fn_init)(struct k_room *room, void *params);
 
-    void (*fn_destroy)(struct k_room *room);
+    /**
+     * \brief 销毁房间时的清理回调
+     *
+     * 若你在房间运行过程中申请有不是由 k_game 所管辖的资源，
+     * 你可以在此回调中释放这些资源。
+     *
+     * 此回调是可选的，指定值为 `NULL` 则不执行回调。
+     *
+     * 注意，若房间的初始化回调执行失败，k_game 将不执行本回调。
+     * 你需保证初始化回调能在失败时自行回滚。
+     */
+    void (*fn_cleanup)(struct k_room *room);
 };
 
-extern const struct k_room_config K_ROOM_CONFIG_INIT;
+/** \brief 创建房间所需的配置参数的默认值 */
+#define K_ROOM_CONFIG_INIT \
+{ \
+    .room_name  = NULL, \
+    .room_w     = 600,  \
+    .room_h     = 480,  \
+    .room_speed = 60,   \
+    .data_size  = 0,    \
+    .fn_init    = NULL, \
+    .fn_cleanup = NULL  \
+}
 
+/**
+ * \brief 创建房间
+ *
+ * 若 `config` 中指定了房间的初始化回调，
+ * 则函数将 `params` 转交给该回调。
+ *
+ * 若房间创建成功，函数返回房间指针，否则返回 `NULL`。
+ */
 struct k_room *k_create_room(const struct k_room_config *config, void *params);
 
 /**
@@ -50,8 +106,7 @@ const char *k_room_get_name(struct k_room *room);
  *
  * 当创建房间时，若指定了房间的名字，k_game 会基于该名字为房间创建索引。
  * 本函数能根据名字查找到对应的房间。
- *
- * \return 若找到，函数返回房间指针，否则返回 `NULL`。
+ * 若找到，函数返回房间指针，否则返回 `NULL`。
  */
 struct k_room *k_get_room_by_name(const char *room_name);
 

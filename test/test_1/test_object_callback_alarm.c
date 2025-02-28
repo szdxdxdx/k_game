@@ -65,7 +65,7 @@ static int init(void) {
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     room_config.room_name = "room";
-    room_config.fn_create = create_room;
+    room_config.fn_init = create_room;
 
     struct k_room *room = k_create_room(&room_config, NULL);
 
