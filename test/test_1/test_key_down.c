@@ -14,10 +14,6 @@ static void step_1(void *unused) {
     );
 }
 
-void step_2(void *unused) {
-
-}
-
 static int init_game(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;

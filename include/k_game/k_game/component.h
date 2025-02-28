@@ -11,7 +11,7 @@ struct k_component;
 
 struct k_component_type_config {
 
-    const char *component_type_name;
+    const char *type_name;
 
     size_t data_size;
 
@@ -22,15 +22,9 @@ struct k_component_type_config {
 
 struct k_component_type *k_define_component_type(const struct k_component_type_config *config);
 
-struct k_component_type *k_get_component_type_by_name(const char *component_type_name);
-
-/* ------------------------------------------------------------------------ */
-
-struct k_object *k_component_get_object(struct k_component *component);
+struct k_component_type *k_get_component_type_by_name(const char *type_name);
 
 void *k_component_get_data(struct k_component *component);
-
-/* ------------------------------------------------------------------------ */
 
 struct k_component_callback;
 
@@ -42,7 +36,13 @@ struct k_component_callback *k_component_add_draw_callback(struct k_component *c
 
 void k_component_del_callback(struct k_component_callback *callback);
 
-/* ------------------------------------------------------------------------ */
+struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
+
+void k_object_del_component(struct k_component *component);
+
+struct k_component *k_object_get_component(struct k_object *object, struct k_component_type *component_type);
+
+struct k_object *k_component_get_object(struct k_component *component);
 
 // int k_get_objects_with_component(size_t component_type_id, struct k_object ***get_objects, size_t *n);
 

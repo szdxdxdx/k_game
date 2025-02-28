@@ -10,8 +10,8 @@ struct k_component_registry {
 };
 
 struct k_component_registry_node {
-    struct k_list_node iter_node;
     struct k_str_map_node name_map_node;
+    struct k_list_node iter_node;
 };
 
 void k__component_registry_init(void);

@@ -54,12 +54,12 @@ void k__component_registry_deinit(void) {
     }
 }
 
-struct k_component_type *k_get_component_type_by_name(const char *component_type_name) {
+struct k_component_type *k_get_component_type_by_name(const char *type_name) {
 
-    if (NULL == component_type_name || '\0' == component_type_name[0])
+    if (NULL == type_name || '\0' == type_name[0])
         return NULL;
 
-    struct k_str_map_node *map_node = k_str_map_get(&component_registry.name_map, component_type_name);
+    struct k_str_map_node *map_node = k_str_map_get(&component_registry.name_map, type_name);
     if (NULL == map_node)
         return NULL;
 
@@ -96,7 +96,7 @@ struct k_component_type *k_define_component_type(const struct k_component_type_c
     if (NULL == component_type)
         return NULL;
 
-    if (0 != component_registry_add(component_type, config->component_type_name)) {
+    if (0 != component_registry_add(component_type, config->type_name)) {
         k_free(component_type);
         return NULL;
     }

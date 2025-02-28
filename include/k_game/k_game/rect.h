@@ -9,7 +9,7 @@ struct k_int_rect {
     int x, y, w, h;
 };
 
-struct k_int_vec {
+struct k_int_vec2 {
     int x, y;
 };
 

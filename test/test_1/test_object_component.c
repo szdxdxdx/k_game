@@ -84,7 +84,7 @@ int comp_create(struct k_component *component, void *params) {
 void define_movement_component(void) {
 
     struct k_component_type_config config;
-    config.component_type_name = "my_movement";
+    config.type_name = "my_movement";
     config.data_size = sizeof(struct my_movement_component);
     config.fn_create = comp_create;
     config.fn_destroy = NULL;

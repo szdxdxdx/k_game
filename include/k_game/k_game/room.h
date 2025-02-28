@@ -37,27 +37,13 @@ extern const struct k_room_config K_ROOM_CONFIG_INIT;
 
 struct k_room *k_create_room(const struct k_room_config *config, void *params);
 
-/* ------------------------------------------------------------------------ */
-
 /**
  * \brief 获取房间的名字
  *
- * 若创建该房间时指定了名字，则函数返回其名字，否则返回空字符串 "" 的指针。
+ * 若创建该房间时指定了名字，则函数返回其名字，否则返回空字符串 ""。
  * 你不应该释放该字符串。
  */
 const char *k_room_get_name(struct k_room *room);
-
-int k_room_get_width(struct k_room *room);
-
-int k_room_get_height(struct k_room *room);
-
-void *k_room_get_data(struct k_room *room);
-
-void *k_get_current_room_data(void);
-
-/* ------------------------------------------------------------------------ */
-
-int k_goto_room(struct k_room *room);
 
 /**
  * \brief 通过房间名字查找对应的房间
@@ -69,9 +55,17 @@ int k_goto_room(struct k_room *room);
  */
 struct k_room *k_get_room_by_name(const char *room_name);
 
-struct k_room *k_get_current_room(void);
+int k_room_get_width(struct k_room *room);
 
-/* ------------------------------------------------------------------------ */
+int k_room_get_height(struct k_room *room);
+
+void *k_room_get_data(struct k_room *room);
+
+void *k_get_current_room_data(void);
+
+int k_goto_room(struct k_room *room);
+
+struct k_room *k_get_current_room(void);
 
 struct k_room_callback;
 
