@@ -43,4 +43,6 @@ void k__room_cleanup_draw_callback_storage(struct k_room *room);
 
 void k__room_exec_draw_callbacks(struct k_room *room);
 
+struct k_room_callback *k__room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int z_index);
+
 #endif

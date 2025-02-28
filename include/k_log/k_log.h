@@ -41,34 +41,34 @@ void k__log(int level, const char *file, int line, const char *fmt, ...);
 
 #if K_LOG_LEVEL > K_LOG_LEVEL_TRACE
 #undef  k_log_trace
-#define k_log_trace(fmt, ...)
+#define k_log_trace(fmt, ...) ((void)0)
 #endif
 
 #if K_LOG_LEVEL > K_LOG_LEVEL_DEBUG
 #undef  k_log_debug
-#define k_log_debug(fmt, ...)
+#define k_log_debug(fmt, ...) ((void)0)
 #endif
 
 #if K_LOG_LEVEL > K_LOG_LEVEL_INFO
 #undef  k_log_info
-#define k_log_info(fmt, ...)
+#define k_log_info(fmt, ...) ((void)0)
 #endif
 
 #if K_LOG_LEVEL > K_LOG_LEVEL_WARN
 #undef  k_log_warn
-#define k_log_warn(fmt, ...)
+#define k_log_warn(fmt, ...) ((void)0)
 #endif
 
 #if K_LOG_LEVEL > K_LOG_LEVEL_ERROR
 #undef  k_log_error
-#define k_log_error(fmt, ...)
+#define k_log_error(fmt, ...) ((void)0)
 #undef  k_log_error_once
-#define k_log_error_once(fmt, ...)
+#define k_log_error_once(fmt, ...) ((void)0)
 #endif
 
 #if K_LOG_LEVEL > K_LOG_LEVEL_FATAL
 #undef  k_log_fatal
-#define k_log_fatal(fmt, ...)
+#define k_log_fatal(fmt, ...) ((void)0)
 #endif
 
 #endif

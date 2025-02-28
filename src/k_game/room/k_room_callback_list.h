@@ -5,6 +5,8 @@
 
 #include "./k_room_callback.h"
 
+/* region [callback_list] */
+
 /* 存储房间回调的链表容器
  *
  * 链表这一数据结构足以应对绝大多数场景。
@@ -30,5 +32,21 @@ void k__room_callback_list_init(struct k_room_callback_list *list);
 void k__room_callback_list_clean(struct k_room_callback_list *list);
 
 void k__room_callback_list_exec_all(struct k_room_callback_list *list);
+
+/* endregion */
+
+/* region [use callback_list] */
+
+struct k_room_callback *k__room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+
+struct k_room_callback *k__room_add_leave_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+
+struct k_room_callback *k__room_add_step_begin_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+
+struct k_room_callback *k__room_add_step_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+
+struct k_room_callback *k__room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+
+/* endregion */
 
 #endif

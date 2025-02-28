@@ -1,6 +1,8 @@
 #ifndef K_GAME__ROOM_CALLBACK_H
 #define K_GAME__ROOM_CALLBACK_H
 
+struct k_room;
+
 /* 房间回调结点的基础结构
  *
  * 房间的不同类型回调，对应有不同类型的回调结点来存储回调信息。

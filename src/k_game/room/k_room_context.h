@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "../object/k_object_pool.h"
+
 #include "./k_room_registry.h"
 #include "./k_room_callback_alarm.h"
 #include "./k_room_callback_draw.h"

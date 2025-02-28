@@ -3,7 +3,14 @@
 
 #include <stddef.h>
 
+/**
+ * \brief 房间
+ *
+ * TODO
+ */
 struct k_room;
+
+/* region [create_room] */
 
 /** \brief 创建房间所需的配置参数 */
 struct k_room_config {
@@ -89,17 +96,13 @@ struct k_room_config {
  * 若 `config` 中指定了房间的初始化回调，
  * 则函数将 `params` 转交给该回调。
  *
- * 若房间创建成功，函数返回房间指针，否则返回 `NULL`。
+ * 若创建成功，函数返回房间指针，否则返回 `NULL`。
  */
 struct k_room *k_create_room(const struct k_room_config *config, void *params);
 
-/**
- * \brief 获取房间的名字
- *
- * 若创建该房间时指定了名字，则函数返回其名字，否则返回空字符串 ""。
- * 你不应该释放该字符串。
- */
-const char *k_room_get_name(struct k_room *room);
+/* endregion */
+
+/* region [room_get] */
 
 /**
  * \brief 通过房间名字查找对应的房间
@@ -110,6 +113,16 @@ const char *k_room_get_name(struct k_room *room);
  */
 struct k_room *k_get_room_by_name(const char *room_name);
 
+struct k_room *k_get_current_room(void);
+
+/**
+ * \brief 获取房间的名字
+ *
+ * 若创建该房间时指定了名字，则函数返回其名字，否则返回空字符串 ""。
+ * 你不应该释放该字符串。
+ */
+const char *k_room_get_name(struct k_room *room);
+
 int k_room_get_width(struct k_room *room);
 
 int k_room_get_height(struct k_room *room);
@@ -118,11 +131,22 @@ void *k_room_get_data(struct k_room *room);
 
 void *k_get_current_room_data(void);
 
+/* endregion */
+
+/* region [room_goto] */
+
 int k_goto_room(struct k_room *room);
 
-struct k_room *k_get_current_room(void);
+/* endregion */
 
+/**
+ * \brief 房间回调
+ *
+ * TODO
+ */
 struct k_room_callback;
+
+/* region [room_callback] */
 
 struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
@@ -139,5 +163,7 @@ struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_
 struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
 void k_room_del_callback(struct k_room_callback *callback);
+
+/* endregion */
 
 #endif

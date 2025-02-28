@@ -15,10 +15,10 @@ struct k_game_config {
 #define K_GAME_CONFIG_INIT \
 { \
     .window_title = "k_game", \
-    .window_h   = 480,        \
-    .window_w   = 640,        \
-    .fn_init    = NULL,       \
-    .fn_cleanup = NULL,       \
+    .window_h     = 480,      \
+    .window_w     = 640,      \
+    .fn_init      = NULL,     \
+    .fn_cleanup   = NULL,     \
 }
 
 int k_run_game(const struct k_game_config *config);

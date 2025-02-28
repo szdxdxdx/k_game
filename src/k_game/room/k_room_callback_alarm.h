@@ -36,4 +36,6 @@ void k__room_cleanup_alarm_callback_storage(struct k_room *room);
 
 void k__room_exec_alarm_callbacks(struct k_room *room);
 
+struct k_room_callback *k__room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms);
+
 #endif

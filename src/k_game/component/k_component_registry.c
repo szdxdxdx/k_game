@@ -7,7 +7,7 @@ static struct k_component_registry component_registry;
 void k__component_registry_init(void) {
     k_list_init(&component_registry.components_list);
 
-    static struct k_hash_list buckets[32]; /* <- 使用 32 个哈希桶应该足够。或许有必要动态扩容 */
+    static struct k_hash_list buckets[32]; /* <- 或许有必要支持动态扩容？ */
     k_str_map_init(&component_registry.name_map, buckets, 32);
 }
 

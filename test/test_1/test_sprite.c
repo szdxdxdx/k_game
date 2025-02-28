@@ -4,12 +4,12 @@
 
 #include "k_game.h"
 
-void room_step(void *data) {
+static void room_step(void *data) {
 
     printf("1\n");
 }
 
-int init_game(void) {
+static int init_game(void) {
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     room_config.room_name = "room_1";

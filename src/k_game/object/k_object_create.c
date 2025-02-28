@@ -3,26 +3,30 @@
 #include "k_game/alloc.h"
 #include "k_game/room.h"
 #include "../component/k_component_entity.h"
+
 #include "./k_object_callback.h"
 #include "./k_object_entity.h"
 #include "./k_object_create.h"
 
 struct k_object *k_create_object(size_t data_size) {
+    const char *err_msg = "";
 
     struct k_room *room = k_get_current_room();
     if (NULL == room) {
-        k_log_error("Currently not in any room, unable to create object");
-        goto not_in_room;
+        err_msg = "currently not in any room";
+        goto err;
     }
 
     struct k_object *object = k_malloc(sizeof(struct k_object));
     if (NULL == object)
-        goto malloc_object_failed;
+        goto err;
 
     void *data = NULL;
     if (0 != data_size) {
-        if (NULL == (data = k_malloc(data_size)))
-            goto malloc_data_failed;
+        if (NULL == (data = k_malloc(data_size))) {
+            k_free(object);
+            goto err;
+        }
     }
 
     object->data = data;
@@ -33,10 +37,8 @@ struct k_object *k_create_object(size_t data_size) {
 
     return object;
 
-malloc_data_failed:
-    k_free(object);
-malloc_object_failed:
-not_in_room:
+err:
+    k_log_error("Failed to create object: %s", err_msg);
     return NULL;
 }
 

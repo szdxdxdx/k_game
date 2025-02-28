@@ -60,7 +60,7 @@ static void draw_callback_del_self(struct k_room_callback *self) {
     }
 }
 
-struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int z_index) {
+struct k_room_callback *k__room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int z_index) {
     struct k_room_draw_callback_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback *callback = k_malloc(sizeof(struct k_room_draw_callback));

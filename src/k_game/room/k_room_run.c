@@ -2,11 +2,12 @@
 
 #include "k_log.h"
 
-#include "k_game/room.h"
+#include "../game/k_game_context.h"
 #include "../SDL/k_SDL_event.h"
 #include "../SDL/k_SDL_window.h"
 #include "../SDL/k_SDL_keyboard.h"
-#include "../game/k_game_context.h"
+
+#include "k_game/room.h"
 #include "./k_room_context.h"
 #include "./k_room_run.h"
 

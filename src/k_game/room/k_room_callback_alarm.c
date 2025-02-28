@@ -1,4 +1,5 @@
 #include "k_game/alloc.h"
+
 #include "../game/k_game_context.h"
 #include "./k_room_context.h"
 
@@ -23,6 +24,7 @@ void k__room_cleanup_alarm_callback_storage(struct k_room *room) {
 void k__room_exec_alarm_callbacks(struct k_room *room) {
     struct k_room_alarm_callback_storage *storage = &room->alarm_callbacks;
 
+    /* [?] 应该使用当前时间，还是当前帧时间 */
     const uint64_t current_ms = k__game.step_timestamp;
 
     struct k_room_alarm_callback *callback;
@@ -53,7 +55,7 @@ static void alarm_callback_del_self(struct k_room_callback *self) {
     k_free(callback);
 }
 
-struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms) {
+struct k_room_callback *k__room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms) {
     struct k_room_alarm_callback_storage *storage = &room->alarm_callbacks;
 
     if (delay_ms < 0)

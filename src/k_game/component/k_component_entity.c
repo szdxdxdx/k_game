@@ -1,6 +1,7 @@
 #include "k_game/alloc.h"
-#include "k_game/component.h"
 #include "../object/k_object_entity.h"
+
+#include "k_game/component.h"
 #include "./k_component_type.h"
 #include "./k_component_callback.h"
 #include "./k_component_entity.h"

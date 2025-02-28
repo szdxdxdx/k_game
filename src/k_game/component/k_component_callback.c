@@ -1,7 +1,11 @@
 #include "k_game/alloc.h"
-#include "k_game/component.h"
 #include "k_game/room.h"
 #include "../object/k_object_entity.h"
+#include "../room/k_room_callback_draw.h"
+#include "../room/k_room_callback_list.h"
+#include "../room/k_room_callback_alarm.h"
+
+#include "k_game/component.h"
 #include "./k_component_entity.h"
 #include "./k_component_callback.h"
 
@@ -20,7 +24,7 @@ static inline void component_callback_list_del(struct k_component_callback *call
 
 /* region [del_callback] */
 
-static inline void del_callback(struct k_component_callback *callback) {
+static inline void component_del_callback(struct k_component_callback *callback) {
     k_room_del_callback(callback->room_callback);
     component_callback_list_del(callback);
     k_free(callback);
@@ -29,7 +33,7 @@ static inline void del_callback(struct k_component_callback *callback) {
 void k_component_del_callback(struct k_component_callback *callback) {
 
     if (NULL != callback)
-        del_callback(callback);
+        component_del_callback(callback);
 }
 
 /* endregion */
@@ -48,7 +52,7 @@ void k__component_cleanup_callback_list(struct k_component *component) {
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_component_callback, callback_list_node);
 
-        del_callback(callback);
+        component_del_callback(callback);
     }
 }
 
@@ -61,7 +65,7 @@ static void alarm_callback_wrapper(void *data, int timeout_diff) {
    callback->room_callback = NULL; /* <- 确保不重复删除房间回调 */
 
    callback->fn_alarm_callback(callback->component, timeout_diff);
-   del_callback(callback);
+    component_del_callback(callback);
 }
 
 struct k_component_callback *k_component_add_alarm_callback(struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms) {
@@ -70,7 +74,7 @@ struct k_component_callback *k_component_add_alarm_callback(struct k_component *
     if (NULL == component_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k_room_add_alarm_callback(component->object->room, alarm_callback_wrapper, component_callback, delay_ms);
+    struct k_room_callback *room_callback = k__room_add_alarm_callback(component->object->room, alarm_callback_wrapper, component_callback, delay_ms);
     if (NULL == room_callback) {
         k_free(component_callback);
         return NULL;
@@ -99,7 +103,7 @@ struct k_component_callback *k_component_add_step_callback(struct k_component *c
     if (NULL == component_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k_room_add_step_callback(component->object->room, step_callback_wrapper, component_callback);
+    struct k_room_callback *room_callback = k__room_add_step_callback(component->object->room, step_callback_wrapper, component_callback);
     if (NULL == room_callback) {
         k_free(component_callback);
         return NULL;
@@ -128,7 +132,7 @@ struct k_component_callback *k_component_add_draw_callback(struct k_component *c
     if (NULL == component_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k_room_add_draw_callback(component->object->room, draw_callback_wrapper, component_callback, z_index);
+    struct k_room_callback *room_callback = k__room_add_draw_callback(component->object->room, draw_callback_wrapper, component_callback, z_index);
     if (NULL == room_callback) {
         k_free(component_callback);
         return NULL;

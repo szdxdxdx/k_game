@@ -1,6 +1,11 @@
 #include "k_game/alloc.h"
-#include "k_game/object.h"
+
 #include "k_game/room.h"
+#include "../room/k_room_callback_draw.h"
+#include "../room/k_room_callback_list.h"
+#include "../room/k_room_callback_alarm.h"
+
+#include "k_game/object.h"
 #include "./k_object_entity.h"
 #include "./k_object_callback.h"
 
@@ -19,7 +24,7 @@ static inline void object_callback_list_del(struct k_object_callback *callback) 
 
 /* region [del_callback] */
 
-static inline void del_object_callback(struct k_object_callback *callback) {
+static inline void object_del_callback(struct k_object_callback *callback) {
     k_room_del_callback(callback->room_callback);
     object_callback_list_del(callback);
     k_free(callback);
@@ -28,7 +33,7 @@ static inline void del_object_callback(struct k_object_callback *callback) {
 void k_object_del_callback(struct k_object_callback *callback) {
 
     if (NULL != callback)
-        del_object_callback(callback);
+        object_del_callback(callback);
 }
 
 /* endregion */
@@ -48,8 +53,37 @@ void k__object_cleanup_callbacks_list(struct k_object *object) {
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_object_callback, callback_list_node);
 
-        del_object_callback(callback);
+        object_del_callback(callback);
     }
+}
+
+/* endregion */
+
+/* region [add_step_begin_callback] */
+
+static void step_begin_callback_wrapper(void *data) {
+    struct k_object_callback *callback = data;
+    callback->fn_step_begin_callback(callback->object);
+}
+
+struct k_object_callback *k_object_add_step_begin_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
+
+    struct k_object_callback *object_callback = k_malloc(sizeof(struct k_object_callback));
+    if (NULL == object_callback)
+        return NULL;
+
+    struct k_room_callback *room_callback = k__room_add_step_begin_callback(object->room, step_begin_callback_wrapper, object_callback);
+    if (NULL == room_callback) {
+        k_free(object_callback);
+        return NULL;
+    }
+
+    object_callback->fn_step_begin_callback = fn_callback;
+    object_callback->object = object;
+    object_callback->room_callback = room_callback;
+    object_callback_list_add(object, object_callback);
+
+    return object_callback;
 }
 
 /* endregion */
@@ -65,7 +99,7 @@ static void alarm_callback_wrapper(void *data, int timeout_diff) {
      */
 
     callback->fn_alarm_callback(callback->object, timeout_diff);
-    del_object_callback(callback);
+    object_del_callback(callback);
 }
 
 struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
@@ -75,7 +109,7 @@ struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, v
     if (NULL == object_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k_room_add_alarm_callback(object->room, alarm_callback_wrapper, object_callback, delay_ms);
+    struct k_room_callback *room_callback = k__room_add_alarm_callback(object->room, alarm_callback_wrapper, object_callback, delay_ms);
     if (NULL == room_callback) {
         k_free(object_callback);
         return NULL;
@@ -104,7 +138,7 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
     if (NULL == object_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k_room_add_step_callback(object->room, step_callback_wrapper, object_callback);
+    struct k_room_callback *room_callback = k__room_add_step_callback(object->room, step_callback_wrapper, object_callback);
     if (NULL == room_callback) {
         k_free(object_callback);
         return NULL;
@@ -133,13 +167,41 @@ struct k_object_callback *k_object_add_draw_callback(struct k_object *object, vo
     if (NULL == object_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k_room_add_draw_callback(object->room, draw_callback_wrapper, object_callback, z_index);
+    struct k_room_callback *room_callback = k__room_add_draw_callback(object->room, draw_callback_wrapper, object_callback, z_index);
     if (NULL == room_callback) {
         k_free(object_callback);
         return NULL;
     }
 
     object_callback->fn_draw_callback = fn_callback;
+    object_callback->object = object;
+    object_callback->room_callback = room_callback;
+    object_callback_list_add(object, object_callback);
+
+    return object_callback;
+}
+
+/* endregion */
+
+/* region [add_step_end_callback] */
+
+static void step_end_callback_wrapper(void *data) {
+    struct k_object_callback *callback = data;
+    callback->fn_step_end_callback(callback->object);
+}
+
+struct k_object_callback *k_object_add_step_end_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
+    struct k_object_callback *object_callback = k_malloc(sizeof(struct k_object_callback));
+    if (NULL == object_callback)
+        return NULL;
+
+    struct k_room_callback *room_callback = k__room_add_step_end_callback(object->room, step_end_callback_wrapper, object_callback);
+    if (NULL == room_callback) {
+        k_free(object_callback);
+        return NULL;
+    }
+
+    object_callback->fn_step_end_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
     object_callback_list_add(object, object_callback);

@@ -5,8 +5,7 @@
 #include "./k_component_type.h"
 
 static int check_config(const struct k_component_type_config *config) {
-
-    const char *err_msg;
+    const char *err_msg = "";
 
     if (NULL == config) {
         err_msg = "assert( NULL != config )";
@@ -28,15 +27,15 @@ err:
 struct k_component_type *k_define_component_type(const struct k_component_type_config *config) {
 
     if (0 != check_config(config))
-        return NULL;
+        goto err;
 
     struct k_component_type *component_type = k_malloc(sizeof(struct k_component_type));
     if (NULL == component_type)
-        return NULL;
+        goto err;
 
     if (0 != k__component_registry_add(component_type, config->type_name)) {
         k_free(component_type);
-        return NULL;
+        goto err;
     }
 
     component_type->data_size  = config->data_size;
@@ -44,4 +43,8 @@ struct k_component_type *k_define_component_type(const struct k_component_type_c
     component_type->fn_destroy = config->fn_destroy;
 
     return component_type;
+
+err:
+    k_log_error("Failed to define component type");
+    return NULL;
 }
