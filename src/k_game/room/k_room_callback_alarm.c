@@ -10,11 +10,11 @@ void k__room_init_alarm_callback_storage(struct k_room *room) {
 }
 
 void k__room_cleanup_alarm_callback_storage(struct k_room *room) {
-    struct k_room_alarm_callback_storage *storage = &room->alarm_callbacks;
 
+    struct k_list *callback_list = &room->alarm_callbacks.list;
     struct k_room_alarm_callback *callback;
     struct k_list_node *iter, *next;
-    for (k_list_for_each_s(&storage->list, iter, next)) {
+    for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_alarm_callback, list_node);
 
         k_free(callback);
@@ -27,9 +27,10 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
     /* [?] 应该使用当前时间，还是当前帧时间 */
     const uint64_t current_ms = k__game.step_timestamp;
 
+    struct k_list *callback_list = &storage->list;
     struct k_room_alarm_callback *callback;
     struct k_list_node *iter, *next;
-    for (k_list_for_each_s(&storage->list, iter, next)) {
+    for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_alarm_callback, list_node);
 
         if (callback->timeout <= current_ms) {
@@ -66,9 +67,10 @@ struct k_room_callback *k__room_add_alarm_callback(struct k_room *room, void (*f
 
     uint64_t timeout = k__game.step_timestamp + delay_ms;
 
+    struct k_list *callback_list = &storage->list;
     struct k_room_alarm_callback *callback_in_list;
     struct k_list_node *iter;
-    for (k_list_for_each(&storage->list, iter)) {
+    for (k_list_for_each(callback_list, iter)) {
         callback_in_list = container_of(iter, struct k_room_alarm_callback, list_node);
 
         if (callback_in_list->timeout < timeout)

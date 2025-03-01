@@ -32,4 +32,6 @@ int k_sprite_get_width(struct k_sprite *sprite);
 
 int k_sprite_get_height(struct k_sprite *sprite);
 
+int k_draw_sprite_frame(struct k_sprite *sprite, int x, int y, size_t frame_idx);
+
 #endif

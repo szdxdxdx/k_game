@@ -61,10 +61,10 @@ void k__component_cleanup_callback_list(struct k_component *component) {
 /* region [add_alarm_callback] */
 
 static void alarm_callback_wrapper(void *data, int timeout_diff) {
-   struct k_component_callback *callback = data;
-   callback->room_callback = NULL; /* <- 确保不重复删除房间回调 */
+    struct k_component_callback *callback = data;
+    callback->room_callback = NULL; /* <- 确保不重复删除房间回调 */
 
-   callback->fn_alarm_callback(callback->component, timeout_diff);
+    callback->fn_alarm_callback(callback->component, timeout_diff);
     component_del_callback(callback);
 }
 

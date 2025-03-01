@@ -1,11 +1,13 @@
 #ifndef K_GAME__SPRITE_CREATE_H
 #define K_GAME__SPRITE_CREATE_H
 
+#include "SDL.h"
+
 struct k_sprite_frame {
 
-    struct k_image *image;
+    SDL_Texture *texture;
 
-    struct k_int_point *offset;
+    struct k_int_point offset;
 
     int delay;
 };

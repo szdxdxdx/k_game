@@ -1,5 +1,3 @@
-#include "SDL_image.h"
-
 #include "k_log.h"
 
 #include "k_game/image.h"
@@ -8,6 +6,8 @@
 #include "./k_image_load.h"
 
 int k_draw_image(struct k_image *image, const struct k_int_rect *rect, int x, int y) {
+    /* TODO: assert( NULL != image ) */
+    /* TODO: assert currently is in draw callback */
 
     if (NULL == image) {
         k_log_error_once("Failed to draw image. Image is NULL");
@@ -34,7 +34,7 @@ int k_draw_image(struct k_image *image, const struct k_int_rect *rect, int x, in
     dst.h = src.h;
 
     if (0 != SDL_RenderCopy(k__window.renderer, image->texture, &src, &dst)) {
-        k_log_error("SDL_RenderCopy() failed: %s", IMG_GetError());
+        k_log_error("SDL_RenderCopy() failed: %s", SDL_GetError());
         return -1;
     }
 
