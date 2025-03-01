@@ -6,7 +6,7 @@
 
 static void room_step(void *data) {
 
-    printf("1\n");
+    //printf("1\n");
 }
 
 static int init_game(void) {
@@ -15,8 +15,6 @@ static int init_game(void) {
     room_config.room_name = "room_1";
     struct k_room *room = k_create_room(&room_config, NULL);
     k_room_add_step_callback(room, room_step, NULL);
-
-    k_create_room(&room_config, NULL);
 
     k_goto_room(room);
     return 0;

@@ -12,6 +12,8 @@ struct k_sprite_frame {
 
 struct k_sprite {
 
+    /* TODO registry node */
+
     const char *sprite_name;
 
     int sprite_w, sprite_h;

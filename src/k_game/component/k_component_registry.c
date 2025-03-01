@@ -45,7 +45,7 @@ void k__component_registry_del(struct k_component_type *component_type) {
     struct k_component_registry_node *registry_node = &component_type->registry_node;
 
     if ('\0' != registry_node->name_map_node.key[0])
-        k_str_map_del(&component_registry.name_map, &registry_node->name_map_node);
+        k_str_map_del(&registry_node->name_map_node);
 
     k_list_del(&registry_node->iter_node);
 }

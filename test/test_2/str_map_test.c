@@ -36,7 +36,7 @@ void del(struct k_str_map *map, const char *str) {
     struct k_str_map_node *map_node = k_str_map_get(map, str);
     if (NULL != map_node) {
         struct data_node *node = (struct data_node *)map_node;
-        k_str_map_del(map, &node->map_node);
+        k_str_map_del(&node->map_node);
         printf("del ok : { key=\"%s\", data=%d }\n", str, node->data);
         free((void*)node->map_node.key);
         free(node);

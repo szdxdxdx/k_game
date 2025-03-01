@@ -33,6 +33,7 @@ load_failed:
     k_free(img);
 
 malloc_failed:
+    k_log_error("Failed to load image");
     return NULL;
 }
 

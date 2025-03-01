@@ -57,7 +57,9 @@ static void step_close_SDL(void *data) {
 static int step_init_room_modules(void *data) {
     (void)data;
 
-    k__room_registry_init();
+    if (0 != k__room_registry_init())
+        return -1;
+
     k__room_stack_init();
     return 0;
 }
@@ -66,7 +68,7 @@ static void step_deinit_room_modules(void *data) {
     (void)data;
 
     k__room_stack_deinit();
-    k__room_registry_deinit();
+    k__room_registry_cleanup();
 }
 
 static int step_init_component_modules(void *data) {
