@@ -1,4 +1,5 @@
 #include <string.h>
+#include <assert.h>
 
 #include "k_str_map.h"
 
@@ -28,19 +29,25 @@ static inline struct k_str_map_node *find(struct k_hash_list *list, const char *
     return NULL;
 }
 
-void k_str_map_init(struct k_str_map *map, struct k_hash_list *lists, size_t lists_num) {
+void k_str_map_init(struct k_str_map *map, struct k_hash_list *buckets, size_t buckets_num) {
+    assert(NULL != map);
+    assert(NULL != buckets);
+    assert(1 <= buckets_num);
 
-    k_hash_list_init_all(lists, lists_num);
+    k_hash_list_init_all(buckets, buckets_num);
 
-    map->lists = lists;
-    map->lists_num = lists_num;
+    map->buckets = buckets;
+    map->buckets_num = buckets_num;
 }
 
 int k_str_map_add(struct k_str_map *map, const char *key, struct k_str_map_node *node) {
+    assert(NULL != map);
+    assert(NULL != key);
+    assert(NULL != node);
 
     size_t hash = str_hash(key);
 
-    struct k_hash_list *list = &(map->lists[hash % map->lists_num]);
+    struct k_hash_list *list = &(map->buckets[hash % map->buckets_num]);
     if (NULL != find(list, key, hash))
         return -1;
 
@@ -52,37 +59,44 @@ int k_str_map_add(struct k_str_map *map, const char *key, struct k_str_map_node 
 }
 
 struct k_str_map_node *k_str_map_get(struct k_str_map *map, const char *key) {
+    assert(NULL != map);
+    assert(NULL != key);
+
     size_t hash = str_hash(key);
-    struct k_hash_list *list = &(map->lists[hash % map->lists_num]);
+    struct k_hash_list *list = &(map->buckets[hash % map->buckets_num]);
     return find(list, key, hash);
 }
 
-void k_str_map_del(struct k_str_map *map, struct k_str_map_node *node) {
+void k_str_map_del(struct k_str_map_node *node) {
+    assert(NULL != node);
     k_hash_list_del(&node->list_node);
 }
 
-struct k_hash_list *k_str_map_rehash(struct k_str_map *map, struct k_hash_list *new_lists, size_t new_lists_num) {
+struct k_hash_list *k_str_map_rehash(struct k_str_map *map, struct k_hash_list *new_buckets, size_t new_buckets_num) {
+    assert(NULL != map);
+    assert(NULL != new_buckets);
+    assert(1 <= new_buckets_num);
 
-    k_hash_list_init_all(new_lists, new_lists_num);
+    k_hash_list_init_all(new_buckets, new_buckets_num);
 
-    struct k_hash_list *old_lists = map->lists;
-    size_t old_lists_num = map->lists_num;
+    struct k_hash_list *old_buckets = map->buckets;
+    size_t old_buckets_num = map->buckets_num;
 
-    struct k_hash_list *old_list = old_lists;
-    for (; old_list < old_lists + old_lists_num; old_list++) {
+    struct k_hash_list *old_list = old_buckets;
+    for (; old_list < old_buckets + old_buckets_num; old_list++) {
 
         struct k_str_map_node *map_node;
         struct k_hash_list_node *iter, *next;
         for (k_hash_list_for_each_s(old_list, iter, next)) {
             map_node = container_of(iter, struct k_str_map_node, list_node);
 
-            struct k_hash_list *new_list = &(new_lists[map_node->hash % new_lists_num]);
+            struct k_hash_list *new_list = &(new_buckets[map_node->hash % new_buckets_num]);
             k_hash_list_add(new_list, &map_node->list_node);
         }
     }
 
-    map->lists = new_lists;
-    map->lists_num  = new_lists_num;
+    map->buckets = new_buckets;
+    map->buckets_num  = new_buckets_num;
 
-    return old_lists;
+    return old_buckets;
 }
