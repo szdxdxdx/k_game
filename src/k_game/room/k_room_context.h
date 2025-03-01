@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
+#include "../asset/k_asset_registry.h"
 #include "../object/k_object_pool.h"
 
-#include "./k_room_registry.h"
 #include "./k_room_callback_alarm.h"
 #include "./k_room_callback_draw.h"
 #include "./k_room_callback_list.h"

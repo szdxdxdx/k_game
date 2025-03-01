@@ -6,7 +6,7 @@
 /**
  * \brief 房间
  *
- * TODO
+ * TODO docs
  */
 struct k_room;
 
@@ -142,7 +142,7 @@ int k_goto_room(struct k_room *room);
 /**
  * \brief 房间回调
  *
- * TODO
+ * TODO docs
  */
 struct k_room_callback;
 

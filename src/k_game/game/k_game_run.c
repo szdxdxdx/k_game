@@ -5,7 +5,7 @@
 
 #include "k_game/game.h"
 #include "../SDL/k_SDL_init.h"
-#include "../component/k_component_type.h"
+#include "../component/k_component_registry.h"
 #include "../room/k_room_goto.h"
 #include "../room/k_room_registry.h"
 #include "../room/k_room_run.h"
@@ -67,21 +67,18 @@ static int step_init_room_modules(void *data) {
 static void step_deinit_room_modules(void *data) {
     (void)data;
 
-    k__room_stack_deinit();
+    k__room_stack_cleanup();
     k__room_registry_cleanup();
 }
 
 static int step_init_component_modules(void *data) {
     (void)data;
-
-    k__component_registry_init();
-    return 0;
+    return k__component_registry_init();
 }
 
 static void step_deinit_component_modules(void *data) {
     (void)data;
-
-    k__component_registry_deinit();
+    k__component_registry_cleanup();
 }
 
 static int step_call_fn_init(void *data) {

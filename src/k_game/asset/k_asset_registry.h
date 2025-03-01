@@ -6,6 +6,10 @@
 
 struct k_asset_registry_node;
 
+/* 资源注册表
+ *
+ * TODO docs
+ */
 struct k_asset_registry {
 
     struct k_str_map name_map;
@@ -15,6 +19,10 @@ struct k_asset_registry {
     void (*fn_free)(struct k_asset_registry_node *node);
 };
 
+/* 用于资源注册表的结点结构
+ *
+ * TODO docs
+ */
 struct k_asset_registry_node {
 
     struct k_str_map_node name_map_node;

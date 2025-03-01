@@ -6,6 +6,7 @@
 #include "../game/k_game_context.h"
 
 #include "k_game/room.h"
+#include "./k_room_registry.h"
 #include "./k_room_context.h"
 
 /* region [room_creation_steps] */
@@ -158,7 +159,7 @@ static int step_call_fn_create(void *data) {
         struct k_room *tmp = k__game.current_room;
         k__game.current_room = room;
         int result = room->fn_init(room, params);
-        k__game.current_room = tmp; /* TODO: fn_init() 可能销毁了 tmp 指向的房间？ */
+        k__game.current_room = tmp; /* [?] fn_init() 可能销毁了 tmp 指向的房间 */
 
         if (0 != result) {
             k_log_error("Room fn_init() callback returned %d", result);
@@ -177,7 +178,7 @@ static void step_call_fn_destroy(void *data) {
         struct k_room *tmp = k__game.current_room;
         k__game.current_room = room;
         room->fn_cleanup(room);
-        k__game.current_room = tmp; /* TODO: fn_cleanup() 可能销毁了 tmp 指向的房间？ */
+        k__game.current_room = tmp; /* [?] fn_cleanup() 可能销毁了 tmp 指向的房间 */
     }
 }
 

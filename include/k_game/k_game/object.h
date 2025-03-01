@@ -12,7 +12,7 @@
  * 你在游戏中看到的绝大多数东西都是对象，例如：主角、子弹、球、墙壁等。
  * 当然也有一些对象没有设定精灵的外观，它们仅用于控制游戏的运作。
  *
- * TODO
+ * TODO docs
  */
 struct k_object;
 
@@ -33,7 +33,7 @@ void *k_object_get_data(struct k_object *object);
 /**
  * \brief 对象回调
  *
- * TODO
+ * TODO docs
  */
 struct k_object_callback;
 

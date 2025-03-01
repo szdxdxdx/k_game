@@ -1,8 +1,10 @@
 #include "k_log.h"
 
 #include "k_game/alloc.h"
+
 #include "k_game/component.h"
 #include "./k_component_type.h"
+#include "./k_component_registry.h"
 
 static int check_config(const struct k_component_type_config *config) {
     const char *err_msg = "";
@@ -47,4 +49,9 @@ struct k_component_type *k_define_component_type(const struct k_component_type_c
 err:
     k_log_error("Failed to define component type");
     return NULL;
+}
+
+void k__undef_component_type(struct k_component_type *component_type) {
+    k__component_registry_del(component_type);
+    k_free(component_type);
 }

@@ -37,7 +37,7 @@ void k__room_stack_init(void) {
     room_stack_clear();
 }
 
-void k__room_stack_deinit(void) {
+void k__room_stack_cleanup(void) {
     room_stack_clear();
 }
 

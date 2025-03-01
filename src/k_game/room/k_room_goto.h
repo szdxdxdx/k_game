@@ -18,7 +18,7 @@ struct k_room_stack {
 
 void k__room_stack_init(void);
 
-void k__room_stack_deinit(void);
+void k__room_stack_cleanup(void);
 
 struct k_room *k__room_stack_get_top(void);
 

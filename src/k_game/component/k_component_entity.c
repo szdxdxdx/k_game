@@ -75,15 +75,14 @@ void k__object_init_component_list(struct k_object *object) {
 }
 
 void k__object_cleanup_component_list(struct k_object *object) {
-    struct k_list *component_list = &object->components;
 
+    struct k_list *component_list = &object->components;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(component_list, iter, next)) {
         struct k_component *component = container_of(iter, struct k_component, object_component_node);
 
         destroy_component(component);
     }
-    /* TODO */
 }
 
 /* endregion */

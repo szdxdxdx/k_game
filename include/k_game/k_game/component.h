@@ -8,14 +8,14 @@ struct k_object;
 /**
  * \brief 组件类型
  *
- * TODO
+ * TODO docs
  */
 struct k_component_type;
 
 /**
  * \brief 组件
  *
- * TODO
+ * TODO docs
  */
 struct k_component;
 
@@ -49,7 +49,7 @@ struct k_component_type *k_get_component_type_by_name(const char *type_name);
 /**
  * \brief 组件回调
  *
- * TODO
+ * TODO docs
  */
 struct k_component_callback;
 
