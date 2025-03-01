@@ -8,8 +8,8 @@ static struct k_image *img;
 static struct k_sprite *spr = NULL;
 static uint64_t spr_timer = 0;
 static size_t spr_frame_idx = 0;
-static float x = 200.0f;
-static float y = 200.0f;
+static float x = 30.0f;
+static float y = 30.0f;
 
 static void room_step(void *data) {
 
@@ -44,23 +44,20 @@ static int init_game(void) {
     int sprite_w = 512 / 8;
     int sprite_h = 256 / 3;
 
-    struct k_sprite_config sprite_config;
-    sprite_config.sprite_name = "";
-    sprite_config.sprite_w = sprite_w;
-    sprite_config.sprite_h = sprite_h;
-    sprite_config.origin_x = 0;
-    sprite_config.origin_y = 0;
-    sprite_config.image = img;
-    sprite_config.frames = (struct k_int_point[]) {
-        { 0 * sprite_w, 0 },
-        { 1 * sprite_w, 0 },
-        { 2 * sprite_w, 0 },
-        { 3 * sprite_w, 0 },
-    };
-    sprite_config.frame_delays = (int[]) { 200, 200, 200, 200 };
-    sprite_config.frames_num = 4;
-
-    spr = k_create_sprite(&sprite_config);
+    spr = k_create_sprite((struct k_sprite_config[1]) {{
+        .sprite_name = NULL,
+        .sprite_w = sprite_w,
+        .sprite_h = sprite_h,
+        .origin_x = 30,
+        .origin_y = 30,
+        .frames = (struct k_sprite_frame_config[]) {
+            { .image = img, .offset_x = 0 * sprite_w, .offset_y = 0, .delay = 200 },
+            { .image = img, .offset_x = 1 * sprite_w, .offset_y = 0, .delay = 200 },
+            { .image = img, .offset_x = 2 * sprite_w, .offset_y = 0, .delay = 200 },
+            { .image = img, .offset_x = 3 * sprite_w, .offset_y = 0, .delay = 200 },
+        },
+        .frames_num = 4
+    }});
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     room_config.room_name = "room_1";

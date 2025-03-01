@@ -7,7 +7,7 @@ struct k_sprite_frame {
 
     SDL_Texture *texture;
 
-    struct k_int_point offset;
+    int offset_x, offset_y;
 
     int delay;
 };

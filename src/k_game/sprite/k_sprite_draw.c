@@ -13,8 +13,8 @@ int k__draw_sprite_frame(struct k_sprite *sprite, int x, int y, size_t frame_idx
     struct k_sprite_frame *frame = &sprite->frames[frame_idx];
 
     SDL_Rect src;
-    src.x = frame->offset.x;
-    src.y = frame->offset.y;
+    src.x = frame->offset_x;
+    src.y = frame->offset_y;
     src.w = sprite->sprite_w;
     src.h = sprite->sprite_h;
 

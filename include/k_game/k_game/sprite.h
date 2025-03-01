@@ -3,10 +3,23 @@
 
 #include "rect.h"
 
-struct k_image;
-
+/**
+ * \brief 精灵
+ *
+ * TODO docs
+ */
 struct k_sprite;
 
+/* region [create_sprite] */
+
+struct k_image;
+struct k_sprite_frame_config;
+
+/**
+ * \brief 用于创建精灵的配置
+ *
+ * TODO docs
+ */
 struct k_sprite_config {
 
     const char *sprite_name;
@@ -15,16 +28,30 @@ struct k_sprite_config {
 
     int origin_x, origin_y;
 
-    struct k_image *image;
+    struct k_sprite_frame_config *frames;
 
     int frames_num;
+};
 
-    struct k_int_point *frames;
+/**
+ * \brief 用于创建精灵的配置
+ *
+ * TODO docs
+ */
+struct k_sprite_frame_config {
 
-    int *frame_delays;
+    struct k_image *image;
+
+    int offset_x, offset_y;
+
+    int delay;
 };
 
 struct k_sprite *k_create_sprite(const struct k_sprite_config *config);
+
+/* endregion */
+
+/* region [sprite_get] */
 
 struct k_sprite *k_get_sprite_by_name(const char *sprite_name);
 
@@ -32,6 +59,12 @@ int k_sprite_get_width(struct k_sprite *sprite);
 
 int k_sprite_get_height(struct k_sprite *sprite);
 
+/* endregion */
+
+/* region [draw_sprite] */
+
 int k_draw_sprite_frame(struct k_sprite *sprite, int x, int y, size_t frame_idx);
+
+/* endregion */
 
 #endif

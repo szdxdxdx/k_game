@@ -18,7 +18,7 @@ static int check_config(const struct k_sprite_config *config) {
 
     size_t i = 0;
     for (; i < config->frames_num; i++)
-        check_config_assert(0 < config->frame_delays[i]);
+        check_config_assert(0 < config->frames[i].delay);
 
     return 0;
 
@@ -44,9 +44,10 @@ struct k_sprite *k_create_sprite(const struct k_sprite_config *config) {
 
     size_t i = 0;
     for (; i < config->frames_num; i++) {
-        frames[i].texture = config->image->texture;
-        frames[i].offset  = config->frames[i];
-        frames[i].delay   = config->frame_delays[i];
+        frames[i].texture  = config->frames[i].image->texture;
+        frames[i].offset_x = config->frames[i].offset_x;
+        frames[i].offset_y = config->frames[i].offset_y;
+        frames[i].delay    = config->frames[i].delay;
     }
 
     // TODO sprite->sprite_name
