@@ -48,7 +48,7 @@ static void alarm_callback_100ms(void *data, int timeout_diff) {
     printf("alarm callback 100ms %d\n", timeout_diff);
 
     struct k_room *room = k_get_current_room();
-    k_room_add_alarm_callback(room, alarm_callback_100ms, NULL, 500 - timeout_diff);
+    k_room_add_alarm_callback(room, alarm_callback_100ms, NULL, 100 - timeout_diff);
 }
 
 static void alarm_callback_500ms(void *data, int timeout_diff) {
@@ -154,7 +154,7 @@ static int create_room(struct k_room *room, void *unused) {
 static int init_game(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_speed = 1;
+    config.room_speed = 3;
     config.room_name = "tmp room";
     config.fn_init = create_room;
     struct k_room *tmp_room = k_create_room(&config, NULL);
@@ -170,9 +170,7 @@ int main(int argc, char **argv) {
     setbuf(stdout, NULL);
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
-
     config.fn_init = init_game;
-
     k_run_game(&config);
 
     return 0;

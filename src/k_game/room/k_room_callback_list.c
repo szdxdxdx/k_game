@@ -10,8 +10,9 @@ void k__room_callback_list_init(struct k_room_callback_list *list) {
 void k__room_callback_list_clean(struct k_room_callback_list *list) {
 
     struct k_room_callback_list_item *callback;
+    struct k_list *callback_list = &list->list;
     struct k_list_node *iter, *next;
-    for (k_list_for_each_s(&list->list, iter, next)) {
+    for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_callback_list_item, list_node);
 
         k_free(callback);
@@ -21,8 +22,9 @@ void k__room_callback_list_clean(struct k_room_callback_list *list) {
 void k__room_callback_list_exec_all(struct k_room_callback_list *list) {
 
     struct k_room_callback_list_item *callback;
+    struct k_list *callback_list = &list->list;
     struct k_list_node *iter, *next;
-    for (k_list_for_each_s(&list->list, iter, next)) {
+    for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_callback_list_item, list_node);
 
         callback->fn_callback(callback->data);
@@ -54,6 +56,8 @@ static inline struct k_room_callback *room_callback_list_add(struct k_room_callb
 
 /* endregion */
 
+/* region [use callback_list] */
+
 struct k_room_callback *k__room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
     return room_callback_list_add(&room->enter_callbacks, fn_callback, data);
 }
@@ -73,3 +77,5 @@ struct k_room_callback *k__room_add_step_callback(struct k_room *room, void (*fn
 struct k_room_callback *k__room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
     return room_callback_list_add(&room->step_end_callbacks, fn_callback, data);
 }
+
+/* endregion */

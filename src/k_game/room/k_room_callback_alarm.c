@@ -37,7 +37,7 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
             int timeout_diff = (int)(current_ms - callback->timeout);
 
             /* [?] alarm_callback 结点应何时删除
-             * [?] alarm callback 不应该用 `k_room_del_callback()` 删除自身
+             * [?] alarm_callback 不应该用 `k_room_del_callback()` 删除自身
              */
 
             callback->fn_callback(callback->data, timeout_diff);
