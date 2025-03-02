@@ -70,7 +70,7 @@ struct k_room_callback *k__room_add_alarm_callback(struct k_room *room, void (*f
     for (k_list_for_each(callback_list, iter)) {
         callback_in_list = container_of(iter, struct k_room_alarm_callback, list_node);
 
-        if (callback_in_list->timeout < timeout)
+        if (timeout <= callback_in_list->timeout)
             break;
     }
 

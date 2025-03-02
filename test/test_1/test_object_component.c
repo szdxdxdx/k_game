@@ -44,7 +44,9 @@ void comp_alarm_3(struct k_component *comp, int timeout_diff) {
 void comp_alarm_6(struct k_component *comp, int timeout_diff) {
 
     struct my_movement_component *movement = k_component_get_data(comp);
-    movement->alarm_6 = NULL;
+
+    k_component_del_callback(movement->alarm_6);
+
     printf("6\n");
 }
 
@@ -74,8 +76,8 @@ int comp_create(struct k_component *component, void *params) {
     movement->right_key = config->right_key;
     movement->speed = config->speed;
 
-    k_component_add_alarm_callback(component, comp_alarm_3, 300);
-    movement->alarm_6 = k_component_add_alarm_callback(component, comp_alarm_6, 600);
+    k_component_add_alarm_callback(component, comp_alarm_3, 1000);
+    movement->alarm_6 = k_component_add_alarm_callback(component, comp_alarm_6, 1500);
     k_component_add_step_callback(component, comp_step);
 
     return 0;

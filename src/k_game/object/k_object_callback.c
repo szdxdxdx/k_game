@@ -24,16 +24,25 @@ static inline void object_callback_list_del(struct k_object_callback *callback) 
 
 /* region [del_callback] */
 
-static inline void object_del_callback(struct k_object_callback *callback) {
+void k_object_del_callback(struct k_object_callback *callback) {
+
+    if (NULL == callback)
+        return;
+
+    if (NULL == callback->room_callback) {
+        /* TODO 更好的 `object_del_callback()` 方案
+         *
+         * 目前只有 alarm 回调需要判断 `room_callback` 是否为 `NULL`。
+         * 因为 alarm 回调只执行一次，执行完会释放结点的内存，
+         * 为了防止重复释放内存，这里用 `room_callback == NULL` 来做标记，
+         * 使得在执行 alarm 回调时，使用 `object_del_callback()` 仍是安全的。
+         */
+        return;
+    }
+
     k_room_del_callback(callback->room_callback);
     object_callback_list_del(callback);
     k_free(callback);
-}
-
-void k_object_del_callback(struct k_object_callback *callback) {
-
-    if (NULL != callback)
-        object_del_callback(callback);
 }
 
 /* endregion */
@@ -53,7 +62,8 @@ void k__object_cleanup_callbacks_list(struct k_object *object) {
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_object_callback, object_callback_list_node);
 
-        object_del_callback(callback);
+        k_room_del_callback(callback->room_callback);
+        k_free(callback);
     }
 }
 
@@ -92,14 +102,19 @@ struct k_object_callback *k_object_add_step_begin_callback(struct k_object *obje
 
 static void alarm_callback_wrapper(void *data, int timeout_diff) {
     struct k_object_callback *callback = data;
-    callback->room_callback = NULL; /* <- [?] 确保不重复删除房间回调 */
 
-    /* [?] alarm_callback 结点应何时删除
-     * [?] alarm_callback 不应该用 `k_object_del_callback()` 删除自身
+    /* TODO 更好的 `component_del_callback()` 方案
+     *
+     * 因为 alarm 回调只执行一次，执行完会释放结点的内存，
+     * 为了防止重复释放内存，这里用 `room_callback == NULL` 来做标记，
+     * 使得在执行 alarm 回调时，使用 `component_del_callback()` 仍是安全的。
      */
+    callback->room_callback = NULL;
 
     callback->fn_alarm_callback(callback->object, timeout_diff);
-    object_del_callback(callback);
+
+    object_callback_list_del(callback);
+    k_free(callback);
 }
 
 struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
