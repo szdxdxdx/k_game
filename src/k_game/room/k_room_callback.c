@@ -18,6 +18,7 @@ struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void
 struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms) {
     return k__room_add_alarm_callback(room, fn_callback, data, delay_ms);
 }
+
 struct k_room_callback *k_room_add_step_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
     return k__room_add_step_callback(room, fn_callback, data);
 }
@@ -31,5 +32,9 @@ struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (
 }
 
 void k_room_del_callback(struct k_room_callback *callback) {
+
+    if (NULL == callback)
+        return;
+
     callback->is_deleted = 1;
 }

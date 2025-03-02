@@ -9,7 +9,7 @@
 #include "./k_object_entity.h"
 #include "./k_object_callback.h"
 
-/* region [object_callback_list_add] */
+/* region [callback_list_add] */
 
 static inline void object_callback_list_add(struct k_object *object, struct k_object_callback *callback) {
     struct k_list *callback_list = &object->callbacks;
@@ -38,7 +38,7 @@ void k_object_del_callback(struct k_object_callback *callback) {
 
 /* endregion */
 
-/* region [object_callbacks_list_init] */
+/* region [callback_list_init] */
 
 void k__object_init_callbacks_list(struct k_object *object) {
     struct k_list *callback_list = &object->callbacks;
@@ -95,7 +95,7 @@ static void alarm_callback_wrapper(void *data, int timeout_diff) {
     callback->room_callback = NULL; /* <- [?] 确保不重复删除房间回调 */
 
     /* [?] alarm_callback 结点应何时删除
-     * [?] alarm callback 不应该用 `k_object_del_callback()` 删除自身
+     * [?] alarm_callback 不应该用 `k_object_del_callback()` 删除自身
      */
 
     callback->fn_alarm_callback(callback->object, timeout_diff);

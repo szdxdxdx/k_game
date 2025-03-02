@@ -33,20 +33,22 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_alarm_callback, list_node);
 
-        if (callback->base.is_deleted) {
-            k_list_del(&callback->list_node);
-            k_free(callback);
-            continue;
-        }
+        if (callback->base.is_deleted)
+            goto del_callback;
 
-        if (current_ms < callback->timeout) {
+        if (current_ms < callback->timeout)
             break;
-        }
 
         int timeout_diff = (int)(current_ms - callback->timeout);
 
+        /* [?] alarm_callback 不应该用 `k_room_del_callback()` 删除自身
+         * 这对 room 来说是没问题的，但对 object 与 component 却不是，怎么办？
+         */
         callback->fn_callback(callback->data, timeout_diff);
-        callback->base.is_deleted = 1;
+
+    del_callback:
+        k_list_del(&callback->list_node);
+        k_free(callback);
     }
 }
 

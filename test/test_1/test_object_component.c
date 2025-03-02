@@ -74,8 +74,8 @@ int comp_create(struct k_component *component, void *params) {
     movement->right_key = config->right_key;
     movement->speed = config->speed;
 
-    k_component_add_alarm_callback(component, comp_alarm_3, 3000);
-    movement->alarm_6 = k_component_add_alarm_callback(component, comp_alarm_6, 6000);
+    k_component_add_alarm_callback(component, comp_alarm_3, 300);
+    movement->alarm_6 = k_component_add_alarm_callback(component, comp_alarm_6, 600);
     k_component_add_step_callback(component, comp_step);
 
     return 0;
