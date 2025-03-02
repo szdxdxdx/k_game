@@ -31,7 +31,7 @@ void k__room_callback_list_exec_all(struct k_room_callback_list *list) {
     }
 }
 
-static inline void room_callback_list_item_del_self(struct k_room_callback *self) {
+static inline void fn_del_self(struct k_room_callback *self) {
 
     struct k_room_callback_list_item *callback;
     callback = container_of(self, struct k_room_callback_list_item, impl);
@@ -47,7 +47,7 @@ static inline struct k_room_callback *room_callback_list_add(struct k_room_callb
         return NULL;
 
     k_list_add_tail(&list->list, &callback->list_node);
-    callback->impl.fn_del_self = room_callback_list_item_del_self;
+    callback->impl.fn_del_self = fn_del_self;
     callback->data = data;
     callback->fn_callback = fn_callback;
 

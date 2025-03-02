@@ -32,13 +32,15 @@ void k__room_exec_draw_callbacks(struct k_room *room) {
     struct k_room_draw_callback_storage *storage = &room->draw_callbacks;
 
     struct k_room_draw_callback_z_list *z_list;
+    struct k_list *z_lists = &storage->z_lists;
     struct k_list_node *iter, *next;
-    for (k_list_for_each_s(&storage->z_lists, iter, next)) {
+    for (k_list_for_each_s(z_lists, iter, next)) {
         z_list = container_of(iter, struct k_room_draw_callback_z_list, list_node);
 
         struct k_room_draw_callback *callback;
+        struct k_list *callbacks_list = &z_list->callbacks_list;
         struct k_list_node *iter_, *next_;
-        for (k_list_for_each_s(&z_list->callbacks_list, iter_, next_)) {
+        for (k_list_for_each_s(callbacks_list, iter_, next_)) {
             callback = container_of(iter_, struct k_room_draw_callback, list_node);
 
             callback->fn_callback(callback->data);
@@ -46,7 +48,7 @@ void k__room_exec_draw_callbacks(struct k_room *room) {
     }
 }
 
-static void draw_callback_del_self(struct k_room_callback *self) {
+static void fn_del_self(struct k_room_callback *self) {
     struct k_room_draw_callback *callback = container_of(self, struct k_room_draw_callback, impl);
 
     struct k_room_draw_callback_z_list *z_list = callback->z_list;
@@ -91,11 +93,11 @@ new_z_list:
     k_list_add(iter->prev, &z_list->list_node);
 
 add_callback:
-    k_list_add_tail(&z_list->callbacks_list, &callback->list_node);
-    callback->impl.fn_del_self = draw_callback_del_self;
+    callback->impl.fn_del_self = fn_del_self;
     callback->z_list = z_list;
     callback->data = data;
     callback->fn_callback = fn_callback;
+    k_list_add_tail(&z_list->callbacks_list, &callback->list_node);
 
     return &callback->impl;
 }

@@ -21,6 +21,10 @@ void k__room_cleanup_alarm_callback_storage(struct k_room *room) {
     }
 }
 
+static void do_nothing(struct k_room_callback *self) {
+    (void)self;
+}
+
 void k__room_exec_alarm_callbacks(struct k_room *room) {
     struct k_room_alarm_callback_storage *storage = &room->alarm_callbacks;
 
@@ -36,9 +40,12 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
         if (callback->timeout <= current_ms) {
             int timeout_diff = (int)(current_ms - callback->timeout);
 
-            /* [?] alarm_callback 结点应何时删除
-             * [?] alarm_callback 不应该用 `k_room_del_callback()` 删除自身
+            /* alarm 回调只执行一次。回调执行后，本函数将移除回调结点并释放内存。
+             * 在执行该回调前，将 `fn_del_self` 置为 `do_nothing()`，
+             * 确保即使在回调执行中使用 `k_room_del_callback()` 删除该回调自身，
+             * 也不会重复释放该回调结点的内存。
              */
+            callback->impl.fn_del_self = do_nothing;
 
             callback->fn_callback(callback->data, timeout_diff);
 
@@ -48,7 +55,7 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
     }
 }
 
-static void alarm_callback_del_self(struct k_room_callback *self) {
+static void fn_del_self(struct k_room_callback *self) {
     struct k_room_alarm_callback *callback = container_of(self, struct k_room_alarm_callback, impl);
 
     k_list_del(&callback->list_node);
@@ -77,11 +84,11 @@ struct k_room_callback *k__room_add_alarm_callback(struct k_room *room, void (*f
             break;
     }
 
-    k_list_add(iter->prev, &callback->list_node);
-    callback->impl.fn_del_self = alarm_callback_del_self;
+    callback->impl.fn_del_self = fn_del_self;
     callback->data = data;
     callback->fn_callback = fn_callback;
     callback->timeout = timeout;
+    k_list_add(iter->prev, &callback->list_node);
 
     return &callback->impl;
 }
