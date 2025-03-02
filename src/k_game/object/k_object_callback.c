@@ -11,6 +11,23 @@
 
 /* region [callback_list_add] */
 
+void k__object_init_callbacks_list(struct k_object *object) {
+    k_list_init(&object->callbacks);
+}
+
+void k__object_cleanup_callbacks_list(struct k_object *object) {
+
+    struct k_object_callback *callback;
+    struct k_list *callback_list = &object->callbacks;
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(callback_list, iter, next)) {
+        callback = container_of(iter, struct k_object_callback, object_callback_list_node);
+
+        k_room_del_callback(callback->room_callback);
+        k_free(callback);
+    }
+}
+
 static inline void object_callback_list_add(struct k_object *object, struct k_object_callback *callback) {
     struct k_list *callback_list = &object->callbacks;
     k_list_add_tail(callback_list, &callback->object_callback_list_node);
@@ -43,28 +60,6 @@ void k_object_del_callback(struct k_object_callback *callback) {
     k_room_del_callback(callback->room_callback);
     object_callback_list_del(callback);
     k_free(callback);
-}
-
-/* endregion */
-
-/* region [callback_list_init] */
-
-void k__object_init_callbacks_list(struct k_object *object) {
-    struct k_list *callback_list = &object->callbacks;
-    k_list_init(callback_list);
-}
-
-void k__object_cleanup_callbacks_list(struct k_object *object) {
-
-    struct k_object_callback *callback;
-    struct k_list *callback_list = &object->callbacks;
-    struct k_list_node *iter, *next;
-    for (k_list_for_each_s(callback_list, iter, next)) {
-        callback = container_of(iter, struct k_object_callback, object_callback_list_node);
-
-        k_room_del_callback(callback->room_callback);
-        k_free(callback);
-    }
 }
 
 /* endregion */
