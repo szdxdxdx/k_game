@@ -1,0 +1,59 @@
+#ifndef K_GAME__OBJECT_ENTITY_H
+#define K_GAME__OBJECT_ENTITY_H
+
+#include "k_list.h"
+
+#include "./object_pool.h"
+
+struct k_room;
+struct k_room_callback;
+
+/* region [object] */
+
+struct k_object {
+
+    struct k_object_pool_node pool_node;
+
+    struct k_room *room;
+
+    struct k_list callbacks;
+
+    struct k_list components;
+
+    void *data;
+};
+
+/* endregion */
+
+/* region [object_create] */
+
+void k__destroy_object(struct k_object *object);
+
+/* endregion */
+
+/* region [object_callback] */
+
+struct k_object_callback {
+
+    struct k_list_node object_callback_list_node;
+
+    struct k_room_callback *room_callback;
+
+    struct k_object *object;
+
+    union {
+        void (*fn_step_begin_callback)(struct k_object *object);
+        void (*fn_alarm_callback)     (struct k_object *object, int timeout_diff);
+        void (*fn_step_callback)      (struct k_object *object);
+        void (*fn_draw_callback)      (struct k_object *object);
+        void (*fn_step_end_callback)  (struct k_object *object);
+    };
+};
+
+void k__object_init_callbacks_list(struct k_object *object);
+
+void k__object_cleanup_callbacks_list(struct k_object *object);
+
+/* endregion */
+
+#endif

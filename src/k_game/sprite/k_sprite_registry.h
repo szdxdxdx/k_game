@@ -1,4 +1,0 @@
-#ifndef K_GAME__SPRITE_REGISTRY_H
-#define K_GAME__SPRITE_REGISTRY_H
-
-#endif
