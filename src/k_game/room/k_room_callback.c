@@ -31,7 +31,5 @@ struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (
 }
 
 void k_room_del_callback(struct k_room_callback *callback) {
-
-    if (NULL != callback)
-        callback->fn_del_self(callback);
+    callback->is_deleted = 1;
 }

@@ -13,11 +13,11 @@
 
 static inline void component_callback_list_add(struct k_component *component, struct k_component_callback *callback) {
     struct k_list *callback_list = &component->callbacks;
-    k_list_add_tail(callback_list, &callback->callback_list_node);
+    k_list_add_tail(callback_list, &callback->component_callback_list_node);
 }
 
 static inline void component_callback_list_del(struct k_component_callback *callback) {
-    k_list_del(&callback->callback_list_node);
+    k_list_del(&callback->component_callback_list_node);
 }
 
 /* endregion */
@@ -45,12 +45,12 @@ void k__component_init_callback_list(struct k_component *component) {
 }
 
 void k__component_cleanup_callback_list(struct k_component *component) {
-    struct k_list *callback_list = &component->callbacks;
 
     struct k_component_callback *callback;
+    struct k_list *callback_list = &component->callbacks;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(callback_list, iter, next)) {
-        callback = container_of(iter, struct k_component_callback, callback_list_node);
+        callback = container_of(iter, struct k_component_callback, component_callback_list_node);
 
         component_del_callback(callback);
     }

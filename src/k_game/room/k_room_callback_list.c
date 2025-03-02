@@ -1,7 +1,7 @@
 #include "k_game/alloc.h"
 #include "./k_room_context.h"
 
-/* region [callback_list] */
+/* region [callbacks] */
 
 void k__room_callback_list_init(struct k_room_callback_list *list) {
     k_list_init(&list->list);
@@ -27,17 +27,13 @@ void k__room_callback_list_exec_all(struct k_room_callback_list *list) {
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_callback_list_item, list_node);
 
-        callback->fn_callback(callback->data);
+        if (callback->base.is_deleted) {
+            k_list_del(&callback->list_node);
+            k_free(callback);
+        } else {
+            callback->fn_callback(callback->data);
+        }
     }
-}
-
-static inline void fn_del_self(struct k_room_callback *self) {
-
-    struct k_room_callback_list_item *callback;
-    callback = container_of(self, struct k_room_callback_list_item, impl);
-
-    k_list_del(&callback->list_node);
-    k_free(callback);
 }
 
 static inline struct k_room_callback *room_callback_list_add(struct k_room_callback_list *list, void (*fn_callback)(void *data), void *data) {
@@ -46,17 +42,17 @@ static inline struct k_room_callback *room_callback_list_add(struct k_room_callb
     if (NULL == callback)
         return NULL;
 
-    k_list_add_tail(&list->list, &callback->list_node);
-    callback->impl.fn_del_self = fn_del_self;
+    callback->base.is_deleted = 0;
     callback->data = data;
     callback->fn_callback = fn_callback;
+    k_list_add_tail(&list->list, &callback->list_node);
 
-    return &callback->impl;
+    return &callback->base;
 }
 
 /* endregion */
 
-/* region [use callback_list] */
+/* region [use callbacks] */
 
 struct k_room_callback *k__room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
     return room_callback_list_add(&room->enter_callbacks, fn_callback, data);

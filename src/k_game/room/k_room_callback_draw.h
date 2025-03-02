@@ -9,22 +9,20 @@ struct k_room;
 
 struct k_room_draw_callback {
 
-    struct k_room_callback impl;
-
-    struct k_room_draw_callback_z_list *z_list;
-
     struct k_list_node list_node;
 
-    void *data;
+    struct k_room_callback base;
 
     void (*fn_callback)(void *data);
+
+    void *data;
 };
 
 struct k_room_draw_callback_z_list {
 
     struct k_list_node list_node;
 
-    struct k_list callbacks_list;
+    struct k_list callbacks;
 
     int z_index;
 };

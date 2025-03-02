@@ -21,10 +21,6 @@ void k__room_cleanup_alarm_callback_storage(struct k_room *room) {
     }
 }
 
-static void do_nothing(struct k_room_callback *self) {
-    (void)self;
-}
-
 void k__room_exec_alarm_callbacks(struct k_room *room) {
     struct k_room_alarm_callback_storage *storage = &room->alarm_callbacks;
 
@@ -37,29 +33,21 @@ void k__room_exec_alarm_callbacks(struct k_room *room) {
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_alarm_callback, list_node);
 
-        if (callback->timeout <= current_ms) {
-            int timeout_diff = (int)(current_ms - callback->timeout);
-
-            /* alarm 回调只执行一次。回调执行后，本函数将移除回调结点并释放内存。
-             * 在执行该回调前，将 `fn_del_self` 置为 `do_nothing()`，
-             * 确保即使在回调执行中使用 `k_room_del_callback()` 删除该回调自身，
-             * 也不会重复释放该回调结点的内存。
-             */
-            callback->impl.fn_del_self = do_nothing;
-
-            callback->fn_callback(callback->data, timeout_diff);
-
+        if (callback->base.is_deleted) {
             k_list_del(&callback->list_node);
             k_free(callback);
+            continue;
         }
+
+        if (current_ms < callback->timeout) {
+            break;
+        }
+
+        int timeout_diff = (int)(current_ms - callback->timeout);
+
+        callback->fn_callback(callback->data, timeout_diff);
+        callback->base.is_deleted = 1;
     }
-}
-
-static void fn_del_self(struct k_room_callback *self) {
-    struct k_room_alarm_callback *callback = container_of(self, struct k_room_alarm_callback, impl);
-
-    k_list_del(&callback->list_node);
-    k_free(callback);
 }
 
 struct k_room_callback *k__room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms) {
@@ -84,11 +72,11 @@ struct k_room_callback *k__room_add_alarm_callback(struct k_room *room, void (*f
             break;
     }
 
-    callback->impl.fn_del_self = fn_del_self;
+    callback->base.is_deleted = 0;
     callback->data = data;
     callback->fn_callback = fn_callback;
     callback->timeout = timeout;
     k_list_add(iter->prev, &callback->list_node);
 
-    return &callback->impl;
+    return &callback->base;
 }

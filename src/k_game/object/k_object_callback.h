@@ -8,7 +8,7 @@ struct k_object;
 
 struct k_object_callback {
 
-    struct k_list_node callback_list_node;
+    struct k_list_node object_callback_list_node;
 
     struct k_room_callback *room_callback;
 

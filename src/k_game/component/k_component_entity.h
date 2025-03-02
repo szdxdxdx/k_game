@@ -13,7 +13,7 @@ struct k_component_type;
 
 struct k_component {
 
-    struct k_list_node object_component_node;
+    struct k_list_node object_component_list_node;
 
     const struct k_component_type *type;
 

@@ -5,7 +5,7 @@
 
 #include "./k_room_callback.h"
 
-/* region [callback_list] */
+/* region [callbacks] */
 
 /* 存储房间回调的链表容器
  *
@@ -20,7 +20,7 @@ struct k_room_callback_list_item {
 
     struct k_list_node list_node;
 
-    struct k_room_callback impl;
+    struct k_room_callback base;
 
     void *data;
 
@@ -35,7 +35,7 @@ void k__room_callback_list_exec_all(struct k_room_callback_list *list);
 
 /* endregion */
 
-/* region [use callback_list] */
+/* region [use callbacks] */
 
 struct k_room_callback *k__room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 

@@ -18,7 +18,7 @@ void k__room_cleanup_draw_callback_storage(struct k_room *room) {
 
         struct k_room_draw_callback *callback;
         struct k_list_node *iter_, *next_;
-        for (k_list_for_each_s(&z_list->callbacks_list, iter_, next_)) {
+        for (k_list_for_each_s(&z_list->callbacks, iter_, next_)) {
             callback = container_of(iter_, struct k_room_draw_callback, list_node);
 
             k_free(callback);
@@ -38,27 +38,23 @@ void k__room_exec_draw_callbacks(struct k_room *room) {
         z_list = container_of(iter, struct k_room_draw_callback_z_list, list_node);
 
         struct k_room_draw_callback *callback;
-        struct k_list *callbacks_list = &z_list->callbacks_list;
+        struct k_list *callbacks_list = &z_list->callbacks;
         struct k_list_node *iter_, *next_;
         for (k_list_for_each_s(callbacks_list, iter_, next_)) {
             callback = container_of(iter_, struct k_room_draw_callback, list_node);
 
-            callback->fn_callback(callback->data);
+            if (callback->base.is_deleted) {
+                k_list_del(&z_list->list_node);
+                k_free(callback);
+            } else {
+                callback->fn_callback(callback->data);
+            }
         }
-    }
-}
 
-static void fn_del_self(struct k_room_callback *self) {
-    struct k_room_draw_callback *callback = container_of(self, struct k_room_draw_callback, impl);
-
-    struct k_room_draw_callback_z_list *z_list = callback->z_list;
-
-    k_list_del(&callback->list_node);
-    k_free(callback);
-
-    if (k_list_is_empty(&z_list->callbacks_list)) {
-        k_list_del(&z_list->list_node);
-        k_free(z_list);
+        if (k_list_is_empty(&z_list->callbacks)) {
+            k_list_del(&z_list->list_node);
+            k_free(z_list);
+        }
     }
 }
 
@@ -89,15 +85,14 @@ new_z_list:
     }
 
     z_list->z_index = z_index;
-    k_list_init(&z_list->callbacks_list);
+    k_list_init(&z_list->callbacks);
     k_list_add(iter->prev, &z_list->list_node);
 
 add_callback:
-    callback->impl.fn_del_self = fn_del_self;
-    callback->z_list = z_list;
+    callback->base.is_deleted = 0;
     callback->data = data;
     callback->fn_callback = fn_callback;
-    k_list_add_tail(&z_list->callbacks_list, &callback->list_node);
+    k_list_add_tail(&z_list->callbacks, &callback->list_node);
 
-    return &callback->impl;
+    return &callback->base;
 }

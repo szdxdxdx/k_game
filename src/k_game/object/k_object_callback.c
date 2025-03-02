@@ -13,11 +13,11 @@
 
 static inline void object_callback_list_add(struct k_object *object, struct k_object_callback *callback) {
     struct k_list *callback_list = &object->callbacks;
-    k_list_add_tail(callback_list, &callback->callback_list_node);
+    k_list_add_tail(callback_list, &callback->object_callback_list_node);
 }
 
 static inline void object_callback_list_del(struct k_object_callback *callback) {
-    k_list_del(&callback->callback_list_node);
+    k_list_del(&callback->object_callback_list_node);
 }
 
 /* endregion */
@@ -46,12 +46,12 @@ void k__object_init_callbacks_list(struct k_object *object) {
 }
 
 void k__object_cleanup_callbacks_list(struct k_object *object) {
-    struct k_list *callback_list = &object->callbacks;
 
     struct k_object_callback *callback;
+    struct k_list *callback_list = &object->callbacks;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(callback_list, iter, next)) {
-        callback = container_of(iter, struct k_object_callback, callback_list_node);
+        callback = container_of(iter, struct k_object_callback, object_callback_list_node);
 
         object_del_callback(callback);
     }

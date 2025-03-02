@@ -10,11 +10,11 @@
 
 static inline void object_component_list_add(struct k_object *object, struct k_component *component) {
     struct k_list *component_list = &object->components;
-    k_list_add_tail(component_list, &component->object_component_node);
+    k_list_add_tail(component_list, &component->object_component_list_node);
 }
 
 static inline void object_component_list_del(struct k_component *component) {
-    k_list_del(&component->object_component_node);
+    k_list_del(&component->object_component_list_node);
 }
 
 /* endregion */
@@ -46,7 +46,7 @@ static struct k_component *create_component(const struct k_component_type *compo
     return component;
 
 fn_create_failed:
-    k_list_del(&component->object_component_node);
+    k_list_del(&component->object_component_list_node);
     k_free(component->data);
 malloc_data_failed:
     k_free(component);
@@ -76,10 +76,11 @@ void k__object_init_component_list(struct k_object *object) {
 
 void k__object_cleanup_component_list(struct k_object *object) {
 
+    struct k_component *component;
     struct k_list *component_list = &object->components;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(component_list, iter, next)) {
-        struct k_component *component = container_of(iter, struct k_component, object_component_node);
+        component = container_of(iter, struct k_component, object_component_list_node);
 
         destroy_component(component);
     }

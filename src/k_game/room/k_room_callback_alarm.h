@@ -11,15 +11,15 @@ struct k_room;
 
 struct k_room_alarm_callback {
 
-    struct k_room_callback impl;
-
     struct k_list_node list_node;
 
-    void *data;
+    struct k_room_callback base;
+
+    uint64_t timeout;
 
     void (*fn_callback)(void *data, int timeout_diff);
 
-    uint64_t timeout;
+    void *data;
 };
 
 struct k_room_alarm_callback_storage {
