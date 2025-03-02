@@ -54,6 +54,6 @@ void k__destroy_object(struct k_object *object) {
 
 void k_destroy_object(struct k_object *object) {
 
-    if (NULL == object)
+    if (NULL != object)
         k__destroy_object(object);
 }

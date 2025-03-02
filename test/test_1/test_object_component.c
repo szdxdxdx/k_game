@@ -127,11 +127,24 @@ static void object_draw(struct k_object *object) {
     }
 }
 
+static void object_step_kill_self(struct k_object *object) {
+
+    if (k_is_key_pressed('Q'))
+        k_destroy_object(object);
+}
+
+static void object_step_do_nothing(struct k_object *object) {
+    (void)object;
+}
+
 static struct k_object *create_player(int up_key, int down_key, int left_key, int right_key, float speed) {
 
     struct k_object *object = k_create_object(sizeof(struct obj_player));
     if (NULL == object)
         return NULL;
+
+    k_object_add_step_callback(object, object_step_kill_self);
+    k_object_add_step_callback(object, object_step_do_nothing);
 
     struct obj_player *player = k_object_get_data(object);
     player->spr_timer = 0;
@@ -185,7 +198,7 @@ static int init(void) {
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");

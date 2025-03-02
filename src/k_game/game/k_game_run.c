@@ -54,6 +54,16 @@ static void step_close_SDL(void *data) {
     k__close_SDL();
 }
 
+static int step_init_component_modules(void *data) {
+    (void)data;
+    return k__component_registry_init();
+}
+
+static void step_deinit_component_modules(void *data) {
+    (void)data;
+    k__component_registry_cleanup();
+}
+
 static int step_init_room_modules(void *data) {
     (void)data;
 
@@ -69,16 +79,6 @@ static void step_deinit_room_modules(void *data) {
 
     k__room_stack_cleanup();
     k__room_registry_cleanup();
-}
-
-static int step_init_component_modules(void *data) {
-    (void)data;
-    return k__component_registry_init();
-}
-
-static void step_deinit_component_modules(void *data) {
-    (void)data;
-    k__component_registry_cleanup();
 }
 
 static int step_call_fn_init(void *data) {
@@ -103,8 +103,8 @@ static void step_call_fn_cleanup(void *data) {
 static const struct k_seq_step game_initialization_steps[] = {
     { step_check_config,           NULL                          },
     { step_init_SDL,               step_close_SDL                },
-    { step_init_room_modules,      step_deinit_room_modules      },
     { step_init_component_modules, step_deinit_component_modules },
+    { step_init_room_modules,      step_deinit_room_modules      },
     { step_call_fn_init,           step_call_fn_cleanup          },
 };
 
