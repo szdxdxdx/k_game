@@ -10,12 +10,12 @@ static struct k_image *img;
 
 /* endregion */
 
-/* region [obj_player] */
-
 struct obj_player {
-    struct k_component *WASD;
+
     uint64_t spr_timer;
     int current_frame;
+
+    float x, y;
 };
 
 static void object_draw(struct k_object *object) {
@@ -30,8 +30,7 @@ static void object_draw(struct k_object *object) {
     rect.w = w;
     rect.h = h;
 
-    struct k_component_WASD *position = k_component_get_data(player->WASD);
-    k_draw_image(img, &rect, (int)position->x, (int)position->y);
+    k_draw_image(img, &rect, (int)player->x, (int)player->y);
 
     uint64_t current_ms = k_get_step_timestamp();
     if (player->spr_timer <= current_ms) {
@@ -42,10 +41,6 @@ static void object_draw(struct k_object *object) {
     }
 }
 
-/* endregion */
-
-/* region [game && room] */
-
 static int create_room(struct k_room *room, void *params) {
 
     struct k_object *object = k_create_object(sizeof(struct obj_player));
@@ -55,16 +50,16 @@ static int create_room(struct k_room *room, void *params) {
 
     k_object_add_draw_callback(object, object_draw, 0);
 
-    struct k_component_type *WASD = k_get_component_type_by_name("WASD");
-    struct k_component_WASD_config WASD_config;
+    struct k_component_type *WASD = k_get_component_type_by_name("k/WASD");
+    struct k_WASD_config WASD_config;
     WASD_config.key_up    = 'W';
-    WASD_config.key_down  = 'S';
     WASD_config.key_left  = 'A';
+    WASD_config.key_down  = 'S';
     WASD_config.key_right = 'D';
-    WASD_config.speed = 200.0f;
-    WASD_config.x = 30.f;
-    WASD_config.y = 30.f;
-    player->WASD = k_object_add_component(object, WASD, &WASD_config);
+    WASD_config.speed     = 200.0f;
+    WASD_config.x         = &player->x;
+    WASD_config.y         = &player->y;
+    k_object_add_component(object, WASD, &WASD_config);
 
     return 0;
 }
@@ -98,7 +93,5 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-/* endregion */
 
 #endif

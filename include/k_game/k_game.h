@@ -13,5 +13,6 @@
 #include "./k_game_run.h"
 
 #include "./k_game_components/WASD.h"
+#include "./k_game_components/sprite_renderer.h"
 
 #endif
