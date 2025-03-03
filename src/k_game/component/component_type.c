@@ -5,17 +5,13 @@
 #include "k_game/component_type.h"
 
 static int check_config(const struct k_component_type_config *config) {
-    const char *err_msg = "";
+    const char *err_msg;
 
-    if (NULL == config) {
-        err_msg = "assert( NULL != config )";
-        goto err;
-    }
+#define check_config_assert(cond) \
+    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
 
-    if (NULL == config->fn_create) {
-        err_msg = "assert( NULL != fn_create )";
-        goto err;
-    }
+    check_config_assert(NULL != config);
+    check_config_assert(NULL != config->fn_init);
 
     return 0;
 
@@ -38,9 +34,9 @@ struct k_component_type *k_define_component_type(const struct k_component_type_c
         goto err;
     }
 
-    component_type->data_size  = config->data_size;
-    component_type->fn_create  = config->fn_create;
-    component_type->fn_destroy = config->fn_destroy;
+    component_type->data_size = config->data_size;
+    component_type->fn_init = config->fn_init;
+    component_type->fn_fini = config->fn_fini;
 
     return component_type;
 

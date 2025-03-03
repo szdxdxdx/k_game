@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(k_game C)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 90)
 
 include_directories(
     "${CMAKE_SOURCE_DIR}/include/k_game"

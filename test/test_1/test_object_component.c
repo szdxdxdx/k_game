@@ -31,7 +31,7 @@ struct my_movement_component {
     float speed;
 };
 
-void comp_alarm_3(struct k_component *comp, int timeout_diff) {
+static void comp_alarm_3(struct k_component *comp, int timeout_diff) {
 
     printf("3\n");
     if (k_is_key_down('B')) {
@@ -41,7 +41,7 @@ void comp_alarm_3(struct k_component *comp, int timeout_diff) {
     }
 }
 
-void comp_alarm_6(struct k_component *comp, int timeout_diff) {
+static void comp_alarm_6(struct k_component *comp, int timeout_diff) {
 
     struct my_movement_component *movement = k_component_get_data(comp);
 
@@ -50,7 +50,7 @@ void comp_alarm_6(struct k_component *comp, int timeout_diff) {
     printf("6\n");
 }
 
-void comp_step(struct k_component *comp) {
+static void comp_step(struct k_component *comp) {
     struct my_movement_component *movement = k_component_get_data(comp);
     float delta_ms = k_get_step_delta();
 
@@ -64,7 +64,7 @@ void comp_step(struct k_component *comp) {
         movement->y += movement->speed * delta_ms;
 }
 
-int comp_create(struct k_component *component, void *params) {
+static int comp_create(struct k_component *component, void *params) {
     struct my_movement_component *movement = k_component_get_data(component);
     struct my_movement_component_config *config = params;
     movement->x = 0;
@@ -83,13 +83,13 @@ int comp_create(struct k_component *component, void *params) {
     return 0;
 }
 
-void define_movement_component(void) {
+static void define_movement_component(void) {
 
     struct k_component_type_config config;
     config.type_name = "my_movement";
     config.data_size = sizeof(struct my_movement_component);
-    config.fn_create = comp_create;
-    config.fn_destroy = NULL;
+    config.fn_init = comp_create;
+    config.fn_fini = NULL;
 
     struct k_component_type *component_type = k_define_component_type(&config);
     (void)component_type;

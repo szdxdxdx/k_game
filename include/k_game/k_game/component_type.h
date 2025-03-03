@@ -26,12 +26,18 @@ struct k_component_type {
 
     size_t data_size;
 
-    int (*fn_create)(struct k_component *component, void *params);
+    int (*fn_init)(struct k_component *component, void *params);
 
-    void (*fn_destroy)(struct k_component *component);
+    void (*fn_fini)(struct k_component *component);
 };
 
 void k__undef_component_type(struct k_component_type *component_type);
+
+/* endregion */
+
+/* region [k_game component_type] */
+
+int k__define_component_type_WASD(void);
 
 /* endregion */
 

@@ -12,4 +12,6 @@
 #include "./k_game_component.h"
 #include "./k_game_run.h"
 
+#include "./k_game_components/WASD.h"
+
 #endif

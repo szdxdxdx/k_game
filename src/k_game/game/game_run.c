@@ -43,7 +43,14 @@ static void step_close_SDL(void *data) {
 
 static int step_init_component_modules(void *data) {
     (void)data;
-    return k__component_registry_init();
+
+    if (0 != k__component_registry_init())
+        return -1;
+
+    if (0 != k__define_component_type_WASD())
+        return -1;
+
+    return 0;
 }
 
 static void step_deinit_component_modules(void *data) {
