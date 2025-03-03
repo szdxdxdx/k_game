@@ -49,6 +49,8 @@ static int step_init_component_modules(void *data) {
 
     if (0 != k__define_component_type_WASD())
         return -1;
+    if (0 != k__define_component_type_sprite_renderer())
+        return -1;
 
     return 0;
 }

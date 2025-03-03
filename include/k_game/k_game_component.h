@@ -32,6 +32,14 @@ struct k_component_type_config {
     void (*fn_fini)(struct k_component *component);
 };
 
+#define K_COMPONENT_TYPE_CONFIG_INIT \
+{ \
+    .type_name = NULL, \
+    .data_size = 0,    \
+    .fn_init   = NULL, \
+    .fn_fini   = NULL  \
+}
+
 struct k_component_type *k_define_component_type(const struct k_component_type_config *config);
 
 /* endregion */

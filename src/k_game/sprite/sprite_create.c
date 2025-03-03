@@ -52,11 +52,12 @@ struct k_sprite *k_create_sprite(const struct k_sprite_config *config) {
     }
 
     // TODO sprite->sprite_name
-    sprite->sprite_w = config->sprite_w;
-    sprite->sprite_h = config->sprite_h;
-    sprite->origin_x = config->origin_x;
-    sprite->origin_y = config->origin_y;
-    sprite->frames = frames;
+    sprite->sprite_w   = config->sprite_w;
+    sprite->sprite_h   = config->sprite_h;
+    sprite->origin_x   = config->origin_x;
+    sprite->origin_y   = config->origin_y;
+    sprite->frames     = frames;
+    sprite->frames_num = config->frames_num;
 
     return sprite;
 }

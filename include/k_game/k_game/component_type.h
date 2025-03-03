@@ -38,6 +38,7 @@ void k__undef_component_type(struct k_component_type *component_type);
 /* region [k_game component_type] */
 
 int k__define_component_type_WASD(void);
+int k__define_component_type_sprite_renderer(void);
 
 /* endregion */
 
