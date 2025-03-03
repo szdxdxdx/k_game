@@ -162,6 +162,12 @@ struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_
 
 struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
+/*
+ * 若 `callback` 为 `NULL`，则函数不做任何事情。
+ *
+ * TODO docs
+ * 删除后最好将指针置为 `NULL`，防止悬空指针
+ */
 void k_room_del_callback(struct k_room_callback *callback);
 
 /* endregion */

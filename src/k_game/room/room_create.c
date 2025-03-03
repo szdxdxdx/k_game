@@ -21,15 +21,11 @@ static int step_check_config(void *data) {
 
     const char *err_msg;
 
-    if (NULL == config) {
-        err_msg = "assert( NULL != config )";
-        goto err;
-    }
+#define check_config_assert(cond) \
+    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
 
-    if (config->room_speed <= 0) {
-        err_msg = "assert( 0 < room_speed )";
-        goto err;
-    }
+    check_config_assert(NULL != config);
+    check_config_assert(0 < config->room_speed);
 
     return 0;
 

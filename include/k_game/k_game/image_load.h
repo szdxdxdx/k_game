@@ -9,6 +9,8 @@ struct k_image {
 
     /* TODO registry node */
 
+    /* TODO ref_count && is_deleted */
+
     int w, h;
 
     SDL_Texture *texture;

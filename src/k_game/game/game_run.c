@@ -16,25 +16,13 @@ static int step_check_config(void *data) {
 
     const char *err_msg;
 
-    if (NULL == config) {
-        err_msg = "assert( NULL != config )";
-        goto err;
-    }
+#define check_config_assert(cond) \
+    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
 
-    if (config->window_h <= 0) {
-        err_msg = "assert( 0 < window_h )";
-        goto err;
-    }
-
-    if (config->window_w <= 0) {
-        err_msg = "assert( 0 < window_w )";
-        goto err;
-    }
-
-    if (NULL == config->fn_init) {
-        err_msg = "assert( NULL != fn_init )";
-        goto err;
-    }
+    check_config_assert(NULL != config);
+    check_config_assert(0 < config->window_h);
+    check_config_assert(0 < config->window_w);
+    check_config_assert(NULL != config->fn_init);
 
     return 0;
 

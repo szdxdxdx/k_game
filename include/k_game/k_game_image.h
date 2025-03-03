@@ -11,6 +11,6 @@ int k_image_get_width(struct k_image *image);
 
 int k_image_get_height(struct k_image *image);
 
-int k_draw_image(struct k_image *image, const struct k_int_rect *rect, int x, int y);
+int k_draw_image(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y);
 
 #endif

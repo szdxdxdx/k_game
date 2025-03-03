@@ -10,14 +10,16 @@ static int check_config(const struct k_sprite_config *config) {
     const char *err_msg;
 
 #define check_config_assert(cond) \
-    if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }
+    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
 
     check_config_assert(NULL != config);
     check_config_assert(0 != config->frames_num);
 
     size_t i = 0;
-    for (; i < config->frames_num; i++)
+    for (; i < config->frames_num; i++) {
+        check_config_assert(NULL != config->frames[i].image);
         check_config_assert(0 < config->frames[i].delay);
+    }
 
     return 0;
 

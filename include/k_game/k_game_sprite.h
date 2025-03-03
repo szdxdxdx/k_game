@@ -13,7 +13,20 @@ struct k_sprite;
 /* region [create_sprite] */
 
 struct k_image;
-struct k_sprite_frame_config;
+
+/**
+ * \brief 用于创建精灵的配置
+ *
+ * TODO docs
+ */
+struct k_sprite_frame_config {
+
+    struct k_image *image;
+
+    int offset_x, offset_y;
+
+    int delay;
+};
 
 /**
  * \brief 用于创建精灵的配置
@@ -31,20 +44,6 @@ struct k_sprite_config {
     struct k_sprite_frame_config *frames;
 
     int frames_num;
-};
-
-/**
- * \brief 用于创建精灵的配置
- *
- * TODO docs
- */
-struct k_sprite_frame_config {
-
-    struct k_image *image;
-
-    int offset_x, offset_y;
-
-    int delay;
 };
 
 struct k_sprite *k_create_sprite(const struct k_sprite_config *config);
