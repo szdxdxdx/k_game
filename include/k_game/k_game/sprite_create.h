@@ -13,7 +13,7 @@
 
 struct k_sprite_frame {
 
-    SDL_Texture *texture;
+    struct k_image *image;
 
     int offset_x, offset_y;
 

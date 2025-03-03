@@ -5,6 +5,6 @@
 
 struct k_sprite;
 
-int k__draw_sprite_frame(struct k_sprite *sprite, int x, int y, size_t frame_idx);
+int k__draw_sprite_frame(struct k_sprite *sprite, int dst_x, int dst_y, size_t frame_idx);
 
 #endif

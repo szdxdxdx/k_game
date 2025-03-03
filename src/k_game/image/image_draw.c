@@ -3,10 +3,22 @@
 #include "k_game/k_SDL.h"
 #include "k_game/game_context.h"
 #include "k_game_image.h"
-#include "k_game/image_load.h"
+#include "k_game/image_asset.h"
+#include "k_game/image_draw.h"
 
-/* TODO: move to .h ? */
-static int k__draw_image(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
+int k_draw_image(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
+    /* TODO: assert( NULL != image ) */
+    /* TODO: assert currently is in draw callback */
+
+    if (NULL == image) {
+        k_log_error_once("Failed to draw image. Image is NULL");
+        return -1;
+    }
+
+    return k__draw_image(image, src_rect, dst_x, dst_y);
+}
+
+int k__draw_image(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
 
     SDL_Rect src;
     if (NULL == src_rect) {
@@ -29,23 +41,6 @@ static int k__draw_image(const struct k_image *image, const struct k_int_rect *s
 
     if (0 != SDL_RenderCopy(k__window.renderer, image->texture, &src, &dst)) {
         k_log_error("SDL_RenderCopy() failed: %s", SDL_GetError());
-        return -1;
-    }
-
-    return 0;
-}
-
-int k_draw_image(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
-    /* TODO: assert( NULL != image ) */
-    /* TODO: assert currently is in draw callback */
-
-    if (NULL == image) {
-        k_log_error_once("Failed to draw image. Image is NULL");
-        return -1;
-    }
-
-    if (0 != k__draw_image(image, src_rect, dst_x, dst_y)) {
-        k_log_error("Failed to draw image");
         return -1;
     }
 

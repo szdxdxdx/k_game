@@ -1,7 +1,7 @@
 #include "k_log.h"
 
 #include "k_game_alloc.h"
-#include "k_game/image_load.h"
+#include "k_game/image_asset.h"
 #include "k_game_sprite.h"
 #include "k_game/sprite_create.h"
 
@@ -45,7 +45,7 @@ struct k_sprite *k_create_sprite(const struct k_sprite_config *config) {
 
     size_t i = 0;
     for (; i < config->frames_num; i++) {
-        frames[i].texture  = config->frames[i].image->texture;
+        frames[i].image    = config->frames[i].image;
         frames[i].offset_x = config->frames[i].offset_x;
         frames[i].offset_y = config->frames[i].offset_y;
         frames[i].delay    = config->frames[i].delay;
