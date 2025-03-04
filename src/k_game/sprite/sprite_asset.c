@@ -4,7 +4,7 @@
 #include "k_game_alloc.h"
 #include "k_game/image_asset.h"
 #include "k_game_sprite.h"
-#include "k_game/sprite_create.h"
+#include "k_game/sprite_asset.h"
 
 /* region [sprite_creation_steps] */
 
@@ -108,18 +108,12 @@ struct k_sprite *k_sprite_create(const struct k_sprite_config *config) {
     ctx.config = config;
     ctx.sprite = NULL;
 
-    size_t steps_num = k_array_len(sprite_creation_steps);
-    size_t completed_count = k_execute_steps_forward(sprite_creation_steps, steps_num, &ctx);
-    if (completed_count != steps_num) {
-        k_execute_steps_backward(sprite_creation_steps, completed_count, &ctx);
-        goto err;
+    if (0 != k_seq_step_exec_with_rollback(sprite_creation_steps, k_array_len(sprite_creation_steps), &ctx)) {
+        k_log_error("Failed to create sprite");
+        return NULL;
     }
 
     return ctx.sprite;
-
-err:
-    k_log_error("Failed to create sprite");
-    return NULL;
 }
 
 void k__sprite_destroy(struct k_sprite *sprite) {
@@ -128,5 +122,5 @@ void k__sprite_destroy(struct k_sprite *sprite) {
     ctx.config = NULL;
     ctx.sprite = sprite;
 
-    k_execute_steps_backward(sprite_creation_steps, k_array_len(sprite_creation_steps), &ctx);
+    k_seq_step_exec_backward(sprite_creation_steps, k_array_len(sprite_creation_steps), &ctx);
 }

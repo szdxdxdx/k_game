@@ -1,5 +1,5 @@
-#ifndef K_GAME__SPRITE_CREATE_H
-#define K_GAME__SPRITE_CREATE_H
+#ifndef K_GAME__SPRITE_ASSET_H
+#define K_GAME__SPRITE_ASSET_H
 
 #include "SDL.h"
 

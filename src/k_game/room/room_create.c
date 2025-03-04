@@ -197,18 +197,12 @@ struct k_room *k_room_create(const struct k_room_config *config, void *params) {
     ctx.params = params;
     ctx.room   = NULL;
 
-    size_t steps_num = k_array_len(room_creation_steps);
-    size_t completed_count = k_execute_steps_forward(room_creation_steps, steps_num, &ctx);
-    if (completed_count != steps_num) {
-        k_execute_steps_backward(room_creation_steps, completed_count, &ctx);
-        goto err;
+    if (0 != k_seq_step_exec_with_rollback(room_creation_steps, k_array_len(room_creation_steps), &ctx)) {
+        k_log_error("Failed to create room");
+        return NULL;
     }
 
     return ctx.room;
-
-err:
-    k_log_error("Failed to create room");
-    return NULL;
 }
 
 void k__room_destroy(struct k_room *room) {
@@ -218,7 +212,7 @@ void k__room_destroy(struct k_room *room) {
     ctx.params = NULL;
     ctx.room   = room;
 
-    k_execute_steps_backward(room_creation_steps, k_array_len(room_creation_steps), &ctx);
+    k_seq_step_exec_backward(room_creation_steps, k_array_len(room_creation_steps), &ctx);
 }
 
 void k_room_destroy(struct k_room *room) {

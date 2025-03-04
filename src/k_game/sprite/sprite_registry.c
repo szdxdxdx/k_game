@@ -1,4 +1,4 @@
-#include "k_game/sprite_create.h"
+#include "k_game/sprite_asset.h"
 
 static struct k_asset_registry sprite_registry;
 

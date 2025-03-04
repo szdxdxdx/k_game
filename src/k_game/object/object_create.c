@@ -6,11 +6,10 @@
 #include "k_game/component_entity.h"
 
 struct k_object *k_object_create(size_t data_size) {
-    const char *err_msg = "";
 
     struct k_room *room = k_get_current_room();
     if (NULL == room) {
-        err_msg = "currently not in any room";
+        k_log_error("currently not in any room");
         goto err;
     }
 
@@ -35,7 +34,7 @@ struct k_object *k_object_create(size_t data_size) {
     return object;
 
 err:
-    k_log_error("Failed to create object: %s", err_msg);
+    k_log_error("Failed to create object");
     return NULL;
 }
 

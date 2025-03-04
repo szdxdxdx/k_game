@@ -1,5 +1,5 @@
-#ifndef K_GAME__SDL_H
-#define K_GAME__SDL_H
+#ifndef K_GAME__K_SDL_H
+#define K_GAME__K_SDL_H
 
 #include "SDL_render.h"
 #include "SDL_events.h"

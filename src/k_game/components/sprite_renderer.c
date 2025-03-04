@@ -1,4 +1,4 @@
-#include "k_game/sprite_create.h"
+#include "k_game/sprite_asset.h"
 #include "k_game/sprite_draw.h"
 #include "k_game_time.h"
 #include "k_game_component.h"
