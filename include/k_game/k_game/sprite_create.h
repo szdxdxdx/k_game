@@ -3,9 +3,19 @@
 
 #include "SDL.h"
 
-/* region [registry] */
+#include "k_game/asset_registry.h"
 
-/* TODO sprite registry */
+struct k_sprite;
+
+/* region [sprite_registry] */
+
+int k__sprite_registry_init(void);
+
+void k__sprite_registry_cleanup(void);
+
+int k__sprite_registry_add(struct k_sprite *sprite, const char *sprite_name);
+
+void k__sprite_registry_del(struct k_sprite *sprite);
 
 /* endregion */
 
@@ -22,7 +32,7 @@ struct k_sprite_frame {
 
 struct k_sprite {
 
-    /* TODO registry node */
+    struct k_asset_registry_node registry_node;
 
     const char *sprite_name;
 
@@ -34,6 +44,8 @@ struct k_sprite {
 
     int frames_num;
 };
+
+void k__sprite_destroy(struct k_sprite *sprite);
 
 /* endregion */
 

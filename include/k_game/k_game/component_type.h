@@ -6,7 +6,7 @@
 struct k_component;
 struct k_component_type;
 
-/* region [registry] */
+/* region [component_registry] */
 
 int k__component_registry_init(void);
 
@@ -39,8 +39,8 @@ const char *k__component_type_get_name(struct k_component_type *component_type);
 
 /* region [k_game component] */
 
-int k__define_component_type_WASD(void);
-int k__define_component_type_sprite_renderer(void);
+int k__component_def_WASD(void);
+int k__component_def_sprite_renderer(void);
 
 /* endregion */
 

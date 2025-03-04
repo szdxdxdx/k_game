@@ -39,7 +39,7 @@ int k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_regi
         registry_node->name_map_node.key = "";
     } else {
         if (0 != k_str_map_add(&registry->name_map, asset_name, &registry_node->name_map_node)) {
-            k_log_error("Failed to add asset to registry: asset name \"%s\" already exists", asset_name);
+            k_log_error("Failed to add asset: asset named \"%s\" already exists", asset_name);
             return -1;
         }
     }

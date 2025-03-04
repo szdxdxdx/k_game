@@ -7,7 +7,9 @@
 #include "k_game/object_pool.h"
 #include "k_game/room_callback.h"
 
-/* region [registry] */
+struct k_room;
+
+/* region [room_registry] */
 
 int k__room_registry_init(void);
 

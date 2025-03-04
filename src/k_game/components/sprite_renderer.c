@@ -52,7 +52,7 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     return 0;
 }
 
-int k__define_component_type_sprite_renderer(void) {
+int k__component_def_sprite_renderer(void) {
 
     struct k_component_type_config config = K_COMPONENT_TYPE_CONFIG_INIT;
     config.type_name = "k/spr-rdr";

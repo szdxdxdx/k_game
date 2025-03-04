@@ -67,7 +67,7 @@ static void game_loop(struct k_room *room) {
 }
 
 void k__room_run(struct k_room *room) {
-    k_log_trace("Entering room { .name=\"%s\" }", k_room_get_name(room));
+    k_log_trace("Entered room { .name=\"%s\" }", k_room_get_name(room));
 
     k__game.current_room = room;
     enter_room(room);

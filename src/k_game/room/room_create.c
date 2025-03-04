@@ -45,14 +45,15 @@ static int step_malloc_room(void *data) {
 
 static void step_free_room(void *data) {
     struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
 
-    k_free(ctx->room);
+    k_free(room);
 }
 
 static int step_registry_add(void *data) {
     struct k_room_creation_context *ctx = data;
-    struct k_room *room = ctx->room;
     const struct k_room_config *config = ctx->config;
+    struct k_room *room = ctx->room;
 
     return k__room_registry_add(room, config->room_name);
 }
@@ -89,8 +90,8 @@ static void step_free_room_data(void *data) {
 
 static int step_configure_room(void *data) {
     struct k_room_creation_context *ctx = data;
-    struct k_room *room = ctx->room;
     const struct k_room_config *config = ctx->config;
+    struct k_room *room = ctx->room;
 
     room->fn_init    = config->fn_init;
     room->fn_cleanup = config->fn_cleanup;
@@ -145,8 +146,8 @@ static void step_cleanup_callbacks(void *data) {
 
 static int step_call_fn_create(void *data) {
     struct k_room_creation_context *ctx = data;
-    struct k_room *room = ctx->room;
     void *params = ctx->params;
+    struct k_room *room = ctx->room;
 
     if (NULL != room->fn_init) {
 

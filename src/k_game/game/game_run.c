@@ -4,6 +4,7 @@
 #include "k_seq_step.h"
 
 #include "k_game/k_SDL.h"
+#include "k_game/sprite_create.h"
 #include "k_game/room_context.h"
 #include "k_game/room_goto.h"
 #include "k_game/component_type.h"
@@ -41,26 +42,36 @@ static void step_close_SDL(void *data) {
     k__SDL_close();
 }
 
-static int step_init_component_modules(void *data) {
+static int step_init_sprite_module(void *data) {
+    (void)data;
+    return k__sprite_registry_init();
+}
+
+static void step_deinit_sprite_module(void *data) {
+    (void)data;
+    k__sprite_registry_cleanup();
+}
+
+static int step_init_component_module(void *data) {
     (void)data;
 
     if (0 != k__component_registry_init())
         return -1;
 
-    if (0 != k__define_component_type_WASD())
+    if (0 != k__component_def_WASD())
         return -1;
-    if (0 != k__define_component_type_sprite_renderer())
+    if (0 != k__component_def_sprite_renderer())
         return -1;
 
     return 0;
 }
 
-static void step_deinit_component_modules(void *data) {
+static void step_deinit_component_module(void *data) {
     (void)data;
     k__component_registry_cleanup();
 }
 
-static int step_init_room_modules(void *data) {
+static int step_init_room_module(void *data) {
     (void)data;
 
     if (0 != k__room_registry_init())
@@ -70,7 +81,7 @@ static int step_init_room_modules(void *data) {
     return 0;
 }
 
-static void step_deinit_room_modules(void *data) {
+static void step_deinit_room_module(void *data) {
     (void)data;
 
     k__room_stack_cleanup();
@@ -97,11 +108,12 @@ static void step_call_fn_cleanup(void *data) {
 }
 
 static const struct k_seq_step game_initialization_steps[] = {
-    { step_check_config,           NULL                          },
-    { step_init_SDL,               step_close_SDL                },
-    { step_init_component_modules, step_deinit_component_modules },
-    { step_init_room_modules,      step_deinit_room_modules      },
-    { step_call_fn_init,           step_call_fn_cleanup          },
+    { step_check_config,           NULL                         },
+    { step_init_SDL,               step_close_SDL               },
+    { step_init_sprite_module,     step_deinit_sprite_module    },
+    { step_init_component_module,  step_deinit_component_module },
+    { step_init_room_module,       step_deinit_room_module      },
+    { step_call_fn_init,           step_call_fn_cleanup         },
 };
 
 /* endregion */

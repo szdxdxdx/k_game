@@ -27,7 +27,7 @@ void k__object_destroy(struct k_object *object);
 
 /* endregion */
 
-/* region [callback] */
+/* region [object_callback] */
 
 struct k_object_callback {
 

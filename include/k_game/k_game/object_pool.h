@@ -6,6 +6,8 @@
 struct k_room;
 struct k_object;
 
+/* region [room->object_pool] */
+
 struct k_object_pool {
 
     struct k_list object_list;
@@ -23,5 +25,7 @@ void k__room_deinit_object_pool(struct k_room *room);
 void k__room_object_pool_add(struct k_room *room, struct k_object *object);
 
 void k__room_object_pool_del(struct k_object *object);
+
+/* endregion */
 
 #endif

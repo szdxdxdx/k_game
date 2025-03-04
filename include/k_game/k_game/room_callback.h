@@ -7,7 +7,7 @@
 
 struct k_room;
 
-/* region [callback] */
+/* region [room_callback] */
 
 /* 房间回调结点的基础结构
  *
@@ -22,7 +22,7 @@ struct k_room_callback {
 
 /* endregion */
 
-/* region [callback_list] */
+/* region [room_callback_list] */
 
 /* 存储房间回调的链表容器
  *
