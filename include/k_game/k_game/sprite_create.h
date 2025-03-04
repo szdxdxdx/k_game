@@ -3,7 +3,7 @@
 
 #include "SDL.h"
 
-/* region [sprite_registry] */
+/* region [registry] */
 
 /* TODO sprite registry */
 

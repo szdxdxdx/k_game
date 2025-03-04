@@ -12,14 +12,14 @@ struct obj_player {
 
 static int create_room(struct k_room *room, void *params) {
 
-    struct k_object *object = k_create_object(sizeof(struct obj_player));
+    struct k_object *object = k_object_create(sizeof(struct obj_player));
     struct obj_player *player = k_object_get_data(object);
     player->x = 0.0f;
     player->y = 0.0f;
 
     /* ------------------------------------------------------------------------ */
 
-    struct k_component_type *renderer = k_get_component_type_by_name("k/spr-rdr");
+    struct k_component_type *renderer = k_component_find("k/spr-rdr");
     struct k_sprite_renderer_config renderer_config;
     renderer_config.sprite  = spr_player;
     renderer_config.z_index = 0;
@@ -29,7 +29,7 @@ static int create_room(struct k_room *room, void *params) {
 
     /* ------------------------------------------------------------------------ */
 
-    struct k_component_type *WASD = k_get_component_type_by_name("k/WASD");
+    struct k_component_type *WASD = k_component_find("k/WASD");
     struct k_WASD_config WASD_config;
     WASD_config.key_up    = 'W';
     WASD_config.key_left  = 'A';
@@ -45,14 +45,14 @@ static int create_room(struct k_room *room, void *params) {
 
 static int init(void) {
 
-    struct k_image *img = k_load_image("", "assets/tmp.png");
+    struct k_image *img = k_image_load("", "assets/tmp.png");
 
     /* ------------------------------------------------------------------------ */
 
     int sprite_w = 512 / 8;
     int sprite_h = 256 / 3;
 
-    spr_player = k_create_sprite((struct k_sprite_config[1]) {{
+    spr_player = k_sprite_create((struct k_sprite_config[1]) {{
         .sprite_name = NULL,
         .sprite_w = sprite_w,
         .sprite_h = sprite_h,
@@ -71,7 +71,8 @@ static int init(void) {
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     room_config.fn_init = create_room;
-    struct k_room *room = k_create_room(&room_config, NULL);
+
+    struct k_room *room = k_room_create(&room_config, NULL);
 
     /* ------------------------------------------------------------------------ */
 
@@ -92,7 +93,7 @@ int main(int argc, char **argv) {
     game_config.window_h = 360;
     game_config.fn_init = init;
 
-    k_run_game(&game_config);
+    k_game_run(&game_config);
 
     return 0;
 }

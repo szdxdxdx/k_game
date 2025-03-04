@@ -25,7 +25,7 @@ struct k_component {
 
 /* endregion */
 
-/* region [component_callback] */
+/* region [callback] */
 
 struct k_component_callback {
 
@@ -48,7 +48,7 @@ void k__component_cleanup_callback_list(struct k_component *component);
 
 /* endregion */
 
-/* region [object_component] */
+/* region [object] */
 
 void k__object_init_component_list(struct k_object *object);
 

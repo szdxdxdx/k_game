@@ -19,7 +19,7 @@ void k__room_callback_list_clean(struct k_room_callback_list *list) {
     }
 }
 
-void k__room_callback_list_exec_all(struct k_room_callback_list *list) {
+void k__room_callback_list_exec(struct k_room_callback_list *list) {
 
     struct k_room_callback_list_item *callback;
     struct k_list *callback_list = &list->list;

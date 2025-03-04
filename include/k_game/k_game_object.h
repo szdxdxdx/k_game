@@ -16,19 +16,11 @@
  */
 struct k_object;
 
-/* region [create_objet] */
+struct k_object *k_object_create(size_t data_size);
 
-struct k_object *k_create_object(size_t data_size);
-
-void k_destroy_object(struct k_object *object);
-
-/* endregion */
-
-/* region [object_get] */
+void k_object_destroy(struct k_object *object);
 
 void *k_object_get_data(struct k_object *object);
-
-/* endregion */
 
 /**
  * \brief 对象回调
@@ -36,8 +28,6 @@ void *k_object_get_data(struct k_object *object);
  * TODO docs
  */
 struct k_object_callback;
-
-/* region [object_callback] */
 
 struct k_object_callback *k_object_add_step_begin_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
 
@@ -50,7 +40,5 @@ struct k_object_callback *k_object_add_draw_callback(struct k_object *object, vo
 struct k_object_callback *k_object_add_step_end_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
 
 void k_object_del_callback(struct k_object_callback *callback);
-
-/* endregion */
 
 #endif

@@ -7,7 +7,7 @@
 
 struct k_room;
 
-/* region [room_callback] */
+/* region [callback] */
 
 /* 房间回调结点的基础结构
  *
@@ -48,7 +48,7 @@ void k__room_callback_list_init(struct k_room_callback_list *list);
 
 void k__room_callback_list_clean(struct k_room_callback_list *list);
 
-void k__room_callback_list_exec_all(struct k_room_callback_list *list);
+void k__room_callback_list_exec(struct k_room_callback_list *list);
 
 /* endregion */
 

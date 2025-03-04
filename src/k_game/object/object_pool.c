@@ -15,7 +15,7 @@ void k__room_deinit_object_pool(struct k_room *room) {
     for (k_list_for_each_s(&pool->object_list, iter, next)) {
         struct k_object *object = container_of(iter, struct k_object, pool_node);
 
-        k__destroy_object(object);
+        k__object_destroy(object);
     }
 }
 

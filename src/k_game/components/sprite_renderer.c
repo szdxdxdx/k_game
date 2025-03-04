@@ -33,7 +33,7 @@ static void sprite_renderer_draw(struct k_component *component) {
 
     float x = *(renderer->x);
     float y = *(renderer->y);
-    k__draw_sprite_frame(sprite, (int)x, (int)y, renderer->frame_idx);
+    k__sprite_draw_frame(sprite, (int)x, (int)y, renderer->frame_idx);
 }
 
 static int sprite_renderer_init(struct k_component *component, void *params) {
@@ -59,7 +59,7 @@ int k__define_component_type_sprite_renderer(void) {
     config.data_size = sizeof(struct k_sprite_renderer);
     config.fn_init = sprite_renderer_init;
 
-    struct k_component_type *type = k_define_component_type(&config);
+    struct k_component_type *type = k_component_define(&config);
 
     return NULL == type ? -1 : 0;
 }

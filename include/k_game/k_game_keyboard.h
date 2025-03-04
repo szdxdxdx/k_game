@@ -4,29 +4,29 @@
 enum k_keyboard_key;
 
 /* 按下按键 */
-int k_is_key_pressed(enum k_keyboard_key key);
+int k_key_pressed(enum k_keyboard_key key);
 
 /* 松开按键 */
-int k_is_key_released(enum k_keyboard_key key);
+int k_key_released(enum k_keyboard_key key);
 
 /* 按住按键 */
-int k_is_key_held(enum k_keyboard_key key);
+int k_key_held(enum k_keyboard_key key);
 
 /* 按键空闲 */
-int k_is_key_idle(enum k_keyboard_key key);
+int k_key_idle(enum k_keyboard_key key);
 
 /* 按下或按住 */
-int k_is_key_down(enum k_keyboard_key key);
+int k_key_down(enum k_keyboard_key key);
 
 /* 没有按下，也没有按住 */
-int k_is_key_up(enum k_keyboard_key key);
+int k_key_up(enum k_keyboard_key key);
 
 /**
  * \brief 键盘按键的键码
  *
- * 字母键、符号键的键码与该字符的 ASCII 码相同。
+ * 为方便编程，k_game 使用 ASCII 码作为字母键、符号键的键码。
  *
- * 需要修饰符来修改按键的行为的字符，对应的键码不可用。
+ * 需要修饰符来修改按键的行为才能打出的字符，对应的键码不可用。
  * 例如，k_game 不会直接识别出 `#`，而是识别出 `shift` 和 `3`。
  *
  * `K_KEY_UNUSED_XXX` 一类的键码仅用作占位，不对应任何按键。

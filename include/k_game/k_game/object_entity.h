@@ -23,15 +23,11 @@ struct k_object {
     void *data;
 };
 
-/* endregion */
-
-/* region [object_create] */
-
-void k__destroy_object(struct k_object *object);
+void k__object_destroy(struct k_object *object);
 
 /* endregion */
 
-/* region [object_callback] */
+/* region [callback] */
 
 struct k_object_callback {
 
@@ -50,9 +46,9 @@ struct k_object_callback {
     };
 };
 
-void k__object_init_callbacks_list(struct k_object *object);
+void k__object_init_callback_list(struct k_object *object);
 
-void k__object_cleanup_callbacks_list(struct k_object *object);
+void k__object_cleanup_callback_list(struct k_object *object);
 
 /* endregion */
 

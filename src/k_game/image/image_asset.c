@@ -7,7 +7,7 @@
 #include "k_game_image.h"
 #include "k_game/image_asset.h"
 
-struct k_image *k_load_image(const char *image_name, const char *filepath) {
+struct k_image *k_image_load(const char *image_name, const char *filepath) {
 
     struct k_image *img = k_malloc(sizeof(struct k_image));
     if (NULL == img)

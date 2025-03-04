@@ -11,12 +11,12 @@ static inline int enter_room(struct k_room *room) {
 
     room->game_loop = 1; /* <- 标记游戏循环开启，在 entry 回调中也能退出循环 */
 
-    k__room_callback_list_exec_all(&room->enter_callbacks);
+    k__room_callback_list_exec(&room->enter_callbacks);
     return 0;
 }
 
 static inline void leave_room(struct k_room *room) {
-    k__room_callback_list_exec_all(&room->leave_callbacks);
+    k__room_callback_list_exec(&room->leave_callbacks);
 }
 
 static inline int frame_delay(struct k_room *room) {
@@ -47,11 +47,11 @@ static void game_loop(struct k_room *room) {
 
         do k__poll_SDL_events(); while (frame_delay(room));
 
-        k__room_callback_list_exec_all(&room->step_begin_callbacks);
+        k__room_callback_list_exec(&room->step_begin_callbacks);
 
         k__room_exec_alarm_callbacks(room);
 
-        k__room_callback_list_exec_all(&room->step_callbacks);
+        k__room_callback_list_exec(&room->step_callbacks);
 
         SDL_SetRenderDrawColor(k__window.renderer, 0, 0, 0, 255);
         SDL_RenderClear(k__window.renderer);
@@ -60,7 +60,7 @@ static void game_loop(struct k_room *room) {
 
         SDL_RenderPresent(k__window.renderer);
 
-        k__room_callback_list_exec_all(&room->step_end_callbacks);
+        k__room_callback_list_exec(&room->step_end_callbacks);
     }
 
     k_log_trace("Game loop ended");

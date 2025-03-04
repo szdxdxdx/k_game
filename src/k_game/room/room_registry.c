@@ -4,7 +4,7 @@ static struct k_asset_registry room_registry;
 
 static void fn_free_asset(struct k_asset_registry_node *node) {
     struct k_room *room = container_of(node, struct k_room, registry_node);
-    k__destroy_room(room);
+    k__room_destroy(room);
 }
 
 int k__room_registry_init(void) {
@@ -23,7 +23,7 @@ void k__room_registry_del(struct k_room *room) {
     k__asset_registry_del(&room->registry_node);
 }
 
-struct k_room *k_get_room_by_name(const char *room_name) {
+struct k_room *k_room_find(const char *room_name) {
     struct k_asset_registry_node *registry_node = k__asset_registry_get(&room_registry, room_name);
     if (NULL == registry_node)
         return NULL;

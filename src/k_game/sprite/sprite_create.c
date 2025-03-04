@@ -28,7 +28,7 @@ err:
     return -1;
 }
 
-struct k_sprite *k_create_sprite(const struct k_sprite_config *config) {
+struct k_sprite *k_sprite_create(const struct k_sprite_config *config) {
 
     if (0 != check_config(config))
         return NULL;

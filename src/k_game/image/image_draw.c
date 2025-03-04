@@ -6,7 +6,7 @@
 #include "k_game/image_asset.h"
 #include "k_game/image_draw.h"
 
-int k_draw_image(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
+int k_image_draw(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
     /* TODO: assert( NULL != image ) */
     /* TODO: assert currently is in draw callback */
 
@@ -15,10 +15,10 @@ int k_draw_image(const struct k_image *image, const struct k_int_rect *src_rect,
         return -1;
     }
 
-    return k__draw_image(image, src_rect, dst_x, dst_y);
+    return k__image_draw(image, src_rect, dst_x, dst_y);
 }
 
-int k__draw_image(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
+int k__image_draw(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
 
     SDL_Rect src;
     if (NULL == src_rect) {

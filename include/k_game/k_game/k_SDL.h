@@ -4,17 +4,17 @@
 #include "SDL_render.h"
 #include "SDL_events.h"
 
-/* region [SDL_init] */
+/* region [init] */
 
 struct k_game_config;
 
-int k__init_SDL(const struct k_game_config *config);
+int k__SDL_init(const struct k_game_config *config);
 
-void k__close_SDL(void);
+void k__SDL_close(void);
 
 /* endregion */
 
-/* region [SDL_window] */
+/* region [window] */
 
 struct k_game_window {
 
@@ -27,9 +27,9 @@ extern struct k_game_window k__window;
 
 /* endregion */
 
-/* region [SDL_keyboard] */
+/* region [keyboard] */
 
-void k__refresh_keyboard(void);
+void k__refresh_keyboard(void); /* <- TODO rename */
 
 void k__handle_SDL_key_down_event(SDL_KeyboardEvent *event);
 

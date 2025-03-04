@@ -19,8 +19,6 @@ struct k_component_type;
  */
 struct k_component;
 
-/* region [define_component_type] */
-
 struct k_component_type_config {
 
     const char *type_name;
@@ -40,17 +38,9 @@ struct k_component_type_config {
     .fn_fini   = NULL  \
 }
 
-struct k_component_type *k_define_component_type(const struct k_component_type_config *config);
+struct k_component_type *k_component_define(const struct k_component_type_config *config);
 
-/* endregion */
-
-/* region [component_type_get] */
-
-const char *k_component_type_get_name(struct k_component_type *component_type);
-
-struct k_component_type *k_get_component_type_by_name(const char *type_name);
-
-/* endregion */
+struct k_component_type *k_component_find(const char *type_name);
 
 /**
  * \brief 组件回调
@@ -59,7 +49,15 @@ struct k_component_type *k_get_component_type_by_name(const char *type_name);
  */
 struct k_component_callback;
 
-/* region [object_add_component] */
+struct k_component_callback *k_component_add_alarm_callback(struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms);
+
+struct k_component_callback *k_component_add_step_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
+
+struct k_component_callback *k_component_add_draw_callback(struct k_component *component, void (*fn_callback)(struct k_component *component), int z_index);
+
+void k_component_del_callback(struct k_component_callback *callback);
+
+void *k_component_get_data(struct k_component *component);
 
 /*
  * TODO docs
@@ -72,30 +70,10 @@ struct k_component *k_object_add_component(struct k_object *object, struct k_com
 
 void k_object_del_component(struct k_component *component);
 
+struct k_object *k_component_get_object(struct k_component *component);
+
 // TODO struct k_component *k_object_get_component(struct k_object *object, struct k_component_type *component_type);
 
 // TODO int k_get_objects_with_component(size_t component_type_id, struct k_object ***get_objects, size_t *n);
-
-/* endregion */
-
-/* region [component_callback] */
-
-struct k_component_callback *k_component_add_alarm_callback(struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms);
-
-struct k_component_callback *k_component_add_step_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
-
-struct k_component_callback *k_component_add_draw_callback(struct k_component *component, void (*fn_callback)(struct k_component *component), int z_index);
-
-void k_component_del_callback(struct k_component_callback *callback);
-
-/* endregion */
-
-/* region [component_get] */
-
-void *k_component_get_data(struct k_component *component);
-
-struct k_object *k_component_get_object(struct k_component *component);
-
-/* endregion */
 
 #endif

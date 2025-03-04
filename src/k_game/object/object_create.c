@@ -5,7 +5,7 @@
 #include "k_game/object_entity.h"
 #include "k_game/component_entity.h"
 
-struct k_object *k_create_object(size_t data_size) {
+struct k_object *k_object_create(size_t data_size) {
     const char *err_msg = "";
 
     struct k_room *room = k_get_current_room();
@@ -28,7 +28,7 @@ struct k_object *k_create_object(size_t data_size) {
 
     object->data = data;
     object->room = room;
-    k__object_init_callbacks_list(object);
+    k__object_init_callback_list(object);
     k__object_init_component_list(object);
     k__room_object_pool_add(room, object);
 
@@ -39,18 +39,18 @@ err:
     return NULL;
 }
 
-void k__destroy_object(struct k_object *object) {
+void k__object_destroy(struct k_object *object) {
 
     k__object_cleanup_component_list(object);
-    k__object_cleanup_callbacks_list(object);
+    k__object_cleanup_callback_list(object);
     k__room_object_pool_del(object);
 
     k_free(object->data);
     k_free(object);
 }
 
-void k_destroy_object(struct k_object *object) {
+void k_object_destroy(struct k_object *object) {
 
     if (NULL != object)
-        k__destroy_object(object);
+        k__object_destroy(object);
 }

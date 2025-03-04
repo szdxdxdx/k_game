@@ -181,28 +181,28 @@ void k__handle_SDL_key_up_event(SDL_KeyboardEvent *event) {
     key_state[k_key] |= 0b001;
 }
 
-int k_is_key_pressed(enum k_keyboard_key key) {
+int k_key_pressed(enum k_keyboard_key key) {
     return 0b010 == (key_state[key] & 0b110);
 }
 
-int k_is_key_released(enum k_keyboard_key key) {
+int k_key_released(enum k_keyboard_key key) {
     return 0b001 == (key_state[key] & 0b001);
 }
 
-int k_is_key_held(enum k_keyboard_key key) {
+int k_key_held(enum k_keyboard_key key) {
     return 0b100 == (key_state[key] & 0b101);
 }
 
-int k_is_key_idle(enum k_keyboard_key key) {
+int k_key_idle(enum k_keyboard_key key) {
     return 0b000 == key_state[key];
 }
 
-int k_is_key_down(enum k_keyboard_key key) {
+int k_key_down(enum k_keyboard_key key) {
     return 0b010 == (key_state[key] & 0b110)
         || 0b100 == (key_state[key] & 0b101);
 }
 
-int k_is_key_up(enum k_keyboard_key key) {
+int k_key_up(enum k_keyboard_key key) {
     return 0b010 != (key_state[key] & 0b110)
         && 0b100 != (key_state[key] & 0b101);
 }

@@ -10,8 +10,6 @@
  */
 struct k_sprite;
 
-/* region [create_sprite] */
-
 struct k_image;
 
 /**
@@ -46,24 +44,14 @@ struct k_sprite_config {
     int frames_num;
 };
 
-struct k_sprite *k_create_sprite(const struct k_sprite_config *config);
+struct k_sprite *k_sprite_create(const struct k_sprite_config *config);
 
-/* endregion */
-
-/* region [sprite_get] */
-
-struct k_sprite *k_get_sprite_by_name(const char *sprite_name);
+struct k_sprite *k_sprite_find(const char *sprite_name);
 
 int k_sprite_get_width(struct k_sprite *sprite);
 
 int k_sprite_get_height(struct k_sprite *sprite);
 
-/* endregion */
-
-/* region [draw_sprite] */
-
-int k_draw_sprite_frame(struct k_sprite *sprite, int x, int y, size_t frame_idx);
-
-/* endregion */
+int k_sprite_draw_frame(struct k_sprite *sprite, int x, int y, size_t frame_idx);
 
 #endif

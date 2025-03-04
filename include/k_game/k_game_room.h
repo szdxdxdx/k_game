@@ -10,8 +10,6 @@
  */
 struct k_room;
 
-/* region [create_room] */
-
 /** \brief 创建房间所需的配置参数 */
 struct k_room_config {
 
@@ -21,7 +19,7 @@ struct k_room_config {
      * 名字是可选的，指定值为空字符串 "" 或 `NULL` 表示不使用名字。
      *
      * 若指定名字，需保证其唯一性。k_game 会基于该名字为房间创建索引，
-     * 之后你可以通过 `k_get_room_by_name()` 查找房间。
+     * 之后你可以通过 `k_room_find()` 查找房间。
      *
      * 在创建房间时，k_game 不会分配内存来复制名字。
      * 传递的字符串的内存段必须始终有效，建议使用字符串字面量。
@@ -98,11 +96,7 @@ struct k_room_config {
  *
  * 若创建成功，函数返回房间指针，否则返回 `NULL`。
  */
-struct k_room *k_create_room(const struct k_room_config *config, void *params);
-
-/* endregion */
-
-/* region [room_get] */
+struct k_room *k_room_create(const struct k_room_config *config, void *params);
 
 /**
  * \brief 通过房间名字查找对应的房间
@@ -111,7 +105,9 @@ struct k_room *k_create_room(const struct k_room_config *config, void *params);
  * 本函数能根据名字查找到对应的房间。
  * 若找到，函数返回房间指针，否则返回 `NULL`。
  */
-struct k_room *k_get_room_by_name(const char *room_name);
+struct k_room *k_room_find(const char *room_name);
+
+int k_goto_room(struct k_room *room);
 
 struct k_room *k_get_current_room(void);
 
@@ -131,22 +127,12 @@ void *k_room_get_data(struct k_room *room);
 
 void *k_get_current_room_data(void);
 
-/* endregion */
-
-/* region [room_goto] */
-
-int k_goto_room(struct k_room *room);
-
-/* endregion */
-
 /**
  * \brief 房间回调
  *
  * TODO docs
  */
 struct k_room_callback;
-
-/* region [room_callback] */
 
 struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
@@ -169,7 +155,5 @@ struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (
  * 删除后最好将指针置为 `NULL`，防止悬空指针
  */
 void k_room_del_callback(struct k_room_callback *callback);
-
-/* endregion */
 
 #endif

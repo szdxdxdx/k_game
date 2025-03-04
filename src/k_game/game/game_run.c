@@ -33,12 +33,12 @@ err:
 
 static int step_init_SDL(void *data) {
     const struct k_game_config *config = data;
-    return k__init_SDL(config);
+    return k__SDL_init(config);
 }
 
 static void step_close_SDL(void *data) {
     (void)data;
-    k__close_SDL();
+    k__SDL_close();
 }
 
 static int step_init_component_modules(void *data) {
@@ -145,7 +145,7 @@ end:
     k_log_info("Game end");
 }
 
-int k_run_game(const struct k_game_config *config) {
+int k_game_run(const struct k_game_config *config) {
 
     if (0 != init_game(config))
         return -1;

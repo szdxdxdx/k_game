@@ -20,7 +20,7 @@ err:
     return -1;
 }
 
-struct k_component_type *k_define_component_type(const struct k_component_type_config *config) {
+struct k_component_type *k_component_define(const struct k_component_type_config *config) {
 
     if (0 != check_config(config))
         goto err;
@@ -45,7 +45,7 @@ err:
     return NULL;
 }
 
-void k__undef_component_type(struct k_component_type *component_type) {
+void k__component_undef(struct k_component_type *component_type) {
     k__component_registry_del(component_type);
     k_free(component_type);
 }

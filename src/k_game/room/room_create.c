@@ -189,7 +189,7 @@ static const struct k_seq_step room_creation_steps[] = {
 
 /* endregion */
 
-struct k_room *k_create_room(const struct k_room_config *config, void *params) {
+struct k_room *k_room_create(const struct k_room_config *config, void *params) {
 
     struct k_room_creation_context ctx;
     ctx.config = config;
@@ -210,7 +210,7 @@ err:
     return NULL;
 }
 
-void k__destroy_room(struct k_room *room) {
+void k__room_destroy(struct k_room *room) {
 
     struct k_room_creation_context ctx;
     ctx.config = NULL;
@@ -220,8 +220,8 @@ void k__destroy_room(struct k_room *room) {
     k_execute_steps_backward(room_creation_steps, k_array_len(room_creation_steps), &ctx);
 }
 
-void k_destroy_room(struct k_room *room) {
+void k_room_destroy(struct k_room *room) {
 
     if (NULL != room)
-        k__destroy_room(room);
+        k__room_destroy(room);
 }

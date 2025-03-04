@@ -149,7 +149,7 @@ init_SDL_failed:
 
 /* endregion */
 
-int k__init_SDL(const struct k_game_config *config) {
+int k__SDL_init(const struct k_game_config *config) {
 
     if (0 != init_or_close_SDL(config, 1)) {
         k_log_error("Failed to initialize SDL");
@@ -161,7 +161,7 @@ int k__init_SDL(const struct k_game_config *config) {
     }
 }
 
-void k__close_SDL(void) {
+void k__SDL_close(void) {
     init_or_close_SDL(NULL, 0);
     k_log_trace("SDL closed");
 }

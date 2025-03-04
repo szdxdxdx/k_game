@@ -4,7 +4,7 @@ static struct k_asset_registry component_registry;
 
 static void fn_free_asset(struct k_asset_registry_node *registry_node) {
     struct k_component_type *component_type = container_of(registry_node, struct k_component_type, registry_node);
-    k__undef_component_type(component_type);
+    k__component_undef(component_type);
 }
 
 int k__component_registry_init(void) {
@@ -23,7 +23,7 @@ void k__component_registry_del(struct k_component_type *component_type) {
     k__asset_registry_del(&component_type->registry_node);
 }
 
-struct k_component_type *k_get_component_type_by_name(const char *type_name) {
+struct k_component_type *k_component_find(const char *type_name) {
 
     struct k_asset_registry_node *registry_node = k__asset_registry_get(&component_registry, type_name);
     if (NULL == registry_node)
@@ -33,6 +33,6 @@ struct k_component_type *k_get_component_type_by_name(const char *type_name) {
     return component_type;
 }
 
-const char *k_component_type_get_name(struct k_component_type *component_type) {
+const char *k__component_type_get_name(struct k_component_type *component_type) {
     return k__asset_get_name(&component_type->registry_node);
 }

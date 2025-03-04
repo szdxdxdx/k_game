@@ -20,13 +20,13 @@ static void WASD_step(struct k_component *component) {
 
     float delta_time = k_get_step_delta();
 
-    if (k_is_key_down(WASD->key_up))
+    if (k_key_down(WASD->key_up))
         *(WASD->y) -= WASD->speed * delta_time;
-    if (k_is_key_down(WASD->key_down))
+    if (k_key_down(WASD->key_down))
         *(WASD->y) += WASD->speed * delta_time;
-    if (k_is_key_down(WASD->key_left))
+    if (k_key_down(WASD->key_left))
         *(WASD->x) -= WASD->speed * delta_time;
-    if (k_is_key_down(WASD->key_right))
+    if (k_key_down(WASD->key_right))
         *(WASD->x) += WASD->speed * delta_time;
 }
 
@@ -55,7 +55,7 @@ int k__define_component_type_WASD(void) {
     config.data_size = sizeof(struct WASD_data);
     config.fn_init = WASD_init;
 
-    struct k_component_type *type = k_define_component_type(&config);
+    struct k_component_type *type = k_component_define(&config);
 
     return NULL == type ? -1 : 0;
 }
