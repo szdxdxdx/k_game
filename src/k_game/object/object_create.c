@@ -30,7 +30,7 @@ struct k_object *k_object_create(size_t data_size) {
     object->room = room;
     k__object_init_callback_list(object);
     k__object_init_component_list(object);
-    k__object_pool_add(&room->object_pool, object);
+    k__room_object_pool_add(room, object);
 
     return object;
 
@@ -43,7 +43,7 @@ void k__object_destroy(struct k_object *object) {
 
     k__object_cleanup_component_list(object);
     k__object_cleanup_callback_list(object);
-    k__object_pool_del(object);
+    k__room_object_pool_del(object);
 
     k_free(object->data);
     k_free(object);

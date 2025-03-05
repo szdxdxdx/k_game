@@ -7,6 +7,17 @@
 
 /* region [room_stack] */
 
+#ifndef K_ROOM_STACK_MAX_SIZE
+#define K_ROOM_STACK_MAX_SIZE 32
+#endif
+
+struct k_room_stack {
+
+    struct k_room *rooms[K_ROOM_STACK_MAX_SIZE];
+
+    size_t top;
+};
+
 static struct k_room_stack room_stack;
 
 static inline void room_stack_clear(void) {

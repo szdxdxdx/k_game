@@ -43,59 +43,66 @@ static void step_close_SDL(void *data) {
     k__SDL_close();
 }
 
-static int step_init_image_module(void *data) {
+static int step_init_image_registry(void *data) {
     (void)data;
     return k__image_registry_init();
 }
 
-static void step_deinit_image_module(void *data) {
+static void step_cleanup_image_registry(void *data) {
     (void)data;
     k__image_registry_cleanup();
 }
 
-static int step_init_sprite_module(void *data) {
+static int step_init_sprite_registry(void *data) {
     (void)data;
     return k__sprite_registry_init();
 }
 
-static void step_deinit_sprite_module(void *data) {
+static void step_cleanup_sprite_registry(void *data) {
     (void)data;
     k__sprite_registry_cleanup();
 }
 
-static int step_init_component_module(void *data) {
+static int step_init_component_registry(void *data) {
     (void)data;
 
-    if (0 != k__component_registry_init())
-        return -1;
-
-    if (0 != k__component_def_WASD())
-        return -1;
-    if (0 != k__component_def_sprite_renderer())
-        return -1;
-
-    return 0;
+    return k__component_registry_init();
 }
 
-static void step_deinit_component_module(void *data) {
+static void step_cleanup_component_registry(void *data) {
     (void)data;
     k__component_registry_cleanup();
 }
 
-static int step_init_room_module(void *data) {
+static int step_define_components(void *data) {
     (void)data;
 
-    if (0 != k__room_registry_init())
-        return -1;
+    if (0 != k__component_def_WASD())            return -1;
+    if (0 != k__component_def_sprite_renderer()) return -1;
+
+    return 0;
+}
+
+static int step_init_room_registry(void *data) {
+    (void)data;
+    return k__room_registry_init();
+}
+
+static void step_cleanup_room_registry(void *data) {
+    (void)data;
+    k__room_registry_cleanup();
+}
+
+static int step_init_room_stack(void *data) {
+    (void)data;
 
     k__room_stack_init();
     return 0;
 }
 
-static void step_deinit_room_module(void *data) {
+static void step_cleanup_room_stack(void *data) {
     (void)data;
     k__room_stack_cleanup();
-    k__room_registry_cleanup();
 }
 
 static int step_call_fn_init(void *data) {
@@ -118,13 +125,15 @@ static void step_call_fn_cleanup(void *data) {
 }
 
 static const struct k_seq_step game_initialization_steps[] = {
-    { step_check_config,          NULL                         },
-    { step_init_SDL,              step_close_SDL               },
-    { step_init_image_module,     step_deinit_image_module     },
-    { step_init_sprite_module,    step_deinit_sprite_module    },
-    { step_init_component_module, step_deinit_component_module },
-    { step_init_room_module,      step_deinit_room_module      },
-    { step_call_fn_init,          step_call_fn_cleanup         },
+    { step_check_config,            NULL                            },
+    { step_init_SDL,                step_close_SDL                  },
+    { step_init_image_registry,     step_cleanup_image_registry     },
+    { step_init_sprite_registry,    step_cleanup_sprite_registry    },
+    { step_init_component_registry, step_cleanup_component_registry },
+    { step_define_components,       NULL                            },
+    { step_init_room_registry,      step_cleanup_room_registry      },
+    { step_init_room_stack,         step_cleanup_room_stack         },
+    { step_call_fn_init,            step_call_fn_cleanup            },
 };
 
 /* endregion */

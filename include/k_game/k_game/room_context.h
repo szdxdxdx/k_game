@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "k_game/asset_registry.h"
-#include "k_game/object_pool.h"
+#include "k_game/room_object_pool.h"
 #include "k_game/room_callback.h"
 
 struct k_room;
