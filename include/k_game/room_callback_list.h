@@ -1,0 +1,5 @@
+
+#ifndef K_GAME__ROOM_CALLBACK_LIST_H
+#define K_GAME__ROOM_CALLBACK_LIST_H
+
+#endif

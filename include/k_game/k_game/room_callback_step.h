@@ -1,5 +1,5 @@
-#ifndef K_GAME___ROOM_CALLBACK_STEP_H
-#define K_GAME___ROOM_CALLBACK_STEP_H
+#ifndef K_GAME__ROOM_CALLBACK_STEP_H
+#define K_GAME__ROOM_CALLBACK_STEP_H
 
 #include "k_list.h"
 
@@ -39,6 +39,6 @@ void k__room_exec_step_callbacks(struct k_room *room);
 
 void k__room_exec_step_end_callbacks(struct k_room *room);
 
-void k__room_flush_step_pending_callbacks(struct k_room *room);
+void k__room_flush_pending_step_callbacks(struct k_room *room);
 
 #endif

@@ -4,13 +4,13 @@
 /* region [callbacks] */
 
 void k__room_callback_list_init(struct k_room_callback_list *list) {
-    k_list_init(&list->list);
+    k_list_init(&list->callback_list);
 }
 
 void k__room_callback_list_clean(struct k_room_callback_list *list) {
 
     struct k_room_callback_list_item *callback;
-    struct k_list *callback_list = &list->list;
+    struct k_list *callback_list = &list->callback_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_callback_list_item, list_node);
@@ -22,7 +22,7 @@ void k__room_callback_list_clean(struct k_room_callback_list *list) {
 void k__room_callback_list_exec(struct k_room_callback_list *list) {
 
     struct k_room_callback_list_item *callback;
-    struct k_list *callback_list = &list->list;
+    struct k_list *callback_list = &list->callback_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_callback_list_item, list_node);
@@ -45,7 +45,7 @@ static inline struct k_room_callback *room_callback_list_add(struct k_room_callb
     callback->base.is_deleted = 0;
     callback->data = data;
     callback->fn_callback = fn_callback;
-    k_list_add_tail(&list->list, &callback->list_node);
+    k_list_add_tail(&list->callback_list, &callback->list_node);
 
     return &callback->base;
 }
