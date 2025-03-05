@@ -7,7 +7,6 @@
 
 #include "k_game/room_callback.h"
 
-
 struct k_room_alarm_callback {
 
     struct k_list_node list_node;

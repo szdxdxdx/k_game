@@ -10,12 +10,39 @@ struct obj_player {
     float x, y;
 };
 
+static struct k_object_callback *begin;
+
+static void object_step_begin(struct k_object *object) {
+    printf("begin");
+}
+
+static void object_step_end(struct k_object *object) {
+    printf("end");
+}
+
+static void object_step(struct k_object *object) {
+
+
+    if (k_key_pressed('B'))
+        begin = k_object_add_step_callback(object, object_step_begin);
+
+    if (k_key_pressed('V')) {
+        k_object_del_callback(begin);
+        begin = NULL;
+    }
+
+    if (k_key_pressed('E'))
+        k_object_add_step_callback(object, object_step_end);
+}
+
 static int create_room(struct k_room *room, void *params) {
 
     struct k_object *object = k_object_create(sizeof(struct obj_player));
     struct obj_player *player = k_object_get_data(object);
     player->x = 0.0f;
     player->y = 0.0f;
+
+    k_object_add_step_callback(object, object_step);
 
     /* ------------------------------------------------------------------------ */
 
@@ -71,6 +98,7 @@ static int init(void) {
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     room_config.fn_init = create_room;
+    room_config.room_speed = 2;
 
     struct k_room *room = k_room_create(&room_config, NULL);
 
@@ -81,7 +109,7 @@ static int init(void) {
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");

@@ -5,17 +5,16 @@
 
 #include "k_game/room_callback.h"
 
-struct k_room;
-
 struct k_room_step_callback_registry {
 
     struct k_list step_begin_callback_list;
+    struct k_list step_begin_pending_list;
 
     struct k_list step_callback_list;
+    struct k_list step_pending_list;
 
     struct k_list step_end_callback_list;
-
-    struct k_list pending_list;
+    struct k_list step_end_pending_list;
 };
 
 struct k_room_step_callback {
@@ -39,6 +38,10 @@ void k__room_exec_step_callbacks(struct k_room *room);
 
 void k__room_exec_step_end_callbacks(struct k_room *room);
 
-void k__room_flush_pending_step_callbacks(struct k_room *room);
+void k__room_flush_step_begin_callbacks(struct k_room *room);
+
+void k__room_flush_step_callbacks(struct k_room *room);
+
+void k__room_flush_step_end_callbacks(struct k_room *room);
 
 #endif

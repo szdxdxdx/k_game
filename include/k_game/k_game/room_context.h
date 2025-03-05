@@ -34,11 +34,7 @@ struct k_room {
 
     struct k_room_callback_list leave_callbacks;
 
-    struct k_room_callback_list step_begin_callbacks;
-
-    struct k_room_callback_list step_callbacks;
-
-    struct k_room_callback_list step_end_callbacks;
+    struct k_room_step_callback_registry step_callbacks;
 
     struct k_room_alarm_callback_storage alarm_callbacks;
 

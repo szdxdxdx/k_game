@@ -62,16 +62,4 @@ struct k_room_callback *k__room_add_leave_callback(struct k_room *room, void (*f
     return room_callback_list_add(&room->leave_callbacks, fn_callback, data);
 }
 
-struct k_room_callback *k__room_add_step_begin_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
-    return room_callback_list_add(&room->step_begin_callbacks, fn_callback, data);
-}
-
-struct k_room_callback *k__room_add_step_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
-    return room_callback_list_add(&room->step_callbacks, fn_callback, data);
-}
-
-struct k_room_callback *k__room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
-    return room_callback_list_add(&room->step_end_callbacks, fn_callback, data);
-}
-
 /* endregion */

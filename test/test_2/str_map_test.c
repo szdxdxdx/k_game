@@ -111,8 +111,6 @@ void test(void) {
             printf("unknown cmd\n");
         }
     }
-
-    free(map.lists);
 }
 
 #if 0
