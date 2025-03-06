@@ -1,13 +1,20 @@
 #include "k_game_alloc.h"
-#include "../room/room_context.h"
+
+#include "../room/room.h"
 
 #include "./object.h"
 
-void k__object_pool_init(struct k_object_pool *pool) {
+struct k_object_pool *k__object_pool_create(void) {
+
+    struct k_object_pool *pool = k_malloc(sizeof(struct k_object_pool));
+    if (NULL == pool)
+        return NULL;
+
     k_list_init(&pool->object_list);
+    return pool;
 }
 
-void k__object_pool_cleanup(struct k_object_pool *pool) {
+void k__object_pool_destroy(struct k_object_pool *pool) {
 
     struct k_object *object;
     struct k_list *list = &pool->object_list;
@@ -17,6 +24,8 @@ void k__object_pool_cleanup(struct k_object_pool *pool) {
 
         k__object_destroy(object);
     }
+
+    k_free(pool);
 }
 
 struct k_object *k__object_pool_acquire(struct k_object_pool *pool) {

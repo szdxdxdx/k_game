@@ -98,7 +98,7 @@ static int init(void) {
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     room_config.fn_init = create_room;
-    room_config.room_speed = 2;
+    room_config.room_speed = 30;
 
     struct k_room *room = k_room_create(&room_config, NULL);
 

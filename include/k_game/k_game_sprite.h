@@ -1,6 +1,8 @@
 #ifndef K_GAME_SPRITE_H
 #define K_GAME_SPRITE_H
 
+#include <stddef.h>
+
 #include "k_game_rect.h"
 
 /**

@@ -17,9 +17,9 @@ struct k_object_pool_node {
     struct k_list_node iter_node;
 };
 
-void k__object_pool_init(struct k_object_pool *pool);
+struct k_object_pool *k__object_pool_create(void);
 
-void k__object_pool_cleanup(struct k_object_pool *pool);
+void k__object_pool_destroy(struct k_object_pool *pool);
 
 struct k_object *k__object_pool_acquire(struct k_object_pool *pool);
 
