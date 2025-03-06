@@ -3,7 +3,7 @@
 
 #include "k_list.h"
 
-#include "./room_object_pool.h"
+#include "./object_pool.h"
 
 struct k_object {
 
