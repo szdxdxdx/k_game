@@ -6,7 +6,28 @@
 #include "k_game/component_entity.h"
 #include "k_game/component_callback.h"
 
-/* region [del_callback] */
+/* region [component_callback_list] */
+
+void k__component_init_callback_list(struct k_component *component) {
+    k_list_init(&component->callback_list);
+}
+
+void k__component_cleanup_callback_list(struct k_component *component) {
+
+    struct k_component_callback *callback;
+    struct k_list *callback_list = &component->callback_list;
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(callback_list, iter, next)) {
+        callback = container_of(iter, struct k_component_callback, component_callback_list_node);
+
+        k_room_del_callback(callback->room_callback);
+        k_free(callback);
+    }
+}
+
+/* endregion */
+
+/* region [component_del_callback] */
 
 void k_component_del_callback(struct k_component_callback *callback) {
 
@@ -31,7 +52,7 @@ void k_component_del_callback(struct k_component_callback *callback) {
 
 /* endregion */
 
-/* region [add_alarm_callback] */
+/* region [component_add_alarm_callback] */
 
 static void alarm_callback_wrapper(void *data, int timeout_diff) {
     struct k_component_callback *callback = data;
@@ -72,7 +93,7 @@ struct k_component_callback *k_component_add_alarm_callback(struct k_component *
 
 /* endregion */
 
-/* region [add_step_callback] */
+/* region [component_add_step_callback] */
 
 static void step_callback_wrapper(void *data) {
     struct k_component_callback *callback = data;
@@ -101,7 +122,7 @@ struct k_component_callback *k_component_add_step_callback(struct k_component *c
 
 /* endregion */
 
-/* region [add_draw_callback] */
+/* region [component_add_draw_callback] */
 
 static void draw_callback_wrapper(void *data) {
     struct k_component_callback *callback = data;

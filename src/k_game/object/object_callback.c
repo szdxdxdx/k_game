@@ -28,7 +28,7 @@ void k__object_cleanup_callback_list(struct k_object *object) {
 
 /* endregion */
 
-/* region [del_callback] */
+/* region [object_del_callback] */
 
 void k_object_del_callback(struct k_object_callback *callback) {
 
@@ -53,7 +53,7 @@ void k_object_del_callback(struct k_object_callback *callback) {
 
 /* endregion */
 
-/* region [add_step_begin_callback] */
+/* region [object_add_step_begin_callback] */
 
 static void step_begin_callback_wrapper(void *data) {
     struct k_object_callback *callback = data;
@@ -82,7 +82,7 @@ struct k_object_callback *k_object_add_step_begin_callback(struct k_object *obje
 
 /* endregion */
 
-/* region [add_alarm_callback] */
+/* region [object_add_alarm_callback] */
 
 static void alarm_callback_wrapper(void *data, int timeout_diff) {
     struct k_object_callback *callback = data;
@@ -124,7 +124,7 @@ struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, v
 
 /* endregion */
 
-/* region [add_step_callback] */
+/* region [object_add_step_callback] */
 
 static void step_callback_wrapper(void *data) {
     struct k_object_callback *callback = data;
@@ -153,7 +153,7 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
 
 /* endregion */
 
-/* region [add_draw_callback] */
+/* region [object_add_draw_callback] */
 
 static void draw_callback_wrapper(void *data) {
     struct k_object_callback *callback = data;
@@ -182,7 +182,7 @@ struct k_object_callback *k_object_add_draw_callback(struct k_object *object, vo
 
 /* endregion */
 
-/* region [add_step_end_callback] */
+/* region [object_add_step_end_callback] */
 
 static void step_end_callback_wrapper(void *data) {
     struct k_object_callback *callback = data;
