@@ -1,5 +1,5 @@
-#ifndef K_GAME__ROOM_OBJECT_POOL_H
-#define K_GAME__ROOM_OBJECT_POOL_H
+#ifndef K_GAME__OBJECT_POOL_H
+#define K_GAME__OBJECT_POOL_H
 
 #include "k_list.h"
 
@@ -22,9 +22,9 @@ void k__room_init_object_pool(struct k_room *room);
 
 void k__room_cleanup_object_pool(struct k_room *room);
 
-void k__room_object_pool_add(struct k_room *room, struct k_object *object);
+struct k_object *k__room_object_pool_acquire(struct k_room *room);
 
-void k__room_object_pool_del(struct k_object *object);
+void k__room_object_pool_release(struct k_object *object);
 
 /* endregion */
 

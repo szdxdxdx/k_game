@@ -1,7 +1,7 @@
 #include "k_game_alloc.h"
 #include "k_game/room_context.h"
 
-/* region [callbacks] */
+/* region [callback_list] */
 
 void k__room_callback_list_init(struct k_room_callback_list *list) {
     k_list_init(&list->callback_list);
@@ -52,7 +52,7 @@ static inline struct k_room_callback *room_callback_list_add(struct k_room_callb
 
 /* endregion */
 
-/* region [use callbacks] */
+/* region [use callback_list] */
 
 struct k_room_callback *k__room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
     return room_callback_list_add(&room->enter_callbacks, fn_callback, data);

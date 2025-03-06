@@ -1,3 +1,4 @@
+#include "k_game/component_registry.h"
 #include "k_game/component_type.h"
 
 static struct k_asset_registry component_registry;

@@ -4,13 +4,13 @@
 #include <stdint.h>
 
 #include "k_game/asset_registry.h"
-#include "k_game/room_object_pool.h"
 #include "k_game/room_callback_list.h"
 #include "k_game/room_callback_step_begin.h"
 #include "k_game/room_callback_step.h"
 #include "k_game/room_callback_step_end.h"
 #include "k_game/room_callback_alarm.h"
 #include "k_game/room_callback_draw.h"
+#include "k_game/room_object_pool.h"
 
 struct k_room;
 

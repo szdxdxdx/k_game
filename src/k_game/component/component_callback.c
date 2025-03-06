@@ -4,35 +4,7 @@
 #include "k_game/object_entity.h"
 #include "k_game_component.h"
 #include "k_game/component_entity.h"
-
-/* region [callback_list] */
-
-void k__component_init_callback_list(struct k_component *component) {
-    k_list_init(&component->callbacks);
-}
-
-void k__component_cleanup_callback_list(struct k_component *component) {
-
-    struct k_component_callback *callback;
-    struct k_list *callback_list = &component->callbacks;
-    struct k_list_node *iter, *next;
-    for (k_list_for_each_s(callback_list, iter, next)) {
-        callback = container_of(iter, struct k_component_callback, component_callback_list_node);
-
-        k_room_del_callback(callback->room_callback);
-        k_free(callback);
-    }
-}
-
-static inline void component_callback_list_add(struct k_component *component, struct k_component_callback *callback) {
-    k_list_add_tail(&component->callbacks, &callback->component_callback_list_node);
-}
-
-static inline void component_callback_list_del(struct k_component_callback *callback) {
-    k_list_del(&callback->component_callback_list_node);
-}
-
-/* endregion */
+#include "k_game/component_callback.h"
 
 /* region [del_callback] */
 
@@ -53,7 +25,7 @@ void k_component_del_callback(struct k_component_callback *callback) {
     }
 
     k_room_del_callback(callback->room_callback);
-    component_callback_list_del(callback);
+    k_list_del(&callback->component_callback_list_node);
     k_free(callback);
 }
 
@@ -74,7 +46,7 @@ static void alarm_callback_wrapper(void *data, int timeout_diff) {
 
     callback->fn_alarm_callback(callback->component, timeout_diff);
 
-    component_callback_list_del(callback);
+    k_list_del(&callback->component_callback_list_node);
     k_free(callback);
 }
 
@@ -93,7 +65,7 @@ struct k_component_callback *k_component_add_alarm_callback(struct k_component *
     component_callback->component = component;
     component_callback->room_callback = room_callback;
     component_callback->fn_alarm_callback = fn_callback;
-    component_callback_list_add(component, component_callback);
+    k_list_add_tail(&component->callback_list, &component_callback->component_callback_list_node);
 
     return component_callback;
 }
@@ -122,7 +94,7 @@ struct k_component_callback *k_component_add_step_callback(struct k_component *c
     component_callback->component = component;
     component_callback->room_callback = room_callback;
     component_callback->fn_step_callback = fn_callback;
-    component_callback_list_add(component, component_callback);
+    k_list_add_tail(&component->callback_list, &component_callback->component_callback_list_node);
 
     return component_callback;
 }
@@ -151,7 +123,7 @@ struct k_component_callback *k_component_add_draw_callback(struct k_component *c
     component_callback->component = component;
     component_callback->room_callback = room_callback;
     component_callback->fn_draw_callback = fn_callback;
-    component_callback_list_add(component, component_callback);
+    k_list_add_tail(&component->callback_list, &component_callback->component_callback_list_node);
 
     return component_callback;
 }

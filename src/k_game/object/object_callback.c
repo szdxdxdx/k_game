@@ -3,17 +3,18 @@
 #include "k_game/room_callback.h"
 #include "k_game_object.h"
 #include "k_game/object_entity.h"
+#include "k_game/object_callback.h"
 
-/* region [callback_list_add] */
+/* region [object_callback_list] */
 
 void k__object_init_callback_list(struct k_object *object) {
-    k_list_init(&object->callbacks);
+    k_list_init(&object->callback_list);
 }
 
 void k__object_cleanup_callback_list(struct k_object *object) {
 
     struct k_object_callback *callback;
-    struct k_list *callback_list = &object->callbacks;
+    struct k_list *callback_list = &object->callback_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_object_callback, object_callback_list_node);
@@ -21,15 +22,8 @@ void k__object_cleanup_callback_list(struct k_object *object) {
         k_room_del_callback(callback->room_callback);
         k_free(callback);
     }
-}
 
-static inline void object_callback_list_add(struct k_object *object, struct k_object_callback *callback) {
-    struct k_list *callback_list = &object->callbacks;
-    k_list_add_tail(callback_list, &callback->object_callback_list_node);
-}
-
-static inline void object_callback_list_del(struct k_object_callback *callback) {
-    k_list_del(&callback->object_callback_list_node);
+    k_list_init(&object->callback_list);
 }
 
 /* endregion */
@@ -53,7 +47,7 @@ void k_object_del_callback(struct k_object_callback *callback) {
     }
 
     k_room_del_callback(callback->room_callback);
-    object_callback_list_del(callback);
+    k_list_del(&callback->object_callback_list_node);
     k_free(callback);
 }
 
@@ -81,7 +75,7 @@ struct k_object_callback *k_object_add_step_begin_callback(struct k_object *obje
     object_callback->fn_step_begin_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    object_callback_list_add(object, object_callback);
+    k_list_add_tail(&object->callback_list, &object_callback->object_callback_list_node);
 
     return object_callback;
 }
@@ -103,7 +97,7 @@ static void alarm_callback_wrapper(void *data, int timeout_diff) {
 
     callback->fn_alarm_callback(callback->object, timeout_diff);
 
-    object_callback_list_del(callback);
+    k_list_del(&callback->object_callback_list_node);
     k_free(callback);
 }
 
@@ -123,7 +117,7 @@ struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, v
     object_callback->fn_alarm_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    object_callback_list_add(object, object_callback);
+    k_list_add_tail(&object->callback_list, &object_callback->object_callback_list_node);
 
     return object_callback;
 }
@@ -152,7 +146,7 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
     object_callback->fn_step_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    object_callback_list_add(object, object_callback);
+    k_list_add_tail(&object->callback_list, &object_callback->object_callback_list_node);
 
     return object_callback;
 }
@@ -181,7 +175,7 @@ struct k_object_callback *k_object_add_draw_callback(struct k_object *object, vo
     object_callback->fn_draw_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    object_callback_list_add(object, object_callback);
+    k_list_add_tail(&object->callback_list, &object_callback->object_callback_list_node);
 
     return object_callback;
 }
@@ -209,7 +203,7 @@ struct k_object_callback *k_object_add_step_end_callback(struct k_object *object
     object_callback->fn_step_end_callback = fn_callback;
     object_callback->object = object;
     object_callback->room_callback = room_callback;
-    object_callback_list_add(object, object_callback);
+    k_list_add_tail(&object->callback_list, &object_callback->object_callback_list_node);
 
     return object_callback;
 }

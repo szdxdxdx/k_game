@@ -20,11 +20,20 @@ void k__room_cleanup_object_pool(struct k_room *room) {
     }
 }
 
-void k__room_object_pool_add(struct k_room *room, struct k_object *object) {
+struct k_object *k__room_object_pool_acquire(struct k_room *room) {
     struct k_object_pool *pool = &room->object_pool;
+
+    struct k_object *object = k_malloc(sizeof(struct k_object)); /* TODO pool_alloc */
+    if (NULL == object)
+        return NULL;
+
+    object->room = room;
     k_list_add_tail(&pool->object_list, &object->pool_node.iter_node);
+
+    return object;
 }
 
-void k__room_object_pool_del(struct k_object *object) {
+void k__room_object_pool_release(struct k_object *object) {
     k_list_del(&object->pool_node.iter_node);
+    k_free(object); /* TODO pool_free */
 }

@@ -2,9 +2,10 @@
 
 #include "k_game_alloc.h"
 #include "k_game_room.h"
-#include "k_game/room_context.h"
+#include "k_game/room_object_pool.h"
 #include "k_game/object_entity.h"
-#include "k_game/component_entity.h"
+#include "k_game/object_callback.h"
+#include "k_game/object_component.h"
 
 struct k_object *k_object_create(size_t data_size) {
 
@@ -14,23 +15,21 @@ struct k_object *k_object_create(size_t data_size) {
         goto err;
     }
 
-    struct k_object *object = k_malloc(sizeof(struct k_object));
+    struct k_object *object = k__room_object_pool_acquire(room);
     if (NULL == object)
         goto err;
 
     void *data = NULL;
     if (0 != data_size) {
         if (NULL == (data = k_malloc(data_size))) {
-            k_free(object);
+            k__room_object_pool_release(object);
             goto err;
         }
     }
 
     object->data = data;
-    object->room = room;
     k__object_init_callback_list(object);
     k__object_init_component_list(object);
-    k__room_object_pool_add(room, object);
 
     return object;
 
@@ -43,10 +42,9 @@ void k__object_destroy(struct k_object *object) {
 
     k__object_cleanup_component_list(object);
     k__object_cleanup_callback_list(object);
-    k__room_object_pool_del(object);
 
     k_free(object->data);
-    k_free(object);
+    k__room_object_pool_release(object);
 }
 
 void k_object_destroy(struct k_object *object) {

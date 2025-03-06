@@ -3,19 +3,8 @@
 #include "k_game_component.h"
 #include "k_game/component_type.h"
 #include "k_game/component_entity.h"
-
-/* region [object_component_list_add] */
-
-static inline void object_component_list_add(struct k_object *object, struct k_component *component) {
-    struct k_list *component_list = &object->components;
-    k_list_add_tail(component_list, &component->object_component_list_node);
-}
-
-static inline void object_component_list_del(struct k_component *component) {
-    k_list_del(&component->object_component_list_node);
-}
-
-/* endregion */
+#include "k_game/component_callback.h"
+#include "k_game.h"
 
 /* region [create_component] */
 
@@ -33,10 +22,10 @@ static struct k_component *create_component(const struct k_component_type *compo
 
     component->type = component_type;
     component->data = data;
-    k__component_init_callback_list(component);
+    k_list_init(&component->callback_list);
 
     component->object = object;
-    object_component_list_add(object, component);
+    k_list_add_tail(&object->component_list, &component->object_component_list_node);
 
     if (0 != component_type->fn_init(component, params))
         goto fn_create_failed;
@@ -57,8 +46,18 @@ static inline void destroy_component(struct k_component *component) {
     if (component->type->fn_fini != NULL)
         component->type->fn_fini(component);
 
-    object_component_list_del(component);
-    k__component_cleanup_callback_list(component);
+    k_list_del(&component->object_component_list_node);
+
+    struct k_component_callback *callback;
+    struct k_list *callback_list = &component->callback_list;
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(callback_list, iter, next)) {
+        callback = container_of(iter, struct k_component_callback, component_callback_list_node);
+
+        k_room_del_callback(callback->room_callback);
+        k_free(callback);
+    }
+
     k_free(component->data);
     k_free(component);
 }
@@ -68,14 +67,14 @@ static inline void destroy_component(struct k_component *component) {
 /* region [object_component_list_init] */
 
 void k__object_init_component_list(struct k_object *object) {
-    struct k_list *component_list = &object->components;
+    struct k_list *component_list = &object->component_list;
     k_list_init(component_list);
 }
 
 void k__object_cleanup_component_list(struct k_object *object) {
 
     struct k_component *component;
-    struct k_list *component_list = &object->components;
+    struct k_list *component_list = &object->component_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(component_list, iter, next)) {
         component = container_of(iter, struct k_component, object_component_list_node);
