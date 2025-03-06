@@ -47,7 +47,6 @@ static void game_loop(struct k_room *room) {
 
 
     while (room->game_loop) {
-        k_log_trace("%u", k__game.step_timestamp);
 
         k__room_flush_step_begin_callbacks(room);
         k__room_flush_step_callbacks(room);
