@@ -12,7 +12,7 @@ struct obj_player {
 
 static int create_room(struct k_room *room, void *params) {
 
-    struct k_object *object = k_object_create(sizeof(struct obj_player));
+    struct k_object *object = k_object_create(room, sizeof(struct obj_player));
     struct obj_player *player = k_object_get_data(object);
     player->x = 0.0f;
     player->y = 0.0f;

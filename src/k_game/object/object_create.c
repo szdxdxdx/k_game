@@ -7,21 +7,15 @@
 #include "k_game/object_callback.h"
 #include "k_game/object_component.h"
 
-struct k_object *k_object_create(size_t data_size) {
-
-    struct k_room *room = k_get_current_room();
-    if (NULL == room) {
-        k_log_error("currently not in any room");
-        goto err;
-    }
+struct k_object *k_object_create(struct k_room *room, size_t object_data_size) {
 
     struct k_object *object = k__room_object_pool_acquire(room);
     if (NULL == object)
         goto err;
 
     void *data = NULL;
-    if (0 != data_size) {
-        if (NULL == (data = k_malloc(data_size))) {
+    if (0 != object_data_size) {
+        if (NULL == (data = k_malloc(object_data_size))) {
             k__room_object_pool_release(object);
             goto err;
         }
