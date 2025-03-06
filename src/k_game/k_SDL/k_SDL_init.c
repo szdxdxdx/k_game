@@ -46,7 +46,7 @@ static int init_SDL_mix(void) {
     if (flags != Mix_Init(flags))
         goto err;
 
-    if (0 != Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048)) {
+    if (0 != Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048)) {
         Mix_Quit();
         goto err;
     }
