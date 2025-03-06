@@ -3,8 +3,7 @@
 #include "k_game_component.h"
 #include "../room/room_callback.h"
 #include "../object/object_entity.h"
-#include "./component_entity.h"
-#include "./component_callback.h"
+#include "./component.h"
 
 /* region [component_callback_list] */
 

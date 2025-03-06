@@ -2,7 +2,6 @@
 
 #include "k_game_alloc.h"
 #include "../room/room_context.h"
-#include "./object_pool.h"
 #include "./object_entity.h"
 #include "./object_callback.h"
 #include "./object_component.h"

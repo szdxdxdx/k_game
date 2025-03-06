@@ -6,6 +6,7 @@
 #include "../game/game_context.h"
 #include "k_game_room.h"
 #include "./room_context.h"
+#include "room_registry.h"
 
 /* region [room_creation_steps] */
 

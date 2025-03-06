@@ -1,6 +1,6 @@
 #include "./object_entity.h"
 #include "./object_component.h"
-#include "../component/component_entity.h"
+#include "../component/component.h"
 
 void k__object_init_component_list(struct k_object *object) {
     k_list_init(&object->component_list);

@@ -1,8 +1,6 @@
 #include "k_game_alloc.h"
 #include "../object/object_component.h"
-#include "./component_type.h"
-#include "./component_entity.h"
-#include "./component_callback.h"
+#include "./component.h"
 
 struct k_component *k__component_create(const struct k_component_type *component_type, struct k_object *object, void *params) {
 

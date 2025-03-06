@@ -1,5 +1,4 @@
-#include "./component_registry.h"
-#include "./component_type.h"
+#include "./component.h"
 
 static struct k_asset_registry component_registry;
 

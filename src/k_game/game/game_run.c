@@ -9,7 +9,7 @@
 #include "../room/room_registry.h"
 #include "../room/room_context.h"
 #include "../room/room_goto.h"
-#include "../component/component_registry.h"
+#include "../component/component.h"
 #include "../components/components_def.h"
 #include "k_game_run.h"
 

@@ -1,9 +1,7 @@
 #include "k_log.h"
 
 #include "k_game_alloc.h"
-#include "k_game_component.h"
-#include "./component_registry.h"
-#include "./component_type.h"
+#include "./component.h"
 
 static int check_config(const struct k_component_type_config *config) {
     const char *err_msg;

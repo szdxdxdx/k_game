@@ -1,4 +1,4 @@
-#include "./component_entity.h"
+#include "./component.h"
 
 struct k_object *k_component_get_object(struct k_component *component) {
     return component->object;
