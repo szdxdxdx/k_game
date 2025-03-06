@@ -7,7 +7,7 @@
 #include "./object.h"
 
 struct k_object *k_object_create(struct k_room *room, size_t object_data_size) {
-    struct k_object_pool *pool = room->object_pool;
+    struct k_object_pool *pool = &room->object_pool;
 
     struct k_object *object = k__object_pool_acquire(pool);
     if (NULL == object)

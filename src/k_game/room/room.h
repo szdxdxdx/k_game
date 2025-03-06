@@ -6,8 +6,10 @@
 #include "k_game_room.h"
 
 #include "../asset/asset_registry.h"
+#include "../object/object_pool.h"
 
-#include "./room_callback_list.h"
+#include "./room_callback_enter.h"
+#include "./room_callback_leave.h"
 #include "./room_callback_step_begin.h"
 #include "./room_callback_step.h"
 #include "./room_callback_step_end.h"
@@ -31,15 +33,14 @@ void k__room_registry_del(struct k_room *room);
 /* region [room] */
 
 struct k_object_pool;
-struct k_room_callback_regisry;
 
 struct k_room {
 
     struct k_asset_registry_node registry_node;
 
-    struct k_room_callback_list enter_callbacks;
+    struct k_room_enter_callback_registry enter_callbacks;
 
-    struct k_room_callback_list leave_callbacks;
+    struct k_room_leave_callback_registry leave_callbacks;
 
     struct k_room_step_begin_callback_registry step_begin_callbacks;
 
@@ -51,7 +52,7 @@ struct k_room {
 
     struct k_room_step_end_callback_registry step_end_callbacks;
 
-    struct k_object_pool *object_pool;
+    struct k_object_pool object_pool;
 
     int room_w, room_h;
 

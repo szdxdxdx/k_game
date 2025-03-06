@@ -35,7 +35,7 @@ struct k_room_callback *k__room_add_step_begin_callback(struct k_room *room, voi
     if (NULL == callback)
         return NULL;
 
-    callback->base.callback_type = K_ROOM_STEP_BEGIN_CALLBACK;
+    callback->base.is_deleted = 0;
     callback->data = data;
     callback->fn_callback = fn_callback;
     k_list_add_tail(&registry->pending_list, &callback->list_node);
@@ -52,7 +52,7 @@ void k__room_exec_step_begin_callbacks(struct k_room *room) {
     for (k_list_for_each_s(callback_list, iter, next)) {
         callback = container_of(iter, struct k_room_step_begin_callback, list_node);
 
-        if (callback->base.callback_type == K_ROOM_CALLBACK_DELETED) {
+        if (callback->base.is_deleted) {
             k_list_del(&callback->list_node);
             k_free(callback);
         } else {
@@ -61,7 +61,7 @@ void k__room_exec_step_begin_callbacks(struct k_room *room) {
     }
 }
 
-void k__room_flush_pending_step_begin_callbacks(struct k_room *room) {
+void k__room_flush_step_begin_callbacks(struct k_room *room) {
     struct k_room_step_begin_callback_registry *registry = &room->step_begin_callbacks;
 
     struct k_list *callback_list = &registry->callback_list;

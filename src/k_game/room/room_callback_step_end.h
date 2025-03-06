@@ -29,6 +29,6 @@ void k__room_cleanup_step_end_callback_registry(struct k_room *room);
 
 void k__room_exec_step_end_callbacks(struct k_room *room);
 
-void k__room_flush_pending_step_end_callbacks(struct k_room *room);
+void k__room_flush_step_end_callbacks(struct k_room *room);
 
 #endif

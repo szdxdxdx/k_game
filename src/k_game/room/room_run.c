@@ -13,14 +13,14 @@ static inline int enter_room(struct k_room *room) {
 
     room->game_loop = 1; /* <- 标记游戏循环开启，在 entry 回调中也能退出循环 */
 
-    // TODO k__room_flush_enter_begin_callbacks(room);
-    k__room_callback_list_exec(&room->enter_callbacks);
+    k__room_flush_enter_callbacks(room);
+    k__room_exec_enter_callbacks(room);
     return 0;
 }
 
 static inline void leave_room(struct k_room *room) {
-    // TODO k__room_flush_leave_begin_callbacks(room);
-    k__room_callback_list_exec(&room->leave_callbacks);
+    k__room_flush_leave_callbacks(room);
+    k__room_exec_leave_callbacks(room);
 }
 
 static inline int frame_delay(struct k_room *room) {
@@ -45,12 +45,13 @@ static inline int frame_delay(struct k_room *room) {
 static void game_loop(struct k_room *room) {
     k_log_trace("Game loop started...");
 
+
     while (room->game_loop) {
         k_log_trace("%u", k__game.step_timestamp);
 
-        k__room_flush_pending_step_begin_callbacks(room);
-        k__room_flush_pending_step_callbacks(room);
-        k__room_flush_pending_step_end_callbacks(room);
+        k__room_flush_step_begin_callbacks(room);
+        k__room_flush_step_callbacks(room);
+        k__room_flush_step_end_callbacks(room);
 
         k__refresh_keyboard();
 

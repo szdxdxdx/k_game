@@ -103,31 +103,26 @@ static int step_configure_room(void *data) {
     return 0;
 }
 
-static int step_create_object_pool(void *data) {
+static int step_init_object_pool(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    struct k_object_pool *pool = k__object_pool_create();
-    if (NULL == pool)
-        return -1;
-
-    room->object_pool = pool;
-    return 0;
+    return k__object_pool_init(&room->object_pool);
 }
 
-static void step_destroy_object_pool(void *data) {
+static void step_cleanup_object_pool(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    k__object_pool_destroy(room->object_pool);
+    k__object_pool_cleanup(&room->object_pool);
 }
 
 static int step_init_callback_registry(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    k__room_callback_list_init(&room->enter_callbacks);
-    k__room_callback_list_init(&room->leave_callbacks);
+    k__room_init_enter_callback_registry(room);
+    k__room_init_leave_callback_registry(room);
 
     k__room_init_step_begin_callback_registry(room);
     k__room_init_step_callback_registry(room);
@@ -144,8 +139,8 @@ static void step_cleanup_callback_registry(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    k__room_callback_list_clean(&room->enter_callbacks);
-    k__room_callback_list_clean(&room->leave_callbacks);
+    k__room_cleanup_enter_callback_registry(room);
+    k__room_cleanup_leave_callback_registry(room);
 
     k__room_cleanup_step_begin_callback_registry(room);
     k__room_cleanup_step_callback_registry(room);
@@ -196,7 +191,7 @@ static const struct k_seq_step room_creation_steps[] = {
     { step_malloc_room_data,       step_free_room_data            },
     { step_configure_room,         NULL                           },
     { step_init_callback_registry, step_cleanup_callback_registry },
-    { step_create_object_pool,     step_destroy_object_pool       },
+    { step_init_object_pool,       step_cleanup_object_pool       },
     { step_call_fn_create,         step_call_fn_destroy           },
 };
 

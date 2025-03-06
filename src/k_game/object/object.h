@@ -4,28 +4,7 @@
 #include "k_list.h"
 
 #include "k_game_object.h"
-
-/* region [object_pool] */
-
-struct k_object_pool {
-
-    struct k_list object_list;
-};
-
-struct k_object_pool_node {
-
-    struct k_list_node iter_node;
-};
-
-struct k_object_pool *k__object_pool_create(void);
-
-void k__object_pool_destroy(struct k_object_pool *pool);
-
-struct k_object *k__object_pool_acquire(struct k_object_pool *pool);
-
-void k__object_pool_release(struct k_object *object);
-
-/* endregion */
+#include "./object_pool.h"
 
 /* region [object] */
 
