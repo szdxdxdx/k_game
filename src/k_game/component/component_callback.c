@@ -1,10 +1,10 @@
 #include "k_game_alloc.h"
 #include "k_game_room.h"
-#include "k_game/room_callback.h"
-#include "k_game/object_entity.h"
 #include "k_game_component.h"
-#include "k_game/component_entity.h"
-#include "k_game/component_callback.h"
+#include "../room/room_callback.h"
+#include "../object/object_entity.h"
+#include "./component_entity.h"
+#include "./component_callback.h"
 
 /* region [component_callback_list] */
 

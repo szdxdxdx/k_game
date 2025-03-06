@@ -1,7 +1,7 @@
 #ifndef K_GAME__COMPONENT_TYPE_H
 #define K_GAME__COMPONENT_TYPE_H
 
-#include "k_game/asset_registry.h"
+#include "../asset/asset_registry.h"
 
 struct k_component;
 

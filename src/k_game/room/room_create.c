@@ -3,9 +3,9 @@
 #include "k_seq_step.h"
 
 #include "k_game_alloc.h"
-#include "k_game/game_context.h"
+#include "../game/game_context.h"
 #include "k_game_room.h"
-#include "k_game/room_context.h"
+#include "./room_context.h"
 
 /* region [room_creation_steps] */
 

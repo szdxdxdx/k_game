@@ -1,10 +1,9 @@
 #include "k_log.h"
 
-#include "k_game/k_SDL.h"
-#include "k_game/game_context.h"
 #include "k_game_image.h"
-#include "k_game/image_asset.h"
-#include "k_game/image_draw.h"
+#include "../k_SDL/k_SDL.h"
+#include "./image_asset.h"
+#include "./image_draw.h"
 
 int k_image_draw(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
     /* TODO: assert( NULL != image ) */

@@ -1,5 +1,5 @@
-#include "k_game/sprite_registry.h"
-#include "k_game/sprite_asset.h"
+#include "./sprite_registry.h"
+#include "./sprite_asset.h"
 
 static struct k_asset_registry sprite_registry;
 

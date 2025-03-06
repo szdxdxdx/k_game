@@ -1,5 +1,5 @@
 #include "k_game_alloc.h"
-#include "k_game/room_context.h"
+#include "./room_context.h"
 
 void k__room_init_step_end_callback_registry(struct k_room *room) {
     struct k_room_step_end_callback_registry *registry = &room->step_end_callbacks;

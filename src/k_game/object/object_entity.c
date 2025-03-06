@@ -1,4 +1,4 @@
-#include "k_game/object_entity.h"
+#include "./object_entity.h"
 
 void *k_object_get_data(struct k_object *object) {
     return object->data;

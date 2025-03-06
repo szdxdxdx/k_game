@@ -3,7 +3,7 @@
 
 #include "SDL_render.h"
 
-#include "k_game/asset_registry.h"
+#include "../asset/asset_registry.h"
 
 struct k_image {
 

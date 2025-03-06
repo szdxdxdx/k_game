@@ -1,6 +1,6 @@
 #include "k_game_alloc.h"
-#include "k_game/room_context.h"
-#include "k_game/object_entity.h"
+#include "../room/room_context.h"
+#include "./object_entity.h"
 
 void k__object_pool_init(struct k_object_pool *pool) {
     k_list_init(&pool->object_list);

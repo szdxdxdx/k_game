@@ -2,10 +2,11 @@
 
 #include "k_log.h"
 
-#include "k_game/k_SDL.h"
-#include "k_game/game_context.h"
+#include "../k_SDL/k_SDL.h"
+#include "../game/game_context.h"
 #include "k_game_room.h"
-#include "k_game/room_context.h"
+#include "./room_context.h"
+#include "./room_callback_list.h"
 
 static inline int enter_room(struct k_room *room) {
 

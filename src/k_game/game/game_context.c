@@ -1,7 +1,7 @@
 #include "k_game_time.h"
-#include "k_game/game_context.h"
+#include "./game_context.h"
 #include "k_game_room.h"
-#include "k_game/room_context.h"
+#include "../room/room_context.h"
 
 struct k_game_context k__game = {
     .current_room = NULL,

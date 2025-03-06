@@ -1,5 +1,5 @@
 #include "k_game_keyboard.h"
-#include "k_game/k_SDL.h"
+#include "./k_SDL.h"
 
 /* 将 SDL 的键码转为 k_game 的键码
  */

@@ -3,7 +3,7 @@
 
 #include "k_list.h"
 
-#include "k_game/room_callback.h"
+#include "./room_callback.h"
 
 /* 存储房间回调的链表容器
  *

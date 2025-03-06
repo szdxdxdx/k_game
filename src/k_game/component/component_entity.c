@@ -1,4 +1,4 @@
-#include "k_game/component_entity.h"
+#include "./component_entity.h"
 
 struct k_object *k_component_get_object(struct k_component *component) {
     return component->object;

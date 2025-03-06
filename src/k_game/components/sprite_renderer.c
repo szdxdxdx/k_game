@@ -1,8 +1,9 @@
-#include "k_game/sprite_asset.h"
-#include "k_game/sprite_draw.h"
+#include "../sprite/sprite_asset.h"
+#include "../sprite/sprite_draw.h"
 #include "k_game_time.h"
 #include "k_game_component.h"
 #include "k_game_components/sprite_renderer.h"
+#include "./components_def.h"
 
 struct k_sprite_renderer {
 

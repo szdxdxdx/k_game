@@ -1,7 +1,7 @@
 #include "k_log.h"
 
 #include "k_game_alloc.h"
-#include "k_game/asset_registry.h"
+#include "./asset_registry.h"
 
 int k__asset_registry_init(struct k_asset_registry *registry, void (*fn_free)(struct k_asset_registry_node *registry_node)) {
 

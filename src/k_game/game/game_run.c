@@ -3,14 +3,14 @@
 #include "k_log.h"
 #include "k_seq_step.h"
 
-#include "k_game/k_SDL.h"
-#include "k_game/image_registry.h"
-#include "k_game/sprite_registry.h"
-#include "k_game/room_registry.h"
-#include "k_game/room_context.h"
-#include "k_game/room_goto.h"
-#include "k_game/component_registry.h"
-#include "k_game/components_def.h"
+#include "../k_SDL/k_SDL.h"
+#include "../image/image_registry.h"
+#include "../sprite/sprite_registry.h"
+#include "../room/room_registry.h"
+#include "../room/room_context.h"
+#include "../room/room_goto.h"
+#include "../component/component_registry.h"
+#include "../components/components_def.h"
 #include "k_game_run.h"
 
 /* region [game_initialization_steps] */
