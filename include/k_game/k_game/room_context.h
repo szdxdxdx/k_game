@@ -6,8 +6,10 @@
 #include "k_game/asset_registry.h"
 #include "k_game/room_object_pool.h"
 #include "k_game/room_callback_list.h"
-#include "k_game/room_callback_alarm.h"
+#include "k_game/room_callback_step_begin.h"
 #include "k_game/room_callback_step.h"
+#include "k_game/room_callback_step_end.h"
+#include "k_game/room_callback_alarm.h"
 #include "k_game/room_callback_draw.h"
 
 struct k_room;
@@ -34,11 +36,15 @@ struct k_room {
 
     struct k_room_callback_list leave_callbacks;
 
-    struct k_room_step_callback_registry step_callbacks;
+    struct k_room_step_begin_callback_registry step_begin_callbacks;
 
     struct k_room_alarm_callback_storage alarm_callbacks;
 
+    struct k_room_step_callback_registry step_callbacks;
+
     struct k_room_draw_callback_storage draw_callbacks;
+
+    struct k_room_step_end_callback_registry step_end_callbacks;
 
     struct k_object_pool object_pool;
 

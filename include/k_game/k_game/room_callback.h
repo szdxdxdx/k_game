@@ -5,15 +5,19 @@
 
 #include "k_list.h"
 
-// enum k_room_callback_type {
-//     K_ROOM_CALLBACK_TYPE_ENTER      = 1,
-//     K_ROOM_CALLBACK_TYPE_LEAVE      ,
-//     K_ROOM_CALLBACK_TYPE_STEP_BEGIN ,
-//     K_ROOM_CALLBACK_TYPE_ALARM      ,
-//     K_ROOM_CALLBACK_TYPE_STEP       ,
-//     K_ROOM_CALLBACK_TYPE_DRAW       ,
-//     K_ROOM_CALLBACK_TYPE_STEP_END   ,
-// };
+enum k_room_callback_type {
+
+    K_ROOM_CALLBACK_DELETED    = 0,
+
+    K_ROOM_ENTER_CALLBACK      ,
+    K_ROOM_LEAVE_CALLBACK      ,
+
+    K_ROOM_STEP_BEGIN_CALLBACK ,
+    K_ROOM_ALARM_CALLBACK      ,
+    K_ROOM_STEP_CALLBACK       ,
+    K_ROOM_DRAW_CALLBACK       ,
+    K_ROOM_STEP_END_CALLBACK   ,
+};
 
 struct k_room;
 
@@ -29,7 +33,7 @@ struct k_room_callback {
     /* 标记该回调是否已被删除 */
     uint8_t is_deleted : 1;
 
-    // uint8_t callback_type : 7;
+    enum k_room_callback_type callback_type;
 };
 
 /* endregion */

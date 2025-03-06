@@ -7,7 +7,6 @@
 #include "k_game_room.h"
 #include "k_game/room_context.h"
 
-
 static inline int enter_room(struct k_room *room) {
 
     room->game_loop = 1; /* <- 标记游戏循环开启，在 entry 回调中也能退出循环 */
@@ -45,31 +44,25 @@ static void game_loop(struct k_room *room) {
     k_log_trace("Game loop started...");
 
     while (room->game_loop) {
-
         k_log_trace("%u", k__game.step_timestamp);
 
-        k__room_flush_step_begin_callbacks(room);
-        k__room_flush_step_callbacks(room);
-        k__room_flush_step_end_callbacks(room);
+        k__room_flush_pending_step_begin_callbacks(room);
+        k__room_flush_pending_step_callbacks(room);
+        k__room_flush_pending_step_end_callbacks(room);
 
         k__refresh_keyboard();
 
         do k__poll_SDL_events(); while (frame_delay(room));
 
         k__room_exec_step_begin_callbacks(room);
-
         k__room_exec_alarm_callbacks(room);
-
         k__room_exec_step_callbacks(room);
-
-        SDL_SetRenderDrawColor(k__window.renderer, 0, 0, 0, 255);
-        SDL_RenderClear(k__window.renderer);
-
+        // SDL_SetRenderDrawColor(k__window.renderer, 0, 0, 0, 255);
+        // SDL_RenderClear(k__window.renderer);
         k__room_exec_draw_callbacks(room);
+        k__room_exec_step_end_callbacks(room);
 
         SDL_RenderPresent(k__window.renderer);
-
-        k__room_exec_step_end_callbacks(room);
     }
 
     k_log_trace("Game loop ended");
