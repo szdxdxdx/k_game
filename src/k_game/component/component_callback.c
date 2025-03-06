@@ -55,7 +55,7 @@ void k_component_del_callback(struct k_component_callback *callback) {
 
 /* region [component_add_alarm_callback] */
 
-static void alarm_callback_wrapper(void *data, int timeout_diff) {
+static void fn_alarm_callback_wrapper(void *data, int timeout_diff) {
     struct k_component_callback *callback = data;
 
     /* TODO 更好的 `component_del_callback()` 方案
@@ -78,7 +78,7 @@ struct k_component_callback *k_component_add_alarm_callback(struct k_component *
     if (NULL == component_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k__room_add_alarm_callback(component->object->room, alarm_callback_wrapper, component_callback, delay_ms);
+    struct k_room_callback *room_callback = k__room_add_alarm_callback(component->object->room, fn_alarm_callback_wrapper, component_callback, delay_ms);
     if (NULL == room_callback) {
         k_free(component_callback);
         return NULL;
@@ -96,7 +96,7 @@ struct k_component_callback *k_component_add_alarm_callback(struct k_component *
 
 /* region [component_add_step_callback] */
 
-static void step_callback_wrapper(void *data) {
+static void fn_step_callback_wrapper(void *data) {
     struct k_component_callback *callback = data;
     callback->fn_step_callback(callback->component);
 }
@@ -107,7 +107,7 @@ struct k_component_callback *k_component_add_step_callback(struct k_component *c
     if (NULL == component_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k__room_add_step_callback(component->object->room, step_callback_wrapper, component_callback);
+    struct k_room_callback *room_callback = k__room_add_step_callback(component->object->room, fn_step_callback_wrapper, component_callback);
     if (NULL == room_callback) {
         k_free(component_callback);
         return NULL;
@@ -125,7 +125,7 @@ struct k_component_callback *k_component_add_step_callback(struct k_component *c
 
 /* region [component_add_draw_callback] */
 
-static void draw_callback_wrapper(void *data) {
+static void fn_draw_callback_wrapper(void *data) {
     struct k_component_callback *callback = data;
     callback->fn_draw_callback(callback->component);
 }
@@ -136,7 +136,7 @@ struct k_component_callback *k_component_add_draw_callback(struct k_component *c
     if (NULL == component_callback)
         return NULL;
 
-    struct k_room_callback *room_callback = k__room_add_draw_callback(component->object->room, draw_callback_wrapper, component_callback, z_index);
+    struct k_room_callback *room_callback = k__room_add_draw_callback(component->object->room, fn_draw_callback_wrapper, component_callback, z_index);
     if (NULL == room_callback) {
         k_free(component_callback);
         return NULL;

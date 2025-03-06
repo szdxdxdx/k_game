@@ -15,6 +15,8 @@ int k__sprite_registry_add(struct k_sprite *sprite, const char *sprite_name);
 
 void k__sprite_registry_del(struct k_sprite *sprite);
 
+const char *k__sprite_get_name(struct k_sprite *sprite);
+
 /* endregion */
 
 /* region [sprite] */
