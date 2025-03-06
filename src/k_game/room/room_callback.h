@@ -5,6 +5,19 @@
 
 #include "k_game_room.h"
 
+enum k_room_callback_type {
+
+    K_ROOM_CALLBACK_DELETED,
+
+    K_ROOM_ENTER_CALLBACK,
+    K_ROOM_LEAVE_CALLBACK,
+    K_ROOM_STEP_BEGIN_CALLBACK,
+    K_ROOM_DRAW_CALLBACK,
+    K_ROOM_STEP_CALLBACK,
+    K_ROOM_ALARM_CALLBACK,
+    K_ROOM_STEP_END_CALLBACK,
+};
+
 struct k_room;
 
 /* 房间回调结点的基础结构
@@ -16,6 +29,8 @@ struct k_room_callback {
 
     /* 标记该回调是否已被删除 */
     uint8_t is_deleted;
+
+    enum k_room_callback_type type;
 };
 
 struct k_room_callback *k__room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);

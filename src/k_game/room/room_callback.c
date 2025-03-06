@@ -37,6 +37,15 @@ struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (
 
 void k_room_del_callback(struct k_room_callback *callback) {
 
-    if (NULL != callback)
-        callback->is_deleted = 1;
+    if (NULL == callback)
+        return;
+
+    /*
+     * TODO assert( ! callback->is_deleted )
+     *
+     * 虽然 `k_room_del_callback()` 不会立即释放结点的内存，
+     * 但也不能重复调用，这就跟不能重复调用 `free()` 一样。
+     */
+
+    callback->is_deleted = 1;
 }

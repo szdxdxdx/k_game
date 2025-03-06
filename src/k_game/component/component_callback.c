@@ -42,6 +42,7 @@ void k_component_del_callback(struct k_component_callback *callback) {
          * 因为 alarm 回调只执行一次，执行完会释放结点的内存，
          * 为了防止重复释放内存，这里用 `room_callback == NULL` 来做标记，
          * 使得在执行 alarm 回调时，使用 `component_del_callback()` 仍是安全的。
+         * 但无法判断是否多次调用了 `component_del_callback()`。
          */
         return;
     }
@@ -63,6 +64,7 @@ static void fn_alarm_callback_wrapper(void *data, int timeout_diff) {
      * 因为 alarm 回调只执行一次，执行完会释放结点的内存，
      * 为了防止重复释放内存，这里用 `room_callback == NULL` 来做标记，
      * 使得在执行 alarm 回调时，使用 `component_del_callback()` 仍是安全的。
+     * 但无法判断是否多次调用了 `component_del_callback()`。
      */
     callback->room_callback = NULL;
 
