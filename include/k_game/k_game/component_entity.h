@@ -3,8 +3,6 @@
 
 #include "k_list.h"
 
-struct k_room_callback;
-struct k_object;
 struct k_component_type;
 struct k_component;
 

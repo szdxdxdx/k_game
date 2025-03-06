@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#include "k_list.h"
-
 enum k_room_callback_type {
 
     K_ROOM_CALLBACK_DELETED    = 0,

@@ -24,7 +24,7 @@ void k__room_registry_del(struct k_room *room) {
 }
 
 struct k_room *k_room_find(const char *room_name) {
-    struct k_asset_registry_node *registry_node = k__asset_registry_get(&room_registry, room_name);
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&room_registry, room_name);
     if (NULL == registry_node)
         return NULL;
 

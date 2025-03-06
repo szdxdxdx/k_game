@@ -24,7 +24,7 @@ void k__sprite_registry_del(struct k_sprite *sprite) {
 }
 
 struct k_sprite *k_sprite_find(const char *sprite_name) {
-    struct k_asset_registry_node *registry_node = k__asset_registry_get(&sprite_registry, sprite_name);
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&sprite_registry, sprite_name);
     if (NULL == registry_node)
         return NULL;
 

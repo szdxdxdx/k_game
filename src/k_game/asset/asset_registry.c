@@ -48,10 +48,6 @@ int k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_regi
     return 0;
 }
 
-const char *k__asset_get_name(struct k_asset_registry_node *registry_node) {
-    return registry_node->name_map_node.key;
-}
-
 void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
 
     if ('\0' != registry_node->name_map_node.key[0])
@@ -60,7 +56,7 @@ void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
     k_list_del(&registry_node->iter_node);
 }
 
-struct k_asset_registry_node *k__asset_registry_get(struct k_asset_registry *registry, const char *asset_name) {
+struct k_asset_registry_node *k__asset_registry_find(struct k_asset_registry *registry, const char *asset_name) {
 
     if (NULL == asset_name || '\0' == asset_name[0])
         return NULL;
@@ -71,4 +67,8 @@ struct k_asset_registry_node *k__asset_registry_get(struct k_asset_registry *reg
 
     struct k_asset_registry_node *registry_node = container_of(map_node, struct k_asset_registry_node, name_map_node);
     return registry_node;
+}
+
+const char *k__asset_get_name(struct k_asset_registry_node *registry_node) {
+    return registry_node->name_map_node.key;
 }
