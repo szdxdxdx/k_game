@@ -43,4 +43,6 @@ struct k_object_callback *k_object_add_step_end_callback(struct k_object *object
 
 void k_object_del_callback(struct k_object_callback *callback);
 
+void k_object_del_all_callbacks(struct k_object *object);
+
 #endif

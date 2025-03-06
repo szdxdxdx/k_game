@@ -51,6 +51,11 @@ void k_object_del_callback(struct k_object_callback *callback) {
     k_free(callback);
 }
 
+void k_object_del_all_callbacks(struct k_object *object) {
+    /* assert( NULL != object) */
+    k__object_cleanup_callback_list(object);
+}
+
 /* endregion */
 
 /* region [object_add_step_begin_callback] */

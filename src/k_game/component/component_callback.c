@@ -23,6 +23,8 @@ void k__component_cleanup_callback_list(struct k_component *component) {
         k_room_del_callback(callback->room_callback);
         k_free(callback);
     }
+
+    k_list_init(&component->callback_list);
 }
 
 /* endregion */

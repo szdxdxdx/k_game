@@ -24,7 +24,7 @@ void k__image_registry_del(struct k_image *image) {
 }
 
 struct k_image *k_image_find(const char *image_name) {
-    struct k_asset_registry_node *registry_node = k__asset_registry_get(&image_registry, image_name);
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&image_registry, image_name);
     if (NULL == registry_node)
         return NULL;
 

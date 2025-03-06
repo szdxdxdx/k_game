@@ -1,7 +1,6 @@
 #include "k_log.h"
 
 #include "k_game_alloc.h"
-#include "k_game_room.h"
 #include "k_game/room_object_pool.h"
 #include "k_game/object_entity.h"
 #include "k_game/object_callback.h"
