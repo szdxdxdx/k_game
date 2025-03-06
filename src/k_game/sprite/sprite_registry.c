@@ -1,3 +1,4 @@
+#include "k_game/sprite_registry.h"
 #include "k_game/sprite_asset.h"
 
 static struct k_asset_registry sprite_registry;
@@ -24,6 +25,7 @@ void k__sprite_registry_del(struct k_sprite *sprite) {
 }
 
 struct k_sprite *k_sprite_find(const char *sprite_name) {
+
     struct k_asset_registry_node *registry_node = k__asset_registry_find(&sprite_registry, sprite_name);
     if (NULL == registry_node)
         return NULL;

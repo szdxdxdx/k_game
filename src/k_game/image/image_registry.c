@@ -1,4 +1,5 @@
 #include "k_game/image_asset.h"
+#include "k_game/image_registry.h"
 
 static struct k_asset_registry image_registry;
 

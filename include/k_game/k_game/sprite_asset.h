@@ -1,25 +1,7 @@
 #ifndef K_GAME__SPRITE_ASSET_H
 #define K_GAME__SPRITE_ASSET_H
 
-#include "SDL.h"
-
 #include "k_game/asset_registry.h"
-
-struct k_sprite;
-
-/* region [sprite_registry] */
-
-int k__sprite_registry_init(void);
-
-void k__sprite_registry_cleanup(void);
-
-int k__sprite_registry_add(struct k_sprite *sprite, const char *sprite_name);
-
-void k__sprite_registry_del(struct k_sprite *sprite);
-
-/* endregion */
-
-/* region [sprite] */
 
 struct k_sprite_frame {
 
@@ -46,7 +28,5 @@ struct k_sprite {
 };
 
 void k__sprite_destroy(struct k_sprite *sprite);
-
-/* endregion */
 
 #endif
