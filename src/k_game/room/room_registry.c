@@ -1,4 +1,5 @@
 #include "k_game/room_context.h"
+#include "k_game/room_registry.h"
 
 static struct k_asset_registry room_registry;
 

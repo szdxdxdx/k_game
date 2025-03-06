@@ -6,6 +6,7 @@
 #include "k_game/k_SDL.h"
 #include "k_game/image_asset.h"
 #include "k_game/sprite_asset.h"
+#include "k_game/room_registry.h"
 #include "k_game/room_context.h"
 #include "k_game/room_goto.h"
 #include "k_game/component_registry.h"

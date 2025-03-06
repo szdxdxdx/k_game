@@ -12,22 +12,6 @@
 #include "k_game/room_callback_draw.h"
 #include "k_game/object_pool.h"
 
-struct k_room;
-
-/* region [room_registry] */
-
-int k__room_registry_init(void);
-
-void k__room_registry_cleanup(void);
-
-int k__room_registry_add(struct k_room *room, const char *room_name);
-
-void k__room_registry_del(struct k_room *room);
-
-/* endregion */
-
-/* region [room] */
-
 struct k_room {
 
     struct k_asset_registry_node registry_node;
@@ -73,7 +57,5 @@ void k__room_destroy(struct k_room *room);
 void k_room_destroy(struct k_room *room);
 
 void k__room_run(struct k_room *room);
-
-/* endregion */
 
 #endif
