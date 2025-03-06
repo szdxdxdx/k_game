@@ -1,7 +1,8 @@
-#include "../sprite/sprite_asset.h"
-#include "../sprite/sprite_draw.h"
 #include "k_game_time.h"
 #include "k_game_component.h"
+
+#include "../sprite/sprite.h"
+
 #include "k_game_components/sprite_renderer.h"
 #include "./components_def.h"
 

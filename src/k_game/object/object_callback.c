@@ -1,9 +1,8 @@
 #include "k_game_alloc.h"
 #include "k_game_room.h"
 #include "../room/room_callback.h"
-#include "k_game_object.h"
-#include "./object_entity.h"
-#include "./object_callback.h"
+
+#include "./object.h"
 
 /* region [object_callback_list] */
 

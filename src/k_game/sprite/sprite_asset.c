@@ -2,9 +2,10 @@
 #include "k_seq_step.h"
 
 #include "k_game_alloc.h"
-#include "../image/image_asset.h"
-#include "k_game_sprite.h"
-#include "./sprite_asset.h"
+
+#include "../image/image.h"
+
+#include "./sprite.h"
 
 /* region [sprite_creation_steps] */
 

@@ -1,6 +1,4 @@
-#include "../asset/asset_registry.h"
-#include "./image_asset.h"
-#include "./image_registry.h"
+#include "./image.h"
 
 static struct k_asset_registry image_registry;
 

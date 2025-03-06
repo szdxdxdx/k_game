@@ -1,6 +1,6 @@
 #include "k_game_alloc.h"
-#include "../game/game_context.h"
-#include "./room_context.h"
+#include "../game/game.h"
+#include "./room.h"
 
 void k__room_init_alarm_callback_storage(struct k_room *room) {
     k_list_init(&room->alarm_callbacks.list);

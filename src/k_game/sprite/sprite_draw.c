@@ -1,7 +1,6 @@
-#include "../image/image_draw.h"
-#include "k_game_sprite.h"
-#include "./sprite_asset.h"
-#include "./sprite_draw.h"
+#include "../image/image.h"
+
+#include "./sprite.h"
 
 int k__sprite_draw_frame(struct k_sprite *sprite, int dst_x, int dst_y, size_t frame_idx) {
 

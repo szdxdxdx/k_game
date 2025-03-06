@@ -2,8 +2,7 @@
 
 #include "k_log.h"
 
-#include "k_game_room.h"
-#include "./room_goto.h"
+#include "./room.h"
 
 /* region [room_stack] */
 

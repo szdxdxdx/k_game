@@ -1,5 +1,5 @@
 #include "k_game_alloc.h"
-#include "./room_context.h"
+#include "./room.h"
 
 void k__room_init_step_begin_callback_registry(struct k_room *room) {
     struct k_room_step_begin_callback_registry *registry = &room->step_begin_callbacks;

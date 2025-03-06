@@ -1,16 +1,37 @@
-#ifndef K_GAME__ROOM_CONTEXT_H
-#define K_GAME__ROOM_CONTEXT_H
+#ifndef K_GAME__ROOM_H
+#define K_GAME__ROOM_H
 
 #include <stdint.h>
 
+#include "k_game_room.h"
+
 #include "../asset/asset_registry.h"
+
 #include "./room_callback_list.h"
 #include "./room_callback_step_begin.h"
 #include "./room_callback_step.h"
 #include "./room_callback_step_end.h"
 #include "./room_callback_alarm.h"
 #include "./room_callback_draw.h"
-#include "../object/object_pool.h"
+
+/* region [room_registry] */
+
+struct k_room;
+
+int k__room_registry_init(void);
+
+void k__room_registry_cleanup(void);
+
+int k__room_registry_add(struct k_room *room, const char *room_name);
+
+void k__room_registry_del(struct k_room *room);
+
+/* endregion */
+
+/* region [room] */
+
+struct k_object_pool;
+struct k_room_callback_regisry;
 
 struct k_room {
 
@@ -30,7 +51,7 @@ struct k_room {
 
     struct k_room_step_end_callback_registry step_end_callbacks;
 
-    struct k_object_pool object_pool;
+    struct k_object_pool *object_pool;
 
     int room_w, room_h;
 
@@ -57,5 +78,17 @@ void k__room_destroy(struct k_room *room);
 void k_room_destroy(struct k_room *room);
 
 void k__room_run(struct k_room *room);
+
+/* endregion */
+
+/* region [room_goto] */
+
+void k__room_stack_init(void);
+
+void k__room_stack_cleanup(void);
+
+struct k_room *k__room_stack_get_top(void);
+
+/* endregion */
 
 #endif

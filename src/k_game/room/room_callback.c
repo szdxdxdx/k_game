@@ -1,4 +1,4 @@
-#include "./room_callback.h"
+#include "./room.h"
 
 struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
     /* TODO assert( NULL != room ... ) */

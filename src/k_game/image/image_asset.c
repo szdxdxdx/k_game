@@ -4,9 +4,10 @@
 #include "k_seq_step.h"
 
 #include "k_game_alloc.h"
-#include "k_game_image.h"
+
 #include "../k_SDL/k_SDL.h"
-#include "./image_asset.h"
+
+#include "./image.h"
 
 /* region [image_load_steps] */
 

@@ -1,5 +1,4 @@
-#include "./room_context.h"
-#include "./room_registry.h"
+#include "./room.h"
 
 static struct k_asset_registry room_registry;
 

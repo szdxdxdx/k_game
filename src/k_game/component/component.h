@@ -3,11 +3,9 @@
 
 #include "k_list.h"
 
-#include "k_game_component.h"
 #include "../asset/asset_registry.h"
 
-struct k_component_type;
-struct k_component;
+#include "k_game_component.h"
 
 /* region [component_registry] */
 
@@ -62,6 +60,8 @@ void k__component_destroy(struct k_component *component);
 /* endregion */
 
 /* region [component_callback] */
+
+struct k_room_callback;
 
 struct k_component_callback {
 

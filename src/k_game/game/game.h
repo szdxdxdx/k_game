@@ -1,5 +1,5 @@
-#ifndef K_GAME__GAME_CONTEXT_H
-#define K_GAME__GAME_CONTEXT_H
+#ifndef K_GAME__GAME_H
+#define K_GAME__GAME_H
 
 #include <stdint.h>
 

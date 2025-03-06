@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#include "k_game_room.h"
+
+struct k_room;
+
 enum k_room_callback_type {
 
     K_ROOM_CALLBACK_DELETED    = 0,
@@ -17,10 +21,6 @@ enum k_room_callback_type {
     K_ROOM_STEP_END_CALLBACK   ,
 };
 
-struct k_room;
-
-/* region [room_callback] */
-
 /* 房间回调结点的基础结构
  *
  * 房间的不同类型回调，对应有不同类型的回调结点来存储回调信息。
@@ -33,10 +33,6 @@ struct k_room_callback {
 
     enum k_room_callback_type callback_type;
 };
-
-/* endregion */
-
-/* region [add_callback] */
 
 struct k_room_callback *k__room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
 
@@ -51,7 +47,5 @@ struct k_room_callback *k__room_add_step_callback(struct k_room *room, void (*fn
 struct k_room_callback *k__room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int z_index);
 
 struct k_room_callback *k__room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
-
-/* endregion */
 
 #endif

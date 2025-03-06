@@ -3,10 +3,11 @@
 #include "k_seq_step.h"
 
 #include "k_game_alloc.h"
-#include "../game/game_context.h"
-#include "k_game_room.h"
-#include "./room_context.h"
-#include "room_registry.h"
+
+#include "../game/game.h"
+#include "../object/object.h"
+
+#include "./room.h"
 
 /* region [room_creation_steps] */
 

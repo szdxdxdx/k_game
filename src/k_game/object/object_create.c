@@ -2,9 +2,8 @@
 
 #include "k_game_alloc.h"
 #include "../room/room_context.h"
-#include "./object_entity.h"
-#include "./object_callback.h"
-#include "./object_component.h"
+
+#include "./object.h"
 
 struct k_object *k_object_create(struct k_room *room, size_t object_data_size) {
     struct k_object_pool *pool = &room->object_pool;
