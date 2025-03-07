@@ -15,6 +15,4 @@ struct k_object_callback {
 
 void k__object_init_callback_list(struct k_object *object);
 
-void k__object_cleanup_callback_list(struct k_object *object);
-
 #endif

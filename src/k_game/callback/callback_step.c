@@ -10,7 +10,21 @@ void k__init_step_callback_manager(struct k_step_callback_manager *manager) {
 
 void k__deinit_step_callback_manager(struct k_step_callback_manager *manager) {
 
-    /* TODO */
+    struct k_step_callback *step_callback;
+    struct k_list *list;
+    struct k_list_node *iter, *next;
+
+    list = &manager->callback_list;
+    for (k_list_for_each_s(list, iter, next)) {
+        step_callback = container_of(iter, struct k_step_callback, list_node);
+        k_free(step_callback);
+    }
+
+    list = &manager->pending_list;
+    for (k_list_for_each_s(list, iter, next)) {
+        step_callback = container_of(iter, struct k_step_callback, list_node);
+        k_free(step_callback);
+    }
 }
 
 struct k_room_callback *k__add_room_step_callback(struct k_step_callback_manager *manager, void (*fn_callback)(void *data), void *data) {
@@ -62,11 +76,11 @@ void k__exec_step_callbacks(struct k_step_callback_manager *manager) {
         }
 
         if (K_ROOM_CALLBACK == step_callback->base.context) {
-            struct k_room_step_callback *callback = container_of(step_callback, struct k_room_step_callback, step_callback);
+            struct k_room_step_callback *callback = (struct k_room_step_callback *)step_callback;
             callback->fn_callback(callback->data);
         }
         else if (K_OBJECT_CALLBACK == step_callback->base.context) {
-            struct k_object_step_callback *callback = container_of(step_callback, struct k_object_step_callback, step_callback);
+            struct k_object_step_callback *callback = (struct k_object_step_callback *)step_callback;
             callback->fn_callback(callback->object);
         }
     }

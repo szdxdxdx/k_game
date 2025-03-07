@@ -41,7 +41,7 @@ err:
 void k__object_destroy(struct k_object *object) {
 
     k__object_cleanup_component_list(object);
-    k__object_cleanup_callback_list(object);
+    k_object_del_all_callbacks(object);
 
     k_free(object->data);
     k__object_pool_release(object);

@@ -10,11 +10,23 @@
 
 #include "k_game.h"
 
-static void object_step(struct k_object *object) {
+static struct k_room_callback *room_step;
+static struct k_object_callback *object_step;
+
+static void fn_object_step(struct k_object *object) {
     printf("object_step\n");
+
+    if (k_key_pressed('O')) {
+        k_object_del_callback(object_step);
+    }
+
+    if (room_step != NULL && k_key_pressed('R')) {
+        k_room_del_callback(room_step);
+        room_step = NULL;
+    }
 }
 
-static void room_step(void *data) {
+static void fn_room_step(void *data) {
 
     const char *s = data;
 
@@ -22,10 +34,10 @@ static void room_step(void *data) {
 }
 
 static int init_room(struct k_room *room, void *params) {
-    k_room_add_step_callback(room, room_step, "room_step");
+    room_step = k_room_add_step_callback(room, fn_room_step, "room_step");
 
     struct k_object *object = k_object_create(0);
-    k_object_add_step_callback(object, object_step);
+    object_step = k_object_add_step_callback(object, fn_object_step);
 
     return 0;
 }

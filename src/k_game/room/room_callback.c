@@ -6,3 +6,9 @@ struct k_room_callback *k_room_add_step_callback(struct k_room *room, void (*fn_
     struct k_room_callback *callback = k__add_room_step_callback(manager, fn_callback, data);
     return callback;
 }
+
+void k_room_del_callback(struct k_room_callback *callback) {
+
+    if (NULL != callback)
+        k__callback_set_deleted(callback->base);
+}
