@@ -8,7 +8,7 @@ void k__init_step_callback_manager(struct k_step_callback_manager *manager) {
     k_list_init(&manager->pending_list);
 }
 
-void k__cleanup_step_callback(struct k_step_callback_manager *manager) {
+void k__deinit_step_callback_manager(struct k_step_callback_manager *manager) {
 
     /* TODO */
 }
@@ -25,6 +25,7 @@ struct k_room_callback *k__add_room_step_callback(struct k_step_callback_manager
     callback->room_callback.base         = &callback->step_callback.base;
     callback->fn_callback                = fn_callback;
     callback->data                       = data;
+    k_list_add_tail(&manager->pending_list, &callback->step_callback.list_node);
 
     return &callback->room_callback;
 }
@@ -41,6 +42,7 @@ struct k_object_callback *k__add_object_step_callback(struct k_step_callback_man
     callback->object_callback.base       = &callback->step_callback.base;
     callback->fn_callback                = fn_callback;
     callback->object                     = object;
+    k_list_add_tail(&manager->pending_list, &callback->step_callback.list_node);
 
     return &callback->object_callback;
 }

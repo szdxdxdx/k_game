@@ -1,3 +1,6 @@
+
+#if 0
+
 #define SDL_MAIN_HANDLED
 #include "SDL.h"
 #include "SDL_mixer.h"
@@ -41,8 +44,6 @@ static int init(void) {
     k_goto_room(room);
     return 0;
 }
-
-#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");

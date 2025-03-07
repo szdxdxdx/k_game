@@ -3,10 +3,16 @@
 #include "k_game_alloc.h"
 
 #include "../room/room.h"
+#include "../game/game.h"
 
 #include "./object.h"
 
-struct k_object *k_object_create(struct k_room *room, size_t object_data_size) {
+struct k_object *k_object_create(size_t object_data_size) {
+
+    struct k_room *room = k__game.current_room;
+    if (NULL == room) {
+        goto err;
+    }
 
     struct k_object *object = k__object_pool_acquire(&room->object_pool);
     if (NULL == object)

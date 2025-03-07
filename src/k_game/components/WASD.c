@@ -44,8 +44,8 @@ static int WASD_init(struct k_component *component, void *params) {
     WASD->x         = config->x;
     WASD->y         = config->y;
 
-    if (NULL == k_component_add_step_callback(component, WASD_step))
-        return -1;
+    //if (NULL == k_component_add_step_callback(component, WASD_step))
+    //    return -1;
 
     return 0;
 }

@@ -5,8 +5,8 @@
 
 #include "./callback_base.h"
 
-#include "./callback_room.h"
-#include "./callback_object.h"
+#include "../room/room_callback.h"
+#include "../object/object_callback.h"
 
 struct k_step_callback {
 
@@ -24,7 +24,7 @@ struct k_step_callback_manager {
 
 void k__init_step_callback_manager(struct k_step_callback_manager *manager);
 
-void k__cleanup_step_callback(struct k_step_callback_manager *manager);
+void k__deinit_step_callback_manager(struct k_step_callback_manager *manager);
 
 void k__exec_step_callbacks(struct k_step_callback_manager *manager);
 
@@ -48,6 +48,8 @@ struct k_room_callback *k__add_room_step_callback(struct k_step_callback_manager
 /* endregion */
 
 /* region [object_step_callback] */
+
+struct k_object;
 
 struct k_object_step_callback {
 

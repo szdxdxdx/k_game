@@ -7,8 +7,8 @@
 
 #include "./callback_base.h"
 
-#include "./callback_object.h"
-#include "./callback_room.h"
+#include "../room/room_callback.h"
+#include "../object/object_callback.h"
 
 struct k_alarm_callback {
 
@@ -24,7 +24,7 @@ struct k_alarm_callback_manager {
 
 void k__init_alarm_callback_manager(struct k_alarm_callback_manager *manager);
 
-void k__cleanup_alarm_callback(struct k_alarm_callback_manager *manager);
+void k__deinit_alarm_callback_manager(struct k_alarm_callback_manager *manager);
 
 void k__exec_alarm_callbacks(struct k_alarm_callback_manager *manager);
 

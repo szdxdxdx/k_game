@@ -1,3 +1,6 @@
+
+#if 0
+
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,7 +49,7 @@ static int create_room(struct k_room *room, void *params) {
 
     /* ------------------------------------------------------------------------ */
 
-    struct k_component_type *renderer = k_component_find("k/spr-rdr");
+    struct k_component_type *renderer = k_component_type_find("k/spr-rdr");
     struct k_sprite_renderer_config renderer_config;
     renderer_config.sprite  = spr_player;
     renderer_config.z_index = 0;
@@ -56,7 +59,7 @@ static int create_room(struct k_room *room, void *params) {
 
     /* ------------------------------------------------------------------------ */
 
-    struct k_component_type *WASD = k_component_find("k/WASD");
+    struct k_component_type *WASD = k_component_type_find("k/WASD");
     struct k_WASD_config WASD_config;
     WASD_config.key_up    = 'W';
     WASD_config.key_left  = 'A';
@@ -108,8 +111,6 @@ static int init(void) {
 
     return 0;
 }
-
-#if 0
 
 int main(int argc, char **argv) {
     system("chcp 65001");

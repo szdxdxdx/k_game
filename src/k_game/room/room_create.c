@@ -117,38 +117,19 @@ static void step_cleanup_object_pool(void *data) {
     k__object_pool_cleanup(&room->object_pool);
 }
 
-static int step_init_callback_registry(void *data) {
+static int step_init_callback_managers(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    k__room_init_enter_callback_registry(room);
-    k__room_init_leave_callback_registry(room);
-
-    k__room_init_step_begin_callback_registry(room);
-    k__room_init_step_callback_registry(room);
-    k__room_init_step_end_callback_registry(room);
-
-    k__room_init_alarm_callback_storage(room);
-
-    k__room_init_draw_callback_storage(room);
-
+    k__init_step_callback_manager(&room->step_callback_manager);
     return 0;
 }
 
-static void step_cleanup_callback_registry(void *data) {
+static void step_deinit_callback_managers(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
-    k__room_cleanup_enter_callback_registry(room);
-    k__room_cleanup_leave_callback_registry(room);
-
-    k__room_cleanup_step_begin_callback_registry(room);
-    k__room_cleanup_step_callback_registry(room);
-    k__room_cleanup_step_end_callback_registry(room);
-
-    k__room_cleanup_alarm_callback_storage(room);
-
-    k__room_cleanup_draw_callback_storage(room);
+    k__deinit_step_callback_manager(&room->step_callback_manager);
 }
 
 static int step_call_fn_create(void *data) {
@@ -185,14 +166,14 @@ static void step_call_fn_destroy(void *data) {
 }
 
 static const struct k_seq_step room_creation_steps[] = {
-    { step_check_config,           NULL                           },
-    { step_malloc_room,            step_free_room                 },
-    { step_registry_add,           step_registry_del              },
-    { step_malloc_room_data,       step_free_room_data            },
-    { step_configure_room,         NULL                           },
-    { step_init_callback_registry, step_cleanup_callback_registry },
-    { step_init_object_pool,       step_cleanup_object_pool       },
-    { step_call_fn_create,         step_call_fn_destroy           },
+    { step_check_config,           NULL                          },
+    { step_malloc_room,            step_free_room                },
+    { step_registry_add,           step_registry_del             },
+    { step_malloc_room_data,       step_free_room_data           },
+    { step_configure_room,         NULL                          },
+    { step_init_callback_managers, step_deinit_callback_managers },
+    { step_init_object_pool,       step_cleanup_object_pool      },
+    { step_call_fn_create,         step_call_fn_destroy          },
 };
 
 /* endregion */

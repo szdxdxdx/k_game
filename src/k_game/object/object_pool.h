@@ -3,8 +3,6 @@
 
 #include "k_list.h"
 
-/* region [room->object_pool] */
-
 struct k_object;
 
 struct k_object_pool {
@@ -24,7 +22,5 @@ void k__object_pool_cleanup(struct k_object_pool *pool);
 struct k_object *k__object_pool_acquire(struct k_object_pool *pool);
 
 void k__object_pool_release(struct k_object *object);
-
-/* endregion */
 
 #endif
