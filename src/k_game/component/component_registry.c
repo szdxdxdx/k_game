@@ -23,7 +23,7 @@ void k__component_registry_del(struct k_component_type *component_type) {
     k__asset_registry_del(&component_type->registry_node);
 }
 
-struct k_component_type *k_component_find(const char *type_name) {
+struct k_component_type *k_component_type_find(const char *type_name) {
 
     struct k_asset_registry_node *registry_node = k__asset_registry_find(&component_registry, type_name);
     if (NULL == registry_node)

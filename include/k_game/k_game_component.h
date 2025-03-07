@@ -40,7 +40,7 @@ struct k_component_type_config {
 
 struct k_component_type *k_component_define(const struct k_component_type_config *config);
 
-struct k_component_type *k_component_find(const char *type_name);
+struct k_component_type *k_component_type_find(const char *type_name);
 
 /**
  * \brief 组件回调

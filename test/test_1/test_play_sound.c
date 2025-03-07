@@ -10,23 +10,26 @@
 
 static Mix_Music *music_1;
 static Mix_Music *music_2;
-static struct k_room_callback *step_callback;
+static struct k_room_callback *player_hhddd;
 
 static void room_step(void *data) {
 
     if (k_key_pressed('H')) {
         Mix_PlayMusic(music_2, 1);
 
-        k_room_del_callback(step_callback);
-        step_callback = NULL;
+        k_room_del_callback(player_hhddd);
+        player_hhddd = NULL;
     }
 }
 
 static void room_enter(void *data) {
+    struct k_room *room = k_get_current_room();
 
     music_1 = Mix_LoadMUS("assets/tmp.wav");
-    music_2 = Mix_LoadMUS("assets/DJMZJ_HHDDD.mp3");
     Mix_PlayMusic(music_1, -1);
+
+    music_2 = Mix_LoadMUS("assets/DJMZJ_HHDDD.mp3");
+    player_hhddd = k_room_add_step_callback(room, room_step, NULL);
 }
 
 static int init(void) {
@@ -34,7 +37,6 @@ static int init(void) {
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     struct k_room *room = k_room_create(&room_config, NULL);
     k_room_add_enter_callback(room, room_enter, NULL);
-    step_callback = k_room_add_step_callback(room, room_step, NULL);
 
     k_goto_room(room);
     return 0;

@@ -47,11 +47,6 @@ void k__room_exec_draw_callbacks(struct k_room *room) {
                 callback->fn_callback(callback->data);
             }
         }
-
-        if (k_list_is_empty(&z_list->callbacks)) {
-            k_list_del(&z_list->list_node);
-            k_free(z_list);
-        }
     }
 }
 
