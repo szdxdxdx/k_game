@@ -1,6 +1,7 @@
 #include "k_log.h"
 
 #include "k_game_alloc.h"
+#include "k_game_component.h"
 
 #include "../room/room.h"
 #include "../game/game.h"
@@ -28,8 +29,8 @@ struct k_object *k_object_create(size_t object_data_size) {
 
     object->room = room;
     object->data = data;
-    k__object_init_callback_list(object);
-    k__object_init_component_list(object);
+    k_list_init(&object->callback_list);
+    k_list_init(&object->component_list);
 
     return object;
 
@@ -40,7 +41,7 @@ err:
 
 void k__object_destroy(struct k_object *object) {
 
-    k__object_cleanup_component_list(object);
+    k_object_del_all_components(object);
     k_object_del_all_callbacks(object);
 
     k_free(object->data);

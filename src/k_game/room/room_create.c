@@ -122,6 +122,7 @@ static int step_init_callback_managers(void *data) {
     struct k_room *room = ctx->room;
 
     k__init_step_callback_manager(&room->step_callback_manager);
+    k__init_alarm_callback_manager(&room->alarm_callback_manager);
     return 0;
 }
 
@@ -130,6 +131,7 @@ static void step_deinit_callback_managers(void *data) {
     struct k_room *room = ctx->room;
 
     k__deinit_step_callback_manager(&room->step_callback_manager);
+    k__deinit_alarm_callback_manager(&room->alarm_callback_manager);
 }
 
 static int step_call_fn_create(void *data) {

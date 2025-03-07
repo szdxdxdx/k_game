@@ -31,6 +31,17 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
     return callback;
 }
 
+struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
+
+    struct k_alarm_callback_manager *manager = &object->room->alarm_callback_manager;
+    struct k_object_callback *callback = k__add_object_alarm_callback(manager, fn_callback, object, delay_ms);
+    if (NULL == callback)
+        return NULL;
+
+    k_list_add_tail(&object->callback_list, &callback->list_node);
+    return callback;
+}
+
 void k_object_del_callback(struct k_object_callback *callback) {
 
     if (NULL != callback) {

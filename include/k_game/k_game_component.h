@@ -42,6 +42,23 @@ struct k_component_type *k_component_define(const struct k_component_type_config
 
 struct k_component_type *k_component_type_find(const char *type_name);
 
+/*
+ * TODO docs
+ *
+ * 往对象上挂载组件时，会根据给定的组件类型创造一个组件实例。
+ * 组件不能独立存在，必须要挂载到对象上。
+ * 当对象被销毁时，对象所携带的组件也会跟着一并销毁。
+ */
+struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
+
+void k_object_del_component(struct k_component *component);
+
+void k_object_del_all_components(struct k_object *object);
+
+void *k_component_get_data(struct k_component *component);
+
+struct k_object *k_component_get_object(struct k_component *component);
+
 /**
  * \brief 组件回调
  *
@@ -57,22 +74,7 @@ struct k_component_callback *k_component_add_draw_callback(struct k_component *c
 
 void k_component_del_callback(struct k_component_callback *callback);
 
-void *k_component_get_data(struct k_component *component);
-
-/*
- * TODO docs
- *
- * 往对象上挂载组件时，会根据给定的组件类型创造一个组件实例。
- * 组件不能独立存在，必须要挂载到对象上。
- * 当对象被销毁时，对象所携带的组件也会跟着一并销毁。
- */
-struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
-
-void k_object_del_component(struct k_component *component);
-
-void k_object_del_all_components(struct k_object *object);
-
-struct k_object *k_component_get_object(struct k_component *component);
+void k_component_del_all_callbacks(struct k_component *component);
 
 // TODO struct k_component *k_object_get_component(struct k_object *object, struct k_component_type *component_type);
 

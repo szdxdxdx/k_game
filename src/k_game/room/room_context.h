@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "../asset/asset_registry.h"
-#include "../callback/callback_step.h"
+#include "../callback/callback.h"
 #include "../object/object_pool.h"
 
 struct k_object_pool;
@@ -14,6 +14,8 @@ struct k_room {
     struct k_asset_registry_node registry_node;
 
     struct k_step_callback_manager step_callback_manager;
+
+    struct k_alarm_callback_manager alarm_callback_manager;
 
     struct k_object_pool object_pool;
 

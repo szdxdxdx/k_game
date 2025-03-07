@@ -8,7 +8,7 @@ struct k_object;
 
 struct k_component {
 
-    struct k_list_node object_component_list_node;
+    struct k_list_node list_node;
 
     const struct k_component_type *type;
 

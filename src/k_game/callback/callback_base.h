@@ -15,6 +15,8 @@ enum k_callback_context_type {
     K_ROOM_CALLBACK,
 
     K_OBJECT_CALLBACK,
+
+    K_COMPONENT_CALLBACK,
 };
 
 struct k_callback {

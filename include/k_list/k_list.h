@@ -49,6 +49,11 @@ static inline void k_list_del(struct k_list_node *node) {
     node->next->prev = node->prev;
 }
 
+static inline void k_list_link_self(struct k_list_node *node) {
+    node->prev = node;
+    node->next = node;
+}
+
 static inline int k_list_is_empty(struct k_list *list) {
     return list->head.next == &list->head;
 }

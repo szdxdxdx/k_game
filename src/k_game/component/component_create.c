@@ -18,10 +18,10 @@ struct k_component *k__component_create(const struct k_component_type *component
 
     component->type = component_type;
     component->data = data;
-    k__component_init_callback_list(component);
+    k_list_init(&component->callback_list);
 
     component->object = object;
-    k__object_component_list_add(object, component);
+    k_list_add_tail(&object->component_list, &component->list_node);
 
     if (0 != component_type->fn_init(component, params))
         goto fn_create_failed;
@@ -29,7 +29,7 @@ struct k_component *k__component_create(const struct k_component_type *component
     return component;
 
 fn_create_failed:
-    k_list_del(&component->object_component_list_node);
+    k_list_del(&component->list_node);
     k_free(component->data);
 malloc_data_failed:
     k_free(component);
@@ -42,8 +42,8 @@ void k__component_destroy(struct k_component *component) {
     if (component->type->fn_fini != NULL)
         component->type->fn_fini(component);
 
-    k__object_component_list_del(component);
-    k__component_cleanup_callback_list(component);
+    k_list_del(&component->list_node);
+    k_component_del_all_callbacks(component);
 
     k_free(component->data);
     k_free(component);

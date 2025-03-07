@@ -1,10 +1,5 @@
 #include "./component.h"
 
-
-void k__component_init_callback_list(struct k_component *component) {
-    /* TODO */
-}
-
-void k__component_cleanup_callback_list(struct k_component *component) {
+void k_component_del_all_callbacks(struct k_component *component) {
     /* TODO */
 }
