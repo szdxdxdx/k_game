@@ -24,9 +24,13 @@ struct k_list {
     struct k_list_node head;
 };
 
+static inline void k_list_link_self(struct k_list_node *node) {
+    node->prev = node;
+    node->next = node;
+}
+
 static inline void k_list_init(struct k_list *list) {
-    list->head.next = &list->head;
-    list->head.prev = &list->head;
+    k_list_link_self(&list->head);
 }
 
 static inline void k_list_add(struct k_list_node *prev, struct k_list_node *node) {
@@ -47,11 +51,6 @@ static inline void k_list_add_tail(struct k_list *list, struct k_list_node *node
 static inline void k_list_del(struct k_list_node *node) {
     node->prev->next = node->next;
     node->next->prev = node->prev;
-}
-
-static inline void k_list_link_self(struct k_list_node *node) {
-    node->prev = node;
-    node->next = node;
 }
 
 static inline int k_list_is_empty(struct k_list *list) {
