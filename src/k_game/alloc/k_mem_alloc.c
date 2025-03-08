@@ -13,6 +13,6 @@ void *k_malloc(size_t size) {
     return p;
 }
 
-void k_free(void *ptr) {
-    free(ptr);
+void k_free(void *p) {
+    free(p);
 }

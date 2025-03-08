@@ -14,6 +14,13 @@ struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn
     return callback;
 }
 
+struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int z_index) {
+
+    struct k_draw_callback_manager *manager = &room->draw_callback_manager;
+    struct k_room_callback *callback = k__callback_add_room_draw(manager, fn_callback, data, z_index);
+    return callback;
+}
+
 void k_room_del_callback(struct k_room_callback *callback) {
 
     if (NULL != callback)

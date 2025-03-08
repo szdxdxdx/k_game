@@ -4,9 +4,16 @@
 
 /* region [callback_def] */
 
+struct k_step_callback {
+
+    struct k_list_node list_node;
+
+    struct k_callback base;
+};
+
 struct k_room_step_callback {
 
-    struct k_step_callback step_callback;
+    struct k_step_callback step_callback; /* inherit */
 
     struct k_room_callback room_callback;
 
@@ -17,7 +24,7 @@ struct k_room_step_callback {
 
 struct k_object_step_callback {
 
-    struct k_step_callback step_callback;
+    struct k_step_callback step_callback; /* inherit */
 
     struct k_object_callback object_callback;
 
@@ -28,7 +35,7 @@ struct k_object_step_callback {
 
 struct k_component_step_callback {
 
-    struct k_step_callback step_callback;
+    struct k_step_callback step_callback; /* inherit */
 
     struct k_component_callback component_callback;
 
@@ -47,17 +54,11 @@ void k__callback_init_step_manager(struct k_step_callback_manager *manager) {
 
 void k__callback_deinit_step_manager(struct k_step_callback_manager *manager) {
 
+    k__callback_flush_step(manager);
+
     struct k_step_callback *step_callback;
-    struct k_list *list;
+    struct k_list *list = &manager->callback_list;
     struct k_list_node *iter, *next;
-
-    list = &manager->callback_list;
-    for (k_list_for_each_s(list, iter, next)) {
-        step_callback = container_of(iter, struct k_step_callback, list_node);
-        k_free(step_callback);
-    }
-
-    list = &manager->pending_list;
     for (k_list_for_each_s(list, iter, next)) {
         step_callback = container_of(iter, struct k_step_callback, list_node);
         k_free(step_callback);

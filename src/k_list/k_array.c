@@ -1,32 +1,71 @@
 #include <assert.h>
 #include <limits.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "k_array.h"
 
 #define ptr_offset(p, offset) ((void *)((uintptr_t)(p) + (offset)))
 
-int k_array_init(struct k_array *arr, size_t elem_size, size_t init_capacity) {
-    assert(NULL != arr);
-    assert(0 < elem_size);
+struct k_array *k_array_create(const struct k_array_config *config) {
+    assert(NULL != config);
+    assert(NULL != config->fn_malloc);
+    assert(NULL != config->fn_free);
+    assert(0 < config->elem_size);
 
-    arr->elem_size = elem_size;
+    struct k_array *arr = config->fn_malloc(sizeof(struct k_array));
+    if (NULL == arr)
+        return NULL;
+
+    arr->fn_malloc = config->fn_malloc;
+    arr->fn_free   = config->fn_free;
+    arr->elem_size = config->elem_size;
     arr->capacity  = 0;
     arr->size      = 0;
     arr->storage   = NULL;
 
-    return k_array_reserve(arr, init_capacity);
+    if (0 != k_array_reserve(arr, config->init_capacity)) {
+        config->fn_free(arr);
+        return NULL;
+    }
+
+    return arr;
 }
 
-void k_array_free_storage(struct k_array *arr) {
+void k_array_destroy(struct k_array *arr) {
+
+    if (NULL == arr)
+        return;
+
+    arr->fn_free(arr->storage);
+    arr->fn_free(arr);
+}
+
+struct k_array *k_array_construct(struct k_array *arr, const struct k_array_config *config) {
     assert(NULL != arr);
+    assert(NULL != config);
+    assert(NULL != config->fn_malloc);
+    assert(NULL != config->fn_free);
+    assert(0 < config->elem_size);
 
-    free(arr->storage);
+    arr->fn_malloc = config->fn_malloc;
+    arr->fn_free   = config->fn_free;
+    arr->elem_size = config->elem_size;
+    arr->capacity  = 0;
+    arr->size      = 0;
+    arr->storage   = NULL;
 
-    arr->capacity = 0;
-    arr->size     = 0;
-    arr->storage  = NULL;
+    if (0 != k_array_reserve(arr, config->init_capacity))
+        return NULL;
+
+    return arr;
+}
+
+void k_array_destruct(struct k_array *arr) {
+
+    if (NULL == arr)
+        return;
+
+    arr->fn_free(arr->storage);
 }
 
 int k_array_reserve(struct k_array *arr, size_t n) {
@@ -42,18 +81,18 @@ int k_array_reserve(struct k_array *arr, size_t n) {
     if (new_capacity < n)
         new_capacity = n;
 
-    void *new_storage = malloc(new_capacity * arr->elem_size);
+    void *new_storage = arr->fn_malloc(new_capacity * arr->elem_size);
     if (NULL == new_storage) {
         if (new_capacity == n)
             return -1;
 
-        new_storage = malloc(n * arr->elem_size);
+        new_storage = arr->fn_malloc(n * arr->elem_size);
         if (NULL == new_storage)
             return -1;
     }
 
     memcpy(new_storage, arr->storage, arr->size * arr->elem_size);
-    free(arr->storage);
+    arr->fn_free(arr->storage);
 
     arr->capacity = new_capacity;
     arr->storage  = new_storage;
@@ -86,12 +125,12 @@ void *k_array_shift_right(struct k_array *arr, size_t idx, size_t n) {
     if (new_capacity < required_capacity)
         new_capacity = required_capacity;
 
-    void *new_storage = malloc(new_capacity * arr->elem_size);
+    void *new_storage = arr->fn_malloc(new_capacity * arr->elem_size);
     if (NULL == new_storage) {
         if (new_capacity == required_capacity)
             return NULL;
 
-        new_storage = malloc(required_capacity * arr->elem_size);
+        new_storage = arr->fn_malloc(required_capacity * arr->elem_size);
         if (NULL == new_storage)
             return NULL;
     }
@@ -107,7 +146,7 @@ void *k_array_shift_right(struct k_array *arr, size_t idx, size_t n) {
         size_t part_2_size = (arr->size - idx) * arr->elem_size;
         memcpy(part_2_to, part_2_from, part_2_size);
 
-        free(arr->storage);
+        arr->fn_free(arr->storage);
     }
 
     arr->capacity = new_capacity;
@@ -173,6 +212,16 @@ void k_array_clear(struct k_array *arr) {
     assert(NULL != arr);
 
     arr->size = 0;
+}
+
+void k_array_free_storage(struct k_array *arr) {
+    assert(NULL != arr);
+
+    arr->fn_free(arr->storage);
+
+    arr->capacity = 0;
+    arr->size     = 0;
+    arr->storage  = NULL;
 }
 
 void k_array_fill(struct k_array *arr, size_t idx_from, size_t idx_to, const void *elem) {

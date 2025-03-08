@@ -51,6 +51,7 @@ static void game_loop(struct k_room *room) {
         // k__room_flush_step_begin_callbacks(room);
         k__callback_flush_alarm(&room->alarm_callback_manager);
         k__callback_flush_step(&room->step_callback_manager);
+        k__callback_flush_draw(&room->draw_callback_manager);
 
         // k__room_flush_step_end_callbacks(room);
 
@@ -62,10 +63,10 @@ static void game_loop(struct k_room *room) {
         k__callback_exec_alarm(&room->alarm_callback_manager);
         k__callback_exec_step(&room->step_callback_manager);
 
-        // SDL_SetRenderDrawColor(k__window.renderer, 0, 0, 0, 255);
-        // SDL_RenderClear(k__window.renderer);
+        SDL_SetRenderDrawColor(k__window.renderer, 0, 0, 0, 255);
+        SDL_RenderClear(k__window.renderer);
+        k__callback_exec_draw(&room->draw_callback_manager);
 
-        // k__room_exec_draw_callbacks(room);
         // k__room_exec_step_end_callbacks(room);
 
         SDL_RenderPresent(k__window.renderer);

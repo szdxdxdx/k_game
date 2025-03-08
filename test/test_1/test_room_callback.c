@@ -1,5 +1,5 @@
 
-#if 0
+#if 1
 
 #include <stddef.h>
 #include <stdio.h>
@@ -13,34 +13,92 @@ struct obj_player {
     float x, y;
 };
 
-static struct k_object_callback *begin;
+static void object_draw_1(struct k_object *object)  { printf(" 1 "); }
+static void object_draw_2(struct k_object *object)  { printf(" 2 "); }
+static void object_draw_3(struct k_object *object)  { printf(" 3 "); }
+static void object_draw_4(struct k_object *object)  { printf(" 4 "); }
+static void object_draw_5(struct k_object *object)  { printf(" 5 "); }
+static void object_draw_6(struct k_object *object)  { printf(" 6 "); }
+static void object_draw_7(struct k_object *object)  { printf(" 7 "); }
+static void object_draw_8(struct k_object *object)  { printf(" 8 "); }
+static void object_draw_9(struct k_object *object)  { printf(" 9 "); }
 
-static void object_step_begin(struct k_object *object) {
-    printf("begin");
-}
+static void object_draw_end_line(struct k_object *object)  { printf("\n"); }
 
-static void object_step_end(struct k_object *object) {
-    printf("end");
-}
+static void object_draw_11(struct k_object *object) { printf("11 "); }
+static void object_draw_12(struct k_object *object) { printf("12 "); }
+static void object_draw_13(struct k_object *object) { printf("13 "); }
+static void object_draw_14(struct k_object *object) { printf("14 "); }
+static void object_draw_15(struct k_object *object) { printf("15 "); }
+static void object_draw_16(struct k_object *object) { printf("16 "); }
+static void object_draw_17(struct k_object *object) { printf("17 "); }
+static void object_draw_18(struct k_object *object) { printf("18 "); }
+static void object_draw_19(struct k_object *object) { printf("19 "); }
+
+static void object_draw_21(struct k_object *object) { printf("21 "); }
+static void object_draw_22(struct k_object *object) { printf("22 "); }
+static void object_draw_23(struct k_object *object) { printf("23 "); }
+static void object_draw_24(struct k_object *object) { printf("24 "); }
+static void object_draw_25(struct k_object *object) { printf("25 "); }
+static void object_draw_26(struct k_object *object) { printf("26 "); }
+static void object_draw_27(struct k_object *object) { printf("27 "); }
+static void object_draw_28(struct k_object *object) { printf("28 "); }
+static void object_draw_29(struct k_object *object) { printf("29 "); }
 
 static void object_step(struct k_object *object) {
+    struct obj_player *player = k_object_get_data(object);
 
+    if (k_key_pressed('1')) {
 
-    if (k_key_pressed('B'))
-        begin = k_object_add_step_callback(object, object_step_begin);
+        k_object_add_draw_callback(object, object_draw_1, 0);
+        k_object_add_draw_callback(object, object_draw_2, 0);
+        k_object_add_draw_callback(object, object_draw_3, 0);
+        k_object_add_draw_callback(object, object_draw_4, 0);
+        k_object_add_draw_callback(object, object_draw_5, 0);
 
-    if (k_key_pressed('V')) {
-        k_object_del_callback(begin);
-        begin = NULL;
+        k_object_add_draw_callback(object, object_draw_end_line, 5);
+
+        k_object_add_draw_callback(object, object_draw_11, 10);
+        k_object_add_draw_callback(object, object_draw_12, 10);
+
+        k_object_add_draw_callback(object, object_draw_6, 0);
+        k_object_add_draw_callback(object, object_draw_7, 0);
+        k_object_add_draw_callback(object, object_draw_8, 0);
+        k_object_add_draw_callback(object, object_draw_9, 0);
+        k_object_add_draw_callback(object, object_draw_21, 20);
+        k_object_add_draw_callback(object, object_draw_22, 20);
+        k_object_add_draw_callback(object, object_draw_23, 20);
+
+        k_object_add_draw_callback(object, object_draw_end_line, 25);
+
+        k_object_add_draw_callback(object, object_draw_24, 20);
+        k_object_add_draw_callback(object, object_draw_25, 20);
+        k_object_add_draw_callback(object, object_draw_26, 20);
+        k_object_add_draw_callback(object, object_draw_27, 20);
+
+        k_object_add_draw_callback(object, object_draw_13, 10);
+        k_object_add_draw_callback(object, object_draw_14, 10);
+        k_object_add_draw_callback(object, object_draw_15, 10);
+        k_object_add_draw_callback(object, object_draw_16, 10);
+
+        k_object_add_draw_callback(object, object_draw_end_line, 15);
+        k_object_add_draw_callback(object, object_draw_28, 20);
+        k_object_add_draw_callback(object, object_draw_29, 20);
+
+        k_object_add_draw_callback(object, object_draw_17, 10);
+        k_object_add_draw_callback(object, object_draw_18, 10);
+        k_object_add_draw_callback(object, object_draw_19, 10);
     }
 
-    if (k_key_pressed('E'))
-        k_object_add_step_callback(object, object_step_end);
+    if (k_key_pressed('A')) {
+        k_object_del_all_callbacks(object);
+        k_object_add_step_callback(object, object_step);
+    }
 }
 
 static int create_room(struct k_room *room, void *params) {
 
-    struct k_object *object = k_object_create(room, sizeof(struct obj_player));
+    struct k_object *object = k_object_create(sizeof(struct obj_player));
     struct obj_player *player = k_object_get_data(object);
     player->x = 0.0f;
     player->y = 0.0f;

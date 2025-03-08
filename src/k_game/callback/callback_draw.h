@@ -10,34 +10,18 @@
 #include "../object/object_callback.h"
 #include "../component/component_callback.h"
 
-struct k_draw_callback_layer {
-
-    struct k_list_node layer_list_node;
-
-    int z_index;
-
-    struct k_list callback_list;
-};
-
-struct k_draw_callback {
-
-    struct k_list_node list_node;
-
-    struct k_callback base;
-
-    struct k_draw_callback_layer *layer;
-};
-
 struct k_draw_callback_manager {
+
+    struct k_array z_index_map;
 
     struct k_list layer_list;
 
-    struct k_list pending_layer_list;
+    struct k_list layer_pending_list;
 
-    struct k_list pending_callback_list;
+    struct k_list callback_pending_list;
 };
 
-void k__callback_init_draw_manager(struct k_draw_callback_manager *manager);
+int k__callback_init_draw_manager(struct k_draw_callback_manager *manager);
 
 void k__callback_deinit_draw_manager(struct k_draw_callback_manager *manager);
 

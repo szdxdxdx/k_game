@@ -10,6 +10,12 @@
  */
 struct k_array {
 
+    /** \brief 内存分配函数 */
+    void *(*fn_malloc)(size_t size);
+
+    /** \brief 内存释放函数 */
+    void (*fn_free)(void *p);
+
     /** \brief 数组所存储的元素的大小 */
     size_t elem_size;
 
@@ -38,22 +44,51 @@ struct k_array {
     void *storage;
 };
 
-/**
- * \brief 初始化数组
- *
- * `elem_size` 指明数组所存储的元素的大小，单位：字节。
- * `init_capacity` 指明数组的初始容量。
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
-int k_array_init(struct k_array *arr, size_t elem_size, size_t init_capacity);
+/** \brief 用于构造数组的配置参数 */
+struct k_array_config {
+
+    /** \brief 内存分配函数 */
+    void *(*fn_malloc)(size_t size);
+
+    /** \brief 内存释放函数 */
+    void (*fn_free)(void *ptr);
+
+    /** \brief 数组所存储的元素的大小 */
+    size_t elem_size;
+
+    /** \brief 初始容量 */
+    size_t init_capacity;
+};
 
 /**
- * \brief 清空数组，并释放存储元素所用的内存
+ * \brief 创建数组
  *
- * 若不再使用数组，则需调用本函数释放内存。
+ * 若成功，函数返回数组容器的指针，否则返回 `NULL`。
  */
-void k_array_free_storage(struct k_array *arr);
+struct k_array *k_array_create(const struct k_array_config *config);
+
+/**
+ * \brief 销毁数组
+ *
+ * 若 `arr` 为 `NULL`，则函数不执行任何操作。
+ */
+void k_array_destroy(struct k_array *arr);
+
+/**
+ * \brief 构造数组
+ *
+ * 在 `arr` 指向的内存段上原地构造数组。
+ *
+ * 若成功，函数返回值同入参 `arr`，否则返回 `NULL`。
+ */
+struct k_array *k_array_construct(struct k_array *arr, const struct k_array_config *config);
+
+/**
+ * \brief 析构数组
+ *
+ * 原地析构 `arr` 所指向的内存段上的动态数组。
+ */
+void k_array_destruct(struct k_array *arr);
 
 /**
  * \brief 获取数组中指定索引处的元素的地址
@@ -97,7 +132,7 @@ int k_array_reserve(struct k_array *arr, size_t n);
  * 若成功，数组 `size` 增加 `n`，函数返回所腾出空间的首地址。
  * 该地址在执行下一次增删或扩缩容操作前始终有效，新元素在该处开始往后覆盖写入。
  *
- * 若失败，数组 `size` 不变，函数返回 NULL。
+ * 若失败，数组 `size` 不变，函数返回 `NULL`。
  *
  * 若数组 `arr` 存储的元素类型为 `T`，要在索引 `idx` 处增加 `n` 个元素，可以这样操作：
  * ```C
@@ -169,6 +204,9 @@ void k_array_pop_back(struct k_array *arr);
 
 /** \brief 清空数组，但保持原容量，不释放存储元素所使用的内存 */
 void k_array_clear(struct k_array *arr);
+
+/** \brief 清空数组，并释放存储元素所用的内存 */
+void k_array_free_storage(struct k_array *arr);
 
 /**
  * \brief 将数组指定区间（左闭右开）内的元素覆盖填充为指定值

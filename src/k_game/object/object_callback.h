@@ -13,6 +13,4 @@ struct k_object_callback {
     struct k_callback *base;
 };
 
-void k__object_init_callback_list(struct k_object *object);
-
 #endif

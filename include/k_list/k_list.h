@@ -57,6 +57,14 @@ static inline int k_list_is_empty(struct k_list *list) {
     return list->head.next == &list->head;
 }
 
+#define k_list_get_first(list) ((list)->head.next)
+#define k_list_move_next(iter) (iter = iter->next)
+#define k_list_tail(list)      (&(list)->head)
+
+#define k_list_get_last(list)  ((list)->head.prev)
+#define k_list_move_prev(iter) (iter = iter->prev)
+#define k_list_head(list)      (&(list)->head)
+
 #define k_list_for_each(list_, node_) \
     node_ = (list_)->head.next; \
     node_ != &((list_)->head); \

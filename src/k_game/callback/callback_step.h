@@ -9,13 +9,6 @@
 #include "../object/object_callback.h"
 #include "../component/component_callback.h"
 
-struct k_step_callback {
-
-    struct k_list_node list_node;
-
-    struct k_callback base;
-};
-
 struct k_step_callback_manager {
 
     struct k_list callback_list;

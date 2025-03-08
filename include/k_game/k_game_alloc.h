@@ -5,6 +5,6 @@
 
 void *k_malloc(size_t size);
 
-void k_free(void *ptr);
+void k_free(void *p);
 
 #endif

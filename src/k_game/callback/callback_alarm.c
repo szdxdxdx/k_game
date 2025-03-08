@@ -5,9 +5,18 @@
 
 /* region [callback_def] */
 
+struct k_alarm_callback {
+
+    struct k_list_node list_node;
+
+    struct k_callback base;
+
+    uint64_t timeout;
+};
+
 struct k_room_alarm_callback {
 
-    struct k_alarm_callback alarm_callback;
+    struct k_alarm_callback alarm_callback; /* inherit */
 
     struct k_room_callback room_callback;
 
@@ -18,7 +27,7 @@ struct k_room_alarm_callback {
 
 struct k_object_alarm_callback {
 
-    struct k_alarm_callback alarm_callback;
+    struct k_alarm_callback alarm_callback; /* inherit */
 
     struct k_object_callback object_callback;
 
@@ -29,7 +38,7 @@ struct k_object_alarm_callback {
 
 struct k_component_alarm_callback {
 
-    struct k_alarm_callback alarm_callback;
+    struct k_alarm_callback alarm_callback; /* inherit */
 
     struct k_component_callback component_callback;
 
@@ -47,17 +56,11 @@ void k__callback_init_alarm_manager(struct k_alarm_callback_manager *manager) {
 
 void k__callback_deinit_alarm_manager(struct k_alarm_callback_manager *manager) {
 
+    k__callback_flush_alarm(manager);
+
     struct k_alarm_callback *alarm_callback;
-    struct k_list *list;
+    struct k_list *list = &manager->callback_list;
     struct k_list_node *iter, *next;
-
-    list = &manager->callback_list;
-    for (k_list_for_each_s(list, iter, next)) {
-        alarm_callback = container_of(iter, struct k_alarm_callback, list_node);
-        k_free(alarm_callback);
-    }
-
-    list = &manager->pending_list;
     for (k_list_for_each_s(list, iter, next)) {
         alarm_callback = container_of(iter, struct k_alarm_callback, list_node);
         k_free(alarm_callback);

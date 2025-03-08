@@ -48,8 +48,8 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     renderer->x         = config->x;
     renderer->y         = config->y;
 
-    //if (NULL == k_component_add_draw_callback(component, sprite_renderer_draw, config->z_index))
-    //    return -1;
+    if (NULL == k_component_add_draw_callback(component, sprite_renderer_draw, config->z_index))
+        return -1;
 
     return 0;
 }
