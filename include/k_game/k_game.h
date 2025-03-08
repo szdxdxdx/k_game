@@ -12,7 +12,7 @@
 #include "./k_game_component.h"
 #include "./k_game_run.h"
 
-#include "./k_game_components/WASD.h"
-#include "./k_game_components/sprite_renderer.h"
+#include "./k_game_components/k_WASD.h"
+#include "./k_game_components/k_sprite_renderer.h"
 
 #endif

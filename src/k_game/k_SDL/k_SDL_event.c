@@ -1,5 +1,5 @@
-#include "../game/game.h"
-#include "../room/room.h"
+#include "../game/k_game_context.h"
+#include "../room/k_room.h"
 
 #include "./k_SDL.h"
 

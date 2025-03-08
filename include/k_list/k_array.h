@@ -77,7 +77,7 @@ void k_array_destroy(struct k_array *arr);
 /**
  * \brief 构造数组
  *
- * 在 `arr` 指向的内存段上原地构造数组。
+ * 在 `arr` 所指向的内存段上原地构造数组。
  *
  * 若成功，函数返回值同入参 `arr`，否则返回 `NULL`。
  */
@@ -87,6 +87,8 @@ struct k_array *k_array_construct(struct k_array *arr, const struct k_array_conf
  * \brief 析构数组
  *
  * 原地析构 `arr` 所指向的内存段上的动态数组。
+ *
+ * 若 `arr` 为 `NULL`，则函数不执行任何操作。
  */
 void k_array_destruct(struct k_array *arr);
 
