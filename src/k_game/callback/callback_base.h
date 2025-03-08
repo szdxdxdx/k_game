@@ -8,6 +8,8 @@ enum k_callback_event_type {
     K_ALARM_CALLBACK,
 
     K_STEP_CALLBACK,
+
+    K_DRAW_CALLBACK,
 };
 
 enum k_callback_context_type {

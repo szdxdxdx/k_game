@@ -49,8 +49,8 @@ static void game_loop(struct k_room *room) {
     while (room->game_loop) {
 
         // k__room_flush_step_begin_callbacks(room);
-        k__flush_alarm_callbacks(&room->alarm_callback_manager);
-        k__flush_step_callbacks(&room->step_callback_manager);
+        k__callback_flush_alarm(&room->alarm_callback_manager);
+        k__callback_flush_step(&room->step_callback_manager);
 
         // k__room_flush_step_end_callbacks(room);
 
@@ -59,8 +59,8 @@ static void game_loop(struct k_room *room) {
         do k__poll_SDL_events(); while (frame_delay(room));
 
         // k__room_exec_step_begin_callbacks(room);
-        k__exec_alarm_callbacks(&room->alarm_callback_manager);
-        k__exec_step_callbacks(&room->step_callback_manager);
+        k__callback_exec_alarm(&room->alarm_callback_manager);
+        k__callback_exec_step(&room->step_callback_manager);
 
         // SDL_SetRenderDrawColor(k__window.renderer, 0, 0, 0, 255);
         // SDL_RenderClear(k__window.renderer);

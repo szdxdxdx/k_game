@@ -25,21 +25,16 @@ static void room_step(void *data) {
     }
 }
 
-static void room_enter(void *data) {
-    struct k_room *room = k_get_current_room();
+static int init(void) {
+
+    struct k_room_config room_config = K_ROOM_CONFIG_INIT;
+    struct k_room *room = k_room_create(&room_config, NULL);
 
     music_1 = Mix_LoadMUS("assets/tmp.wav");
     Mix_PlayMusic(music_1, -1);
 
     music_2 = Mix_LoadMUS("assets/DJMZJ_HHDDD.mp3");
     player_hhddd = k_room_add_step_callback(room, room_step, NULL);
-}
-
-static int init(void) {
-
-    struct k_room_config room_config = K_ROOM_CONFIG_INIT;
-    struct k_room *room = k_room_create(&room_config, NULL);
-    k_room_add_enter_callback(room, room_enter, NULL);
 
     k_goto_room(room);
     return 0;

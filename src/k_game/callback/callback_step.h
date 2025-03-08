@@ -23,63 +23,18 @@ struct k_step_callback_manager {
     struct k_list pending_list;
 };
 
-void k__init_step_callback_manager(struct k_step_callback_manager *manager);
+void k__callback_init_step_manager(struct k_step_callback_manager *manager);
 
-void k__deinit_step_callback_manager(struct k_step_callback_manager *manager);
+void k__callback_deinit_step_manager(struct k_step_callback_manager *manager);
 
-void k__flush_step_callbacks(struct k_step_callback_manager *manager);
+void k__callback_flush_step(struct k_step_callback_manager *manager);
 
-void k__exec_step_callbacks(struct k_step_callback_manager *manager);
+void k__callback_exec_step(struct k_step_callback_manager *manager);
 
-/* region [room_step_callback] */
+struct k_room_callback *k__callback_add_room_step(struct k_step_callback_manager *manager, void (*fn_callback)(void *), void *data);
 
-struct k_room_step_callback {
+struct k_object_callback *k__callback_add_object_step(struct k_step_callback_manager *manager, void (*fn_callback)(struct k_object *object), struct k_object *object);
 
-    struct k_step_callback step_callback;
-
-    struct k_room_callback room_callback;
-
-    void (*fn_callback)(void *data);
-
-    void *data;
-};
-
-struct k_room_callback *k__add_room_step_callback(struct k_step_callback_manager *manager, void (*fn_callback)(void *data), void *data);
-
-/* endregion */
-
-/* region [object_step_callback] */
-
-struct k_object_step_callback {
-
-    struct k_step_callback step_callback;
-
-    struct k_object_callback object_callback;
-
-    void (*fn_callback)(struct k_object *object);
-
-    struct k_object *object;
-};
-
-struct k_object_callback *k__add_object_step_callback(struct k_step_callback_manager *manager, void (*fn_callback)(struct k_object *object), struct k_object *object);
-
-/* endregion */
-
-/* region [component_step] */
-
-struct k_component_step_callback {
-
-    struct k_step_callback step_callback;
-
-    struct k_component_callback component_callback;
-
-    void (*fn_callback)(struct k_component *component);
-
-    struct k_component *component;
-};
-
-struct k_component_callback *k__add_component_step_callback(struct k_step_callback_manager *manager, void (*fn_callback)(struct k_component *component), struct k_component *component);
-
-/* endregion */
+struct k_component_callback *k__callback_add_component_step(struct k_step_callback_manager *manager, void (*fn_callback)(struct k_component *component), struct k_component *component);
 
 #endif
