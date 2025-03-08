@@ -5,12 +5,12 @@ project(k_game C)
 
 set(CMAKE_C_STANDARD 90)
 
-include_directories(
-    "${CMAKE_SOURCE_DIR}/include/k_game"
-    "${CMAKE_SOURCE_DIR}/include/k_list"
-    "${CMAKE_SOURCE_DIR}/include/k_log"
-    "${CMAKE_SOURCE_DIR}/include/k_printf"
-    "${CMAKE_SOURCE_DIR}/include/k_utils")
+file(GLOB INCLUDE_SUBDIRS "${CMAKE_SOURCE_DIR}/include/*")
+foreach(INCLUDE_SUBDIR ${INCLUDE_SUBDIRS})
+    if(IS_DIRECTORY ${INCLUDE_SUBDIR})
+        include_directories(${INCLUDE_SUBDIR})
+    endif()
+endforeach()
 
 include_directories(
     "${CMAKE_SOURCE_DIR}/libs/SDL2-devel-2.30.11-mingw/SDL2-2.30.11/x86_64-w64-mingw32/include/SDL2"
@@ -20,7 +20,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/libs/webui-windows-gcc-x64/include")
 
 file(GLOB_RECURSE SRC_FILES
-    "${CMAKE_SOURCE_DIR}/test/test_1/*.c"
+    "${CMAKE_SOURCE_DIR}/test/test_2/*.c"
     "${CMAKE_SOURCE_DIR}/src/*.c")
 
 link_directories(
