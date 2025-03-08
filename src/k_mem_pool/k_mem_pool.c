@@ -66,6 +66,7 @@ static int check_config(const struct k_mem_pool_config *config) {
 }
 
 struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config) {
+    assert(NULL != config);
 
     if (0 != check_config(config))
         return NULL;
@@ -98,6 +99,8 @@ struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config) {
 }
 
 struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_mem_pool_config *config) {
+    assert(NULL != pool);
+    assert(NULL != config);
 
     if (0 != check_config(config))
         return NULL;
