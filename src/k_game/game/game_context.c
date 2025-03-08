@@ -11,10 +11,6 @@ struct k_room *k_get_current_room(void) {
     return k__game.current_room;
 }
 
-void *k_get_current_room_data(void) {
-    return k__game.current_room->data;
-}
-
 float k_get_step_delta(void) {
     return k__game.step_delta;
 }

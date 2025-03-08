@@ -21,8 +21,7 @@ struct k_room_config {
      * 若指定名字，需保证其唯一性。k_game 会基于该名字为房间创建索引，
      * 之后你可以通过 `k_room_find()` 查找房间。
      *
-     * 在创建房间时，k_game 不会分配内存来复制名字。
-     * 传递的字符串的内存段必须始终有效，建议使用字符串字面量。
+     * k_game 不会分配内存来复制名字，该字符串所处的内存段必须始终有效。
      */
     const char *room_name;
 
@@ -33,19 +32,22 @@ struct k_room_config {
     int room_speed;
 
     /**
-     * \brief 自定义数据结构体的大小，单位：字节
+     * \brief 房间关联数据的结构体大小
      *
-     * 在此指定为房间附加的自定义数据结的构体大小。
+     * 在此指定为房间附加的自定义数据的结构体大小，单位：字节。
      *
-     * 创建房间时，k_game 会为自定义的数据段分配内存，
-     * 之后你可以通过 `k_room_get_data()` 访问该数据。
+     * 创建房间时，k_game 会为房间的关联数据分配内存，
+     * 之后你可以通过 `k_room_get_data()` 读写该内存。
      *
-     * 附加数据是可选的，若不需要可指定该值为 0。
+     * 关联数据的内存由 k_game 管理，其生命周期与房间相同。
+     * 销毁房间时 k_game 会释放该内存。
+     *
+     * 关联数据是可选的，若不需要可指定该值为 0。
      */
     size_t data_size;
 
     /**
-     * \brief 创建房间时的初始化回调
+     * \brief 创建房间后执行的回调
      *
      * 在此回调中，你可以对房间执行你所需的初始化工作：
      * - 初始化该房间自定义数据段的内存
@@ -54,24 +56,27 @@ struct k_room_config {
      * - 在房间中创建对象
      * - ...
      *
+     * 你需要通过返回值告诉 k_game 你的初始化是否成功，
+     * 若成功，回调函数应返回 0，否则应返回非 0。
      * 房间初始化失败，也意味着房间创建失败。
-     * 你将通过函数的返回值告诉 k_game 你的初始化是否成功，
-     * 若成功，函数应返回 0，否则应返回非 0。
+     *
+     * 此回调的 `params` 参数由 `k_room_create()` 传入。
      *
      * 此回调是可选的，指定值为 `NULL` 则不执行回调。
      */
     int (*fn_init)(struct k_room *room, void *params);
 
     /**
-     * \brief 销毁房间时的清理回调
+     * \brief 销毁房间前执行的回调
      *
      * 若你在房间运行过程中申请有不是由 k_game 所管辖的资源，
      * 你可以在此回调中释放这些资源。
      *
-     * 此回调是可选的，指定值为 `NULL` 则不执行回调。
-     *
-     * 注意，若房间的初始化回调执行失败，k_game 将不执行本回调。
+     * 注意：
+     * 若房间的 `fn_init()` 回调执行失败，则不会执行本回调。
      * 你需保证初始化回调能在失败时自行回滚。
+     *
+     * 此回调是可选的，指定值为 `NULL` 则不执行回调。
      */
     void (*fn_cleanup)(struct k_room *room);
 };
@@ -91,7 +96,7 @@ struct k_room_config {
 /**
  * \brief 创建房间
  *
- * 若 `config` 中指定了房间的初始化回调，
+ * 若 `config` 中指定了房间的初始化回调 `fn_init()`，
  * 则函数将 `params` 转交给该回调。
  *
  * 若创建成功，函数返回房间指针，否则返回 `NULL`。
@@ -123,9 +128,13 @@ int k_room_get_width(struct k_room *room);
 
 int k_room_get_height(struct k_room *room);
 
+/**
+ * \brief 获取房间的关联数据
+ *
+ * 若创建房间时，指定了房间关联数据的结构体大小不为 0，
+ * 则函数返回该指向数据内存段的指针，否则返回 `NULL`，
+ */
 void *k_room_get_data(struct k_room *room);
-
-void *k_get_current_room_data(void);
 
 /**
  * \brief 房间回调
@@ -157,5 +166,7 @@ struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (
 void k_room_del_callback(struct k_room_callback *callback);
 
 void k_room_del_all_callbacks(struct k_room *room);
+
+void k_room_clean_canvas(void *unused);
 
 #endif

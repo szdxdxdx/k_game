@@ -18,6 +18,7 @@ static void object_step(struct k_object *object) {
 }
 
 static int create_room(struct k_room *room, void *params) {
+    k_room_add_draw_callback(room, k_room_clean_canvas, NULL, INT_MIN);
 
     struct k_object *object = k_object_create(sizeof(struct obj_player));
     struct obj_player *player = k_object_get_data(object);
