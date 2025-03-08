@@ -117,6 +117,10 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
         switch (alarm_callback->base.context) {
             case K_ROOM_CALLBACK: {
                 struct k_room_alarm_callback *callback = (struct k_room_alarm_callback *)alarm_callback;
+
+                k_list_del(&callback->room_callback.list_node); /* 摘链并自环，原因同 case K_OBJECT_CALLBACK */
+                k_list_link_self(&callback->room_callback.list_node);
+
                 callback->fn_callback(callback->data, timeout_diff);
                 break;
             }

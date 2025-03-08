@@ -11,8 +11,4 @@ struct k_component_callback {
     struct k_callback *base;
 };
 
-void k__component_init_callback_list(struct k_component *component);
-
-void k__component_cleanup_callback_list(struct k_component *component);
-
 #endif

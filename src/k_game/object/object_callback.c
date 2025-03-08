@@ -36,10 +36,11 @@ struct k_object_callback *k_object_add_draw_callback(struct k_object *object, vo
 
 void k_object_del_callback(struct k_object_callback *callback) {
 
-    if (NULL != callback) {
-        k__callback_set_deleted(callback->base);
-        k_list_del(&callback->list_node);
-    }
+    if (NULL == callback)
+        return;
+
+    k_list_del(&callback->list_node);
+    k__callback_set_deleted(callback->base);
 }
 
 void k_object_del_all_callbacks(struct k_object *object) {

@@ -37,10 +37,11 @@ struct k_component_callback *k_component_add_draw_callback(struct k_component *c
 
 void k_component_del_callback(struct k_component_callback *callback) {
 
-    if (NULL != callback) {
-        k__callback_set_deleted(callback->base);
-        k_list_del(&callback->list_node);
-    }
+    if (NULL == callback)
+        return;
+
+    k_list_del(&callback->list_node);
+    k__callback_set_deleted(callback->base);
 }
 
 void k_component_del_all_callbacks(struct k_component *component) {

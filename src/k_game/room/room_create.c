@@ -90,7 +90,7 @@ static void step_free_room_data(void *data) {
     k_free(room->data);
 }
 
-static int step_configure_room(void *data) {
+static int step_init_room(void *data) {
     struct k_room_creation_context *ctx = data;
     const struct k_room_config *config = ctx->config;
     struct k_room *room = ctx->room;
@@ -99,6 +99,7 @@ static int step_configure_room(void *data) {
     room->fn_cleanup = config->fn_cleanup;
     room->game_loop  = 0;
     room->step_interval_ms = (uint64_t)(1000 / config->room_speed);
+    k_list_init(&room->callback_list);
 
     return 0;
 }
@@ -138,7 +139,7 @@ static void step_deinit_callback_managers(void *data) {
     k__callback_deinit_draw_manager(&room->draw_callback_manager);
 }
 
-static int step_call_fn_create(void *data) {
+static int step_call_fn_init(void *data) {
     struct k_room_creation_context *ctx = data;
     void *params = ctx->params;
     struct k_room *room = ctx->room;
@@ -159,7 +160,7 @@ static int step_call_fn_create(void *data) {
     return 0;
 }
 
-static void step_call_fn_destroy(void *data) {
+static void step_call_fn_cleanup(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
@@ -176,10 +177,10 @@ static const struct k_seq_step room_creation_steps[] = {
     { step_malloc_room,            step_free_room                },
     { step_registry_add,           step_registry_del             },
     { step_malloc_room_data,       step_free_room_data           },
-    { step_configure_room,         NULL                          },
+    { step_init_room,              NULL                          },
     { step_init_callback_managers, step_deinit_callback_managers },
     { step_init_object_pool,       step_cleanup_object_pool      },
-    { step_call_fn_create,         step_call_fn_destroy          },
+    { step_call_fn_init,           step_call_fn_cleanup          },
 };
 
 /* endregion */
