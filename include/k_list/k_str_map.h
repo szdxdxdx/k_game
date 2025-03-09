@@ -23,7 +23,9 @@ struct k_str_map_node {
 
 void k_str_map_init(struct k_str_map *map, struct k_hash_list *buckets, size_t buckets_num);
 
-int k_str_map_add(struct k_str_map *map, const char *key, struct k_str_map_node *node);
+int k_str_map_add_if_absent(struct k_str_map *map, const char *key, struct k_str_map_node *node);
+
+void k_str_map_add_directly(struct k_str_map *map, const char *key, struct k_str_map_node *node);
 
 struct k_str_map_node *k_str_map_get(struct k_str_map *map, const char *key);
 

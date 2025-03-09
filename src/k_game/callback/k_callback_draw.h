@@ -1,9 +1,8 @@
 #ifndef K_GAME__CALLBACK_DRAW_H
 #define K_GAME__CALLBACK_DRAW_H
 
-#include "k_array.h"
 #include "k_list.h"
-#include "k_hash_list.h"
+#include "k_int_map.h"
 
 #include "./k_callback_base.h"
 
@@ -13,7 +12,7 @@
 
 struct k_draw_callback_manager {
 
-    struct k_array z_index_map;
+    struct k_int_map z_index_map;
 
     struct k_list layer_list;
 

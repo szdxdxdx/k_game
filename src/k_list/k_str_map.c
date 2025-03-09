@@ -40,7 +40,7 @@ void k_str_map_init(struct k_str_map *map, struct k_hash_list *buckets, size_t b
     map->buckets_num = buckets_num;
 }
 
-int k_str_map_add(struct k_str_map *map, const char *key, struct k_str_map_node *node) {
+int k_str_map_add_if_absent(struct k_str_map *map, const char *key, struct k_str_map_node *node) {
     assert(NULL != map);
     assert(NULL != key);
     assert(NULL != node);
@@ -56,6 +56,19 @@ int k_str_map_add(struct k_str_map *map, const char *key, struct k_str_map_node 
     k_hash_list_add(list, &node->list_node);
 
     return 0;
+}
+
+void k_str_map_add_directly(struct k_str_map *map, const char *key, struct k_str_map_node *node) {
+    assert(NULL != map);
+    assert(NULL != key);
+    assert(NULL != node);
+
+    size_t hash = str_hash(key);
+    struct k_hash_list *list = &(map->buckets[hash % map->buckets_num]);
+
+    node->key = key;
+    node->hash = hash;
+    k_hash_list_add(list, &node->list_node);
 }
 
 struct k_str_map_node *k_str_map_get(struct k_str_map *map, const char *key) {

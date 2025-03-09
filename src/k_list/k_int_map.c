@@ -1,4 +1,3 @@
-#include <string.h>
 #include <assert.h>
 
 #include "k_int_map.h"
@@ -28,7 +27,7 @@ void k_int_map_init(struct k_int_map *map, struct k_hash_list *buckets, size_t b
     map->buckets_num = buckets_num;
 }
 
-int k_int_map_add(struct k_int_map *map, int key, struct k_int_map_node *node) {
+int k_int_map_add_if_absent(struct k_int_map *map, int key, struct k_int_map_node *node) {
     assert(NULL != map);
     assert(NULL != node);
 
@@ -42,6 +41,17 @@ int k_int_map_add(struct k_int_map *map, int key, struct k_int_map_node *node) {
     k_hash_list_add(list, &node->list_node);
 
     return 0;
+}
+
+void k_int_map_add_directly(struct k_int_map *map, int key, struct k_int_map_node *node) {
+    assert(NULL != map);
+    assert(NULL != node);
+
+    size_t hash = (size_t)key;
+    struct k_hash_list *list = &(map->buckets[hash % map->buckets_num]);
+
+    node->key = key;
+    k_hash_list_add(list, &node->list_node);
 }
 
 struct k_int_map_node *k_int_map_get(struct k_int_map *map, int key) {
