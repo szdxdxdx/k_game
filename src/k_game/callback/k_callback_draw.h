@@ -3,6 +3,7 @@
 
 #include "k_array.h"
 #include "k_list.h"
+#include "k_hash_list.h"
 
 #include "./k_callback_base.h"
 

@@ -28,7 +28,7 @@ struct k_mem_block {
     };
 };
 
-#define ptr_offset(p, offset) ((void *)((uintptr_t)(p) + (offset)))
+#define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
 #define align_up(n, x)   (((n) + (x) - 1) / (x) * (x))
 #define align_down(n, x) ((n) / (x) * (x))
@@ -163,11 +163,9 @@ static inline struct k_mem_block **select_free_list(struct k_mem_pool *pool, siz
 
 static void *alloc_from_pool(struct k_mem_pool *pool, size_t size) {
 
-    /* 先将请求的 `size` 向上对齐，然后查询对应的 free_list 是否存有空闲 block */
     size_t block_size = align_up(size, pool->alloc_size_align);
     struct k_mem_block **list = select_free_list(pool, block_size);
     if (NULL != *list) {
-        /* free_list 中存有空闲 block，分配该 block */
         struct k_mem_block *block = *list;
         *list = block->next;
 
@@ -175,17 +173,14 @@ static void *alloc_from_pool(struct k_mem_pool *pool, size_t size) {
         return ptr_offset(block, sizeof(struct k_mem_block));
     }
 
-    /* free_list 中没有空闲 block，需要裁切 chunk。先计算当前 chunk 的剩余空间是否足够 */
     size_t remaining_size = pool->chunk_capacity - pool->chunk_used;
     size_t required_size  = sizeof(struct k_mem_block) + block_size;
     if (remaining_size < required_size) {
 
-        /* 当前 chunk 剩余空间不足，需要创建新 chunk */
         struct k_mem_chunk *new_chunk = pool->fn_malloc(sizeof(struct k_mem_chunk) + pool->chunk_capacity);
         if (NULL == new_chunk)
             return NULL;
 
-        /* 查看旧 chunk 剩余部分是否仍能裁出一个小 block，若能，则裁出 block 并归入 free_list */
         if (sizeof(struct k_mem_block) < remaining_size) {
             size_t free_block_size = align_down(remaining_size - sizeof(struct k_mem_block), pool->alloc_size_align);
             if (pool->alloc_size_align <= free_block_size) {
@@ -198,13 +193,11 @@ static void *alloc_from_pool(struct k_mem_pool *pool, size_t size) {
             }
         }
 
-        /* pool 使用新的 chunk */
         new_chunk->next = pool->chunk;
         pool->chunk = new_chunk;
         pool->chunk_used = 0;
     }
 
-    /* 从 chunk 中裁出一小块 block 并分配 */
     struct k_mem_block *block = ptr_offset(pool->chunk, sizeof(struct k_mem_chunk) + pool->chunk_used);
     pool->chunk_used += required_size;
 
@@ -215,12 +208,10 @@ static void *alloc_from_pool(struct k_mem_pool *pool, size_t size) {
 void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size) {
     assert(NULL != pool);
 
-    /* 若是申请小块内存，从 chunk 中分配出 block */
     if (size <= pool->block_size_max) {
         return alloc_from_pool(pool, size);
     }
 
-    /* 若是申请大块内存，pool 求助 `fn_malloc()` 分配 block */
     else if (size < SIZE_MAX - sizeof(struct k_mem_block)) {
         struct k_mem_block *block = pool->fn_malloc(sizeof(struct k_mem_block) + size);
         if (NULL == block)
@@ -233,7 +224,6 @@ void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size) {
         return ptr_offset(block, sizeof(struct k_mem_block));
     }
 
-    /* 申请内存块过大 */
     else {
         return NULL;
     }

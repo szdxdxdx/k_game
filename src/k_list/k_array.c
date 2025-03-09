@@ -4,7 +4,7 @@
 
 #include "k_array.h"
 
-#define ptr_offset(p, offset) ((void *)((uintptr_t)(p) + (offset)))
+#define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
 struct k_array *k_array_create(const struct k_array_config *config) {
     assert(NULL != config);
