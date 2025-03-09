@@ -4,7 +4,7 @@
 
 #include "./k_image.h"
 
-int k_image_draw(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
+int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
     /* TODO: assert( NULL != image ) */
     /* TODO: assert currently is in draw callback */
 
@@ -16,7 +16,7 @@ int k_image_draw(const struct k_image *image, const struct k_int_rect *src_rect,
     return k__image_draw(image, src_rect, dst_x, dst_y);
 }
 
-int k__image_draw(const struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
+int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y) {
 
     SDL_Rect src;
     if (NULL == src_rect) {

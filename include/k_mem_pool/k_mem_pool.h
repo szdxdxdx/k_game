@@ -6,24 +6,24 @@
 /**
  * \brief 内存池
  *
- * 1. 内存池会动态向系统申请分配大内存块 chunk，分配给用户的内存是从 chunk 中切出的小块 block。
+ * 内存池会动态向系统申请分配大内存块 chunk，分配给用户的内存是从 chunk 中切出的小块 block。
  *
- * 2. 分配内存时，若请求的 size 不超过 `block_size_max`，则从 chunk 中切出一块 block 分配给用户。
- *    分配出的 block 大小会向上对齐为 `alloc_size_align` 的倍数。
+ * 分配内存时，若请求的 size 不超过 `block_size_max`，则从 chunk 中切出一块 block 分配给用户。
+ * 分配出的 block 大小会向上对齐为 `alloc_size_align` 的倍数。
  *
- * 3. 每个从 chunk 中切出的 block 都对应有一条 free_list。归还 block 时将其链入对应的 free_list。
- *    free_list 使用单链串起一组空闲 block。分配内存时优先使用 free_list 中的空闲 block。
+ * 每个从 chunk 中切出的 block 都对应有一条 free_list。归还 block 时将其链入对应的 free_list。
+ * free_list 使用单链串起一组空闲 block。分配内存时优先使用 free_list 中的空闲 block。
  *
- * 4. 若申请的内存大小超过 `block_size_max`，内存池会调用 `fn_malloc()` 来分配 block。
- *    归还该 block 时，也不会将其链入 `free_list`，而是调用 `fn_free()`。
+ * 若申请的内存大小超过 `block_size_max`，内存池会调用 `fn_malloc()` 来分配 block。
+ * 归还该 block 时，也不会将其链入 `free_list`，而是调用 `fn_free()`。
  *
- * 5. 创建或构造内存池时不会预分配 chunk，等到用户第一次向内存池索要内存时才创建第一个 chunk。
- *    内存池使用期间不会归还 chunk 的内存，等到销毁或析构内存池时才归还所有 chunk。
+ * 创建或构造内存池时不会预分配 chunk，等到用户第一次向内存池索要内存时才创建第一个 chunk。
+ * 内存池使用期间不会归还 chunk 的内存，等到销毁或析构内存池时才归还所有 chunk。
  */
 struct k_mem_pool {
 
-    /* 结构体成员为私有，请勿直接访问。
-     * 公开此结构体的定义，仅仅是为了允许你能将内存池嵌入到其他结构体中。
+    /* 此结构体所有成员都应为私有，请勿直接访问。
+     * 公开定义仅仅是为了允许你能将其嵌入到其他结构体中。
      */
 
     void *(*fn_malloc)(size_t size);

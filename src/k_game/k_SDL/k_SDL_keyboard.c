@@ -172,13 +172,13 @@ void k__refresh_keyboard(void) {
 }
 
 void k__handle_SDL_key_down_event(SDL_KeyboardEvent *event) {
-    enum k_keyboard_key k_key = SDL_key_to_k_key(event->keysym.sym);
-    key_state[k_key] |= 0b010;
+    enum k_keyboard_key key = SDL_key_to_k_key(event->keysym.sym);
+    key_state[key] |= 0b010;
 }
 
 void k__handle_SDL_key_up_event(SDL_KeyboardEvent *event) {
-    enum k_keyboard_key k_key = SDL_key_to_k_key(event->keysym.sym);
-    key_state[k_key] |= 0b001;
+    enum k_keyboard_key key = SDL_key_to_k_key(event->keysym.sym);
+    key_state[key] |= 0b001;
 }
 
 int k_key_pressed(enum k_keyboard_key key) {

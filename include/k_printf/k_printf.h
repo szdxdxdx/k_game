@@ -143,10 +143,10 @@ struct k_printf_spec {
      *
      * 若是静态指定的最小宽度，则 `min_width` 保存着该宽度值，一定为正，最大为 `INT_MAX`。
      * 例如：
-     * 遇到 `%2k` 时，`min_width` 的值为 2。
-     * 遇到 `%02k` 时，`0` 被识别成零填充修饰符，`min_width` 的值为 2。
-     * 遇到 `%-2k` 时，`-` 被识别成左对齐修饰符，`min_width` 的值为 2。
-     * 遇到 `%999999999999k` 时，`min_width` 的值为 `INT_MAX`。
+     * - 遇到 `%2k` 时，`min_width` 的值为 2。
+     * - 遇到 `%02k` 时，`0` 被识别成零填充修饰符，`min_width` 的值为 2。
+     * - 遇到 `%-2k` 时，`-` 被识别成左对齐修饰符，`min_width` 的值为 2。
+     * - 遇到 `%999999999999k` 时，`min_width` 的值为 `INT_MAX`。
      *
      * 若是动态指定的最小宽度，则 `min_width` 为 -1。
      * 例如，遇到 `%*k` 时，`use_min_width` 为非 0，`min_width` 为 -1，
@@ -163,10 +163,10 @@ struct k_printf_spec {
      *
      * 若是静态指定的精度，则 `precision` 保存着该精度值，一定为正，最大为 `INT_MAX`。
      * 例如：
-     * 遇到 `%.2k` 时，`precision` 的值为 2。
-     * 遇到 `%.k` 时，`precision` 的值为 0。
-     * 遇到 `%.999999999999k` 时，`precision` 的值为 `INT_MAX`。
-     * 遇到 `%.-2k` 时，无法正确识别出格式说明符`%k`。
+     * - 遇到 `%.2k` 时，`precision` 的值为 2。
+     * - 遇到 `%.k` 时，`precision` 的值为 0。
+     * - 遇到 `%.999999999999k` 时，`precision` 的值为 `INT_MAX`。
+     * - 遇到 `%.-2k` 时，无法正确识别出格式说明符`%k`。
      *
      * 若是动态指定的精度，则 `precision` 为 -1。
      * 例如，遇到 `%.*k` 时，`use_precision` 为非 0，`precision` 为 -1，
