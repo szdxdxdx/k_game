@@ -1,7 +1,8 @@
 #include "k_game_alloc.h"
 
-#include "./k_callback.h"
 #include "../game/k_game_context.h"
+
+#include "./k_callback.h"
 
 /* region [callback_def] */
 

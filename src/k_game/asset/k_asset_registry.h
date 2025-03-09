@@ -16,7 +16,7 @@ struct k_asset_registry {
 
     struct k_list asset_list;
 
-    void (*fn_free)(struct k_asset_registry_node *node);
+    void (*fn_free_asset)(struct k_asset_registry_node *node);
 };
 
 /* 用于资源注册表的结点结构
@@ -30,7 +30,7 @@ struct k_asset_registry_node {
     struct k_list_node iter_node;
 };
 
-int k__asset_registry_init(struct k_asset_registry *registry, void (*fn_free)(struct k_asset_registry_node *registry_node));
+int k__asset_registry_init(struct k_asset_registry *registry, void (*fn_free_asset)(struct k_asset_registry_node *registry_node));
 
 void k__asset_registry_cleanup(struct k_asset_registry *registry);
 

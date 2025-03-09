@@ -3,31 +3,32 @@
 #include "k_game_alloc.h"
 #include "./k_asset_registry.h"
 
-int k__asset_registry_init(struct k_asset_registry *registry, void (*fn_free)(struct k_asset_registry_node *registry_node)) {
+int k__asset_registry_init(struct k_asset_registry *registry, void (*fn_free_asset)(struct k_asset_registry_node *registry_node)) {
 
-    size_t buckets_num = 31;
+    size_t buckets_num = 32;
     struct k_hash_list *buckets = k_malloc(buckets_num * sizeof(struct k_hash_list));
     if (NULL == buckets)
         return -1;
 
-    k_list_init(&registry->asset_list);
     k_str_map_init(&registry->name_map, buckets, buckets_num);
-    registry->fn_free = fn_free;
+
+    k_list_init(&registry->asset_list);
+    registry->fn_free_asset = fn_free_asset;
 
     return 0;
 }
 
 void k__asset_registry_cleanup(struct k_asset_registry *registry) {
 
-    void (*fn_free)(struct k_asset_registry_node *) = registry->fn_free;
-    struct k_asset_registry_node *registry_node;
+    void (*fn_free_asset)(struct k_asset_registry_node *) = registry->fn_free_asset;
 
+    struct k_asset_registry_node *registry_node;
     struct k_list *asset_list = &registry->asset_list;
     struct k_list_node *iter, *next;
     for(k_list_for_each_s(asset_list, iter, next)) {
         registry_node = container_of(iter, struct k_asset_registry_node, iter_node);
 
-        fn_free(registry_node);
+        fn_free_asset(registry_node);
     }
 
     k_free(registry->name_map.buckets);
