@@ -12,7 +12,7 @@
 #include "../component/k_component.h"
 #include "../components/k_components_def.h"
 
-/* region [game_initialization_steps] */
+/* region [steps] */
 
 static int step_check_config(void *data) {
     const struct k_game_config *config = data;
@@ -125,7 +125,7 @@ static void step_call_fn_cleanup(void *data) {
         config->fn_cleanup();
 }
 
-static const struct k_seq_step game_initialization_steps[] = {
+static const struct k_seq_step steps[] = {
     { step_check_config,            NULL                            },
     { step_init_SDL,                step_close_SDL                  },
     { step_init_image_registry,     step_cleanup_image_registry     },
@@ -141,25 +141,18 @@ static const struct k_seq_step game_initialization_steps[] = {
 
 static int init_game(const struct k_game_config *config) {
 
-    size_t steps_num = k_array_len(game_initialization_steps);
-    size_t completed_count = k_seq_step_exec_forward(game_initialization_steps, steps_num, (void *)config);
-    if (completed_count != steps_num)
-        goto err;
+    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), (void *)config)) {
+        k_log_error("Failed to initialize game");
+        return -1;
+    }
 
     k_log_info("Game initialized");
     return 0;
-
-err:
-    k_seq_step_exec_backward(game_initialization_steps, completed_count, (void *)config);
-    k_log_error("Failed to initialize game");
-    return -1;
 }
 
 static void deinit_game(const struct k_game_config *config) {
 
-    size_t steps_num = k_array_len(game_initialization_steps);
-    k_seq_step_exec_backward(game_initialization_steps, steps_num, (void *)config);
-
+    k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), (void *)config);
     k_log_info("Game deinitialized");
 }
 

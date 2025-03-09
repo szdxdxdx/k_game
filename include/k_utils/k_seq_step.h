@@ -14,10 +14,8 @@ size_t k_seq_step_exec_forward(const struct k_seq_step *steps, size_t steps_num,
 
 void k_seq_step_exec_backward(const struct k_seq_step *steps, size_t steps_num, void *data);
 
-int k_seq_step_exec_with_rollback(const struct k_seq_step *steps, size_t steps_num, void *data);
+int k_seq_step_exec(const struct k_seq_step *steps, size_t steps_num, void *data);
 
-#ifndef k_array_len
-#define k_array_len(arr) (sizeof(arr) / sizeof(arr[0]))
-#endif
+#define k_seq_step_array_len(arr) (sizeof(arr) / sizeof(arr[0]))
 
 #endif

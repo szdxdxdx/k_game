@@ -93,7 +93,7 @@ static void step_registry_del(void *data) {
     k__image_registry_del(image);
 }
 
-static const struct k_seq_step image_load_steps[] = {
+static const struct k_seq_step steps[] = {
     { step_check_config,  NULL                 },
     { step_malloc_image,  step_free_image      },
     { step_load_texture,  step_destroy_texture },
@@ -110,7 +110,7 @@ struct k_image *k_image_load(const char *image_name, const char *filepath) {
     ctx.image_name = image_name;
     ctx.image      = NULL;
 
-    if (0 != k_seq_step_exec_with_rollback(image_load_steps, k_array_len(image_load_steps), &ctx)) {
+    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx)) {
         k_log_error("Failed to load image");
         return NULL;
     }
@@ -125,5 +125,5 @@ void k__image_release(struct k_image *image) {
     ctx.image_name = NULL;
     ctx.image      = image;
 
-    k_seq_step_exec_backward(image_load_steps, k_array_len(image_load_steps), &ctx);
+    k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
 }

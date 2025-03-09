@@ -186,7 +186,7 @@ static void step_call_fn_cleanup(void *data) {
     }
 }
 
-static const struct k_seq_step room_creation_steps[] = {
+static const struct k_seq_step steps[] = {
     { step_check_config,           NULL                          },
     { step_malloc_room,            step_free_room                },
     { step_registry_add,           step_registry_del             },
@@ -207,7 +207,7 @@ struct k_room *k_room_create(const struct k_room_config *config, void *params) {
     ctx.params = params;
     ctx.room   = NULL;
 
-    if (0 != k_seq_step_exec_with_rollback(room_creation_steps, k_array_len(room_creation_steps), &ctx)) {
+    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx)) {
         k_log_error("Failed to create room");
         return NULL;
     }
@@ -222,7 +222,7 @@ void k__room_destroy(struct k_room *room) {
     ctx.params = NULL;
     ctx.room   = room;
 
-    k_seq_step_exec_backward(room_creation_steps, k_array_len(room_creation_steps), &ctx);
+    k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
 }
 
 void k_room_destroy(struct k_room *room) {

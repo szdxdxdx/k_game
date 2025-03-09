@@ -7,7 +7,7 @@
 
 #include "./k_sprite.h"
 
-/* region [sprite_creation_steps] */
+/* region [steps] */
 
 struct k_sprite_creation_context {
     const struct k_sprite_config *config;
@@ -95,7 +95,7 @@ static void step_registry_del(void *data) {
     k__sprite_registry_del(sprite);
 }
 
-static const struct k_seq_step sprite_creation_steps[] = {
+static const struct k_seq_step steps[] = {
     { step_check_config,  NULL              },
     { step_malloc_sprite, step_free_sprite  },
     { step_registry_add,  step_registry_del },
@@ -109,7 +109,7 @@ struct k_sprite *k_sprite_create(const struct k_sprite_config *config) {
     ctx.config = config;
     ctx.sprite = NULL;
 
-    if (0 != k_seq_step_exec_with_rollback(sprite_creation_steps, k_array_len(sprite_creation_steps), &ctx)) {
+    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx)) {
         k_log_error("Failed to create sprite");
         return NULL;
     }
@@ -123,5 +123,5 @@ void k__sprite_destroy(struct k_sprite *sprite) {
     ctx.config = NULL;
     ctx.sprite = sprite;
 
-    k_seq_step_exec_backward(sprite_creation_steps, k_array_len(sprite_creation_steps), &ctx);
+    k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
 }
