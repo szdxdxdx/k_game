@@ -9,7 +9,7 @@
 #include "./k_SDL.h"
 #include "k_game_run.h"
 
-/* region [SDL_initialization_steps] */
+/* region [steps] */
 
 static int step_init_SDL(void *unused) {
     (void)unused;

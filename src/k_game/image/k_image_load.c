@@ -9,7 +9,7 @@
 
 #include "./k_image.h"
 
-/* region [image_load_steps] */
+/* region [steps] */
 
 struct k_image_load_context {
     const char *filepath;

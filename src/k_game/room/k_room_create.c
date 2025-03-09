@@ -9,7 +9,7 @@
 
 #include "./k_room.h"
 
-/* region [room_creation_steps] */
+/* region [steps] */
 
 struct k_room_creation_context {
     const struct k_room_config *config;
