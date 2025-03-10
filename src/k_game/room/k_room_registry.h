@@ -7,7 +7,7 @@ int k__room_registry_init(void);
 
 void k__room_registry_cleanup(void);
 
-int k__room_registry_add(struct k_room *room, const char *room_name);
+void k__room_registry_add(struct k_room *room);
 
 void k__room_registry_del(struct k_room *room);
 

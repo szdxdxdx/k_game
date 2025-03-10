@@ -27,8 +27,8 @@ static int init(void) {
     struct k_room *room = k_room_create(&room_config, NULL);
     k_room_add_step_callback(room, room_step, NULL);
 
-    sound_1 = k_sound_load(NULL, "assets/bgm.wav", K_SOUND_BGM);
-    sound_2 = k_sound_load(NULL, "assets/sfx.mp3", K_SOUND_SFX);
+    sound_1 = k_sound_load("assets/bgm.wav", K_SOUND_BGM);
+    sound_2 = k_sound_load("assets/sfx.mp3", K_SOUND_SFX);
 
     k_sound_play(sound_1);
 

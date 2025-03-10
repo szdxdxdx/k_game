@@ -65,12 +65,7 @@ static int create_room(struct k_room *room, void *params) {
 
 static int init(void) {
 
-    struct k_image *img = k_image_load(NULL, "assets/tmp.png");
-    k_image_load("1", "assets/tmp.png");
-    k_image_load("2", "assets/tmp.png");
-    k_image_load("", "assets/tmp.png");
-    k_image_load("", "assets/tmp.png");
-    k_image_load("2", "assets/tmp.png");
+    struct k_image *img = k_image_load("assets/tmp.png");
 
     /* ------------------------------------------------------------------------ */
 
@@ -78,7 +73,6 @@ static int init(void) {
     int sprite_h = 256 / 3;
 
     spr_player = k_sprite_create((struct k_sprite_config[]) {{
-        .sprite_name = NULL,
         .sprite_w = sprite_w,
         .sprite_h = sprite_h,
         .origin_x = 30,

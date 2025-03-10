@@ -13,18 +13,6 @@ struct k_room;
 /** \brief 创建房间所需的配置参数 */
 struct k_room_config {
 
-    /**
-     * \brief 房间的名字
-     *
-     * 名字是可选的，指定值为空字符串 "" 或 `NULL` 表示不使用名字。
-     *
-     * 若指定名字，需保证其唯一性。k_game 会基于该名字为房间创建索引，
-     * 之后你可以通过 `k_room_find()` 查找房间。
-     *
-     * k_game 不会分配内存来复制名字，该字符串所处的内存段必须始终有效。
-     */
-    const char *room_name;
-
     /** \brief 房间的宽高 */
     int room_w, room_h;
 
@@ -84,7 +72,6 @@ struct k_room_config {
 /** \brief 创建房间所需的配置参数的默认值 */
 #define K_ROOM_CONFIG_INIT \
 { \
-    .room_name  = NULL, \
     .room_w     = 600,  \
     .room_h     = 480,  \
     .room_speed = 60,   \
@@ -104,10 +91,22 @@ struct k_room_config {
 struct k_room *k_room_create(const struct k_room_config *config, void *params);
 
 /**
- * \brief 通过房间名字查找对应的房间
+ * \brief 设置房间的名字
  *
- * 当创建房间时，若指定了房间的名字，k_game 会基于该名字为房间创建索引。
- * 本函数能根据名字查找到对应的房间。
+ * 房间名字是可选的，默认情况下房间没有名字。
+ *
+ * 你可以为房间设置名字，k_game 将基于该名字创建索引，
+ * 之后可通过 k_room_find() 函数查找房间。
+ *
+ * - 房间名字必须唯一
+ * - k_game 不会复制名字字符串，因此传入的字符串内存必须始终有效
+ * - 若将名字设为空字符串 "" 或 NULL，则表示移除房间名字
+ */
+int k_room_set_name(struct k_room *room, const char *name);
+
+/**
+ * \brief 通过房间名称查找房间
+ *
  * 若找到，函数返回房间指针，否则返回 `NULL`。
  */
 struct k_room *k_room_find(const char *room_name);
@@ -115,14 +114,6 @@ struct k_room *k_room_find(const char *room_name);
 int k_goto_room(struct k_room *room);
 
 struct k_room *k_get_current_room(void);
-
-/**
- * \brief 获取房间的名字
- *
- * 若创建该房间时指定了名字，则函数返回其名字，否则返回空字符串 ""。
- * 你不应该释放该字符串。
- */
-const char *k_room_get_name(struct k_room *room);
 
 int k_room_get_width(struct k_room *room);
 

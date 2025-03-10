@@ -85,7 +85,8 @@ static int step_registry_add(void *data) {
     struct k_sprite_creation_context *ctx = data;
     const struct k_sprite_config *config = ctx->config;
 
-    return k__sprite_registry_add(ctx->sprite, config->sprite_name);
+    k__sprite_registry_add(ctx->sprite);
+    return 0;
 }
 
 static void step_registry_del(void *data) {

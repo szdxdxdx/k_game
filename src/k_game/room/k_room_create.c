@@ -52,21 +52,6 @@ static void step_free_room(void *data) {
     k_free(room);
 }
 
-static int step_registry_add(void *data) {
-    struct k_room_creation_context *ctx = data;
-    const struct k_room_config *config = ctx->config;
-    struct k_room *room = ctx->room;
-
-    return k__room_registry_add(room, config->room_name);
-}
-
-static void step_registry_del(void *data) {
-    struct k_room_creation_context *ctx = data;
-    struct k_room *room = ctx->room;
-
-    k__room_registry_del(room);
-}
-
 static int step_malloc_data(void *data) {
     struct k_room_creation_context *ctx = data;
     const struct k_room_config *config = ctx->config;
@@ -153,6 +138,22 @@ static void step_cleanup_object_pool(void *data) {
     k__object_pool_cleanup(&room->object_pool);
 }
 
+static int step_registry_add(void *data) {
+    struct k_room_creation_context *ctx = data;
+    const struct k_room_config *config = ctx->config;
+    struct k_room *room = ctx->room;
+
+    k__room_registry_add(room);
+    return 0;
+}
+
+static void step_registry_del(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+
+    k__room_registry_del(room);
+}
+
 static int step_call_fn_init(void *data) {
     struct k_room_creation_context *ctx = data;
     void *params = ctx->params;
@@ -189,12 +190,12 @@ static void step_call_fn_cleanup(void *data) {
 static const struct k_seq_step steps[] = {
     { step_check_config,           NULL                          },
     { step_malloc_room,            step_free_room                },
-    { step_registry_add,           step_registry_del             },
     { step_malloc_data,            step_free_data                },
     { step_set_properties,         NULL                          },
     { step_init_callback_managers, step_deinit_callback_managers },
     { step_init_callback_list,     step_del_callbacks            },
     { step_init_object_pool,       step_cleanup_object_pool      },
+    { step_registry_add,           step_registry_del             },
     { step_call_fn_init,           step_call_fn_cleanup          },
 };
 

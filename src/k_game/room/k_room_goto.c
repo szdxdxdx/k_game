@@ -66,14 +66,12 @@ int k_goto_room(struct k_room *room) {
         return -1;
     }
 
-    if (room_stack_is_full()) {
-        k_log_error("Failed to goto room { .name=\"%s\" }. Room stack is full", k_room_get_name(room));
+    if (room_stack_is_full())
+        /* TODO log("Room stack is full") */
         return -1;
-    }
 
     room_stack_push(room);
 
-    k_log_trace("Next room set to { .name=\"%s\" }", k_room_get_name(room));
     return 0;
 }
 

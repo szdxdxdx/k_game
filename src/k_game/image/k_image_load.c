@@ -80,9 +80,7 @@ static int step_registry_add(void *data) {
     struct k_image_load_context *ctx = data;
     struct k_image *image = ctx->image;
 
-    if (0 != k__image_registry_add(image, ctx->image_name))
-        return -1;
-
+    k__image_registry_add(image);
     return 0;
 }
 
@@ -103,11 +101,10 @@ static const struct k_seq_step steps[] = {
 
 /* endregion */
 
-struct k_image *k_image_load(const char *image_name, const char *filepath) {
+struct k_image *k_image_load(const char *filepath) {
 
     struct k_image_load_context ctx;
     ctx.filepath   = filepath;
-    ctx.image_name = image_name;
     ctx.image      = NULL;
 
     if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx)) {

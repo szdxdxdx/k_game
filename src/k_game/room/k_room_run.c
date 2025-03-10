@@ -1,7 +1,5 @@
 #include "SDL.h"
 
-#include "k_log.h"
-
 #include "k_game_room.h"
 
 #include "../k_SDL/k_SDL.h"
@@ -43,7 +41,6 @@ static inline int frame_delay(struct k_room *room) {
 }
 
 static void game_loop(struct k_room *room) {
-    k_log_trace("Game loop started...");
 
     while (room->game_loop) {
 
@@ -67,13 +64,9 @@ static void game_loop(struct k_room *room) {
 
         SDL_RenderPresent(k__window.renderer);
     }
-
-    k_log_trace("Game loop ended");
 }
 
 void k__room_run(struct k_room *room) {
-    k_log_trace("Entered room { .name=\"%s\" }", k_room_get_name(room));
-
     k__game.current_room = room;
     enter_room(room);
 
@@ -82,6 +75,4 @@ void k__room_run(struct k_room *room) {
 
     leave_room(room);
     k__game.current_room = NULL;
-
-    k_log_trace("Left room { .name=\"%s\" }", k_room_get_name(room));
 }

@@ -34,12 +34,14 @@ int k__asset_registry_init(struct k_asset_registry *registry, void (*fn_free_ass
 
 void k__asset_registry_cleanup(struct k_asset_registry *registry);
 
-int k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node, const char *asset_name);
+void k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node);
 
 void k__asset_registry_del(struct k_asset_registry_node *registry_node);
 
-struct k_asset_registry_node *k__asset_registry_find(struct k_asset_registry *registry, const char *asset_name);
+int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node, const char *name);
 
 const char *k__asset_get_name(struct k_asset_registry_node *registry_node);
+
+struct k_asset_registry_node *k__asset_registry_find(struct k_asset_registry *registry, const char *asset_name);
 
 #endif

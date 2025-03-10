@@ -15,12 +15,16 @@ void k__image_registry_cleanup(void) {
      k__asset_registry_cleanup(&image_registry);
 }
 
-int k__image_registry_add(struct k_image *image, const char *image_name) {
-    return k__asset_registry_add(&image_registry, &image->registry_node, image_name);
+void k__image_registry_add(struct k_image *image) {
+    k__asset_registry_add(&image_registry, &image->registry_node);
 }
 
 void k__image_registry_del(struct k_image *image) {
     k__asset_registry_del(&image->registry_node);
+}
+
+int k_image_set_name(struct k_image *image, const char *image_name) {
+    return k__asset_set_name(&image_registry, &image->registry_node, image_name);
 }
 
 struct k_image *k_image_find(const char *image_name) {
@@ -30,8 +34,4 @@ struct k_image *k_image_find(const char *image_name) {
 
     struct k_image *image = container_of(registry_node, struct k_image, registry_node);
     return image;
-}
-
-const char *k__image_get_name(struct k_image *image) {
-    return k__asset_get_name(&image->registry_node);
 }

@@ -15,12 +15,16 @@ void k__room_registry_cleanup(void) {
      k__asset_registry_cleanup(&room_registry);
 }
 
-int k__room_registry_add(struct k_room *room, const char *room_name) {
-    return k__asset_registry_add(&room_registry, &room->registry_node, room_name);
+void k__room_registry_add(struct k_room *room) {
+    k__asset_registry_add(&room_registry, &room->registry_node);
 }
 
 void k__room_registry_del(struct k_room *room) {
     k__asset_registry_del(&room->registry_node);
+}
+
+int k_room_set_name(struct k_room *room, const char *name) {
+    return k__asset_set_name(&room_registry, &room->registry_node, name);
 }
 
 struct k_room *k_room_find(const char *room_name) {
@@ -30,8 +34,4 @@ struct k_room *k_room_find(const char *room_name) {
 
     struct k_room *room = container_of(registry_node, struct k_room, registry_node);
     return room;
-}
-
-const char *k_room_get_name(struct k_room *room) {
-    return k__asset_get_name(&room->registry_node);
 }

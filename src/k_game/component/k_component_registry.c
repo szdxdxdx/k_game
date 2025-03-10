@@ -16,7 +16,8 @@ void k__component_registry_cleanup(void) {
 }
 
 int k__component_registry_add(struct k_component_type *component_type, const char *type_name) {
-    return k__asset_registry_add(&component_registry, &component_type->registry_node, type_name);
+    k__asset_registry_add(&component_registry, &component_type->registry_node);
+    return k__asset_set_name(&component_registry, &component_type->registry_node, type_name);
 }
 
 void k__component_registry_del(struct k_component_type *component_type) {
@@ -31,8 +32,4 @@ struct k_component_type *k_component_type_find(const char *type_name) {
 
     struct k_component_type *component_type = container_of(registry_node, struct k_component_type, registry_node);
     return component_type;
-}
-
-const char *k__component_type_get_name(struct k_component_type *component_type) {
-    return k__asset_get_name(&component_type->registry_node);
 }

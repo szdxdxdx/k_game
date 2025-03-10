@@ -35,8 +35,6 @@ struct k_sprite_frame_config {
  */
 struct k_sprite_config {
 
-    const char *sprite_name;
-
     int sprite_w, sprite_h;
 
     int origin_x, origin_y;
@@ -47,6 +45,8 @@ struct k_sprite_config {
 };
 
 struct k_sprite *k_sprite_create(const struct k_sprite_config *config);
+
+int k_sprite_set_name(struct k_sprite *sprite, const char *name);
 
 struct k_sprite *k_sprite_find(const char *sprite_name);
 

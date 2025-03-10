@@ -15,8 +15,8 @@ void k__sprite_registry_cleanup(void) {
      k__asset_registry_cleanup(&sprite_registry);
 }
 
-int k__sprite_registry_add(struct k_sprite *sprite, const char *sprite_name) {
-    return k__asset_registry_add(&sprite_registry, &sprite->registry_node, sprite_name);
+void k__sprite_registry_add(struct k_sprite *sprite) {
+    k__asset_registry_add(&sprite_registry, &sprite->registry_node);
 }
 
 void k__sprite_registry_del(struct k_sprite *sprite) {

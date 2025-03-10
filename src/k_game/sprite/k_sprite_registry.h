@@ -7,7 +7,7 @@ int k__sprite_registry_init(void);
 
 void k__sprite_registry_cleanup(void);
 
-int k__sprite_registry_add(struct k_sprite *sprite, const char *sprite_name);
+void k__sprite_registry_add(struct k_sprite *sprite);
 
 void k__sprite_registry_del(struct k_sprite *sprite);
 
