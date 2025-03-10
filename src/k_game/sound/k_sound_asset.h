@@ -5,17 +5,19 @@
 
 #include "../asset/k_asset_registry.h"
 
-struct k_sound {
-
-    Mix_Music *music;
-};
-
 struct k_sound_BGM {
 
+    Mix_Music *sound;
 };
 
 struct k_sound_SFX {
 
+    Mix_Chunk *sound;
+};
+
+struct k_sound {
+
+    Mix_Music *sound;
 };
 
 #endif

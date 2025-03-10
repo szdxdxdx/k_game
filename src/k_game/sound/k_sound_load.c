@@ -14,6 +14,6 @@ struct k_sound *k_sound_load(const char *sound_name, const char *filepath, enum 
         return NULL;
     }
 
-    sound->music = music;
+    sound->sound = music;
     return sound;
 }

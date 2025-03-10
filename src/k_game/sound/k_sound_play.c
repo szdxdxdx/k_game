@@ -2,9 +2,13 @@
 
 #include "./k_sound.h"
 
+static inline int k__sound_SFX_play(struct k_sound_SFX *sfx) {
+
+}
+
 static inline int k__sound_play(struct k_sound *sound) {
 
-    Mix_Music *music = sound->music;
+    Mix_Music *music = sound->sound;
 
     if (0 != Mix_PlayMusic(music, 1)) {
         k_log_error("Mix_PlayMusic(): %s", Mix_GetError());
