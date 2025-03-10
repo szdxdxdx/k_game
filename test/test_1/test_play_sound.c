@@ -1,5 +1,5 @@
 
-#if 1
+#if 0
 
 #define SDL_MAIN_HANDLED
 #include "SDL.h"

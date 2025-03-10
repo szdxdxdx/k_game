@@ -107,7 +107,7 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
     for (k_list_for_each_s(callback_list, iter, next)) {
         alarm_callback = container_of(iter, struct k_alarm_callback, list_node);
 
-        if (alarm_callback->base.deleted)
+        if (alarm_callback->base.is_deleted)
             goto del_callback;
 
         if (current_ms < alarm_callback->timeout)
@@ -173,14 +173,17 @@ struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manag
     /* [?] 应该使用当前时间，还是当前帧时间 */
     uint64_t timeout = k__game.step_timestamp + delay_ms;
 
-    callback->alarm_callback.base.event   = K_ALARM_CALLBACK;
-    callback->alarm_callback.base.context = K_ROOM_CALLBACK;
-    callback->alarm_callback.base.deleted = 0;
-    callback->alarm_callback.timeout      = timeout;
-    callback->room_callback.base          = &callback->alarm_callback.base;
-    callback->fn_callback                 = fn_callback;
-    callback->data                        = data;
+    callback->alarm_callback.base.event      = K_ALARM_CALLBACK;
+    callback->alarm_callback.base.context    = K_ROOM_CALLBACK;
+    callback->alarm_callback.base.is_deleted = 0;
+
+    callback->alarm_callback.timeout = timeout;
     k_list_add_tail(&manager->pending_list, &callback->alarm_callback.list_node);
+
+    callback->room_callback.base = &callback->alarm_callback.base;
+
+    callback->fn_callback = fn_callback;
+    callback->data        = data;
 
     return &callback->room_callback;
 }
@@ -194,14 +197,17 @@ struct k_object_callback *k__callback_add_object_alarm(struct k_alarm_callback_m
     /* [?] 应该使用当前时间，还是当前帧时间 */
     uint64_t timeout = k__game.step_timestamp + delay_ms;
 
-    callback->alarm_callback.base.event   = K_ALARM_CALLBACK;
-    callback->alarm_callback.base.context = K_OBJECT_CALLBACK;
-    callback->alarm_callback.base.deleted = 0;
-    callback->alarm_callback.timeout      = timeout;
-    callback->object_callback.base        = &callback->alarm_callback.base;
-    callback->fn_callback                 = fn_callback;
-    callback->object                      = object;
+    callback->alarm_callback.base.event      = K_ALARM_CALLBACK;
+    callback->alarm_callback.base.context    = K_OBJECT_CALLBACK;
+    callback->alarm_callback.base.is_deleted = 0;
+
+    callback->alarm_callback.timeout = timeout;
     k_list_add_tail(&manager->pending_list, &callback->alarm_callback.list_node);
+
+    callback->object_callback.base = &callback->alarm_callback.base;
+
+    callback->fn_callback = fn_callback;
+    callback->object      = object;
 
     return &callback->object_callback;
 }
@@ -215,14 +221,17 @@ struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_call
     /* [?] 应该使用当前时间，还是当前帧时间 */
     uint64_t timeout = k__game.step_timestamp + delay_ms;
 
-    callback->alarm_callback.base.event   = K_ALARM_CALLBACK;
-    callback->alarm_callback.base.context = K_COMPONENT_CALLBACK;
-    callback->alarm_callback.base.deleted = 0;
-    callback->alarm_callback.timeout      = timeout;
-    callback->component_callback.base     = &callback->alarm_callback.base;
-    callback->fn_callback                 = fn_callback;
-    callback->component                   = component;
+    callback->alarm_callback.base.event      = K_ALARM_CALLBACK;
+    callback->alarm_callback.base.context    = K_COMPONENT_CALLBACK;
+    callback->alarm_callback.base.is_deleted = 0;
+
+    callback->alarm_callback.timeout = timeout;
     k_list_add_tail(&manager->pending_list, &callback->alarm_callback.list_node);
+
+    callback->component_callback.base = &callback->alarm_callback.base;
+
+    callback->fn_callback = fn_callback;
+    callback->component   = component;
 
     return &callback->component_callback;
 }

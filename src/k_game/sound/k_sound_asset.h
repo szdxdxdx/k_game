@@ -10,4 +10,12 @@ struct k_sound {
     Mix_Music *music;
 };
 
+struct k_sound_BGM {
+
+};
+
+struct k_sound_SFX {
+
+};
+
 #endif

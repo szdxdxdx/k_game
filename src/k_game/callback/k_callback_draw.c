@@ -199,7 +199,7 @@ void k__callback_exec_draw(struct k_draw_callback_manager *manager) {
         for (k_list_for_each_s(callback_list, iter_, next_)) {
             draw_callback = container_of(iter_, struct k_draw_callback, list_node);
 
-            if (draw_callback->base.deleted) {
+            if (draw_callback->base.is_deleted) {
                 k_list_del(&draw_callback->list_node);
                 k_free(draw_callback);
                 continue;
@@ -236,14 +236,17 @@ struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager
     if (NULL == callback)
         return NULL;
 
-    callback->draw_callback.base.event   = K_DRAW_CALLBACK;
-    callback->draw_callback.base.context = K_ROOM_CALLBACK;
-    callback->draw_callback.base.deleted = 0;
-    callback->draw_callback.layer        = layer;
-    callback->room_callback.base         = &callback->draw_callback.base;
-    callback->fn_callback                = fn_callback;
-    callback->data                       = data;
+    callback->draw_callback.base.context    = K_ROOM_CALLBACK;
+    callback->draw_callback.base.event      = K_DRAW_CALLBACK;
+    callback->draw_callback.base.is_deleted = 0;
+
+    callback->draw_callback.layer = layer;
     k_list_add_tail(&manager->callback_pending_list, &callback->draw_callback.list_node);
+
+    callback->room_callback.base = &callback->draw_callback.base;
+
+    callback->fn_callback = fn_callback;
+    callback->data        = data;
 
     return &callback->room_callback;
 }
@@ -258,14 +261,17 @@ struct k_object_callback *k__callback_add_object_draw(struct k_draw_callback_man
     if (NULL == callback)
         return NULL;
 
-    callback->draw_callback.base.event   = K_DRAW_CALLBACK;
-    callback->draw_callback.base.context = K_OBJECT_CALLBACK;
-    callback->draw_callback.base.deleted = 0;
-    callback->draw_callback.layer        = layer;
-    callback->object_callback.base       = &callback->draw_callback.base;
-    callback->fn_callback                = fn_callback;
-    callback->object                     = object;
+    callback->draw_callback.base.context    = K_OBJECT_CALLBACK;
+    callback->draw_callback.base.event      = K_DRAW_CALLBACK;
+    callback->draw_callback.base.is_deleted = 0;
+
+    callback->draw_callback.layer = layer;
     k_list_add_tail(&manager->callback_pending_list, &callback->draw_callback.list_node);
+
+    callback->object_callback.base = &callback->draw_callback.base;
+
+    callback->fn_callback = fn_callback;
+    callback->object      = object;
 
     return &callback->object_callback;
 }
@@ -280,14 +286,17 @@ struct k_component_callback *k__callback_add_component_draw(struct k_draw_callba
     if (NULL == callback)
         return NULL;
 
-    callback->draw_callback.base.event   = K_DRAW_CALLBACK;
-    callback->draw_callback.base.context = K_COMPONENT_CALLBACK;
-    callback->draw_callback.base.deleted = 0;
-    callback->draw_callback.layer        = layer;
-    callback->component_callback.base    = &callback->draw_callback.base;
-    callback->fn_callback                = fn_callback;
-    callback->component                  = component;
+    callback->draw_callback.base.context    = K_COMPONENT_CALLBACK;
+    callback->draw_callback.base.event      = K_DRAW_CALLBACK;
+    callback->draw_callback.base.is_deleted = 0;
+
+    callback->draw_callback.layer = layer;
     k_list_add_tail(&manager->callback_pending_list, &callback->draw_callback.list_node);
+
+    callback->component_callback.base = &callback->draw_callback.base;
+
+    callback->fn_callback = fn_callback;
+    callback->component   = component;
 
     return &callback->component_callback;
 }
