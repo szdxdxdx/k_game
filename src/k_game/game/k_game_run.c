@@ -158,29 +158,22 @@ static int init_game(const struct k_game_config *config) {
         return -1;
     }
 
-    k_log_info("Game initialized");
     return 0;
 }
 
 static void deinit_game(const struct k_game_config *config) {
-
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), (void *)config);
-    k_log_info("Game deinitialized");
 }
 
 static void run_game() {
-    k_log_info("Game started...");
 
     struct k_room *room = k__room_stack_get_top();
     if (NULL == room) {
         k_log_error("No room to run");
-        goto end;
+        return;
     }
 
     k__room_run(room);
-
-end:
-    k_log_info("Game end");
 }
 
 int k_game_run(const struct k_game_config *config) {
