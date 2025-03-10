@@ -10,7 +10,7 @@ struct k_game_config;
 
 int k__SDL_init(const struct k_game_config *config);
 
-void k__SDL_close(void);
+void k__SDL_quit(void);
 
 /* endregion */
 

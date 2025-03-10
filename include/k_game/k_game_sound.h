@@ -16,7 +16,7 @@ struct k_sound *k_sound_find(const char *sound_name);
 
 int k_sound_play(struct k_sound *sound);
 
-int k_sound_loop(struct k_sound *sound);
+int k_sound_loop(struct k_sound *sound, int loops);
 
 int k_sound_stop(struct k_sound *sound);
 

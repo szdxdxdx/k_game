@@ -156,12 +156,9 @@ int k__SDL_init(const struct k_game_config *config) {
         return -1;
     }
 
-    k_log_trace("SDL initialized");
     return 0;
 }
 
-void k__SDL_close(void) {
-
+void k__SDL_quit(void) {
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), NULL);
-    k_log_trace("SDL closed");
 }

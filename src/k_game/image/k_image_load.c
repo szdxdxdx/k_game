@@ -20,8 +20,10 @@ struct k_image_load_context {
 static int step_check_config(void *data) {
     struct k_image_load_context *ctx = data;
 
-    if (NULL == ctx->filepath || '\0' == ctx->filepath[0])
+    if (NULL == ctx->filepath || '\0' == ctx->filepath[0]) {
+        /* TODO log error */
         return -1;
+    }
 
     return 0;
 }
@@ -104,8 +106,8 @@ static const struct k_seq_step steps[] = {
 struct k_image *k_image_load(const char *filepath) {
 
     struct k_image_load_context ctx;
-    ctx.filepath   = filepath;
-    ctx.image      = NULL;
+    ctx.filepath = filepath;
+    ctx.image    = NULL;
 
     if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx)) {
         k_log_error("Failed to load image");
