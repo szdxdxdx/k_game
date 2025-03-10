@@ -51,7 +51,7 @@ int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry
 
     if (NULL == name || '\0' == name[0]) {
 
-        if ('\0' == map_node->key[0]) {
+        if ('\0' != map_node->key[0]) {
             k_str_map_del(map_node);
             map_node->key = "";
         }

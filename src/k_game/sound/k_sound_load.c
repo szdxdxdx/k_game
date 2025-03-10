@@ -16,6 +16,7 @@ static struct k_sound *k_sound_load_BGM(const char *filepath) {
 
     sound->sound_type = K_SOUND_BGM;
     sound->music = music;
+    k__sound_registry_add(sound);
     return sound;
 }
 
@@ -33,6 +34,7 @@ static struct k_sound *k_sound_load_SFX(const char *filepath) {
 
     sound->sound_type = K_SOUND_SFX;
     sound->chunk = chunk;
+    k__sound_registry_add(sound);
     return sound;
 }
 
@@ -51,4 +53,19 @@ struct k_sound *k_sound_load(const char *filepath, enum k_sound_type sound_type)
         default:
             return NULL;
     }
+}
+
+void k__sound_release(struct k_sound *sound) {
+
+    switch (sound->sound_type) {
+        case K_SOUND_BGM:
+            Mix_FreeMusic(sound->music);
+            break;
+        case K_SOUND_SFX:
+            Mix_FreeChunk(sound->chunk);
+            break;
+    }
+
+    k__sound_registry_del(sound);
+    k_free(sound);
 }
