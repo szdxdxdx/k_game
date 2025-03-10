@@ -7,16 +7,7 @@
 
 #include "./k_sprite.h"
 
-/* region [steps] */
-
-struct k_sprite_creation_context {
-    const struct k_sprite_config *config;
-    struct k_sprite *sprite;
-};
-
-static int step_check_config(void *data) {
-    struct k_sprite_creation_context *ctx = data;
-    const struct k_sprite_config *config = ctx->config;
+static int check_config(const struct k_sprite_config *config) {
 
     const char *err_msg;
 
@@ -45,14 +36,16 @@ err:
     return -1;
 }
 
-static int step_malloc_sprite(void *data) {
-    struct k_sprite_creation_context *ctx = data;
-    const struct k_sprite_config *config = ctx->config;
+struct k_sprite *k_sprite_create(const struct k_sprite_config *config) {
 
+    if (0 != check_config(config))
+        goto err;
+
+    /* sprite 结构体和精灵帧 frames 共处同一个大内存块 */
     size_t frames_size = config->frames_num * sizeof(struct k_sprite_frame);
     struct k_sprite *sprite = k_malloc(sizeof(struct k_sprite) + frames_size);
     if (NULL == sprite)
-        return -1;
+        goto err;
 
     struct k_sprite_frame *frames = (struct k_sprite_frame *)&(sprite[1]);
     size_t i = 0;
@@ -70,59 +63,15 @@ static int step_malloc_sprite(void *data) {
     sprite->frames     = frames;
     sprite->frames_num = config->frames_num;
 
-    ctx->sprite = sprite;
-    return 0;
-}
+    k__sprite_registry_add(sprite);
+    return sprite;
 
-static void step_free_sprite(void *data) {
-    struct k_sprite_creation_context *ctx = data;
-    struct k_sprite *sprite = ctx->sprite;
-
-    k_free(sprite);
-}
-
-static int step_registry_add(void *data) {
-    struct k_sprite_creation_context *ctx = data;
-    const struct k_sprite_config *config = ctx->config;
-
-    k__sprite_registry_add(ctx->sprite);
-    return 0;
-}
-
-static void step_registry_del(void *data) {
-    struct k_sprite_creation_context *ctx = data;
-    struct k_sprite *sprite = ctx->sprite;
-
-    k__sprite_registry_del(sprite);
-}
-
-static const struct k_seq_step steps[] = {
-    { step_check_config,  NULL              },
-    { step_malloc_sprite, step_free_sprite  },
-    { step_registry_add,  step_registry_del },
-};
-
-/* endregion */
-
-struct k_sprite *k_sprite_create(const struct k_sprite_config *config) {
-
-    struct k_sprite_creation_context ctx;
-    ctx.config = config;
-    ctx.sprite = NULL;
-
-    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx)) {
-        k_log_error("Failed to create sprite");
-        return NULL;
-    }
-
-    return ctx.sprite;
+err:
+    k_log_error("Failed to create sprite");
+    return NULL;
 }
 
 void k__sprite_destroy(struct k_sprite *sprite) {
-
-    struct k_sprite_creation_context ctx;
-    ctx.config = NULL;
-    ctx.sprite = sprite;
-
-    k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
+    k__sprite_registry_del(sprite);
+    k_free(sprite);
 }
