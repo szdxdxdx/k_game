@@ -1,0 +1,4 @@
+#ifndef K_GAME__SOUND_REGISTRY_H
+#define K_GAME__SOUND_REGISTRY_H
+
+#endif

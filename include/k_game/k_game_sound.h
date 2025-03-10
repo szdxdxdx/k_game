@@ -8,7 +8,9 @@ enum k_sound_type {
     K_SOUND_SFX,
 };
 
-struct k_sound k_sound_load(const char *sound_name, const char *filepath);
+struct k_sound *k_sound_load(const char *sound_name, const char *filepath, enum k_sound_type sound_type);
+
+struct k_sound *k_sound_find(const char *sound_name);
 
 int k_sound_play(struct k_sound *sound);
 

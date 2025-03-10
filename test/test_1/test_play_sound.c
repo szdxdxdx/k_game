@@ -1,5 +1,5 @@
 
-#if 0
+#if 1
 
 #define SDL_MAIN_HANDLED
 #include "SDL.h"
@@ -11,6 +11,7 @@
 
 #include "k_game.h"
 
+static struct k_sound *sound_1, *sound_2;
 static Mix_Music *music_1;
 static Mix_Music *music_2;
 static struct k_room_callback *player_hhddd;
@@ -18,10 +19,7 @@ static struct k_room_callback *player_hhddd;
 static void room_step(void *data) {
 
     if (k_key_pressed('H')) {
-        Mix_PlayMusic(music_2, 1);
-
-        k_room_del_callback(player_hhddd);
-        player_hhddd = NULL;
+        k_sound_play(sound_2);
     }
 }
 
@@ -29,12 +27,12 @@ static int init(void) {
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     struct k_room *room = k_room_create(&room_config, NULL);
+    k_room_add_step_callback(room, room_step, NULL);
 
-    music_1 = Mix_LoadMUS("assets/tmp.wav");
-    Mix_PlayMusic(music_1, -1);
+    sound_1 = k_sound_load(NULL, "assets/bgm.wav", K_SOUND_BGM);
+    sound_2 = k_sound_load(NULL, "assets/sfx.mp3", K_SOUND_SFX);
 
-    music_2 = Mix_LoadMUS("assets/DJMZJ_HHDDD.mp3");
-    player_hhddd = k_room_add_step_callback(room, room_step, NULL);
+    k_sound_play(sound_1);
 
     k_goto_room(room);
     return 0;

@@ -6,6 +6,7 @@
 #include "./k_game_time.h"
 #include "./k_game_keyboard.h"
 #include "./k_game_image.h"
+#include "./k_game_sound.h"
 #include "./k_game_sprite.h"
 #include "./k_game_room.h"
 #include "./k_game_object.h"
