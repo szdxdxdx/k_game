@@ -138,19 +138,19 @@ void *k_room_get_data(struct k_room *room);
  */
 struct k_room_callback;
 
-struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+struct k_room_callback *k_room_add_enter_callback(struct k_room *room, void *data, void (*fn_callback)(struct k_room *prev_room, void *data));
 
-struct k_room_callback *k_room_add_leave_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+struct k_room_callback *k_room_add_leave_callback(struct k_room *room, void *data, void (*fn_callback)(struct k_room *next_room, void *data));
 
-struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms);
+struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
 
-struct k_room_callback *k_room_add_step_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+struct k_room_callback *k_room_add_step_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int z_index);
+struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void *data, void (*fn_callback)(void *data), int z_index);
 
-struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data);
+struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
 
 /*
  * 若 `callback` 为 `NULL`，则函数不做任何事情。

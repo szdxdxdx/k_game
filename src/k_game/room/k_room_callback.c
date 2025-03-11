@@ -1,6 +1,6 @@
 #include "./k_room.h"
 
-struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
+struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void *data, void (*fn_callback)(void *data)) {
 
     struct k_step_callback_manager *manager = &room->step_begin_callback_manager;
     struct k_room_callback *callback = k__callback_add_room_step(manager, fn_callback, data);
@@ -11,7 +11,7 @@ struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void
     return callback;
 }
 
-struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms) {
+struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
 
     struct k_alarm_callback_manager *manager = &room->alarm_callback_manager;
     struct k_room_callback *callback = k__callback_add_room_alarm(manager, fn_callback, data, delay_ms);
@@ -22,7 +22,7 @@ struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void (*fn
     return callback;
 }
 
-struct k_room_callback *k_room_add_step_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
+struct k_room_callback *k_room_add_step_callback(struct k_room *room, void *data, void (*fn_callback)(void *data)) {
 
     struct k_step_callback_manager *manager = &room->step_callback_manager;
     struct k_room_callback *callback = k__callback_add_room_step(manager, fn_callback, data);
@@ -33,7 +33,7 @@ struct k_room_callback *k_room_add_step_callback(struct k_room *room, void (*fn_
     return callback;
 }
 
-struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_callback)(void *data), void *data, int z_index) {
+struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void *data, void (*fn_callback)(void *data), int z_index) {
 
     struct k_draw_callback_manager *manager = &room->draw_callback_manager;
     struct k_room_callback *callback = k__callback_add_room_draw(manager, fn_callback, data, z_index);
@@ -44,7 +44,7 @@ struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void (*fn_
     return callback;
 }
 
-struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void (*fn_callback)(void *data), void *data) {
+struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *data, void (*fn_callback)(void *data)) {
 
     struct k_step_callback_manager *manager = &room->step_end_callback_manager;
     struct k_room_callback *callback = k__callback_add_room_step(manager, fn_callback, data);
