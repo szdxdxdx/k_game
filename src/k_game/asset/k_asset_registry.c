@@ -21,6 +21,7 @@ void k__asset_registry_cleanup(struct k_asset_registry *registry, void (*fn_rele
     for(k_list_for_each_s(asset_list, iter, next)) {
         registry_node = container_of(iter, struct k_asset_registry_node, iter_node);
 
+        k__asset_registry_del(registry_node);
         fn_release_asset(registry_node);
     }
 
@@ -34,10 +35,13 @@ void k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_reg
 
 void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
 
-    if ('\0' != registry_node->name_map_node.key[0])
+    if ('\0' != registry_node->name_map_node.key[0]) {
         k_str_map_del(&registry_node->name_map_node);
+        k_hash_list_node_loop(&registry_node->name_map_node.list_node);
+    }
 
     k_list_del(&registry_node->iter_node);
+    k_list_node_loop(&registry_node->iter_node);
 }
 
 int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node, const char *name) {

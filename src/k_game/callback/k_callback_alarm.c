@@ -120,7 +120,7 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
                 struct k_room_alarm_callback *callback = (struct k_room_alarm_callback *)alarm_callback;
 
                 k_list_del(&callback->room_callback.list_node); /* 摘链并自环，原因同 case K_OBJECT_CALLBACK */
-                k_list_link_self(&callback->room_callback.list_node);
+                k_list_node_loop(&callback->room_callback.list_node);
 
                 callback->fn_callback(callback->data, timeout_diff);
                 break;
@@ -142,7 +142,7 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
                  *
                  * 此处将结点自环。对自环结点重复执行摘链操作是安全的。
                  */
-                k_list_link_self(&callback->object_callback.list_node);
+                k_list_node_loop(&callback->object_callback.list_node);
 
                 callback->fn_callback(callback->object, timeout_diff);
                 break;
@@ -151,7 +151,7 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
                 struct k_component_alarm_callback *callback = (struct k_component_alarm_callback *)alarm_callback;
 
                 k_list_del(&callback->component_callback.list_node); /* 摘链并自环，原因同 case K_OBJECT_CALLBACK */
-                k_list_link_self(&callback->component_callback.list_node);
+                k_list_node_loop(&callback->component_callback.list_node);
 
                 callback->fn_callback(callback->component, timeout_diff);
                 break;

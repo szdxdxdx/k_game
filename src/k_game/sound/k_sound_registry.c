@@ -17,12 +17,12 @@ int k__sound_registry_init(void) {
 
 static void fn_release_BGM(struct k_asset_registry_node *registry_node) {
     struct k_sound_BGM *sound = (struct k_sound_BGM *)registry_node;
-    /* TODO */
+    k_sound_BGM_release(sound);
 }
 
 static void fn_release_SFX(struct k_asset_registry_node *registry_node) {
     struct k_sound_SFX *sound = (struct k_sound_SFX *)registry_node;
-    /* TODO */
+    k_sound_SFX_release(sound);
 }
 
 void k__sound_registry_cleanup(void) {

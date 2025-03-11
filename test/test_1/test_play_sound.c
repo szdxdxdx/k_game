@@ -21,6 +21,9 @@ static int init(void) {
     bgm = k_sound_BGM_load("./assets/bgm.wav");
     ddd = k_sound_BGM_load("./assets/ddd.mp3");
     ynx = k_sound_SFX_load("./assets/ynx.mp3");
+    k_sound_BGM_set_name(bgm, "bgm");
+    k_sound_BGM_set_name(ddd, "ddd");
+    k_sound_SFX_set_name(ynx, "ynx");
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     struct k_room *room = k_room_create(&room_config, NULL);

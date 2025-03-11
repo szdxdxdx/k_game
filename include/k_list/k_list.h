@@ -24,13 +24,13 @@ struct k_list {
     struct k_list_node head;
 };
 
-static inline void k_list_link_self(struct k_list_node *node) {
+static inline void k_list_node_loop(struct k_list_node *node) {
     node->prev = node;
     node->next = node;
 }
 
 static inline void k_list_init(struct k_list *list) {
-    k_list_link_self(&list->head);
+    k_list_node_loop(&list->head);
 }
 
 static inline void k_list_add(struct k_list_node *prev, struct k_list_node *node) {

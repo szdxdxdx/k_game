@@ -36,6 +36,11 @@ static inline void k_hash_list_add(struct k_hash_list *list, struct k_hash_list_
     node->pprev = &list->first;
 }
 
+static inline void k_hash_list_node_loop(struct k_hash_list_node *node) {
+    node->next = node;
+    node->pprev = &node;
+}
+
 static inline void k_hash_list_del(struct k_hash_list_node *node) {
 
     if (NULL != node->next)
