@@ -30,15 +30,6 @@ void k__log(int level, const char *file, int line, const char *fmt, ...);
 #define k_log_error(fmt, ...) k__log(K_LOG_LEVEL_ERROR, K__FILE_PATH, __LINE__, fmt, ##__VA_ARGS__)
 #define k_log_fatal(fmt, ...) k__log(K_LOG_LEVEL_FATAL, K__FILE_PATH, __LINE__, fmt, ##__VA_ARGS__)
 
-#define k_log_error_once(fmt, ...) \
-    do { \
-        static int is_logged = 0; \
-        if ( ! is_logged) { \
-            is_logged = 1; \
-            k_log_error(fmt, ##__VA_ARGS__); \
-        }\
-    } while(0)
-
 #if K_LOG_LEVEL > K_LOG_LEVEL_TRACE
 #undef  k_log_trace
 #define k_log_trace(fmt, ...) ((void)0)

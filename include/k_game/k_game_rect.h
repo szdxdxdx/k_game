@@ -13,4 +13,8 @@ struct k_int_rect {
     int x, y, w, h;
 };
 
+struct k_float_rect {
+    float x, y, w, h;
+};
+
 #endif

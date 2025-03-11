@@ -35,7 +35,7 @@ static void sprite_renderer_draw(struct k_component *component) {
 
     float x = *(renderer->x);
     float y = *(renderer->y);
-    k__sprite_draw_frame(sprite, (int)x, (int)y, renderer->frame_idx);
+    k__sprite_draw_frame(sprite, renderer->frame_idx, x, y);
 }
 
 static int sprite_renderer_init(struct k_component *component, void *params) {

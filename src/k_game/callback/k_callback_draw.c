@@ -63,8 +63,7 @@ static inline void flush_layers(struct k_draw_callback_manager *manager) {
 
 static inline struct k_draw_callback_layer *find_or_create_layer(struct k_draw_callback_manager *manager, int z_index) {
 
-    struct k_int_map *z_index_map = &manager->z_index_map;
-    struct k_int_map_node *node = k_int_map_get(z_index_map, z_index);
+    struct k_int_map_node *node = k_int_map_get(&manager->z_index_map, z_index);
     if (NULL != node) {
         struct k_draw_callback_layer *layer = container_of(node, struct k_draw_callback_layer, z_index_map_node);
         return layer;
@@ -75,7 +74,7 @@ static inline struct k_draw_callback_layer *find_or_create_layer(struct k_draw_c
         return NULL;
 
     k_list_init(&new_layer->callback_list);
-    k_int_map_add_directly(z_index_map, z_index, &new_layer->z_index_map_node);
+    k_int_map_add_directly(&manager->z_index_map, z_index, &new_layer->z_index_map_node);
 
     add_new_layer_to_pending_list(manager, new_layer);
     return new_layer;

@@ -68,8 +68,6 @@ static int init(void) {
 
     struct k_image *img = k_image_load("assets/tmp.png");
 
-    k_image_load("assets/tmp2.png");
-
     /* ------------------------------------------------------------------------ */
 
     int sprite_w = 512 / 8;

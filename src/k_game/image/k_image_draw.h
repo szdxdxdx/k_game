@@ -5,6 +5,6 @@
 
 struct k_image;
 
-int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, int dst_x, int dst_y);
+int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, float dst_x, float dst_y);
 
 #endif
