@@ -11,6 +11,13 @@
 
 /* region [steps] */
 
+static int step_set_log_level(void *unused) {
+    (void)unused;
+
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_ERROR);
+    return 0;
+}
+
 static int step_init_SDL(void *unused) {
     (void)unused;
 
@@ -139,6 +146,7 @@ static void step_destroy_renderer(void *unused) {
 }
 
 static struct k_seq_step steps[] = {
+    { step_set_log_level,   NULL                  },
     { step_init_SDL,        step_quit_SDL         },
     { step_init_SDL_img,    step_quit_SDL_img     },
     { step_init_SDL_mix,    step_quit_SDL_mix     },
