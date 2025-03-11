@@ -95,12 +95,16 @@ struct k_room *k_room_create(const struct k_room_config *config, void *params);
  *
  * 房间名字是可选的，默认情况下房间没有名字。
  *
- * 你可以为房间设置名字，k_game 将基于该名字创建索引，
- * 之后可通过 k_room_find() 函数查找房间。
+ * 你可以为房间设置唯一名字，k_game 将基于该名字为房间建立索引，
+ * 之后可使用 `k_room_find()` 根据名字查找房间。
  *
- * - 房间名字必须唯一
- * - k_game 不会复制名字字符串，因此传入的字符串内存必须始终有效
- * - 若将名字设为空字符串 "" 或 NULL，则表示移除房间名字
+ * 若名字设为空字符串 "" 或 `NULL`，则清除名字，并删除索引。
+ *
+ * 注意：
+ * k_game 不会复制 `name` 字符串，而是直接保存指针。
+ * 请确保该字符串的内存段在整个使用期间有效，且不被修改。
+ *
+ * 若成功，函数返回 0，否则返回非 0。
  */
 int k_room_set_name(struct k_room *room, const char *name);
 
@@ -122,7 +126,7 @@ int k_room_get_height(struct k_room *room);
 /**
  * \brief 获取房间的关联数据
  *
- * 若创建房间时，指定了房间关联数据的结构体大小不为 0，
+ * 若创建房间时，若指定了房间关联数据的结构体大小不为 0，
  * 则函数返回该指向数据内存段的指针，否则返回 `NULL`，
  */
 void *k_room_get_data(struct k_room *room);
