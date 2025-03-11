@@ -164,7 +164,7 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
     }
 }
 
-struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manager *manager, void (*fn_callback)(void *data, int timeout_diff), void *data, int delay_ms) {
+struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manager *manager, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
 
     struct k_room_alarm_callback *callback = k_malloc(sizeof(struct k_room_alarm_callback));
     if (NULL == callback)
@@ -188,7 +188,7 @@ struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manag
     return &callback->room_callback;
 }
 
-struct k_object_callback *k__callback_add_object_alarm(struct k_alarm_callback_manager *manager, void (*fn_callback)(struct k_object *object, int timeout_diff), struct k_object *object, int delay_ms) {
+struct k_object_callback *k__callback_add_object_alarm(struct k_alarm_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
 
     struct k_object_alarm_callback *callback = k_malloc(sizeof(struct k_object_alarm_callback));
     if (NULL == callback)
@@ -212,7 +212,7 @@ struct k_object_callback *k__callback_add_object_alarm(struct k_alarm_callback_m
     return &callback->object_callback;
 }
 
-struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_callback_manager *manager, void (*fn_callback)(struct k_component *component, int timeout_diff), struct k_component *component, int delay_ms) {
+struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms) {
 
     struct k_component_alarm_callback *callback = k_malloc(sizeof(struct k_component_alarm_callback));
     if (NULL == callback)

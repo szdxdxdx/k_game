@@ -5,7 +5,7 @@
 struct k_component_callback *k_component_add_step_begin_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
 
     struct k_step_callback_manager *manager = &component->object->room->step_begin_callback_manager;
-    struct k_component_callback *callback = k__callback_add_component_step(manager, fn_callback, component);
+    struct k_component_callback *callback = k__callback_add_component_step(manager, component, fn_callback);
     if (NULL == callback)
         return NULL;
 
@@ -16,7 +16,7 @@ struct k_component_callback *k_component_add_step_begin_callback(struct k_compon
 struct k_component_callback *k_component_add_alarm_callback(struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms) {
 
     struct k_alarm_callback_manager *manager = &component->object->room->alarm_callback_manager;
-    struct k_component_callback *callback = k__callback_add_component_alarm(manager, fn_callback, component, delay_ms);
+    struct k_component_callback *callback = k__callback_add_component_alarm(manager, component, fn_callback, delay_ms);
     if (NULL == callback)
         return NULL;
 
@@ -27,7 +27,7 @@ struct k_component_callback *k_component_add_alarm_callback(struct k_component *
 struct k_component_callback *k_component_add_step_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
 
     struct k_step_callback_manager *manager = &component->object->room->step_callback_manager;
-    struct k_component_callback *callback = k__callback_add_component_step(manager, fn_callback, component);
+    struct k_component_callback *callback = k__callback_add_component_step(manager, component, fn_callback);
     if (NULL == callback)
         return NULL;
 
@@ -38,7 +38,7 @@ struct k_component_callback *k_component_add_step_callback(struct k_component *c
 struct k_component_callback *k_component_add_draw_callback(struct k_component *component, void (*fn_callback)(struct k_component *component), int z_index) {
 
     struct k_draw_callback_manager *manager = &component->object->room->draw_callback_manager;
-    struct k_component_callback *callback = k__callback_add_component_draw(manager, fn_callback, component, z_index);
+    struct k_component_callback *callback = k__callback_add_component_draw(manager, component, fn_callback, z_index);
     if (NULL == callback)
         return NULL;
 
@@ -49,7 +49,7 @@ struct k_component_callback *k_component_add_draw_callback(struct k_component *c
 struct k_component_callback *k_component_add_step_end_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
 
     struct k_step_callback_manager *manager = &component->object->room->step_end_callback_manager;
-    struct k_component_callback *callback = k__callback_add_component_step(manager, fn_callback, component);
+    struct k_component_callback *callback = k__callback_add_component_step(manager, component, fn_callback);
     if (NULL == callback)
         return NULL;
 

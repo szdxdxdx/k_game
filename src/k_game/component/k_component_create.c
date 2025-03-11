@@ -29,6 +29,7 @@ struct k_component *k__component_create(const struct k_component_type *component
     return component;
 
 fn_create_failed:
+    k_component_del_all_callbacks(component);
     k_list_del(&component->list_node);
     k_free(component->data);
 malloc_data_failed:

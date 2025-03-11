@@ -113,7 +113,7 @@ void k__callback_exec_step(struct k_step_callback_manager *manager) {
     }
 }
 
-struct k_room_callback *k__callback_add_room_step(struct k_step_callback_manager *manager, void (*fn_callback)(void *data), void *data) {
+struct k_room_callback *k__callback_add_room_step(struct k_step_callback_manager *manager, void *data, void (*fn_callback)(void *data)) {
 
     struct k_room_step_callback *callback = k_malloc(sizeof(struct k_room_step_callback));
     if (NULL == callback)
@@ -133,7 +133,7 @@ struct k_room_callback *k__callback_add_room_step(struct k_step_callback_manager
     return &callback->room_callback;
 }
 
-struct k_object_callback *k__callback_add_object_step(struct k_step_callback_manager *manager, void (*fn_callback)(struct k_object *object), struct k_object *object) {
+struct k_object_callback *k__callback_add_object_step(struct k_step_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object)) {
 
     struct k_object_step_callback *callback = k_malloc(sizeof(struct k_object_step_callback));
     if (NULL == callback)
@@ -153,7 +153,7 @@ struct k_object_callback *k__callback_add_object_step(struct k_step_callback_man
     return &callback->object_callback;
 }
 
-struct k_component_callback *k__callback_add_component_step(struct k_step_callback_manager *manager, void (*fn_callback)(struct k_component *component), struct k_component *component) {
+struct k_component_callback *k__callback_add_component_step(struct k_step_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component)) {
 
     struct k_component_step_callback *callback = k_malloc(sizeof(struct k_component_step_callback));
     if (NULL == callback)

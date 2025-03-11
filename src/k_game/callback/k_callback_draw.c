@@ -225,7 +225,7 @@ void k__callback_exec_draw(struct k_draw_callback_manager *manager) {
     }
 }
 
-struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager *manager, void (*fn_callback)(void *data), void *data, int z_index) {
+struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager *manager, void *data, void (*fn_callback)(void *data), int z_index) {
 
     struct k_draw_callback_layer *layer = find_or_create_layer(manager, z_index);
     if (NULL == layer)
@@ -250,7 +250,7 @@ struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager
     return &callback->room_callback;
 }
 
-struct k_object_callback *k__callback_add_object_draw(struct k_draw_callback_manager *manager, void (*fn_callback)(struct k_object *object), struct k_object *object, int z_index) {
+struct k_object_callback *k__callback_add_object_draw(struct k_draw_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object), int z_index) {
 
     struct k_draw_callback_layer *layer = find_or_create_layer(manager, z_index);
     if (NULL == layer)
@@ -275,7 +275,7 @@ struct k_object_callback *k__callback_add_object_draw(struct k_draw_callback_man
     return &callback->object_callback;
 }
 
-struct k_component_callback *k__callback_add_component_draw(struct k_draw_callback_manager *manager, void (*fn_callback)(struct k_component *component), struct k_component *component, int z_index) {
+struct k_component_callback *k__callback_add_component_draw(struct k_draw_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component), int z_index) {
 
     struct k_draw_callback_layer *layer = find_or_create_layer(manager, z_index);
     if (NULL == layer)
