@@ -41,3 +41,11 @@ void k_room_del_callback(struct k_room_callback *callback) {
     k_list_del(&callback->list_node);
     k__callback_set_deleted(callback->base);
 }
+
+void k_room_del_all_callback(struct k_room_callback *callback) {
+
+    /* [?] 应该删除房间的所有回调吗？
+     * step、alarm 这些可以删，但是 enter 和 leave 呢？
+     * fn_init 和 fn_cleanup 也是回调，这些又该怎么论？
+     */
+}
