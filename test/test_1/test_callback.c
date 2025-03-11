@@ -65,14 +65,10 @@ static int create_room(struct k_room *room, void *params) {
 
 static int init(void) {
 
-    {
 
-        struct k_image *img = k_image_load("assets/tmp.png");
-        k_image_set_name(img, "tmp1");
-        k_image_set_name(img, "tmp2");
-    }
+    struct k_image *img = k_image_load("assets/tmp.png");
 
-    struct k_image *img = k_image_find("tmp1");
+    k_image_load("assets/tmp2.png");
 
     /* ------------------------------------------------------------------------ */
 
@@ -108,7 +104,7 @@ static int init(void) {
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");
