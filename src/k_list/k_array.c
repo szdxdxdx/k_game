@@ -83,12 +83,16 @@ int k_array_reserve(struct k_array *arr, size_t n) {
 
     void *new_storage = arr->fn_malloc(new_capacity * arr->elem_size);
     if (NULL == new_storage) {
-        if (new_capacity == n)
+        if (new_capacity == n) {
             return -1;
+        }
+        else {
+            new_capacity = n;
 
-        new_storage = arr->fn_malloc(n * arr->elem_size);
-        if (NULL == new_storage)
-            return -1;
+            new_storage = arr->fn_malloc(new_capacity * arr->elem_size);
+            if (NULL == new_storage)
+                return -1;
+        }
     }
 
     memcpy(new_storage, arr->storage, arr->size * arr->elem_size);
@@ -127,12 +131,16 @@ void *k_array_shift_right(struct k_array *arr, size_t idx, size_t n) {
 
     void *new_storage = arr->fn_malloc(new_capacity * arr->elem_size);
     if (NULL == new_storage) {
-        if (new_capacity == required_capacity)
+        if (new_capacity == required_capacity) {
             return NULL;
+        }
+        else {
+            new_capacity = required_capacity;
 
-        new_storage = arr->fn_malloc(required_capacity * arr->elem_size);
-        if (NULL == new_storage)
-            return NULL;
+            new_storage = arr->fn_malloc(new_capacity * arr->elem_size);
+            if (NULL == new_storage)
+                return NULL;
+        }
     }
 
     if (NULL != arr->storage) {
