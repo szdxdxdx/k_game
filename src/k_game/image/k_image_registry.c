@@ -2,17 +2,17 @@
 
 static struct k_asset_registry image_registry;
 
-static void fn_free_asset(struct k_asset_registry_node *node) {
+int k__image_registry_init(void) {
+    return k__asset_registry_init(&image_registry);
+}
+
+static void fn_release_asset(struct k_asset_registry_node *node) {
     struct k_image *image = container_of(node, struct k_image, registry_node);
     k__image_release(image);
 }
 
-int k__image_registry_init(void) {
-    return k__asset_registry_init(&image_registry, fn_free_asset);
-}
-
 void k__image_registry_cleanup(void) {
-     k__asset_registry_cleanup(&image_registry);
+     k__asset_registry_cleanup(&image_registry, fn_release_asset);
 }
 
 void k__image_registry_add(struct k_image *image) {

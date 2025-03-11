@@ -4,8 +4,7 @@
 #include "k_game_sound.h"
 
 #include "./k_sound_registry.h"
-#include "./k_sound_asset.h"
-#include "./k_sound_load.h"
-#include "./k_sound_play.h"
+#include "./k_sound_BGM.h"
+#include "./k_sound_SFX.h"
 
 #endif

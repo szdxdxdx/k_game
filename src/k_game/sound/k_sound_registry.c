@@ -1,38 +1,73 @@
 #include "./k_sound.h"
 
-static struct k_asset_registry sound_registry;
-
-static void fn_free_asset(struct k_asset_registry_node *node) {
-    struct k_sound *sound = container_of(node, struct k_sound, registry_node);
-    k__sound_release(sound);
-}
+static struct k_asset_registry BGM_registry, SFX_registry;
 
 int k__sound_registry_init(void) {
-    return k__asset_registry_init(&sound_registry, fn_free_asset);
+
+    if (0 != k__asset_registry_init(&BGM_registry))
+        return -1;
+
+    if (0 != k__asset_registry_init(&SFX_registry)) {
+        k__asset_registry_cleanup(&BGM_registry, NULL);
+        return -1;
+    }
+
+    return 0;
+}
+
+static void fn_release_BGM(struct k_asset_registry_node *registry_node) {
+    struct k_sound_BGM *sound = (struct k_sound_BGM *)registry_node;
+    /* TODO */
+}
+
+static void fn_release_SFX(struct k_asset_registry_node *registry_node) {
+    struct k_sound_SFX *sound = (struct k_sound_SFX *)registry_node;
+    /* TODO */
 }
 
 void k__sound_registry_cleanup(void) {
-    return k__asset_registry_cleanup(&sound_registry);
+    k__asset_registry_cleanup(&BGM_registry, fn_release_BGM);
+    k__asset_registry_cleanup(&SFX_registry, fn_release_SFX);
 }
 
-void k__sound_registry_add(struct k_sound *sound) {
-    return k__asset_registry_add(&sound_registry, &sound->registry_node);
+void k__sound_registry_add_BGM(struct k_sound_BGM *sound) {
+    k__asset_registry_add(&BGM_registry, &sound->registry_node);
 }
 
-void k__sound_registry_del(struct k_sound *sound) {
-    return k__asset_registry_del(&sound->registry_node);
+void k__sound_registry_add_SFX(struct k_sound_SFX *sound) {
+    k__asset_registry_add(&SFX_registry, &sound->registry_node);
 }
 
-int k_sound_set_name(struct k_sound *sound, const char *name) {
-    return k__asset_set_name(&sound_registry, &sound->registry_node, name);
+void k__sound_registry_del_BGM(struct k_sound_BGM *sound) {
+    k__asset_registry_del(&sound->registry_node);
 }
 
-struct k_sound *k_sound_find(const char *sound_name) {
+void k__sound_registry_del_SFX(struct k_sound_SFX *sound) {
+    k__asset_registry_del(&sound->registry_node);
+}
 
-    struct k_asset_registry_node *registry_node = k__asset_registry_find(&sound_registry, sound_name);
+int k_sound_BGM_set_name(struct k_sound_BGM *sound, const char *name) {
+    return k__asset_set_name(&BGM_registry, &sound->registry_node, name);
+}
+
+int k_sound_SFX_set_name(struct k_sound_SFX *sound, const char *name) {
+    return k__asset_set_name(&SFX_registry, &sound->registry_node, name);
+}
+
+struct k_sound_BGM *k_sound_BGM_find(const char *BGM_name) {
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&BGM_registry, BGM_name);
     if (NULL == registry_node)
         return NULL;
 
-    struct k_sound *sound = container_of(registry_node, struct k_sound, registry_node);
+    struct k_sound_BGM *sound = container_of(registry_node, struct k_sound_BGM, registry_node);
+    return sound;
+}
+
+struct k_sound_SFX *k_sound_SFX_find(const char *SFX_name) {
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&SFX_registry, SFX_name);
+    if (NULL == registry_node)
+        return NULL;
+
+    struct k_sound_SFX *sound = container_of(registry_node, struct k_sound_SFX, registry_node);
     return sound;
 }

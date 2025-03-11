@@ -41,17 +41,3 @@ void k_room_del_callback(struct k_room_callback *callback) {
     k_list_del(&callback->list_node);
     k__callback_set_deleted(callback->base);
 }
-
-void k_room_del_all_callbacks(struct k_room *room) {
-
-    struct k_room_callback *callback;
-    struct k_list *list = &room->callback_list;
-    struct k_list_node *iter;
-    for (k_list_for_each(list, iter)) {
-        callback = container_of(iter, struct k_room_callback, list_node);
-
-        k__callback_set_deleted(callback->base);
-    }
-
-    k_list_init(&room->callback_list);
-}

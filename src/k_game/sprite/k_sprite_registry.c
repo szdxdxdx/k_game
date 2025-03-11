@@ -2,17 +2,17 @@
 
 static struct k_asset_registry sprite_registry;
 
-static void fn_free_asset(struct k_asset_registry_node *registry_node) {
+int k__sprite_registry_init(void) {
+    return k__asset_registry_init(&sprite_registry);
+}
+
+static void fn_release_asset(struct k_asset_registry_node *registry_node) {
     struct k_sprite *sprite = container_of(registry_node, struct k_sprite, registry_node);
     k__sprite_destroy(sprite);
 }
 
-int k__sprite_registry_init(void) {
-    return k__asset_registry_init(&sprite_registry, fn_free_asset);
-}
-
 void k__sprite_registry_cleanup(void) {
-     k__asset_registry_cleanup(&sprite_registry);
+     k__asset_registry_cleanup(&sprite_registry, fn_release_asset);
 }
 
 void k__sprite_registry_add(struct k_sprite *sprite) {

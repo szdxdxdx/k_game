@@ -1,25 +1,34 @@
 #ifndef K_GAME_SOUND_H
 #define K_GAME_SOUND_H
 
-struct k_sound;
+struct k_sound_BGM;
 
-enum k_sound_type {
-    K_SOUND_BGM,
-    K_SOUND_SFX,
-};
+struct k_sound_BGM *k_sound_BGM_load(const char *filepath);
 
-struct k_sound *k_sound_load(const char *filepath, enum k_sound_type sound_type);
+void k_sound_BGM_free(struct k_sound_BGM *sound);
 
-int k_sound_set_name(struct k_sound *sound, const char *name);
+int k_sound_BGM_set_name(struct k_sound_BGM *sound, const char *name);
 
-struct k_sound *k_sound_find(const char *sound_name);
+struct k_sound_BGM *k_sound_BGM_find(const char *BGM_name);
 
-int k_sound_play(struct k_sound *sound);
+int k_sound_BGM_loop(struct k_sound_BGM *sound, int loops);
 
-int k_sound_loop(struct k_sound *sound, int loops);
+int k_sound_BGM_is_playing(void);
 
-int k_sound_stop(struct k_sound *sound);
+void k_sound_BGM_stop(void);
 
-int k_sound_set_volume(struct k_sound *sound, float volume);
+int k_sound_set_BGM_volume(float volume);
+
+struct k_sound_SFX;
+
+struct k_sound_SFX *k_sound_load_SFX(const char *filepath);
+
+void k_sound_SFX_free(struct k_sound_SFX *sound);
+
+int k_sound_SFX_set_name(struct k_sound_SFX *sound, const char *name);
+
+struct k_sound_SFX *k_sound_SFX_find(const char *SFX_name);
+
+int k_sound_SFX_play(struct k_sound_SFX *sound);
 
 #endif

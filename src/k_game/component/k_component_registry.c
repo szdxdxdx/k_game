@@ -2,17 +2,17 @@
 
 static struct k_asset_registry component_registry;
 
-static void fn_free_asset(struct k_asset_registry_node *registry_node) {
+int k__component_registry_init(void) {
+    return k__asset_registry_init(&component_registry);
+}
+
+static void fn_release_asset(struct k_asset_registry_node *registry_node) {
     struct k_component_type *component_type = container_of(registry_node, struct k_component_type, registry_node);
     k__component_undef(component_type);
 }
 
-int k__component_registry_init(void) {
-    return k__asset_registry_init(&component_registry, fn_free_asset);
-}
-
 void k__component_registry_cleanup(void) {
-    k__asset_registry_cleanup(&component_registry);
+    k__asset_registry_cleanup(&component_registry, fn_release_asset);
 }
 
 int k__component_registry_add(struct k_component_type *component_type, const char *type_name) {

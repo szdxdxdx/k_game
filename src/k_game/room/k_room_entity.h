@@ -1,5 +1,5 @@
-#ifndef K_GAME__ROOM_CONTEXT_H
-#define K_GAME__ROOM_CONTEXT_H
+#ifndef K_GAME__ROOM_ENTITY_H
+#define K_GAME__ROOM_ENTITY_H
 
 #include <stdint.h>
 
