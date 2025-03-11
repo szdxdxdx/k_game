@@ -7,6 +7,7 @@
 
 #include "../k_SDL/k_SDL.h"
 #include "../image/k_image.h"
+#include "../sound/k_sound.h"
 #include "../sprite/k_sprite.h"
 #include "../room/k_room.h"
 #include "../component/k_component.h"
@@ -54,6 +55,16 @@ static void step_cleanup_image_registry(void *data) {
     k__image_registry_cleanup();
 }
 
+static int step_init_sound_registry(void *data) {
+    (void)data;
+    return k__sound_registry_init();
+}
+
+static void step_cleanup_sound_registry(void *data) {
+    (void)data;
+    k__sound_registry_cleanup();
+}
+
 static int step_init_sprite_registry(void *data) {
     (void)data;
     return k__sprite_registry_init();
@@ -66,7 +77,6 @@ static void step_cleanup_sprite_registry(void *data) {
 
 static int step_init_component_registry(void *data) {
     (void)data;
-
     return k__component_registry_init();
 }
 
@@ -129,7 +139,7 @@ static const struct k_seq_step steps[] = {
     { step_check_config,            NULL                            },
     { step_init_SDL,                step_quit_SDL                   },
     { step_init_image_registry,     step_cleanup_image_registry     },
- // { step_init_sound_registry,     step_cleanup_sound_registry     },
+    { step_init_sound_registry,     step_cleanup_sound_registry     },
     { step_init_sprite_registry,    step_cleanup_sprite_registry    },
     { step_init_component_registry, step_cleanup_component_registry },
     { step_define_components,       NULL                            },

@@ -4,21 +4,35 @@
 
 #include "k_game.h"
 
+struct k_sound_BGM *bgm, *ddd;
+struct k_sound_SFX *ynx;
+
 static void room_step(void *data) {
 
+    if (k_key_pressed('Y'))
+        k_sound_SFX_play(ynx);
+
+    if (k_key_pressed('H'))
+        k_sound_BGM_loop(ddd, INT_MAX);
 }
 
 static int init(void) {
+
+    bgm = k_sound_BGM_load("./assets/bgm.wav");
+    ddd = k_sound_BGM_load("./assets/ddd.mp3");
+    ynx = k_sound_SFX_load("./assets/ynx.mp3");
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     struct k_room *room = k_room_create(&room_config, NULL);
     k_room_add_step_callback(room, room_step, NULL);
 
+    k_sound_BGM_loop(bgm, INT_MAX);
+
     k_goto_room(room);
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");
