@@ -235,8 +235,8 @@ struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager
     if (NULL == callback)
         return NULL;
 
-    callback->draw_callback.base.context    = K_ROOM_CALLBACK;
-    callback->draw_callback.base.event      = K_DRAW_CALLBACK;
+    callback->draw_callback.base.context = K_ROOM_CALLBACK;
+    callback->draw_callback.base.event   = K_DRAW_CALLBACK;
     callback->draw_callback.base.is_deleted = 0;
 
     callback->draw_callback.layer = layer;
@@ -260,8 +260,8 @@ struct k_object_callback *k__callback_add_object_draw(struct k_draw_callback_man
     if (NULL == callback)
         return NULL;
 
-    callback->draw_callback.base.context    = K_OBJECT_CALLBACK;
-    callback->draw_callback.base.event      = K_DRAW_CALLBACK;
+    callback->draw_callback.base.context = K_OBJECT_CALLBACK;
+    callback->draw_callback.base.event   = K_DRAW_CALLBACK;
     callback->draw_callback.base.is_deleted = 0;
 
     callback->draw_callback.layer = layer;
@@ -285,8 +285,8 @@ struct k_component_callback *k__callback_add_component_draw(struct k_draw_callba
     if (NULL == callback)
         return NULL;
 
-    callback->draw_callback.base.context    = K_COMPONENT_CALLBACK;
-    callback->draw_callback.base.event      = K_DRAW_CALLBACK;
+    callback->draw_callback.base.context = K_COMPONENT_CALLBACK;
+    callback->draw_callback.base.event   = K_DRAW_CALLBACK;
     callback->draw_callback.base.is_deleted = 0;
 
     callback->draw_callback.layer = layer;

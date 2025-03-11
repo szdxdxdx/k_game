@@ -94,8 +94,10 @@ static int step_init_callback_managers(void *data) {
     if (0 != k__callback_init_draw_manager(&room->draw_callback_manager))
         return -1;
 
+    k__callback_init_step_manager(&room->step_begin_callback_manager);
     k__callback_init_alarm_manager(&room->alarm_callback_manager);
     k__callback_init_step_manager(&room->step_callback_manager);
+    k__callback_init_step_manager(&room->step_end_callback_manager);
     return 0;
 }
 
@@ -103,9 +105,11 @@ static void step_deinit_callback_managers(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
+    k__callback_deinit_step_manager(&room->step_begin_callback_manager);
     k__callback_deinit_alarm_manager(&room->alarm_callback_manager);
     k__callback_deinit_step_manager(&room->step_callback_manager);
     k__callback_deinit_draw_manager(&room->draw_callback_manager);
+    k__callback_deinit_step_manager(&room->step_end_callback_manager);
 }
 
 static int step_init_callback_list(void *data) {

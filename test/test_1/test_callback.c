@@ -10,23 +10,6 @@ struct obj_player {
     float x, y;
 };
 
-static void object_alarm(struct k_object *object, int timeout_diff) {
-
-    printf("object alarm\n");
-}
-
-static void object_step(struct k_object *object) {
-
-    if (k_key_pressed('1'))
-        k_object_add_alarm_callback(object, object_alarm, 1000);
-
-    if (k_key_pressed('2'))
-        k_object_del_all_callbacks(object);
-
-    if (k_key_pressed('3'))
-        k_object_del_all_components(object);
-}
-
 static int create_room(struct k_room *room, void *params) {
     k_room_add_draw_callback(room, k_room_clean_canvas, NULL, INT_MIN);
 
@@ -34,8 +17,6 @@ static int create_room(struct k_room *room, void *params) {
     struct obj_player *player = k_object_get_data(object);
     player->x = 0.0f;
     player->y = 0.0f;
-
-    k_object_add_step_callback(object, object_step);
 
     /* ------------------------------------------------------------------------ */
 
@@ -102,7 +83,7 @@ static int init(void) {
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");

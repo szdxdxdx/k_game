@@ -119,8 +119,8 @@ struct k_room_callback *k__callback_add_room_step(struct k_step_callback_manager
     if (NULL == callback)
         return NULL;
 
-    callback->step_callback.base.context    = K_ROOM_CALLBACK;
-    callback->step_callback.base.event      = K_STEP_CALLBACK;
+    callback->step_callback.base.context = K_ROOM_CALLBACK;
+    callback->step_callback.base.event   = K_STEP_CALLBACK;
     callback->step_callback.base.is_deleted = 0;
 
     k_list_add_tail(&manager->pending_list, &callback->step_callback.list_node);
@@ -139,8 +139,8 @@ struct k_object_callback *k__callback_add_object_step(struct k_step_callback_man
     if (NULL == callback)
         return NULL;
 
-    callback->step_callback.base.event      = K_STEP_CALLBACK;
-    callback->step_callback.base.context    = K_OBJECT_CALLBACK;
+    callback->step_callback.base.context = K_OBJECT_CALLBACK;
+    callback->step_callback.base.event   = K_STEP_CALLBACK;
     callback->step_callback.base.is_deleted = 0;
 
     k_list_add_tail(&manager->pending_list, &callback->step_callback.list_node);
@@ -159,8 +159,8 @@ struct k_component_callback *k__callback_add_component_step(struct k_step_callba
     if (NULL == callback)
         return NULL;
 
-    callback->step_callback.base.event      = K_STEP_CALLBACK;
-    callback->step_callback.base.context    = K_COMPONENT_CALLBACK;
+    callback->step_callback.base.context = K_COMPONENT_CALLBACK;
+    callback->step_callback.base.event   = K_STEP_CALLBACK;
     callback->step_callback.base.is_deleted = 0;
 
     k_list_add_tail(&manager->pending_list, &callback->step_callback.list_node);
