@@ -17,10 +17,10 @@ struct k_mem_chunk {
 /* 分配给用户使用的内存块的头部 */
 struct k_mem_block {
 
-    /* 分配出的 block 启用 `list` 字段，记录所属的 free_list，归还时链入。
-     * 若为 NULL，表示该 block 由 `fn_malloc` 分配，归还时调用 `fn_free`。
+    /* 分配出的 block 启用 `list` 字段，记录其所属的 free_list，方便归还时直接链入。
+     * 已归入 free_list 的空闲 block 启用 `next` 字段链向下一个 block。
      *
-     * 归入 free_list 的空闲 block 启用 `next` 字段，链向下一个 block
+     * 若 block 由 `fn_malloc()` 分配，则 `list` 标记为 NULL，归还时调用 `fn_free()`。
      */
     union {
         struct k_mem_block **list;
@@ -79,6 +79,7 @@ struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config) {
     if (NULL == pool)
         return NULL;
 
+    struct k_mem_block **free_lists = ptr_offset(pool, sizeof(struct k_mem_pool));
     size_t chunk_capacity = config->alloc_chunk_size - sizeof(struct k_mem_chunk);
 
     pool->fn_malloc        = config->fn_malloc;
@@ -88,9 +89,8 @@ struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config) {
     pool->chunk            = NULL;
     pool->alloc_size_align = config->alloc_size_align;
     pool->block_size_max   = config->block_size_max;
-    pool->free_lists       = ptr_offset(pool, sizeof(struct k_mem_pool));
+    pool->free_lists       = free_lists;
 
-    struct k_mem_block **free_lists = pool->free_lists;
     size_t i = 0;
     for (; i < lists_num; i++)
         free_lists[i] = NULL;
@@ -164,6 +164,7 @@ static inline struct k_mem_block **select_free_list(struct k_mem_pool *pool, siz
 static void *alloc_from_pool(struct k_mem_pool *pool, size_t size) {
 
     size_t block_size = align_up(size, pool->alloc_size_align);
+
     struct k_mem_block **list = select_free_list(pool, block_size);
     if (NULL != *list) {
         struct k_mem_block *block = *list;
