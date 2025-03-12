@@ -18,8 +18,8 @@ static int create_room(void *params) {
     struct k_object *object = k_object_create(sizeof(struct obj_player));
 
     struct obj_player *player = k_object_get_data(object);
-    player->x = 0.0f;
-    player->y = 0.0f;
+    player->x = 60.0f;
+    player->y = 80.0f;
 
     /* ------------------------------------------------------------------------ */
 

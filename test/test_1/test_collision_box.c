@@ -14,8 +14,8 @@ static void create_player_1(void) {
     struct k_object *object = k_object_create(sizeof(struct obj_player));
 
     struct obj_player *player = k_object_get_data(object);
-    player->x = 0.0f;
-    player->y = 0.0f;
+    player->x = 60.0f;
+    player->y = 80.0f;
 
     /* ------------------------------------------------------------------------ */
 
@@ -43,15 +43,15 @@ static void create_player_1(void) {
     /* ------------------------------------------------------------------------ */
 
     struct k_component_type *collision_box = k_component_type_find("k/C-box");
-    struct k_collision_box_rectangle_config box_config;
-    box_config.box_type  = K_COLLISION_BOX_RECTANGLE;
-    box_config.x         = &player->x;
-    box_config.y         = &player->y;
-    box_config.offset_x1 = -32.0f;
-    box_config.offset_y1 = -42.0f;
-    box_config.offset_x2 = +32.0f;
-    box_config.offset_y2 = +42.0f;
-    k_object_add_component(object, collision_box, &box_config);
+    struct k_collision_box_rectangle_config rect_box_config;
+    rect_box_config.box_type  = K_COLLISION_BOX_RECTANGLE;
+    rect_box_config.x         = &player->x;
+    rect_box_config.y         = &player->y;
+    rect_box_config.offset_x1 = -32.0f;
+    rect_box_config.offset_y1 = -42.0f;
+    rect_box_config.offset_x2 = +32.0f;
+    rect_box_config.offset_y2 = +42.0f;
+    k_object_add_component(object, collision_box, &rect_box_config);
 }
 
 static void create_player_2(void) {
@@ -59,7 +59,7 @@ static void create_player_2(void) {
 
     struct obj_player *player = k_object_get_data(object);
     player->x = 100.0f;
-    player->y = 20.0f;
+    player->y = 220.0f;
 
     /* ------------------------------------------------------------------------ */
 
@@ -108,8 +108,8 @@ static int init(void) {
     spr_player = k_sprite_create((struct k_sprite_config[]) {{
         .sprite_w = sprite_w,
         .sprite_h = sprite_h,
-        .origin_x = sprite_w / 2,
-        .origin_y = sprite_h / 2,
+        .origin_x = (float)sprite_w / 2,
+        .origin_y = (float)sprite_h / 2,
         .frames = (struct k_sprite_frame_config[]) {
             { .image = img, .offset_x = 0 * sprite_w, .offset_y = 0, .delay = 200 },
             { .image = img, .offset_x = 1 * sprite_w, .offset_y = 0, .delay = 200 },
