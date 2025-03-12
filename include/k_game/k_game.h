@@ -15,5 +15,6 @@
 
 #include "./k_game_components/k_WASD.h"
 #include "./k_game_components/k_sprite_renderer.h"
+#include "./k_game_components/k_collision_box.h"
 
 #endif

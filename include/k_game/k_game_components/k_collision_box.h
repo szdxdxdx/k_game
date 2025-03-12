@@ -9,17 +9,24 @@ enum k_collision_box_type {
 struct k_collision_box_rectangle_config {
     enum k_collision_box_type box_type;
 
-    float x, y;
-    float offset_x, offset_y;
+    float *x;
+    float *y;
+
+    float offset_x1;
+    float offset_y1;
+    float offset_x2;
+    float offset_y2;
 };
 
-struct k_collision_box_config {
+struct k_collision_box_circle_config {
     enum k_collision_box_type box_type;
 
-    float *x, *y;
-    float offset_x, offset_y;
+    float *x;
+    float *y;
+
+    float offset_x;
+    float offset_y;
+    float r;
 };
-
-
 
 #endif

@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 
 #include "k_game_component.h"
 
@@ -29,12 +30,72 @@ union k_collision_box {
     struct k_collision_box_circle    circle;
 };
 
+union k_collision_box_config {
+    enum k_collision_box_type box_type;
+    struct k_collision_box_rectangle_config rectangle;
+    struct k_collision_box_circle_config    circle;
+};
+
 /* endregion */
 
+void box_debug_draw(struct k_component *component) {
+
+    union k_collision_box *box = k_component_get_data(component);
+
+    if (K_COLLISION_BOX_RECTANGLE == box->box_type) {
+        struct k_collision_box_rectangle *rect = &box->rectangle;
+
+        float x1 = *rect->x + rect->offset_x1;
+        float y1 = *rect->y + rect->offset_y1;
+        float x2 = *rect->x + rect->offset_x2;
+        float y2 = *rect->y + rect->offset_y2;
+        printf("rectangle: x1=%f, y1=%f, x2=%f, y2=%f\n", x1, y1, x2, y2);
+    }
+
+    else if (K_COLLISION_BOX_CIRCLE == box->box_type) {
+        struct k_collision_box_circle *circle = &box->circle;
+
+        float x = *circle->x + circle->offset_x;
+        float y = *circle->y + circle->offset_y;
+        printf("circle: x=%f, y=%f, r=%f\n", x, y, circle->r);
+    }
+}
+
 int box_init(struct k_component *component, void *params) {
-    struct k_collision_box_config *config = params;
+    union k_collision_box_config *box_config = params;
 
+    switch (box_config->box_type) {
+        case K_COLLISION_BOX_RECTANGLE: {
+            struct k_collision_box_rectangle_config *config = &box_config->rectangle;
+            struct k_collision_box_rectangle *rect = k_component_get_data(component);
 
+            rect->box_type  = config->box_type;
+            rect->x         = config->x;
+            rect->y         = config->y;
+            rect->offset_x1 = config->offset_x1;
+            rect->offset_y1 = config->offset_y1;
+            rect->offset_x2 = config->offset_x2;
+            rect->offset_y2 = config->offset_y2;
+            break;
+        }
+
+        case K_COLLISION_BOX_CIRCLE: {
+            struct k_collision_box_circle_config *config = &box_config->circle;
+            struct k_collision_box_circle *circle = k_component_get_data(component);
+
+            circle->box_type = config->box_type;
+            circle->x        = config->x;
+            circle->y        = config->y;
+            circle->offset_x = config->offset_x;
+            circle->offset_y = config->offset_y;
+            circle->r        = config->r;
+            break;
+        }
+
+        default: return -1;
+    }
+
+    k_component_add_draw_callback(component, box_debug_draw, 0);
     return 0;
 }
 

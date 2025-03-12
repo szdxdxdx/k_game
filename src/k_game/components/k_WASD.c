@@ -5,7 +5,7 @@
 #include "k_game_components/k_WASD.h"
 #include "./k_components_def.h"
 
-struct WASD_data {
+struct k_WASD {
 
     enum k_keyboard_key key_up;
     enum k_keyboard_key key_down;
@@ -18,7 +18,7 @@ struct WASD_data {
 };
 
 static void WASD_step(struct k_component *component) {
-    struct WASD_data *WASD = k_component_get_data(component);
+    struct k_WASD *WASD = k_component_get_data(component);
 
     float delta_time = k_get_step_delta();
 
@@ -33,7 +33,7 @@ static void WASD_step(struct k_component *component) {
 }
 
 static int WASD_init(struct k_component *component, void *params) {
-    struct WASD_data *WASD = k_component_get_data(component);
+    struct k_WASD *WASD = k_component_get_data(component);
     struct k_WASD_config *config = params;
 
     WASD->key_up    = config->key_up;
@@ -54,7 +54,7 @@ int k__component_def_WASD(void) {
 
     struct k_component_type_config config = K_COMPONENT_TYPE_CONFIG_INIT;
     config.type_name = "k/WASD";
-    config.data_size = sizeof(struct WASD_data);
+    config.data_size = sizeof(struct k_WASD);
     config.fn_init = WASD_init;
 
     return NULL != k_component_define(&config) ? 0 : -1;
