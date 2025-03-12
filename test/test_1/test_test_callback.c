@@ -21,23 +21,23 @@ static void create_player_1(void) {
 
     struct k_component_type *renderer = k_component_type_find("k/spr-rdr");
     struct k_sprite_renderer_config renderer_config;
-    renderer_config.sprite  = spr_player;
-    renderer_config.z_index = 0;
     renderer_config.x       = &player->x;
     renderer_config.y       = &player->y;
+    renderer_config.sprite  = spr_player;
+    renderer_config.z_index = 0;
     k_object_add_component(object, renderer, &renderer_config);
 
     /* ------------------------------------------------------------------------ */
 
     struct k_component_type *WASD = k_component_type_find("k/WASD");
     struct k_WASD_config WASD_config;
+    WASD_config.x         = &player->x;
+    WASD_config.y         = &player->y;
     WASD_config.key_up    = 'W';
     WASD_config.key_left  = 'A';
     WASD_config.key_down  = 'S';
     WASD_config.key_right = 'D';
     WASD_config.speed     = 200.0f;
-    WASD_config.x         = &player->x;
-    WASD_config.y         = &player->y;
     k_object_add_component(object, WASD, &WASD_config);
 
     /* ------------------------------------------------------------------------ */

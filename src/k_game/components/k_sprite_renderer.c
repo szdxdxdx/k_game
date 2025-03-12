@@ -8,13 +8,14 @@
 
 struct k_sprite_renderer {
 
-    uint64_t timer;
-
-    size_t frame_idx;
+    float *x;
+    float *y;
 
     struct k_sprite *sprite;
 
-    float *x, *y;
+    uint64_t timer;
+
+    size_t frame_idx;
 };
 
 static void renderer_draw(struct k_component *component) {

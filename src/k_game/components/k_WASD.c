@@ -7,14 +7,15 @@
 
 struct k_WASD {
 
+    float *x;
+    float *y;
+
     enum k_keyboard_key key_up;
     enum k_keyboard_key key_down;
     enum k_keyboard_key key_left;
     enum k_keyboard_key key_right;
 
     float speed;
-
-    float *x, *y;
 };
 
 static void WASD_step(struct k_component *component) {

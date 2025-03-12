@@ -5,11 +5,12 @@ struct k_sprite;
 
 struct k_sprite_renderer_config {
 
+    float *x;
+    float *y;
+
     struct k_sprite *sprite;
 
     int z_index;
-
-    float *x, *y;
 };
 
 #endif
