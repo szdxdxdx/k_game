@@ -82,8 +82,16 @@ static int step_set_properties(void *data) {
 
     room->fn_init    = config->fn_init;
     room->fn_cleanup = config->fn_cleanup;
-    room->game_loop  = 0;
+    room->fn_enter   = config->fn_enter;
+    room->fn_leave   = config->fn_leave;
+
+    room->room_w = config->room_w;
+    room->room_h = config->room_h;
+
+    room->game_loop = 0;
+
     room->step_interval_ms = (uint64_t)(1000 / config->room_speed);
+
     return 0;
 }
 
@@ -163,7 +171,7 @@ static int step_call_fn_init(void *data) {
 
         struct k_room *tmp = k__game.current_room;
         k__game.current_room = room;
-        int result = room->fn_init(room, params);
+        int result = room->fn_init(params);
         k__game.current_room = tmp; /* [?] fn_init() 可能销毁了 tmp 指向的房间 */
 
         if (0 != result) {
@@ -182,7 +190,7 @@ static void step_call_fn_cleanup(void *data) {
     if (NULL != room->fn_cleanup) {
         struct k_room *tmp = k__game.current_room;
         k__game.current_room = room;
-        room->fn_cleanup(room);
+        room->fn_cleanup();
         k__game.current_room = tmp; /* [?] fn_cleanup() 可能销毁了 tmp 指向的房间 */
     }
 }

@@ -7,20 +7,6 @@
 
 #include "./k_room.h"
 
-static inline int enter_room(struct k_room *room) {
-
-    room->game_loop = 1; /* <- 标记游戏循环开启，在 entry 回调中也能退出循环 */
-
-    // k__room_flush_enter_callbacks(room);
-    // k__room_exec_enter_callbacks(room);
-    return 0;
-}
-
-static inline void leave_room(struct k_room *room) {
-    // k__room_flush_leave_callbacks(room);
-    // k__room_exec_leave_callbacks(room);
-}
-
 static inline int frame_delay(struct k_room *room) {
 
     uint64_t current_time = SDL_GetTicks64();
@@ -40,7 +26,13 @@ static inline int frame_delay(struct k_room *room) {
     return 0;
 }
 
-static void game_loop(struct k_room *room) {
+void k__room_run(struct k_room *room) {
+    k__game.current_room = room;
+
+    room->game_loop = 1;
+
+    if (NULL != room->fn_enter)
+        room->fn_enter();
 
     while (room->game_loop) {
 
@@ -61,15 +53,9 @@ static void game_loop(struct k_room *room) {
         SDL_RenderPresent(k__window.renderer);
         k__callback_exec_step(&room->step_end_callback_manager);
     }
-}
 
-void k__room_run(struct k_room *room) {
-    k__game.current_room = room;
-    enter_room(room);
+    if (NULL != room->fn_leave)
+        room->fn_leave();
 
-    if (room->game_loop)
-        game_loop(room);
-
-    leave_room(room);
     k__game.current_room = NULL;
 }

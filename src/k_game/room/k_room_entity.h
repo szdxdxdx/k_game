@@ -23,13 +23,14 @@ struct k_room {
 
     struct k_list callback_list;
 
+    int  (*fn_init)   (void *params);
+    void (*fn_cleanup)(void);
+    void (*fn_enter)  (void);
+    void (*fn_leave)  (void);
+
     struct k_object_pool object_pool;
 
     int room_w, room_h;
-
-    int (*fn_init)(struct k_room *room, void *params);
-
-    void (*fn_cleanup)(struct k_room *room);
 
     uint64_t step_interval_ms;
 

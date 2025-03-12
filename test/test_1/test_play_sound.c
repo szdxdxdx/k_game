@@ -16,26 +16,29 @@ static void room_step(void *data) {
         k_sound_BGM_loop(ddd, INT_MAX);
 }
 
-static int init(void) {
+static void fn_enter(void) {
+    struct k_room *room = k_get_current_room();
 
     bgm = k_sound_BGM_load("./assets/bgm.wav");
     ddd = k_sound_BGM_load("./assets/ddd.mp3");
     ynx = k_sound_SFX_load("./assets/ynx.mp3");
-    k_sound_BGM_set_name(bgm, "bgm");
-    k_sound_BGM_set_name(ddd, "ddd");
-    k_sound_SFX_set_name(ynx, "ynx");
-
-    struct k_room_config room_config = K_ROOM_CONFIG_INIT;
-    struct k_room *room = k_room_create(&room_config, NULL);
-    k_room_add_step_callback(room, room_step, NULL);
 
     k_sound_BGM_loop(bgm, INT_MAX);
+
+    k_room_add_step_callback(room, NULL, room_step);
+}
+
+static int init(void) {
+
+    struct k_room_config room_config = K_ROOM_CONFIG_INIT;
+    room_config.fn_enter = fn_enter;
+    struct k_room *room = k_room_create(&room_config, NULL);
 
     k_goto_room(room);
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");
