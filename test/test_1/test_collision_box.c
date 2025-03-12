@@ -65,23 +65,23 @@ static void create_player_2(void) {
 
     struct k_component_type *renderer = k_component_type_find("k/spr-rdr");
     struct k_sprite_renderer_config renderer_config;
-    renderer_config.sprite  = spr_player;
-    renderer_config.z_index = 0;
     renderer_config.x       = &player->x;
     renderer_config.y       = &player->y;
+    renderer_config.sprite  = spr_player;
+    renderer_config.z_index = 0;
     k_object_add_component(object, renderer, &renderer_config);
 
     /* ------------------------------------------------------------------------ */
 
     struct k_component_type *WASD = k_component_type_find("k/WASD");
     struct k_WASD_config WASD_config;
+    WASD_config.x         = &player->x;
+    WASD_config.y         = &player->y;
     WASD_config.key_up    = 'I';
     WASD_config.key_left  = 'J';
     WASD_config.key_down  = 'K';
     WASD_config.key_right = 'L';
     WASD_config.speed     = 200.0f;
-    WASD_config.x         = &player->x;
-    WASD_config.y         = &player->y;
     k_object_add_component(object, WASD, &WASD_config);
 
     struct k_component_type *collision_box = k_component_type_find("k/C-box");
@@ -91,7 +91,7 @@ static void create_player_2(void) {
     circle_box_config.y        = &player->y;
     circle_box_config.offset_x = 0.0f;
     circle_box_config.offset_y = 0.0f;
-    circle_box_config.r        = 16.0f;
+    circle_box_config.r        = 40.0f;
     k_object_add_component(object, collision_box, &circle_box_config);
 }
 

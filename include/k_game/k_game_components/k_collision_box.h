@@ -7,6 +7,7 @@ enum k_collision_box_type {
 };
 
 struct k_collision_box_rectangle_config {
+
     enum k_collision_box_type box_type;
 
     float *x;
@@ -19,6 +20,7 @@ struct k_collision_box_rectangle_config {
 };
 
 struct k_collision_box_circle_config {
+
     enum k_collision_box_type box_type;
 
     float *x;
