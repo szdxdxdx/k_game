@@ -7,7 +7,7 @@ struct k_image;
 
 struct k_image *k_image_load(const char *filepath);
 
-int k_image_set_name(struct k_image *image, const char *name);
+int k_image_set_name(struct k_image *image, const char *image_name);
 
 struct k_image *k_image_find(const char *image_name);
 

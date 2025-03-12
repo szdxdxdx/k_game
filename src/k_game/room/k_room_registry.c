@@ -23,8 +23,8 @@ void k__room_registry_del(struct k_room *room) {
     k__asset_registry_del(&room->registry_node);
 }
 
-int k_room_set_name(struct k_room *room, const char *name) {
-    return k__asset_set_name(&room_registry, &room->registry_node, name);
+int k_room_set_name(struct k_room *room, const char *room_name) {
+    return k__asset_set_name(&room_registry, &room->registry_node, room_name);
 }
 
 struct k_room *k_room_find(const char *room_name) {

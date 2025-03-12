@@ -3,65 +3,56 @@
 
 #include <stddef.h>
 
+struct k_room;
 struct k_object;
 
 /**
- * \brief 组件类型
- *
- * TODO docs
- */
-struct k_component_type;
-
-/**
  * \brief 组件
- *
  * TODO docs
  */
 struct k_component;
 
-struct k_component_type_config {
+/**
+ * \brief 组件管理器
+ * TODO docs
+ */
+struct k_component_manager;
 
-    const char *type_name;
+/**
+ * \brief 组件类型
+ * TODO docs
+ */
+struct k_component_type;
+
+struct k_component_config {
 
     size_t data_size;
 
-    int (*fn_init)(struct k_component *component, void *params);
+    int (*fn_init)(struct k_component_manager *manager, struct k_component *component, void *params);
 
-    void (*fn_fini)(struct k_component *component);
+    void (*fn_fini)(struct k_component_manager *manager, struct k_component *component);
 };
 
-#define K_COMPONENT_TYPE_CONFIG_INIT \
+#define K_COMPONENT_CONFIG_INIT \
 { \
-    .type_name = NULL, \
     .data_size = 0,    \
     .fn_init   = NULL, \
     .fn_fini   = NULL  \
 }
 
-struct k_component_type *k_component_define(const struct k_component_type_config *config);
+struct k_component_manager_config {
+
+    size_t data_size;
+};
+
+struct k_component_type *k_component_define(const struct k_component_config *component_config, const struct k_component_manager_config *manager_config);
+
+int k_component_type_set_name(struct k_component_type *component_type, const char *type_name);
 
 struct k_component_type *k_component_type_find(const char *type_name);
 
-/*
- * TODO docs
- *
- * 往对象上挂载组件时，会根据给定的组件类型创造一个组件实例。
- * 组件不能独立存在，必须要挂载到对象上。
- * 当对象被销毁时，对象所携带的组件也会跟着一并销毁。
- */
-struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
-
-void k_object_del_component(struct k_component *component);
-
-void k_object_del_all_components(struct k_object *object);
-
-void *k_component_get_data(struct k_component *component);
-
-struct k_object *k_component_get_object(struct k_component *component);
-
 /**
  * \brief 组件回调
- *
  * TODO docs
  */
 struct k_component_callback;
@@ -80,8 +71,35 @@ void k_component_del_callback(struct k_component_callback *callback);
 
 void k_component_del_all_callbacks(struct k_component *component);
 
+/**
+ * \brief 创建一个组件实例，并挂载到指定的对象上
+ *
+ * 函数将入参 `params` 转交给组件的初始化回调 `fn_init()`。
+ *
+ * 若创建成功，函数返回组件指针，否则返回 `NULL`。
+ */
+struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
+
+struct k_object *k_component_get_object(struct k_component *component);
+
+void k_object_del_component(struct k_component *component);
+
+void k_object_del_all_components(struct k_object *object);
+
 // TODO struct k_component *k_object_get_component(struct k_object *object, struct k_component_type *component_type);
 
 // TODO int k_get_objects_with_component(size_t component_type_id, struct k_object ***get_objects, size_t *n);
+
+/**
+ * \brief 向房间添加组件管理器
+ * TODO docs
+ */
+int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type);
+
+struct k_component_manager *k_room_get_component_manager(struct k_room *room, struct k_component_type *component_type);
+
+void *k_component_get_data(struct k_component *component);
+
+struct k_component_manager *k_component_get_manager(struct k_component *component);
 
 #endif

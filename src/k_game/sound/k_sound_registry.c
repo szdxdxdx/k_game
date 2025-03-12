@@ -46,12 +46,12 @@ void k__sound_registry_del_SFX(struct k_sound_SFX *sound) {
     k__asset_registry_del(&sound->registry_node);
 }
 
-int k_sound_BGM_set_name(struct k_sound_BGM *sound, const char *name) {
-    return k__asset_set_name(&BGM_registry, &sound->registry_node, name);
+int k_sound_BGM_set_name(struct k_sound_BGM *sound, const char *BGM_name) {
+    return k__asset_set_name(&BGM_registry, &sound->registry_node, BGM_name);
 }
 
-int k_sound_SFX_set_name(struct k_sound_SFX *sound, const char *name) {
-    return k__asset_set_name(&SFX_registry, &sound->registry_node, name);
+int k_sound_SFX_set_name(struct k_sound_SFX *sound, const char *SFX_name) {
+    return k__asset_set_name(&SFX_registry, &sound->registry_node, SFX_name);
 }
 
 struct k_sound_BGM *k_sound_BGM_find(const char *BGM_name) {

@@ -44,11 +44,11 @@ void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
     k_list_node_loop(&registry_node->iter_node);
 }
 
-int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node, const char *name) {
+int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node, const char *asset_name) {
 
     struct k_str_map_node *map_node = &registry_node->name_map_node;
 
-    if (NULL == name || '\0' == name[0]) {
+    if (NULL == asset_name || '\0' == asset_name[0]) {
 
         if ('\0' != map_node->key[0]) {
             k_str_map_del(map_node);
@@ -59,7 +59,7 @@ int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry
         if ('\0' != map_node->key[0])
             k_str_map_del(map_node);
 
-        if (0 != k_str_map_add_if_absent(&registry->name_map, name, map_node)) {
+        if (0 != k_str_map_add_if_absent(&registry->name_map, asset_name, map_node)) {
             return -1; /* TODO log("同名资源已存在") */
         }
     }

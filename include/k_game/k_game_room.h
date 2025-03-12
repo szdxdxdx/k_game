@@ -49,7 +49,7 @@ struct k_room_config {
      * 若成功，回调函数应返回 0，否则应返回非 0。
      * 房间初始化失败，也意味着房间创建失败。
      *
-     * 此回调的 `params` 参数由 `k_room_create()` 传入。
+     * 此回调的入参 `params` 由 `k_room_create()` 传入。
      *
      * 此回调是可选的，指定值为 `NULL` 则不执行回调。
      */
@@ -89,8 +89,7 @@ struct k_room_config {
 /**
  * \brief 创建房间
  *
- * 若 `config` 中指定了房间的初始化回调 `fn_init()`，
- * 则函数将 `params` 转交给该回调。
+ * 函数将入参 `params` 转交给房间的初始化回调 `fn_init()`。
  *
  * 若创建成功，函数返回房间指针，否则返回 `NULL`。
  */
@@ -106,12 +105,12 @@ struct k_room *k_room_create(const struct k_room_config *config, void *params);
  *
  * 若名字设为空字符串 "" 或 `NULL`，则清除名字，并删除索引。
  *
- * 注意：k_game 仅保存该指针，而不会复制 `name` 字符串。
+ * 注意：k_game 仅保存该指针，而不会复制 `room_name` 字符串。
  * 请确保该字符串的内存段在整个使用期间有效且不被修改。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
-int k_room_set_name(struct k_room *room, const char *name);
+int k_room_set_name(struct k_room *room, const char *room_name);
 
 /**
  * \brief 通过房间名称查找房间

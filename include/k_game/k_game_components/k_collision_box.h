@@ -31,4 +31,6 @@ struct k_collision_box_circle_config {
     float r;
 };
 
+void k_collision_check_rectangle(float x1, float y1, float x2, float y2);
+
 #endif

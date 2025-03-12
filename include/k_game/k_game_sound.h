@@ -7,7 +7,7 @@ struct k_sound_BGM *k_sound_BGM_load(const char *filepath);
 
 void k_sound_BGM_release(struct k_sound_BGM *sound);
 
-int k_sound_BGM_set_name(struct k_sound_BGM *sound, const char *name);
+int k_sound_BGM_set_name(struct k_sound_BGM *sound, const char *BGM_name);
 
 struct k_sound_BGM *k_sound_BGM_find(const char *BGM_name);
 
@@ -25,7 +25,7 @@ struct k_sound_SFX *k_sound_SFX_load(const char *filepath);
 
 void k_sound_SFX_release(struct k_sound_SFX *sound);
 
-int k_sound_SFX_set_name(struct k_sound_SFX *sound, const char *name);
+int k_sound_SFX_set_name(struct k_sound_SFX *sound, const char *SFX_name);
 
 struct k_sound_SFX *k_sound_SFX_find(const char *SFX_name);
 

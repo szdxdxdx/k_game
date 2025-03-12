@@ -49,7 +49,7 @@ struct k_sprite_config {
 
 struct k_sprite *k_sprite_create(const struct k_sprite_config *config);
 
-int k_sprite_set_name(struct k_sprite *sprite, const char *name);
+int k_sprite_set_name(struct k_sprite *sprite, const char *sprite_name);
 
 struct k_sprite *k_sprite_find(const char *sprite_name);
 

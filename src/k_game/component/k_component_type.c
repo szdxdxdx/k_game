@@ -4,7 +4,7 @@
 
 #include "./k_component.h"
 
-static int check_config(const struct k_component_type_config *config) {
+static int check_config(const struct k_component_config *config) {
     const char *err_msg;
 
 #define check_config_assert(cond) \
@@ -20,7 +20,7 @@ err:
     return -1;
 }
 
-struct k_component_type *k_component_define(const struct k_component_type_config *config) {
+struct k_component_type *k_component_define(const struct k_component_config *config) {
 
     if (0 != check_config(config))
         goto err;

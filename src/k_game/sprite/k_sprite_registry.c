@@ -23,6 +23,10 @@ void k__sprite_registry_del(struct k_sprite *sprite) {
     k__asset_registry_del(&sprite->registry_node);
 }
 
+int k_sprite_set_name(struct k_sprite *sprite, const char *sprite_name) {
+    return k__asset_set_name(&sprite_registry, &sprite->registry_node, sprite_name);
+}
+
 struct k_sprite *k_sprite_find(const char *sprite_name) {
 
     struct k_asset_registry_node *registry_node = k__asset_registry_find(&sprite_registry, sprite_name);
