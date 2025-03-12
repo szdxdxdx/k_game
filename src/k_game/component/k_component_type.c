@@ -31,9 +31,11 @@ struct k_component_type *k_component_define(const struct k_component_manager_con
 
     k__component_type_registry_add(component_type);
 
-    component_type->data_size = config->data_size;
+    component_type->component_data_size = config->data_size;
     component_type->fn_init = config->fn_init;
     component_type->fn_fini = config->fn_fini;
+
+    /* TODO manager_config */
 
     return component_type;
 

@@ -10,22 +10,21 @@ struct k_component *k__component_create(struct k_component_type *component_type,
     if (NULL == component)
         goto malloc_failed;
 
-    if (0 == component_type->data_size) {
+    if (0 == component_type->component_data_size) {
         component->data = NULL;
     } else {
-        component->data = k_malloc(component_type->data_size);
+        component->data = k_malloc(component_type->component_data_size);
         if (NULL == component->data)
             goto malloc_data_failed;
     }
 
     component->type = component_type;
+    component->manager = k_room_get_component_manager(object->room, component_type);
 
     k_list_init(&component->callback_list);
 
     component->object = object;
     k_list_add_tail(&object->component_list, &component->list_node);
-
-    component->manager = k_room_get_component_manager(object->room, component_type);
 
     if (0 != component_type->fn_init(component, params))
         goto fn_create_failed;
