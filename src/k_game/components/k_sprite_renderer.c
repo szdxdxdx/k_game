@@ -36,9 +36,7 @@ static void renderer_draw(struct k_component *component) {
     k__sprite_draw_frame(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y));
 }
 
-static int renderer_init(struct k_component_manager *manager, struct k_component *component, void *params) {
-    (void)manager;
-
+static int renderer_init(struct k_component *component, void *params) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
     struct k_sprite_renderer_config *config = params;
 

@@ -34,9 +34,7 @@ static void WASD_step(struct k_component *component) {
         *(WASD->x) += WASD->speed * delta_time;
 }
 
-static int WASD_init(struct k_component_manager *manager, struct k_component *component, void *params) {
-    (void)manager;
-
+static int WASD_init(struct k_component *component, void *params) {
     struct k_WASD *WASD = k_component_get_data(component);
     struct k_WASD_config *config = params;
 

@@ -93,7 +93,8 @@ static void collision_box_draw(struct k_component *component) {
          * 【中点圆算法】通过模拟圆的对称性，只计算 1/8 的圆弧，然后通过对称性绘制整个圆
          */
         {
-            int x = (int)circle->r, y = 0;
+            int x = (int)circle->r;
+            int y = 0;
             int err = 0; /* <- 表示当前点到理想圆路径的误差 */
             int centerX = (int)center_x;
             int centerY = (int)center_y;
@@ -118,8 +119,9 @@ static void collision_box_draw(struct k_component *component) {
     }
 }
 
-static int collision_box_init(struct k_component_manager *manager, struct k_component *component, void *params) {
+static int collision_box_init(struct k_component *component, void *params) {
 
+    struct k_component_manager *manager = k_component_get_manager(component);
     // if (NULL == manager)
     //     return -1;
 

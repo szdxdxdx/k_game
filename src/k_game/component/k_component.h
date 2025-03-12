@@ -5,6 +5,7 @@
 
 #include "./k_component_registry.h"
 #include "./k_component_type.h"
+#include "./k_component_manager.h"
 #include "./k_component_entity.h"
 #include "./k_component_create.h"
 

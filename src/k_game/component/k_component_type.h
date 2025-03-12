@@ -13,9 +13,9 @@ struct k_component_type {
 
     size_t data_size;
 
-    int (*fn_init)(struct k_component_manager *manager, struct k_component *component, void *params);
+    int (*fn_init)(struct k_component *component, void *params);
 
-    void (*fn_fini)(struct k_component_manager *manager, struct k_component *component);
+    void (*fn_fini)(struct k_component *component);
 };
 
 void k__component_undef(struct k_component_type *component_type);

@@ -28,9 +28,9 @@ struct k_component_config {
 
     size_t data_size;
 
-    int (*fn_init)(struct k_component_manager *manager, struct k_component *component, void *params);
+    int (*fn_init)(struct k_component *component, void *params);
 
-    void (*fn_fini)(struct k_component_manager *manager, struct k_component *component);
+    void (*fn_fini)(struct k_component *component);
 };
 
 #define K_COMPONENT_CONFIG_INIT \

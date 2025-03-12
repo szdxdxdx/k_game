@@ -10,9 +10,11 @@ struct k_component {
 
     struct k_list_node list_node;
 
-    const struct k_component_type *type;
+    struct k_component_type *type;
 
     struct k_object *object;
+
+    struct k_component_manager *manager;
 
     struct k_list callback_list;
 

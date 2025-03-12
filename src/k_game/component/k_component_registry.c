@@ -36,3 +36,7 @@ struct k_component_type *k_component_type_find(const char *type_name) {
     struct k_component_type *component_type = container_of(registry_node, struct k_component_type, registry_node);
     return component_type;
 }
+
+struct k_component_manager *k_room_get_component_manager(struct k_room *room, struct k_component_type *component_type) {
+    return NULL;
+}
