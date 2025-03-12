@@ -56,15 +56,6 @@ struct k_collision_box_manager {
 
 static struct k_collision_box_manager collision_box_manager;
 
-static int collision_box_manager_init(void) {
-
-    return 0;
-}
-
-static void collision_box_manager_fini(void) {
-    /* TODO */
-}
-
 /* endregion */
 
 /* region [component_callback] */
@@ -127,7 +118,11 @@ static void collision_box_draw(struct k_component *component) {
     }
 }
 
-static int collision_box_init(struct k_component *component, void *params) {
+static int collision_box_init(struct k_component_manager *manager, struct k_component *component, void *params) {
+
+    // if (NULL == manager)
+    //     return -1;
+
     union k_collision_box_config *box_config = params;
 
     switch (box_config->box_type) {
@@ -171,15 +166,19 @@ static int collision_box_init(struct k_component *component, void *params) {
 
 int k__component_def_collision_box(void) {
 
-    if (0 != collision_box_manager_init())
+    struct k_component_manager_config manager_config;
+    /* TODO */
+
+    struct k_component_config component_config = K_COMPONENT_CONFIG_INIT;
+    component_config.data_size = sizeof(union k_collision_box);
+    component_config.fn_init   = collision_box_init;
+
+    struct k_component_type *type = k_component_define(&manager_config, &component_config);
+    if (NULL == type)
         return -1;
 
-    struct k_component_config config = K_COMPONENT_CONFIG_INIT;
-    config.type_name = "k/C-box";
-    config.data_size = sizeof(union k_collision_box);
-    config.fn_init   = collision_box_init;
-
-    return NULL != k_component_define(&config) ? 0 : -1;
+    k_component_type_set_name(type, "k/C-box");
+    return 0;
 }
 
 /* endregion */

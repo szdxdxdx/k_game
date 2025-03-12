@@ -7,7 +7,7 @@ int k__component_registry_init(void);
 
 void k__component_registry_cleanup(void);
 
-int k__component_registry_add(struct k_component_type *component_type, const char *name);
+void k__component_registry_add(struct k_component_type *component_type);
 
 void k__component_registry_del(struct k_component_type *component_type);
 

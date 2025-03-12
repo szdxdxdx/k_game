@@ -15,13 +15,16 @@ void k__component_registry_cleanup(void) {
     k__asset_registry_cleanup(&component_registry, fn_release_asset);
 }
 
-int k__component_registry_add(struct k_component_type *component_type, const char *type_name) {
+void k__component_registry_add(struct k_component_type *component_type) {
     k__asset_registry_add(&component_registry, &component_type->registry_node);
-    return k__asset_set_name(&component_registry, &component_type->registry_node, type_name);
 }
 
 void k__component_registry_del(struct k_component_type *component_type) {
     k__asset_registry_del(&component_type->registry_node);
+}
+
+int k_component_type_set_name(struct k_component_type *component_type, const char *type_name) {
+    return k__asset_set_name(&component_registry, &component_type->registry_node, type_name);
 }
 
 struct k_component_type *k_component_type_find(const char *type_name) {

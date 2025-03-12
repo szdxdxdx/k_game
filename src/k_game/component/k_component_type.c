@@ -20,7 +20,7 @@ err:
     return -1;
 }
 
-struct k_component_type *k_component_define(const struct k_component_config *config) {
+struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_config *config) {
 
     if (0 != check_config(config))
         goto err;
@@ -29,10 +29,7 @@ struct k_component_type *k_component_define(const struct k_component_config *con
     if (NULL == component_type)
         goto err;
 
-    if (0 != k__component_registry_add(component_type, config->type_name)) {
-        k_free(component_type);
-        goto err;
-    }
+    k__component_registry_add(component_type);
 
     component_type->data_size = config->data_size;
     component_type->fn_init = config->fn_init;

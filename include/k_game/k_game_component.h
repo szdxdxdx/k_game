@@ -45,7 +45,7 @@ struct k_component_manager_config {
     size_t data_size;
 };
 
-struct k_component_type *k_component_define(const struct k_component_config *component_config, const struct k_component_manager_config *manager_config);
+struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_config *component_config);
 
 int k_component_type_set_name(struct k_component_type *component_type, const char *type_name);
 

@@ -23,7 +23,7 @@ struct k_component *k__component_create(const struct k_component_type *component
     component->object = object;
     k_list_add_tail(&object->component_list, &component->list_node);
 
-    if (0 != component_type->fn_init(component, params))
+    if (0 != component_type->fn_init(NULL, component, params))
         goto fn_create_failed;
 
     return component;
@@ -41,7 +41,7 @@ malloc_failed:
 void k__component_destroy(struct k_component *component) {
 
     if (component->type->fn_fini != NULL)
-        component->type->fn_fini(component);
+        component->type->fn_fini(NULL, component);
 
     k_list_del(&component->list_node);
     k_component_del_all_callbacks(component);
