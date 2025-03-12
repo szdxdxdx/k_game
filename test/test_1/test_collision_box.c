@@ -83,6 +83,16 @@ static void create_player_2(void) {
     WASD_config.x         = &player->x;
     WASD_config.y         = &player->y;
     k_object_add_component(object, WASD, &WASD_config);
+
+    struct k_component_type *collision_box = k_component_type_find("k/C-box");
+    struct k_collision_box_circle_config circle_box_config;
+    circle_box_config.box_type = K_COLLISION_BOX_CIRCLE;
+    circle_box_config.x        = &player->x;
+    circle_box_config.y        = &player->y;
+    circle_box_config.offset_x = 0.0f;
+    circle_box_config.offset_y = 0.0f;
+    circle_box_config.r        = 16.0f;
+    k_object_add_component(object, collision_box, &circle_box_config);
 }
 
 static int create_room(void *params) {

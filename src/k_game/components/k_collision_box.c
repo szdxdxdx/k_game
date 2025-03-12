@@ -55,16 +55,12 @@ void box_debug_draw(struct k_component *component) {
         float y1 = *rect->y + rect->offset_y1;
         float x2 = *rect->x + rect->offset_x2;
         float y2 = *rect->y + rect->offset_y2;
-        printf("rectangle: x1=%f, y1=%f, x2=%f, y2=%f\n", x1, y1, x2, y2);
-
-#define min(a, b) (a < b ? a : b)
-#define abs(a) ((a) < 0 ? -(a) : (a))
 
         SDL_FRect draw_rect = {
-            .x = min(x1, x2),
-            .y = min(y1, y2),
-            .w = abs(x2 - x1),
-            .h = abs(y2 - y1)
+            .x = (x1 < x2 ? x1 : x2),
+            .y = (y1 < y2 ? y1 : y2),
+            .w = (x2 > x1 ? x2 - x1 : x1 - x2),
+            .h = (y2 > y1 ? y2 - y1 : y1 - y2),
         };
         SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 0, 255);
         SDL_RenderDrawRectF(k__window.renderer, &draw_rect);
@@ -73,9 +69,37 @@ void box_debug_draw(struct k_component *component) {
     else if (K_COLLISION_BOX_CIRCLE == box->box_type) {
         struct k_collision_box_circle *circle = &box->circle;
 
-        float x = *circle->x + circle->offset_x;
-        float y = *circle->y + circle->offset_y;
-        printf("circle: x=%f, y=%f, r=%f\n", x, y, circle->r);
+        float center_x = *circle->x + circle->offset_x;
+        float center_y = *circle->y + circle->offset_y;
+
+        SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 0, 255);
+        // SDL_RenderDrawCircleF(k__window.renderer, x, y, circle->r);
+        int x = (int)circle->r;
+        int y = 0;
+        int err = 0;
+        int centerX = (int)center_x;
+        int centerY = (int)center_y;
+
+        while (x >= y) {
+            // 绘制圆的 8 个对称点
+            SDL_RenderDrawPoint(k__window.renderer, centerX + x, centerY + y);
+            SDL_RenderDrawPoint(k__window.renderer, centerX + y, centerY + x);
+            SDL_RenderDrawPoint(k__window.renderer, centerX - y, centerY + x);
+            SDL_RenderDrawPoint(k__window.renderer, centerX - x, centerY + y);
+            SDL_RenderDrawPoint(k__window.renderer, centerX - x, centerY - y);
+            SDL_RenderDrawPoint(k__window.renderer, centerX - y, centerY - x);
+            SDL_RenderDrawPoint(k__window.renderer, centerX + y, centerY - x);
+            SDL_RenderDrawPoint(k__window.renderer, centerX + x, centerY - y);
+
+            if (err <= 0) {
+                y += 1;
+                err += 2 * y + 1;
+            }
+            if (err > 0) {
+                x -= 1;
+                err -= 2 * x + 1;
+            }
+        }
     }
 }
 
