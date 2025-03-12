@@ -17,7 +17,7 @@ struct k_sprite_renderer {
     float *x, *y;
 };
 
-static void sprite_renderer_draw(struct k_component *component) {
+static void renderer_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
     struct k_sprite *sprite = renderer->sprite;
 
@@ -35,7 +35,7 @@ static void sprite_renderer_draw(struct k_component *component) {
     k__sprite_draw_frame(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y));
 }
 
-static int sprite_renderer_init(struct k_component *component, void *params) {
+static int renderer_init(struct k_component *component, void *params) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
     struct k_sprite_renderer_config *config = params;
 
@@ -45,7 +45,7 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     renderer->x         = config->x;
     renderer->y         = config->y;
 
-    if (NULL == k_component_add_draw_callback(component, sprite_renderer_draw, config->z_index))
+    if (NULL == k_component_add_draw_callback(component, renderer_draw, config->z_index))
         return -1;
 
     return 0;
@@ -56,9 +56,7 @@ int k__component_def_sprite_renderer(void) {
     struct k_component_type_config config = K_COMPONENT_TYPE_CONFIG_INIT;
     config.type_name = "k/spr-rdr";
     config.data_size = sizeof(struct k_sprite_renderer);
-    config.fn_init = sprite_renderer_init;
+    config.fn_init = renderer_init;
 
-    struct k_component_type *type = k_component_define(&config);
-
-    return NULL == type ? -1 : 0;
+    return NULL != k_component_define(&config) ? 0 : -1;
 }

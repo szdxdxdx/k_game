@@ -88,10 +88,10 @@ static void step_cleanup_component_registry(void *data) {
 static int step_define_components(void *data) {
     (void)data;
 
-    if (0 != k__component_def_WASD())            return -1;
-    if (0 != k__component_def_sprite_renderer()) return -1;
-
-    return 0;
+    return k__component_def_WASD()
+        || k__component_def_sprite_renderer()
+        || k__component_def_collision_box()
+     ? -1 : 0;
 }
 
 static int step_init_room_registry(void *data) {
