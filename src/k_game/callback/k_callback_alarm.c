@@ -4,6 +4,10 @@
 
 #include "./k_callback.h"
 
+#include "../room/k_room.h"
+#include "../object/k_object.h"
+#include "../component/k_component.h"
+
 /* region [callback_def] */
 
 struct k_alarm_callback {
@@ -164,7 +168,7 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
     }
 }
 
-struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manager *manager, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
+struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
 
     struct k_room_alarm_callback *callback = k_malloc(sizeof(struct k_room_alarm_callback));
     if (NULL == callback)
@@ -181,6 +185,7 @@ struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manag
     k_list_add_tail(&manager->pending_list, &callback->alarm_callback.list_node);
 
     callback->room_callback.base = &callback->alarm_callback.base;
+    k_list_add_tail(&room->callback_list, &callback->room_callback.list_node);
 
     callback->fn_callback = fn_callback;
     callback->data        = data;
@@ -205,6 +210,7 @@ struct k_object_callback *k__callback_add_object_alarm(struct k_alarm_callback_m
     k_list_add_tail(&manager->pending_list, &callback->alarm_callback.list_node);
 
     callback->object_callback.base = &callback->alarm_callback.base;
+    k_list_add_tail(&object->callback_list, &callback->object_callback.list_node);
 
     callback->fn_callback = fn_callback;
     callback->object      = object;
@@ -229,6 +235,7 @@ struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_call
     k_list_add_tail(&manager->pending_list, &callback->alarm_callback.list_node);
 
     callback->component_callback.base = &callback->alarm_callback.base;
+    k_list_add_tail(&component->callback_list, &callback->component_callback.list_node);
 
     callback->fn_callback = fn_callback;
     callback->component   = component;

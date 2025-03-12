@@ -2,6 +2,10 @@
 
 #include "./k_callback.h"
 
+#include "../room/k_room.h"
+#include "../object/k_object.h"
+#include "../component/k_component.h"
+
 /* region [layer] */
 
 struct k_draw_callback_layer {
@@ -225,7 +229,7 @@ void k__callback_exec_draw(struct k_draw_callback_manager *manager) {
     }
 }
 
-struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager *manager, void *data, void (*fn_callback)(void *data), int z_index) {
+struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data), int z_index) {
 
     struct k_draw_callback_layer *layer = find_or_create_layer(manager, z_index);
     if (NULL == layer)
@@ -243,6 +247,7 @@ struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager
     k_list_add_tail(&manager->callback_pending_list, &callback->draw_callback.list_node);
 
     callback->room_callback.base = &callback->draw_callback.base;
+    k_list_add_tail(&room->callback_list, &callback->room_callback.list_node);
 
     callback->fn_callback = fn_callback;
     callback->data        = data;
@@ -268,6 +273,7 @@ struct k_object_callback *k__callback_add_object_draw(struct k_draw_callback_man
     k_list_add_tail(&manager->callback_pending_list, &callback->draw_callback.list_node);
 
     callback->object_callback.base = &callback->draw_callback.base;
+    k_list_add_tail(&object->callback_list, &callback->object_callback.list_node);
 
     callback->fn_callback = fn_callback;
     callback->object      = object;
@@ -293,6 +299,7 @@ struct k_component_callback *k__callback_add_component_draw(struct k_draw_callba
     k_list_add_tail(&manager->callback_pending_list, &callback->draw_callback.list_node);
 
     callback->component_callback.base = &callback->draw_callback.base;
+    k_list_add_tail(&component->callback_list, &callback->component_callback.list_node);
 
     callback->fn_callback = fn_callback;
     callback->component   = component;

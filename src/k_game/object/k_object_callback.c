@@ -2,58 +2,23 @@
 #include "./k_object.h"
 
 struct k_object_callback *k_object_add_step_begin_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
-
-    struct k_step_callback_manager *manager = &object->room->step_begin_callback_manager;
-    struct k_object_callback *callback = k__callback_add_object_step(manager, object, fn_callback);
-    if (NULL == callback)
-        return NULL;
-
-    k_list_add_tail(&object->callback_list, &callback->list_node);
-    return callback;
+    return k__callback_add_object_step(&object->room->step_begin_callback_manager, object, fn_callback);
 }
 
 struct k_object_callback *k_object_add_alarm_callback(struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
-
-    struct k_alarm_callback_manager *manager = &object->room->alarm_callback_manager;
-    struct k_object_callback *callback = k__callback_add_object_alarm(manager, object, fn_callback, delay_ms);
-    if (NULL == callback)
-        return NULL;
-
-    k_list_add_tail(&object->callback_list, &callback->list_node);
-    return callback;
+    return k__callback_add_object_alarm(&object->room->alarm_callback_manager, object, fn_callback, delay_ms);
 }
 
 struct k_object_callback *k_object_add_step_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
-
-    struct k_step_callback_manager *manager = &object->room->step_callback_manager;
-    struct k_object_callback *callback = k__callback_add_object_step(manager, object, fn_callback);
-    if (NULL == callback)
-        return NULL;
-
-    k_list_add_tail(&object->callback_list, &callback->list_node);
-    return callback;
+    return k__callback_add_object_step(&object->room->step_callback_manager, object, fn_callback);
 }
 
 struct k_object_callback *k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object), int z_index) {
-
-    struct k_draw_callback_manager *manager = &object->room->draw_callback_manager;
-    struct k_object_callback *callback = k__callback_add_object_draw(manager, object, fn_callback, z_index);
-    if (NULL == callback)
-        return NULL;
-
-    k_list_add_tail(&object->callback_list, &callback->list_node);
-    return callback;
+    return k__callback_add_object_draw(&object->room->draw_callback_manager, object, fn_callback, z_index);
 }
 
 struct k_object_callback *k_object_add_step_end_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
-
-    struct k_step_callback_manager *manager = &object->room->step_end_callback_manager;
-    struct k_object_callback *callback = k__callback_add_object_step(manager, object, fn_callback);
-    if (NULL == callback)
-        return NULL;
-
-    k_list_add_tail(&object->callback_list, &callback->list_node);
-    return callback;
+    return k__callback_add_object_step(&object->room->step_end_callback_manager, object, fn_callback);
 }
 
 void k_object_del_callback(struct k_object_callback *callback) {

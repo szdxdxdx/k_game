@@ -26,7 +26,7 @@ void k__callback_flush_alarm(struct k_alarm_callback_manager *manager);
 
 void k__callback_exec_alarm(struct k_alarm_callback_manager *manager);
 
-struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manager *manager, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
+struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
 
 struct k_object_callback *k__callback_add_object_alarm(struct k_alarm_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms);
 

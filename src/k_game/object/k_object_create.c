@@ -1,5 +1,3 @@
-#include "k_log.h"
-
 #include "k_game_alloc.h"
 #include "k_game_component.h"
 
@@ -35,7 +33,6 @@ struct k_object *k_object_create(size_t object_data_size) {
     return object;
 
 err:
-    k_log_error("Failed to create object");
     return NULL;
 }
 
