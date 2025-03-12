@@ -23,7 +23,8 @@ struct k_sprite_frame_config {
 
     struct k_image *image;
 
-    int offset_x, offset_y;
+    int offset_x;
+    int offset_y;
 
     int delay;
 };
@@ -35,9 +36,11 @@ struct k_sprite_frame_config {
  */
 struct k_sprite_config {
 
-    int sprite_w, sprite_h;
+    int sprite_w;
+    int sprite_h;
 
-    int origin_x, origin_y;
+    float origin_x;
+    float origin_y;
 
     struct k_sprite_frame_config *frames;
 

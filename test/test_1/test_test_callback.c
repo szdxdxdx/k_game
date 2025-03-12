@@ -47,10 +47,10 @@ static void create_player_1(void) {
     box_config.box_type  = K_COLLISION_BOX_RECTANGLE;
     box_config.x         = &player->x;
     box_config.y         = &player->y;
-    box_config.offset_x1 = 0.0f;
-    box_config.offset_y1 = 0.0f;
-    box_config.offset_x2 = 10.0f;
-    box_config.offset_y2 = 10.0f;
+    box_config.offset_x1 = -32.0f;
+    box_config.offset_y1 = -42.0f;
+    box_config.offset_x2 = +32.0f;
+    box_config.offset_y2 = +42.0f;
     k_object_add_component(object, collision_box, &box_config);
 }
 
@@ -108,8 +108,8 @@ static int init(void) {
     spr_player = k_sprite_create((struct k_sprite_config[]) {{
         .sprite_w = sprite_w,
         .sprite_h = sprite_h,
-        .origin_x = 30,
-        .origin_y = 30,
+        .origin_x = sprite_w / 2,
+        .origin_y = sprite_h / 2,
         .frames = (struct k_sprite_frame_config[]) {
             { .image = img, .offset_x = 0 * sprite_w, .offset_y = 0, .delay = 200 },
             { .image = img, .offset_x = 1 * sprite_w, .offset_y = 0, .delay = 200 },

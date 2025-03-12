@@ -18,5 +18,7 @@ int k__sprite_draw_frame(struct k_sprite *sprite, size_t frame_idx, float dst_x,
     src.w = sprite->sprite_w;
     src.h = sprite->sprite_h;
 
-    return k__image_draw(frame->image, &src, dst_x, dst_y);
+    float x = dst_x - sprite->origin_x;
+    float y = dst_y - sprite->origin_y;
+    return k__image_draw(frame->image, &src, x, y);
 }

@@ -1,10 +1,10 @@
 #include "k_game_time.h"
 #include "k_game_component.h"
+#include "k_game_components/k_sprite_renderer.h"
+
+#include "./k_components_def.h"
 
 #include "../sprite/k_sprite.h"
-
-#include "k_game_components/k_sprite_renderer.h"
-#include "./k_components_def.h"
 
 struct k_sprite_renderer {
 

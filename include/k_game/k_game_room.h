@@ -14,7 +14,8 @@ struct k_room;
 struct k_room_config {
 
     /** \brief 房间的宽高 */
-    int room_w, room_h;
+    int room_w;
+    int room_h;
 
     /** \brief 房间的运行速度，单位：步/秒（帧/秒） */
     int room_speed;

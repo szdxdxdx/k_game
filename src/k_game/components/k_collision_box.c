@@ -1,10 +1,16 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <limits.h>
+
+#include "SDL.h"
 
 #include "k_game_component.h"
-
 #include "k_game_components/k_collision_box.h"
+
 #include "./k_components_def.h"
+
+#include "../game/k_game_context.h"
+#include "../k_SDL/k_SDL.h"
 
 /* region [box_type_def] */
 
@@ -50,6 +56,18 @@ void box_debug_draw(struct k_component *component) {
         float x2 = *rect->x + rect->offset_x2;
         float y2 = *rect->y + rect->offset_y2;
         printf("rectangle: x1=%f, y1=%f, x2=%f, y2=%f\n", x1, y1, x2, y2);
+
+#define min(a, b) (a < b ? a : b)
+#define abs(a) ((a) < 0 ? -(a) : (a))
+
+        SDL_FRect draw_rect = {
+            .x = min(x1, x2),
+            .y = min(y1, y2),
+            .w = abs(x2 - x1),
+            .h = abs(y2 - y1)
+        };
+        SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 0, 255);
+        SDL_RenderDrawRectF(k__window.renderer, &draw_rect);
     }
 
     else if (K_COLLISION_BOX_CIRCLE == box->box_type) {
@@ -95,7 +113,7 @@ int box_init(struct k_component *component, void *params) {
         default: return -1;
     }
 
-    k_component_add_draw_callback(component, box_debug_draw, 0);
+    k_component_add_draw_callback(component, box_debug_draw, INT_MAX - 2);
     return 0;
 }
 

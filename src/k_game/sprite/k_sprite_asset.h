@@ -18,9 +18,11 @@ struct k_sprite {
 
     const char *sprite_name;
 
-    int sprite_w, sprite_h;
+    int sprite_w;
+    int sprite_h;
 
-    int origin_x, origin_y;
+    float origin_x;
+    float origin_y;
 
     struct k_sprite_frame *frames;
 
