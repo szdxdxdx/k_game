@@ -2,7 +2,7 @@
 
 static struct k_asset_registry component_registry;
 
-int k__component_registry_init(void) {
+int k__component_type_registry_init(void) {
     return k__asset_registry_init(&component_registry);
 }
 
@@ -11,15 +11,15 @@ static void fn_release_asset(struct k_asset_registry_node *registry_node) {
     k__component_undef(component_type);
 }
 
-void k__component_registry_cleanup(void) {
+void k__component_type_registry_cleanup(void) {
     k__asset_registry_cleanup(&component_registry, fn_release_asset);
 }
 
-void k__component_registry_add(struct k_component_type *component_type) {
+void k__component_type_registry_add(struct k_component_type *component_type) {
     k__asset_registry_add(&component_registry, &component_type->registry_node);
 }
 
-void k__component_registry_del(struct k_component_type *component_type) {
+void k__component_type_registry_del(struct k_component_type *component_type) {
     k__asset_registry_del(&component_type->registry_node);
 }
 

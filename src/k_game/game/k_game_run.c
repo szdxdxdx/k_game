@@ -77,12 +77,12 @@ static void step_cleanup_sprite_registry(void *data) {
 
 static int step_init_component_registry(void *data) {
     (void)data;
-    return k__component_registry_init();
+    return k__component_type_registry_init();
 }
 
 static void step_cleanup_component_registry(void *data) {
     (void)data;
-    k__component_registry_cleanup();
+    k__component_type_registry_cleanup();
 }
 
 static int step_define_components(void *data) {

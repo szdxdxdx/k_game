@@ -133,6 +133,21 @@ static void step_del_all_callbacks(void *data) {
     /* 回调管理器会清除的。所以这里不需要清除？*/
 }
 
+static int step_init_component_managers(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+
+    k_component_manager_registry_init(&room->component_manager_registry);
+    return 0;
+}
+
+static void step_deinit_component_managers(void *data) {
+    struct k_room_creation_context *ctx = data;
+    struct k_room *room = ctx->room;
+
+    k_component_manager_registry_deinit(&room->component_manager_registry);
+}
+
 static int step_init_object_pool(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
@@ -196,15 +211,16 @@ static void step_call_fn_cleanup(void *data) {
 }
 
 static const struct k_seq_step steps[] = {
-    { step_check_config,           NULL                          },
-    { step_malloc_room,            step_free_room                },
-    { step_malloc_data,            step_free_data                },
-    { step_set_properties,         NULL                          },
-    { step_init_callback_managers, step_deinit_callback_managers },
-    { step_init_callback_list,     step_del_all_callbacks        },
-    { step_init_object_pool,       step_cleanup_object_pool      },
-    { step_registry_add,           step_registry_del             },
-    { step_call_fn_init,           step_call_fn_cleanup          },
+    { step_check_config,            NULL                           },
+    { step_malloc_room,             step_free_room                 },
+    { step_malloc_data,             step_free_data                 },
+    { step_set_properties,          NULL                           },
+    { step_init_callback_managers,  step_deinit_callback_managers  },
+    { step_init_callback_list,      step_del_all_callbacks         },
+    { step_init_component_managers, step_deinit_component_managers },
+    { step_init_object_pool,        step_cleanup_object_pool       },
+    { step_registry_add,            step_registry_del              },
+    { step_call_fn_init,            step_call_fn_cleanup           },
 };
 
 /* endregion */

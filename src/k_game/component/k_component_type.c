@@ -29,7 +29,7 @@ struct k_component_type *k_component_define(const struct k_component_manager_con
     if (NULL == component_type)
         goto err;
 
-    k__component_registry_add(component_type);
+    k__component_type_registry_add(component_type);
 
     component_type->data_size = config->data_size;
     component_type->fn_init = config->fn_init;
@@ -43,6 +43,6 @@ err:
 }
 
 void k__component_undef(struct k_component_type *component_type) {
-    k__component_registry_del(component_type);
+    k__component_type_registry_del(component_type);
     k_free(component_type);
 }
