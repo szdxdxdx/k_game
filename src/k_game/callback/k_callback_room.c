@@ -1,4 +1,4 @@
-#include "./k_room.h"
+#include "../room/k_room.h"
 
 struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void *data, void (*fn_callback)(void *data)) {
     return k__callback_add_room_step(&room->step_begin_callback_manager, room, data, fn_callback);

@@ -1,15 +1,9 @@
 #ifndef K_GAME__CALLBACK_ALARM_H
 #define K_GAME__CALLBACK_ALARM_H
 
-#include <stdint.h>
-
 #include "k_list.h"
 
 #include "./k_callback_base.h"
-
-#include "../room/k_room_callback.h"
-#include "../object/k_object_callback.h"
-#include "../component/k_component_callback.h"
 
 struct k_alarm_callback_manager {
 

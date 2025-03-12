@@ -7,6 +7,5 @@
 #include "./k_component_type.h"
 #include "./k_component_entity.h"
 #include "./k_component_create.h"
-#include "./k_component_callback.h"
 
 #endif

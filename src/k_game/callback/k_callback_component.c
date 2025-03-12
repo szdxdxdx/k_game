@@ -1,6 +1,6 @@
 #include "../room/k_room.h"
 #include "../object/k_object.h"
-#include "./k_component.h"
+#include "../component/k_component.h"
 
 struct k_component_callback *k_component_add_step_begin_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
     return k__callback_add_component_step(&component->object->room->step_begin_callback_manager, component, fn_callback);

@@ -1,5 +1,5 @@
 #include "../room/k_room.h"
-#include "./k_object.h"
+#include "../object/k_object.h"
 
 struct k_object_callback *k_object_add_step_begin_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
     return k__callback_add_object_step(&object->room->step_begin_callback_manager, object, fn_callback);

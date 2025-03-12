@@ -27,4 +27,15 @@ struct k_callback {
 
 void k__callback_set_deleted(struct k_callback *callback);
 
+struct k_step_callback;
+struct k_alarm_callback;
+struct k_draw_callback;
+
+struct k_room;
+struct k_room_callback;
+struct k_object;
+struct k_object_callback;
+struct k_component;
+struct k_component_callback;
+
 #endif

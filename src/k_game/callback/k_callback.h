@@ -5,4 +5,8 @@
 #include "./k_callback_step.h"
 #include "./k_callback_draw.h"
 
+#include "./k_callback_room.h"
+#include "./k_callback_object.h"
+#include "./k_callback_component.h"
+
 #endif

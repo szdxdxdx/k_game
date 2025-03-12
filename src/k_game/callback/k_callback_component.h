@@ -1,5 +1,7 @@
-#ifndef K_GAME__COMPONENT_CALLBACK_H
-#define K_GAME__COMPONENT_CALLBACK_H
+#ifndef K_GAME__CALLBACK_COMPONENT_H
+#define K_GAME__CALLBACK_COMPONENT_H
+
+#include "k_list.h"
 
 struct k_component;
 struct k_callback;

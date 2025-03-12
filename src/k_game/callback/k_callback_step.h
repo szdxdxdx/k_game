@@ -5,10 +5,6 @@
 
 #include "./k_callback_base.h"
 
-#include "../room/k_room_callback.h"
-#include "../object/k_object_callback.h"
-#include "../component/k_component_callback.h"
-
 struct k_step_callback_manager {
 
     struct k_list callback_list;

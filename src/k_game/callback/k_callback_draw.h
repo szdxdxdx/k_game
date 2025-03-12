@@ -5,9 +5,6 @@
 #include "k_int_map.h"
 
 #include "./k_callback_base.h"
-#include "../room/k_room_callback.h"
-#include "../object/k_object_callback.h"
-#include "../component/k_component_callback.h"
 
 struct k_draw_callback_manager {
 

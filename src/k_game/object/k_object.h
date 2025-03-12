@@ -6,6 +6,5 @@
 #include "./k_object_entity.h"
 #include "./k_object_create.h"
 #include "./k_object_pool.h"
-#include "./k_object_callback.h"
 
 #endif
