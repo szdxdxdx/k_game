@@ -10,10 +10,13 @@ struct obj_player {
     float x, y;
 };
 
-static int create_room(struct k_room *room, void *params) {
+static int create_room(void *params) {
+    struct k_room *room = k_get_current_room();
+
     k_room_add_draw_callback(room, NULL, k_room_clean_canvas, INT_MIN);
 
     struct k_object *object = k_object_create(sizeof(struct obj_player));
+
     struct obj_player *player = k_object_get_data(object);
     player->x = 0.0f;
     player->y = 0.0f;

@@ -19,10 +19,9 @@ struct k_sprite_renderer {
 
 static void sprite_renderer_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
-    uint64_t step_delta_ms = k_get_step_delta_ms();
-
     struct k_sprite *sprite = renderer->sprite;
-    renderer->timer += step_delta_ms;
+
+    renderer->timer += k_get_step_delta_ms();
     while (1) {
         int delay = sprite->frames[renderer->frame_idx].delay;
         if (renderer->timer < delay)
@@ -33,9 +32,7 @@ static void sprite_renderer_draw(struct k_component *component) {
         renderer->frame_idx %= sprite->frames_num;
     }
 
-    float x = *(renderer->x);
-    float y = *(renderer->y);
-    k__sprite_draw_frame(sprite, renderer->frame_idx, x, y);
+    k__sprite_draw_frame(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y));
 }
 
 static int sprite_renderer_init(struct k_component *component, void *params) {
