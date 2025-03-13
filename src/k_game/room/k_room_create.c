@@ -11,14 +11,14 @@
 
 /* region [steps] */
 
-struct k_room_creation_context {
+struct step_context {
     const struct k_room_config *config;
     void *params;
     struct k_room *room;
 };
 
-static int step_check_config(void *data) {
-    struct k_room_creation_context *ctx = data;
+static int step_check_config(void *context) {
+    struct step_context *ctx = context;
     const struct k_room_config *config = ctx->config;
 
     const char *err_msg;
@@ -37,8 +37,8 @@ err:
     return -1;
 }
 
-static int step_malloc(void *data) {
-    struct k_room_creation_context *ctx = data;
+static int step_malloc(void *context) {
+    struct step_context *ctx = context;
     const struct k_room_config *config = ctx->config;
 
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
@@ -65,15 +65,15 @@ static int step_malloc(void *data) {
     }
 }
 
-static void step_free(void *data) {
-    struct k_room_creation_context *ctx = data;
+static void step_free(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     k_free(room);
 }
 
-static int step_set_properties(void *data) {
-    struct k_room_creation_context *ctx = data;
+static int step_set_properties(void *context) {
+    struct step_context *ctx = context;
     const struct k_room_config *config = ctx->config;
     struct k_room *room = ctx->room;
 
@@ -92,8 +92,8 @@ static int step_set_properties(void *data) {
     return 0;
 }
 
-static int step_init_callback_managers(void *data) {
-    struct k_room_creation_context *ctx = data;
+static int step_init_callback_managers(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     if (0 != k__callback_init_draw_manager(&room->draw_callback_manager))
@@ -106,8 +106,8 @@ static int step_init_callback_managers(void *data) {
     return 0;
 }
 
-static void step_deinit_callback_managers(void *data) {
-    struct k_room_creation_context *ctx = data;
+static void step_deinit_callback_managers(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     k__callback_deinit_step_manager(&room->step_begin_callback_manager);
@@ -117,43 +117,43 @@ static void step_deinit_callback_managers(void *data) {
     k__callback_deinit_step_manager(&room->step_end_callback_manager);
 }
 
-static int step_init_callback_list(void *data) {
-    struct k_room_creation_context *ctx = data;
+static int step_init_callback_list(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     k_list_init(&room->callback_list);
     return 0;
 }
 
-static void step_del_all_callbacks(void *data) {
-    (void)data;
+static void step_del_all_callbacks(void *unused) {
+    (void)unused;
     /* 交由各个 callback manager 清除 */
 }
 
-static int step_init_component_managers(void *data) {
-    struct k_room_creation_context *ctx = data;
+static int step_init_component_managers(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     k_component_manager_registry_init(&room->component_manager_registry);
     return 0;
 }
 
-static void step_deinit_component_managers(void *data) {
-    struct k_room_creation_context *ctx = data;
+static void step_deinit_component_managers(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     k_component_manager_registry_deinit(&room->component_manager_registry);
 }
 
-static int step_init_object_pool(void *data) {
-    struct k_room_creation_context *ctx = data;
+static int step_init_object_pool(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     return k__object_pool_init(&room->object_pool);
 }
 
-static void step_cleanup_object_pool(void *data) {
-    struct k_room_creation_context *ctx = data;
+static void step_cleanup_object_pool(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     k__object_pool_cleanup(&room->object_pool);
@@ -161,8 +161,8 @@ static void step_cleanup_object_pool(void *data) {
 
 static size_t id_counter = 0;
 
-static int step_registry_add(void *data) {
-    struct k_room_creation_context *ctx = data;
+static int step_registry_add(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     k__room_registry_add(room);
@@ -171,8 +171,8 @@ static int step_registry_add(void *data) {
     return 0;
 }
 
-static void step_registry_del(void *data) {
-    struct k_room_creation_context *ctx = data;
+static void step_registry_del(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     k__room_registry_del(room);
@@ -181,8 +181,8 @@ static void step_registry_del(void *data) {
         id_counter--; /* `fn_init()` 初始化失败，回收 id */
 }
 
-static int step_call_fn_init(void *data) {
-    struct k_room_creation_context *ctx = data;
+static int step_call_fn_init(void *context) {
+    struct step_context *ctx = context;
     void *params = ctx->params;
     struct k_room *room = ctx->room;
 
@@ -203,8 +203,8 @@ static int step_call_fn_init(void *data) {
     return 0;
 }
 
-static void step_call_fn_cleanup(void *data) {
-    struct k_room_creation_context *ctx = data;
+static void step_call_fn_cleanup(void *context) {
+    struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
     if (NULL != room->fn_cleanup) {
@@ -231,7 +231,7 @@ static const struct k_seq_step steps[] = {
 
 struct k_room *k_room_create(const struct k_room_config *config, void *params) {
 
-    struct k_room_creation_context ctx;
+    struct step_context ctx;
     ctx.config = config;
     ctx.params = params;
     ctx.room   = NULL;
@@ -246,7 +246,7 @@ struct k_room *k_room_create(const struct k_room_config *config, void *params) {
 
 void k__room_destroy(struct k_room *room) {
 
-    struct k_room_creation_context ctx;
+    struct step_context ctx;
     ctx.config = NULL;
     ctx.params = NULL;
     ctx.room   = room;

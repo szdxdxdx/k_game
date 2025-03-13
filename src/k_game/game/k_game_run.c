@@ -15,8 +15,8 @@
 
 /* region [steps] */
 
-static int step_check_config(void *data) {
-    const struct k_game_config *config = data;
+static int step_check_config(void *context) {
+    const struct k_game_config *config = context;
 
     const char *err_msg;
 
@@ -35,58 +35,58 @@ err:
     return -1;
 }
 
-static int step_init_SDL(void *data) {
-    const struct k_game_config *config = data;
+static int step_init_SDL(void *context) {
+    const struct k_game_config *config = context;
     return k__SDL_init(config);
 }
 
-static void step_quit_SDL(void *data) {
-    (void)data;
+static void step_quit_SDL(void *unused) {
+    (void)unused;
     k__SDL_quit();
 }
 
-static int step_init_image_registry(void *data) {
-    (void)data;
+static int step_init_image_registry(void *unused) {
+    (void)unused;
     return k__image_registry_init();
 }
 
-static void step_cleanup_image_registry(void *data) {
-    (void)data;
+static void step_cleanup_image_registry(void *unused) {
+    (void)unused;
     k__image_registry_cleanup();
 }
 
-static int step_init_sound_registry(void *data) {
-    (void)data;
+static int step_init_sound_registry(void *unused) {
+    (void)unused;
     return k__sound_registry_init();
 }
 
-static void step_cleanup_sound_registry(void *data) {
-    (void)data;
+static void step_cleanup_sound_registry(void *unused) {
+    (void)unused;
     k__sound_registry_cleanup();
 }
 
-static int step_init_sprite_registry(void *data) {
-    (void)data;
+static int step_init_sprite_registry(void *unused) {
+    (void)unused;
     return k__sprite_registry_init();
 }
 
-static void step_cleanup_sprite_registry(void *data) {
-    (void)data;
+static void step_cleanup_sprite_registry(void *unused) {
+    (void)unused;
     k__sprite_registry_cleanup();
 }
 
-static int step_init_component_registry(void *data) {
-    (void)data;
+static int step_init_component_registry(void *unused) {
+    (void)unused;
     return k__component_type_registry_init();
 }
 
-static void step_cleanup_component_registry(void *data) {
-    (void)data;
+static void step_cleanup_component_registry(void *unused) {
+    (void)unused;
     k__component_type_registry_cleanup();
 }
 
-static int step_define_components(void *data) {
-    (void)data;
+static int step_define_components(void *unused) {
+    (void)unused;
 
     return k__component_def_WASD()
         || k__component_def_sprite_renderer()
@@ -94,30 +94,30 @@ static int step_define_components(void *data) {
      ? -1 : 0;
 }
 
-static int step_init_room_registry(void *data) {
-    (void)data;
+static int step_init_room_registry(void *unused) {
+    (void)unused;
     return k__room_registry_init();
 }
 
-static void step_cleanup_room_registry(void *data) {
-    (void)data;
+static void step_cleanup_room_registry(void *unused) {
+    (void)unused;
     k__room_registry_cleanup();
 }
 
-static int step_init_room_stack(void *data) {
-    (void)data;
+static int step_init_room_stack(void *unused) {
+    (void)unused;
 
     k__room_stack_init();
     return 0;
 }
 
-static void step_cleanup_room_stack(void *data) {
-    (void)data;
+static void step_cleanup_room_stack(void *unused) {
+    (void)unused;
     k__room_stack_cleanup();
 }
 
-static int step_call_fn_init(void *data) {
-    const struct k_game_config *config = data;
+static int step_call_fn_init(void *context) {
+    const struct k_game_config *config = context;
 
     int result = config->fn_init();
     if (0 != result) {
@@ -128,8 +128,8 @@ static int step_call_fn_init(void *data) {
     return 0;
 }
 
-static void step_call_fn_cleanup(void *data) {
-    const struct k_game_config *config = data;
+static void step_call_fn_cleanup(void *context) {
+    const struct k_game_config *config = context;
 
     if (NULL != config->fn_cleanup)
         config->fn_cleanup();

@@ -98,8 +98,8 @@ static void step_quit_SDL_ttf(void *unused) {
     TTF_Quit();
 }
 
-static int step_create_window(void *data) {
-    const struct k_game_config *config = data;
+static int step_create_window(void *context) {
+    const struct k_game_config *config = context;
 
     const char *title = config->window_title;
     int x = SDL_WINDOWPOS_CENTERED;
