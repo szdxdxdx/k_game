@@ -19,9 +19,9 @@ static int k__component_manager_create(struct k_room *room, struct k_component_t
         return -1;
 
     if (0 != manager_type->data_size) {
-        manager->data = NULL;
-    } else {
         manager->data = ptr_offset(manager, sizeof(struct k_component_manager));
+    } else {
+        manager->data = NULL;
     }
 
     manager->component_type = component_type;
@@ -46,6 +46,18 @@ map_add_failed:
 
 /* endregion */
 
+/* region [room_add_manager] */
+
 int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params) {
     return k__component_manager_create(room, component_type, params);
 }
+
+/* endregion */
+
+/* region [manager_get] */
+
+void *k_component_manager_get_data(struct k_component_manager *manager) {
+    return manager->data;
+}
+
+/* endregion */

@@ -24,10 +24,10 @@ struct k_component *k__component_create(struct k_component_type *component_type,
     }
 
     component->type = component_type;
-    if (NULL == manager_type) {
-        component->manager = NULL;
-    } else {
+    if (NULL != manager_type) {
         component->manager = k__component_manager_map_find(object->room->room_id, manager_type->type_id);
+    } else {
+        component->manager = NULL;
     }
 
     k_list_init(&component->callback_list);
@@ -35,8 +35,10 @@ struct k_component *k__component_create(struct k_component_type *component_type,
     component->object = object;
     k_list_add_tail(&object->component_list, &component->list_node);
 
-    if (0 != entity_type->fn_init(component, params))
-        goto fn_create_failed;
+    if (NULL != entity_type->fn_init) {
+        if (0 != entity_type->fn_init(component, params))
+            goto fn_create_failed;
+    }
 
     return component;
 

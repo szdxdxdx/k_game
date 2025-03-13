@@ -48,10 +48,10 @@ union k_collision_box {
 
 struct k_collision_box_manager {
 
-    int _;
 };
 
 static int collision_box_manager_init(struct k_component_manager *manager, void *params) {
+    struct k_collision_box_manager *data = k_component_manager_get_data(manager);
 
     return 0;
 }
@@ -122,8 +122,8 @@ static void collision_box_draw(struct k_component *component) {
 static int collision_box_init(struct k_component *component, void *params) {
 
     struct k_component_manager *manager = k_component_get_manager(component);
-    // if (NULL == manager)
-    //     return -1;
+    if (NULL == manager)
+        return -1;
 
     union k_collision_box_config *box_config = params;
 

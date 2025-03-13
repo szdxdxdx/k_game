@@ -61,7 +61,8 @@ int k__component_manager_map_add(size_t room_id, size_t manager_type_id, struct 
 
 room_array_grow:
     {
-        struct k_array **p = k_array_shift_right(room_array, room_array->size, room_id - room_array->size + 1);
+        size_t append_size = room_id - room_array->size + 1;
+        struct k_array **p = k_array_shift_right(room_array, room_array->size, append_size);
         if (NULL == p)
             return -1;
 
@@ -88,11 +89,13 @@ manager_array_create:
 
 manager_array_grow:
     {
-        struct k_component_manager **p = k_array_shift_right(*p_manager_array, 0, manager_type_id);
+        size_t append_size = manager_type_id - (*p_manager_array)->size + 1;
+        struct k_component_manager **p = k_array_shift_right(*p_manager_array, 0, append_size);
         if (NULL == p)
             return -1;
 
         p_manager = k_array_get_elem_addr(*p_manager_array, manager_type_id);
+
         for (; p < p_manager; p++)
             *p = NULL;
     }

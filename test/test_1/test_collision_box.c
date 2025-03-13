@@ -111,7 +111,7 @@ static int create_room(void *params) {
     k_room_add_draw_callback(room, NULL, k_room_clean_canvas, INT_MIN);
 
     struct k_component_type *collision_box = k_component_type_find("k/C-box");
-    k_room_add_component_manager(room, collision_box, NULL);
+    k_room_add_component_manager(room, collision_box, "world");
 
     create_player_1();
     create_player_2();

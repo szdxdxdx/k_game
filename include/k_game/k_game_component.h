@@ -115,6 +115,12 @@ struct k_component_manager *k_component_get_manager(struct k_component *componen
 
 /* endregion */
 
+/* region [component_manager_get] */
+
+void *k_component_manager_get_data(struct k_component_manager *manager);
+
+/* endregion */
+
 /* region [component_add_callback] */
 
 struct k_component_callback *k_component_add_step_begin_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
