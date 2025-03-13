@@ -101,7 +101,7 @@ void k_object_del_all_components(struct k_object *object);
  * \brief 向房间添加组件管理器
  * TODO docs
  */
-int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type);
+int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params);
 
 struct k_component_manager *k_room_get_component_manager(struct k_room *room, struct k_component_type *component_type);
 
