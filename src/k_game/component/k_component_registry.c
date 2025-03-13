@@ -1,9 +1,9 @@
 #include "./k_component.h"
 
-static struct k_asset_registry component_type_registry;
+static struct k_asset_registry component_registry;
 
 int k__component_type_registry_init(void) {
-    return k__asset_registry_init(&component_type_registry);
+    return k__asset_registry_init(&component_registry);
 }
 
 static void fn_release_asset(struct k_asset_registry_node *registry_node) {
@@ -12,11 +12,11 @@ static void fn_release_asset(struct k_asset_registry_node *registry_node) {
 }
 
 void k__component_type_registry_cleanup(void) {
-    k__asset_registry_cleanup(&component_type_registry, fn_release_asset);
+    k__asset_registry_cleanup(&component_registry, fn_release_asset);
 }
 
 void k__component_type_registry_add(struct k_component_type *component_type) {
-    k__asset_registry_add(&component_type_registry, &component_type->registry_node);
+    k__asset_registry_add(&component_registry, &component_type->registry_node);
 }
 
 void k__component_type_registry_del(struct k_component_type *component_type) {
@@ -24,12 +24,12 @@ void k__component_type_registry_del(struct k_component_type *component_type) {
 }
 
 int k_component_type_set_name(struct k_component_type *component_type, const char *type_name) {
-    return k__asset_set_name(&component_type_registry, &component_type->registry_node, type_name);
+    return k__asset_set_name(&component_registry, &component_type->registry_node, type_name);
 }
 
 struct k_component_type *k_component_type_find(const char *type_name) {
 
-    struct k_asset_registry_node *registry_node = k__asset_registry_find(&component_type_registry, type_name);
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&component_registry, type_name);
     if (NULL == registry_node)
         return NULL;
 

@@ -1,34 +1,41 @@
 #include "k_game_alloc.h"
 
 #include "../object/k_object.h"
+#include "../room/k_room.h"
 
 #include "./k_component.h"
 
 /* region [component_create] */
 
 struct k_component *k__component_create(struct k_component_type *component_type, struct k_object *object, void *params) {
+    struct k_component_entity_type *entity_type = &component_type->entity_type;
+    struct k_component_manager_type *manager_type = component_type->manager_type;
 
     struct k_component *component = k_malloc(sizeof(struct k_component));
     if (NULL == component)
         goto malloc_failed;
 
-    if (0 == component_type->component_data_size) {
+    if (0 == entity_type->data_size) {
         component->data = NULL;
     } else {
-        component->data = k_malloc(component_type->component_data_size);
+        component->data = k_malloc(entity_type->data_size);
         if (NULL == component->data)
             goto malloc_data_failed;
     }
 
     component->type = component_type;
-    component->manager = k_room_get_component_manager(object->room, component_type);
+    if (NULL == manager_type) {
+        component->manager = NULL;
+    } else {
+        component->manager = k__component_manager_map_find(manager_type->type_id, object->room->room_id);
+    }
 
     k_list_init(&component->callback_list);
 
     component->object = object;
     k_list_add_tail(&object->component_list, &component->list_node);
 
-    if (0 != component_type->fn_init(component, params))
+    if (0 != entity_type->fn_init(component, params))
         goto fn_create_failed;
 
     return component;
@@ -44,9 +51,10 @@ malloc_failed:
 }
 
 void k__component_destroy(struct k_component *component) {
+    struct k_component_entity_type *entity_type = &component->type->entity_type;
 
-    if (component->type->fn_fini != NULL)
-        component->type->fn_fini(component);
+    if (entity_type->fn_fini != NULL)
+        entity_type->fn_fini(component);
 
     k_list_del(&component->list_node);
     k_component_del_all_callbacks(component);

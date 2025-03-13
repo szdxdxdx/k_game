@@ -24,7 +24,7 @@ struct k_component_manager;
  */
 struct k_component_type;
 
-struct k_component_config {
+struct k_component_entity_config {
 
     size_t data_size;
 
@@ -33,7 +33,7 @@ struct k_component_config {
     void (*fn_fini)(struct k_component *component);
 };
 
-#define K_COMPONENT_CONFIG_INIT \
+#define K_COMPONENT_ENTITY_CONFIG_INIT \
 { \
     .data_size = 0,    \
     .fn_init   = NULL, \
@@ -45,7 +45,7 @@ struct k_component_manager_config {
     size_t data_size;
 };
 
-struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_config *component_config);
+struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config);
 
 int k_component_type_set_name(struct k_component_type *component_type, const char *type_name);
 

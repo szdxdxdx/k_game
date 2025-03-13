@@ -54,7 +54,7 @@ static int renderer_init(struct k_component *component, void *params) {
 
 int k__component_def_sprite_renderer(void) {
 
-    struct k_component_config config = K_COMPONENT_CONFIG_INIT;
+    struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_sprite_renderer);
     config.fn_init = renderer_init;
 

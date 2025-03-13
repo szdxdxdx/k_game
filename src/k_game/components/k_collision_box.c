@@ -171,7 +171,7 @@ int k__component_def_collision_box(void) {
     struct k_component_manager_config manager_config;
     /* TODO */
 
-    struct k_component_config component_config = K_COMPONENT_CONFIG_INIT;
+    struct k_component_entity_config component_config = K_COMPONENT_ENTITY_CONFIG_INIT;
     component_config.data_size = sizeof(union k_collision_box);
     component_config.fn_init   = collision_box_init;
 
