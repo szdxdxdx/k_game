@@ -4,15 +4,16 @@
 #include <stddef.h>
 
 struct k_component_manager;
+struct k_room;
 
 int k__component_manager_map_init(void);
 
 void k__component_manager_map_free(void);
 
-int k__component_manager_map_add(size_t room_id, size_t manager_type_id, struct k_component_manager *manager);
+int k__component_manager_map_add(struct k_room *room, struct k_component_manager *manager);
 
-void k__component_manager_map_del(size_t room_id, size_t manager_type_id);
+void k__component_manager_map_del(struct k_room *room, struct k_component_manager_type *manager_type);
 
-struct k_component_manager *k__component_manager_map_find(size_t room_id, size_t manager_type_id);
+struct k_component_manager *k__component_manager_map_find(struct k_room *room, struct k_component_manager_type *manager_type);
 
 #endif

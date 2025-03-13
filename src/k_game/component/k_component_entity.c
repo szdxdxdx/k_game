@@ -13,7 +13,7 @@ struct k_component *k__component_create(struct k_component_type *component_type,
 
     struct k_component *component = k_malloc(sizeof(struct k_component));
     if (NULL == component)
-        goto malloc_failed;
+        goto malloc_component_failed;
 
     if (0 == entity_type->data_size) {
         component->data = NULL;
@@ -25,7 +25,7 @@ struct k_component *k__component_create(struct k_component_type *component_type,
 
     component->type = component_type;
     if (NULL != manager_type) {
-        component->manager = k__component_manager_map_find(object->room->room_id, manager_type->type_id);
+        component->manager = k__component_manager_map_find(object->room, manager_type);
     } else {
         component->manager = NULL;
     }
@@ -48,7 +48,7 @@ fn_create_failed:
     k_free(component->data);
 malloc_data_failed:
     k_free(component);
-malloc_failed:
+malloc_component_failed:
     return NULL;
 }
 
