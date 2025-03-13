@@ -1,1 +1,51 @@
+#include "k_game_alloc.h"
+
 #include "./k_component.h"
+
+#include "../room/k_room.h"
+
+/* region [manager_create] */
+
+static int k__component_manager_create(struct k_room *room, struct k_component_type *component_type, void *params) {
+
+    struct k_component_manager_type *manager_type = component_type->manager_type;
+    if (NULL == manager_type)
+        return -1;
+
+#define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
+
+    struct k_component_manager *manager = k_malloc(sizeof(struct k_component_manager) + manager_type->data_size);
+    if (NULL == manager)
+        return -1;
+
+    if (0 != manager_type->data_size) {
+        manager->data = NULL;
+    } else {
+        manager->data = ptr_offset(manager, sizeof(struct k_component_manager));
+    }
+
+    manager->component_type = component_type;
+
+    if (0 != k__component_manager_map_add(room->room_id, manager_type->type_id, manager))
+        goto map_add_failed;
+
+    if (NULL != manager_type->fn_init) {
+        if (0 != manager_type->fn_init(manager, params))
+            goto fn_init_failed;
+    }
+
+    return 0;
+
+fn_init_failed:
+    k__component_manager_map_del(room->room_id, manager_type->type_id);
+map_add_failed:
+    k_free(manager);
+
+    return -1;
+}
+
+/* endregion */
+
+int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params) {
+    return k__component_manager_create(room, component_type, params);
+}

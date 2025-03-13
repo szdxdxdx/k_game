@@ -43,23 +43,17 @@ static int step_malloc(void *context) {
 
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
+    ctx->room = k_malloc(sizeof(struct k_room) + config->data_size);
+    if (NULL == ctx->room)
+        return -1;
+
     if (0 != config->data_size) {
-        ctx->room = k_malloc(sizeof(struct k_room) + config->data_size);
-        if (NULL == ctx->room) {
-            return -1;
-        } else {
-            ctx->room->data = ptr_offset(ctx->room, sizeof(struct k_room));
-            return 0;
-        }
+        ctx->room->data = ptr_offset(ctx->room, sizeof(struct k_room));
     } else {
-        ctx->room = k_malloc(sizeof(struct k_room));
-        if (NULL == ctx->room) {
-            return -1;
-        } else {
-            ctx->room->data = NULL;
-            return 0;
-        }
+        ctx->room->data = NULL;
     }
+
+    return 0;
 }
 
 static void step_free(void *context) {

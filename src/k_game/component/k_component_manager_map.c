@@ -102,6 +102,20 @@ manger_array_set_item:
     return 0;
 }
 
+void k__component_manager_map_del(size_t room_id, size_t manager_type_id) {
+
+    struct k_array *room_array = &manager_map.map;
+    if (room_array->size <= room_id)
+        return;
+
+    struct k_array *manager_array = k_array_get_elem(room_array, room_id, struct k_array *);
+    if (manager_array->size <= manager_type_id)
+        return;
+
+    struct k_component_manager **p_manager = k_array_get_elem_addr(manager_array, manager_type_id);
+    *p_manager = NULL;
+}
+
 struct k_component_manager *k__component_manager_map_find(size_t room_id, size_t manager_type_id) {
 
     struct k_array *room_array = &manager_map.map;

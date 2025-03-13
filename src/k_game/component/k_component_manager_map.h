@@ -11,6 +11,8 @@ void k__component_manager_map_free(void);
 
 int k__component_manager_map_add(size_t room_id, size_t manager_type_id, struct k_component_manager *manager);
 
+void k__component_manager_map_del(size_t room_id, size_t manager_type_id);
+
 struct k_component_manager *k__component_manager_map_find(size_t room_id, size_t manager_type_id);
 
 #endif
