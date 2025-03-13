@@ -29,6 +29,10 @@ static inline void k_list_node_loop(struct k_list_node *node) {
     node->next = node;
 }
 
+static inline int k_list_node_is_loop(struct k_list_node *node) {
+    return node->next == node && node->prev == node;
+}
+
 static inline void k_list_init(struct k_list *list) {
     k_list_node_loop(&list->head);
 }

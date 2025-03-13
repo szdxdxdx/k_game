@@ -17,6 +17,7 @@ static int k__component_manager_create(struct k_room *room, struct k_component_t
         return -1;
 
     manager->component_type = component_type;
+    manager->room = room;
 
     if (0 != manager_type->data_size) {
         manager->data = ptr_offset(manager, sizeof(struct k_component_manager));
@@ -41,14 +42,24 @@ map_add_failed:
     return -1;
 }
 
-void k__component_manager_destroy(struct k_room *room, struct k_component_type *component_type) {
+void k__component_manager_destroy_self(struct k_component_manager *manager) {
+
+    struct k_component_manager_type *manager_type = manager->component_type->manager_type;
+    if (NULL != manager_type->fn_fini) {
+        manager_type->fn_fini(manager);
+    }
+
+    k_free(manager);
+}
+
+static void k__component_manager_destroy(struct k_room *room, struct k_component_type *component_type) {
 
     struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
     if (NULL == manager)
         return;
 
-    k__component_manager_map_del(room, component_type->manager_type);
-    k_free(manager);
+    k__component_manager_map_del(manager->room, component_type->manager_type);
+    k__component_manager_destroy_self(manager);
 }
 
 /* endregion */

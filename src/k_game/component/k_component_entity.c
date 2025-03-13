@@ -36,6 +36,7 @@ struct k_component *k__component_create(struct k_component_type *component_type,
     k_list_add_tail(&object->component_list, &component->list_node);
 
     if (NULL != entity_type->fn_init) {
+        /* TODO 应该允许在 `fn_init()` 回调中删除自身吗？ */
         if (0 != entity_type->fn_init(component, params))
             goto fn_create_failed;
     }
@@ -58,6 +59,7 @@ void k__component_destroy(struct k_component *component) {
     if (entity_type->fn_fini != NULL)
         entity_type->fn_fini(component);
 
+    /* TODO 应该允许在 `fn_fini()` 回调中能再次删除自身吗？ */
     k_list_del(&component->list_node);
     k_component_del_all_callbacks(component);
 

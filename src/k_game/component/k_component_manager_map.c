@@ -17,8 +17,8 @@ static struct k_component_manager_map manager_map;
 
 /* 该常量用于表示一个无效的数组，类似于 `NULL`
  *
- * `manager_map` 的部分代码逻辑中 `NULL == arr` 与 `arr->size == 0` 等价，
- * 使用 `NULL_ARRAY` 而非 `NULL`，可以节省一步判断 `NULL != arr`。
+ * `manager_map` 代码的部分逻辑中 `NULL == arr` 与 `arr->size == 0` 等价，
+ * 使用 `NULL_ARRAY` 而非 `NULL` 可以节省一步判断 `NULL != arr`。
  */
 static struct k_array NULL_ARRAY = { .size=0, .capacity=0 };
 
@@ -42,13 +42,46 @@ int k__component_manager_map_init(void) {
     return 0;
 }
 
-void k__component_manager_map_cleanup_room_all(struct k_room *room) {
+void k__room_del_all_component_managers(struct k_room *room) {
 
+    size_t room_id = room->room_id;
+
+    struct k_array *room_array = &manager_map.map;
+    if (room_array->size <= room_id)
+        return;
+
+    struct k_array **p_manager_array = k_array_get_elem_addr(room_array, room_id);
+    if (&NULL_ARRAY == *p_manager_array)
+        return;
+
+    struct k_component_manager **p_manager = (*p_manager_array)->storage;
+    struct k_component_manager **end = k_array_get_elem_addr(*p_manager_array, (*p_manager_array)->size);
+    for (; p_manager < end; p_manager++) {
+
+        if (NULL != *p_manager)
+            k__component_manager_destroy_self(*p_manager);
+    }
+
+    k_array_destroy(*p_manager_array);
+    *p_manager_array = &NULL_ARRAY;
 }
 
 void k__component_manager_map_free(void) {
 
-    /* TODO */
+    struct k_array *room_array = &manager_map.map;
+    size_t i = 0;
+    for (; i < room_array->size; i++) {
+
+        /* k_game 先销毁了所有 room，然后才清理 component_manager_map。
+         * 而销毁 room 时，已释放掉对应的 manager_array，
+         * 所以这里的每个 manager_array 应该全是已经释放了的。
+         */
+        struct k_array *manager_array = k_array_get_elem(room_array, i, struct k_array *);
+        if (&NULL_ARRAY != manager_array)
+            k_array_destroy(manager_array);
+    }
+
+    k_array_destruct(room_array);
 }
 
 int k__component_manager_map_add(struct k_room *room, struct k_component_manager *manager) {

@@ -36,6 +36,11 @@ static int my_component_1_manager_init(struct k_component_manager *manager, void
     return 0;
 }
 
+static void my_component_1_manager_fini(struct k_component_manager *manager) {
+    struct my_component_1 *data = k_component_manager_get_data(manager);
+    printf("fini component_1_manager, manager->s = '%s'\n", data->s);
+}
+
 static void my_component_1_define(void) {
 
     struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
@@ -45,6 +50,7 @@ static void my_component_1_define(void) {
     struct k_component_manager_config manager_config = K_COMPONENT_MANAGER_CONFIG_INIT;
     manager_config.data_size = sizeof(struct my_component_1_manager);
     manager_config.fn_init = my_component_1_manager_init;
+    manager_config.fn_fini = my_component_1_manager_fini;
 
     struct k_component_type *component_type = k_component_define(&manager_config, &entity_config);
     k_component_type_set_name(component_type, "my-1");
@@ -84,6 +90,11 @@ static int my_component_2_manager_init(struct k_component_manager *manager, void
     return 0;
 }
 
+static void my_component_2_manager_fini(struct k_component_manager *manager) {
+    struct my_component_2 *data = k_component_manager_get_data(manager);
+    printf("fini component_2_manager, manager->s = '%s'\n", data->s);
+}
+
 static void my_component_2_define(void) {
 
     struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
@@ -93,6 +104,7 @@ static void my_component_2_define(void) {
     struct k_component_manager_config manager_config = K_COMPONENT_MANAGER_CONFIG_INIT;
     manager_config.data_size = sizeof(struct my_component_2_manager);
     manager_config.fn_init = my_component_2_manager_init;
+    manager_config.fn_fini = my_component_2_manager_fini;
 
     struct k_component_type *component_type = k_component_define(&manager_config, &entity_config);
     k_component_type_set_name(component_type, "my-2");
