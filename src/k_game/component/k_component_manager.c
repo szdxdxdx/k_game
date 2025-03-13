@@ -41,6 +41,16 @@ map_add_failed:
     return -1;
 }
 
+void k__component_manager_destroy(struct k_room *room, struct k_component_type *component_type) {
+
+    struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
+    if (NULL == manager)
+        return;
+
+    k__component_manager_map_del(room, component_type->manager_type);
+    k_free(manager);
+}
+
 /* endregion */
 
 /* region [room_add_manager] */
@@ -50,12 +60,7 @@ int k_room_add_component_manager(struct k_room *room, struct k_component_type *c
 }
 
 void k_room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
-
-    struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
-    if (NULL == manager)
-        return;
-
-    k__component_manager_map_del(room, component_type->manager_type);
+    k__component_manager_destroy(room, component_type);
 }
 
 /* endregion */

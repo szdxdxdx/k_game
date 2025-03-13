@@ -24,13 +24,11 @@ static struct k_array NULL_ARRAY = { .size=0, .capacity=0 };
 
 int k__component_manager_map_init(void) {
 
-    size_t init_capacity = 16;
-
     struct k_array_config config;
     config.fn_malloc     = k_malloc;
     config.fn_free       = k_free;
     config.elem_size     = sizeof(struct k_array *);
-    config.init_capacity = init_capacity;
+    config.init_capacity = 16;
 
     struct k_array *room_array = k_array_construct(&manager_map.map, &config);
     if (NULL == room_array)
@@ -42,6 +40,10 @@ int k__component_manager_map_init(void) {
         p[i] = &NULL_ARRAY;
 
     return 0;
+}
+
+void k__component_manager_map_cleanup_room_all(struct k_room *room) {
+
 }
 
 void k__component_manager_map_free(void) {
@@ -92,7 +94,7 @@ manager_array_create:
         config.fn_malloc     = k_malloc;
         config.fn_free       = k_free;
         config.elem_size     = sizeof(struct k_component_manager *);
-        config.init_capacity = 0;
+        config.init_capacity = 16;
 
         *p_manager_array = k_array_create(&config);
         if (NULL == *p_manager_array) {
@@ -104,7 +106,7 @@ manager_array_create:
 manager_array_grow:
     {
         size_t append_size = manager_type_id - (*p_manager_array)->size + 1;
-        struct k_component_manager **p = k_array_shift_right(*p_manager_array, 0, append_size);
+        struct k_component_manager **p = k_array_shift_right(*p_manager_array, (*p_manager_array)->size, append_size);
         if (NULL == p)
             return -1;
 
