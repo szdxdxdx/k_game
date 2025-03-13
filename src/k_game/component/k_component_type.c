@@ -32,14 +32,13 @@ err:
     return -1;
 }
 
+
 static int step_malloc(void *context) {
     struct step_context *ctx = context;
 
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
     if (NULL != ctx->manager_config) {
-
-        /* 组件实体类型的定义和管理器类型的定义结构体共处同一个大内存块 */
         ctx->component_type = k_malloc(sizeof(struct k_component_type) + sizeof(struct k_component_manager_type));
         if (NULL == ctx->component_type) {
             return -1;
@@ -47,8 +46,7 @@ static int step_malloc(void *context) {
             ctx->component_type->manager_type = ptr_offset(ctx->component_type, sizeof(struct k_component_type));
             return 0;
         }
-    }
-    else {
+    } else {
         ctx->component_type = k_malloc(sizeof(struct k_component_type));
         if (NULL == ctx->component_type) {
             return -1;
@@ -70,17 +68,22 @@ static size_t id_counter = 0;
 
 static int step_set_properties(void *context) {
     struct step_context *ctx = context;
-    const struct k_component_manager_config *manager_config = ctx->manager_config;
-    const struct k_component_entity_config *entity_config = ctx->entity_config;
     struct k_component_type *component_type = ctx->component_type;
 
-    component_type->entity_type.data_size = entity_config->data_size;
-    component_type->entity_type.fn_init = entity_config->fn_init;
-    component_type->entity_type.fn_fini = entity_config->fn_fini;
+    struct k_component_entity_type *entity_type = &component_type->entity_type;
+    const struct k_component_entity_config *entity_config = ctx->entity_config;
+    entity_type->data_size = entity_config->data_size;
+    entity_type->fn_init   = entity_config->fn_init;
+    entity_type->fn_fini   = entity_config->fn_fini;
 
     if (NULL != component_type->manager_type) {
-        component_type->manager_type->data_size = manager_config->data_size;
-        component_type->manager_type->type_id = id_counter++;
+
+        struct k_component_manager_type *manager_type = component_type->manager_type;
+        const struct k_component_manager_config *manager_config = ctx->manager_config;
+        manager_type->type_id   = id_counter++;
+        manager_type->data_size = manager_config->data_size;
+        manager_type->fn_init   = manager_config->fn_init;
+        manager_type->fn_fini   = manager_config->fn_fini;
     }
 
     return 0;

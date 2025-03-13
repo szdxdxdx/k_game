@@ -1,18 +1,13 @@
-#include <stdint.h>
-#include <stdio.h>
 #include <limits.h>
 
-#include "SDL.h"
+#include "../k_SDL/k_SDL.h"
 
 #include "k_game_component.h"
 #include "k_game_components/k_collision_box.h"
 
 #include "./k_components_def.h"
 
-#include "../game/k_game_context.h"
-#include "../k_SDL/k_SDL.h"
-
-/* region [component_data] */
+/* region [collision_box struct] */
 
 union k_collision_box_config {
     enum k_collision_box_type box_type;
@@ -46,15 +41,20 @@ union k_collision_box {
     struct k_collision_box_rectangle rectangle;
     struct k_collision_box_circle    circle;
 };
+
 /* endregion */
 
 /* region [collision_box_manager] */
 
 struct k_collision_box_manager {
 
+    int _;
 };
 
-static struct k_collision_box_manager collision_box_manager;
+static int collision_box_manager_init(struct k_component_manager *manager, void *params) {
+
+    return 0;
+}
 
 /* endregion */
 
@@ -168,14 +168,15 @@ static int collision_box_init(struct k_component *component, void *params) {
 
 int k__component_def_collision_box(void) {
 
-    struct k_component_manager_config manager_config;
-    /* TODO */
+    struct k_component_manager_config manager_config = K_COMPONENT_MANAGER_CONFIG_INIT;
+    manager_config.data_size = sizeof(struct k_collision_box_manager);
+    manager_config.fn_init   = collision_box_manager_init;
 
-    struct k_component_entity_config component_config = K_COMPONENT_ENTITY_CONFIG_INIT;
-    component_config.data_size = sizeof(union k_collision_box);
-    component_config.fn_init   = collision_box_init;
+    struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
+    entity_config.data_size = sizeof(union k_collision_box);
+    entity_config.fn_init   = collision_box_init;
 
-    struct k_component_type *type = k_component_define(&manager_config, &component_config);
+    struct k_component_type *type = k_component_define(&manager_config, &entity_config);
     if (NULL == type)
         return -1;
 
