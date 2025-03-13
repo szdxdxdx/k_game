@@ -13,6 +13,12 @@ struct k_object;
 struct k_component;
 
 /**
+ * \brief 组件回调
+ * TODO docs
+ */
+struct k_component_callback;
+
+/**
  * \brief 组件管理器
  * TODO docs
  */
@@ -23,6 +29,8 @@ struct k_component_manager;
  * TODO docs
  */
 struct k_component_type;
+
+/* region [component_define] */
 
 struct k_component_entity_config {
 
@@ -43,6 +51,10 @@ struct k_component_entity_config {
 struct k_component_manager_config {
 
     size_t data_size;
+
+    int (*fn_init)(struct k_component_manager *manager, void *params);
+
+    void (*fn_fini)(struct k_component_manager *manager);
 };
 
 struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config);
@@ -51,25 +63,9 @@ int k_component_type_set_name(struct k_component_type *component_type, const cha
 
 struct k_component_type *k_component_type_find(const char *type_name);
 
-/**
- * \brief 组件回调
- * TODO docs
- */
-struct k_component_callback;
+/* endregion */
 
-struct k_component_callback *k_component_add_step_begin_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
-
-struct k_component_callback *k_component_add_alarm_callback(struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms);
-
-struct k_component_callback *k_component_add_step_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
-
-struct k_component_callback *k_component_add_draw_callback(struct k_component *component, void (*fn_callback)(struct k_component *component), int z_index);
-
-struct k_component_callback *k_component_add_step_end_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
-
-void k_component_del_callback(struct k_component_callback *callback);
-
-void k_component_del_all_callbacks(struct k_component *component);
+/* region [object_add_component] */
 
 /**
  * \brief 创建一个组件实例，并挂载到指定的对象上
@@ -90,6 +86,10 @@ void k_object_del_all_components(struct k_object *object);
 
 // TODO int k_get_objects_with_component(size_t component_type_id, struct k_object ***get_objects, size_t *n);
 
+/* endregion */
+
+/* region [room_add_component_manager] */
+
 /**
  * \brief 向房间添加组件管理器
  * TODO docs
@@ -98,8 +98,32 @@ int k_room_add_component_manager(struct k_room *room, struct k_component_type *c
 
 struct k_component_manager *k_room_get_component_manager(struct k_room *room, struct k_component_type *component_type);
 
+/* endregion */
+
+/* region [component_get] */
+
 void *k_component_get_data(struct k_component *component);
 
 struct k_component_manager *k_component_get_manager(struct k_component *component);
+
+/* endregion */
+
+/* region [component_add_callback] */
+
+struct k_component_callback *k_component_add_step_begin_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
+
+struct k_component_callback *k_component_add_alarm_callback(struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms);
+
+struct k_component_callback *k_component_add_step_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
+
+struct k_component_callback *k_component_add_draw_callback(struct k_component *component, void (*fn_callback)(struct k_component *component), int z_index);
+
+struct k_component_callback *k_component_add_step_end_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
+
+void k_component_del_callback(struct k_component_callback *callback);
+
+void k_component_del_all_callbacks(struct k_component *component);
+
+/* endregion */
 
 #endif

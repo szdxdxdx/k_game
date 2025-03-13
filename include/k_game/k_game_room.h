@@ -10,6 +10,15 @@
  */
 struct k_room;
 
+/**
+ * \brief 房间回调
+ *
+ * TODO docs
+ */
+struct k_room_callback;
+
+/* region [room_create] */
+
 /** \brief 创建房间所需的配置参数 */
 struct k_room_config {
 
@@ -119,13 +128,17 @@ int k_room_set_name(struct k_room *room, const char *room_name);
  */
 struct k_room *k_room_find(const char *room_name);
 
+/* endregion */
+
+/* region [room_goto] */
+
 int k_goto_room(struct k_room *room);
 
 struct k_room *k_get_current_room(void);
 
-int k_room_get_width(struct k_room *room);
+/* endregion */
 
-int k_room_get_height(struct k_room *room);
+/* region [room_get] */
 
 /**
  * \brief 获取房间的关联数据
@@ -135,12 +148,13 @@ int k_room_get_height(struct k_room *room);
  */
 void *k_room_get_data(struct k_room *room);
 
-/**
- * \brief 房间回调
- *
- * TODO docs
- */
-struct k_room_callback;
+int k_room_get_width(struct k_room *room);
+
+int k_room_get_height(struct k_room *room);
+
+/* endregion */
+
+/* region [room_add_callback] */
 
 struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
 
@@ -160,6 +174,12 @@ struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *
  */
 void k_room_del_callback(struct k_room_callback *callback);
 
+/* endregion */
+
+/* region [utils] */
+
 void k_room_clean_canvas(void *unused);
+
+/* endregion */
 
 #endif
