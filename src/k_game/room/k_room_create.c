@@ -39,10 +39,8 @@ err:
 static int step_malloc_room(void *data) {
     struct k_room_creation_context *ctx = data;
 
-    if (NULL == (ctx->room = k_malloc(sizeof(struct k_room))))
-        return -1;
-    else
-        return 0;
+    ctx->room = k_malloc(sizeof(struct k_room));
+    return NULL != ctx->room ? 0 : -1;
 }
 
 static void step_free_room(void *data) {
@@ -79,6 +77,9 @@ static int step_set_properties(void *data) {
     struct k_room_creation_context *ctx = data;
     const struct k_room_config *config = ctx->config;
     struct k_room *room = ctx->room;
+
+    static size_t id_counter = 0;
+    room->room_id = id_counter++;
 
     room->fn_init    = config->fn_init;
     room->fn_cleanup = config->fn_cleanup;
@@ -130,7 +131,7 @@ static int step_init_callback_list(void *data) {
 
 static void step_del_all_callbacks(void *data) {
     (void)data;
-    /* 回调管理器会清除的。所以这里不需要清除？*/
+    /* 交由各个 callback manager 清除 */
 }
 
 static int step_init_component_managers(void *data) {

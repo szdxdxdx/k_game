@@ -16,6 +16,8 @@ struct k_room {
 
     struct k_asset_registry_node registry_node;
 
+    size_t room_id;
+
     struct k_step_callback_manager  step_begin_callback_manager;
     struct k_alarm_callback_manager alarm_callback_manager;
     struct k_step_callback_manager  step_callback_manager;

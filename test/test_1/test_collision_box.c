@@ -84,6 +84,8 @@ static void create_player_2(void) {
     WASD_config.speed     = 200.0f;
     k_object_add_component(object, WASD, &WASD_config);
 
+    /* ------------------------------------------------------------------------ */
+
     struct k_component_type *collision_box = k_component_type_find("k/C-box");
     struct k_collision_box_circle_config circle_box_config;
     circle_box_config.box_type = K_COLLISION_BOX_CIRCLE;
