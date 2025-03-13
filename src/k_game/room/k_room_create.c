@@ -130,21 +130,6 @@ static void step_del_all_callbacks(void *unused) {
     /* 交由各个 callback manager 清除 */
 }
 
-static int step_init_component_managers(void *context) {
-    struct step_context *ctx = context;
-    struct k_room *room = ctx->room;
-
-    k_component_manager_registry_init(&room->component_manager_registry);
-    return 0;
-}
-
-static void step_deinit_component_managers(void *context) {
-    struct step_context *ctx = context;
-    struct k_room *room = ctx->room;
-
-    k_component_manager_registry_deinit(&room->component_manager_registry);
-}
-
 static int step_init_object_pool(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
@@ -178,26 +163,29 @@ static void step_registry_del(void *context) {
     k__room_registry_del(room);
 
     if (id_counter == room->room_id)
-        id_counter--; /* `fn_init()` 初始化失败，回收 id */
+        id_counter--; /* [?] 若 `fn_init()` 初始化失败则回收 id */
 }
 
 static int step_call_fn_init(void *context) {
     struct step_context *ctx = context;
-    void *params = ctx->params;
     struct k_room *room = ctx->room;
 
+    if (NULL == room->fn_init)
+        return 0;
 
-    if (NULL != room->fn_init) {
+    void *params = ctx->params;
 
-        struct k_room *tmp = k__game.current_room;
-        k__game.current_room = room;
-        int result = room->fn_init(params);
-        k__game.current_room = tmp; /* [?] fn_init() 可能销毁了 tmp 指向的房间 */
+    struct k_room *tmp = k__game.current_room;
+    k__game.current_room = room;
 
-        if (0 != result) {
-            k_log_error("Room fn_init() callback returned %d", result);
-            return -1;
-        }
+    int result = room->fn_init(params);
+
+    /* [?] fn_init() 可能销毁了 tmp 指向的房间 */
+    k__game.current_room = tmp;
+
+    if (0 != result) {
+        k_log_error("Room fn_init() callback returned %d", result);
+        return -1;
     }
 
     return 0;
@@ -207,24 +195,27 @@ static void step_call_fn_cleanup(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    if (NULL != room->fn_cleanup) {
-        struct k_room *tmp = k__game.current_room;
-        k__game.current_room = room;
-        room->fn_cleanup();
-        k__game.current_room = tmp; /* [?] fn_cleanup() 可能销毁了 tmp 指向的房间 */
-    }
+    if (NULL == room->fn_cleanup)
+        return;
+
+    struct k_room *tmp = k__game.current_room;
+    k__game.current_room = room;
+
+    room->fn_cleanup();
+
+    /* [?] fn_cleanup() 可能销毁了 tmp 指向的房间 */
+    k__game.current_room = tmp;
 }
 
 static const struct k_seq_step steps[] = {
-    { step_check_config,            NULL                           },
-    { step_malloc,                  step_free                      },
-    { step_set_properties,          NULL                           },
-    { step_init_callback_managers,  step_deinit_callback_managers  },
-    { step_init_callback_list,      step_del_all_callbacks         },
-    { step_init_component_managers, step_deinit_component_managers },
-    { step_init_object_pool,        step_cleanup_object_pool       },
-    { step_registry_add,            step_registry_del              },
-    { step_call_fn_init,            step_call_fn_cleanup           },
+    { step_check_config,           NULL                          },
+    { step_malloc,                 step_free                     },
+    { step_set_properties,         NULL                          },
+    { step_init_callback_managers, step_deinit_callback_managers },
+    { step_init_callback_list,     step_del_all_callbacks        },
+    { step_init_object_pool,       step_cleanup_object_pool      },
+    { step_registry_add,           step_registry_del             },
+    { step_call_fn_init,           step_call_fn_cleanup          },
 };
 
 /* endregion */

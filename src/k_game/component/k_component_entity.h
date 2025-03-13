@@ -21,4 +21,8 @@ struct k_component {
     void *data;
 };
 
+struct k_component *k__component_create(struct k_component_type *component_type, struct k_object *object, void *params);
+
+void k__component_destroy(struct k_component *component);
+
 #endif

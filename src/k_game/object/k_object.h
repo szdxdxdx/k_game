@@ -4,7 +4,6 @@
 #include "k_game_object.h"
 
 #include "./k_object_entity.h"
-#include "./k_object_create.h"
 #include "./k_object_pool.h"
 
 #endif

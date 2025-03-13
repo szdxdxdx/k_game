@@ -8,7 +8,6 @@
 #include "../asset/k_asset_registry.h"
 #include "../callback/k_callback.h"
 #include "../object/k_object_pool.h"
-#include "../component/k_component_manager_registry.h"
 
 struct k_object_pool;
 
@@ -32,7 +31,6 @@ struct k_room {
     void (*fn_leave)(void);
 
     struct k_object_pool object_pool;
-    struct k_component_manager_registry component_manager_registry;
 
     int room_w;
     int room_h;

@@ -35,11 +35,7 @@ err:
 static int step_malloc(void *context) {
     struct step_context *ctx = context;
 
-    ctx->component_type = k_malloc(sizeof(struct k_component_type));
-    if (NULL == ctx->component_type)
-        return -1;
-    else
-        return 0;
+    return NULL != (ctx->component_type = k_malloc(sizeof(struct k_component_type))) ? 0 : -1;
 }
 
 static void step_free(void *context) {
@@ -52,6 +48,7 @@ static void step_free(void *context) {
 static int step_set_properties(void *context) {
     struct step_context *ctx = context;
     const struct k_component_config *component_config = ctx->component_config;
+    const struct k_component_manager_config *manager_config = ctx->manager_config;
     struct k_component_type *component_type = ctx->component_type;
 
     component_type->component_data_size = component_config->data_size;

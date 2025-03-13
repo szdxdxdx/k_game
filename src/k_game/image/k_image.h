@@ -5,7 +5,5 @@
 
 #include "./k_image_registry.h"
 #include "./k_image_asset.h"
-#include "./k_image_load.h"
-#include "./k_image_draw.h"
 
 #endif

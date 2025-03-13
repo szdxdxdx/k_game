@@ -18,4 +18,6 @@ struct k_object {
     void *data;
 };
 
+void k__object_destroy(struct k_object *object);
+
 #endif

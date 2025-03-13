@@ -29,4 +29,8 @@ struct k_sprite {
     int frames_num;
 };
 
+void k__sprite_destroy(struct k_sprite *sprite);
+
+int k__sprite_draw_frame(struct k_sprite *sprite, size_t frame_idx, float dst_x, float dst_y);
+
 #endif

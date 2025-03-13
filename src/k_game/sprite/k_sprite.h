@@ -5,7 +5,5 @@
 
 #include "./k_sprite_registry.h"
 #include "./k_sprite_asset.h"
-#include "./k_sprite_create.h"
-#include "./k_sprite_draw.h"
 
 #endif
