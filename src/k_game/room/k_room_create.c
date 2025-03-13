@@ -28,6 +28,7 @@ static int step_check_config(void *data) {
 
     check_config_assert(NULL != config);
     check_config_assert(0 < config->room_speed);
+    check_config_assert(config->data_size < SIZE_MAX - sizeof(struct k_room));
 
     return 0;
 
@@ -36,50 +37,45 @@ err:
     return -1;
 }
 
-static int step_malloc_room(void *data) {
+static int step_malloc(void *data) {
     struct k_room_creation_context *ctx = data;
+    const struct k_room_config *config = ctx->config;
 
-    ctx->room = k_malloc(sizeof(struct k_room));
-    return NULL != ctx->room ? 0 : -1;
+#define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
+
+    if (0 != config->data_size) {
+
+        /* 房间的关联数据和房间结构体共处同一个大内存块 */
+        ctx->room = k_malloc(sizeof(struct k_room) + config->data_size);
+        if (NULL == ctx->room) {
+            return -1;
+        } else {
+            ctx->room->data = ptr_offset(ctx->room, sizeof(struct k_room));
+            return 0;
+        }
+    }
+    else {
+        ctx->room = k_malloc(sizeof(struct k_room));
+        if (NULL == ctx->room) {
+            return -1;
+        } else {
+            ctx->room->data = NULL;
+            return 0;
+        }
+    }
 }
 
-static void step_free_room(void *data) {
+static void step_free(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
     k_free(room);
 }
 
-static int step_malloc_data(void *data) {
-    struct k_room_creation_context *ctx = data;
-    const struct k_room_config *config = ctx->config;
-    struct k_room *room = ctx->room;
-
-    if (0 == config->data_size) {
-        room->data = NULL;
-    } else {
-        room->data = k_malloc(config->data_size);
-        if (NULL == room->data)
-            return -1;
-    }
-
-    return 0;
-}
-
-static void step_free_data(void *data) {
-    struct k_room_creation_context *ctx = data;
-    struct k_room *room = ctx->room;
-
-    k_free(room->data);
-}
-
 static int step_set_properties(void *data) {
     struct k_room_creation_context *ctx = data;
     const struct k_room_config *config = ctx->config;
     struct k_room *room = ctx->room;
-
-    static size_t id_counter = 0;
-    room->room_id = id_counter++;
 
     room->fn_init    = config->fn_init;
     room->fn_cleanup = config->fn_cleanup;
@@ -163,11 +159,15 @@ static void step_cleanup_object_pool(void *data) {
     k__object_pool_cleanup(&room->object_pool);
 }
 
+static size_t id_counter = 0;
+
 static int step_registry_add(void *data) {
     struct k_room_creation_context *ctx = data;
     struct k_room *room = ctx->room;
 
     k__room_registry_add(room);
+
+    room->room_id = id_counter++;
     return 0;
 }
 
@@ -176,12 +176,16 @@ static void step_registry_del(void *data) {
     struct k_room *room = ctx->room;
 
     k__room_registry_del(room);
+
+    if (id_counter == room->room_id)
+        id_counter--; /* `fn_init()` 初始化失败，回收 id */
 }
 
 static int step_call_fn_init(void *data) {
     struct k_room_creation_context *ctx = data;
     void *params = ctx->params;
     struct k_room *room = ctx->room;
+
 
     if (NULL != room->fn_init) {
 
@@ -213,8 +217,7 @@ static void step_call_fn_cleanup(void *data) {
 
 static const struct k_seq_step steps[] = {
     { step_check_config,            NULL                           },
-    { step_malloc_room,             step_free_room                 },
-    { step_malloc_data,             step_free_data                 },
+    { step_malloc,                  step_free                      },
     { step_set_properties,          NULL                           },
     { step_init_callback_managers,  step_deinit_callback_managers  },
     { step_init_callback_list,      step_del_all_callbacks         },

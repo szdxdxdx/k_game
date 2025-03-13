@@ -1,10 +1,15 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "k_game.h"
 
 static struct k_sprite *spr_player;
+
+struct room_data {
+    char s[32];
+};
 
 struct obj_player {
     float x, y;
@@ -100,6 +105,9 @@ static void create_player_2(void) {
 static int create_room(void *params) {
     struct k_room *room = k_get_current_room();
 
+    struct room_data *data = k_room_get_data(room);
+    strcpy(data->s, "Hello World!");
+
     k_room_add_draw_callback(room, NULL, k_room_clean_canvas, INT_MIN);
 
     create_player_1();
@@ -108,7 +116,7 @@ static int create_room(void *params) {
     return 0;
 }
 
-static int init(void) {
+static int init_game(void) {
 
     struct k_image *img = k_image_load("assets/tmp.png");
 
@@ -135,6 +143,7 @@ static int init(void) {
 
     struct k_room_config room_config = K_ROOM_CONFIG_INIT;
     room_config.fn_init = create_room;
+    room_config.data_size = sizeof(struct room_data);
     room_config.room_speed = 30;
 
     struct k_room *room = k_room_create(&room_config, NULL);
@@ -156,7 +165,7 @@ int main(int argc, char **argv) {
     struct k_game_config game_config = K_GAME_CONFIG_INIT;
     game_config.window_w = 400;
     game_config.window_h = 360;
-    game_config.fn_init = init;
+    game_config.fn_init = init_game;
 
     k_game_run(&game_config);
 
