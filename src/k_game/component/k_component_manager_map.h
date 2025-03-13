@@ -7,10 +7,10 @@ struct k_component_manager;
 
 int k__component_manager_map_init(void);
 
-void k__component_manager_map_deinit(void);
+void k__component_manager_map_free(void);
 
-struct k_component_manager *k__component_manager_map_add(size_t room_id, struct k_component_manager_type *manager_type);
+int k__component_manager_map_add(size_t room_id, size_t manager_type_id, struct k_component_manager *manager);
 
-struct k_component_manager *k__component_manager_map_find(size_t manager_type_id, size_t room_id);
+struct k_component_manager *k__component_manager_map_find(size_t room_id, size_t manager_type_id);
 
 #endif

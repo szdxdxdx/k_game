@@ -27,7 +27,7 @@ struct k_component *k__component_create(struct k_component_type *component_type,
     if (NULL == manager_type) {
         component->manager = NULL;
     } else {
-        component->manager = k__component_manager_map_find(manager_type->type_id, object->room->room_id);
+        component->manager = k__component_manager_map_find(object->room->room_id, manager_type->type_id);
     }
 
     k_list_init(&component->callback_list);

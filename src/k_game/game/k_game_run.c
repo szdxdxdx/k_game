@@ -92,7 +92,7 @@ static int step_init_component_manager_map(void *unused) {
 
 static void step_deinit_component_manager_map(void *unused) {
     (void)unused;
-    k__component_manager_map_deinit();
+    k__component_manager_map_free();
 }
 
 static int step_define_components(void *unused) {
