@@ -71,12 +71,12 @@ void k__component_manager_map_free(void) {
     struct k_array *room_array = &manager_map.map;
     size_t i = 0;
     for (; i < room_array->size; i++) {
-
-        /* k_game 先销毁了所有 room，然后才清理 component_manager_map。
-         * 而销毁 room 时，已释放掉对应的 manager_array，
-         * 所以这里的每个 manager_array 应该全是已经释放了的。
-         */
         struct k_array *manager_array = k_array_get_elem(room_array, i, struct k_array *);
+
+        /* k_game 销毁所有房间后才清理 `manager_map`，
+         * 而销毁房间时已移除完该房间的组件管理器，
+         * 所以下述 if 判断结果理应为 false。
+         */
         if (&NULL_ARRAY != manager_array)
             k_array_destroy(manager_array);
     }
