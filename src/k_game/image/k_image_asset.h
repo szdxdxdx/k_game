@@ -26,6 +26,12 @@ struct k_image {
     SDL_Texture *texture;
 };
 
+/**
+ * \brief 释放图片资源【暂未公布的 API】
+ *
+ * 释放图片后，引用该图片的精灵所持有的图片指针将失效，
+ * 若继续使用该精灵，程序会尝试访问已释放的内存。
+ */
 void k_image_release(struct k_image *image);
 
 int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, float dst_x, float dst_y);

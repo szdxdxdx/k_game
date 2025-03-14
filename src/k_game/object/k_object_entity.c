@@ -38,19 +38,16 @@ err:
     return NULL;
 }
 
-void k__object_destroy(struct k_object *object) {
+void k_object_destroy(struct k_object *object) {
+
+    if (NULL == object)
+        return;
 
     k_object_del_all_components(object);
     k_object_del_all_callbacks(object);
 
     k_free(object->data);
     k__object_pool_release(object);
-}
-
-void k_object_destroy(struct k_object *object) {
-
-    if (NULL != object)
-        k__object_destroy(object);
 }
 
 /* endregion */

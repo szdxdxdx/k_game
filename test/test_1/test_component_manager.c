@@ -157,7 +157,7 @@ static int init_game(void) {
     return 0;
 }
 
-#if 1
+#if 0
 
 int main(int argc, char **argv) {
     system("chcp 65001");
