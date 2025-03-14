@@ -26,7 +26,7 @@ int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, floa
     dst.h = (float)src.h;
 
     if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
-        k_log_error("SDL_RenderCopy() failed: %s", SDL_GetError());
+        k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
         return -1;
     }
 
@@ -34,13 +34,12 @@ int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, floa
 }
 
 int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, float dst_x, float dst_y) {
-    /* TODO: assert( NULL != image ) */
-    /* TODO: assert currently is in draw callback */
 
     if (NULL == image) {
-        k_log_error("Failed to draw image. Image is NULL");
+        k_log_error("Failed to draw image. image is NULL");
         return -1;
     }
+    /* TODO: assert currently is in draw callback */
 
     return k__image_draw(image, src_rect, dst_x, dst_y);
 }

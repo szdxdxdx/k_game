@@ -15,7 +15,7 @@ struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h)
 
     scaled_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, scaled_w, scaled_h);
     if (NULL == scaled_texture) {
-        k_log_error("Failed to create SDL texture: %s", SDL_GetError());
+        k_log_error("Failed to scale image, SDL error: %s", SDL_GetError());
         goto err;
     }
 
@@ -28,8 +28,10 @@ struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h)
     SDL_SetRenderTarget(renderer, NULL);
 
     struct k_image *new_image = k__image_create(scaled_texture);
-    if (NULL == new_image)
+    if (NULL == new_image) {
+        k_log_error("Failed to scale image");
         goto err;
+    }
 
     return new_image;
 
@@ -37,6 +39,5 @@ err:
     if (NULL != scaled_texture)
         SDL_DestroyTexture(scaled_texture);
 
-    k_log_error("Failed to scale image");
     return NULL;
 }

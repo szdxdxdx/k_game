@@ -14,7 +14,7 @@ static struct k_sprite *my_load_sprite_strip(const char *filepath, int frames_nu
     int scaled_w = scale * k_image_get_width(img);
     int scaled_h = scale * k_image_get_height(img);
 
-    struct k_image *img_player = k_image_scale(img, scaled_w, scaled_h);
+    struct k_image *img_player = k_image_scale(NULL, scaled_w, scaled_h);
     k_image_release(img);
 
     /* 素材中的动画都不超过 15 帧，此处不需要动态申请内存 */
