@@ -75,15 +75,12 @@ err:
     return NULL;
 }
 
-static void k__sprite_destroy(struct k_sprite *sprite) {
-    k__asset_registry_del(&sprite->registry_node);
-    k_free(sprite);
-}
-
 void k_sprite_destroy(struct k_sprite *sprite) {
 
-    if (NULL != sprite)
-        k__sprite_destroy(sprite);
+    /* if (NULL == sprite) return; ? */
+
+    k__asset_registry_del(&sprite->registry_node);
+    k_free(sprite);
 }
 
 /* endregion */
@@ -96,7 +93,7 @@ int k__sprite_registry_init(void) {
 
 static void fn_release_asset(struct k_asset_registry_node *registry_node) {
     struct k_sprite *sprite = container_of(registry_node, struct k_sprite, registry_node);
-    k__sprite_destroy(sprite);
+    k_sprite_destroy(sprite);
 }
 
 void k__sprite_registry_cleanup(void) {

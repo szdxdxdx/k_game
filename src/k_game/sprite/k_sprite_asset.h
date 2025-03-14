@@ -37,7 +37,8 @@ struct k_sprite {
     int frames_num;
 };
 
-/*
+/**
+ * \brief 销毁精灵【暂未公布的 API】
  *
  */
 void k_sprite_destroy(struct k_sprite *sprite);

@@ -7,6 +7,14 @@
 
 #include "../asset/k_asset_registry.h"
 
+/* region [image_registry] */
+
+int k__image_registry_init(void);
+
+void k__image_registry_cleanup(void);
+
+/* endregion */
+
 struct k_image {
 
     struct k_asset_registry_node registry_node;
@@ -18,7 +26,7 @@ struct k_image {
     SDL_Texture *texture;
 };
 
-void k__image_release(struct k_image *image);
+void k_image_release(struct k_image *image);
 
 int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, float dst_x, float dst_y);
 

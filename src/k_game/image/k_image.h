@@ -3,7 +3,6 @@
 
 #include "k_game_image.h"
 
-#include "./k_image_registry.h"
 #include "./k_image_asset.h"
 
 #endif
