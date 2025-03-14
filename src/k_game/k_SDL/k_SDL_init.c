@@ -135,6 +135,12 @@ static int step_create_renderer(void *unused) {
         return -1;
     }
 
+    if (0 != SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND)) {
+        k_log_error("Failed to set SDL renderer blend mode: %s", SDL_GetError());
+        SDL_DestroyRenderer(renderer);
+        return -1;
+    }
+
     k__window.renderer = renderer;
     return 0;
 }

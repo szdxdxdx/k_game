@@ -31,9 +31,9 @@ void k_image_release(struct k_image *image) {
     if (NULL == image)
         return;
 
-    k__asset_registry_del(&image->registry_node);
-
     SDL_DestroyTexture(image->texture);
+
+    k__asset_registry_del(&image->registry_node);
     k_free(image);
 }
 
