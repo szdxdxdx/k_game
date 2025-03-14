@@ -13,7 +13,7 @@ struct k_room_component_manager_map {
     /* 使用动态二维数组建立从【房间实例、组件类型】到【组件管理器实例】的索引，
      * 能以 O(1) 的时间复杂度，快速获取特定房间中挂载的特定类型的组件管理器实例。
      *
-     * 用类似泛型的语法表示 map 的类型为：
+     * 用类似 C++ 的模板语法来表示 map 的类型应为：
      * k_array<k_array<k_component_manager *> *> map;
      */
     struct k_array map;
@@ -238,7 +238,7 @@ void k_room_del_component_manager(struct k_room *room, struct k_component_type *
     k__component_manager_destroy_self(manager);
 }
 
-void k__room_del_all_component_managers(struct k_room *room) {
+void k_room_del_all_component_managers(struct k_room *room) {
 
     struct k_array *room_array = &component_manager_map.map;
     if (room_array->size <= room->room_id)

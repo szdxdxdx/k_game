@@ -3,7 +3,6 @@
 
 #include "k_game_sprite.h"
 
-#include "./k_sprite_registry.h"
 #include "./k_sprite_asset.h"
 
 #endif

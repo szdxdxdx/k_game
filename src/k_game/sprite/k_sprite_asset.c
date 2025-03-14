@@ -7,6 +7,8 @@
 
 #include "./k_sprite.h"
 
+static struct k_asset_registry sprite_registry;
+
 /* region [sprite_create] */
 
 static int check_config(const struct k_sprite_config *config) {
@@ -65,7 +67,7 @@ struct k_sprite *k_sprite_create(const struct k_sprite_config *config) {
     sprite->frames     = frames;
     sprite->frames_num = config->frames_num;
 
-    k__sprite_registry_add(sprite);
+    k__asset_registry_add(&sprite_registry, &sprite->registry_node);
     return sprite;
 
 err:
@@ -73,9 +75,50 @@ err:
     return NULL;
 }
 
-void k__sprite_destroy(struct k_sprite *sprite) {
-    k__sprite_registry_del(sprite);
+static void k__sprite_destroy(struct k_sprite *sprite) {
+    k__asset_registry_del(&sprite->registry_node);
     k_free(sprite);
+}
+
+void k_sprite_destroy(struct k_sprite *sprite) {
+
+    if (NULL != sprite)
+        k__sprite_destroy(sprite);
+}
+
+/* endregion */
+
+/* region [sprite_registry] */
+
+int k__sprite_registry_init(void) {
+    return k__asset_registry_init(&sprite_registry);
+}
+
+static void fn_release_asset(struct k_asset_registry_node *registry_node) {
+    struct k_sprite *sprite = container_of(registry_node, struct k_sprite, registry_node);
+    k__sprite_destroy(sprite);
+}
+
+void k__sprite_registry_cleanup(void) {
+     k__asset_registry_cleanup(&sprite_registry, fn_release_asset);
+}
+
+int k_sprite_set_name(struct k_sprite *sprite, const char *sprite_name) {
+    return k__asset_set_name(&sprite_registry, &sprite->registry_node, sprite_name);
+}
+
+struct k_sprite *k_sprite_find(const char *sprite_name) {
+
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&sprite_registry, sprite_name);
+    if (NULL == registry_node)
+        return NULL;
+
+    struct k_sprite *sprite = container_of(registry_node, struct k_sprite, registry_node);
+    return sprite;
+}
+
+const char *k__sprite_get_name(struct k_sprite *sprite) {
+    return k__asset_get_name(&sprite->registry_node);
 }
 
 /* endregion */

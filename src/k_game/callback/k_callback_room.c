@@ -25,7 +25,12 @@ void k_room_del_callback(struct k_room_callback *callback) {
     if (NULL == callback)
         return;
 
+    if (k_list_node_is_loop(&callback->list_node))
+        return;
+
     k_list_del(&callback->list_node);
+    k_list_node_loop(&callback->list_node);
+
     k__callback_set_deleted(callback->base);
 }
 

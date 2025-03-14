@@ -10,17 +10,11 @@
 #include "./k_room.h"
 #include "../component/k_component.h"
 
-/* region [steps] */
+static struct k_asset_registry room_registry;
 
-struct step_context {
-    const struct k_room_config *config;
-    void *params;
-    struct k_room *room;
-};
+/* region [room_create] */
 
-static int step_check_config(void *context) {
-    struct step_context *ctx = context;
-    const struct k_room_config *config = ctx->config;
+static int check_config(const struct k_room_config *config) {
 
     const char *err_msg;
 
@@ -37,6 +31,14 @@ err:
     k_log_error("Invalid room config: %s", err_msg);
     return -1;
 }
+
+/* region [steps] */
+
+struct step_context {
+    const struct k_room_config *config;
+    void *params;
+    struct k_room *room;
+};
 
 static int step_malloc(void *context) {
     struct step_context *ctx = context;
@@ -140,7 +142,7 @@ static void step_del_component_managers(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__room_del_all_component_managers(room);
+    k_room_del_all_component_managers(room);
 }
 
 static size_t id_counter = 0;
@@ -149,7 +151,7 @@ static int step_registry_add(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__room_registry_add(room);
+    k__asset_registry_add(&room_registry, &room->registry_node);
 
     room->room_id = id_counter++;
     return 0;
@@ -159,7 +161,7 @@ static void step_registry_del(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__room_registry_del(room);
+    k__asset_registry_del(&room->registry_node);
 
     if (id_counter == room->room_id)
         id_counter--; /* [?] 若 `fn_init()` 初始化失败则回收 id */
@@ -207,7 +209,6 @@ static void step_call_fn_cleanup(void *context) {
 }
 
 static const struct k_seq_step steps[] = {
-    { step_check_config,           NULL                          },
     { step_malloc,                 step_free                     },
     { step_set_properties,         NULL                          },
     { step_init_callback_managers, step_deinit_callback_managers },
@@ -222,20 +223,27 @@ static const struct k_seq_step steps[] = {
 
 struct k_room *k_room_create(const struct k_room_config *config, void *params) {
 
+    if (0 != check_config(config))
+        goto err;
+
     struct step_context ctx;
     ctx.config = config;
     ctx.params = params;
     ctx.room   = NULL;
-
-    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx)) {
-        k_log_error("Failed to create room");
-        return NULL;
-    }
+    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx))
+        goto err;
 
     return ctx.room;
+
+err:
+    k_log_error("Failed to create room");
+    return NULL;
 }
 
-void k__room_destroy(struct k_room *room) {
+void k_room_destroy(struct k_room *room) {
+
+    if (NULL == room)
+        return;
 
     struct step_context ctx;
     ctx.config = NULL;
@@ -245,8 +253,34 @@ void k__room_destroy(struct k_room *room) {
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
 }
 
-void k_room_destroy(struct k_room *room) {
+/* endregion */
 
-    if (NULL != room)
-        k__room_destroy(room);
+/* region [room_registry] */
+
+int k__room_registry_init(void) {
+    return k__asset_registry_init(&room_registry);
 }
+
+static void fn_release_asset(struct k_asset_registry_node *node) {
+    struct k_room *room = container_of(node, struct k_room, registry_node);
+    k_room_destroy(room);
+}
+
+void k__room_registry_cleanup(void) {
+     k__asset_registry_cleanup(&room_registry, fn_release_asset);
+}
+
+int k_room_set_name(struct k_room *room, const char *room_name) {
+    return k__asset_set_name(&room_registry, &room->registry_node, room_name);
+}
+
+struct k_room *k_room_find(const char *room_name) {
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&room_registry, room_name);
+    if (NULL == registry_node)
+        return NULL;
+
+    struct k_room *room = container_of(registry_node, struct k_room, registry_node);
+    return room;
+}
+
+/* endregion */
