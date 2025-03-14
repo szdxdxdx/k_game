@@ -1,8 +1,178 @@
-#include "k_game_alloc.h"
+#include "k_array.h"
 
+#include "k_game_alloc.h"
 #include "./k_component.h"
 
-/* region [manager_create] */
+#include "../room/k_room.h"
+
+/* region [function forward declaration] */
+
+static void k__component_manager_destroy_self(struct k_component_manager *manager);
+
+/* endregion */
+
+/* region [component_manager_map] */
+
+struct k_component_manager_map {
+
+    /* 使用动态二维数组建立索引：
+     * map[room_id][manager_type_id] = manager
+     */
+    struct k_array map;
+};
+
+static struct k_component_manager_map component_manager_map;
+
+/* 用于表示一个无效的数组的常量，类似于 `NULL`
+ *
+ * `component_manager_map` 代码的部分逻辑中
+ * `NULL == arr` 与 `arr->size == 0` 等价，
+ * 使用 `NULL_ARRAY` 而非 `NULL` 可以节省一步判断 `NULL != arr`。
+ */
+static struct k_array NULL_ARRAY = { .size=0, .capacity=0 };
+
+int k__component_manager_map_init(void) {
+
+    struct k_array_config config;
+    config.fn_malloc     = k_malloc;
+    config.fn_free       = k_free;
+    config.elem_size     = sizeof(struct k_array *);
+    config.init_capacity = 16;
+    struct k_array *room_array = k_array_construct(&component_manager_map.map, &config);
+    if (NULL == room_array)
+        return -1;
+
+    struct k_array **p = k_array_shift_right(room_array, 0, room_array->capacity);
+    size_t i = 0;
+    for (; i < room_array->size; i++)
+        p[i] = &NULL_ARRAY;
+
+    return 0;
+}
+
+void k__component_manager_map_free(void) {
+
+    struct k_array *room_array = &component_manager_map.map;
+    size_t i = 0;
+    for (; i < room_array->size; i++) {
+        struct k_array *manager_array = k_array_get_elem(room_array, i, struct k_array *);
+
+        /* k_game 销毁所有房间后才清理 `component_manager_map`，
+         * 而销毁房间时已移除完该房间的组件管理器，
+         * 所以下述 if 判断结果理应为 false。
+         */
+        if (&NULL_ARRAY != manager_array)
+            k_array_destroy(manager_array);
+    }
+
+    k_array_destruct(room_array);
+}
+
+static int k__component_manager_map_add(struct k_room *room, struct k_component_manager *manager) {
+
+    size_t room_id = room->room_id;
+    size_t manager_type_id = manager->component_type->manager_type->type_id;
+
+    struct k_array *room_array = &component_manager_map.map;
+    struct k_array **p_manager_array;
+    struct k_component_manager **p_manager;
+
+    if (room_array->size <= room_id)
+        goto room_array_grow;
+
+    p_manager_array = k_array_get_elem_addr(room_array, room_id);
+    if (&NULL_ARRAY == *p_manager_array) {
+        goto manager_array_create;
+    }
+    else if ((*p_manager_array)->size <= manager_type_id) {
+        goto manager_array_grow;
+    }
+    else {
+        p_manager = k_array_get_elem_addr(*p_manager_array, manager_type_id);
+        goto manger_array_set_item;
+    }
+
+room_array_grow:
+    {
+        size_t append_size = room_id - room_array->size + 1;
+        struct k_array **p = k_array_shift_right(room_array, room_array->size, append_size);
+        if (NULL == p)
+            return -1;
+
+        p_manager_array = k_array_get_elem_addr(room_array, room_id);
+
+        for (; p < p_manager_array; p++)
+            *p = &NULL_ARRAY;
+    }
+
+manager_array_create:
+    {
+        struct k_array_config config;
+        config.fn_malloc     = k_malloc;
+        config.fn_free       = k_free;
+        config.elem_size     = sizeof(struct k_component_manager *);
+        config.init_capacity = 16;
+        *p_manager_array = k_array_create(&config);
+        if (NULL == *p_manager_array) {
+            *p_manager_array = &NULL_ARRAY;
+            return -1;
+        }
+    }
+
+manager_array_grow:
+    {
+        size_t append_size = manager_type_id - (*p_manager_array)->size + 1;
+        struct k_component_manager **p = k_array_shift_right(*p_manager_array, (*p_manager_array)->size, append_size);
+        if (NULL == p)
+            return -1;
+
+        p_manager = k_array_get_elem_addr(*p_manager_array, manager_type_id);
+
+        for (; p < p_manager; p++)
+            *p = NULL;
+    }
+
+manger_array_set_item:
+    *p_manager = manager;
+    return 0;
+}
+
+static void k__component_manager_map_del(struct k_room *room, struct k_component_manager_type *manager_type) {
+
+    size_t room_id = room->room_id;
+    size_t manager_type_id = manager_type->type_id;
+
+    struct k_array *room_array = &component_manager_map.map;
+    if (room_array->size <= room_id)
+        return;
+
+    struct k_array *manager_array = k_array_get_elem(room_array, room_id, struct k_array *);
+    if (manager_array->size <= manager_type_id)
+        return;
+
+    struct k_component_manager **p_manager = k_array_get_elem_addr(manager_array, manager_type_id);
+    *p_manager = NULL;
+}
+
+struct k_component_manager *k__component_manager_map_find(struct k_room *room, struct k_component_manager_type *manager_type) {
+
+    size_t room_id = room->room_id;
+    size_t manager_type_id = manager_type->type_id;
+
+    struct k_array *room_array = &component_manager_map.map;
+    if (room_array->size <= room_id)
+        return NULL;
+
+    struct k_array *manager_array = k_array_get_elem(room_array, room_id, struct k_array *);
+    if (manager_array->size <= manager_type_id)
+        return NULL;
+
+    return k_array_get_elem(manager_array, manager_type_id, struct k_component_manager *);
+}
+
+/* endregion */
+
+/* region [component_manager_create] */
 
 static int k__component_manager_create(struct k_room *room, struct k_component_type *component_type, void *params) {
 
@@ -42,7 +212,7 @@ map_add_failed:
     return -1;
 }
 
-void k__component_manager_destroy_self(struct k_component_manager *manager) {
+static void k__component_manager_destroy_self(struct k_component_manager *manager) {
 
     struct k_component_manager_type *manager_type = manager->component_type->manager_type;
     if (NULL != manager_type->fn_fini) {
@@ -52,34 +222,57 @@ void k__component_manager_destroy_self(struct k_component_manager *manager) {
     k_free(manager);
 }
 
-static void k__component_manager_destroy(struct k_room *room, struct k_component_type *component_type) {
-
-    struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
-    if (NULL == manager)
-        return;
-
-    k__component_manager_map_del(manager->room, component_type->manager_type);
-    k__component_manager_destroy_self(manager);
-}
-
 /* endregion */
 
-/* region [room_add_manager] */
+/* region [room_add_component_manager] */
 
 int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params) {
     return k__component_manager_create(room, component_type, params);
 }
 
 void k_room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
-    k__component_manager_destroy(room, component_type);
+
+    struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
+    if (NULL == manager)
+        return;
+
+    k__component_manager_map_del(manager->room, component_type->manager_type);
+
+    k__component_manager_destroy_self(manager);
+}
+
+void k__room_del_all_component_managers(struct k_room *room) {
+
+    struct k_array *room_array = &component_manager_map.map;
+    if (room_array->size <= room->room_id)
+        return;
+
+    struct k_array **p_manager_array = k_array_get_elem_addr(room_array, room->room_id);
+    if (&NULL_ARRAY == *p_manager_array)
+        return;
+
+    struct k_component_manager **p_manager = (*p_manager_array)->storage;
+    struct k_component_manager **end = k_array_get_elem_addr(*p_manager_array, (*p_manager_array)->size);
+    for (; p_manager < end; p_manager++) {
+
+        if (NULL != *p_manager)
+            k__component_manager_destroy_self(*p_manager);
+    }
+
+    k_array_destroy(*p_manager_array);
+    *p_manager_array = &NULL_ARRAY;
 }
 
 /* endregion */
 
-/* region [manager_get] */
+/* region [component_manager_get] */
 
 void *k_component_manager_get_data(struct k_component_manager *manager) {
     return manager->data;
+}
+
+struct k_room *k_component_manager_get_room(struct k_component_manager *manager) {
+    return manager->room;
 }
 
 /* endregion */

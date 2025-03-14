@@ -5,7 +5,18 @@
 
 #include "../asset/k_asset_registry.h"
 
+struct k_component_type;
 struct k_component;
+
+/* region [component_type_registry] */
+
+int k__component_type_registry_init(void);
+
+void k__component_type_registry_cleanup(void);
+
+/* endregion */
+
+/* region [component_type] */
 
 struct k_component_entity_type {
 
@@ -36,6 +47,6 @@ struct k_component_type {
     struct k_component_manager_type *manager_type;
 };
 
-void k__component_undef(struct k_component_type *component_type);
+/* endregion */
 
 #endif

@@ -95,31 +95,11 @@ void k_object_del_all_components(struct k_object *object);
 
 /* endregion */
 
-/* region [room_add_component_manager] */
-
-/**
- * \brief 向房间添加组件管理器
- * TODO docs
- */
-int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params);
-
-void k_room_del_component_manager(struct k_room *room, struct k_component_type *component_type);
-
-struct k_component_manager *k_room_get_component_manager(struct k_room *room, struct k_component_type *component_type);
-
-/* endregion */
-
 /* region [component_get] */
 
 void *k_component_get_data(struct k_component *component);
 
 struct k_component_manager *k_component_get_manager(struct k_component *component);
-
-/* endregion */
-
-/* region [component_manager_get] */
-
-void *k_component_manager_get_data(struct k_component_manager *manager);
 
 /* endregion */
 
@@ -138,6 +118,28 @@ struct k_component_callback *k_component_add_step_end_callback(struct k_componen
 void k_component_del_callback(struct k_component_callback *callback);
 
 void k_component_del_all_callbacks(struct k_component *component);
+
+/* endregion */
+
+/* region [room_add_component_manager] */
+
+/**
+ * \brief 向房间添加组件管理器
+ * TODO docs
+ */
+int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params);
+
+void k_room_del_component_manager(struct k_room *room, struct k_component_type *component_type);
+
+struct k_component_manager *k_room_get_component_manager(struct k_room *room, struct k_component_type *component_type);
+
+/* endregion */
+
+/* region [component_manager_get] */
+
+void *k_component_manager_get_data(struct k_component_manager *manager);
+
+struct k_room *k_component_manager_get_room(struct k_component_manager *manager);
 
 /* endregion */
 

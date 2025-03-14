@@ -5,6 +5,10 @@
 
 #include "./k_component.h"
 
+static struct k_asset_registry component_type_registry;
+
+/* region [component_define] */
+
 /* region [steps] */
 
 struct step_context {
@@ -93,7 +97,7 @@ static int step_registry_add(void *context) {
     struct step_context *ctx = context;
     struct k_component_type *component_type = ctx->component_type;
 
-    k__component_type_registry_add(component_type);
+    k__asset_registry_add(&component_type_registry, &component_type->registry_node);
     return 0;
 }
 
@@ -101,7 +105,7 @@ static void step_registry_del(void *context) {
     struct step_context *ctx = context;
     struct k_component_type *component_type = ctx->component_type;
 
-    k__component_type_registry_del(component_type);
+    k__asset_registry_del(&component_type->registry_node);
 }
 
 static struct k_seq_step steps[] = {
@@ -128,7 +132,7 @@ struct k_component_type *k_component_define(const struct k_component_manager_con
     return ctx.component_type;
 }
 
-void k__component_undef(struct k_component_type *component_type) {
+static void k__component_undef(struct k_component_type *component_type) {
 
     struct step_context ctx;
     ctx.manager_config = NULL;
@@ -137,3 +141,36 @@ void k__component_undef(struct k_component_type *component_type) {
 
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
 }
+
+/* endregion */
+
+/* region [component_type_registry] */
+
+int k__component_type_registry_init(void) {
+    return k__asset_registry_init(&component_type_registry);
+}
+
+static void fn_release_asset(struct k_asset_registry_node *registry_node) {
+    struct k_component_type *component_type = container_of(registry_node, struct k_component_type, registry_node);
+    k__component_undef(component_type);
+}
+
+void k__component_type_registry_cleanup(void) {
+    k__asset_registry_cleanup(&component_type_registry, fn_release_asset);
+}
+
+int k_component_type_set_name(struct k_component_type *component_type, const char *type_name) {
+    return k__asset_set_name(&component_type_registry, &component_type->registry_node, type_name);
+}
+
+struct k_component_type *k_component_type_find(const char *type_name) {
+
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&component_type_registry, type_name);
+    if (NULL == registry_node)
+        return NULL;
+
+    struct k_component_type *component_type = container_of(registry_node, struct k_component_type, registry_node);
+    return component_type;
+}
+
+/* endregion */
