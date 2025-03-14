@@ -90,7 +90,7 @@ static int step_init_component_manager_map(void *unused) {
     return k__component_manager_map_init();
 }
 
-static void step_deinit_component_manager_map(void *unused) {
+static void step_free_component_manager_map(void *unused) {
     (void)unused;
     k__component_manager_map_free();
 }
@@ -146,17 +146,17 @@ static void step_call_fn_cleanup(void *context) {
 }
 
 static const struct k_seq_step steps[] = {
-    { step_check_config,                NULL                              },
-    { step_init_SDL,                    step_quit_SDL                     },
-    { step_init_image_registry,         step_cleanup_image_registry       },
-    { step_init_sound_registry,         step_cleanup_sound_registry       },
-    { step_init_sprite_registry,        step_cleanup_sprite_registry      },
-    { step_init_component_registry,     step_cleanup_component_registry   },
-    { step_init_component_manager_map,  step_deinit_component_manager_map },
-    { step_define_components,           NULL                              },
-    { step_init_room_registry,          step_cleanup_room_registry        },
-    { step_init_room_stack,             step_cleanup_room_stack           },
-    { step_call_fn_init,                step_call_fn_cleanup              },
+    { step_check_config,               NULL                            },
+    { step_init_SDL,                   step_quit_SDL                   },
+    { step_init_image_registry,        step_cleanup_image_registry     },
+    { step_init_sound_registry,        step_cleanup_sound_registry     },
+    { step_init_sprite_registry,       step_cleanup_sprite_registry    },
+    { step_init_component_registry,    step_cleanup_component_registry },
+    { step_init_component_manager_map, step_free_component_manager_map },
+    { step_define_components,          NULL                            },
+    { step_init_room_registry,         step_cleanup_room_registry      },
+    { step_init_room_stack,            step_cleanup_room_stack         },
+    { step_call_fn_init,               step_call_fn_cleanup            },
 };
 
 /* endregion */

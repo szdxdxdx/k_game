@@ -21,7 +21,7 @@ struct k_component_manager {
 
     struct k_component_type *component_type;
 
-    struct k_room *room;
+    struct k_room *room; /* [?] 不是必须的 */
 };
 
 /**
