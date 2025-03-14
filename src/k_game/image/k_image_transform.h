@@ -1,0 +1,4 @@
+#ifndef K_GAME__IMAGE_TRANSFORM_H
+#define K_GAME__IMAGE_TRANSFORM_H
+
+#endif
