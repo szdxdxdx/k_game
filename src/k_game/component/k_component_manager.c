@@ -227,7 +227,7 @@ int k_room_add_component_manager(struct k_room *room, struct k_component_type *c
     return k__component_manager_create(room, component_type, params);
 }
 
-static void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
+void k_room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
 
     struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
     if (NULL == manager)
