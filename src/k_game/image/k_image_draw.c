@@ -10,8 +10,8 @@ int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, floa
     if (NULL == src_rect) {
         src.x = 0;
         src.y = 0;
-        src.w = image->w;
-        src.h = image->h;
+        src.w = image->image_w;
+        src.h = image->image_h;
     } else {
         src.x = src_rect->x;
         src.y = src_rect->y;

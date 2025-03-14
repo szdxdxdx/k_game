@@ -1,17 +1,30 @@
 #include "./demo_1.h"
 
+static struct k_sprite *my_load_sprite_strip(const char *filepath, int frames_num, int frame_delay) {
+
+    struct k_image *img = k_image_load(filepath);
+
+
+
+}
+
 static void my_load_sprite_player(void) {
 
-    struct k_image *img_player = k_image_load("./demo_1/mechanic_mike.png");
-    k_image_set_name(img_player, "player");
+    int scale = 2;
 
-    int sprite_w = 80;
-    int sprite_h = 64;
-    float origin_x = 40.0f;
-    float origin_y = 43.0f;
+    int   sprite_w = scale * 80;
+    int   sprite_h = scale * 64;
+    float origin_x = (float)scale * 40.0f;
+    float origin_y = (float)scale * 43.0f;
 
     {
-        int frame_delay = 120;
+        struct k_image *img = k_image_load("./demo_1/player/run.png");
+
+        int scaled_w = scale * k_image_get_width(img);
+        int scaled_h = scale * k_image_get_height(img);
+
+        struct k_image *img_player = k_image_scale(img, scaled_w, scaled_h);
+        k_image_release(img);
 
         struct k_sprite_config config = {
             .sprite_w = sprite_w,
@@ -19,34 +32,12 @@ static void my_load_sprite_player(void) {
             .origin_x = origin_x,
             .origin_y = origin_y,
             .frames = (struct k_sprite_frame_config[]){
-                { img_player, 0 * sprite_w, 0, frame_delay },
-                { img_player, 1 * sprite_w, 0, frame_delay },
-                { img_player, 2 * sprite_w, 0, frame_delay },
-                { img_player, 3 * sprite_w, 0, frame_delay },
-                { img_player, 4 * sprite_w, 0, frame_delay },
-                { img_player, 5 * sprite_w, 0, frame_delay },
-                { img_player, 6 * sprite_w, 0, frame_delay },
-            },
-            .frames_num = 7
-        };
-        struct k_sprite *sprite = k_sprite_create(&config);
-        k_sprite_set_name(sprite, "player/idle");
-    }
-
-    {
-        int frame_delay = 120;
-        struct k_sprite_config config = {
-            .sprite_w = sprite_w,
-            .sprite_h = sprite_h,
-            .origin_x = origin_x,
-            .origin_y = origin_y,
-            .frames = (struct k_sprite_frame_config[]){
-                { img_player,  7 * sprite_w, 0, frame_delay },
-                { img_player,  8 * sprite_w, 0, frame_delay },
-                { img_player,  9 * sprite_w, 0, frame_delay },
-                { img_player, 10 * sprite_w, 0, frame_delay },
-                { img_player, 11 * sprite_w, 0, frame_delay },
-                { img_player, 12 * sprite_w, 0, frame_delay },
+                { img_player, 0 * sprite_w, 0, 150 },
+                { img_player, 1 * sprite_w, 0, 150 },
+                { img_player, 2 * sprite_w, 0, 150 },
+                { img_player, 3 * sprite_w, 0, 150 },
+                { img_player, 4 * sprite_w, 0, 150 },
+                { img_player, 5 * sprite_w, 0, 150 },
             },
             .frames_num = 6
         };
@@ -57,8 +48,6 @@ static void my_load_sprite_player(void) {
 
 static void my_load_sprite_enemy(void) {
 
-    struct k_image *img_enemy = k_image_load("./demo_1/microwave.png");
-    k_image_set_name(img_enemy, "enemy");
 }
 
 void my_load_sprite_asset(void) {

@@ -17,7 +17,8 @@ struct k_image {
 
     struct k_asset_registry_node registry_node;
 
-    int w, h;
+    int image_w;
+    int image_h;
 
     SDL_Texture *texture;
 };

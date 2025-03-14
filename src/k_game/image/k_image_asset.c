@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 #include "SDL_image.h"
 
 #include "k_game_alloc.h"
@@ -15,7 +17,7 @@ struct k_image *k__image_create(SDL_Texture *texture) {
         goto err;
 
     image->texture = texture;
-    SDL_QueryTexture(image->texture, NULL, NULL, &image->w, &image->h);
+    SDL_QueryTexture(texture, NULL, NULL, &image->image_w, &image->image_h);
 
     k__asset_registry_add(&image_registry, &image->registry_node);
     return image;
@@ -27,9 +29,10 @@ err:
 void k_image_release(struct k_image *image) {
 
     if (NULL == image)
-        return
+        return;
 
     k__asset_registry_del(&image->registry_node);
+
     SDL_DestroyTexture(image->texture);
     k_free(image);
 }
@@ -94,11 +97,11 @@ err:
 /* region [image_get] */
 
 int k_image_get_width(struct k_image *image) {
-    return image->w;
+    return image->image_w;
 }
 
 int k_image_get_height(struct k_image *image) {
-    return image->h;
+    return image->image_h;
 }
 
 /* endregion */

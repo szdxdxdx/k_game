@@ -42,7 +42,7 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, float
 
 /* region [image_transform] */
 
-struct k_image *image_scale(struct k_image *image, float scale_x, float scale_y);
+struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h);
 
 /* endregion */
 

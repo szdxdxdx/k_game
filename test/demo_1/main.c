@@ -1,3 +1,7 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "./demo_1.h"
 
 static int fn_init_game(void) {
@@ -11,6 +15,9 @@ static int fn_init_game(void) {
 }
 
 int main(int argc, char **argv) {
+    system("chcp 65001");
+    setbuf(stdout, NULL);
+    setbuf(stderr, NULL);
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_title = "demo 1";
