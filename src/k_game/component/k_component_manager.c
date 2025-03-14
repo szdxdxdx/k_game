@@ -5,29 +5,26 @@
 
 #include "../room/k_room.h"
 
-/* region [function forward declaration] */
-
-static void k__component_manager_destroy_self(struct k_component_manager *manager);
-
-/* endregion */
-
 /* region [component_manager_map] */
 
-struct k_component_manager_map {
+/* 全局单例容器，用于管理所有的组件管理器实例 */
+struct k_room_component_manager_map {
 
-    /* 使用动态二维数组建立索引：
-     * map[room_id][manager_type_id] = manager
+    /* 使用动态二维数组建立从【房间实例、组件类型】到【组件管理器实例】的索引，
+     * 能以 O(1) 的时间复杂度，快速获取特定房间中挂载的特定类型的组件管理器实例。
+     *
+     * 用类似泛型的语法表示 map 的类型为：
+     * k_array<k_array<k_component_manager *> *> map;
      */
     struct k_array map;
 };
 
-static struct k_component_manager_map component_manager_map;
+static struct k_room_component_manager_map component_manager_map;
 
-/* 用于表示一个无效的数组的常量，类似于 `NULL`
+/* 常量，用于表示一个无效数组，类似于 `NULL`
  *
- * `component_manager_map` 代码的部分逻辑中
- * `NULL == arr` 与 `arr->size == 0` 等价，
- * 使用 `NULL_ARRAY` 而非 `NULL` 可以节省一步判断 `NULL != arr`。
+ * 在 `component_manager_map` 的实现逻辑中，`NULL == arr` 等价与 `arr->size == 0`。
+ * 使用该常量而非 `NULL` 可省去额外的 `NULL != arr` 检查。
  */
 static struct k_array NULL_ARRAY = { .size=0, .capacity=0 };
 
@@ -230,7 +227,7 @@ int k_room_add_component_manager(struct k_room *room, struct k_component_type *c
     return k__component_manager_create(room, component_type, params);
 }
 
-void k_room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
+static void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
 
     struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
     if (NULL == manager)

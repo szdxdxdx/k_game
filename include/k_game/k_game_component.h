@@ -129,8 +129,6 @@ void k_component_del_all_callbacks(struct k_component *component);
  */
 int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params);
 
-void k_room_del_component_manager(struct k_room *room, struct k_component_type *component_type);
-
 struct k_component_manager *k_room_get_component_manager(struct k_room *room, struct k_component_type *component_type);
 
 /* endregion */
