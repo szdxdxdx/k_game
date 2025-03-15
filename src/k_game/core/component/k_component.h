@@ -1,0 +1,10 @@
+#ifndef K_GAME__COMPONENT_H
+#define K_GAME__COMPONENT_H
+
+#include "k_game.h"
+
+#include "./k_component_type.h"
+#include "./k_component_manager.h"
+#include "./k_component_entity.h"
+
+#endif
