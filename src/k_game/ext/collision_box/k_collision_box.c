@@ -1,10 +1,9 @@
 #include <limits.h>
 
-#include "../core/k_SDL/k_SDL.h"
-
 #include "k_game.h"
+#include "../../core/k_SDL/k_SDL.h"
 
-#include "./k_components_def.h"
+#include "../k_components_def.h"
 
 /* region [collision_box struct] */
 

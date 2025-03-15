@@ -5,13 +5,13 @@
 
 #include "k_game.h"
 
-#include "../k_SDL/k_SDL.h"
-#include "../image/k_image.h"
-#include "../sound/k_sound.h"
-#include "../sprite/k_sprite.h"
-#include "../room/k_room.h"
+#include "./core/k_SDL/k_SDL.h"
+#include "./core/image/k_image.h"
+#include "./core/sound/k_sound.h"
+#include "./core/sprite/k_sprite.h"
+#include "./core/room/k_room.h"
 
-#include "../../ext/k_components_def.h"
+#include "./ext/k_components_def.h"
 
 /* region [steps] */
 

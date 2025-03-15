@@ -1,6 +1,6 @@
 #include "k_game.h"
 
-#include "./k_components_def.h"
+#include "../k_components_def.h"
 
 struct k_sprite_renderer {
 
