@@ -48,8 +48,8 @@ int k__sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite
     opt.dst_w           = options->dst_w;
     opt.dst_h           = options->dst_h;  /* TODO (w > 0 && h > 0) */
     opt.angle           = options->angle;
-    opt.pivot_x         = sprite->origin_x;
-    opt.pivot_y         = sprite->origin_y;
+    opt.pivot_x         = sprite->origin_x * ((float)options->dst_w / (float)sprite->sprite_w);
+    opt.pivot_y         = sprite->origin_y * ((float)options->dst_h / (float)sprite->sprite_h);
     opt.horizontal_flip = options->flip_x;
     opt.vertical_flip   = options->flip_y;
 
