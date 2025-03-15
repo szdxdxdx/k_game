@@ -1,5 +1,3 @@
-#include <assert.h>
-
 #include "k_log.h"
 
 #include "../k_SDL/k_SDL.h"
@@ -9,7 +7,6 @@
 /* region [image_draw] */
 
 int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, float dst_x, float dst_y) {
-    assert(NULL != image);
 
     SDL_Rect src;
     if (NULL == src_rect) {
@@ -18,8 +15,6 @@ int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, floa
         src.w = image->image_w;
         src.h = image->image_h;
     } else {
-        assert(0 <= src_rect->w);
-        assert(0 <= src_rect->h);
         src.x = src_rect->x;
         src.y = src_rect->y;
         src.w = src_rect->w;
@@ -29,7 +24,7 @@ int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, floa
     SDL_FRect dst;
     dst.x = dst_x;
     dst.y = dst_y;
-    dst.w = (float)src.w;
+    dst.w = (float)src.w; /* TODO (w > 0 && h > 0) */
     dst.h = (float)src.h;
 
     if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
@@ -57,8 +52,6 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, float
 /* region [image_draw_EX] */
 
 int k__image_draw_EX(struct k_image *image, struct k_image_draw_options *options) {
-    assert(NULL != image);
-    assert(NULL != options);
 
     const struct k_int_rect *src_rect = options->src_rect;
 
@@ -69,8 +62,6 @@ int k__image_draw_EX(struct k_image *image, struct k_image_draw_options *options
         src.w = image->image_w;
         src.h = image->image_h;
     } else {
-        assert(0 <= src_rect->w);
-        assert(0 <= src_rect->h);
         src.x = src_rect->x;
         src.y = src_rect->y;
         src.w = src_rect->w;
@@ -80,7 +71,7 @@ int k__image_draw_EX(struct k_image *image, struct k_image_draw_options *options
     SDL_FRect dst;
     dst.x = options->dst_x;
     dst.y = options->dst_y;
-    dst.w = (float)options->dst_w;
+    dst.w = (float)options->dst_w; /* TODO (w > 0 && h > 0) */
     dst.h = (float)options->dst_h;
 
     SDL_FPoint center;

@@ -42,14 +42,14 @@ int k__sprite_draw_EX(struct k_sprite *sprite, size_t frame_idx, struct k_sprite
     src.h = sprite->sprite_h;
 
     struct k_image_draw_options opt;
-    opt.src_rect = &src;
-    opt.dst_x    = options->x - sprite->origin_x;
-    opt.dst_y    = options->y - sprite->origin_y;
-    opt.dst_w    = options->dst_w;
-    opt.dst_h    = options->dst_h;
-    opt.angle    = options->angle;
-    opt.pivot_x  = sprite->origin_x;
-    opt.pivot_y  = sprite->origin_y;
+    opt.src_rect        = &src;
+    opt.dst_x           = options->x - sprite->origin_x;
+    opt.dst_y           = options->y - sprite->origin_y;
+    opt.dst_w           = options->dst_w;
+    opt.dst_h           = options->dst_h;  /* TODO (w > 0 && h > 0) */
+    opt.angle           = options->angle;
+    opt.pivot_x         = sprite->origin_x;
+    opt.pivot_y         = sprite->origin_y;
     opt.horizontal_flip = options->horizontal_flip;
     opt.vertical_flip   = options->vertical_flip;
 
