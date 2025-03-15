@@ -30,7 +30,7 @@ struct k_sprite_renderer {
     float angle;
 
     /* 利用位标识来指示在绘制操作中需要应用哪些变换 */
-    enum renderer_transform transform_flags;
+    uint8_t transform_flags;
 };
 
 /* region [set_speed] */
@@ -292,12 +292,18 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
     struct k_sprite_renderer_config *config = params;
 
-    struct k_component_callback *draw_callback = k_component_add_draw_callback(component, renderer_draw, config->z_index);
-    if (NULL == draw_callback)
-        return -1;
+    renderer->component = component;
 
-    renderer->component     = component;
-    renderer->draw_callback = draw_callback;
+    if (NULL == config->sprite) {
+        renderer->draw_callback = NULL;
+    } else {
+        renderer->draw_callback = k_component_add_draw_callback(component, renderer_draw, config->z_index);
+        if (NULL == renderer->draw_callback)
+            return -1;
+    }
+    renderer->z_index = config->z_index;
+
+    renderer->draw_callback = NULL;
     renderer->z_index       = config->z_index;
 
     renderer->sprite    = config->sprite;
@@ -310,9 +316,15 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
 
     renderer->transform_flags = transform_none;
 
-    renderer->scaled_w = k_sprite_get_width(config->sprite);
-    renderer->scaled_h = k_sprite_get_height(config->sprite);
-    renderer->angle    = 0.0f;
+    if (NULL == config->sprite) {
+        renderer->scaled_w = 0;
+        renderer->scaled_h = 0;
+    } else {
+        renderer->scaled_w = k_sprite_get_width(config->sprite);
+        renderer->scaled_h = k_sprite_get_height(config->sprite);
+    }
+
+    renderer->angle = 0.0f;
 
     return 0;
 }
