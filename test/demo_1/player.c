@@ -58,29 +58,51 @@ static void player_step(struct k_object *object) {
 
     float delta = k_get_step_delta();
 
+    /* 旋转 */
     if (k_key_down('R'))
         k_sprite_renderer_adjust_rotation(player->spr_rdr, 180.0f * delta);
 
+    /* 翻转 */
     if (k_key_down('F')) {
-
         if (k_key_pressed('X'))
             k_sprite_renderer_flip_x(player->spr_rdr, 1);
         if (k_key_pressed('Y'))
             k_sprite_renderer_flip_y(player->spr_rdr, 1);
     }
 
-    if ( ! k_key_down(K_KEY_LEFT_SHIFT)) {
-        if (k_key_down('X'))
-            k_sprite_renderer_adjust_w(player->spr_rdr, 1);
-        if (k_key_down('Y'))
-            k_sprite_renderer_adjust_h(player->spr_rdr, 1);
-    } else {
-        if (k_key_down('X'))
-            k_sprite_renderer_adjust_w(player->spr_rdr, -1);
-        if (k_key_down('Y'))
-            k_sprite_renderer_adjust_h(player->spr_rdr, -1);
+    /* 放缩 */
+    if (k_key_down('Z')) {
+        if ( ! k_key_down(K_KEY_LEFT_SHIFT)) {
+            if (k_key_down('X'))
+                k_sprite_renderer_adjust_w(player->spr_rdr, 1);
+            if (k_key_down('Y'))
+                k_sprite_renderer_adjust_h(player->spr_rdr, 1);
+        } else {
+            if (k_key_down('X'))
+                k_sprite_renderer_adjust_w(player->spr_rdr, -1);
+            if (k_key_down('Y'))
+                k_sprite_renderer_adjust_h(player->spr_rdr, -1);
+        }
     }
 
+    /* 放缩 */
+
+    if (k_key_down('V')) {
+        static float scale_x = 1.0f, scale_y = 1.0f;
+        if ( ! k_key_down(K_KEY_LEFT_CTRL)) {
+            if (k_key_down('X'))
+                k_sprite_renderer_scale_x(player->spr_rdr, scale_x += 0.1f);
+            if (k_key_down('Y'))
+                k_sprite_renderer_scale_y(player->spr_rdr, scale_y += 0.1f);
+        } else {
+            if (k_key_down('X'))
+                k_sprite_renderer_scale_x(player->spr_rdr, scale_x -= 0.1f);
+            if (k_key_down('Y'))
+                k_sprite_renderer_scale_y(player->spr_rdr, scale_y -= 0.0f);
+    }
+    }
+
+    /* 加速减速 */
     if (k_key_down('='))
         k_sprite_renderer_add_speed(player->spr_rdr, 1.0f * delta);
     if (k_key_down('-'))
