@@ -37,7 +37,7 @@ struct k_sprite_renderer {
 
 void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed) {
 
-    if (NULL != renderer->sprite)
+    if (NULL == renderer->sprite)
         return;
 
     if (speed <= 0.0f)

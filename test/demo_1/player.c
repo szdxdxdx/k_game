@@ -95,6 +95,7 @@ struct k_object *my_create_player(float x, float y) {
     struct k_object *object = k_object_create(sizeof(struct my_player));
 
     k_object_add_step_begin_callback(object, player_step_begin);
+    k_object_add_step_callback(object, player_step);
 
     struct my_player *player = k_object_get_data(object);
     player->x = x;
