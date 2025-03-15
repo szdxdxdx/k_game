@@ -71,7 +71,22 @@ int k_sprite_get_frame_delay(struct k_sprite *sprite, size_t frame_idx);
 
 /* region [sprite_draw] */
 
-int k_sprite_draw_frame(struct k_sprite *sprite, size_t frame_idx, float x, float y);
+int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y);
+
+struct k_sprite_draw_options {
+
+    float x;
+    float y;
+
+    int dst_w;
+    int dst_h;
+
+    float angle;
+
+    uint8_t horizontal_flip, vertical_flip;
+};
+
+int k_sprite_draw_EX(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options);
 
 /* endregion */
 

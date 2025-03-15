@@ -31,7 +31,7 @@ static void renderer_draw(struct k_component *component) {
         renderer->frame_idx %= frames_num;
     }
 
-    k_sprite_draw_frame(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y));
+    k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y));
 }
 
 static int renderer_init(struct k_component *component, void *params) {

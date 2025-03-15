@@ -15,7 +15,7 @@ void k__poll_SDL_events(void) {
                 break;
 
             case SDL_MOUSEMOTION:
-                //printf("mouse position = (%d, %d)\n", event.motion.x, event.motion.y);
+                //printf("mouse position = (%d, %d)\n", event.motion.dst_x, event.motion.dst_y);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -27,7 +27,7 @@ void k__poll_SDL_events(void) {
                 break;
 
             case SDL_MOUSEWHEEL:
-                //printf("mouse wheel x=%d, y=%d\n", event.wheel.x, event.wheel.y);
+                //printf("mouse wheel dst_x=%d, dst_y=%d\n", event.wheel.dst_x, event.wheel.dst_y);
                 break;
 
 

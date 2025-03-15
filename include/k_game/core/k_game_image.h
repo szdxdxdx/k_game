@@ -1,6 +1,8 @@
 #ifndef K_GAME_IMAGE_H
 #define K_GAME_IMAGE_H
 
+#include <stdint.h>
+
 #include "./k_game_rect.h"
 
 /**
@@ -34,15 +36,33 @@ int k_image_get_height(struct k_image *image);
 
 /* endregion */
 
+/* region [image_transform] */
+
+struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h);
+
+/* endregion */
+
 /* region [image_draw] */
 
 int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, float dst_x, float dst_y);
 
-/* endregion */
+struct k_image_draw_options {
 
-/* region [image_transform] */
+    const struct k_int_rect *src_rect;
 
-struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h);
+    float dst_x, dst_y;
+
+    int dst_w, dst_h;
+
+    float angle;
+    float pivot_x, pivot_y;
+
+    /* TODO alpha? */
+
+    uint8_t horizontal_flip, vertical_flip;
+};
+
+int k_image_draw_EX(struct k_image *image, struct k_image_draw_options *options);
 
 /* endregion */
 
