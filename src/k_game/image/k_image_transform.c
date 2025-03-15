@@ -8,8 +8,13 @@ struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h)
 
     SDL_Texture* scaled_texture = NULL;
 
-    if (NULL == image || scaled_w <= 0 || scaled_h <= 0)
+    if (NULL == image) {
+        k_log_error("Failed to scale image, image is NULL");
+        return NULL;
+    } else if (scaled_w <= 0 || scaled_h <= 0) {
+        k_log_error("Failed to scale image, scaled width and height must be greater than 0");
         goto err;
+    }
 
     SDL_Renderer *renderer = k__window.renderer;
 
