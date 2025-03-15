@@ -50,16 +50,19 @@ struct k_image_draw_options {
 
     const struct k_int_rect *src_rect;
 
-    float dst_x, dst_y;
-
-    int dst_w, dst_h;
+    float dst_x;
+    float dst_y;
+    int   dst_w;
+    int   dst_h;
 
     float angle;
-    float pivot_x, pivot_y;
+    float pivot_x;
+    float pivot_y;
+
+    uint8_t flip_x;
+    uint8_t flip_y;
 
     /* TODO alpha? */
-
-    uint8_t horizontal_flip, vertical_flip;
 };
 
 int k_image_draw_ex(struct k_image *image, struct k_image_draw_options *options);

@@ -42,16 +42,16 @@ int k__sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite
     src.h = sprite->sprite_h;
 
     struct k_image_draw_options opt;
-    opt.src_rect        = &src;
-    opt.dst_x           = options->x - sprite->origin_x;
-    opt.dst_y           = options->y - sprite->origin_y;
-    opt.dst_w           = options->dst_w;
-    opt.dst_h           = options->dst_h;  /* TODO (w > 0 && h > 0) */
-    opt.angle           = options->angle;
-    opt.pivot_x         = sprite->origin_x * ((float)options->dst_w / (float)sprite->sprite_w);
-    opt.pivot_y         = sprite->origin_y * ((float)options->dst_h / (float)sprite->sprite_h);
-    opt.horizontal_flip = options->flip_x;
-    opt.vertical_flip   = options->flip_y;
+    opt.src_rect = &src;
+    opt.dst_x    = options->x - sprite->origin_x * options->scale_x;
+    opt.dst_y    = options->y - sprite->origin_y * options->scale_y;
+    opt.dst_w    = (int)(options->scale_x * (float)sprite->sprite_w);
+    opt.dst_h    = (int)(options->scale_y * (float)sprite->sprite_h);
+    opt.angle    = options->angle;
+    opt.pivot_x  = sprite->origin_x * options->scale_x;
+    opt.pivot_y  = sprite->origin_y * options->scale_y;
+    opt.flip_x   = options->flip_x;
+    opt.flip_y   = options->flip_y; /* TODO */
 
     return k__image_draw_ex(frame->image, &opt);
 }
@@ -60,7 +60,7 @@ int k_sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_
 
     if (NULL == sprite || NULL == options)
         return -1;
-    if (options->dst_w <= 0 || options->dst_h <= 0)
+    if (options->scale_x <= 0 || options->scale_y <= 0)
         return -1;
     if (sprite->frames_num <= frame_idx)
         return -1;

@@ -79,9 +79,9 @@ int k__image_draw_ex(struct k_image *image, struct k_image_draw_options *options
     center.y = options->pivot_y;
 
     SDL_RendererFlip flip = SDL_FLIP_NONE;
-    if (options->horizontal_flip)
+    if (options->flip_x)
         flip |= SDL_FLIP_HORIZONTAL;
-    if (options->vertical_flip)
+    if (options->flip_y)
         flip |= SDL_FLIP_VERTICAL;
 
     if (0 != SDL_RenderCopyExF(k__window.renderer, image->texture, &src, &dst, options->angle, &center, flip)) {

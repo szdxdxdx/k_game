@@ -78,8 +78,8 @@ struct k_sprite_draw_options {
     float x;
     float y;
 
-    int dst_w;
-    int dst_h;
+    float scale_x;
+    float scale_y;
 
     float angle;
 
