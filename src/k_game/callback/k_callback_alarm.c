@@ -21,18 +21,18 @@ struct k_alarm_callback {
 
 struct k_room_alarm_callback {
 
-    struct k_alarm_callback alarm_callback; /* inherit */
+    struct k_alarm_callback alarm_callback; /* inherited */
 
     struct k_room_callback room_callback;
 
-    void (*fn_callback)(void *data,  int timeout_diff);
+    void (*fn_callback)(void *data, int timeout_diff);
 
     void *data;
 };
 
 struct k_object_alarm_callback {
 
-    struct k_alarm_callback alarm_callback; /* inherit */
+    struct k_alarm_callback alarm_callback; /* inherited */
 
     struct k_object_callback object_callback;
 
@@ -43,7 +43,7 @@ struct k_object_alarm_callback {
 
 struct k_component_alarm_callback {
 
-    struct k_alarm_callback alarm_callback; /* inherit */
+    struct k_alarm_callback alarm_callback; /* inherited */
 
     struct k_component_callback component_callback;
 

@@ -212,8 +212,11 @@ static void k__component_manager_destroy_self(struct k_component_manager *manage
 
     struct k_component_manager_type *manager_type = manager->component_type->manager_type;
     if (NULL != manager_type->fn_fini) {
+        /* TODO 禁止在 `fn_fini()` 中再次删除自身 */
         manager_type->fn_fini(manager);
     }
+
+    k__component_manager_map_del(manager->room, manager_type);
 
     k_free(manager);
 }
@@ -233,7 +236,6 @@ void k_room_del_component_manager(struct k_room *room, struct k_component_type *
         return;
 
     k__component_manager_destroy_self(manager);
-    k__component_manager_map_del(room, component_type->manager_type);
 }
 
 void k_room_del_all_component_managers(struct k_room *room) {

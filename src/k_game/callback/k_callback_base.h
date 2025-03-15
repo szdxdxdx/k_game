@@ -6,14 +6,14 @@
 enum k_callback_type {
 
     K_ROOM_CALLBACK       = 0,
-    K_OBJECT_CALLBACK     = 1,
-    K_COMPONENT_CALLBACK  = 2,
+    K_OBJECT_CALLBACK     ,
+    K_COMPONENT_CALLBACK  ,
 
     K_STEP_BEGIN_CALLBACK = 0,
-    K_ALARM_CALLBACK      = 1,
-    K_STEP_CALLBACK       = 2,
-    K_DRAW_CALLBACK       = 3,
-    K_STEP_END_CALLBACK   = 4,
+    K_ALARM_CALLBACK      ,
+    K_STEP_CALLBACK       ,
+    K_DRAW_CALLBACK       ,
+    K_STEP_END_CALLBACK   ,
 };
 
 struct k_callback {

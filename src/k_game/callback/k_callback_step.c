@@ -17,7 +17,7 @@ struct k_step_callback {
 
 struct k_room_step_callback {
 
-    struct k_step_callback step_callback; /* inherit */
+    struct k_step_callback step_callback; /* inherited */
 
     struct k_room_callback room_callback;
 
@@ -28,7 +28,7 @@ struct k_room_step_callback {
 
 struct k_object_step_callback {
 
-    struct k_step_callback step_callback; /* inherit */
+    struct k_step_callback step_callback; /* inherited */
 
     struct k_object_callback object_callback;
 
@@ -39,7 +39,7 @@ struct k_object_step_callback {
 
 struct k_component_step_callback {
 
-    struct k_step_callback step_callback; /* inherit */
+    struct k_step_callback step_callback; /* inherited */
 
     struct k_component_callback component_callback;
 

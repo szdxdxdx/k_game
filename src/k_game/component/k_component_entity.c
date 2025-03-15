@@ -56,10 +56,11 @@ malloc_component_failed:
 void k__component_destroy(struct k_component *component) {
     struct k_component_entity_type *entity_type = &component->type->entity_type;
 
-    if (entity_type->fn_fini != NULL)
+    if (entity_type->fn_fini != NULL) {
+        /* TODO 禁止在 `fn_fini()` 回调中再次删除自身 */
         entity_type->fn_fini(component);
+    }
 
-    /* TODO 应该允许在 `fn_fini()` 回调中能再次删除自身吗？ */
     k_list_del(&component->list_node);
     k_component_del_all_callbacks(component);
 
