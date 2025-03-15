@@ -3,51 +3,16 @@
 
 /* region [player] */
 
-struct my_player {
-    float x, y;
-    struct k_component *WASD;
-    struct k_component *spr_rdr;
-};
-
 struct my_enemy {
     float x, y;
     struct k_component *WASD;
-    struct k_component *spr_rdr;
 };
-
-static void my_create_player(void) {
-
-    struct k_object *obj_player = k_object_create(sizeof(struct my_player));
-
-    struct my_player *player = k_object_get_data(obj_player);
-    player->x = 300.0f;
-    player->y = 300.0f;
-
-    struct k_component_type *WASD = k_component_type_find("k/WASD");
-    struct k_WASD_config WASD_config;
-    WASD_config.key_up    = 'W';
-    WASD_config.key_left  = 'A';
-    WASD_config.key_down  = 'S';
-    WASD_config.key_right = 'D';
-    WASD_config.speed     = 150.0f;
-    WASD_config.x         = &player->x;
-    WASD_config.y         = &player->y;
-    player->WASD = k_object_add_component(obj_player, WASD, &WASD_config);
-
-    struct k_component_type *renderer = k_component_type_find("k/spr-rdr");
-    struct k_sprite_renderer_config renderer_config;
-    renderer_config.sprite  = k_sprite_find("player/idle");
-    renderer_config.z_index = 0;
-    renderer_config.x       = &player->x;
-    renderer_config.y       = &player->y;
-    player->spr_rdr = k_object_add_component(obj_player, renderer, &renderer_config);
-}
 
 static void my_create_enemy(void) {
 
-    struct k_object *obj_enemy = k_object_create(sizeof(struct my_player));
+    struct k_object *obj_enemy = k_object_create(sizeof(struct my_enemy));
 
-    struct my_player *enemy = k_object_get_data(obj_enemy);
+    struct my_enemy *enemy = k_object_get_data(obj_enemy);
     enemy->x = 500.0f;
     enemy->y = 300.0f;
 
@@ -68,7 +33,7 @@ static void my_create_enemy(void) {
     renderer_config.z_index = 0;
     renderer_config.x       = &enemy->x;
     renderer_config.y       = &enemy->y;
-    enemy->spr_rdr = k_object_add_component(obj_enemy, renderer, &renderer_config);
+    k_object_add_component(obj_enemy, renderer, &renderer_config);
 }
 
 /* endregion */
@@ -78,7 +43,7 @@ static int fn_room_init(void *params) {
 
     k_room_add_draw_callback(room, NULL, k_room_clean_canvas, INT_MIN);
 
-    my_create_player();
+    my_create_player(300.0f, 300.0f);
     my_create_enemy();
     return 0;
 }

@@ -21,7 +21,7 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y) {
 
     if (NULL == sprite)
         return -1;
-    if (frame_idx <= sprite->frames_num)
+    if (sprite->frames_num <= frame_idx)
         return -1;
 
     /* [?] assert currently is in draw callback */
@@ -60,11 +60,9 @@ int k_sprite_draw_EX(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_
 
     if (NULL == sprite || NULL == options)
         return -1;
-
     if (options->dst_w <= 0 || options->dst_h <= 0)
         return -1;
-
-    if (frame_idx <= sprite->frames_num)
+    if (sprite->frames_num <= frame_idx)
         return -1;
 
     /* [?] assert currently is in draw callback */
