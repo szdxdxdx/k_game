@@ -51,7 +51,7 @@ int k__sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite
     opt.pivot_x  = sprite->origin_x * options->scale_x;
     opt.pivot_y  = sprite->origin_y * options->scale_y;
     opt.flip_x   = options->flip_x;
-    opt.flip_y   = options->flip_y; /* TODO */
+    opt.flip_y   = options->flip_y;
 
     return k__image_draw_ex(frame->image, &opt);
 }

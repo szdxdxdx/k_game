@@ -168,6 +168,34 @@ void k_sprite_renderer_adjust_h(struct k_sprite_renderer *renderer, int h_delta)
  */
 int k_sprite_renderer_get_h(struct k_sprite_renderer *renderer);
 
+/* ------------------------------------------------------------------------ */
+
+/**
+ * \brief 设置渲染器水平方向的缩放比率
+ *
+ * 渲染器将延水平方向拉伸或压缩绘制精灵图，变换原点为精灵的中心。
+ * - 若 `scale_x` 为 1.0f，则按原尺寸绘制
+ * - 若 `scale_x` 为 2.0f，则拉伸精灵图宽度到原来的两倍
+ * - 若 `scale_x` 为 0.5f，则压缩精灵图宽度到原来的一半
+ *
+ * 缩放比率不能为负值，否则函数不做任何事。
+ * 若渲染器没有引用精灵，则函数不做任何事。
+ */
+void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x);
+
+/**
+ * \brief 设置渲染器竖直方向的缩放比率
+ *
+ * 渲染器将延竖直方向拉伸或压缩绘制精灵图，变换原点为精灵的中心。
+ * - 若 `scale_x` 为 1.0f，则表按原尺寸绘制
+ * - 若 `scale_x` 为 2.0f，则拉伸精灵图高度到原来的两倍
+ * - 若 `scale_x` 为 0.5f，则压缩精灵图高度到原来的一半
+ *
+ * 缩放比率不能为负值，否则函数不做任何事。
+ * 若渲染器没有引用精灵，则函数不做任何事。
+ */
+void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y);
+
 /**
  * \brief 设置渲染器绘制精灵的旋转角度
  *
@@ -222,7 +250,7 @@ int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器延竖直方向翻转绘制精灵
  *
- * 若 `flip` 为非 0，则启用竖直翻转，否则禁用水平翻转。
+ * 若 `flip` 为非 0，则启用竖直翻转，否则禁用竖直翻转。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
  */
