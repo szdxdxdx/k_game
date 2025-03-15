@@ -31,7 +31,7 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y) {
     return k__sprite_draw_frame(sprite, frame_idx, x, y);
 }
 
-int k__sprite_draw_EX(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options) {
+int k__sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options) {
 
     struct k_sprite_frame *frame = &sprite->frames[frame_idx];
 
@@ -50,13 +50,13 @@ int k__sprite_draw_EX(struct k_sprite *sprite, size_t frame_idx, struct k_sprite
     opt.angle           = options->angle;
     opt.pivot_x         = sprite->origin_x;
     opt.pivot_y         = sprite->origin_y;
-    opt.horizontal_flip = options->horizontal_flip;
-    opt.vertical_flip   = options->vertical_flip;
+    opt.horizontal_flip = options->flip_x;
+    opt.vertical_flip   = options->flip_y;
 
-    return k__image_draw_EX(frame->image, &opt);
+    return k__image_draw_ex(frame->image, &opt);
 }
 
-int k_sprite_draw_EX(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options) {
+int k_sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options) {
 
     if (NULL == sprite || NULL == options)
         return -1;
@@ -69,5 +69,5 @@ int k_sprite_draw_EX(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_
 
     /* [?] if (not in camera view) return 0; */
 
-    return k__sprite_draw_EX(sprite, frame_idx, options);
+    return k__sprite_draw_ex(sprite, frame_idx, options);
 }

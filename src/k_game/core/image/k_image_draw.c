@@ -51,7 +51,7 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, float
 
 /* region [image_draw_EX] */
 
-int k__image_draw_EX(struct k_image *image, struct k_image_draw_options *options) {
+int k__image_draw_ex(struct k_image *image, struct k_image_draw_options *options) {
 
     const struct k_int_rect *src_rect = options->src_rect;
 
@@ -92,7 +92,7 @@ int k__image_draw_EX(struct k_image *image, struct k_image_draw_options *options
     return 0;
 }
 
-int k_image_draw_EX(struct k_image *image, struct k_image_draw_options *options) {
+int k_image_draw_ex(struct k_image *image, struct k_image_draw_options *options) {
 
     if (NULL == image) {
         k_log_error("Failed to draw image. image is NULL");
@@ -106,7 +106,7 @@ int k_image_draw_EX(struct k_image *image, struct k_image_draw_options *options)
 
     /* [?] assert currently is in draw callback */
 
-    return k__image_draw_EX(image, options);
+    return k__image_draw_ex(image, options);
 }
 
 /* endregion */

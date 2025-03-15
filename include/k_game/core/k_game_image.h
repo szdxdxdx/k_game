@@ -62,7 +62,7 @@ struct k_image_draw_options {
     uint8_t horizontal_flip, vertical_flip;
 };
 
-int k_image_draw_EX(struct k_image *image, struct k_image_draw_options *options);
+int k_image_draw_ex(struct k_image *image, struct k_image_draw_options *options);
 
 /* endregion */
 

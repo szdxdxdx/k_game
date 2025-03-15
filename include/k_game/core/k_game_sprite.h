@@ -83,10 +83,11 @@ struct k_sprite_draw_options {
 
     float angle;
 
-    uint8_t horizontal_flip, vertical_flip;
+    uint8_t flip_x;
+    uint8_t flip_y;
 };
 
-int k_sprite_draw_EX(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options);
+int k_sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options);
 
 /* endregion */
 
