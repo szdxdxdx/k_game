@@ -15,16 +15,24 @@ static void player_step(struct k_object *object) {
     if (k_key_down('R'))
         k_sprite_renderer_add_rotation(player->spr_rdr, 180.0f * delta);
 
-    if (k_key_pressed('X'))
-        k_sprite_renderer_flip_x(player->spr_rdr);
-    if (k_key_pressed('Y'))
-        k_sprite_renderer_flip_y(player->spr_rdr);
+    if (k_key_down('F')) {
 
-    if (k_key_down(K_KEY_LEFT_SHIFT)) {
+        if (k_key_pressed('X'))
+            k_sprite_renderer_flip_x(player->spr_rdr);
+        if (k_key_pressed('Y'))
+            k_sprite_renderer_flip_y(player->spr_rdr);
+    }
+
+    if ( ! k_key_down(K_KEY_LEFT_SHIFT)) {
         if (k_key_down('X'))
             k_sprite_renderer_add_scale_w(player->spr_rdr, 1);
         if (k_key_down('Y'))
             k_sprite_renderer_add_scale_h(player->spr_rdr, 1);
+    } else {
+        if (k_key_down('X'))
+            k_sprite_renderer_add_scale_w(player->spr_rdr, -1);
+        if (k_key_down('Y'))
+            k_sprite_renderer_add_scale_h(player->spr_rdr, -1);
     }
 
     if (k_key_down('='))

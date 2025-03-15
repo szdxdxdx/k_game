@@ -3,47 +3,43 @@
 #include "../k_components_def.h"
 
 enum renderer_transform {
-        transform_none      = 0b00000,
-        transform_scaled_w  = 0b00001,
-        transform_scaled_h  = 0b00010,
-        transform_rotation  = 0b00100,
-        transform_flip_x    = 0b01000,
-        transform_flip_y    = 0b10000,
-    };
+    transform_none      = 0,
+    transform_scaled_w  = 1 << 0,
+    transform_scaled_h  = 1 << 1,
+    transform_rotation  = 1 << 2,
+    transform_flip_x    = 1 << 3,
+    transform_flip_y    = 1 << 4,
+};
 
 struct k_sprite_renderer {
     struct k_component *component;
+
     struct k_component_callback *draw_callback;
+    int z_index;
 
     struct k_sprite *sprite;
-
     float timer;
-
     float speed;
-
     size_t frame_idx;
 
     float *x;
     float *y;
 
-    /* 伸缩变换 */
     int scaled_w;
     int scaled_h;
-
-    /* 旋转变换 */
     float angle;
 
-    /* 用于指示在绘制操作中需要应用哪些变换
-     *
-     * 每一个比特位对应一种变换，
-     * 由枚举 `enum renderer_transform` 定义。
-     */
-    uint8_t transform_flags;
+    /* 利用位标识来指示在绘制操作中需要应用哪些变换 */
+    enum renderer_transform transform_flags;
 };
 
 /* region [set_speed] */
 
 void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed) {
+
+    if (NULL == renderer->sprite)
+        return;
+
     if (0.0f <= speed)
         renderer->speed = speed;
 }
@@ -52,14 +48,12 @@ void k_sprite_renderer_add_speed(struct k_sprite_renderer *renderer, float speed
     k_sprite_renderer_set_speed(renderer, renderer->speed + speed_add);
 }
 
-/* endregion */
+float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
 
-/* region [set_sprite] */
+    if (NULL == renderer->sprite)
+        return 0.0f;
 
-void k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite) {
-    renderer->timer     = 0;
-    renderer->frame_idx = 0;
-    renderer->sprite    = sprite;
+    return renderer->speed;
 }
 
 /* endregion */
@@ -67,6 +61,9 @@ void k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_s
 /* region [set_transform] */
 
 void k_sprite_renderer_set_scale_w(struct k_sprite_renderer *renderer, int scaled_w) {
+
+    if (NULL == renderer->sprite)
+        return;
 
     if (scaled_w <= 0)
         scaled_w = 0;
@@ -83,7 +80,18 @@ void k_sprite_renderer_add_scale_w(struct k_sprite_renderer *renderer, int w_add
     k_sprite_renderer_set_scale_w(renderer, renderer->scaled_w + w_add);
 }
 
+int k_sprite_renderer_get_scale_w(struct k_sprite_renderer *renderer) {
+
+    if (NULL == renderer->sprite)
+        return 0;
+
+    return renderer->scaled_w;
+}
+
 void k_sprite_renderer_set_scale_h(struct k_sprite_renderer *renderer, int scaled_h) {
+
+    if (NULL == renderer->sprite)
+        return;
 
     if (scaled_h <= 0)
         scaled_h = 0;
@@ -96,11 +104,22 @@ void k_sprite_renderer_set_scale_h(struct k_sprite_renderer *renderer, int scale
         renderer->transform_flags &= ~transform_scaled_h;
 }
 
+int k_sprite_renderer_get_scale_h(struct k_sprite_renderer *renderer) {
+
+    if (NULL == renderer->sprite)
+        return 0;
+
+    return renderer->scaled_h;
+}
+
 void k_sprite_renderer_add_scale_h(struct k_sprite_renderer *renderer, int h_add) {
     k_sprite_renderer_set_scale_h(renderer, renderer->scaled_h + h_add);
 }
 
 void k_sprite_renderer_set_rotation(struct k_sprite_renderer *renderer, float angle) {
+
+    if (NULL == renderer->sprite)
+        return;
 
     renderer->angle = angle;
 
@@ -114,17 +133,52 @@ void k_sprite_renderer_add_rotation(struct k_sprite_renderer *renderer, float an
     k_sprite_renderer_set_rotation(renderer, renderer->angle + angle_add);
 }
 
+float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer) {
+
+    if (NULL == renderer->sprite)
+        return 0.0f;
+
+    return renderer->angle;
+}
+
 void k_sprite_renderer_flip_x(struct k_sprite_renderer *renderer) {
+
+    if (NULL == renderer->sprite)
+        return;
+
     renderer->transform_flags ^= transform_flip_x;
 }
 
+int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer) {
+
+    if (NULL == renderer->sprite)
+        return 0;
+
+    return renderer->transform_flags & transform_flip_x;
+}
+
 void k_sprite_renderer_flip_y(struct k_sprite_renderer *renderer) {
+
+    if (NULL == renderer->sprite)
+        return;
+
     renderer->transform_flags ^= transform_flip_y;
 }
 
-void k_sprite_renderer_clear_transforms(struct k_sprite_renderer *renderer) {
-    renderer->transform_flags = transform_none;
+int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer) {
 
+    if (NULL == renderer->sprite)
+        return 0;
+
+    return renderer->transform_flags & transform_flip_y;
+}
+
+void k_sprite_renderer_clear_transforms(struct k_sprite_renderer *renderer) {
+
+    if (NULL == renderer->sprite)
+        return;
+
+    renderer->transform_flags = transform_none;
     renderer->scaled_w = k_sprite_get_width(renderer->sprite);
     renderer->scaled_h = k_sprite_get_height(renderer->sprite);
     renderer->angle    = 0.0f;
@@ -182,6 +236,9 @@ static void renderer_draw(struct k_component *component) {
 
 int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_index) {
 
+    if (NULL == renderer->sprite)
+        return -1;
+
     struct k_component_callback *draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw, z_index);
     if (NULL == draw_callback)
         return -1;
@@ -189,6 +246,42 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
     k_component_del_callback(renderer->draw_callback);
     renderer->draw_callback = draw_callback;
     return 0;
+}
+
+/* endregion */
+
+/* region [set_sprite] */
+
+int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite) {
+
+    if (NULL == renderer->sprite) {
+        if (NULL == sprite) {
+            return 0;
+        }
+        else {
+            renderer->draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw, renderer->z_index);
+            if (NULL == renderer->draw_callback)
+                return -1;
+        }
+    }
+    else {
+        if (NULL == sprite) {
+            k_component_del_callback(renderer->draw_callback);
+            renderer->draw_callback = NULL;
+        }
+    }
+
+    k_sprite_renderer_clear_transforms(renderer);
+
+    renderer->sprite    = sprite;
+    renderer->timer     = 0;
+    renderer->frame_idx = 0;
+
+    return 0;
+}
+
+struct k_sprite *k_sprite_renderer_del_sprite(struct k_sprite_renderer *renderer) {
+    return renderer->sprite;
 }
 
 /* endregion */
@@ -205,6 +298,7 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
 
     renderer->component     = component;
     renderer->draw_callback = draw_callback;
+    renderer->z_index       = config->z_index;
 
     renderer->sprite    = config->sprite;
     renderer->timer     = 0;
