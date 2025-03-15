@@ -44,7 +44,7 @@ static int fn_room_init(void *params) {
     k_room_add_draw_callback(room, NULL, k_room_clean_canvas, INT_MIN);
 
     my_create_player(300.0f, 300.0f);
-    my_create_enemy();
+   // my_create_enemy();
     return 0;
 }
 

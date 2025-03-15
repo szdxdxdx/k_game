@@ -10,12 +10,13 @@ struct my_player {
 static void player_step(struct k_object *object) {
     struct my_player *player = k_object_get_data(object);
 
+    float delta = k_get_step_delta();
+
     if (k_key_down('R'))
-        k_sprite_renderer_add_rotation(player->spr_rdr, 180.0f * k_get_step_delta());
+        k_sprite_renderer_add_rotation(player->spr_rdr, 180.0f * delta);
 
     if (k_key_pressed('X'))
         k_sprite_renderer_flip_x(player->spr_rdr);
-
     if (k_key_pressed('Y'))
         k_sprite_renderer_flip_y(player->spr_rdr);
 
@@ -25,6 +26,14 @@ static void player_step(struct k_object *object) {
         if (k_key_down('Y'))
             k_sprite_renderer_add_scale_h(player->spr_rdr, 1);
     }
+
+    if (k_key_down('='))
+        k_sprite_renderer_add_speed(player->spr_rdr, 1.0f * delta);
+    if (k_key_down('-'))
+        k_sprite_renderer_add_speed(player->spr_rdr, -0.5f * delta);
+
+    if (k_key_pressed('C'))
+        k_sprite_renderer_clear_transforms(player->spr_rdr);
 }
 
 struct k_object *my_create_player(float x, float y) {
@@ -54,7 +63,6 @@ struct k_object *my_create_player(float x, float y) {
     renderer_config.x       = &player->x;
     renderer_config.y       = &player->y;
     player->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
-    k_sprite_renderer_set_speed(player->spr_rdr, 0.1f);
 
     return object;
 }
