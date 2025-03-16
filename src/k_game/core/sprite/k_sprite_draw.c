@@ -44,38 +44,21 @@ int k_sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_
     src.w = sprite->sprite_w;
     src.h = sprite->sprite_h;
 
-    float scala_x = (float)options->scaled_w / (float)(sprite->sprite_w);
-    float scala_y = (float)options->scaled_h / (float)(sprite->sprite_h);
-
-    float scaled_origin_x = sprite->origin_x * scala_x;
-    float scaled_origin_y = sprite->origin_y * scala_y;
+    /* 将精灵中心移动到【经过伸缩、翻转】变换后的图片上 */
+    float scala_x  = (float)(options->scaled_w) / (float)(sprite->sprite_w);
+    float scala_y  = (float)(options->scaled_h) / (float)(sprite->sprite_h);
+    float origin_x = scala_x * (options->flip_x ? (float)(options->scaled_w) - sprite->origin_x : sprite->origin_x);
+    float origin_y = scala_y * (options->flip_y ? (float)(options->scaled_h) - sprite->origin_y : sprite->origin_y);
 
     struct k_image_draw_options opts;
     opts.src_rect = &src;
-
-
-    // opts.dst_x    = options->x - scaled_origin_x;
-    // opts.dst_y    = options->y - scaled_origin_y;
-
-    if (options->flip_x) {
-        opts.dst_x   = options->x - scala_x * ((float)options->scaled_w - sprite->origin_x);
-        opts.pivot_x = scala_x * ((float)options->scaled_w - sprite->origin_x);
-    } else {
-        opts.dst_x   = options->x - scala_x * sprite->origin_x;
-        opts.pivot_x = scala_x * sprite->origin_x;
-    }
-
-    if (options->flip_y) {
-        opts.dst_y   = options->y - scala_y * ((float)options->scaled_h - sprite->origin_y);
-        opts.pivot_y = scala_y * ((float)options->scaled_h - sprite->origin_y);
-    } else {
-        opts.dst_y   = options->y - scala_y * sprite->origin_y;
-        opts.pivot_y = scala_y * sprite->origin_y;
-    }
-
+    opts.dst_x    = options->x - origin_x;
+    opts.dst_y    = options->y - origin_y;
     opts.dst_w    = options->scaled_w;
     opts.dst_h    = options->scaled_h;
     opts.angle    = options->angle;
+    opts.pivot_x  = origin_x;
+    opts.pivot_y  = origin_y;
     opts.flip_x   = options->flip_x;
     opts.flip_y   = options->flip_y;
 
