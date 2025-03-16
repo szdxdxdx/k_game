@@ -3,15 +3,13 @@
 
 #include <stddef.h>
 
-#include "k_game_rect.h"
-
 struct k_image;
 
 /**
  * \brief 精灵
  *
  * 精灵可以是一张静态图片，或是一组连续的动画帧。
- * 用来表示游戏中的各种可见元素，例如：角色、敌人、道具、背景等。
+ * 用来表示游戏中的各种可见元素，例如：角色、敌人、道具等。
  */
 struct k_sprite;
 

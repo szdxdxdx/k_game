@@ -122,6 +122,8 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
 
 /* region [sprite_renderer transform] */
 
+/* region [scale_x] */
+
 /**
  * \brief 设置渲染器绘制精灵的宽度
  *
@@ -168,6 +170,10 @@ void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x
  * 若渲染器没有引用精灵，则函数返回宽度值为 0。
  */
 int k_sprite_renderer_get_w(struct k_sprite_renderer *renderer);
+
+/* endregion */
+
+/* region [scale_y] */
 
 /**
  * \brief 设置渲染器绘制精灵的高度
@@ -216,6 +222,10 @@ void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y
  */
 int k_sprite_renderer_get_h(struct k_sprite_renderer *renderer);
 
+/* endregion */
+
+/* region [rotate] */
+
 /**
  * \brief 设置渲染器绘制精灵的旋转角度
  *
@@ -249,6 +259,10 @@ void k_sprite_renderer_adjust_rotation(struct k_sprite_renderer *renderer, float
  */
 float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer);
 
+/* endregion */
+
+/* region [flip_x] */
+
 /**
  * \brief 设置渲染器延水平方向翻转绘制精灵
  *
@@ -268,6 +282,10 @@ void k_sprite_renderer_flip_x(struct k_sprite_renderer *renderer, int flip);
  */
 int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
 
+/* endregion */
+
+/* region [flip_y] */
+
 /**
  * \brief 设置渲染器延竖直方向翻转绘制精灵
  *
@@ -286,6 +304,8 @@ void k_sprite_renderer_flip_y(struct k_sprite_renderer *renderer, int flip);
  * 若渲染器没有引用精灵，则函数返回 0。
  */
 int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
+
+/* endregion */
 
 /**
  * \brief 重置渲染器对图像的所有变换操作

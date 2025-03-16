@@ -1,6 +1,12 @@
 #ifndef K_GAME_COMPONENT_COLLISION_BOX_H
 #define K_GAME_COMPONENT_COLLISION_BOX_H
 
+struct k_collision_box;
+
+/* region [object_add_collision_box] */
+
+/* endregion */
+
 enum k_collision_box_type {
     K_COLLISION_BOX_RECTANGLE,
     K_COLLISION_BOX_CIRCLE,
@@ -30,6 +36,23 @@ struct k_collision_box_circle_config {
     float offset_y;
     float r;
 };
+
+struct k_collision_box_config {
+
+    enum k_collision_box_type box_type;
+
+    union {
+        struct k_collision_box_rectangle_config rectangle;
+
+        struct k_collision_box_circle_config circle;
+    };
+};
+
+struct k_collision_box *k_object_add_collision_box(struct k_object *object, struct k_collision_box_config *config);
+
+void k_object_del_collision_box(struct k_collision_box *box);
+
+void k_collision_check_circle(float x, float y, float r);
 
 void k_collision_check_rectangle(float x1, float y1, float x2, float y2);
 

@@ -8,12 +8,6 @@
 
 /* region [collision_box struct] */
 
-union k_collision_box_config {
-    enum k_collision_box_type box_type;
-    struct k_collision_box_rectangle_config rectangle;
-    struct k_collision_box_circle_config    circle;
-};
-
 struct k_collision_box_rectangle {
     uint8_t box_type;
 
@@ -35,10 +29,12 @@ struct k_collision_box_circle {
     float r;
 };
 
-union k_collision_box {
+struct k_collision_box {
     uint8_t box_type;
-    struct k_collision_box_rectangle rectangle;
-    struct k_collision_box_circle    circle;
+    union {
+        struct k_collision_box_rectangle rectangle;
+        struct k_collision_box_circle    circle;
+    };
 };
 
 /* endregion */
@@ -61,7 +57,7 @@ static int collision_box_manager_init(struct k_component_manager *manager, void 
 
 static void collision_box_draw(struct k_component *component) {
 
-    union k_collision_box *box = k_component_get_data(component);
+    struct k_collision_box *box = k_component_get_data(component);
 
     if (K_COLLISION_BOX_RECTANGLE == box->box_type) {
         struct k_collision_box_rectangle *rect = &box->rectangle;
@@ -124,7 +120,7 @@ static int collision_box_init(struct k_component *component, void *params) {
     if (NULL == manager)
         return -1;
 
-    union k_collision_box_config *box_config = params;
+    struct k_collision_box_config *box_config = params;
 
     switch (box_config->box_type) {
         case K_COLLISION_BOX_RECTANGLE: {
@@ -172,7 +168,7 @@ int k__component_def_collision_box(void) {
     manager_config.fn_init   = collision_box_manager_init;
 
     struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
-    entity_config.data_size = sizeof(union k_collision_box);
+    entity_config.data_size = sizeof(struct k_collision_box);
     entity_config.fn_init   = collision_box_init;
 
     struct k_component_type *type = k_component_define(&manager_config, &entity_config);
