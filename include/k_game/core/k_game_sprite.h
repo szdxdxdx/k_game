@@ -10,49 +10,119 @@ struct k_image;
 /**
  * \brief 精灵
  *
- * TODO docs
+ * 精灵可以是一张静态图片，或是一组连续的动画帧。
+ * 用来表示游戏中的各种可见元素，例如：角色、敌人、道具、背景等。
  */
 struct k_sprite;
 
 /* region [sprite_create] */
 
-/**
- * \brief 用于创建精灵的配置
- *
- * TODO docs
- */
+/** \brief 用于创建精灵帧的配置 */
 struct k_sprite_frame_config {
 
+    /**
+     * \brief 精灵帧引用的图片
+     *
+     * 指定精灵帧所引用的图片，请指定有效的图片指针。
+     *
+     * 精灵仅持有图片的指针，不复制图片。
+     * 若要销毁图片，请确保该图片未被精灵引用，以避免悬空指针。
+     */
     struct k_image *image;
 
+    /**
+     * \brief 精灵帧在原图上的偏移，单位：像素
+     *
+     * 精灵帧引用的图片可能是一张大图（如精灵图集），而帧所用的仅仅是其中的一部分。
+     * `offset_x` 和 `offset_y` 指定了帧的左上角在大图中的位置。
+     * 而帧的宽高已在 `k_sprite_config` 中指定。
+     */
     int offset_x;
     int offset_y;
 
+    /**
+     * \brief 帧延迟，单位：毫秒
+     *
+     * `delay` 指定当前帧在精灵的动画序列中的显示时间。
+     * 该值决定了当前帧需要停留多久才能切换到下一帧。
+     */
     int delay;
 };
 
-/**
- * \brief 用于创建精灵的配置
- *
- * TODO docs
- */
+/** \brief 用于创建精灵的配置 */
 struct k_sprite_config {
 
+    /**
+     * \brief 精灵宽高，单位：像素
+     *
+     * 精灵动画的每一帧都采用固定的宽高。
+     */
     int sprite_w;
     int sprite_h;
 
+    /**
+     * \brief 精灵原点
+     *
+     * 精灵原点是精灵的基准点，用于定义精灵的变换中心和定位参考点。
+     * 原点坐标是相对于精灵左上角的偏移量。
+     */
     float origin_x;
     float origin_y;
 
+    /**
+     * \brief 精灵帧
+     *
+     * 指向精灵帧配置数组的指针，用于定义精灵每一帧的属性。
+     * 数组长度由 `frames_num` 指定。
+     *
+     * 创建精灵时 k_game 会复制该数组，创建成功后，精灵不依赖该数组。
+     */
     struct k_sprite_frame_config *frames;
 
+    /**
+     * \brief 精灵帧的数量
+     *
+     * 精灵必须至少有一个帧。
+     */
     int frames_num;
 };
 
+/**
+ * \brief 创建精灵
+ *
+ * 若创建成功，函数返回精灵指针，否则返回 `NULL`。
+ */
 struct k_sprite *k_sprite_create(const struct k_sprite_config *config);
 
+/**
+ * \brief 销毁精灵
+ *
+ * 若 `sprite` 为 `NULL`，则函数不做任何事。
+ */
+void k_sprite_destroy(struct k_sprite *sprite);
+
+/**
+ * \brief 设置精灵的名字
+ *
+ * 精灵名字是可选的，默认情况下精灵没有名字。
+ *
+ * 你可以为精灵设置唯一名字，k_game 将基于该名字为精灵建立索引，
+ * 之后可使用 `k_sprite_find()` 根据名字查找精灵。
+ *
+ * 若名字设为空字符串 "" 或 `NULL`，则清除名字，并删除索引。
+ *
+ * 注意：k_game 不会复制名字，而仅是保存字符串指针。
+ * 请确保该字符串的内存段在整个使用期间有效且不被修改。
+ *
+ * 若成功，函数返回 0，否则返回非 0。
+ */
 int k_sprite_set_name(struct k_sprite *sprite, const char *sprite_name);
 
+/**
+ * \brief 通过精灵名称查找精灵
+ *
+ * 若找到，函数返回精灵指针，否则返回 `NULL`。
+ */
 struct k_sprite *k_sprite_find(const char *sprite_name);
 
 /* endregion */
@@ -83,7 +153,7 @@ struct k_sprite_draw_options {
      *
      * `scaled_w` 和 `scaled_h` 分别指定目标宽高，
      * 绘制时，精灵图的宽高将被拉伸或压缩至该值。
-     * 伸缩变换的原点为精灵的中心。
+     * 伸缩变换的原点为精灵的原点。
      *
      * 若目标宽高其中之一为 0 或负值，则精灵图被压缩至不可见。
      * 若不希望缩放精灵，请指定目标宽高为精灵原本的宽高，
@@ -96,7 +166,7 @@ struct k_sprite_draw_options {
      * \brief 旋转绘制精灵
      *
      * `angle` 指定旋转角度，单位采用角度制，顺时针方向为正方向。
-     * 旋转变换的原点为精灵的中心。
+     * 旋转变换的原点为精灵的原点。
      *
      * 若不需要旋转，请将 `angle` 指定为 0.0f。
      */
@@ -108,7 +178,7 @@ struct k_sprite_draw_options {
      * `flip_x` 和 `flip_y` 分别指定是否启用水平、竖直翻转,
      * 0 表示不启用，非 0 则启用。
      *
-     * 翻转变换的原点为精灵的中心。
+     * 翻转变换的原点为精灵的原点。
      */
     uint8_t flip_x;
     uint8_t flip_y;
@@ -119,7 +189,7 @@ struct k_sprite_draw_options {
  *
  * 该函数用于绘制精灵帧。请确保传入的 `sprite` 是有效精灵指针。
  * 参数 `frame_idx` 指定帧索引，请确保传入有效的索引值。
- * 坐标参数 `x` 和 `y` 用于指定精灵中心的绘制位置。
+ * 坐标参数 `x` 和 `y` 用于指定精灵原点的绘制位置。
  * 可选参数 `options` 用于执行缩放、旋转和翻转变换，若为 `NULL` 则不应用任何变换。
  *
  * 若成功，函数返回 0，否则返回非 0。

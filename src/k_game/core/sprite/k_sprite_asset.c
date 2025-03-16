@@ -75,7 +75,8 @@ err:
 
 void k_sprite_destroy(struct k_sprite *sprite) {
 
-    /* if (NULL == sprite) return; ? */
+    if (NULL == sprite)
+        return;
 
     k__asset_registry_del(&sprite->registry_node);
     k_free(sprite);

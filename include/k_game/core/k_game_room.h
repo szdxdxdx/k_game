@@ -114,7 +114,7 @@ struct k_room *k_room_create(const struct k_room_config *config, void *params);
  *
  * 若名字设为空字符串 "" 或 `NULL`，则清除名字，并删除索引。
  *
- * 注意：k_game 仅保存该指针，而不会复制 `room_name` 字符串。
+ * 注意：k_game 不会复制名字，而仅是保存字符串指针。
  * 请确保该字符串的内存段在整个使用期间有效且不被修改。
  *
  * 若成功，函数返回 0，否则返回非 0。

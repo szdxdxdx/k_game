@@ -37,7 +37,7 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
         src.w = sprite->sprite_w;
         src.h = sprite->sprite_h;
 
-        /* 将精灵中心移动到【经过伸缩、翻转】变换后的图片上 */
+        /* 将精灵原点移动到【经过伸缩、翻转】变换后的图片上 */
         float scaled_w = (float)(options->scaled_w);
         float scaled_h = (float)(options->scaled_h);
         float scala_x  = scaled_w / (float)(sprite->sprite_w);
