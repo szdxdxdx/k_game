@@ -39,6 +39,12 @@ void k__handle_SDL_key_up_event(SDL_KeyboardEvent *event);
 
 /* endregion */
 
+/* region [mouse] */
+
+void k__handle_SDL_mouse_motion_event(SDL_MouseMotionEvent *event);
+
+/* endregion */
+
 /* region [SDL_event] */
 
 void k__poll_SDL_events(void);

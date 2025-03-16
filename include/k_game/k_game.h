@@ -5,6 +5,7 @@
 #include "./core/k_game_alloc.h"
 #include "./core/k_game_time.h"
 #include "./core/k_game_keyboard.h"
+#include "./core/k_game_mouse.h"
 #include "./core/k_game_image.h"
 #include "./core/k_game_sound.h"
 #include "./core/k_game_sprite.h"
