@@ -2,6 +2,7 @@
 #define MY_OBJECT_H
 
 #include "./my_obj_player.h"
+#include "./my_obj_player_bullet.h"
 #include "./my_obj_enemy.h"
 
 #endif

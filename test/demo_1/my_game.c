@@ -8,6 +8,7 @@
 static int fn_init_game(void) {
 
     my_spr_player_load();
+    my_spr_player_bullet_load();
     my_spr_enemy_load();
 
     struct k_room *room = my_room_1_create();

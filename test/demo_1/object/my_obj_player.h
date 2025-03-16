@@ -16,6 +16,7 @@ struct my_player {
     float next_y;
 
     int state;
+    int face;
 
     struct k_component *WASD;
     struct k_sprite_renderer *spr_rdr;

@@ -2,17 +2,19 @@
 
 #include "../sprite/my_sprite.h"
 
-static void player_step_begin(struct k_object *object) {
+static void player_step_set_state(struct k_object *object) {
     struct my_player *player = k_object_get_data(object);
 
     enum my_player_state state = player_idle;
     if (player->next_x < player->x) {
         k_sprite_renderer_flip_x(player->spr_rdr, 1);
         state = player_run;
+        player->face = -1;
     }
     else if (player->next_x > player->x) {
         k_sprite_renderer_flip_x(player->spr_rdr, 0);
         state = player_run;
+        player->face = 1;
     }
     else if (player->next_y != player->y) {
         state = player_run;
@@ -37,6 +39,14 @@ static void player_step_begin(struct k_object *object) {
 
     player->x = player->next_x;
     player->y = player->next_y;
+}
+
+static void player_step_shoot(struct k_object *object) {
+    struct my_player *player = k_object_get_data(object);
+
+    if (k_key_pressed('Q')) {
+        my_player_bullet_create(player->x, player->y, player->face);
+    }
 }
 
 static void player_step(struct k_object *object) {
@@ -101,8 +111,9 @@ struct k_object *my_player_create(float x, float y) {
 
     struct k_object *object = k_object_create(sizeof(struct my_player));
 
-    k_object_add_step_begin_callback(object, player_step_begin);
+    k_object_add_step_begin_callback(object, player_step_set_state);
     k_object_add_step_callback(object, player_step);
+    k_object_add_step_callback(object, player_step_shoot);
 
     struct my_player *player = k_object_get_data(object);
     player->x = x;
@@ -110,6 +121,7 @@ struct k_object *my_player_create(float x, float y) {
     player->next_x = x;
     player->next_y = y;
     player->state = player_idle;
+    player->face = 1;
 
     struct k_component_type *WASD = k_component_type_find("k/WASD");
     struct k_WASD_config WASD_config;
