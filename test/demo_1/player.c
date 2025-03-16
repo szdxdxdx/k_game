@@ -31,6 +31,9 @@ static void player_step_begin(struct k_object *object) {
         k_sprite_renderer_flip_x(player->spr_rdr, 0);
         state = player_run;
     }
+    else if (player->next_y != player->y) {
+        state = player_run;
+    }
 
     switch (state) {
         case player_run: {
@@ -86,7 +89,6 @@ static void player_step(struct k_object *object) {
     }
 
     /* 放缩 */
-
     if (k_key_down('V')) {
         static float scale_x = 1.0f, scale_y = 1.0f;
         if ( ! k_key_down(K_KEY_LEFT_CTRL)) {
@@ -132,7 +134,7 @@ struct k_object *my_create_player(float x, float y) {
     WASD_config.key_left  = 'A';
     WASD_config.key_down  = 'S';
     WASD_config.key_right = 'D';
-    WASD_config.speed     = 0.1f;
+    WASD_config.speed     = 150.0f;
     WASD_config.x         = &player->next_x;
     WASD_config.y         = &player->next_y;
     player->WASD = k_object_add_component(object, WASD, &WASD_config);
@@ -143,7 +145,6 @@ struct k_object *my_create_player(float x, float y) {
     renderer_config.x       = &player->x;
     renderer_config.y       = &player->y;
     player->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
-    k_sprite_renderer_set_speed(player->spr_rdr, 0.0f);
 
     return object;
 }

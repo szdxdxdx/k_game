@@ -176,12 +176,4 @@ void k_room_del_callback(struct k_room_callback *callback);
 
 /* endregion */
 
-/* region [utils] */
-
-void k_room_clean_canvas(void *unused);
-
-void k_room_draw_grid(void *unused);
-
-/* endregion */
-
 #endif

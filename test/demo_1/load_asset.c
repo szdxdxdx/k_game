@@ -6,8 +6,8 @@ static struct k_sprite *my_load_sprite_strip(const char *filepath, int frames_nu
 
     int sprite_w = scale * 80;
     int sprite_h = scale * 64;
-    float origin_x = (float)scale * 27.0f;
-    float origin_y = (float)scale * 32.0f;
+    float origin_x = (float)scale * 40.0f;
+    float origin_y = (float)scale * 43.0f;
 
     struct k_image *img = k_image_load(filepath);
 

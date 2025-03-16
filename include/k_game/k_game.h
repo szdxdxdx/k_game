@@ -18,4 +18,6 @@
 #include "./ext/k_sprite_renderer.h"
 #include "./ext/k_collision_box.h"
 
+#include "./tmp/k_game_tmp.h"
+
 #endif
