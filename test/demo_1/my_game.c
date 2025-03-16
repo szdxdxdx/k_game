@@ -2,13 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./demo_1.h"
+#include "./sprite/my_sprite.h"
+#include "./room/my_room.h"
 
 static int fn_init_game(void) {
 
-    my_load_sprite_asset();
+    my_spr_player_load();
+    my_spr_enemy_load();
 
-    struct k_room *room = my_create_room_1();
+    struct k_room *room = my_room_1_create();
 
     k_goto_room(room);
     return 0;

@@ -1,21 +1,24 @@
-#include "./demo_1.h"
+#include "k_game.h"
 
-static struct k_sprite *my_load_sprite_strip(const char *filepath, int frames_num, const char *sprite_name) {
+#include "./my_sprite.h"
+
+struct k_sprite *my_spr_enemy_attack = NULL;
+
+static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num) {
 
     int scale = 2;
 
-    int sprite_w = scale * 80;
-    int sprite_h = scale * 64;
-    float origin_x = (float)scale * 40.0f;
-    float origin_y = (float)scale * 43.0f;
-
     struct k_image *img = k_image_load(filepath);
-
-    int scaled_w = scale * k_image_get_width(img);
-    int scaled_h = scale * k_image_get_height(img);
-
-    struct k_image *img_player = k_image_scale(img, scaled_w, scaled_h);
+    int scaled_image_w = scale * k_image_get_width(img);
+    int scaled_image_h = scale * k_image_get_height(img);
+    struct k_image *img_player = k_image_scale(img, scaled_image_w, scaled_image_h);
     k_image_release(img);
+
+    int sprite_w = k_image_get_width(img_player) / frames_num;
+    int sprite_h = k_image_get_height(img_player);
+
+    float origin_x = (float)scale * 43.0f;
+    float origin_y = (float)scale * 60.0f;
 
     /* 素材中的动画都不超过 15 帧，此处不需要动态申请内存 */
     struct k_sprite_frame_config frames_config[] = {
@@ -45,26 +48,12 @@ static struct k_sprite *my_load_sprite_strip(const char *filepath, int frames_nu
         .frames     = frames_config,
         .frames_num = frames_num
     };
-    struct k_sprite *sprite = k_sprite_create(&config);
-    k_sprite_set_name(sprite, sprite_name);
 
-    return sprite;
+    return k_sprite_create(&config);
 }
 
-static void my_load_sprite_player(void) {
+int my_spr_enemy_load(void) {
 
-    my_load_sprite_strip("./demo_1/player/run.png",  6, "player/run");
-    my_load_sprite_strip("./demo_1/player/idle.png", 7, "player/idle");
-}
-
-static void my_load_sprite_enemy(void) {
-
-    my_load_sprite_strip("./demo_1/enemy/Attack.png", 6, "enemy/attack");
-
-}
-
-void my_load_sprite_asset(void) {
-
-    my_load_sprite_player();
-    my_load_sprite_enemy();
+    my_spr_enemy_attack = load_sprite_strip("./demo_1/enemy/Attack.png", 15);
+    return 0;
 }

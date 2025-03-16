@@ -1,23 +1,6 @@
+#include "./my_object.h"
 
-#include "./demo_1.h"
-
-enum my_player_state {
-    player_idle,
-    player_run,
-};
-
-struct my_player {
-    float x;
-    float y;
-
-    float next_x;
-    float next_y;
-
-    int state;
-
-    struct k_component *WASD;
-    struct k_sprite_renderer *spr_rdr;
-};
+#include "../sprite/my_sprite.h"
 
 static void player_step_begin(struct k_object *object) {
     struct my_player *player = k_object_get_data(object);
@@ -39,14 +22,14 @@ static void player_step_begin(struct k_object *object) {
         case player_run: {
             if (state != player->state) {
                 player->state = player_run;
-                k_sprite_renderer_set_sprite(player->spr_rdr, k_sprite_find("player/run"));
+                k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_run);
             }
             break;
         }
         case player_idle: {
             if (player_idle != player->state) {
                  player->state = player_idle;
-                k_sprite_renderer_set_sprite(player->spr_rdr, k_sprite_find("player/idle"));
+                k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_idle);
             }
             break;
         }
@@ -114,7 +97,7 @@ static void player_step(struct k_object *object) {
         k_sprite_renderer_clear_transforms(player->spr_rdr);
 }
 
-struct k_object *my_create_player(float x, float y) {
+struct k_object *my_player_create(float x, float y) {
 
     struct k_object *object = k_object_create(sizeof(struct my_player));
 
@@ -140,7 +123,7 @@ struct k_object *my_create_player(float x, float y) {
     player->WASD = k_object_add_component(object, WASD, &WASD_config);
 
     struct k_sprite_renderer_config renderer_config;
-    renderer_config.sprite  = k_sprite_find("player/idle");
+    renderer_config.sprite  = my_spr_player_idle;
     renderer_config.z_index = 0;
     renderer_config.x       = &player->x;
     renderer_config.y       = &player->y;
@@ -148,4 +131,3 @@ struct k_object *my_create_player(float x, float y) {
 
     return object;
 }
-

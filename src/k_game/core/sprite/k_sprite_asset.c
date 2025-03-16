@@ -17,7 +17,7 @@ static int check_config(const struct k_sprite_config *config) {
     do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
 
     check_config_assert(NULL != config);
-    check_config_assert(0 != config->frames_num);
+    check_config_assert(0 < config->frames_num);
 
     size_t i = 0;
     for (; i < config->frames_num; i++) {
@@ -111,10 +111,6 @@ struct k_sprite *k_sprite_find(const char *sprite_name) {
 
     struct k_sprite *sprite = container_of(registry_node, struct k_sprite, registry_node);
     return sprite;
-}
-
-const char *k__sprite_get_name(struct k_sprite *sprite) {
-    return k__asset_get_name(&sprite->registry_node);
 }
 
 /* endregion */
