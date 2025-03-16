@@ -55,7 +55,7 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num) 
 
 int my_spr_player_load(void) {
 
-    my_spr_player_run  = load_sprite_strip("./demo_1/player/run.png",  6);
-    my_spr_player_idle = load_sprite_strip("./demo_1/player/idle.png", 7);
+    my_spr_player_run  = load_sprite_strip("./demo_1/image/player/run.png",  6);
+    my_spr_player_idle = load_sprite_strip("./demo_1/image/player/idle.png", 7);
     return 0;
 }

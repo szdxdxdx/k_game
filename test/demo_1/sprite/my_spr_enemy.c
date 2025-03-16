@@ -54,6 +54,6 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num) 
 
 int my_spr_enemy_load(void) {
 
-    my_spr_enemy_attack = load_sprite_strip("./demo_1/enemy/Attack.png", 15);
+    my_spr_enemy_attack = load_sprite_strip("./demo_1/image/enemy/Attack.png", 15);
     return 0;
 }

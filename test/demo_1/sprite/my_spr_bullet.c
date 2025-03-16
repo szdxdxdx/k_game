@@ -54,6 +54,6 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num) 
 
 int my_spr_player_bullet_load(void) {
 
-    my_spr_player_bullet = load_sprite_strip("./demo_1/player/bullet.png", 1);
+    my_spr_player_bullet = load_sprite_strip("./demo_1/image/player/bullet.png", 1);
     return 0;
 }

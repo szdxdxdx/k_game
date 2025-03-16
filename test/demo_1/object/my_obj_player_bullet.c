@@ -25,10 +25,10 @@ struct k_object *my_player_bullet_create(float x, float y, int face) {
     k_object_add_step_callback(object, bullet_step);
 
     struct k_sprite_renderer_config config;
-    config.sprite = my_spr_player_bullet;
+    config.sprite  = my_spr_player_bullet;
     config.z_index = 10;
-    config.x = &bullet->x;
-    config.y = &bullet->y;
+    config.x       = &bullet->x;
+    config.y       = &bullet->y;
     struct k_sprite_renderer *rdr = k_object_add_sprite_renderer(object, &config);
     if (bullet->speed < 0)
         k_sprite_renderer_flip_x(rdr, 1);

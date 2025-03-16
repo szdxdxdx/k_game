@@ -1,15 +1,23 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "./sprite/my_sprite.h"
 #include "./room/my_room.h"
 
-static int fn_init_game(void) {
-
+static void load_sprite(void) {
     my_spr_player_load();
     my_spr_player_bullet_load();
     my_spr_enemy_load();
+}
+
+static void load_sound(void) {
+    struct k_sound_BGM *bgm = k_sound_BGM_load("./demo_1/sound/bgm.wav");
+    k_sound_BGM_loop(bgm, INT_MAX);
+}
+
+static int fn_init_game(void) {
+    load_sprite();
+    load_sound();
 
     struct k_room *room = my_room_1_create();
 
