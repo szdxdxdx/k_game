@@ -13,7 +13,7 @@ struct k_room_callback *k_room_add_step_callback(struct k_room *room, void *data
 }
 
 struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void *data, void (*fn_callback)(void *data), int z_index) {
-    return k__callback_add_room_draw(&room->draw_callback_manager, room, data, fn_callback, z_index);;
+    return k__callback_add_room_draw(&room->draw_callback_manager, room, data, fn_callback, z_index);
 }
 
 struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *data, void (*fn_callback)(void *data)) {
