@@ -59,12 +59,16 @@ struct k_sprite *k_sprite_find(const char *sprite_name);
 
 /* region [sprite_get] */
 
+/** \brief 获取精灵的宽 */
 int k_sprite_get_width(struct k_sprite *sprite);
 
+/** \brief 获取精灵的高 */
 int k_sprite_get_height(struct k_sprite *sprite);
 
+/** \brief 获取精灵的帧数 */
 int k_sprite_get_frames_num(struct k_sprite *sprite);
 
+/** \brief 获取精灵帧的延时 */
 int k_sprite_get_frame_delay(struct k_sprite *sprite, size_t frame_idx);
 
 /* endregion */
@@ -113,7 +117,10 @@ struct k_sprite_draw_options {
 /**
  * \brief 绘制精灵帧
  *
- * `options` 指定绘制的变换参数，若为 `NULL` 则不应用任何变换。
+ * 该函数用于绘制精灵帧。请确保传入的 `sprite` 是有效精灵指针。
+ * 参数 `frame_idx` 指定帧索引，请确保传入有效的索引值。
+ * 坐标参数 `x` 和 `y` 用于指定精灵中心的绘制位置。
+ * 可选参数 `options` 用于执行缩放、旋转和翻转变换，若为 `NULL` 则不应用任何变换。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */

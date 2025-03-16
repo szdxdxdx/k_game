@@ -179,7 +179,7 @@ void k_sprite_renderer_rotate(struct k_sprite_renderer *renderer, float angle) {
 
     renderer->angle = angle;
 
-    if (angle <= -0.0001f || 0.0001f <= angle)
+    if (0.0f != angle)
         renderer->transform_flags |= transform_rotate;
     else
         renderer->transform_flags &= ~transform_rotate;
