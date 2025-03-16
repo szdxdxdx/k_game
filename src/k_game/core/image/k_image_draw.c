@@ -49,7 +49,7 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, float
 
 /* endregion */
 
-/* region [image_draw_EX] */
+/* region [image_draw_ex] */
 
 int k__image_draw_ex(struct k_image *image, struct k_image_draw_options *options) {
 

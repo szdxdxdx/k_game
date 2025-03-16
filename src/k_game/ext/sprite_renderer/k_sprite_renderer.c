@@ -253,7 +253,8 @@ static inline void calc_current_frame(struct k_sprite_renderer *renderer) {
 
         timer_ms -= delay;
         renderer->frame_idx += 1;
-        renderer->frame_idx %= frames_num;
+        if (frames_num <= renderer->frame_idx)
+            renderer->frame_idx = 0;
     }
 
     renderer->timer = (float)timer_ms / 1000.0f;

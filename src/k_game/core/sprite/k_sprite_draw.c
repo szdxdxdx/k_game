@@ -2,7 +2,13 @@
 
 #include "./k_sprite.h"
 
-static int k__sprite_draw_frame(struct k_sprite *sprite, size_t frame_idx, float dst_x, float dst_y) {
+int k_sprite_draw_frame(struct k_sprite *sprite, size_t frame_idx, float dst_x, float dst_y) {
+
+    if (NULL == sprite)
+        return -1;
+
+    if (sprite->frames_num <= frame_idx)
+        return -1;
 
     struct k_sprite_frame *frame = &sprite->frames[frame_idx];
 
@@ -17,21 +23,18 @@ static int k__sprite_draw_frame(struct k_sprite *sprite, size_t frame_idx, float
     return k__image_draw(frame->image, &src, x, y);
 }
 
-int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y) {
+int k_sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options) {
 
-    if (NULL == sprite)
+    if (NULL == sprite || NULL == options)
         return -1;
+
     if (sprite->frames_num <= frame_idx)
         return -1;
 
-    /* [?] assert currently is in draw callback */
-
-    /* [?] if (not in camera view) return 0; */
-
-    return k__sprite_draw_frame(sprite, frame_idx, x, y);
-}
-
-static int k__sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options) {
+    if (options->scaled_w <= 0 || options->scaled_h <= 0) {
+        /* 若伸缩变化将图片宽高压缩至不可见，则不需要执行真正的绘制操作 */
+        return 0;
+    }
 
     struct k_sprite_frame *frame = &sprite->frames[frame_idx];
 
@@ -57,20 +60,4 @@ static int k__sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k
     opt.flip_y   = options->flip_y;
 
     return k__image_draw_ex(frame->image, &opt);
-}
-
-int k_sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_draw_options *options) {
-
-    if (NULL == sprite || NULL == options)
-        return -1;
-    if (options->scaled_w <= 0 || options->scaled_h <= 0) /* TODO <- 能不能为 0？ */
-        return -1;
-    if (sprite->frames_num <= frame_idx)
-        return -1;
-
-    /* [?] assert currently is in draw callback */
-
-    /* [?] if (not in camera view) return 0; */
-
-    return k__sprite_draw_ex(sprite, frame_idx, options);
 }
