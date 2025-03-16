@@ -22,7 +22,7 @@ static void player_step_set_state(struct k_object *object) {
 
     switch (state) {
         case player_run: {
-            if (state != player->state) {
+            if (player_run != player->state) {
                 player->state = player_run;
                 k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_run);
             }

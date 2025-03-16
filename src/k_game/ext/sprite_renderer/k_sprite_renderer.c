@@ -340,32 +340,53 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
 
 int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite) {
 
-    if (NULL == sprite) {
-        if (NULL != renderer->sprite) {
+    if (NULL == renderer->sprite) {
+
+        if (NULL == sprite) {
+            return 0;
+        }
+        else {
+            struct k_component_callback *draw_callback;
+            if (k_sprite_get_frames_num(sprite) == 1) {
+                draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_image, renderer->z_index);
+            } else {
+                draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_animation, renderer->z_index);
+            }
+
+            if (NULL == draw_callback)
+                return -1;
+
+            renderer->draw_callback = draw_callback;
+            renderer->sprite = sprite;
+
+            k_sprite_renderer_clear_transforms(renderer);
+            return 0;
+        }
+    }
+    else {
+        if (NULL == sprite) {
             k_component_del_callback(renderer->draw_callback);
             renderer->draw_callback = NULL;
-            renderer->sprite = NULL;
         }
-        return 0;
+        else {
+            struct k_component_callback *draw_callback;
+            if (k_sprite_get_frames_num(sprite) == 1) {
+                draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_image, renderer->z_index);
+            } else {
+                draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_animation, renderer->z_index);
+            }
+
+            if (NULL == draw_callback)
+                return -1;
+
+            k_component_del_callback(renderer->draw_callback);
+            renderer->draw_callback = draw_callback;
+            renderer->sprite = sprite;
+
+            k_sprite_renderer_clear_transforms(renderer);
+            return 0;
+        }
     }
-
-    struct k_component_callback *draw_callback;
-    if (k_sprite_get_frames_num(sprite) == 1) {
-        draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_image, renderer->z_index);
-    } else {
-        draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_animation, renderer->z_index);
-    }
-
-    if (NULL == draw_callback)
-        return -1;
-
-    k_component_del_callback(renderer->draw_callback);
-    renderer->draw_callback = draw_callback;
-
-    renderer->sprite    = sprite;
-    renderer->timer     = 0;
-    renderer->frame_idx = 0;
-    return 0;
 }
 
 /* endregion */
