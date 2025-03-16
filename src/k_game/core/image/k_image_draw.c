@@ -21,10 +21,14 @@ int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, floa
         src.h = src_rect->h;
     }
 
+    /* TODO (w > 0 && h > 0)
+     *
+     * 以及检查输出的矩形有没有在视野范围内
+     */
     SDL_FRect dst;
     dst.x = dst_x;
     dst.y = dst_y;
-    dst.w = (float)src.w; /* TODO (w > 0 && h > 0) */
+    dst.w = (float)src.w;
     dst.h = (float)src.h;
 
     if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
@@ -41,8 +45,6 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, float
         k_log_error("Failed to draw image. image is NULL");
         return -1;
     }
-
-    /* [?] assert currently is in draw callback */
 
     return k__image_draw(image, src_rect, dst_x, dst_y);
 }
@@ -68,10 +70,14 @@ int k__image_draw_ex(struct k_image *image, struct k_image_draw_options *options
         src.h = src_rect->h;
     }
 
+    /* TODO (w > 0 && h > 0)
+     *
+     * 以及检查输出的矩形有没有在视野范围内
+     */
     SDL_FRect dst;
     dst.x = options->dst_x;
     dst.y = options->dst_y;
-    dst.w = (float)options->dst_w; /* TODO (w > 0 && h > 0) */
+    dst.w = (float)options->dst_w;
     dst.h = (float)options->dst_h;
 
     SDL_FPoint center;
@@ -103,8 +109,6 @@ int k_image_draw_ex(struct k_image *image, struct k_image_draw_options *options)
         k_log_error("Failed to draw image. options is NULL");
         return -1;
     }
-
-    /* [?] assert currently is in draw callback */
 
     return k__image_draw_ex(image, options);
 }

@@ -46,7 +46,7 @@ struct k_sprite_renderer_config {
 /**
  * \brief 为对象添加一个精灵渲染器组件
  *
- * 若成功，函数返回组件指针，否则返回 `NULL`。
+ * 若成功，函数返回渲染器组件指针，否则返回 `NULL`。
  */
 struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, const struct k_sprite_renderer_config *config);
 
@@ -64,10 +64,10 @@ void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器引用的精灵
  *
- * 若指定新的精灵为 `NULL`，则仅移除当前引用的精灵。
- *
- * 绑定新精灵后，渲染器会重置计时器，并定位到精灵的第 0 帧，
+ * 引用新精灵后，渲染器会重置计时器，并定位到精灵的第 0 帧，
  * 但是不会重置播放速度，以及不会重置图像缩放、旋转、翻转等变换效果。
+ *
+ * 若指定新的精灵为 `NULL`，则仅移除当前引用的精灵。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
@@ -75,6 +75,9 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
 
 /**
  * \brief 获取渲染器当前引用的精灵
+ *
+ * 函数返回渲染器当前引用的精灵。
+ * 若渲染器没有引用精灵，则函数返回 `NULL`。
  */
 struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer);
 
@@ -150,8 +153,7 @@ void k_sprite_renderer_adjust_w(struct k_sprite_renderer *renderer, int w_delta)
  *
  * 渲染器将延原精灵图的水平按比率缩放精灵，变换原点为精灵的中心。
  *
- * 缩放比率 `scale_y` 必须为正值。
- *
+ * 缩放比率 `scale_x` 必须为正值。
  * - 若 `scale_x` 为 1.0f，则按原尺寸绘制。
  * - 若 `scale_x` 为 1.0f，则拉伸精灵图宽度到原来的两倍。
  * - 若 `scale_x` 为 0.5f，则压缩精灵图宽度到原来的一半。
@@ -200,7 +202,6 @@ void k_sprite_renderer_adjust_h(struct k_sprite_renderer *renderer, int h_delta)
  * 渲染器将延原精灵图的竖直按比率缩放精灵，变换原点为精灵的中心。
  *
  * 缩放比率 `scale_y` 必须为正值。
- *
  * - 若 `scale_y` 为 1.0f，则按原尺寸绘制。
  * - 若 `scale_y` 大于 1.0f，则该按比率拉伸精灵图高度。
  * - 若 `scale_y` 小于 1.0f，则该按比率压缩精灵图高度。
@@ -253,9 +254,8 @@ float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器延水平方向翻转绘制精灵
  *
- * TODO 将变换原点设置为精灵的中心
- *
  * 若 `flip` 为非 0，则启用水平翻转，否则禁用水平翻转。
+ * 变换原点为精灵的中心。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
  */
@@ -273,9 +273,8 @@ int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器延竖直方向翻转绘制精灵
  *
- * TODO 将变换原点设置为精灵的中心
- *
  * 若 `flip` 为非 0，则启用竖直翻转，否则禁用竖直翻转。
+ * 变换原点为精灵的中心。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
  */

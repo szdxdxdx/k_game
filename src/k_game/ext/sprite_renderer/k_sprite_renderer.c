@@ -285,19 +285,17 @@ static inline void calc_current_frame(struct k_sprite_renderer *renderer) {
 static inline void renderer_draw_sprite(struct k_sprite_renderer *renderer) {
 
     if ( ! renderer->transform_flags) {
-        k_sprite_draw(renderer->sprite, renderer->frame_idx, *(renderer->x), *(renderer->y));
+        k_sprite_draw(renderer->sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
     }
     else {
         struct k_sprite_draw_options opts;
-        opts.x        = *(renderer->x);
-        opts.y        = *(renderer->y);
         opts.scaled_w = renderer->scaled_w;
         opts.scaled_h = renderer->scaled_h;
         opts.angle    = renderer->angle;
         opts.flip_x   = renderer->transform_flags & transform_flip_x;
         opts.flip_y   = renderer->transform_flags & transform_flip_y;
 
-        k_sprite_draw_ex(renderer->sprite, renderer->frame_idx, &opts);
+        k_sprite_draw(renderer->sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
     }
 }
 
