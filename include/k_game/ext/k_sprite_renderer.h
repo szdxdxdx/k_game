@@ -236,7 +236,7 @@ void k_sprite_renderer_rotate(struct k_sprite_renderer *renderer, float angle);
  * 渲染器将旋转绘制精灵，变换原点为精灵的中心。
  * 旋转单位采用角度制，顺时针方向为正方向。
  *
- * - 若 `angle_delta` 为正值，则顺时针方向旋转精灵图，
+ * - 若 `angle_delta` 为正值，则顺时针旋转精灵图，
  * - 若 `angle_delta` 为负值，则逆时针旋转精灵图。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
@@ -254,8 +254,6 @@ float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer);
  * \brief 设置渲染器延水平方向翻转绘制精灵
  *
  * TODO 将变换原点设置为精灵的中心
- *
- * 渲染器将延原精灵图的水平方向翻转绘制精灵。
  *
  * 若 `flip` 为非 0，则启用水平翻转，否则禁用水平翻转。
  *
@@ -276,8 +274,6 @@ int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
  * \brief 设置渲染器延竖直方向翻转绘制精灵
  *
  * TODO 将变换原点设置为精灵的中心
- *
- * 渲染器将延原精灵图的竖直方向翻转绘制精灵。
  *
  * 若 `flip` 为非 0，则启用竖直翻转，否则禁用竖直翻转。
  *
