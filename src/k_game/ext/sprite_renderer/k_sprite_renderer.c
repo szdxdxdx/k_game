@@ -288,16 +288,16 @@ static inline void renderer_draw_sprite(struct k_sprite_renderer *renderer) {
         k_sprite_draw(renderer->sprite, renderer->frame_idx, *(renderer->x), *(renderer->y));
     }
     else {
-        struct k_sprite_draw_options opt;
-        opt.x        = *(renderer->x);
-        opt.y        = *(renderer->y);
-        opt.scaled_w = renderer->scaled_w;
-        opt.scaled_h = renderer->scaled_h;
-        opt.angle    = renderer->angle;
-        opt.flip_x   = renderer->transform_flags & transform_flip_x;
-        opt.flip_y   = renderer->transform_flags & transform_flip_y;
+        struct k_sprite_draw_options opts;
+        opts.x        = *(renderer->x);
+        opts.y        = *(renderer->y);
+        opts.scaled_w = renderer->scaled_w;
+        opts.scaled_h = renderer->scaled_h;
+        opts.angle    = renderer->angle;
+        opts.flip_x   = renderer->transform_flags & transform_flip_x;
+        opts.flip_y   = renderer->transform_flags & transform_flip_y;
 
-        k_sprite_draw_ex(renderer->sprite, renderer->frame_idx, &opt);
+        k_sprite_draw_ex(renderer->sprite, renderer->frame_idx, &opts);
     }
 }
 

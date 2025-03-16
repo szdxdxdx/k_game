@@ -2,7 +2,7 @@
 
 #include "./k_sprite.h"
 
-int k_sprite_draw_frame(struct k_sprite *sprite, size_t frame_idx, float dst_x, float dst_y) {
+int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float dst_x, float dst_y) {
 
     if (NULL == sprite)
         return -1;
@@ -44,20 +44,40 @@ int k_sprite_draw_ex(struct k_sprite *sprite, size_t frame_idx, struct k_sprite_
     src.w = sprite->sprite_w;
     src.h = sprite->sprite_h;
 
-    float scale_x = (float)(options->scaled_w) / (float)(sprite->sprite_w);
-    float scale_y = (float)(options->scaled_h) / (float)(sprite->sprite_h);
+    float scala_x = (float)options->scaled_w / (float)(sprite->sprite_w);
+    float scala_y = (float)options->scaled_h / (float)(sprite->sprite_h);
 
-    struct k_image_draw_options opt;
-    opt.src_rect = &src;
-    opt.dst_x    = options->x - sprite->origin_x * scale_x;
-    opt.dst_y    = options->y - sprite->origin_y * scale_y;
-    opt.dst_w    = options->scaled_w;
-    opt.dst_h    = options->scaled_h;
-    opt.angle    = options->angle;
-    opt.pivot_x  = sprite->origin_x * scale_x;
-    opt.pivot_y  = sprite->origin_y * scale_y;
-    opt.flip_x   = options->flip_x;
-    opt.flip_y   = options->flip_y;
+    float scaled_origin_x = sprite->origin_x * scala_x;
+    float scaled_origin_y = sprite->origin_y * scala_y;
 
-    return k__image_draw_ex(frame->image, &opt);
+    struct k_image_draw_options opts;
+    opts.src_rect = &src;
+
+
+    // opts.dst_x    = options->x - scaled_origin_x;
+    // opts.dst_y    = options->y - scaled_origin_y;
+
+    if (options->flip_x) {
+        opts.dst_x   = options->x - scala_x * ((float)options->scaled_w - sprite->origin_x);
+        opts.pivot_x = scala_x * ((float)options->scaled_w - sprite->origin_x);
+    } else {
+        opts.dst_x   = options->x - scala_x * sprite->origin_x;
+        opts.pivot_x = scala_x * sprite->origin_x;
+    }
+
+    if (options->flip_y) {
+        opts.dst_y   = options->y - scala_y * ((float)options->scaled_h - sprite->origin_y);
+        opts.pivot_y = scala_y * ((float)options->scaled_h - sprite->origin_y);
+    } else {
+        opts.dst_y   = options->y - scala_y * sprite->origin_y;
+        opts.pivot_y = scala_y * sprite->origin_y;
+    }
+
+    opts.dst_w    = options->scaled_w;
+    opts.dst_h    = options->scaled_h;
+    opts.angle    = options->angle;
+    opts.flip_x   = options->flip_x;
+    opts.flip_y   = options->flip_y;
+
+    return k__image_draw_ex(frame->image, &opts);
 }
