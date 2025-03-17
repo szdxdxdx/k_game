@@ -8,9 +8,9 @@
 
 struct k_draw_callback_manager {
 
-    struct k_int_map z_index_map;
-
     struct k_list layer_list;
+
+    struct k_int_map z_index_map;
 
     struct k_list layer_pending_list;
 

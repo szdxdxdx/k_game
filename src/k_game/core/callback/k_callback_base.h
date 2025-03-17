@@ -3,26 +3,23 @@
 
 #include <stdint.h>
 
-enum k_callback_type {
+enum k_callback_state {
 
-    K_ROOM_CALLBACK       = 0,
-    K_OBJECT_CALLBACK     ,
-    K_COMPONENT_CALLBACK  ,
+    K_CALLBACK_PENDING,
+    K_CALLBACK_USER_DEL,
+    K_CALLBACK_DELETED,
+};
 
-    K_STEP_BEGIN_CALLBACK = 0,
-    K_ALARM_CALLBACK      ,
-    K_STEP_CALLBACK       ,
-    K_DRAW_CALLBACK       ,
-    K_STEP_END_CALLBACK   ,
+enum k_callback_context {
+
+    K_ROOM_CALLBACK,
+    K_OBJECT_CALLBACK,
+    K_COMPONENT_CALLBACK,
 };
 
 struct k_callback {
 
-    uint8_t is_deleted;
-
-    uint8_t event;
-
-    uint8_t context;
+    void *_;
 };
 
 void k__callback_set_deleted(struct k_callback *callback);
