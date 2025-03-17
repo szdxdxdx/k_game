@@ -54,8 +54,8 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)
         return 0.0f;
-
-    return renderer->speed;
+    else
+        return renderer->speed;
 }
 
 /* endregion */
@@ -110,8 +110,8 @@ int k_sprite_renderer_get_w(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)
         return 0;
-
-    return renderer->scaled_w;
+    else
+        return renderer->scaled_w;
 }
 
 /* endregion */
@@ -139,8 +139,8 @@ int k_sprite_renderer_get_h(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)
         return 0;
-
-    return renderer->scaled_h;
+    else
+        return renderer->scaled_h;
 }
 
 void k_sprite_renderer_adjust_h(struct k_sprite_renderer *renderer, int h_delta) {
@@ -193,8 +193,8 @@ float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)
         return 0.0f;
-
-    return renderer->angle;
+    else
+        return renderer->angle;
 }
 
 /* endregion */
@@ -216,8 +216,8 @@ int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)
         return 0;
-
-    return renderer->transform_flags & transform_flip_x;
+    else
+        return renderer->transform_flags & transform_flip_x;
 }
 
 /* endregion */
@@ -239,21 +239,24 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)
         return 0;
-
-    return renderer->transform_flags & transform_flip_y;
+    else
+        return renderer->transform_flags & transform_flip_y;
 }
 
 /* endregion */
 
 void k_sprite_renderer_clear_transforms(struct k_sprite_renderer *renderer) {
 
-    if (NULL == renderer->sprite)
-        return;
+    if (NULL == renderer->sprite) {
+        renderer->scaled_w = 0;
+        renderer->scaled_h = 0;
+    } else {
+        renderer->scaled_w = k_sprite_get_width(renderer->sprite);
+        renderer->scaled_h = k_sprite_get_height(renderer->sprite);
+    }
 
+    renderer->angle = 0.0f;
     renderer->transform_flags = transform_none;
-    renderer->scaled_w = k_sprite_get_width(renderer->sprite);
-    renderer->scaled_h = k_sprite_get_height(renderer->sprite);
-    renderer->angle    = 0.0f;
 }
 
 /* endregion */
@@ -320,9 +323,9 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
 
     struct k_component_callback *draw_callback;
     if (k_sprite_get_frames_num(renderer->sprite) == 1) {
-        draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_image, renderer->z_index);
+        draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_image, z_index);
     } else {
-        draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_animation, renderer->z_index);
+        draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_animation, z_index);
     }
 
     if (NULL == draw_callback)
@@ -341,52 +344,66 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
 int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite) {
 
     if (NULL == renderer->sprite) {
-
         if (NULL == sprite) {
             return 0;
         }
-        else {
-            struct k_component_callback *draw_callback;
-            if (k_sprite_get_frames_num(sprite) == 1) {
-                draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_image, renderer->z_index);
-            } else {
-                draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_animation, renderer->z_index);
-            }
 
-            if (NULL == draw_callback)
-                return -1;
+        struct k_component_callback *draw_callback;
+        if (k_sprite_get_frames_num(sprite) == 1)
+            draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_image, renderer->z_index);
+        else
+            draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_animation, renderer->z_index);
 
-            renderer->draw_callback = draw_callback;
-            renderer->sprite = sprite;
+        if (NULL == draw_callback)
+            return -1;
 
-            k_sprite_renderer_clear_transforms(renderer);
-            return 0;
-        }
+        renderer->draw_callback = draw_callback;
+
+        renderer->sprite    = sprite;
+        renderer->timer     = 0.0f;
+        renderer->speed     = 1.0f;
+        renderer->frame_idx = 0;
+
+        renderer->scaled_w = k_sprite_get_width(renderer->sprite);
+        renderer->scaled_h = k_sprite_get_height(renderer->sprite);
+        renderer->angle    = 0.0f;
+
+        renderer->transform_flags = transform_none;
     }
     else {
         if (NULL == sprite) {
             k_component_del_callback(renderer->draw_callback);
             renderer->draw_callback = NULL;
-        }
-        else {
-            struct k_component_callback *draw_callback;
-            if (k_sprite_get_frames_num(sprite) == 1) {
-                draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_image, renderer->z_index);
-            } else {
-                draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_animation, renderer->z_index);
-            }
-
-            if (NULL == draw_callback)
-                return -1;
-
-            k_component_del_callback(renderer->draw_callback);
-            renderer->draw_callback = draw_callback;
-            renderer->sprite = sprite;
-
-            k_sprite_renderer_clear_transforms(renderer);
+            renderer->sprite = NULL;
             return 0;
         }
+
+        struct k_component_callback *draw_callback;
+        if (k_sprite_get_frames_num(sprite) == 1) {
+            draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_image, renderer->z_index);
+        } else {
+            draw_callback = k_component_add_draw_callback(renderer->component, renderer_draw_animation, renderer->z_index);
+        }
+
+        if (NULL == draw_callback)
+            return -1;
+
+        k_component_del_callback(renderer->draw_callback);
+        renderer->draw_callback = draw_callback;
+
+        renderer->sprite    = sprite;
+        renderer->timer     = 0.0f;
+        renderer->speed     = 1.0f;
+        renderer->frame_idx = 0;
+
+        renderer->scaled_w = k_sprite_get_width(renderer->sprite);
+        renderer->scaled_h = k_sprite_get_height(renderer->sprite);
+        renderer->angle    = 0.0f;
+
+        renderer->transform_flags = transform_none;
     }
+
+    return 0;
 }
 
 /* endregion */
@@ -402,9 +419,9 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     renderer->z_index       = config->z_index;
 
     renderer->sprite    = NULL;
-    renderer->timer     = 0;
-    renderer->frame_idx = 0;
+    renderer->timer     = 0.0f;
     renderer->speed     = 1.0f;
+    renderer->frame_idx = 0;
 
     renderer->x = config->x;
     renderer->y = config->y;
@@ -412,6 +429,7 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     renderer->scaled_w = 0;
     renderer->scaled_h = 0;
     renderer->angle    = 0.0f;
+
     renderer->transform_flags = transform_none;
 
     k_sprite_renderer_set_sprite(renderer, config->sprite);
