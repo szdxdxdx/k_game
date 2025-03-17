@@ -1,8 +1,22 @@
-#include "./k_callback_base.h"
+#include <assert.h>
 
-void k__callback_set_deleted(struct k_callback *callback) {
+#include "./k_callback.h"
 
-    /* TODO assert( ! callback->deleted) */
+void k__callback_del(struct k_callback_base *callback) {
 
-    callback->is_deleted = 1;
+    assert(callback->state != K_CALLBACK_DELETED);
+
+    switch (callback->event) {
+        case K_ALARM_CALLBACK:
+            k__callback_del_alarm(callback);
+            break;
+        case K_STEP_CALLBACK:
+            k__callback_del_step(callback);
+            break;
+        case K_DRAW_CALLBACK:
+            k__callback_del_draw(callback);
+            break;
+        default:
+            assert(0);
+    }
 }

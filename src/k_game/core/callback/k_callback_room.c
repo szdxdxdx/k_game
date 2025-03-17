@@ -1,4 +1,4 @@
-#include "../room/k_room.h"
+#include "./k_callback.h"
 
 struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void *data, void (*fn_callback)(void *data)) {
     return k__callback_add_room_step(&room->step_begin_callback_manager, room, data, fn_callback);
@@ -25,13 +25,10 @@ void k_room_del_callback(struct k_room_callback *callback) {
     if (NULL == callback)
         return;
 
-    if (k_list_node_is_loop(&callback->list_node))
-        return;
+    k__callback_del(callback->base);
 
     k_list_del(&callback->list_node);
     k_list_node_loop(&callback->list_node);
-
-    k__callback_set_deleted(callback->base);
 }
 
 void k_room_del_all_callback(struct k_room_callback *callback) {

@@ -26,4 +26,6 @@ struct k_object_callback *k__callback_add_object_step(struct k_step_callback_man
 
 struct k_component_callback *k__callback_add_component_step(struct k_step_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component));
 
+void k__callback_del_step(struct k_callback_base *callback);
+
 #endif

@@ -3,12 +3,9 @@
 
 #include <stdint.h>
 
-enum k_callback_state {
-
-    K_CALLBACK_PENDING,
-    K_CALLBACK_USER_DEL,
-    K_CALLBACK_DELETED,
-};
+struct k_room;
+struct k_object;
+struct k_component;
 
 enum k_callback_context {
 
@@ -17,22 +14,35 @@ enum k_callback_context {
     K_COMPONENT_CALLBACK,
 };
 
-struct k_callback {
+struct k_room_callback;
+struct k_object_callback;
+struct k_component_callback;
 
-    void *_;
+enum k_callback_event {
+
+    K_ALARM_CALLBACK,
+    K_STEP_CALLBACK,
+    K_DRAW_CALLBACK,
 };
-
-void k__callback_set_deleted(struct k_callback *callback);
 
 struct k_step_callback;
 struct k_alarm_callback;
 struct k_draw_callback;
 
-struct k_room;
-struct k_room_callback;
-struct k_object;
-struct k_object_callback;
-struct k_component;
-struct k_component_callback;
+enum k_callback_state {
+
+    K_CALLBACK_PENDING,
+    K_CALLBACK_ACTIVE,
+    K_CALLBACK_EXECUTED,
+    K_CALLBACK_DELETED,
+};
+
+struct k_callback_base {
+    uint8_t context;
+    uint8_t event;
+    uint8_t state;
+};
+
+void k__callback_del(struct k_callback_base *callback);
 
 #endif

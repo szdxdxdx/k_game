@@ -1,6 +1,4 @@
-#include "../room/k_room.h"
-#include "../object/k_object.h"
-#include "../component/k_component.h"
+#include "./k_callback.h"
 
 struct k_component_callback *k_component_add_step_begin_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
     return k__callback_add_component_step(&component->object->room->step_begin_callback_manager, component, fn_callback);
@@ -27,8 +25,10 @@ void k_component_del_callback(struct k_component_callback *callback) {
     if (NULL == callback)
         return;
 
+    k__callback_del(callback->base);
+
     k_list_del(&callback->list_node);
-    k__callback_set_deleted(callback->base);
+    k_list_node_loop(&callback->list_node);
 }
 
 void k_component_del_all_callbacks(struct k_component *component) {
@@ -39,7 +39,7 @@ void k_component_del_all_callbacks(struct k_component *component) {
     for (k_list_for_each(list, iter)) {
         callback = container_of(iter, struct k_component_callback, list_node);
 
-        k__callback_set_deleted(callback->base);
+        k__callback_del(callback->base);
     }
 
     k_list_init(&component->callback_list);

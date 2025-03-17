@@ -31,4 +31,6 @@ struct k_object_callback *k__callback_add_object_draw(struct k_draw_callback_man
 
 struct k_component_callback *k__callback_add_component_draw(struct k_draw_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component), int z_index);
 
+void k__callback_del_draw(struct k_callback_base *callback);
+
 #endif

@@ -7,14 +7,14 @@ static void player_step_set_state(struct k_object *object) {
 
     enum my_player_state state = player_idle;
     if (player->next_x < player->x) {
-        k_sprite_renderer_flip_x(player->spr_rdr, 1);
         state = player_run;
         player->face = -1;
+        k_sprite_renderer_flip_x(player->spr_rdr, 1);
     }
     else if (player->next_x > player->x) {
-        k_sprite_renderer_flip_x(player->spr_rdr, 0);
         state = player_run;
         player->face = 1;
+        k_sprite_renderer_flip_x(player->spr_rdr, 0);
     }
     else if (player->next_y != player->y) {
         state = player_run;
@@ -30,8 +30,11 @@ static void player_step_set_state(struct k_object *object) {
         }
         case player_idle: {
             if (player_idle != player->state) {
-                 player->state = player_idle;
+                player->state = player_idle;
                 k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_idle);
+
+                if (player->face == -1)
+                    k_sprite_renderer_flip_x(player->spr_rdr, 0);
             }
             break;
         }
