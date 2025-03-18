@@ -135,6 +135,11 @@ struct k_component_manager *k_room_get_component_manager(struct k_room *room, st
 
 void *k_component_manager_get_data(struct k_component_manager *manager);
 
+/**
+ * \brief 获取管理该组件实例的管理器
+ *
+ * 函数返回与该组件关联的管理器。若组件是独立的，不与任何管理器关联，则函数返回 `NULL`。
+ */
 struct k_component_manager *k_component_get_manager(struct k_component *component);
 
 void *k_component_get_manager_data(struct k_component *component);

@@ -206,7 +206,7 @@ map_add_failed:
     return -1;
 }
 
-static void k__component_manager_destroy_self(struct k_component_manager *manager) {
+static void k__component_manager_destroy(struct k_component_manager *manager) {
 
     struct k_component_manager_type *manager_type = manager->component_type->manager_type;
     if (NULL != manager_type->fn_fini) {
@@ -231,16 +231,16 @@ struct k_component_manager *k_room_get_component_manager(struct k_room *room, st
     return k__component_manager_map_find(room, component_type->manager_type);
 }
 
-void k_room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
+void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
 
     struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
     if (NULL == manager)
         return;
 
-    k__component_manager_destroy_self(manager);
+    k__component_manager_destroy(manager);
 }
 
-void k_room_del_all_component_managers(struct k_room *room) {
+void k__room_del_all_component_managers(struct k_room *room) {
 
     struct k_array *room_array = &component_manager_map.map;
     if (room_array->size <= room->room_id)
@@ -255,7 +255,7 @@ void k_room_del_all_component_managers(struct k_room *room) {
     for (; p_manager < end; p_manager++) {
 
         if (NULL != *p_manager)
-            k__component_manager_destroy_self(*p_manager);
+            k__component_manager_destroy(*p_manager);
     }
 
     k_array_destroy(*p_manager_array);

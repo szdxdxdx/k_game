@@ -144,7 +144,7 @@ static void step_del_component_managers(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k_room_del_all_component_managers(room);
+    k__room_del_all_component_managers(room);
 }
 
 static size_t id_counter = 0;
