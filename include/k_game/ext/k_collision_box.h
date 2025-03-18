@@ -46,9 +46,9 @@ void k_object_del_collision_box(struct k_collision_box *box);
 
 /* region [collision_check] */
 
-struct k_collision_box *k_collision_check_rectangle(int layer, float x1, float y1, float x2, float y2);
+struct k_collision_box *k_collision_check_rectangle(int group_idx, float x1, float y1, float x2, float y2);
 
-struct k_collision_box *k_collision_check_circle(int layer, float x, float y, float r);
+struct k_collision_box *k_collision_check_circle(int group_idx, float x, float y, float r);
 
 /* endregion */
 
