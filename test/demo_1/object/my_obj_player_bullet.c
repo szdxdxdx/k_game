@@ -15,8 +15,9 @@ static void bullet_step(struct k_object *object) {
 }
 
 struct k_object *my_player_bullet_create(float x, float y, int face) {
+    struct k_room *room = k_get_current_room();
 
-    struct k_object *object = k_object_create(sizeof(struct my_player_bullet));
+    struct k_object *object = k_object_create(sizeof(struct my_player_bullet), room);
     struct my_player_bullet *bullet = k_object_get_data(object);
     bullet->x = x;
     bullet->y = y;

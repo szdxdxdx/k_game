@@ -1,26 +1,24 @@
 #include "k_game.h"
 
+#include "./k_object.h"
+
 #include "../room/k_room.h"
 #include "../game/k_game_context.h"
 
-#include "./k_object.h"
-
 /* region [object_create] */
 
-struct k_object *k_object_create(size_t object_data_size) {
+struct k_object *k_object_create(size_t data_size, struct k_room *room) {
 
-    struct k_room *room = k__game.current_room;
-    if (NULL == room) {
+    if (NULL == room)
         goto err;
-    }
 
     struct k_object *object = k__object_pool_acquire(&room->object_pool);
     if (NULL == object)
         goto err;
 
     void *data = NULL;
-    if (0 != object_data_size) {
-        if (NULL == (data = k_malloc(object_data_size))) {
+    if (0 != data_size) {
+        if (NULL == (data = k_malloc(data_size))) {
             k__object_pool_release(object);
             goto err;
         }

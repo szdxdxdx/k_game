@@ -6,8 +6,6 @@
 
 #include "../k_components_def.h"
 
-/* region [collision_box struct] */
-
 struct k_collision_box_rectangle {
     uint8_t box_type;
 
@@ -37,23 +35,25 @@ struct k_collision_box {
     };
 };
 
-/* endregion */
-
-/* region [collision_box_manager] */
-
 struct k_collision_box_manager {
 
 };
 
-static int collision_box_manager_init(struct k_component_manager *manager, void *params) {
-    struct k_collision_box_manager *data = k_component_manager_get_data(manager);
+/* region [collision_check] */
 
-    return 0;
+struct k_collision_box *k_collision_check_rectangle(int layer, float x1, float y1, float x2, float y2) {
+
+    return NULL;
+}
+
+struct k_collision_box *k_collision_check_circle(int layer, float x, float y, float r) {
+
+    return NULL;
 }
 
 /* endregion */
 
-/* region [component_callback] */
+/* region [collision_box_init] */
 
 static void collision_box_draw(struct k_component *component) {
 
@@ -159,7 +159,19 @@ static int collision_box_init(struct k_component *component, void *params) {
 
 /* endregion */
 
-/* region [define_component_type] */
+/* region [collision_manager_init] */
+
+static int collision_box_manager_init(struct k_component_manager *manager, void *params) {
+    struct k_collision_box_manager *data = k_component_manager_get_data(manager);
+
+    return 0;
+}
+
+/* endregion */
+
+/* region [component_define] */
+
+static struct k_component_type *c_box;
 
 int k__component_def_collision_box(void) {
 
@@ -171,20 +183,32 @@ int k__component_def_collision_box(void) {
     entity_config.data_size = sizeof(struct k_collision_box);
     entity_config.fn_init   = collision_box_init;
 
-    struct k_component_type *type = k_component_define(&manager_config, &entity_config);
-    if (NULL == type)
+    c_box = k_component_define(&manager_config, &entity_config);
+    if (NULL == c_box)
         return -1;
 
-    k_component_type_set_name(type, "k/C-box");
     return 0;
 }
 
 /* endregion */
 
-/* region [collision_check] */
+/* region [object_add_collision_box] */
 
-void k_collision_check_rectangle(float x1, float y1, float x2, float y2) {
+struct k_collision_box *k_object_add_collision_box(struct k_object *object, struct k_collision_box_config *config) {
 
+    return NULL;
+}
+
+void k_object_del_collision_box(struct k_collision_box *box) {
+
+}
+
+/* endregion */
+
+/* region [room_add_collision_box_manager] */
+
+int k_room_add_collision_box_manager(struct k_room *room) {
+    return k_room_add_component_manager(room, c_box, NULL);;
 }
 
 /* endregion */

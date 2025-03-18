@@ -1,6 +1,5 @@
-#include <limits.h>
 #include <math.h>
-#include "../../core/k_SDL/k_SDL.h"
+#include "../../core/k_SDL/k_SDL.h" // <- tmp? TODO
 
 #include "k_game.h"
 
@@ -611,7 +610,7 @@ int k__component_def_sprite_renderer(void) {
 
 /* endregion */
 
-/* region [object_add_component] */
+/* region [object_add_sprite_renderer] */
 
 struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, const struct k_sprite_renderer_config *config) {
 
