@@ -1,10 +1,15 @@
 #include <limits.h>
 
+#include "k_list.h"
+#include "k_int_map.h"
+
 #include "k_game.h"
 
 #include "../../core/k_SDL/k_SDL.h"
 
 #include "../k_components_def.h"
+
+/* region [collision_box] */
 
 struct k_collision_box_rectangle {
     uint8_t box_type;
@@ -35,9 +40,20 @@ struct k_collision_box {
     };
 };
 
+/* endregion */
+
+/* region [collision_box_manager] */
+
+struct k_collision_layer {
+    struct k_int_map_node map_node;
+};
+
 struct k_collision_box_manager {
 
+    struct k_int_map layer_map;
 };
+
+/* endregion */
 
 /* region [collision_check] */
 
@@ -161,9 +177,15 @@ static int collision_box_init(struct k_component *component, void *params) {
 
 /* region [collision_manager_init] */
 
-static int collision_box_manager_init(struct k_component_manager *manager, void *params) {
-    struct k_collision_box_manager *data = k_component_manager_get_data(manager);
+static int collision_box_manager_init(struct k_component_manager *component_manager, void *params) {
+    struct k_collision_box_manager *manager = k_component_manager_get_data(component_manager);
 
+    size_t buckets_num = 32;
+    struct k_hash_list *buckets = k_malloc(sizeof(struct k_hash_list) * buckets_num);
+    if (buckets == NULL)
+        return -1;
+
+    k_int_map_init(&manager->layer_map, buckets, buckets_num);
     return 0;
 }
 
