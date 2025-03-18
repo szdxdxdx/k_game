@@ -42,8 +42,10 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
         float scaled_h = (float)(options->scaled_h);
         float scala_x  = scaled_w / (float)(sprite->sprite_w);
         float scala_y  = scaled_h / (float)(sprite->sprite_h);
-        float origin_x = scala_x * (options->flip_x ? scaled_w - sprite->origin_x : sprite->origin_x);
-        float origin_y = scala_y * (options->flip_y ? scaled_h - sprite->origin_y : sprite->origin_y);
+
+        /* FIXME: 下面代码没有注释时，翻转+伸缩变换时，绘制错误。但注释后的是对的吗？ */
+        float origin_x = scala_x * (options->flip_x ? /*scaled_w -*/ sprite->origin_x : sprite->origin_x);
+        float origin_y = scala_y * (options->flip_y ? /*scaled_h -*/ sprite->origin_y : sprite->origin_y);
 
         struct k_image_draw_options opts;
         opts.src_rect = &src;
