@@ -63,8 +63,10 @@ void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器引用的精灵
  *
- * 引用新精灵后，渲染器会重置计时器，并定位到精灵的第 0 帧，
- * 但是不会重置播放速度，也不会重置图像缩放、旋转、翻转等变换效果。
+ * 更改引用的精灵后，渲染器会重置计时器，动画帧索引定位到第 0 帧，
+ * 播放倍速恢复为 1.0f，并重置渲染器对精灵图的所有变换。
+ *
+ * 更换精灵不会改变渲染器的绘制深度。
  *
  * 若指定新的精灵为 `NULL`，则仅移除当前引用的精灵。
  *
@@ -78,6 +80,18 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
  * 函数返回渲染器当前引用的精灵，若没有则返回 `NULL`。
  */
 struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer);
+
+/**
+ * \brief 更改渲染器的绘制深度
+ *
+ * 即使渲染器没有引用精灵，也可以修改绘制深度。
+ *
+ * 若成功，函数返回 0，否则返回非 0。
+ */
+int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_index);
+
+/** \brief 获取渲染器绘制深度 */
+int k_sprite_renderer_get_z_index(struct k_sprite_renderer *renderer);
 
 /**
  * \brief 设置渲染器播放精灵动画的速度
@@ -100,7 +114,7 @@ void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
  */
-void k_sprite_renderer_add_speed(struct k_sprite_renderer *renderer, float speed_add);
+void k_sprite_renderer_add_speed(struct k_sprite_renderer *renderer, float speed_delta);
 
 /**
  * \brief 获取渲染器播放精灵动画的速度
@@ -108,15 +122,6 @@ void k_sprite_renderer_add_speed(struct k_sprite_renderer *renderer, float speed
  * 若渲染器没有引用精灵，则函数返回速度值为 0。
  */
 float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer);
-
-/**
- * \brief 更改渲染器的绘制深度
- *
- * 若渲染器没有引用精灵，则更改失败。
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
-int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_index);
 
 /* endregion */
 
@@ -308,10 +313,10 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
 /* endregion */
 
 /**
- * \brief 重置渲染器对图像的所有变换操作
+ * \brief 重置渲染器对精灵图的所有变换操作
  *
- * 重置宽高缩放倍率为 1.0f，旋转角度为 0，禁用水平翻转与垂直翻转。
- * 即按精灵图的原始尺寸绘制，不旋转、不翻转。
+ * 重置宽高缩放倍率为 1.0f，旋转角度为 0，取消水平翻转与垂直翻转。
+ * 即按精灵图的原样绘制，不缩放、不旋转、不翻转。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
  */
