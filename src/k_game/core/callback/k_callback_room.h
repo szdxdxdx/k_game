@@ -13,4 +13,6 @@ struct k_room_callback {
     struct k_callback_base *base;
 };
 
+void k__room_free_all_callbacks(struct k_room *room);
+
 #endif

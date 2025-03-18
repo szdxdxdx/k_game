@@ -219,11 +219,10 @@ void k__callback_flush_step(struct k_step_callback_manager *manager) {
     for (k_list_for_each_s(pending_list, iter, next)) {
         callback = container_of(iter, struct k_step_callback, pending_list_node);
 
-        k_list_del(&callback->pending_list_node);
-        k_list_node_loop(&callback->pending_list_node);
-
         switch (callback->base.state) {
             case K_CALLBACK_PENDING:
+                k_list_del(&callback->pending_list_node);
+                k_list_node_loop(&callback->pending_list_node);
                 k_list_add_tail(callback_list, &callback->callback_list_node);
                 callback->base.state = K_CALLBACK_ACTIVE;
                 break;

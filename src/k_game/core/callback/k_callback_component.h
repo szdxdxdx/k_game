@@ -13,4 +13,6 @@ struct k_component_callback {
     struct k_callback_base *base;
 };
 
+void k__component_free_all_callbacks(struct k_component *component);
+
 #endif

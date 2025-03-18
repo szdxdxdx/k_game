@@ -13,4 +13,6 @@ struct k_object_callback {
     struct k_callback_base *base;
 };
 
+void k__object_free_all_callbacks(struct k_object *object);
+
 #endif

@@ -119,9 +119,11 @@ static int step_init_callback_list(void *context) {
     return 0;
 }
 
-static void step_del_all_callbacks(void *unused) {
-    (void)unused;
-    /* 交由各个 callback manager 清除 */
+static void step_del_all_callbacks(void *context) {
+    struct step_context *ctx = context;
+    struct k_room *room = ctx->room;
+
+    k__room_free_all_callbacks(room);
 }
 
 static int step_init_object_pool(void *context) {

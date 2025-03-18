@@ -26,15 +26,32 @@ void k_room_del_callback(struct k_room_callback *callback) {
         return;
 
     k__callback_defer_del(callback->base);
-
-    k_list_del(&callback->list_node);
-    k_list_node_loop(&callback->list_node);
 }
 
-void k_room_del_all_callback(struct k_room_callback *callback) {
+void k_room_del_all_callbacks(struct k_room *room) {
 
-    /* [?] 应该删除房间的所有回调吗？
-     * step、alarm 这些可以删，但是 enter 和 leave 呢？
-     * fn_init 和 fn_cleanup 也是回调，这些又该怎么论？
-     */
+    struct k_room_callback *callback;
+    struct k_list *list = &room->callback_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(list, iter)) {
+        callback = container_of(iter, struct k_room_callback, list_node);
+
+        k__callback_defer_del(callback->base);
+    }
+
+    k_list_init(&room->callback_list);
+}
+
+void k__room_free_all_callbacks(struct k_room *room) {
+
+    struct k_room_callback *callback;
+    struct k_list *list = &room->callback_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(list, iter)) {
+        callback = container_of(iter, struct k_room_callback, list_node);
+
+        k__callback_force_del(callback->base);
+    }
+
+    k_list_init(&room->callback_list);
 }

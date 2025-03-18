@@ -43,7 +43,7 @@ void k_object_destroy(struct k_object *object) {
         return;
 
     k_object_del_all_components(object);
-    k_object_del_all_callbacks(object);
+    k__object_free_all_callbacks(object);
 
     k_free(object->data);
     k__object_pool_release(object);

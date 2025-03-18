@@ -332,23 +332,20 @@ void k__callback_flush_draw(struct k_draw_callback_manager *manager) {
     for (k_list_for_each_s(callback_pending_list, iter, next)) {
         callback = container_of(iter, struct k_draw_callback, pending_list_node);
 
-        k_list_del(&callback->pending_list_node);
-        k_list_node_loop(&callback->pending_list_node);
-
         switch (callback->base.state) {
             case K_CALLBACK_PENDING: {
-
+                k_list_del(&callback->pending_list_node);
+                k_list_node_loop(&callback->pending_list_node);
                 k_list_add_tail(&callback->layer->callback_list, &callback->callback_list_node);
                 callback->base.state = K_CALLBACK_ACTIVE;
                 break;
             }
-            case K_CALLBACK_DELETED: {
-                k_list_del(&callback->callback_list_node);
-                k_free(callback);
+            case K_CALLBACK_DELETED:
+            case K_CALLBACK_DEAD: {
+                free_draw_callback(callback);
                 break;
             }
             default:
-                break;
                 assert(0);
         }
     }

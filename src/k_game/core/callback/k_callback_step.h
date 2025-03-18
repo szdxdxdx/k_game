@@ -28,4 +28,6 @@ struct k_component_callback *k__callback_add_component_step(struct k_step_callba
 
 void k__callback_defer_del_step(struct k_callback_base *callback);
 
+void k__callback_force_del_step(struct k_callback_base *callback);
+
 #endif

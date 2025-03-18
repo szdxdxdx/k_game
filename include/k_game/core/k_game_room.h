@@ -174,6 +174,8 @@ struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *
  */
 void k_room_del_callback(struct k_room_callback *callback);
 
+void k_room_del_all_callbacks(struct k_room *room);
+
 /* endregion */
 
 #endif

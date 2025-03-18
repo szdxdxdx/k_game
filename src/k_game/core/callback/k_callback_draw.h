@@ -33,4 +33,6 @@ struct k_component_callback *k__callback_add_component_draw(struct k_draw_callba
 
 void k__callback_defer_del_draw(struct k_callback_base *callback);
 
+void k__callback_force_del_draw(struct k_callback_base *callback);
+
 #endif

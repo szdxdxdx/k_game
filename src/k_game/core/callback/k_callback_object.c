@@ -26,9 +26,6 @@ void k_object_del_callback(struct k_object_callback *callback) {
         return;
 
     k__callback_defer_del(callback->base);
-
-    k_list_del(&callback->list_node);
-    k_list_node_loop(&callback->list_node);
 }
 
 void k_object_del_all_callbacks(struct k_object *object) {
@@ -40,6 +37,20 @@ void k_object_del_all_callbacks(struct k_object *object) {
         callback = container_of(iter, struct k_object_callback, list_node);
 
         k__callback_defer_del(callback->base);
+    }
+
+    k_list_init(&object->callback_list);
+}
+
+void k__object_free_all_callbacks(struct k_object *object) {
+
+    struct k_object_callback *callback;
+    struct k_list *list = &object->callback_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(list, iter)) {
+        callback = container_of(iter, struct k_object_callback, list_node);
+
+        k__callback_force_del(callback->base);
     }
 
     k_list_init(&object->callback_list);

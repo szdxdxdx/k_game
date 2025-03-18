@@ -241,11 +241,11 @@ void k__callback_flush_alarm(struct k_alarm_callback_manager *manager) {
     for (k_list_for_each_s(list, iter, next)) {
         alarm_callback = container_of(iter, struct k_alarm_callback, pending_list_node);
 
-        k_list_del(&alarm_callback->pending_list_node);
-        k_list_node_loop(&alarm_callback->pending_list_node);
 
         switch (alarm_callback->base.state) {
             case K_CALLBACK_PENDING:
+                k_list_del(&alarm_callback->pending_list_node);
+                k_list_node_loop(&alarm_callback->pending_list_node);
 
                 /* TODO 改用优先队列后，修改这个代码块 */
                 {

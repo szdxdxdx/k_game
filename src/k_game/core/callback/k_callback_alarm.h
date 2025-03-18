@@ -28,4 +28,6 @@ struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_call
 
 void k__callback_defer_del_alarm(struct k_callback_base *callback);
 
+void k__callback_force_del_alarm(struct k_callback_base *callback);
+
 #endif
