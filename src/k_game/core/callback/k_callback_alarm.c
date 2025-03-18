@@ -170,7 +170,7 @@ void k__callback_defer_del_alarm(struct k_callback_base *callback) {
 
     switch (alarm_callback->base.state) {
         case K_CALLBACK_PENDING: {
-            free_alarm_callback(alarm_callback);
+            alarm_callback->base.state = K_CALLBACK_DELETED;
             break;
         }
         case K_CALLBACK_ACTIVE: {
@@ -193,7 +193,7 @@ void k__callback_force_del_alarm(struct k_callback_base *callback) {
 
     switch (alarm_callback->base.state) {
         case K_CALLBACK_PENDING: {
-            free_alarm_callback(alarm_callback);
+            alarm_callback->base.state = K_CALLBACK_DEAD;
             break;
         }
         case K_CALLBACK_ACTIVE: {

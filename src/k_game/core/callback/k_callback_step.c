@@ -156,7 +156,7 @@ void k__callback_defer_del_step(struct k_callback_base *callback) {
 
     switch (step_callback->base.state) {
         case K_CALLBACK_PENDING:
-            free_step_callback(step_callback);
+            step_callback->base.state = K_CALLBACK_DEAD;
             break;
         case K_CALLBACK_ACTIVE:
             k_list_add_tail(&step_callback->manager->pending_list, &step_callback->pending_list_node);
@@ -173,7 +173,7 @@ void k__callback_force_del_step(struct k_callback_base *callback) {
 
     switch (step_callback->base.state) {
         case K_CALLBACK_PENDING:
-            free_step_callback(step_callback);
+            step_callback->base.state = K_CALLBACK_DEAD;
             break;
         case K_CALLBACK_ACTIVE:
             k_list_add_tail(&step_callback->manager->pending_list, &step_callback->pending_list_node);
