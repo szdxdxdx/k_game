@@ -47,7 +47,7 @@ static void player_step_set_state(struct k_object *object) {
 static void player_step_shoot(struct k_object *object) {
     struct my_player *player = k_object_get_data(object);
 
-    if (k_key_down('Q')) {
+    if (k_key_pressed('Q')) {
         my_player_bullet_create(player->x, player->y, player->face);
     }
 }
