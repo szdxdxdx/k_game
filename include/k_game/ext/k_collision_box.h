@@ -3,9 +3,13 @@
 
 struct k_collision_box;
 
-/* region [object_add_collision_box] */
+/* region [room_add_collision_box_manager] */
+
+int k_room_add_collision_box_manager(struct k_room *room);
 
 /* endregion */
+
+/* region [object_add_collision_box] */
 
 enum k_collision_box_type {
     K_COLLISION_BOX_RECTANGLE,
@@ -52,8 +56,14 @@ struct k_collision_box *k_object_add_collision_box(struct k_object *object, stru
 
 void k_object_del_collision_box(struct k_collision_box *box);
 
-void k_collision_check_circle(float x, float y, float r);
+/* endregion */
 
-void k_collision_check_rectangle(float x1, float y1, float x2, float y2);
+/* region [collision_check] */
+
+struct k_collision_box *k_collision_check_rectangle(int layer, float x1, float y1, float x2, float y2);
+
+struct k_collision_box *k_collision_check_circle(int layer, float x, float y, float r);
+
+/* endregion */
 
 #endif

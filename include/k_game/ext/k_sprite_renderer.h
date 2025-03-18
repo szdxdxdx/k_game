@@ -66,8 +66,6 @@ void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
  * 更改引用的精灵后，渲染器会重置计时器，动画帧索引定位到第 0 帧，
  * 播放倍速恢复为 1.0f，并重置渲染器对精灵图的所有变换。
  *
- * 更换精灵不会改变渲染器的绘制深度。
- *
  * 若指定新的精灵为 `NULL`，则仅移除当前引用的精灵。
  *
  * 若成功，函数返回 0，否则返回非 0。
@@ -84,13 +82,14 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 /**
  * \brief 更改渲染器的绘制深度
  *
+ * 更换渲染器引用的精灵，不会改变渲染器的绘制深度。
  * 即使渲染器没有引用精灵，也可以修改绘制深度。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_index);
 
-/** \brief 获取渲染器绘制深度 */
+/** \brief 获取渲染器的绘制深度 */
 int k_sprite_renderer_get_z_index(struct k_sprite_renderer *renderer);
 
 /**
@@ -319,6 +318,8 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
  * 即按精灵图的原样绘制，不缩放、不旋转、不翻转。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
+ *
+ * 更改渲染器引用的精灵时，也会重置所有的变换。
  */
 void k_sprite_renderer_clear_transforms(struct k_sprite_renderer *renderer);
 
