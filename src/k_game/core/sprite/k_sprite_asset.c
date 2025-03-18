@@ -125,6 +125,14 @@ int k_sprite_get_height(struct k_sprite *sprite) {
     return sprite->sprite_h;
 }
 
+float k_sprite_get_origin_x(struct k_sprite *sprite) {
+    return sprite->origin_x;
+}
+
+float k_sprite_get_origin_y(struct k_sprite *sprite) {
+    return sprite->origin_y;
+}
+
 int k_sprite_get_frames_num(struct k_sprite *sprite) {
     return sprite->frames_num;
 }

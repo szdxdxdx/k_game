@@ -25,6 +25,8 @@ static void player_step_set_state(struct k_object *object) {
             if (player_run != player->state) {
                 player->state = player_run;
                 k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_run);
+                if (player->face == -1)
+                    k_sprite_renderer_flip_x(player->spr_rdr, 1);
             }
             break;
         }
@@ -48,7 +50,10 @@ static void player_step_shoot(struct k_object *object) {
     struct my_player *player = k_object_get_data(object);
 
     if (k_key_pressed('Q')) {
-        my_player_bullet_create(player->x, player->y, player->face);
+        my_player_bullet_create(
+            player->x + (float)player->face * 40,
+            player->y - 10.f,
+            player->face);
     }
 }
 
@@ -71,33 +76,10 @@ static void player_step(struct k_object *object) {
 
     /* 放缩 */
     if (k_key_down('Z')) {
-        if ( ! k_key_down(K_KEY_LEFT_SHIFT)) {
-            if (k_key_down('X'))
-                k_sprite_renderer_adjust_w(player->spr_rdr, 1);
-            if (k_key_down('Y'))
-                k_sprite_renderer_adjust_h(player->spr_rdr, 1);
-        } else {
-            if (k_key_down('X'))
-                k_sprite_renderer_adjust_w(player->spr_rdr, -1);
-            if (k_key_down('Y'))
-                k_sprite_renderer_adjust_h(player->spr_rdr, -1);
-        }
-    }
-
-    /* 放缩 */
-    if (k_key_down('V')) {
-        static float scale_x = 1.0f, scale_y = 1.0f;
-        if ( ! k_key_down(K_KEY_LEFT_CTRL)) {
-            if (k_key_down('X'))
-                k_sprite_renderer_scale_x(player->spr_rdr, scale_x += 0.1f);
-            if (k_key_down('Y'))
-                k_sprite_renderer_scale_y(player->spr_rdr, scale_y += 0.1f);
-        } else {
-            if (k_key_down('X'))
-                k_sprite_renderer_scale_x(player->spr_rdr, scale_x -= 0.1f);
-            if (k_key_down('Y'))
-                k_sprite_renderer_scale_y(player->spr_rdr, scale_y -= 0.0f);
-    }
+        if (k_key_down('X'))
+            k_sprite_renderer_adjust_w(player->spr_rdr, 6);
+        if (k_key_down('Y'))
+            k_sprite_renderer_adjust_h(player->spr_rdr, 6);
     }
 
     /* 加速减速 */
@@ -106,8 +88,16 @@ static void player_step(struct k_object *object) {
     if (k_key_down('-'))
         k_sprite_renderer_add_speed(player->spr_rdr, -0.5f * delta);
 
+    /* 清除所有效果 */
     if (k_key_pressed('C'))
         k_sprite_renderer_clear_transforms(player->spr_rdr);
+
+    if (k_key_pressed('B')) {
+        if (k_key_held(K_KEY_LEFT_SHIFT))
+            k_sprite_renderer_set_debug(player->spr_rdr, 0);
+        else
+            k_sprite_renderer_set_debug(player->spr_rdr, 1);
+    }
 }
 
 struct k_object *my_player_create(float x, float y) {

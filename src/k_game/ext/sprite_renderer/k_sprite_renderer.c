@@ -1,3 +1,7 @@
+#include <limits.h>
+#include <math.h>
+#include "../../core/k_SDL/k_SDL.h"
+
 #include "k_game.h"
 
 #include "../k_components_def.h"
@@ -14,8 +18,11 @@ enum renderer_transform {
 struct k_sprite_renderer {
     struct k_component *component;
 
-    struct k_component_callback *draw_callback;
+    struct k_component_callback *callback_draw_sprite;
     int z_index;
+
+    struct k_component_callback *callback_draw_debug_rect;
+    int debug;
 
     struct k_sprite *sprite;
     float timer;
@@ -315,12 +322,142 @@ static void draw_image(struct k_component *component) {
 
 /* endregion */
 
+/* region [renderer_debug] */
+
+static void draw_debug_rect(struct k_component *component) {
+    struct k_sprite_renderer *renderer = k_component_get_data(component);
+
+    float scale_x = (float)renderer->scaled_w / (float)k_sprite_get_width(renderer->sprite);
+    float scale_y = (float)renderer->scaled_h / (float)k_sprite_get_height(renderer->sprite);
+
+    float w      = (float)renderer->scaled_w;
+    float h      = (float)renderer->scaled_h;
+    float ox     = scale_x * k_sprite_get_origin_x(renderer->sprite);
+    float oy     = scale_y * k_sprite_get_origin_y(renderer->sprite);
+    float angle  = renderer->angle;
+    int   flip_x = renderer->transform_flags & transform_flip_x;
+    int   flip_y = renderer->transform_flags & transform_flip_y;
+    float dst_x  = *(renderer->x);
+    float dst_y  = *(renderer->y);
+
+    /* ------------------------------------------------------------------------ */
+
+    float x1, y1, x2, y2;
+    float x3, y3, x4, y4;
+    if (flip_x) {
+        x1 = w - ox;
+        x2 = -ox;
+        x3 = -ox;
+        x4 = w - ox;
+    } else {
+        x1 = -ox;
+        x2 = w - ox;
+        x3 = w - ox;
+        x4 = -ox;
+    }
+    if (flip_y) {
+        y1 = h - oy;
+        y2 = h - oy;
+        y3 = -oy;
+        y4 = -oy;
+    } else {
+        y1 = -oy;
+        y2 = -oy;
+        y3 = h - oy;
+        y4 = h - oy;
+    }
+
+    angle = angle * (3.14159265358979323846f / 180.0f);
+    float s = sinf(angle);
+    float c = cosf(angle);
+    {
+        float x_new = x1 * c - y1 * s;
+        float y_new = x1 * s + y1 * c;
+        x1 = x_new;
+        y1 = y_new;
+
+        x_new = x2 * c - y2 * s;
+        y_new = x2 * s + y2 * c;
+        x2 = x_new;
+        y2 = y_new;
+
+        x_new = x3 * c - y3 * s;
+        y_new = x3 * s + y3 * c;
+        x3 = x_new;
+        y3 = y_new;
+
+        x_new = x4 * c - y4 * s;
+        y_new = x4 * s + y4 * c;
+        x4 = x_new;
+        y4 = y_new;
+    }
+
+    x1 += dst_x; y1 += dst_y;
+    x2 += dst_x; y2 += dst_y;
+    x3 += dst_x; y3 += dst_y;
+    x4 += dst_x; y4 += dst_y;
+
+    SDL_SetRenderDrawColor(k__window.renderer, 168, 213, 182, 255);
+    SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2);
+    SDL_RenderDrawLineF(k__window.renderer, x2, y2, x3, y3);
+    SDL_RenderDrawLineF(k__window.renderer, x3, y3, x4, y4);
+    SDL_RenderDrawLineF(k__window.renderer, x4, y4, x1, y1);
+
+    /* ------------------------------------------------------------------------ */
+
+    float len = 8;
+    float len_c = len * c;
+    float len_s = len * s;
+    x1 = dst_x - len_c;
+    y1 = dst_y - len_s;
+    x2 = dst_x + len_c;
+    y2 = dst_y + len_s;
+    x3 = dst_x + len_s;
+    y3 = dst_y - len_c;
+    x4 = dst_x - len_s;
+    y4 = dst_y + len_c;
+    SDL_SetRenderDrawColor(k__window.renderer, 168, 213, 182, 255);
+    SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2);
+    SDL_RenderDrawLineF(k__window.renderer, x3, y3, x4, y4);
+}
+
+int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
+
+    if (NULL == renderer->sprite) {
+        renderer->debug = debug;
+        return 0;
+    }
+
+#define K_GAME_DEBUG_LAYER 100000
+
+    if (NULL == renderer->callback_draw_debug_rect) {
+        if (0 != debug) {
+            struct k_component_callback *callback;
+            callback = k_component_add_draw_callback(renderer->component, draw_debug_rect, K_SPRITE_RENDERER_DEBUG_DRAW_LAYER);
+            if (NULL == callback)
+                return -1;
+
+            renderer->callback_draw_debug_rect = callback;
+        }
+    } else {
+        if (0 == debug) {
+            k_component_del_callback(renderer->callback_draw_debug_rect);
+            renderer->callback_draw_debug_rect = NULL;
+        }
+    }
+
+    renderer->debug = debug;
+    return 0;
+}
+
+/* endregion */
+
 /* region [renderer_sprite] */
 
 static void renderer_reset(struct k_sprite_renderer *renderer) {
 
-    renderer->timer     = 0.0f;
-    renderer->speed     = 1.0f;
+    renderer->timer = 0.0f;
+    renderer->speed = 1.0f;
     renderer->frame_idx = 0;
 
     if (NULL != renderer->sprite) {
@@ -330,9 +467,7 @@ static void renderer_reset(struct k_sprite_renderer *renderer) {
         renderer->scaled_w = 0;
         renderer->scaled_h = 0;
     }
-
     renderer->angle = 0.0f;
-
     renderer->transform_flags = transform_none;
 }
 
@@ -352,15 +487,15 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         if (NULL == draw_callback)
             return -1;
 
-        renderer->draw_callback = draw_callback;
+        renderer->callback_draw_sprite = draw_callback;
 
         renderer->sprite = sprite;
         renderer_reset(renderer);
     }
     else {
         if (NULL == sprite) {
-            k_component_del_callback(renderer->draw_callback);
-            renderer->draw_callback = NULL;
+            k_component_del_callback(renderer->callback_draw_sprite);
+            renderer->callback_draw_sprite = NULL;
 
             renderer->sprite = NULL;
             renderer_reset(renderer);
@@ -377,13 +512,14 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         if (NULL == draw_callback)
             return -1;
 
-        k_component_del_callback(renderer->draw_callback);
-        renderer->draw_callback = draw_callback;
+        k_component_del_callback(renderer->callback_draw_sprite);
+        renderer->callback_draw_sprite = draw_callback;
 
         renderer->sprite = sprite;
         renderer_reset(renderer);
     }
 
+    k_sprite_renderer_set_debug(renderer, renderer->debug);
     return 0;
 }
 
@@ -412,8 +548,8 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
     if (NULL == draw_callback)
         return -1;
 
-    k_component_del_callback(renderer->draw_callback);
-    renderer->draw_callback = draw_callback;
+    k_component_del_callback(renderer->callback_draw_sprite);
+    renderer->callback_draw_sprite = draw_callback;
 
     renderer->z_index = z_index;
     return 0;
@@ -431,9 +567,13 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
     struct k_sprite_renderer_config *config = params;
 
-    renderer->component     = component;
-    renderer->draw_callback = NULL;
-    renderer->z_index       = config->z_index;
+    renderer->component = component;
+
+    renderer->callback_draw_sprite = NULL;
+    renderer->z_index = config->z_index;
+
+    renderer->callback_draw_debug_rect = NULL;
+    renderer->debug = 0;
 
     renderer->x = config->x;
     renderer->y = config->y;

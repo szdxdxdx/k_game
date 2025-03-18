@@ -324,4 +324,26 @@ void k_sprite_renderer_clear_transforms(struct k_sprite_renderer *renderer);
 
 /* endregion */
 
+/* region [sprite_renderer debug] */
+
+/**
+ * \brief 开启或关闭渲染器调试模式
+ *
+ * 若 `debug` 为非 0，则开启调试模式，否则关闭调试模式。
+ *
+ * 调试模式下，渲染器将用浅绿色绘制精灵图的矩形边框，绘制在精灵原点处绘制十字。
+ * 绘制图层深度为 `K_SPRITE_RENDERER_DEBUG_DRAW_LAYER`。
+ *
+ * 切换渲染器引用的精灵不会关闭调试模式。
+ * 即使渲染器没有引用精灵，也可以修改开启或关闭调试模式。
+ *
+ * 若成功，函数返回 0，否则返回非 0。
+ */
+int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug);
+
+/** \brief 精灵渲染器调试模式绘制图层深度 */
+#define K_SPRITE_RENDERER_DEBUG_DRAW_LAYER 100000
+
+/* endregion */
+
 #endif
