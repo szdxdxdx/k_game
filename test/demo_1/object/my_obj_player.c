@@ -34,7 +34,7 @@ static void player_step_set_state(struct k_object *object) {
                 k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_idle);
 
                 if (player->face == -1)
-                    k_sprite_renderer_flip_x(player->spr_rdr, 0);
+                    k_sprite_renderer_flip_x(player->spr_rdr, 1);
             }
             break;
         }

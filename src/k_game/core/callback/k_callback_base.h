@@ -35,6 +35,7 @@ enum k_callback_state {
     K_CALLBACK_ACTIVE,
     K_CALLBACK_EXECUTED,
     K_CALLBACK_DELETED,
+    K_CALLBACK_DEAD,
 };
 
 struct k_callback_base {
@@ -43,6 +44,8 @@ struct k_callback_base {
     uint8_t state;
 };
 
-void k__callback_del(struct k_callback_base *callback);
+void k__callback_defer_del(struct k_callback_base *callback);
+
+void k__callback_force_del(struct k_callback_base *callback);
 
 #endif

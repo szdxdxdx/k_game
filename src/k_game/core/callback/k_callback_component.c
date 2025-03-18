@@ -25,7 +25,7 @@ void k_component_del_callback(struct k_component_callback *callback) {
     if (NULL == callback)
         return;
 
-    k__callback_del(callback->base);
+    k__callback_defer_del(callback->base);
 
     k_list_del(&callback->list_node);
     k_list_node_loop(&callback->list_node);
@@ -39,7 +39,7 @@ void k_component_del_all_callbacks(struct k_component *component) {
     for (k_list_for_each(list, iter)) {
         callback = container_of(iter, struct k_component_callback, list_node);
 
-        k__callback_del(callback->base);
+        k__callback_defer_del(callback->base);
     }
 
     k_list_init(&component->callback_list);
