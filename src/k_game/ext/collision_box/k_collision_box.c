@@ -62,15 +62,15 @@ struct k_collision_box {
 
 /* region [collision_manager] */
 
-struct k_collision_layer {
+struct k_collision_group {
     struct k_int_map_node map_node;
 
-    struct k_list collision_box_list;
+    struct k_list box_list;
 };
 
 struct k_collision_manager {
 
-    struct k_int_map layer_map;
+    struct k_int_map group_map;
 };
 
 /* endregion */
@@ -79,25 +79,47 @@ struct k_collision_manager {
 
 /* region [collision_check] */
 
-struct k_collision_box *k_collision_check_rectangle(int layer, float x1, float y1, float x2, float y2) {
+struct k_collision_box *k_collision_check_rectangle(int group, float x1, float y1, float x2, float y2) {
 
     return NULL;
 }
 
-struct k_collision_box *k_collision_check_circle(int layer, float x, float y, float r) {
+struct k_collision_box *k_collision_check_circle(int group, float x, float y, float r) {
 
     return NULL;
 }
 
 /* endregion */
 
-/* region [collision_layer] */
+/* region [collision_manager] */
+
+int collision_manager_add(struct k_collision_manager *manager, struct k_collision_box *box, int group_index) {
+
+    struct k_collision_group *group;
+
+    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_index);
+    if (NULL != map_node) {
+        group = container_of(map_node, struct k_collision_group, map_node);
+    }
+    else {
+        group = k_malloc(sizeof(struct k_collision_group));
+        if (NULL == group)
+            return -1;
+
+        k_int_map_add_directly(&manager->group_map, group_index, &group->map_node);
+
+        k_list_init(&group->box_list);
+    }
+
+    k_list_add_tail(&group->box_list, &box->list_node);
+    return 0;
+}
 
 /* endregion */
 
-/* region [collision_box_init] */
+/* region [debug] */
 
-static void collision_box_draw(struct k_component *component) {
+static void collision_debug_draw(struct k_component *component) {
 
     struct k_collision_box *box = k_component_get_data(component);
 
@@ -156,18 +178,23 @@ static void collision_box_draw(struct k_component *component) {
     }
 }
 
+/* endregion */
+
+/* region [collision_box_init] */
+
 static int collision_box_init(struct k_component *component, void *params) {
 
-    struct k_component_manager *manager = k_component_get_manager(component);
+    struct k_collision_manager *manager = k_component_get_manager_data(component);
     if (NULL == manager)
         return -1;
 
+    struct k_collision_box *box = k_component_get_data(component);
     union k_collision_box_config *box_config = params;
 
     switch (box_config->box_type) {
         case K_COLLISION_BOX_RECTANGLE: {
             struct k_collision_rectangle_config *config = &box_config->rectangle;
-            struct k_collision_rectangle *rect = k_component_get_data(component);
+            struct k_collision_rectangle *rect = &box->rectangle;
 
             rect->box_type  = config->box_type;
             rect->x         = config->x;
@@ -181,7 +208,7 @@ static int collision_box_init(struct k_component *component, void *params) {
 
         case K_COLLISION_BOX_CIRCLE: {
             struct k_collision_circle_config *config = &box_config->circle;
-            struct k_collision_circle *circle = k_component_get_data(component);
+            struct k_collision_circle *circle = &box->circle;
 
             circle->box_type = config->box_type;
             circle->x        = config->x;
@@ -195,7 +222,11 @@ static int collision_box_init(struct k_component *component, void *params) {
         default: return -1;
     }
 
-    k_component_add_draw_callback(component, collision_box_draw, INT_MAX - 2);
+    int tmp_group = 3; /* <- tmp */
+    if (0 != collision_manager_add(manager, box, tmp_group))
+        return -1;
+
+    k_component_add_draw_callback(component, collision_debug_draw, INT_MAX - 2);
     return 0;
 }
 
@@ -211,7 +242,7 @@ static int collision_manager_init(struct k_component_manager *component_manager,
     if (buckets == NULL)
         return -1;
 
-    k_int_map_init(&manager->layer_map, buckets, buckets_num);
+    k_int_map_init(&manager->group_map, buckets, buckets_num);
     return 0;
 }
 

@@ -82,6 +82,13 @@ struct k_component_manager *k_component_get_manager(struct k_component *componen
     return component->manager;
 }
 
+void *k_component_get_manager_data(struct k_component *component) {
+    if (NULL == component->manager)
+        return NULL;
+    else
+        return component->manager->data;
+}
+
 /* endregion */
 
 /* region [object_add_component] */

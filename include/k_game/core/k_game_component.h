@@ -99,8 +99,6 @@ void k_object_del_all_components(struct k_object *object);
 
 void *k_component_get_data(struct k_component *component);
 
-struct k_component_manager *k_component_get_manager(struct k_component *component);
-
 /* endregion */
 
 /* region [component_add_callback] */
@@ -136,6 +134,10 @@ struct k_component_manager *k_room_get_component_manager(struct k_room *room, st
 /* region [component_manager_get] */
 
 void *k_component_manager_get_data(struct k_component_manager *manager);
+
+struct k_component_manager *k_component_get_manager(struct k_component *component);
+
+void *k_component_get_manager_data(struct k_component *component);
 
 struct k_room *k_component_manager_get_room(struct k_component_manager *manager);
 
