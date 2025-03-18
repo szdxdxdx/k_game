@@ -26,8 +26,8 @@ struct k_object_callback *k__callback_add_object_alarm(struct k_alarm_callback_m
 
 struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms);
 
-void k__callback_defer_del_alarm(struct k_callback_base *callback);
+void k__callback_flag_deleted_alarm(struct k_callback_base *callback);
 
-void k__callback_force_del_alarm(struct k_callback_base *callback);
+void k__callback_flag_dead_alarm(struct k_callback_base *callback);
 
 #endif

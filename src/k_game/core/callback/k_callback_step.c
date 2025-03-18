@@ -150,7 +150,7 @@ static void free_step_callback(struct k_step_callback *step_callback) {
     k_free(step_callback);
 }
 
-void k__callback_defer_del_step(struct k_callback_base *callback) {
+void k__callback_flag_deleted_step(struct k_callback_base *callback) {
 
     struct k_step_callback *step_callback = container_of(callback, struct k_step_callback, base);
 
@@ -167,7 +167,7 @@ void k__callback_defer_del_step(struct k_callback_base *callback) {
     }
 }
 
-void k__callback_force_del_step(struct k_callback_base *callback) {
+void k__callback_flag_dead_step(struct k_callback_base *callback) {
 
     struct k_step_callback *step_callback = container_of(callback, struct k_step_callback, base);
 
@@ -240,8 +240,8 @@ void k__callback_exec_step(struct k_step_callback_manager *manager) {
 
     struct k_step_callback *step_callback;
     struct k_list *callback_list = &manager->callback_list;
-    struct k_list_node *iter, *next;
-    for (k_list_for_each_s(callback_list, iter, next)) {
+    struct k_list_node *iter;
+    for (k_list_for_each(callback_list, iter)) {
         step_callback = container_of(iter, struct k_step_callback, callback_list_node);
 
         if (K_CALLBACK_DEAD == step_callback->base.state)

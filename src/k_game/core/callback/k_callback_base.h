@@ -44,8 +44,8 @@ struct k_callback_base {
     uint8_t state;
 };
 
-void k__callback_defer_del(struct k_callback_base *callback);
+void k__callback_flag_deleted(struct k_callback_base *callback);
 
-void k__callback_force_del(struct k_callback_base *callback);
+void k__callback_flag_dead(struct k_callback_base *callback);
 
 #endif

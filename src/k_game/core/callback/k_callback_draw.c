@@ -239,7 +239,7 @@ static void free_draw_callback(struct k_draw_callback *draw_callback) {
     k_free(draw_callback);
 }
 
-void k__callback_defer_del_draw(struct k_callback_base *callback) {
+void k__callback_flag_deleted_draw(struct k_callback_base *callback) {
 
     struct k_draw_callback *draw_callback = container_of(callback, struct k_draw_callback, base);
 
@@ -256,7 +256,7 @@ void k__callback_defer_del_draw(struct k_callback_base *callback) {
     }
 }
 
-void k__callback_force_del_draw(struct k_callback_base *callback) {
+void k__callback_flag_dead_draw(struct k_callback_base *callback) {
 
     struct k_draw_callback *draw_callback = container_of(callback, struct k_draw_callback, base);
 
@@ -278,7 +278,7 @@ void k__callback_force_del_draw(struct k_callback_base *callback) {
 
 /* endregion */
 
-/* region [manager] */
+/* region [callback_manager] */
 
 int k__callback_init_draw_manager(struct k_draw_callback_manager *manager) {
 
@@ -361,8 +361,8 @@ void k__callback_exec_draw(struct k_draw_callback_manager *manager) {
 
         struct k_draw_callback *draw_callback;
         struct k_list *callback_list = &layer->callback_list;
-        struct k_list_node *iter_, *next_;
-        for (k_list_for_each_s(callback_list, iter_, next_)) {
+        struct k_list_node *iter_;
+        for (k_list_for_each(callback_list, iter_)) {
             draw_callback = container_of(iter_, struct k_draw_callback, callback_list_node);
 
             if (K_CALLBACK_DEAD == draw_callback->base.state)
