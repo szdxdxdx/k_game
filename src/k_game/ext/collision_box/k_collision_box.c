@@ -208,8 +208,7 @@ static int collision_box_init(struct k_component *component, void *params) {
         default: return -1;
     }
 
-    int tmp_group = 3; /* <- tmp */
-    if (0 != collision_manager_add(manager, box, tmp_group))
+    if (0 != collision_manager_add(manager, box, 0)) // TODO 临时的 group_idx 为 0
         return -1;
 
     k_component_add_draw_callback(component, collision_debug_draw, INT_MAX - 2);

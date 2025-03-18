@@ -7,7 +7,15 @@ static void bullet_step(struct k_object *object) {
     struct k_room *room = k_get_current_room();
 
     float delta = k_get_step_delta();
-    bullet->x += bullet->speed * delta;
+    float x_add = bullet->speed * delta;
+
+    struct k_collision_box *box = k_collision_check_rectangle(0, bullet->x, bullet->y - 2.0f, bullet->x + x_add, bullet->y + 2.0f);
+    if (NULL != box) {
+        k_object_destroy(object);
+        return;
+    }
+
+    bullet->x += x_add;
 
     if (bullet->x < 20.0f || bullet->x > (float)k_room_get_width(room) - 20.f) {
         k_object_destroy(object);
