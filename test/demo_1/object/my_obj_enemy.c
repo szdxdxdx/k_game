@@ -29,5 +29,16 @@ struct k_object *my_enemy_create(float x, float y) {
     renderer_config.y       = &enemy->y;
     enemy->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
 
+
+
+    struct k_collision_rectangle_config collision_rect;
+    collision_rect.x = &enemy->x;
+    collision_rect.y = &enemy->y;
+    collision_rect.offset_x1 = -10.0f;
+    collision_rect.offset_y1 =  -5.0f;
+    collision_rect.offset_x2 =  10.0f;
+    collision_rect.offset_y2 =   5.0f;
+    k_object_add_collision_rectangle(object, &collision_rect);
+
     return object;
 }

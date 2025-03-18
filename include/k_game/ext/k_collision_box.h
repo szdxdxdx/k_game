@@ -5,20 +5,15 @@ struct k_collision_box;
 
 /* region [room_add_collision_box_manager] */
 
-int k_room_add_collision_box_manager(struct k_room *room);
+int k_room_add_collision_manager(struct k_room *room);
 
 /* endregion */
 
 /* region [object_add_collision_box] */
 
-enum k_collision_box_type {
-    K_COLLISION_BOX_RECTANGLE,
-    K_COLLISION_BOX_CIRCLE,
-};
+struct k_collision_rectangle_config {
 
-struct k_collision_box_rectangle_config {
-
-    enum k_collision_box_type box_type;
+    uint8_t box_type;
 
     float *x;
     float *y;
@@ -29,9 +24,11 @@ struct k_collision_box_rectangle_config {
     float offset_y2;
 };
 
-struct k_collision_box_circle_config {
+struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, struct k_collision_rectangle_config *config);
 
-    enum k_collision_box_type box_type;
+struct k_collision_circle_config {
+
+    uint8_t box_type;
 
     float *x;
     float *y;
@@ -41,18 +38,7 @@ struct k_collision_box_circle_config {
     float r;
 };
 
-struct k_collision_box_config {
-
-    enum k_collision_box_type box_type;
-
-    union {
-        struct k_collision_box_rectangle_config rectangle;
-
-        struct k_collision_box_circle_config circle;
-    };
-};
-
-struct k_collision_box *k_object_add_collision_box(struct k_object *object, struct k_collision_box_config *config);
+struct k_collision_box *k_object_add_collision_circle(struct k_object *object, struct k_collision_circle_config *config);
 
 void k_object_del_collision_box(struct k_collision_box *box);
 

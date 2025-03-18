@@ -9,9 +9,22 @@
 
 #include "../k_components_def.h"
 
+/* region [struct def] */
+
 /* region [collision_box] */
 
-struct k_collision_box_rectangle {
+enum {
+    K_COLLISION_BOX_RECTANGLE,
+    K_COLLISION_BOX_CIRCLE,
+};
+
+union k_collision_box_config {
+    uint8_t box_type;
+    struct k_collision_rectangle_config rectangle;
+    struct k_collision_circle_config    circle;
+};
+
+struct k_collision_rectangle {
     uint8_t box_type;
 
     float *x;
@@ -22,7 +35,7 @@ struct k_collision_box_rectangle {
     float offset_y2;
 };
 
-struct k_collision_box_circle {
+struct k_collision_circle {
     uint8_t box_type;
 
     float *x;
@@ -33,25 +46,34 @@ struct k_collision_box_circle {
 };
 
 struct k_collision_box {
-    uint8_t box_type;
+
+    struct k_list_node list_node;
+
+    struct k_component *component;
+
     union {
-        struct k_collision_box_rectangle rectangle;
-        struct k_collision_box_circle    circle;
+        uint8_t box_type;
+        struct k_collision_rectangle rectangle;
+        struct k_collision_circle    circle;
     };
 };
 
 /* endregion */
 
-/* region [collision_box_manager] */
+/* region [collision_manager] */
 
 struct k_collision_layer {
     struct k_int_map_node map_node;
+
+    struct k_list collision_box_list;
 };
 
-struct k_collision_box_manager {
+struct k_collision_manager {
 
     struct k_int_map layer_map;
 };
+
+/* endregion */
 
 /* endregion */
 
@@ -69,6 +91,10 @@ struct k_collision_box *k_collision_check_circle(int layer, float x, float y, fl
 
 /* endregion */
 
+/* region [collision_layer] */
+
+/* endregion */
+
 /* region [collision_box_init] */
 
 static void collision_box_draw(struct k_component *component) {
@@ -76,7 +102,7 @@ static void collision_box_draw(struct k_component *component) {
     struct k_collision_box *box = k_component_get_data(component);
 
     if (K_COLLISION_BOX_RECTANGLE == box->box_type) {
-        struct k_collision_box_rectangle *rect = &box->rectangle;
+        struct k_collision_rectangle *rect = &box->rectangle;
 
         float x1 = *rect->x + rect->offset_x1;
         float y1 = *rect->y + rect->offset_y1;
@@ -94,7 +120,7 @@ static void collision_box_draw(struct k_component *component) {
     }
 
     else if (K_COLLISION_BOX_CIRCLE == box->box_type) {
-        struct k_collision_box_circle *circle = &box->circle;
+        struct k_collision_circle *circle = &box->circle;
 
         float center_x = *circle->x + circle->offset_x;
         float center_y = *circle->y + circle->offset_y;
@@ -136,12 +162,12 @@ static int collision_box_init(struct k_component *component, void *params) {
     if (NULL == manager)
         return -1;
 
-    struct k_collision_box_config *box_config = params;
+    union k_collision_box_config *box_config = params;
 
     switch (box_config->box_type) {
         case K_COLLISION_BOX_RECTANGLE: {
-            struct k_collision_box_rectangle_config *config = &box_config->rectangle;
-            struct k_collision_box_rectangle *rect = k_component_get_data(component);
+            struct k_collision_rectangle_config *config = &box_config->rectangle;
+            struct k_collision_rectangle *rect = k_component_get_data(component);
 
             rect->box_type  = config->box_type;
             rect->x         = config->x;
@@ -154,8 +180,8 @@ static int collision_box_init(struct k_component *component, void *params) {
         }
 
         case K_COLLISION_BOX_CIRCLE: {
-            struct k_collision_box_circle_config *config = &box_config->circle;
-            struct k_collision_box_circle *circle = k_component_get_data(component);
+            struct k_collision_circle_config *config = &box_config->circle;
+            struct k_collision_circle *circle = k_component_get_data(component);
 
             circle->box_type = config->box_type;
             circle->x        = config->x;
@@ -177,8 +203,8 @@ static int collision_box_init(struct k_component *component, void *params) {
 
 /* region [collision_manager_init] */
 
-static int collision_box_manager_init(struct k_component_manager *component_manager, void *params) {
-    struct k_collision_box_manager *manager = k_component_manager_get_data(component_manager);
+static int collision_manager_init(struct k_component_manager *component_manager, void *params) {
+    struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
 
     size_t buckets_num = 32;
     struct k_hash_list *buckets = k_malloc(sizeof(struct k_hash_list) * buckets_num);
@@ -198,8 +224,8 @@ static struct k_component_type *c_box;
 int k__component_def_collision_box(void) {
 
     struct k_component_manager_config manager_config = K_COMPONENT_MANAGER_CONFIG_INIT;
-    manager_config.data_size = sizeof(struct k_collision_box_manager);
-    manager_config.fn_init   = collision_box_manager_init;
+    manager_config.data_size = sizeof(struct k_collision_manager);
+    manager_config.fn_init   = collision_manager_init;
 
     struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
     entity_config.data_size = sizeof(struct k_collision_box);
@@ -216,20 +242,31 @@ int k__component_def_collision_box(void) {
 
 /* region [object_add_collision_box] */
 
-struct k_collision_box *k_object_add_collision_box(struct k_object *object, struct k_collision_box_config *config) {
+struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, struct k_collision_rectangle_config *config) {
 
-    return NULL;
+    if (NULL == object || NULL == config)
+        return NULL;
+
+    config->box_type = K_COLLISION_BOX_RECTANGLE;
+
+    struct k_component *component = k_object_add_component(object, c_box, config);
+    if (NULL == component)
+        return NULL;
+
+    return k_component_get_data(component);
 }
 
 void k_object_del_collision_box(struct k_collision_box *box) {
 
+    if (NULL != box)
+        k_object_del_component(box->component);
 }
 
 /* endregion */
 
-/* region [room_add_collision_box_manager] */
+/* region [room_add_collision_manager] */
 
-int k_room_add_collision_box_manager(struct k_room *room) {
+int k_room_add_collision_manager(struct k_room *room) {
     return k_room_add_component_manager(room, c_box, NULL);;
 }
 
