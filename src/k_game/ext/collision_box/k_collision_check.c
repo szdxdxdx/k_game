@@ -1,7 +1,6 @@
 #include "./_internal.h"
 
-
-struct k_collision_box *k_collision_check_rectangle(int group_idx, float x1, float y1, float x2, float y2) {
+struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2) {
 
     struct k_room *room = k_get_current_room();
     struct k_component_manager *component_manager = k_room_get_component_manager(room, k__component_type_collision_box);
@@ -9,7 +8,7 @@ struct k_collision_box *k_collision_check_rectangle(int group_idx, float x1, flo
         return NULL;
 
     struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
-    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_idx);
+    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_id);
     if (NULL == map_node)
         return NULL;
 
@@ -46,7 +45,7 @@ struct k_collision_box *k_collision_check_rectangle(int group_idx, float x1, flo
     return NULL;
 }
 
-struct k_collision_box *k_collision_check_circle(int group_idx, float x, float y, float r) {
+struct k_collision_box *k_collision_check_circle(int group_id, float x, float y, float r) {
 
     return NULL;
 }

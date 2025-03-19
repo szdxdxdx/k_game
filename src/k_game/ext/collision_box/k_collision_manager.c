@@ -18,11 +18,11 @@ void k__collision_manager_fini(struct k_component_manager *component_manager) {
 
 }
 
-int k__collision_manager_add(struct k_collision_manager *manager, struct k_collision_box *box, int group_idx) {
+int k__collision_manager_add(struct k_collision_manager *manager, struct k_collision_box *box, int group_id) {
 
     struct k_collision_group *group;
 
-    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_idx);
+    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_id);
     if (NULL != map_node) {
         group = container_of(map_node, struct k_collision_group, map_node);
     }
@@ -31,7 +31,7 @@ int k__collision_manager_add(struct k_collision_manager *manager, struct k_colli
         if (NULL == group)
             return -1;
 
-        k_int_map_add_directly(&manager->group_map, group_idx, &group->map_node);
+        k_int_map_add_directly(&manager->group_map, group_id, &group->map_node);
 
         k_list_init(&group->box_list);
     }

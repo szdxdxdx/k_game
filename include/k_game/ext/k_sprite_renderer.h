@@ -2,6 +2,7 @@
 #define K_GAME_SPRITE_RENDERER_H
 
 struct k_sprite;
+struct k_object;
 
 /**
  * \brief 精灵渲染器

@@ -44,7 +44,7 @@ int k__collision_box_init(struct k_component *component, void *params) {
         default: return -1;
     }
 
-    if (0 != k__collision_manager_add(manager, box, 0)) // TODO 临时的 group_idx 为 0
+    if (0 != k__collision_manager_add(manager, box, 0)) // TODO 临时的 group_id 为 0
         return -1;
 
     k_component_add_draw_callback(component, k__collision_debug_draw, INT_MAX - 2);  // <- tmp

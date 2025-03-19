@@ -1,8 +1,6 @@
 #ifndef K_GAME_WASD_H
 #define K_GAME_WASD_H
 
-#include "k_game.h"
-
 struct k_WASD_config {
 
     float *x;
