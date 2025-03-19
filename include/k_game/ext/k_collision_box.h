@@ -1,5 +1,5 @@
-#ifndef K_GAME_COMPONENT_COLLISION_BOX_H
-#define K_GAME_COMPONENT_COLLISION_BOX_H
+#ifndef K_GAME_COLLISION_BOX_H
+#define K_GAME_COLLISION_BOX_H
 
 struct k_collision_box;
 
