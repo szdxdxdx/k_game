@@ -536,8 +536,6 @@ int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
         return 0;
     }
 
-#define K_GAME_DEBUG_LAYER 100000
-
     if (NULL == renderer->callback_draw_debug_rect) {
         if (0 != debug) {
             struct k_component_callback *callback;
@@ -593,7 +591,7 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
 
 /* region [component_define] */
 
-static struct k_component_type *spr_rdr = NULL;
+static struct k_component_type *k__component_type_sprite_renderer = NULL;
 
 int k__component_def_sprite_renderer(void) {
 
@@ -601,8 +599,8 @@ int k__component_def_sprite_renderer(void) {
     config.data_size = sizeof(struct k_sprite_renderer);
     config.fn_init = sprite_renderer_init;
 
-    spr_rdr = k_component_define(NULL, &config);
-    if (NULL == spr_rdr)
+    k__component_type_sprite_renderer = k_component_define(NULL, &config);
+    if (NULL == k__component_type_sprite_renderer)
         return -1;
 
     return 0;
@@ -617,7 +615,7 @@ struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, 
     if (NULL == object || NULL == config)
         return NULL;
 
-    struct k_component *component = k_object_add_component(object, spr_rdr, (void*)config);
+    struct k_component *component = k_object_add_component(object, k__component_type_sprite_renderer, (void*)config);
     if (NULL == component)
         return NULL;
 

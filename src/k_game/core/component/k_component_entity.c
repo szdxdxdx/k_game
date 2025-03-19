@@ -5,7 +5,7 @@
 
 /* region [component_create] */
 
-struct k_component *k__component_create(struct k_component_type *component_type, struct k_object *object, void *params) {
+static struct k_component *k__component_create(struct k_component_type *component_type, struct k_object *object, void *params) {
     struct k_component_entity_type *entity_type = &component_type->entity_type;
     struct k_component_manager_type *manager_type = component_type->manager_type;
 
@@ -51,7 +51,7 @@ malloc_component_failed:
     return NULL;
 }
 
-void k__component_destroy(struct k_component *component) {
+static void k__component_destroy(struct k_component *component) {
     struct k_component_entity_type *entity_type = &component->type->entity_type;
 
     if (entity_type->fn_fini != NULL) {

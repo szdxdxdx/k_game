@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "./k_SDL.h"
 
 struct k_mouse_state {

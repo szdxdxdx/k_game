@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-struct k_component_type *k__component_type_collision_box;
+struct k_component_type *k__component_type_collision_box = NULL;
 
 int k__component_def_collision_box(void) {
 

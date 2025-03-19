@@ -224,6 +224,9 @@ static void k__component_manager_destroy(struct k_component_manager *manager) {
 /* region [room_add_component_manager] */
 
 int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params) {
+    if (NULL == room || NULL == component_type)
+        return -1;
+
     return k__component_manager_create(room, component_type, params);
 }
 
@@ -232,6 +235,10 @@ struct k_component_manager *k_room_get_component_manager(struct k_room *room, st
 }
 
 void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
+    /* 【暂未公布的 API】 */
+
+    if (NULL == room || NULL == component_type)
+        return;
 
     struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
     if (NULL == manager)
