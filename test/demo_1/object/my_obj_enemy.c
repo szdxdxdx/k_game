@@ -5,7 +5,7 @@
 struct k_object *my_enemy_create(float x, float y) {
     struct k_room *room = k_get_current_room();
 
-    struct k_object *object = k_object_create(sizeof(struct my_enemy), room);
+    struct k_object *object = k_object_create(sizeof(struct my_enemy));
 
     struct my_enemy *enemy = k_object_get_data(object);
     enemy->x = x;

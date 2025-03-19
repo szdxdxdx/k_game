@@ -1,13 +1,14 @@
+#include "../game/k_game_context.h"
 #include "./k_room.h"
 
-int k_room_get_width(struct k_room *room) {
-    return room->room_w;
+int k_room_get_width(void) {
+    return k__game.current_room->room_w;
 }
 
-int k_room_get_height(struct k_room *room) {
-    return room->room_h;
+int k_room_get_height(void) {
+    return k__game.current_room->room_h;
 }
 
-void *k_room_get_data(struct k_room *room) {
-    return room->data;
+void *k_room_get_data(void) {
+    return k__game.current_room->data;
 }

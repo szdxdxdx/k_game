@@ -141,40 +141,42 @@ struct k_room *k_get_current_room(void);
 /* region [room_get] */
 
 /**
- * \brief 获取房间的关联数据
+ * \brief 获取当前房间的关联数据
  *
- * 若创建房间时，若指定了房间关联数据的结构体大小不为 0，
- * 则函数返回该指向数据内存段的指针，否则返回 `NULL`，
+ * 若当前房间的关联数据结构体大小为 0，则函数返回 `NULL`，
+ * 否则返回关联数据内存段的指针。
  */
-void *k_room_get_data(struct k_room *room);
+void *k_room_get_data(void);
 
-int k_room_get_width(struct k_room *room);
+/** \brief 获取当前房间的宽 */
+int k_room_get_width(void);
 
-int k_room_get_height(struct k_room *room);
+/** \brief 获取当前房间的高 */
+int k_room_get_height(void);
 
 /* endregion */
 
 /* region [room_add_callback] */
 
-struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k_room_add_step_begin_callback(void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
+struct k_room_callback *k_room_add_alarm_callback(void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
 
-struct k_room_callback *k_room_add_step_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k_room_add_step_callback(void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void *data, void (*fn_callback)(void *data), int z_index);
+struct k_room_callback *k_room_add_draw_callback(void *data, void (*fn_callback)(void *data), int z_index);
 
-struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k_room_add_step_end_callback(void *data, void (*fn_callback)(void *data));
 
-/*
- * 若 `callback` 为 `NULL`，则函数不做任何事情。
+/**
+ * \brief 删除房间的事件回调
  *
- * TODO docs
- * 删除后最好将指针置为 `NULL`，防止悬空指针
+ * 若 `callback` 为 `NULL`，则函数不做任何事情。
  */
 void k_room_del_callback(struct k_room_callback *callback);
 
-void k_room_del_all_callbacks(struct k_room *room);
+/** \brief 删除当前房间所有的事件回调 */
+void k_room_del_all_callbacks(void);
 
 /* endregion */
 

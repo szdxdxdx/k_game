@@ -8,7 +8,7 @@ struct k_collision_box;
 
 /* region [room_add_collision_box_manager] */
 
-int k_room_add_collision_manager(struct k_room *room);
+int k_room_add_collision_manager(void);
 
 /* endregion */
 

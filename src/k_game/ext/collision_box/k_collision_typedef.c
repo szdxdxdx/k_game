@@ -22,8 +22,8 @@ int k__component_def_collision_box(void) {
 
 /* region [room_add_collision_manager] */
 
-int k_room_add_collision_manager(struct k_room *room) {
-    return k_room_add_component_manager(room, k__component_type_collision_box, NULL);;
+int k_room_add_collision_manager(void) {
+    return k_room_add_component_manager(k__component_type_collision_box, NULL);;
 }
 
 /* endregion */

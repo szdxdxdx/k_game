@@ -103,7 +103,7 @@ static void player_step(struct k_object *object) {
 struct k_object *my_player_create(float x, float y) {
     struct k_room *room = k_get_current_room();
 
-    struct k_object *object = k_object_create(sizeof(struct my_player), room);
+    struct k_object *object = k_object_create(sizeof(struct my_player));
 
     k_object_add_step_begin_callback(object, player_step_set_state);
     k_object_add_step_callback(object, player_step);

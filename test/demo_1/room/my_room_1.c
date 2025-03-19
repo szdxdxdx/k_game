@@ -8,10 +8,10 @@ int fn_room_init(void *params) {
     (void)params;
     struct k_room *room = k_get_current_room();
 
-    k_room_add_collision_manager(room);
+    k_room_add_collision_manager();
 
-    k_room_add_draw_callback(room, NULL, k_room_clean_canvas, INT_MIN);
-    k_room_add_draw_callback(room, NULL, k_room_draw_grid, INT_MIN + 1);
+    k_room_add_draw_callback(NULL, k_room_clean_canvas, INT_MIN);
+    k_room_add_draw_callback(NULL, k_room_draw_grid, INT_MIN + 1);
 
     my_player_create(300.0f, 300.0f);
     my_enemy_create(500.0f, 300.0f);

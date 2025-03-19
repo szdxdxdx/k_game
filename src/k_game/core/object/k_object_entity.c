@@ -7,8 +7,9 @@
 
 /* region [object_create] */
 
-struct k_object *k_object_create(size_t data_size, struct k_room *room) {
+struct k_object *k_object_create(size_t object_data_size) {
 
+    struct k_room *room = k__game.current_room;
     if (NULL == room)
         goto err;
 
@@ -17,8 +18,8 @@ struct k_object *k_object_create(size_t data_size, struct k_room *room) {
         goto err;
 
     void *data = NULL;
-    if (0 != data_size) {
-        if (NULL == (data = k_malloc(data_size))) {
+    if (0 != object_data_size) {
+        if (NULL == (data = k_malloc(object_data_size))) {
             k__object_pool_release(object);
             goto err;
         }

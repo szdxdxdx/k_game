@@ -17,7 +17,7 @@ static void bullet_step(struct k_object *object) {
 
     bullet->x += x_add;
 
-    if (bullet->x < 20.0f || bullet->x > (float)k_room_get_width(room) - 20.f) {
+    if (bullet->x < 20.0f || bullet->x > (float)k_room_get_width() - 20.f) {
         k_object_destroy(object);
     }
 }
@@ -25,7 +25,7 @@ static void bullet_step(struct k_object *object) {
 struct k_object *my_player_bullet_create(float x, float y, int face) {
     struct k_room *room = k_get_current_room();
 
-    struct k_object *object = k_object_create(sizeof(struct my_player_bullet), room);
+    struct k_object *object = k_object_create(sizeof(struct my_player_bullet));
     struct my_player_bullet *bullet = k_object_get_data(object);
     bullet->x = x;
     bullet->y = y;
