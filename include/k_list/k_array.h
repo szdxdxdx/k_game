@@ -3,11 +3,7 @@
 
 #include <stddef.h>
 
-/**
- * \brief 结构体数组
- *
- * 数组扩缩容操作使用 C 标准库的 `malloc()` 和 `free()`。
- */
+/** \brief 支持动态扩容的数组容器 */
 struct k_array {
 
     /** \brief 内存分配函数 */

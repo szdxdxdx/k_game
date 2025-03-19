@@ -22,6 +22,7 @@ static inline void flush_layers(struct k_draw_callback_manager *manager) {
 
     struct k_list *layer_list = &manager->layer_list;
     struct k_list_node *iter = k_list_get_first(layer_list);
+    struct k_list_node *tail = k_list_tail(layer_list);
 
     struct k_draw_callback_layer *pending_layer;
     struct k_list *pending_list = &manager->layer_pending_list;
@@ -32,7 +33,7 @@ static inline void flush_layers(struct k_draw_callback_manager *manager) {
         int z_index = layer_get_z_index(pending_layer);
 
         struct k_draw_callback_layer *layer;
-        for (; iter != k_list_tail(layer_list); iter = iter->next) {
+        for (; iter != tail; iter = iter->next) {
             layer = container_of(iter, struct k_draw_callback_layer, layer_list_node);
 
             if (z_index < layer_get_z_index(layer))

@@ -72,7 +72,7 @@ struct k_sprite_config {
      * 指向精灵帧配置数组的指针，用于定义精灵每一帧的属性。
      * 数组长度由 `frames_num` 指定。
      *
-     * 创建精灵时 k_game 会复制该数组，创建成功后，精灵不依赖该数组。
+     * 创建精灵时 k_game 会复制该数组。
      */
     struct k_sprite_frame_config *frames;
 

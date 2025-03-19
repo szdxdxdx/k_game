@@ -165,11 +165,10 @@ static void file_buf_init(struct k_printf_file_buf *buf, FILE *file) {
 
 /* region [c_std_spec] */
 
-/* 处理 C printf 中 `%n` 一族的格式说明符
- *
- * 函数假定传入的格式说明符类型是正确的。
- */
+/* 处理 C printf 中 `%n` 一族的格式说明符 */
 static void printf_callback_c_std_spec_n(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+
+    /* 函数假定传入的格式说明符类型是正确的 */
 
     const char c1 = spec->type[0];
     const char c2 = spec->type[1];
@@ -199,13 +198,10 @@ static void printf_callback_c_std_spec_n(struct k_printf_buf *buf, const struct 
     }
 }
 
-/* 处理 C printf 中除了 `%n` 一族以外所有的格式说明符
- *
- * 函数假定传入的格式说明符类型是正确的。
- */
+/* 处理 C printf 中除了 `%n` 一族以外所有的格式说明符 */
 static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
 
-    /* 将格式说明符交回给 C printf 处理，之后按需消耗掉不定长参数列表的实参 */
+    /* 函数假定传入的格式说明符类型是正确的 */
 
     char fmt_buf[80];
     char *fmt = fmt_buf;
@@ -221,6 +217,7 @@ static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_
     memcpy(fmt, spec->start, len);
     fmt[len] = '\0';
 
+    /* 将格式说明符交回给 C printf 处理 */
     va_list args_copy;
     va_copy(args_copy, *args);
     buf->fn_vprintf(buf, fmt, args_copy);
@@ -229,6 +226,7 @@ static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_
     if (fmt != fmt_buf)
         free(fmt);
 
+    /* 之后按需消耗掉不定长参数列表的实参 */
     if (spec->use_min_width && -1 == spec->min_width)
         va_arg(*args, int);
     if (spec->use_precision && -1 == spec->precision)
@@ -295,11 +293,10 @@ static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_
     }
 }
 
-/* 匹配 C printf 格式说明符，若匹配成功则移动字符串指针，并返回对应的回调
- *
- * C printf 支持的格式说明符详见：https://zh.cppreference.com/w/c/io/fprintf
- */
+/* 匹配 C printf 格式说明符，若匹配成功则移动字符串指针，并返回对应的回调 */
 static k_printf_callback_fn match_c_std_spec(const char **str) {
+
+    /* C printf 支持的格式说明符详见：https://zh.cppreference.com/w/c/io/fprintf */
 
     switch ((*str)[0]) {
         case 'a': case 'A': case 'c': case 'd':
@@ -404,7 +401,7 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
 k_printf_callback_fn k_printf_match_spec_helper(const struct k_printf_spec_callback_tuple *tuples, const char **str) {
 
     const struct k_printf_spec_callback_tuple *spec = tuples;
-    for (; NULL != spec->spec_type; ++spec) {
+    while (NULL != spec->spec_type) {
 
         const char *p_str  = *str;
         const char *p_spec = spec->spec_type;
@@ -417,7 +414,8 @@ k_printf_callback_fn k_printf_match_spec_helper(const struct k_printf_spec_callb
         *str += p_spec - spec->spec_type;
         return spec->fn_callback;
 
-    next_spec:;
+    next_spec:
+        spec++;
     }
 
     return NULL;
@@ -427,11 +425,10 @@ k_printf_callback_fn k_printf_match_spec_helper(const struct k_printf_spec_callb
 
 /* region [x_printf] */
 
-/* 提取字符串开头的非负整数值（最大返回 `INT_MAX`），并移动字符串指针跳过数字
- *
- * 函数假定字符串开头存在非负的数字。
- */
+/* 提取字符串开头的非负整数值（最大返回 `INT_MAX`），并移动字符串指针跳过数字 */
 static int extract_non_negative_int(const char **str) {
+
+    /* 函数假定字符串开头存在非负的数字 */
 
     unsigned long long num = 0;
 
@@ -452,12 +449,10 @@ static int extract_non_negative_int(const char **str) {
     return (int)num;
 }
 
-/* 提取格式说明符，若提取成功则移动字符串指针，并返回对应的回调
- *
- * 函数假定字符串的起始为 `%` 符号。
- */
+/* 提取格式说明符，若提取成功则移动字符串指针，并返回对应的回调 */
 static k_printf_callback_fn extract_spec(const struct k_printf_config *config, const char **str, struct k_printf_spec *get_spec) {
 
+    /* 函数假定字符串开头是 `%` 符号 */
     const char *ch = *str + 1;
 
     struct k_printf_spec spec;
@@ -524,7 +519,7 @@ static k_printf_callback_fn extract_spec(const struct k_printf_config *config, c
 
 /* 格式化写入字符串到缓冲区，并返回格式化后的字符串长度
  *
- * 本函数为 k_printf 家族所有函数的核心实现。
+ * 本函数是 k_printf 家族所有函数的核心实现。
  */
 static int x_printf(const struct k_printf_config *config, struct k_printf_buf *buf, const char *fmt, va_list args) {
 

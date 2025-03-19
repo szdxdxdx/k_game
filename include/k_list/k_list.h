@@ -65,14 +65,6 @@ static inline struct k_list_node *k_list_get_first(struct k_list *list) {
     return list->head.next;
 }
 
-static inline struct k_list_node *k_list_get_last(struct k_list *list) {
-    return list->head.prev;
-}
-
-static inline struct k_list_node *k_list_head(struct k_list *list) {
-    return &list->head;
-}
-
 static inline struct k_list_node *k_list_tail(struct k_list *list) {
     return &list->head;
 }
