@@ -1,0 +1,4 @@
+#ifndef K_GAME__CALLBACK__INTERNAL_H
+#define K_GAME__CALLBACK__INTERNAL_H
+
+#endif

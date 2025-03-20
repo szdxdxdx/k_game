@@ -51,6 +51,14 @@ struct k_component_type {
 
 /* endregion */
 
+/* region [component_manager_map] */
+
+int k__component_manager_map_init(void);
+
+void k__component_manager_map_free(void);
+
+/* endregion */
+
 /* region [component] */
 
 struct k_component {

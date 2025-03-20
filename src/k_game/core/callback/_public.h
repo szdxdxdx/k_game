@@ -1,0 +1,5 @@
+
+#ifndef K_GAME__CALLBACK__PUBLIC_H
+#define K_GAME__CALLBACK__PUBLIC_H
+
+#endif
