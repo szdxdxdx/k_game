@@ -162,8 +162,8 @@ struct k_sprite_draw_options {
      * 若不希望缩放精灵，请指定目标宽高为精灵原本的宽高，
      * 使用 `k_sprite_get_width()` 和 `k_sprite_get_height()`。
      */
-    int scaled_w;
-    int scaled_h;
+    float scaled_w;
+    float scaled_h;
 
     /**
      * \brief 旋转绘制精灵

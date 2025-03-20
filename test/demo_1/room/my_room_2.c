@@ -19,19 +19,20 @@ static void my_room_2_draw(void *data) {
     if (k_key_pressed('Y'))
         flip_y = !flip_y;
 
+    struct k_float_rect dst_rect;
+    dst_rect.x = 10;
+    dst_rect.y = 10;
+    dst_rect.w = (float)k_image_get_width(img_joker);
+    dst_rect.h = (float)k_image_get_height(img_joker);
+
     struct k_image_draw_options opts;
-    opts.src_rect = NULL;
-    opts.dst_x    = 10;
-    opts.dst_y    = 10;
-    opts.scaled_w = k_image_get_width(img_joker);
-    opts.scaled_h = k_image_get_height(img_joker);
     opts.angle    = angle;
     opts.pivot_x  = 81;
     opts.pivot_y  = 58;
     opts.flip_x   = flip_x;
     opts.flip_y   = flip_y;
 
-    k_image_draw(img_joker, &opts);
+    k_image_draw(img_joker, NULL, &dst_rect, &opts);
 }
 
 static int my_room_2_init(void *params) {

@@ -21,19 +21,13 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
         src.w = sprite->sprite_w;
         src.h = sprite->sprite_h;
 
-        struct k_image_draw_options opts;
-        opts.src_rect = &src;
-        opts.dst_x    = x - sprite->origin_x;
-        opts.dst_y    = y - sprite->origin_y;
-        opts.scaled_w = sprite->sprite_w;
-        opts.scaled_h = sprite->sprite_h;
-        opts.angle    = 0.0f;
-        opts.pivot_x  = sprite->origin_x;
-        opts.pivot_y  = sprite->origin_y;
-        opts.flip_x   = 0;
-        opts.flip_y   = 0;
+        struct k_float_rect dst;
+        dst.x = x - sprite->origin_x;
+        dst.y = y - sprite->origin_y;
+        dst.w = (float)sprite->sprite_w;
+        dst.h = (float)sprite->sprite_h;
 
-        return k_image_draw(frame->image, &opts);
+        return k_image_draw(frame->image, &src, &dst, NULL);
     }
 
     /* 应用变换，使用复杂绘制 */
@@ -48,23 +42,24 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
         src.h = sprite->sprite_h;
 
         /* 将精灵原点移动到【经过伸缩、翻转】变换后的图片上 */
-        float scala_x  = (float)options->scaled_w / (float)sprite->sprite_w;
-        float scala_y  = (float)options->scaled_h / (float)sprite->sprite_h;
-        float origin_x = scala_x * (options->flip_x ? (float)options->scaled_w - sprite->origin_x : (float)sprite->origin_x);
-        float origin_y = scala_y * (options->flip_y ? (float)options->scaled_h - sprite->origin_y : (float)sprite->origin_y);
+        float scala_x  = options->scaled_w / (float)sprite->sprite_w;
+        float scala_y  = options->scaled_h / (float)sprite->sprite_h;
+        float origin_x = scala_x * (options->flip_x ? options->scaled_w - sprite->origin_x : (float)sprite->origin_x);
+        float origin_y = scala_y * (options->flip_y ? options->scaled_h - sprite->origin_y : (float)sprite->origin_y);
+
+        struct k_float_rect dst;
+        dst.x = x - origin_x;
+        dst.y = y - origin_y;
+        dst.w = options->scaled_w;
+        dst.h = options->scaled_h;
 
         struct k_image_draw_options opts;
-        opts.src_rect = &src;
-        opts.dst_x    = x - origin_x;
-        opts.dst_y    = y - origin_y;
-        opts.scaled_w = options->scaled_w;
-        opts.scaled_h = options->scaled_h;
         opts.angle    = options->angle;
         opts.pivot_x  = origin_x;
         opts.pivot_y  = origin_y;
         opts.flip_x   = options->flip_x;
         opts.flip_y   = options->flip_y;
 
-        return k_image_draw(frame->image, &opts);
+        return k_image_draw(frame->image, &src, &dst, &opts);
     }
 }

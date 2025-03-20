@@ -47,24 +47,6 @@ struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h)
 /** \brief 用于指定在图片时应用的变换效果 */
 struct k_image_draw_options {
 
-    const struct k_int_rect *src_rect;
-
-    float dst_x;
-    float dst_y;
-
-    /**
-     * \brief 缩放绘制图片
-     *
-     * `scaled_w` 和 `scaled_h` 分别指定目标宽高，
-     * 绘制时，图片的宽高将被拉伸或压缩至该值。
-     *
-     * 若目标宽高之一为 0 或负值，则图片被压缩至不可见。
-     * 若不希望缩放图片，则指定目标宽高为图片原本的宽高，
-     * 使用 `k_image_get_width()` 和 `k_image_get_height()`。
-     */
-    int scaled_w;
-    int scaled_h;
-
     /**
      * \brief 旋转绘制图片
      *
@@ -94,7 +76,7 @@ struct k_image_draw_options {
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
-int k_image_draw(struct k_image *image, struct k_image_draw_options *options);
+int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const struct k_float_rect *dst_rect, struct k_image_draw_options *options);
 
 /* endregion */
 
