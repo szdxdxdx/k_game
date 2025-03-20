@@ -1,5 +1,5 @@
-#ifndef K_GAME__COLLISION_BOX_H
-#define K_GAME__COLLISION_BOX_H
+#ifndef K_GAME__COLLISION__INTERNAL_H
+#define K_GAME__COLLISION__INTERNAL_H
 
 #include <stdint.h>
 
@@ -7,6 +7,8 @@
 #include "k_int_map.h"
 
 #include "k_game.h"
+
+#include "./_public.h"
 
 extern struct k_component_type *k__component_type_collision_box;
 
