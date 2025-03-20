@@ -3,7 +3,7 @@
 #include "./_internal.h"
 
 #include "../k_SDL/k_SDL.h"
-#include "../game/k_game_context.h"
+#include "../game/_public.h"
 
 static inline int frame_delay(struct k_room *room) {
 

@@ -1,6 +1,6 @@
 #include "./k_SDL.h"
 
-#include "../game/k_game_context.h"
+#include "../game/_public.h"
 #include "../room/_public.h"
 
 void k__poll_SDL_events(void) {

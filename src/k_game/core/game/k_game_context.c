@@ -1,6 +1,6 @@
-#include "../room/_public.h"
+#include "./_internal.h"
 
-#include "./k_game_context.h"
+#include "../room/_public.h"
 
 struct k_game_context k__game = {
     .current_room = NULL,

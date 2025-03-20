@@ -1,4 +1,4 @@
-#include "../game/k_game_context.h"
+#include "../game/_public.h"
 
 #include "./k_callback.h"
 

@@ -4,7 +4,7 @@
 
 #include "./_internal.h"
 
-#include "../game/k_game_context.h"
+#include "../game/_public.h"
 
 /* region [room_registry] */
 

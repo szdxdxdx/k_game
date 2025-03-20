@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-#include "../game/k_game_context.h"
+#include "../game/_public.h"
 
 int k_room_get_width(void) {
     return k__game.current_room->room_w;

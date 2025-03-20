@@ -1,8 +1,7 @@
-#include "../room/_public.h"
-
 #include "./_internal.h"
 
-#include "../game/k_game_context.h"
+#include "../game/_public.h"
+#include "../room/_public.h"
 
 /* region [object_create] */
 
