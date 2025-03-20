@@ -4,81 +4,38 @@
 
 #include "./k_image.h"
 
-/* region [image_draw] */
+int k_image_draw(struct k_image *image, struct k_image_draw_options *options) {
 
-int k__image_draw(struct k_image *image, const struct k_int_rect *src_rect, float dst_x, float dst_y) {
-
-    SDL_Rect src;
-    if (NULL == src_rect) {
-        src.x = 0;
-        src.y = 0;
-        src.w = image->image_w;
-        src.h = image->image_h;
-    } else {
-        src.x = src_rect->x;
-        src.y = src_rect->y;
-        src.w = src_rect->w;
-        src.h = src_rect->h;
-    }
-
-    /* TODO (w > 0 && h > 0)
-     *
-     * 以及检查输出的矩形有没有在视野范围内
-     */
-    SDL_FRect dst;
-    dst.x = dst_x;
-    dst.y = dst_y;
-    dst.w = (float)src.w;
-    dst.h = (float)src.h;
-
-    if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
-        k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
+    if (NULL == image || NULL == options)
         return -1;
-    }
 
-    return 0;
-}
-
-int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, float dst_x, float dst_y) {
-
-    if (NULL == image) {
-        k_log_error("Failed to draw image. image is NULL");
-        return -1;
-    }
-
-    return k__image_draw(image, src_rect, dst_x, dst_y);
-}
-
-/* endregion */
-
-/* region [image_draw_ex] */
-
-int k__image_draw_ex(struct k_image *image, struct k_image_draw_options *options) {
-
-    const struct k_int_rect *src_rect = options->src_rect;
-
-    SDL_Rect src;
-    if (NULL == src_rect) {
-        src.x = 0;
-        src.y = 0;
-        src.w = image->image_w;
-        src.h = image->image_h;
-    } else {
-        src.x = src_rect->x;
-        src.y = src_rect->y;
-        src.w = src_rect->w;
-        src.h = src_rect->h;
-    }
-
-    /* TODO (w > 0 && h > 0)
-     *
-     * 以及检查输出的矩形有没有在视野范围内
-     */
     SDL_FRect dst;
     dst.x = options->dst_x;
     dst.y = options->dst_y;
-    dst.w = (float)options->dst_w;
-    dst.h = (float)options->dst_h;
+    dst.w = (float)options->scaled_w;
+    dst.h = (float)options->scaled_h;
+
+    if (dst.w <= 0 || dst.h <= 0)
+        return 0;
+
+    /* TODO 检查输出的矩形有没有在视野范围内
+     */
+
+    SDL_Rect src;
+    if (NULL == options->src_rect) {
+        src.x = 0;
+        src.y = 0;
+        src.w = image->image_w;
+        src.h = image->image_h;
+    } else {
+        src.x = options->src_rect->x;
+        src.y = options->src_rect->y;
+        src.w = options->src_rect->w;
+        src.h = options->src_rect->h;
+    }
+
+    if (src.w <= 0|| src.h <= 0)
+        return -1;
 
     SDL_FPoint center;
     center.x = options->pivot_x;
@@ -97,20 +54,3 @@ int k__image_draw_ex(struct k_image *image, struct k_image_draw_options *options
 
     return 0;
 }
-
-int k_image_draw_ex(struct k_image *image, struct k_image_draw_options *options) {
-
-    if (NULL == image) {
-        k_log_error("Failed to draw image. image is NULL");
-        return -1;
-    }
-
-    if (NULL == options) {
-        k_log_error("Failed to draw image. options is NULL");
-        return -1;
-    }
-
-    return k__image_draw_ex(image, options);
-}
-
-/* endregion */

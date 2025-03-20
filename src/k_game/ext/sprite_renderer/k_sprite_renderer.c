@@ -453,26 +453,26 @@ static void draw_debug_rect(struct k_component *component) {
     float x1, y1, x2, y2;
     float x3, y3, x4, y4;
     if (flip_x) {
+        x1 = ox;
+        x2 = ox - w;
+        x3 = ox - w;
+        x4 = ox;
+    } else {
         x1 = w - ox;
         x2 = -ox;
         x3 = -ox;
         x4 = w - ox;
-    } else {
-        x1 = -ox;
-        x2 = w - ox;
-        x3 = w - ox;
-        x4 = -ox;
     }
     if (flip_y) {
+        y1 = oy;
+        y2 = oy;
+        y3 = oy - h;
+        y4 = oy - h;
+    } else {
         y1 = h - oy;
         y2 = h - oy;
         y3 = -oy;
         y4 = -oy;
-    } else {
-        y1 = -oy;
-        y2 = -oy;
-        y3 = h - oy;
-        y4 = h - oy;
     }
 
     angle = angle * (3.14159265358979323846f / 180.0f);

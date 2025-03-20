@@ -1,7 +1,6 @@
 #include <limits.h>
 
-#include "k_game.h"
-
+#include "./my_room.h"
 #include "../object/my_object.h"
 
 int fn_room_init(void *params) {

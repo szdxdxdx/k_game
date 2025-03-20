@@ -148,7 +148,7 @@ int k_sprite_get_frame_delay(struct k_sprite *sprite, size_t frame_idx);
 
 /* region [sprite_draw] */
 
-/** \brief 用于指定绘制精灵时的各种变换参数 */
+/** \brief 用于指定在绘制精灵帧时应用的变换效果 */
 struct k_sprite_draw_options {
 
     /**
@@ -158,7 +158,7 @@ struct k_sprite_draw_options {
      * 绘制时，精灵图的宽高将被拉伸或压缩至该值。
      * 伸缩变换的原点为精灵的原点。
      *
-     * 若目标宽高其中之一为 0 或负值，则精灵图被压缩至不可见。
+     * 若目标宽高之一为 0 或负值，则精灵图被压缩至不可见。
      * 若不希望缩放精灵，请指定目标宽高为精灵原本的宽高，
      * 使用 `k_sprite_get_width()` 和 `k_sprite_get_height()`。
      */
@@ -190,10 +190,10 @@ struct k_sprite_draw_options {
 /**
  * \brief 绘制精灵帧
  *
- * 该函数用于绘制精灵帧。请确保传入的 `sprite` 是有效精灵指针。
- * 参数 `frame_idx` 指定帧索引，请确保传入有效的索引值。
- * 坐标参数 `x` 和 `y` 用于指定精灵原点的绘制位置。
- * 可选参数 `options` 用于执行缩放、旋转和翻转变换，若为 `NULL` 则不应用任何变换。
+ * `frame_idx` 指定要绘制帧的索引，`x` 和 `y` 指定精灵原点的绘制位置坐标。
+ * `options` 用于执行缩放、旋转和翻转变换，若为 `NULL` 则不应用任何变换。
+ *
+ * 请确保 `sprite` 是有效的指针，`frame_idx` 是有效的索引值。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
