@@ -1,4 +1,5 @@
-#include "../room/k_room.h"
+#include "../room/_public.h"
+
 #include "../game/k_game_context.h"
 
 #include "./_internal.h"

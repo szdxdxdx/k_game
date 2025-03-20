@@ -1,6 +1,7 @@
-#ifndef K_GAME__ROOM_ENTITY_H
-#define K_GAME__ROOM_ENTITY_H
+#ifndef K_GAME__ROOM__PUBLIC_H
+#define K_GAME__ROOM__PUBLIC_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "k_list.h"
@@ -9,7 +10,15 @@
 #include "../callback/k_callback.h"
 #include "../object/_public.h"
 
-struct k_object_pool;
+/* region [room_registry] */
+
+int k__room_registry_init(void);
+
+void k__room_registry_cleanup(void);
+
+/* endregion */
+
+/* region [room] */
 
 struct k_room {
 
@@ -41,5 +50,23 @@ struct k_room {
 
     void *data;
 };
+
+/* endregion */
+
+/* region [room_goto] */
+
+void k__room_stack_init(void);
+
+void k__room_stack_cleanup(void);
+
+struct k_room *k__room_stack_get_top(void);
+
+/* endregion */
+
+/* region [room_run] */
+
+void k__room_run(struct k_room *room);
+
+/* endregion */
 
 #endif

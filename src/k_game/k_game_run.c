@@ -9,7 +9,7 @@
 #include "./core/image/_public.h"
 #include "./core/sound/_public.h"
 #include "./core/sprite/_public.h"
-#include "./core/room/k_room.h"
+#include "./core/room/_public.h"
 
 #include "./ext/k_components_def.h"
 

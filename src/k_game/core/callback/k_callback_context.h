@@ -5,7 +5,7 @@
 
 #include "./k_callback_base.h"
 
-#include "../room/k_room.h"
+#include "../room/_public.h"
 #include "../object/_public.h"
 #include "../component/k_component.h"
 

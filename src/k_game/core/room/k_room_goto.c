@@ -1,8 +1,7 @@
-#include <stddef.h>
 
 #include "k_log.h"
 
-#include "./k_room.h"
+#include "./_internal.h"
 
 /* region [room_stack] */
 

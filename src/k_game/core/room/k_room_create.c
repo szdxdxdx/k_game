@@ -7,8 +7,7 @@
 #include "../game/k_game_context.h"
 #include "../object/_public.h"
 
-#include "./k_room.h"
-#include "../component/k_component.h"
+#include "./_internal.h"
 
 static struct k_asset_registry room_registry;
 

@@ -1,4 +1,4 @@
-#include "../room/k_room.h"
+#include "../room/_public.h"
 
 #include "./_internal.h"
 

@@ -1,7 +1,7 @@
 #include "k_array.h"
 
 #include "./k_component.h"
-#include "../room/k_room.h"
+#include "../room/_public.h"
 #include "../game/k_game_context.h"
 
 /* region [component_manager_map] */
