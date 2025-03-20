@@ -1,19 +1,4 @@
-#include "k_game.h"
-
-#include "../k_components_def.h"
-
-struct k_WASD {
-
-    float *x;
-    float *y;
-
-    enum k_keyboard_key key_up;
-    enum k_keyboard_key key_down;
-    enum k_keyboard_key key_left;
-    enum k_keyboard_key key_right;
-
-    float speed;
-};
+#include "./_internal.h"
 
 static void WASD_step(struct k_component *component) {
     struct k_WASD *WASD = k_component_get_data(component);

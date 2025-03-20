@@ -12,7 +12,7 @@
 #include "./core/component/_public.h"
 #include "./core/room/_public.h"
 
-#include "./ext/k_components_def.h"
+#include "./ext/components/_public.h"
 
 /* region [steps] */
 
