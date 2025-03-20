@@ -15,16 +15,18 @@ struct k_object *k_object_create(size_t object_data_size) {
     if (NULL == object)
         goto err;
 
-    void *data = NULL;
+    object->room = room;
+
     if (0 != object_data_size) {
-        if (NULL == (data = k_malloc(object_data_size))) {
+        object->data = NULL;
+    } else {
+        object->data = k_malloc(object_data_size);
+        if (NULL == object->data) {
             k__object_pool_release(object);
             goto err;
         }
     }
 
-    object->room = room;
-    object->data = data;
     k_list_init(&object->callback_list);
     k_list_init(&object->component_list);
 

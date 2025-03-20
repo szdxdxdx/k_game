@@ -45,5 +45,4 @@ struct k_object {
 
 /* endregion */
 
-
 #endif
