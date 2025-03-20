@@ -44,8 +44,8 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
         /* 将精灵原点移动到【经过伸缩、翻转】变换后的图片上 */
         float scala_x  = options->scaled_w / (float)sprite->sprite_w;
         float scala_y  = options->scaled_h / (float)sprite->sprite_h;
-        float origin_x = scala_x * (options->flip_x ? options->scaled_w - sprite->origin_x : (float)sprite->origin_x);
-        float origin_y = scala_y * (options->flip_y ? options->scaled_h - sprite->origin_y : (float)sprite->origin_y);
+        float origin_x = scala_x * (options->flip_x ? (options->scaled_w - sprite->origin_x) : (float)sprite->origin_x);
+        float origin_y = scala_y * (options->flip_y ? (options->scaled_h - sprite->origin_y) : (float)sprite->origin_y);
 
         struct k_float_rect dst;
         dst.x = x - origin_x;

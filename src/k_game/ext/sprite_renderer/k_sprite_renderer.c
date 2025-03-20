@@ -31,8 +31,8 @@ struct k_sprite_renderer {
     float *x;
     float *y;
 
-    int scaled_w;
-    int scaled_h;
+    float scaled_w;
+    float scaled_h;
     float angle;
 
     uint8_t transform_flags;
@@ -69,7 +69,7 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
 
 /* region [scale] */
 
-void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, int scaled_w) {
+void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, float scaled_w) {
 
     if (NULL == renderer->sprite)
         return;
@@ -79,15 +79,11 @@ void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, int scaled_w) {
     } else {
         renderer->scaled_w = scaled_w;
 
-        if (k_sprite_get_width(renderer->sprite) != scaled_w)
+        if ((float)k_sprite_get_width(renderer->sprite) != scaled_w)
             renderer->transform_flags |= transform_scale_x;
         else
             renderer->transform_flags &= ~transform_scale_x;
     }
-}
-
-void k_sprite_renderer_adjust_w(struct k_sprite_renderer *renderer, int w_delta) {
-    k_sprite_renderer_set_w(renderer, renderer->scaled_w + w_delta);
 }
 
 void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x) {
@@ -100,9 +96,9 @@ void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x
         renderer->transform_flags |= transform_scale_x;
     }
     else {
-        int sprite_w = k_sprite_get_width(renderer->sprite);
+        float sprite_w = (float)k_sprite_get_width(renderer->sprite);
 
-        renderer->scaled_w = (int)((float)sprite_w * scale_x);
+        renderer->scaled_w = sprite_w * scale_x;
 
         if (sprite_w != renderer->scaled_w)
             renderer->transform_flags |= transform_scale_x;
@@ -111,7 +107,7 @@ void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x
     }
 }
 
-int k_sprite_renderer_get_w(struct k_sprite_renderer *renderer) {
+float k_sprite_renderer_get_w(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)
         return 0;
@@ -123,7 +119,7 @@ int k_sprite_renderer_get_w(struct k_sprite_renderer *renderer) {
 
 /* region [scale_y] */
 
-void k_sprite_renderer_set_h(struct k_sprite_renderer *renderer, int scaled_h) {
+void k_sprite_renderer_set_h(struct k_sprite_renderer *renderer, float scaled_h) {
 
     if (NULL == renderer->sprite)
         return;
@@ -133,23 +129,11 @@ void k_sprite_renderer_set_h(struct k_sprite_renderer *renderer, int scaled_h) {
     } else {
         renderer->scaled_h = scaled_h;
 
-        if (k_sprite_get_height(renderer->sprite) != scaled_h)
+        if ((float)k_sprite_get_height(renderer->sprite) != scaled_h)
             renderer->transform_flags |= transform_scale_y;
         else
             renderer->transform_flags &= ~transform_scale_y;
     }
-}
-
-int k_sprite_renderer_get_h(struct k_sprite_renderer *renderer) {
-
-    if (NULL == renderer->sprite)
-        return 0;
-    else
-        return renderer->scaled_h;
-}
-
-void k_sprite_renderer_adjust_h(struct k_sprite_renderer *renderer, int h_delta) {
-    k_sprite_renderer_set_h(renderer, renderer->scaled_h + h_delta);
 }
 
 void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y) {
@@ -162,15 +146,23 @@ void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y
         renderer->transform_flags |= transform_scale_y;
     }
     else {
-        int sprite_h = k_sprite_get_height(renderer->sprite);
+        float sprite_h = (float)k_sprite_get_height(renderer->sprite);
 
-        renderer->scaled_h = (int)((float)sprite_h * scale_y);
+        renderer->scaled_h = sprite_h * scale_y;
 
         if (sprite_h != renderer->scaled_h)
             renderer->transform_flags |= transform_scale_y;
         else
             renderer->transform_flags &= ~transform_scale_y;
     }
+}
+
+float k_sprite_renderer_get_h(struct k_sprite_renderer *renderer) {
+
+    if (NULL == renderer->sprite)
+        return 0;
+    else
+        return renderer->scaled_h;
 }
 
 /* endregion */
@@ -252,12 +244,12 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer) {
 
 void k_sprite_renderer_clear_transforms(struct k_sprite_renderer *renderer) {
 
-    if (NULL == renderer->sprite) {
+    if (NULL != renderer->sprite) {
+        renderer->scaled_w = (float)k_sprite_get_width(renderer->sprite);
+        renderer->scaled_h = (float)k_sprite_get_height(renderer->sprite);
+    } else {
         renderer->scaled_w = 0;
         renderer->scaled_h = 0;
-    } else {
-        renderer->scaled_w = k_sprite_get_width(renderer->sprite);
-        renderer->scaled_h = k_sprite_get_height(renderer->sprite);
     }
 
     renderer->angle = 0.0f;
@@ -329,15 +321,7 @@ static void renderer_reset(struct k_sprite_renderer *renderer) {
     renderer->speed = 1.0f;
     renderer->frame_idx = 0;
 
-    if (NULL != renderer->sprite) {
-        renderer->scaled_w = k_sprite_get_width(renderer->sprite);
-        renderer->scaled_h = k_sprite_get_height(renderer->sprite);
-    } else {
-        renderer->scaled_w = 0;
-        renderer->scaled_h = 0;
-    }
-    renderer->angle = 0.0f;
-    renderer->transform_flags = transform_none;
+    k_sprite_renderer_clear_transforms(renderer);
 }
 
 int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite) {

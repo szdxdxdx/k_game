@@ -27,7 +27,7 @@ struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h)
     SDL_SetTextureBlendMode(scaled_texture, SDL_BLENDMODE_BLEND);
 
     SDL_SetRenderTarget(renderer, scaled_texture);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, image->texture, NULL, NULL);
     SDL_SetRenderTarget(renderer, NULL);

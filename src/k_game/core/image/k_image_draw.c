@@ -15,12 +15,6 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const
     /* TODO 检查输出的矩形有没有在视野范围内
      */
 
-    SDL_FRect dst;
-    dst.x = dst_rect->x;
-    dst.y = dst_rect->y;
-    dst.w = dst_rect->w;
-    dst.h = dst_rect->h;
-
     SDL_Rect src;
     if (NULL == src_rect) {
         src.x = 0;
@@ -37,6 +31,12 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const
         src.w = src_rect->w;
         src.h = src_rect->h;
     }
+
+    SDL_FRect dst;
+    dst.x = dst_rect->x;
+    dst.y = dst_rect->y;
+    dst.w = dst_rect->w;
+    dst.h = dst_rect->h;
 
     if (NULL == options) {
         if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {

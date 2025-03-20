@@ -139,30 +139,16 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer);
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
  */
-void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, int scaled_w);
-
-/**
- * \brief 调整渲染器绘制精灵的宽度
- *
- * 渲染器将延原精灵图的水平方向缩放精灵，变换原点为精灵的原点。
- *
- * - 若 `w_delta` 为正值，则增加宽度，拉伸精灵图。
- * - 若 `w_delta` 为负值，则减少宽度，压缩精灵图。
- *
- * 宽度最小减少到 0，此时精灵图被压缩至不可见。
- *
- * 若渲染器没有引用精灵，则函数不做任何事。
- */
-void k_sprite_renderer_adjust_w(struct k_sprite_renderer *renderer, int w_delta);
+void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, float scaled_w);
 
 /**
  * \brief 设置渲染器水平方向的缩放比率
  *
  * 渲染器将延原精灵图的水平按比率缩放精灵，变换原点为精灵的原点。
  *
- * - 若 `scale_x` 为 1.0f，则按原尺寸绘制。
- * - 若 `scale_x` 为 1.0f，则拉伸精灵图宽度到原来的两倍。
- * - 若 `scale_x` 为 0.5f，则压缩精灵图宽度到原来的一半。
+ * - 若 `scale_x` 为 1.0f，则按原图尺寸绘制。
+ * - 若 `scale_x` 为 1.0f，则拉伸精灵图宽度到原图的两倍。
+ * - 若 `scale_x` 为 0.5f，则压缩精灵图宽度到原图的一半。
  * - 若 `scale_x` 为 0 或负值，则将其设置为 0，此时精灵图被压缩至不可见。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
@@ -174,7 +160,7 @@ void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x
  *
  * 若渲染器没有引用精灵，则函数返回宽度值为 0。
  */
-int k_sprite_renderer_get_w(struct k_sprite_renderer *renderer);
+float k_sprite_renderer_get_w(struct k_sprite_renderer *renderer);
 
 /* endregion */
 
@@ -190,30 +176,16 @@ int k_sprite_renderer_get_w(struct k_sprite_renderer *renderer);
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
  */
-void k_sprite_renderer_set_h(struct k_sprite_renderer *renderer, int scaled_h);
-
-/**
- * \brief 调整渲染器绘制精灵的高度
- *
- * 渲染器将延原精灵图的竖直方向缩放精灵，变换原点为精灵的原点。
- *
- * - 若 `h_delta` 为正值，则增加高度，拉伸精灵图。
- * - 若 `h_delta` 为负值，则减少高度，压缩精灵图。
- *
- * 高度最小减少到 0，此时精灵图被压缩至不可见。
- *
- * 若渲染器没有引用精灵，则函数不做任何事。
- */
-void k_sprite_renderer_adjust_h(struct k_sprite_renderer *renderer, int h_delta);
+void k_sprite_renderer_set_h(struct k_sprite_renderer *renderer, float scaled_h);
 
 /**
  * \brief 设置渲染器竖直方向的缩放比率
  *
  * 渲染器将延原精灵图的竖直按比率缩放精灵，变换原点为精灵的原点。
- *
- * - 若 `scale_y` 为 1.0f，则按原尺寸绘制。
- * - 若 `scale_y` 大于 1.0f，则该按比率拉伸精灵图高度。
- * - 若 `scale_y` 小于 1.0f，则该按比率压缩精灵图高度。
+ *=
+ * - 若 `scale_y` 为 1.0f，则按原图尺寸绘制。
+ * - 若 `scale_y` 为 1.0f，则拉伸精灵图高度到原图的两倍。
+ * - 若 `scale_y` 为 0.5f，则压缩精灵图高度到原图的一半。
  * - 若 `scale_y` 为 0 或负值，则将其设置为 0，此时精灵图被压缩至不可见。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
@@ -225,7 +197,7 @@ void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y
  *
  * 若渲染器没有引用精灵，则函数返回高度值为 0。
  */
-int k_sprite_renderer_get_h(struct k_sprite_renderer *renderer);
+float k_sprite_renderer_get_h(struct k_sprite_renderer *renderer);
 
 /* endregion */
 

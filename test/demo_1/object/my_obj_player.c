@@ -72,14 +72,16 @@ static void player_step(struct k_object *object) {
             k_sprite_renderer_flip_x(player->spr_rdr, 1);
         if (k_key_pressed('Y'))
             k_sprite_renderer_flip_y(player->spr_rdr, 1);
+        if (k_key_pressed('C'))
+            k_sprite_renderer_flip_y(player->spr_rdr, 0);
     }
 
     /* 放缩 */
     if (k_key_down('Z')) {
         if (k_key_down('X'))
-            k_sprite_renderer_adjust_w(player->spr_rdr, 6);
+            k_sprite_renderer_set_w(player->spr_rdr, 6 + k_sprite_renderer_get_w(player->spr_rdr));
         if (k_key_down('Y'))
-            k_sprite_renderer_adjust_h(player->spr_rdr, 6);
+            k_sprite_renderer_set_h(player->spr_rdr, 6 + k_sprite_renderer_get_h(player->spr_rdr));
     }
 
     /* 加速减速 */
@@ -87,10 +89,6 @@ static void player_step(struct k_object *object) {
         k_sprite_renderer_add_speed(player->spr_rdr, 1.0f * delta);
     if (k_key_down('-'))
         k_sprite_renderer_add_speed(player->spr_rdr, -0.5f * delta);
-
-    /* 清除所有效果 */
-    if (k_key_pressed('C'))
-        k_sprite_renderer_clear_transforms(player->spr_rdr);
 
     if (k_key_pressed('B')) {
         if (k_key_held(K_KEY_LEFT_SHIFT))
