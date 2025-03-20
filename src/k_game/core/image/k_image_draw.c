@@ -1,8 +1,6 @@
 #include "k_log.h"
 
-#include "../k_SDL/k_SDL.h"
-
-#include "./k_image.h"
+#include "./_internal.h"
 
 int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const struct k_float_rect *dst_rect, struct k_image_draw_options *options) {
 

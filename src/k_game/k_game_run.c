@@ -6,9 +6,9 @@
 #include "k_game.h"
 
 #include "./core/k_SDL/k_SDL.h"
-#include "./core/image/k_image.h"
-#include "./core/sound/k_sound.h"
-#include "./core/sprite/k_sprite.h"
+#include "./core/image/_public.h"
+#include "./core/sound/_public.h"
+#include "./core/sprite/_public.h"
 #include "./core/room/k_room.h"
 
 #include "./ext/k_components_def.h"
@@ -57,12 +57,22 @@ static void step_cleanup_image_registry(void *unused) {
 
 static int step_init_sound_registry(void *unused) {
     (void)unused;
-    return k__sound_registry_init();
+
+    if (0 != k__sound_BGM_registry_init())
+        return -1;
+
+    if (0 != k__sound_SFX_registry_init()) {
+        k__sound_BGM_registry_cleanup();
+        return -1;
+    }
+
+    return 0;
 }
 
 static void step_cleanup_sound_registry(void *unused) {
     (void)unused;
-    k__sound_registry_cleanup();
+    k__sound_BGM_registry_cleanup();
+    k__sound_SFX_registry_cleanup();
 }
 
 static int step_init_sprite_registry(void *unused) {

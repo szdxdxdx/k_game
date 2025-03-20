@@ -20,6 +20,8 @@ struct k_draw_callback_layer {
 
 static inline void flush_layers(struct k_draw_callback_manager *manager) {
 
+    /* layer 在 pending list 也是有序的，下述代码是在合并两条有序的链表 */
+
     struct k_list *layer_list = &manager->layer_list;
     struct k_list_node *iter = k_list_get_first(layer_list);
     struct k_list_node *tail = k_list_tail(layer_list);
@@ -49,10 +51,10 @@ static inline void flush_layers(struct k_draw_callback_manager *manager) {
 
 static inline struct k_draw_callback_layer *find_or_create_layer(struct k_draw_callback_manager *manager, int z_index) {
 
-    struct k_int_map_node *node = k_int_map_get(&manager->z_index_map, z_index);
-    if (NULL != node) {
-        struct k_draw_callback_layer *layer_found = container_of(node, struct k_draw_callback_layer, z_index_map_node);
-        return layer_found;
+    struct k_int_map_node *map_node = k_int_map_get(&manager->z_index_map, z_index);
+    if (NULL != map_node) {
+        struct k_draw_callback_layer *found_layer = container_of(map_node, struct k_draw_callback_layer, z_index_map_node);
+        return found_layer;
     }
     else {
         struct k_draw_callback_layer *new_layer = k_malloc(sizeof(struct k_draw_callback_layer));

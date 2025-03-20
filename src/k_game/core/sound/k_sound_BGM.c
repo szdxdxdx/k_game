@@ -1,9 +1,36 @@
-#include "SDL_mixer.h"
-
-#include "k_game.h"
-
-#include "./k_sound.h"
 #include "k_log.h"
+
+#include "_internal.h"
+
+/* region [sound_registry] */
+
+static struct k_asset_registry BGM_registry;
+
+int k__sound_BGM_registry_init(void) {
+    return k__asset_registry_init(&BGM_registry);
+}
+
+static void fn_release_BGM(struct k_asset_registry_node *registry_node) {
+    struct k_sound_BGM *sound = (struct k_sound_BGM *)registry_node;
+    k_sound_BGM_release(sound);
+}
+
+void k__sound_BGM_registry_cleanup(void) {
+    k__asset_registry_cleanup(&BGM_registry, fn_release_BGM);
+}
+
+struct k_sound_BGM *k_sound_BGM_find(const char *BGM_name) {
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&BGM_registry, BGM_name);
+    if (NULL == registry_node)
+        return NULL;
+
+    struct k_sound_BGM *sound = container_of(registry_node, struct k_sound_BGM, registry_node);
+    return sound;
+}
+
+/* endregion */
+
+/* region [sound_load] */
 
 struct k_sound_BGM *k_sound_BGM_load(const char *filepath) {
 
@@ -19,7 +46,7 @@ struct k_sound_BGM *k_sound_BGM_load(const char *filepath) {
     }
 
     sound->music = music;
-    k__sound_registry_add_BGM(sound);
+    k__asset_registry_add(&BGM_registry, &sound->registry_node);
     return sound;
 }
 
@@ -28,10 +55,14 @@ void k_sound_BGM_release(struct k_sound_BGM *sound) {
     if (NULL == sound)
         return;
 
-    k__sound_registry_del_BGM(sound);
+    k__asset_registry_del(&sound->registry_node);
     Mix_FreeMusic(sound->music);
     k_free(sound);
 }
+
+/* endregion */
+
+/* region [sound_play] */
 
 int k_sound_BGM_loop(struct k_sound_BGM *sound, int loops) {
 
@@ -48,3 +79,5 @@ int k_sound_BGM_loop(struct k_sound_BGM *sound, int loops) {
 
     return 0;
 }
+
+/* endregion */

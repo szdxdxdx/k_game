@@ -1,8 +1,6 @@
 #include "k_log.h"
 
-#include "../k_SDL/k_SDL.h"
-
-#include "./k_image.h"
+#include "./_internal.h"
 
 struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h) {
 

@@ -1,15 +1,13 @@
-#ifndef K_GAME__SPRITE_ASSET_H
-#define K_GAME__SPRITE_ASSET_H
+#ifndef K_GAME__SPRITE__PUBLIC_H
+#define K_GAME__SPRITE__PUBLIC_H
 
 #include "../asset/k_asset_registry.h"
 
-/* region [sprite_registry] */
+struct k_image;
 
 int k__sprite_registry_init(void);
 
 void k__sprite_registry_cleanup(void);
-
-/* endregion */
 
 struct k_sprite_frame {
 

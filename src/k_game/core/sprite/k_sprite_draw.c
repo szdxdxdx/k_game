@@ -1,6 +1,6 @@
-#include "../image/k_image.h"
+#include "../image/_public.h"
 
-#include "./k_sprite.h"
+#include "./_internal.h"
 
 int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_sprite_draw_options *options) {
 

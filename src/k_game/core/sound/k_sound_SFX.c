@@ -1,6 +1,34 @@
-#include "k_game.h"
+#include "_internal.h"
 
-#include "./k_sound.h"
+/* region [sound_registry] */
+
+static struct k_asset_registry SFX_registry;
+
+int k__sound_SFX_registry_init(void) {
+    return k__asset_registry_init(&SFX_registry);
+}
+
+static void fn_release_SFX(struct k_asset_registry_node *registry_node) {
+    struct k_sound_SFX *sound = (struct k_sound_SFX *)registry_node;
+    k_sound_SFX_release(sound);
+}
+
+void k__sound_SFX_registry_cleanup(void) {
+    k__asset_registry_cleanup(&SFX_registry, fn_release_SFX);
+}
+
+struct k_sound_SFX *k_sound_SFX_find(const char *SFX_name) {
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&SFX_registry, SFX_name);
+    if (NULL == registry_node)
+        return NULL;
+
+    struct k_sound_SFX *sound = container_of(registry_node, struct k_sound_SFX, registry_node);
+    return sound;
+}
+
+/* endregion */
+
+/* region [sound_load] */
 
 struct k_sound_SFX *k_sound_SFX_load(const char *filepath) {
 
@@ -15,7 +43,7 @@ struct k_sound_SFX *k_sound_SFX_load(const char *filepath) {
     }
 
     sound->chunk = chunk;
-    k__sound_registry_add_SFX(sound);
+    k__asset_registry_add(&SFX_registry, &sound->registry_node);
     return sound;
 }
 
@@ -24,10 +52,14 @@ void k_sound_SFX_release(struct k_sound_SFX *sound) {
     if (NULL == sound)
         return;
 
-    k__sound_registry_del_SFX(sound);
+    k__asset_registry_del(&sound->registry_node);
     Mix_FreeChunk(sound->chunk);
     k_free(sound);
 }
+
+/* endregion */
+
+/* region [sound_play] */
 
 void k_sound_SFX_play(struct k_sound_SFX *sound) {
 
@@ -62,3 +94,5 @@ void k_sound_SFX_loop(struct k_sound_SFX *sound, int loops) {
         Mix_PlayChannel(0, sound->chunk, loops_);
     }
 }
+
+/* endregion */
