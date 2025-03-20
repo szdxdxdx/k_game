@@ -12,7 +12,9 @@
 #include "./core/room/_public.h"
 #include "./core/component/_public.h"
 
-#include "./ext/components/_public.h"
+#include "./ext/wasd/_public.h"
+#include "./ext/sprite_renderer/_public.h"
+#include "./ext/collision/_public.h"
 
 /* region [steps] */
 

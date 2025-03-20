@@ -3,10 +3,6 @@
 
 #include <stdint.h>
 
-struct k_room;
-struct k_object;
-struct k_component;
-
 enum k_callback_context {
 
     K_ROOM_CALLBACK,
@@ -14,20 +10,12 @@ enum k_callback_context {
     K_COMPONENT_CALLBACK,
 };
 
-struct k_room_callback;
-struct k_object_callback;
-struct k_component_callback;
-
 enum k_callback_event {
 
     K_ALARM_CALLBACK,
     K_STEP_CALLBACK,
     K_DRAW_CALLBACK,
 };
-
-struct k_step_callback;
-struct k_alarm_callback;
-struct k_draw_callback;
 
 enum k_callback_state {
 
