@@ -1,7 +1,7 @@
 #include "k_seq_step.h"
 #include "k_log.h"
 
-#include "./k_component.h"
+#include "./_internal.h"
 
 static struct k_asset_registry component_type_registry;
 

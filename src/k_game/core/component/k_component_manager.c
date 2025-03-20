@@ -1,6 +1,7 @@
 #include "k_array.h"
 
-#include "./k_component.h"
+#include "./_internal.h"
+
 #include "../game/_public.h"
 #include "../room/_public.h"
 

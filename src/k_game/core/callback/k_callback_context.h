@@ -7,7 +7,7 @@
 
 #include "../room/_public.h"
 #include "../object/_public.h"
-#include "../component/k_component.h"
+#include "../component/_public.h"
 
 struct k_room_callback {
 
