@@ -1,3 +1,5 @@
+#include "SDL_timer.h"
+
 #include "./_internal.h"
 
 #include "../room/_public.h"
@@ -21,4 +23,8 @@ int k_get_step_delta_ms(void) {
 
 uint64_t k_get_step_timestamp(void) {
     return k__game.step_timestamp;
+}
+
+uint64_t k_get_timestamp(void) {
+    return SDL_GetTicks64();
 }

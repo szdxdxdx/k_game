@@ -1,5 +1,3 @@
-#include "SDL.h"
-
 #include "./_internal.h"
 
 #include "../k_SDL/_public.h"
@@ -7,7 +5,7 @@
 
 static inline int frame_delay(struct k_room *room) {
 
-    uint64_t current_time = SDL_GetTicks64();
+    uint64_t current_time = k_get_timestamp();
     uint64_t elapsed_time = current_time - k__game.step_timestamp;
 
     /* 若已到新一帧的时间，则函数返回 0，否则返回非 0

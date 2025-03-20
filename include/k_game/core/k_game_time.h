@@ -12,4 +12,7 @@ int k_get_step_delta_ms(void);
 /** \brief 获取当前帧的时间戳，单位：毫秒 */
 uint64_t k_get_step_timestamp(void);
 
+/** \brief 获取当前时间戳，单位：毫秒 */
+uint64_t k_get_timestamp(void);
+
 #endif
