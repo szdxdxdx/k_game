@@ -1,4 +1,4 @@
-#include "./k_SDL.h"
+#include "./_internal.h"
 
 #include "../game/_public.h"
 #include "../room/_public.h"

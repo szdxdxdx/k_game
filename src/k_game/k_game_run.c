@@ -5,12 +5,12 @@
 
 #include "k_game.h"
 
-#include "./core/k_SDL/k_SDL.h"
+#include "./core/k_SDL/_public.h"
 #include "./core/image/_public.h"
 #include "./core/sound/_public.h"
 #include "./core/sprite/_public.h"
-#include "./core/component/_public.h"
 #include "./core/room/_public.h"
+#include "./core/component/_public.h"
 
 #include "./ext/components/_public.h"
 

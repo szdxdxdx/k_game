@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-#include "../../../core/k_SDL/k_SDL.h"
+#include "../../../core/k_SDL/_public.h"
 
 void k__collision_debug_draw(struct k_component *component) {
 

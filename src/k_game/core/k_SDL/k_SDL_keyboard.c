@@ -1,4 +1,4 @@
-#include "./k_SDL.h"
+#include "./_internal.h"
 
 /* 将 SDL 的键码转为 k_game 的键码
  */

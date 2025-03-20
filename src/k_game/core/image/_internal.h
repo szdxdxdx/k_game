@@ -3,7 +3,7 @@
 
 #include "k_game.h"
 
-#include "../k_SDL/k_SDL.h"
+#include "../k_SDL/_public.h"
 
 #include "./_public.h"
 

@@ -6,7 +6,7 @@
 #include "k_log.h"
 #include "k_seq_step.h"
 
-#include "./k_SDL.h"
+#include "./_internal.h"
 
 /* region [steps] */
 

@@ -1,4 +1,4 @@
-#include "./k_SDL.h"
+#include "./_internal.h"
 
 struct k_mouse_state {
     int x;
