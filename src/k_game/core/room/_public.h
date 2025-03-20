@@ -7,7 +7,7 @@
 #include "k_list.h"
 
 #include "../asset/k_asset_registry.h"
-#include "../callback/k_callback.h"
+#include "../callback/_public.h"
 #include "../object/_public.h"
 
 /* region [room_registry] */

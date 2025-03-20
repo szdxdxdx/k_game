@@ -5,9 +5,9 @@
 
 #include "./k_callback_base.h"
 
-#include "../room/_public.h"
-#include "../object/_public.h"
-#include "../component/_public.h"
+struct k_room;
+struct k_object;
+struct k_component;
 
 struct k_room_callback {
 

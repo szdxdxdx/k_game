@@ -1,6 +1,6 @@
 #include "../game/_public.h"
 
-#include "./k_callback.h"
+#include "./_internal.h"
 
 /* region [room_callback] */
 
