@@ -44,6 +44,7 @@ struct k_callback_base {
     uint8_t state;
 };
 
+/* FIXME */
 void k__callback_flag_deleted(struct k_callback_base *callback);
 
 void k__callback_flag_dead(struct k_callback_base *callback);

@@ -96,6 +96,13 @@ static void player_step(struct k_object *object) {
         else
             k_sprite_renderer_set_debug(player->spr_rdr, 1);
     }
+
+    if (k_key_pressed('H')) {
+        k_sprite_renderer_set_sprite(player->spr_rdr, NULL);
+    }
+    if (k_key_pressed('G')) {
+        k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_run);
+    }
 }
 
 struct k_object *my_player_create(float x, float y) {

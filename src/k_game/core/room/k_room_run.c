@@ -34,21 +34,25 @@ void k__room_run(struct k_room *room) {
 
     while (room->game_loop) {
 
-        k__callback_flush_step(&room->step_begin_callback_manager);
-        k__callback_flush_alarm(&room->alarm_callback_manager);
-        k__callback_flush_step(&room->step_callback_manager);
-        k__callback_flush_draw(&room->draw_callback_manager);
-        k__callback_flush_step(&room->step_end_callback_manager);
-
         k__refresh_keyboard();
 
         do k__poll_SDL_events(); while (frame_delay(room));
 
+        k__callback_flush_step(&room->step_begin_callback_manager);
         k__callback_exec_step(&room->step_begin_callback_manager);
+
+        k__callback_flush_alarm(&room->alarm_callback_manager);
         k__callback_exec_alarm(&room->alarm_callback_manager);
+
+        k__callback_flush_step(&room->step_callback_manager);
         k__callback_exec_step(&room->step_callback_manager);
+
+        k__callback_flush_draw(&room->draw_callback_manager);
         k__callback_exec_draw(&room->draw_callback_manager);
+
         SDL_RenderPresent(k__window.renderer);
+
+        k__callback_flush_step(&room->step_end_callback_manager);
         k__callback_exec_step(&room->step_end_callback_manager);
     }
 

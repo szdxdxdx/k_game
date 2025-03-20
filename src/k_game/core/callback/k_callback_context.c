@@ -32,7 +32,7 @@ struct k_room_callback *k_room_add_step_end_callback(void *data, void (*fn_callb
 void k_room_del_callback(struct k_room_callback *callback) {
 
     if (NULL != callback)
-        k__callback_flag_deleted(callback->base);
+        k__callback_flag_dead(callback->base);
 }
 
 void k_room_del_all_callbacks(void) {
@@ -44,7 +44,7 @@ void k_room_del_all_callbacks(void) {
     for (k_list_for_each(list, iter)) {
         callback = container_of(iter, struct k_room_callback, list_node);
 
-        k__callback_flag_deleted(callback->base);
+        k__callback_flag_dead(callback->base);
     }
 
     k_list_init(&room->callback_list);
@@ -91,7 +91,7 @@ struct k_object_callback *k_object_add_step_end_callback(struct k_object *object
 void k_object_del_callback(struct k_object_callback *callback) {
 
     if (NULL != callback)
-        k__callback_flag_deleted(callback->base);
+        k__callback_flag_dead(callback->base);
 }
 
 void k_object_del_all_callbacks(struct k_object *object) {
@@ -102,7 +102,7 @@ void k_object_del_all_callbacks(struct k_object *object) {
     for (k_list_for_each(list, iter)) {
         callback = container_of(iter, struct k_object_callback, list_node);
 
-        k__callback_flag_deleted(callback->base);
+        k__callback_flag_dead(callback->base);
     }
 
     k_list_init(&object->callback_list);
@@ -149,7 +149,7 @@ struct k_component_callback *k_component_add_step_end_callback(struct k_componen
 void k_component_del_callback(struct k_component_callback *callback) {
 
     if (NULL != callback)
-        k__callback_flag_deleted(callback->base);
+        k__callback_flag_dead(callback->base);
 }
 
 void k_component_del_all_callbacks(struct k_component *component) {
@@ -160,7 +160,7 @@ void k_component_del_all_callbacks(struct k_component *component) {
     for (k_list_for_each(list, iter)) {
         callback = container_of(iter, struct k_component_callback, list_node);
 
-        k__callback_flag_deleted(callback->base);
+        k__callback_flag_dead(callback->base);
     }
 
     k_list_init(&component->callback_list);
