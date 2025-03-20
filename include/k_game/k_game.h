@@ -14,9 +14,9 @@
 #include "./core/k_game_component.h"
 #include "./core/k_game_run.h"
 
-#include "./ext/k_WASD.h"
-#include "./ext/k_sprite_renderer.h"
-#include "./ext/k_collision_box.h"
+#include "./ext/k_game_wasd.h"
+#include "./ext/k_game_sprite_renderer.h"
+#include "./ext/k_game_collision.h"
 
 #include "./tmp/k_game_tmp.h"
 

@@ -1,4 +1,4 @@
-#include "./_internal.h"
+#include "./k_collision.h"
 
 struct k_component_type *k__component_type_collision_box = NULL;
 

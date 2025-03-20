@@ -1,4 +1,4 @@
-#include "./_internal.h"
+#include "./k_collision.h"
 
 struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2) {
 

@@ -1,4 +1,4 @@
-#include "./_internal.h"
+#include "./k_collision.h"
 
 #include "../../core/k_SDL/k_SDL.h"
 

@@ -1,6 +1,6 @@
 #include <limits.h>
 
-#include "./_internal.h"
+#include "./k_collision.h"
 
 /* region [collision_box_init] */
 
