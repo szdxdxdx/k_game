@@ -1,9 +1,12 @@
-#ifndef K_GAME__OBJECT_POOL_H
-#define K_GAME__OBJECT_POOL_H
+#ifndef K_GAME__OBJECT__PUBLIC_H
+#define K_GAME__OBJECT__PUBLIC_H
 
 #include "k_list.h"
 
+struct k_room;
 struct k_object;
+
+/* region [object_pool] */
 
 struct k_object_pool {
 
@@ -22,5 +25,25 @@ void k__object_pool_cleanup(struct k_object_pool *pool);
 struct k_object *k__object_pool_acquire(struct k_object_pool *pool);
 
 void k__object_pool_release(struct k_object *object);
+
+/* endregion */
+
+/* region [object] */
+
+struct k_object {
+
+    struct k_object_pool_node pool_node;
+
+    struct k_room *room;
+
+    struct k_list callback_list;
+
+    struct k_list component_list;
+
+    void *data;
+};
+
+/* endregion */
+
 
 #endif

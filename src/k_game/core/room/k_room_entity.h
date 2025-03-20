@@ -7,7 +7,7 @@
 
 #include "../asset/k_asset_registry.h"
 #include "../callback/k_callback.h"
-#include "../object/k_object_pool.h"
+#include "../object/_public.h"
 
 struct k_object_pool;
 

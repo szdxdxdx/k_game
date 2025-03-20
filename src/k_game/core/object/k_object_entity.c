@@ -1,9 +1,7 @@
-#include "k_game.h"
-
-#include "./k_object.h"
-
 #include "../room/k_room.h"
 #include "../game/k_game_context.h"
+
+#include "./_internal.h"
 
 /* region [object_create] */
 

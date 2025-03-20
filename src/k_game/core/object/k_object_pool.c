@@ -1,8 +1,6 @@
-#include "k_game.h"
-
 #include "../room/k_room.h"
 
-#include "./k_object.h"
+#include "./_internal.h"
 
 int k__object_pool_init(struct k_object_pool *pool) {
 

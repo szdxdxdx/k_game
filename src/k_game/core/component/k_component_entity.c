@@ -1,6 +1,6 @@
 #include "./k_component.h"
 
-#include "../object/k_object.h"
+#include "../object/_public.h"
 #include "../room/k_room.h"
 
 /* region [component_create] */

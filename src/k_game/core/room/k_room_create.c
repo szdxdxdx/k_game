@@ -5,7 +5,7 @@
 #include "k_game.h"
 
 #include "../game/k_game_context.h"
-#include "../object/k_object.h"
+#include "../object/_public.h"
 
 #include "./k_room.h"
 #include "../component/k_component.h"
