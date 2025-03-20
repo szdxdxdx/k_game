@@ -1,9 +1,9 @@
 #include "SDL.h"
 
+#include "./_internal.h"
+
 #include "../k_SDL/k_SDL.h"
 #include "../game/k_game_context.h"
-
-#include "./_internal.h"
 
 static inline int frame_delay(struct k_room *room) {
 

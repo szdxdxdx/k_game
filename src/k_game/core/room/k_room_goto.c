@@ -1,4 +1,3 @@
-
 #include "k_log.h"
 
 #include "./_internal.h"

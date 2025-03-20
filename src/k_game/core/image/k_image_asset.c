@@ -2,8 +2,6 @@
 
 #include "SDL_image.h"
 
-#include "k_game.h"
-
 #include "./_internal.h"
 
 /* region [image_registry] */
