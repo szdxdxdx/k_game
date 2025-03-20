@@ -119,7 +119,7 @@ void k_sprite_renderer_add_speed(struct k_sprite_renderer *renderer, float speed
 /**
  * \brief 获取渲染器播放精灵动画的速度
  *
- * 若渲染器没有引用精灵，则函数返回速度值为 0。
+ * 函数返回渲染器播放精灵动画的速度。若渲染器没有引用精灵，则函数返回 0。
  */
 float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer);
 
@@ -158,7 +158,7 @@ void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x
 /**
  * \brief 获取渲染器绘制精灵的宽度
  *
- * 若渲染器没有引用精灵，则函数返回宽度值为 0。
+ * 函数返回渲染器绘制精灵的宽度。若渲染器没有引用精灵，则函数返回 0。
  */
 float k_sprite_renderer_get_w(struct k_sprite_renderer *renderer);
 
@@ -195,7 +195,7 @@ void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y
 /**
  * \brief 获取渲染器绘制精灵的高度
  *
- * 若渲染器没有引用精灵，则函数返回高度值为 0。
+ * 函数返回渲染器绘制精灵的高度。若渲染器没有引用精灵，则函数返回 0。
  */
 float k_sprite_renderer_get_h(struct k_sprite_renderer *renderer);
 
@@ -232,7 +232,7 @@ void k_sprite_renderer_adjust_rotation(struct k_sprite_renderer *renderer, float
 /**
  * \brief 获取渲染器绘制精灵的旋转角度
  *
- * 若渲染器没有引用精灵，则函数返回角度值为 0。
+ * 函数返回渲染器绘制精灵的的旋转角度。若渲染器没有引用精灵，则函数返回 0。
  */
 float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer);
 
@@ -243,7 +243,7 @@ float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器延水平方向翻转绘制精灵
  *
- * 若 `flip` 为非 0，则启用水平翻转，否则禁用水平翻转。
+ * 若 `flip` 为非 0，则启用水平翻转，否则不启用。
  * 变换原点为精灵的原点。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
@@ -254,7 +254,6 @@ void k_sprite_renderer_flip_x(struct k_sprite_renderer *renderer, int flip);
  * \brief 检查渲染器是否启用水平翻转
  *
  * 若渲染器启用水平翻转，则函数返回非 0，否则返回 0。
- *
  * 若渲染器没有引用精灵，则函数返回 0。
  */
 int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
@@ -266,7 +265,7 @@ int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器延竖直方向翻转绘制精灵
  *
- * 若 `flip` 为非 0，则启用竖直翻转，否则禁用竖直翻转。
+ * 若 `flip` 为非 0，则启用竖直翻转，否则不启用。
  * 变换原点为精灵的原点。
  *
  * 若渲染器没有引用精灵，则函数不做任何事。
@@ -277,7 +276,6 @@ void k_sprite_renderer_flip_y(struct k_sprite_renderer *renderer, int flip);
  * \brief 检查渲染器是否启用竖直翻转
  *
  * 若渲染器启用竖直翻转，则函数返回非 0，否则返回 0。
- *
  * 若渲染器没有引用精灵，则函数返回 0。
  */
 int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
@@ -303,9 +301,9 @@ void k_sprite_renderer_clear_transforms(struct k_sprite_renderer *renderer);
 /**
  * \brief 开启或关闭渲染器调试模式
  *
- * 若 `debug` 为非 0，则开启调试模式，否则关闭调试模式。
+ * 若 `debug` 为非 0 则开启调试模式，否则关闭。
  *
- * 调试模式下，渲染器将用浅绿色绘制精灵图的矩形边框，绘制在精灵原点处绘制十字。
+ * 调试模式下，渲染器将用绿色绘制精灵图的矩形边框，并在精灵原点处绘制十字。
  * 绘制图层深度为 `K_SPRITE_RENDERER_DEBUG_DRAW_LAYER`。
  *
  * 切换渲染器引用的精灵不会关闭调试模式。

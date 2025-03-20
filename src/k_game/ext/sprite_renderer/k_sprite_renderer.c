@@ -58,7 +58,7 @@ void k_sprite_renderer_add_speed(struct k_sprite_renderer *renderer, float speed
 float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)
-        return 0.0f;
+        return 0;
     else
         return renderer->speed;
 }
@@ -489,7 +489,7 @@ static void draw_debug_rect(struct k_component *component) {
     x3 += dst_x; y3 += dst_y;
     x4 += dst_x; y4 += dst_y;
 
-    SDL_SetRenderDrawColor(k__window.renderer, 168, 213, 182, 255);
+    SDL_SetRenderDrawColor(k__window.renderer, 76, 201, 176, 255);
     SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2);
     SDL_RenderDrawLineF(k__window.renderer, x2, y2, x3, y3);
     SDL_RenderDrawLineF(k__window.renderer, x3, y3, x4, y4);
@@ -508,7 +508,7 @@ static void draw_debug_rect(struct k_component *component) {
     y3 = dst_y - len_c;
     x4 = dst_x - len_s;
     y4 = dst_y + len_c;
-    SDL_SetRenderDrawColor(k__window.renderer, 168, 213, 182, 255);
+    SDL_SetRenderDrawColor(k__window.renderer, 76, 201, 176, 255);
     SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2);
     SDL_RenderDrawLineF(k__window.renderer, x3, y3, x4, y4);
 }

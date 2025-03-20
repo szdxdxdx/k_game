@@ -18,8 +18,8 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num) 
     int sprite_w = k_image_get_width(img_player) / frames_num;
     int sprite_h = k_image_get_height(img_player);
 
-    float origin_x = (float)scale * 4.0f;
-    float origin_y = (float)scale * 4.0f;
+    float origin_x = (float)scale * 40.0f;
+    float origin_y = (float)scale * 43.0f;
 
     /* 素材中的动画都不超过 15 帧，此处不需要动态申请内存 */
     struct k_sprite_frame_config frames_config[] = {
