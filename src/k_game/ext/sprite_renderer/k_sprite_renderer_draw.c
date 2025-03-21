@@ -1,5 +1,7 @@
 #include "./_internal.h"
 
+#include "../../core/sprite/_public.h"
+
 /* region [renderer_speed] */
 
 void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed) {
@@ -7,14 +9,10 @@ void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed
     if (NULL == renderer->sprite)
         return;
 
-    if (speed <= 0.0f)
-        renderer->speed = 0.0f;
+    if (speed <= 0)
+        renderer->speed = 0;
     else
         renderer->speed = speed;
-}
-
-void k_sprite_renderer_add_speed(struct k_sprite_renderer *renderer, float speed_delta) {
-    k_sprite_renderer_set_speed(renderer, renderer->speed + speed_delta);
 }
 
 float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
@@ -35,19 +33,16 @@ static void calc_frame_idx(struct k_sprite_renderer *renderer) {
     size_t frames_num = k_sprite_get_frames_num(sprite);
 
     renderer->timer += k_get_step_delta() * renderer->speed;
-    uint64_t timer_ms = (uint64_t)(renderer->timer * 1000);
     while (1) {
-        int delay = k_sprite_get_frame_delay(sprite, renderer->frame_idx);
-        if (timer_ms < delay)
+        float delay = (float)k_sprite_get_frame_delay(sprite, renderer->frame_idx) / 1000;
+        if (renderer->timer < delay)
             break;
 
-        timer_ms -= delay;
+        renderer->timer -= delay;
         renderer->frame_idx += 1;
         if (frames_num <= renderer->frame_idx)
             renderer->frame_idx = 0;
     }
-
-    renderer->timer = (float)timer_ms / 1000;
 }
 
 static void draw_sprite(struct k_sprite_renderer *renderer) {
@@ -111,10 +106,10 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
 
     renderer->sprite = sprite;
 
-    renderer->timer = 0.0f;
-    renderer->speed = 1.0f;
     renderer->frame_idx = 0;
-    k_sprite_renderer_clear_transforms(renderer);
+    renderer->timer = 0;
+    renderer->speed = 1;
+    k_sprite_renderer_reset_transforms(renderer);
 
     k_sprite_renderer_set_debug(renderer, renderer->debug);
     return 0;

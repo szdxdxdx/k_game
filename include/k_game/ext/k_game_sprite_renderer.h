@@ -61,6 +61,8 @@ void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
 
 /* region [sprite_renderer set/get] */
 
+/* region [ref_sprite] */
+
 /**
  * \brief 设置渲染器引用的精灵
  *
@@ -80,6 +82,10 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
  */
 struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer);
 
+/* endregion */
+
+/* region [z_index] */
+
 /**
  * \brief 更改渲染器的绘制深度
  *
@@ -92,6 +98,10 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
 
 /** \brief 获取渲染器的绘制深度 */
 int k_sprite_renderer_get_z_index(struct k_sprite_renderer *renderer);
+
+/* endregion */
+
+/* region [speed] */
 
 /**
  * \brief 设置渲染器播放精灵动画的速度
@@ -106,22 +116,13 @@ int k_sprite_renderer_get_z_index(struct k_sprite_renderer *renderer);
 void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed);
 
 /**
- * \brief 增加或减少渲染器播放精灵动画的速度
- *
- * - 若 `speed_add` 为正值，则加速播放。
- * - 若 `speed_add` 为负值，则减速播放。
- * 播放速度最慢降至 0，此时暂停播放精灵动画。
- *
- * 若渲染器没有引用精灵，则函数不做任何事。
- */
-void k_sprite_renderer_add_speed(struct k_sprite_renderer *renderer, float speed_delta);
-
-/**
  * \brief 获取渲染器播放精灵动画的速度
  *
  * 函数返回渲染器播放精灵动画的速度。若渲染器没有引用精灵，则函数返回 0。
  */
 float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer);
+
+/* endregion */
 
 /* endregion */
 
@@ -292,7 +293,7 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
  *
  * 更改渲染器引用的精灵时，也会重置所有的变换。
  */
-void k_sprite_renderer_clear_transforms(struct k_sprite_renderer *renderer);
+void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
 
 /* endregion */
 

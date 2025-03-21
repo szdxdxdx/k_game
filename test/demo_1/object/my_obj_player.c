@@ -96,9 +96,9 @@ static void player_step(struct k_object *object) {
 
     /* 加速减速 */
     if (k_key_down('='))
-        k_sprite_renderer_add_speed(player->spr_rdr, 1.0f * delta);
+        k_sprite_renderer_set_speed(player->spr_rdr, 1.0f * delta + k_sprite_renderer_get_speed(player->spr_rdr));
     if (k_key_down('-'))
-        k_sprite_renderer_add_speed(player->spr_rdr, -0.5f * delta);
+        k_sprite_renderer_set_speed(player->spr_rdr, -0.5f * delta + k_sprite_renderer_get_speed(player->spr_rdr));
 
     if (k_key_pressed('B')) {
         if (k_key_held(K_KEY_LEFT_SHIFT))

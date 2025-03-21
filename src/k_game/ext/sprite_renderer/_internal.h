@@ -26,17 +26,17 @@ struct k_sprite_renderer {
     struct k_component_callback *callback_draw_rect;
 
     struct k_sprite *sprite;
-    float timer;
-    float speed;
+
     size_t frame_idx;
+    float  timer;
+    float  speed;
 
     float *x;
     float *y;
 
-    float scaled_w;
-    float scaled_h;
-    float angle;
-
+    float   scaled_w;
+    float   scaled_h;
+    float   angle;
     uint8_t transform_flags;
 };
 

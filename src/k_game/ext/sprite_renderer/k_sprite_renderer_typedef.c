@@ -20,10 +20,10 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     renderer->sprite = NULL;
 
     if (NULL == config->sprite) {
-        renderer->timer = 0.0f;
-        renderer->speed = 1.0f;
         renderer->frame_idx = 0;
-        k_sprite_renderer_clear_transforms(renderer);
+        renderer->timer = 0;
+        renderer->speed = 1;
+        k_sprite_renderer_reset_transforms(renderer);
     }
     else {
         if (0 != k_sprite_renderer_set_sprite(renderer, config->sprite))
