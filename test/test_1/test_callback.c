@@ -6,7 +6,7 @@
 
 static struct k_sprite *spr_player;
 
-struct obj_player {
+struct yx_obj_player {
     float x, y;
 };
 
@@ -15,9 +15,9 @@ static int create_room(void *params) {
 
     k_room_add_draw_callback(room, NULL, k_room_clean_canvas, INT_MIN);
 
-    struct k_object *object = k_object_create(sizeof(struct obj_player));
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
-    struct obj_player *player = k_object_get_data(object);
+    struct yx_obj_player *player = k_object_get_data(object);
     player->x = 60.0f;
     player->y = 80.0f;
 

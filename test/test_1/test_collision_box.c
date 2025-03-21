@@ -11,14 +11,14 @@ struct room_data {
     char s[32];
 };
 
-struct obj_player {
+struct yx_obj_player {
     float x, y;
 };
 
 static void create_player_1(void) {
-    struct k_object *object = k_object_create(sizeof(struct obj_player));
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
-    struct obj_player *player = k_object_get_data(object);
+    struct yx_obj_player *player = k_object_get_data(object);
     player->x = 60.0f;
     player->y = 80.0f;
 
@@ -60,9 +60,9 @@ static void create_player_1(void) {
 }
 
 static void create_player_2(void) {
-    struct k_object *object = k_object_create(sizeof(struct obj_player));
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
-    struct obj_player *player = k_object_get_data(object);
+    struct yx_obj_player *player = k_object_get_data(object);
     player->x = 100.0f;
     player->y = 220.0f;
 

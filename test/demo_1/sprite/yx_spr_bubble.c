@@ -1,7 +1,7 @@
 #include "./_internal.h"
 
-struct k_sprite *my_spr_bubble_new = NULL;
-struct k_sprite *my_spr_bubble_del = NULL;
+struct k_sprite *yx_spr_bubble_new = NULL;
+struct k_sprite *yx_spr_bubble_del = NULL;
 
 static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, int delay) {
 
@@ -51,9 +51,9 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, 
     return k_sprite_create(&config);
 }
 
-int my_spr_bubble_load(void) {
+int yx_load_spr_bubble(void) {
 
-    my_spr_bubble_new = load_sprite_strip("./demo_1/sprite/bubble/new.png", 11, 64);
-    my_spr_bubble_del = load_sprite_strip("./demo_1/sprite/bubble/del.png",  5, 64);
+    yx_spr_bubble_new = load_sprite_strip("./demo_1/sprite/bubble/new.png", 11, 64);
+    yx_spr_bubble_del = load_sprite_strip("./demo_1/sprite/bubble/del.png",  5, 64);
     return 0;
 }

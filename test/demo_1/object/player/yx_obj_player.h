@@ -1,14 +1,14 @@
-#ifndef MY_GAME__OBJ_PLAYER_H
-#define MY_GAME__OBJ_PLAYER_H
+#ifndef YX__OBJ_PLAYER_H
+#define YX__OBJ_PLAYER_H
 
 #include "k_game.h"
 
-enum my_player_state {
+enum yx_obj_player_state {
     player_idle,
     player_run,
 };
 
-struct my_player {
+struct yx_obj_player {
     float x;
     float y;
 
@@ -22,6 +22,6 @@ struct my_player {
     struct k_sprite_renderer *spr_rdr;
 };
 
-struct k_object *my_player_create(float x, float y);
+struct k_object *yx_player_create(float x, float y);
 
 #endif

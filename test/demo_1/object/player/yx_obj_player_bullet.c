@@ -1,7 +1,7 @@
-#include "./_internal.h"
+#include "../_internal.h"
 
 static void bullet_step(struct k_object *object) {
-    struct my_player_bullet *bullet = k_object_get_data(object);
+    struct yx_obj_player_bullet *bullet = k_object_get_data(object);
 
     float delta = k_get_step_delta();
     float x_add = bullet->speed * delta;
@@ -19,10 +19,10 @@ static void bullet_step(struct k_object *object) {
     }
 }
 
-struct k_object *my_player_bullet_create(float x, float y, int face) {
+struct k_object *yx_player_bullet_create(float x, float y, int face) {
 
-    struct k_object *object = k_object_create(sizeof(struct my_player_bullet));
-    struct my_player_bullet *bullet = k_object_get_data(object);
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_player_bullet));
+    struct yx_obj_player_bullet *bullet = k_object_get_data(object);
     bullet->x = x;
     bullet->y = y;
     bullet->speed = (face >= 0 ? 200.0f : -200.0f);

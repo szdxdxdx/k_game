@@ -1,9 +1,9 @@
-#ifndef MY_GAME__OBJECT__PUBLIC_H
-#define MY_GAME__OBJECT__PUBLIC_H
+#ifndef YX__OBJECT__PUBLIC_H
+#define YX__OBJECT__PUBLIC_H
 
-#include "./obj_player.h"
-#include "./obj_player_bullet.h"
+#include "./player/yx_obj_player.h"
+#include "./player/yx_obj_player_bullet.h"
 
-#include "./obj_bubble.h"
+#include "./bubble/yx_obj_bubble.h"
 
 #endif
