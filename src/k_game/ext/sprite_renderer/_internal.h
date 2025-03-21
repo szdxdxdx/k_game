@@ -31,6 +31,8 @@ struct k_sprite_renderer {
     float  timer;
     float  speed;
 
+    int loop;
+
     float *x;
     float *y;
 

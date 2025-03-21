@@ -56,6 +56,6 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, 
 int my_spr_ynx_load(void) {
 
     my_spr_ynx_idle = load_sprite_strip("./demo_1/sprite/ynx/idle.png", 2, 64 * 3);
-    my_spr_ynx_run  = load_sprite_strip("./demo_1/sprite/ynx/run.png",  6, 96);
+    my_spr_ynx_run  = load_sprite_strip("./demo_1/sprite/ynx/run.png",  6, 80);
     return 0;
 }

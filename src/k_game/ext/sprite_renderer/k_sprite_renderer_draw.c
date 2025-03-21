@@ -27,12 +27,13 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
 
 /* region [renderer_draw] */
 
-static void calc_frame_idx(struct k_sprite_renderer *renderer) {
-    struct k_sprite *sprite = renderer->sprite;
-
-    size_t frames_num = k_sprite_get_frames_num(sprite);
+static void draw_sprite(struct k_component *component) {
+    struct k_sprite_renderer *renderer = k_component_get_data(component);
 
     renderer->timer += k_get_step_delta() * renderer->speed;
+
+    struct k_sprite *sprite = renderer->sprite;
+    size_t frames_num = k_sprite_get_frames_num(sprite);
     while (1) {
         float delay = (float)k_sprite_get_frame_delay(sprite, renderer->frame_idx) / 1000;
         if (renderer->timer < delay)
@@ -43,12 +44,9 @@ static void calc_frame_idx(struct k_sprite_renderer *renderer) {
         if (frames_num <= renderer->frame_idx)
             renderer->frame_idx = 0;
     }
-}
-
-static void draw_sprite(struct k_sprite_renderer *renderer) {
 
     if (transform_none == renderer->transform_flags) {
-        k_sprite_draw(renderer->sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
+        k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
     }
     else {
         struct k_sprite_draw_options opts;
@@ -58,21 +56,8 @@ static void draw_sprite(struct k_sprite_renderer *renderer) {
         opts.flip_x   = renderer->transform_flags & transform_flip_x;
         opts.flip_y   = renderer->transform_flags & transform_flip_y;
 
-        k_sprite_draw(renderer->sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
+        k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
     }
-}
-
-static void draw_animation(struct k_component *component) {
-    struct k_sprite_renderer *renderer = k_component_get_data(component);
-
-    calc_frame_idx(renderer);
-    draw_sprite(renderer);
-}
-
-static void draw_image(struct k_component *component) {
-    struct k_sprite_renderer *renderer = k_component_get_data(component);
-
-    draw_sprite(renderer);
 }
 
 /* endregion */
@@ -90,18 +75,12 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         renderer->callback_draw_sprite = NULL;
     }
     else {
-        struct k_component_callback *draw_callback;
-        if (k_sprite_get_frames_num(sprite) == 1) {
-            draw_callback = k_component_add_draw_callback(renderer->component, draw_image, renderer->z_index);
-        } else {
-            draw_callback = k_component_add_draw_callback(renderer->component, draw_animation, renderer->z_index);
-        }
-
-        if (NULL == draw_callback)
+        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, draw_sprite, renderer->z_index);
+        if (NULL == callback)
             return -1;
 
         k_component_del_callback(renderer->callback_draw_sprite);
-        renderer->callback_draw_sprite = draw_callback;
+        renderer->callback_draw_sprite = callback;
     }
 
     renderer->sprite = sprite;
@@ -130,18 +109,12 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
         return 0;
     }
 
-    struct k_component_callback *draw_callback;
-    if (k_sprite_get_frames_num(renderer->sprite) == 1) {
-        draw_callback = k_component_add_draw_callback(renderer->component, draw_image, z_index);
-    } else {
-        draw_callback = k_component_add_draw_callback(renderer->component, draw_animation, z_index);
-    }
-
-    if (NULL == draw_callback)
+    struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, draw_sprite, z_index);
+    if (NULL == callback)
         return -1;
 
     k_component_del_callback(renderer->callback_draw_sprite);
-    renderer->callback_draw_sprite = draw_callback;
+    renderer->callback_draw_sprite = callback;
 
     renderer->z_index = z_index;
     return 0;

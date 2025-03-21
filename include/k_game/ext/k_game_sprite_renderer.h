@@ -124,6 +124,12 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer);
 
 /* endregion */
 
+/* region [loop] */
+
+void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop);
+
+/* endregion */
+
 /* endregion */
 
 /* region [sprite_renderer transform] */
