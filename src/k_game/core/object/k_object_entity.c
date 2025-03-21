@@ -17,7 +17,7 @@ struct k_object *k_object_create(size_t object_data_size) {
 
     object->room = room;
 
-    if (0 != object_data_size) {
+    if (0 == object_data_size) {
         object->data = NULL;
     } else {
         object->data = k_malloc(object_data_size);
