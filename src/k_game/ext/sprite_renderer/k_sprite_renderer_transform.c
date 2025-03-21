@@ -115,10 +115,6 @@ void k_sprite_renderer_rotate(struct k_sprite_renderer *renderer, float angle) {
         renderer->transform_flags &= ~transform_rotate;
 }
 
-void k_sprite_renderer_adjust_rotation(struct k_sprite_renderer *renderer, float angle_delta) {
-    k_sprite_renderer_rotate(renderer, renderer->angle + angle_delta);
-}
-
 float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)

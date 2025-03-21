@@ -11,9 +11,9 @@ int fn_room_init(void *params) {
     k_room_add_draw_callback(NULL, k_room_clean_canvas, INT_MIN);
     k_room_add_draw_callback(NULL, k_room_draw_grid, INT_MIN + 1);
 
-   // my_player_create(300.0f, 300.0f);
+    my_player_create(300.0f, 300.0f);
    // my_enemy_create(500.0f, 300.0f);
-    my_bubble_create(500.0f, 300.0f);
+   // my_bubble_create(500.0f, 300.0f);
     return 0;
 }
 

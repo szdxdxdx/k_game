@@ -80,12 +80,7 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
 
     renderer->sprite = sprite;
 
-    renderer->frame_idx = 0;
-    renderer->timer = 0;
-    renderer->speed = 1;
-    k_sprite_renderer_reset_transforms(renderer);
-
-    k_sprite_renderer_set_debug(renderer, renderer->debug);
+    k__sprite_renderer_reset(renderer);
     return 0;
 }
 

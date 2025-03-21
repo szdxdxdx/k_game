@@ -44,4 +44,6 @@ struct k_sprite_renderer {
     uint8_t transform_flags;
 };
 
+void k__sprite_renderer_reset(struct k_sprite_renderer *renderer);
+
 #endif
