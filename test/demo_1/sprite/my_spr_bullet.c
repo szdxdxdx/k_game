@@ -22,22 +22,22 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num) 
 
     /* 素材中的动画都不超过 15 帧，此处不需要动态申请内存 */
     struct k_sprite_frame_config frames_config[] = {
-            { img_player,  0 * sprite_w, 0, 90 },
-            { img_player,  1 * sprite_w, 0, 90 },
-            { img_player,  2 * sprite_w, 0, 90 },
-            { img_player,  3 * sprite_w, 0, 90 },
-            { img_player,  4 * sprite_w, 0, 90 },
-            { img_player,  5 * sprite_w, 0, 90 },
-            { img_player,  6 * sprite_w, 0, 90 },
-            { img_player,  7 * sprite_w, 0, 90 },
-            { img_player,  8 * sprite_w, 0, 90 },
-            { img_player,  9 * sprite_w, 0, 90 },
-            { img_player, 10 * sprite_w, 0, 90 },
-            { img_player, 11 * sprite_w, 0, 90 },
-            { img_player, 12 * sprite_w, 0, 90 },
-            { img_player, 13 * sprite_w, 0, 90 },
-            { img_player, 14 * sprite_w, 0, 90 },
-            { img_player, 15 * sprite_w, 0, 90 },
+            { img_player,  0 * sprite_w, 0, 1 },
+            { img_player,  1 * sprite_w, 0, 1 },
+            { img_player,  2 * sprite_w, 0, 1 },
+            { img_player,  3 * sprite_w, 0, 1 },
+            { img_player,  4 * sprite_w, 0, 1 },
+            { img_player,  5 * sprite_w, 0, 1 },
+            { img_player,  6 * sprite_w, 0, 1 },
+            { img_player,  7 * sprite_w, 0, 1 },
+            { img_player,  8 * sprite_w, 0, 1 },
+            { img_player,  9 * sprite_w, 0, 1 },
+            { img_player, 10 * sprite_w, 0, 1 },
+            { img_player, 11 * sprite_w, 0, 1 },
+            { img_player, 12 * sprite_w, 0, 1 },
+            { img_player, 13 * sprite_w, 0, 1 },
+            { img_player, 14 * sprite_w, 0, 1 },
+            { img_player, 15 * sprite_w, 0, 1 },
     };
 
     struct k_sprite_config config = {

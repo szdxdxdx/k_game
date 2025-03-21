@@ -284,7 +284,8 @@ void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop);
  *
  * 渲染器每播放完一次动画，便会执行一次该回调。
  *
- * 更换渲染器引用的精灵，将取消回调。
+ * 若 `fn_callback` 为 `NULL` 则取消回调。
+ * 更换渲染器引用的精灵，也会移除该回调。
  */
 void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(struct k_object *object));
 
