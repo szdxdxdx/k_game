@@ -13,6 +13,7 @@ int fn_room_init(void *params) {
 
     my_player_create(300.0f, 300.0f);
    // my_enemy_create(500.0f, 300.0f);
+    my_bubble_create(500.0f, 300.0f);
     return 0;
 }
 

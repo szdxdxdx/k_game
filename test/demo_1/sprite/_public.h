@@ -33,4 +33,13 @@ extern struct k_sprite *my_spr_ynx_idle;
 
 /* endregion */
 
+/* region [bubble] */
+
+int my_spr_bubble_load(void);
+
+extern struct k_sprite *my_spr_bubble_new;
+extern struct k_sprite *my_spr_bubble_del;
+
+/* endregion */
+
 #endif

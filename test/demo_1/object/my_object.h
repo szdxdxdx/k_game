@@ -5,4 +5,6 @@
 #include "./my_obj_player_bullet.h"
 #include "./my_obj_enemy.h"
 
+#include "./my_obj_bubble.h"
+
 #endif

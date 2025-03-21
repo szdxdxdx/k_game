@@ -10,6 +10,7 @@ static void load_sprite(void) {
     my_spr_enemy_load();
 
     my_spr_ynx_load();
+    my_spr_bubble_load();
 }
 
 static void load_sound(void) {
