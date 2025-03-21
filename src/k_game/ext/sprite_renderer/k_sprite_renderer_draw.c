@@ -9,7 +9,7 @@ static void draw_sprite(struct k_component *component) {
 
     renderer->timer += k_get_step_delta() * renderer->speed;
 
-    int is_loop = 0;
+    void (*fn_loop_callback)(void *) = NULL;
 
     struct k_sprite *sprite = renderer->sprite;
     size_t frames_num = k_sprite_get_frames_num(sprite);
@@ -22,15 +22,18 @@ static void draw_sprite(struct k_component *component) {
         renderer->frame_idx += 1;
         if (frames_num <= renderer->frame_idx) {
 
-            if (0 < renderer->loop) {
+            if (2 <= renderer->loop) {
+                fn_loop_callback = renderer->fn_loop_callback;
                 renderer->loop -= 1;
-                is_loop = 1;
-
-                if (1 < renderer->loop) {
-                    renderer->frame_idx = 0;
-                } else {
-                    renderer->frame_idx = frames_num - 1;
-                }
+                renderer->frame_idx = 0;
+            }
+            else if (1 == renderer->loop) {
+                fn_loop_callback = renderer->fn_loop_callback;
+                renderer->loop -= 1;
+                renderer->frame_idx = frames_num - 1;
+            }
+            else {
+                renderer->frame_idx = frames_num - 1;
             }
         }
     }
@@ -45,12 +48,11 @@ static void draw_sprite(struct k_component *component) {
         opts.angle    = renderer->angle;
         opts.flip_x   = renderer->transform_flags & transform_flip_x;
         opts.flip_y   = renderer->transform_flags & transform_flip_y;
-
         k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
     }
 
-    if (is_loop && NULL != renderer->fn_loop_callback)
-        renderer->fn_loop_callback(renderer->loop_callback_data);
+    if (NULL != fn_loop_callback)
+        fn_loop_callback(renderer->loop_callback_data);
 }
 
 /* endregion */
@@ -146,8 +148,8 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
 
 void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop) {
 
-    if (loop < 0)
-        renderer->loop = 0;
+    if (loop <= 1)
+        renderer->loop = 1;
     else
         renderer->loop = loop;
 }

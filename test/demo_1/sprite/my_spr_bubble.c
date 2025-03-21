@@ -56,6 +56,6 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, 
 int my_spr_bubble_load(void) {
 
     my_spr_bubble_new = load_sprite_strip("./demo_1/sprite/bubble/new.png", 11, 64);
-    my_spr_bubble_del = load_sprite_strip("./demo_1/sprite/bubble/del.png", 5,  64);
+    my_spr_bubble_del = load_sprite_strip("./demo_1/sprite/bubble/del.png",  5, 64);
     return 0;
 }
