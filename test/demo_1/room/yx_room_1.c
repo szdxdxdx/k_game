@@ -2,17 +2,43 @@
 
 #include "./_internal.h"
 
+#include "../sprite/_public.h"
 #include "../object/_public.h"
 
 int fn_room_init(void *params) {
     (void)params;
 
+    /* region [component_manager] */
+
     k_room_add_collision_manager();
+
+    /* endregion */
+
+    /* region [room_callback] */
 
     k_room_add_draw_callback(NULL, k_room_clean_canvas, INT_MIN);
     k_room_add_draw_callback(NULL, k_room_draw_grid, INT_MIN + 1);
 
-    yx_player_create(300.0f, 300.0f);
+    /* endregion */
+
+    {
+        struct yx_obj_player_config config;
+        config.x = 300;
+        config.y = 300;
+        config.spr_idle = yx_spr_ynx_idle;
+        config.spr_run  = yx_spr_ynx_run;
+        yx_player_create(&config);
+    }
+
+    {
+        struct yx_obj_player_config config;
+        config.x = 500;
+        config.y = 500;
+        config.spr_idle = yx_spr_liliko_idle;
+        config.spr_run  = yx_spr_liliko_run;
+        yx_player_create(&config);
+    }
+
     yx_bubble_create(500.0f, 300.0f);
     return 0;
 }

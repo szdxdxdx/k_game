@@ -3,47 +3,47 @@
 static void player_step_set_state(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    enum yx_obj_player_state state = player_idle;
+    enum yx_obj_player_state state = YX_OBJ_PLAYER_STATE_IDLE;
     if (player->next_x < player->x) {
-        state = player_run;
+        state = YX_OBJ_PLAYER_STATE_RUN;
         player->face = -1;
     }
     else if (player->next_x > player->x) {
-        state = player_run;
+        state = YX_OBJ_PLAYER_STATE_RUN;
         player->face = 1;
     }
     else if (player->next_y != player->y) {
-        state = player_run;
+        state = YX_OBJ_PLAYER_STATE_RUN;
     }
 
     switch (state) {
-        case player_run: {
+        case YX_OBJ_PLAYER_STATE_RUN: {
 
             switch (player->state) {
-                case player_run:
+                case YX_OBJ_PLAYER_STATE_RUN:
                     if (player->face == 1)
                         k_sprite_renderer_flip_x(player->spr_rdr, 1);
                     else
                         k_sprite_renderer_flip_x(player->spr_rdr, 0);
                     break;
-                case player_idle:
-                    player->state = player_run;
-                    k_sprite_renderer_set_sprite(player->spr_rdr, yx_spr_ynx_run);
+                case YX_OBJ_PLAYER_STATE_IDLE:
+                    player->state = YX_OBJ_PLAYER_STATE_RUN;
+                    k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_run);
                     if (player->face == 1)
                         k_sprite_renderer_flip_x(player->spr_rdr, 1);
                     break;
             }
             break;
         }
-        case player_idle: {
+        case YX_OBJ_PLAYER_STATE_IDLE: {
 
             switch (player->state) {
-                case player_run:player->state = player_idle;
-                    k_sprite_renderer_set_sprite(player->spr_rdr, yx_spr_ynx_idle);
+                case YX_OBJ_PLAYER_STATE_RUN:player->state = YX_OBJ_PLAYER_STATE_IDLE;
+                    k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_idle);
 
                     if (player->face == 1)
                         k_sprite_renderer_flip_x(player->spr_rdr, 1);
-                case player_idle:
+                case YX_OBJ_PLAYER_STATE_IDLE:
                     break;
             }
             break;
@@ -109,26 +109,28 @@ static void player_step(struct k_object *object) {
         k_sprite_renderer_set_sprite(player->spr_rdr, NULL);
     }
     if (k_key_pressed('G')) {
-        k_sprite_renderer_set_sprite(player->spr_rdr, yx_spr_ynx_run);
+        k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_run);
     }
 }
 
-struct k_object *yx_player_create(float x, float y) {
-    struct k_room *room = k_get_current_room();
+struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
     k_object_add_step_begin_callback(object, player_step_set_state);
-    k_object_add_step_callback(object, player_step);
-    k_object_add_step_callback(object, player_step_shoot);
+    //k_object_add_step_callback(object, player_step);
+    //k_object_add_step_callback(object, player_step_shoot);
 
     struct yx_obj_player *player = k_object_get_data(object);
-    player->x      = x;
-    player->y      = y;
-    player->next_x = x;
-    player->next_y = y;
-    player->state  = player_idle;
+    player->x      = config->x;
+    player->y      = config->y;
+    player->next_x = config->x;
+    player->next_y = config->y;
+    player->state  = YX_OBJ_PLAYER_STATE_IDLE;
     player->face   = -1;
+
+    player->spr_idle = config->spr_idle;
+    player->spr_run  = config->spr_run;
 
     struct k_component_type *WASD = k_component_type_find("k/WASD");
     struct k_WASD_config WASD_config;
@@ -142,7 +144,7 @@ struct k_object *yx_player_create(float x, float y) {
     player->WASD = k_object_add_component(object, WASD, &WASD_config);
 
     struct k_sprite_renderer_config renderer_config;
-    renderer_config.sprite  = yx_spr_ynx_idle;
+    renderer_config.sprite  = player->spr_idle;
     renderer_config.z_index = 0;
     renderer_config.x       = &player->x;
     renderer_config.y       = &player->y;
