@@ -25,16 +25,18 @@ struct k_sprite_renderer {
     int debug;
     struct k_component_callback *callback_draw_rect;
 
+    float *x;
+    float *y;
+
     struct k_sprite *sprite;
+
+    int loop;
+    void (*fn_loop_callback)(void *data);
+    void *loop_callback_data;
 
     size_t frame_idx;
     float  timer;
     float  speed;
-
-    int loop;
-
-    float *x;
-    float *y;
 
     float   scaled_w;
     float   scaled_h;

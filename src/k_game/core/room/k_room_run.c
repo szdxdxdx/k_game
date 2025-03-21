@@ -17,8 +17,8 @@ static inline int frame_delay(struct k_room *room) {
         return 1;
 
     k__game.step_timestamp = current_time;
-    k__game.step_delta_ms = (int)elapsed_time;
-    k__game.step_delta = (float)elapsed_time / 1000.0f;
+    k__game.step_delta_ms  = (int)elapsed_time;
+    k__game.step_delta     = (float)elapsed_time / 1000.0f;
     return 0;
 }
 
@@ -30,6 +30,7 @@ void k__room_run(struct k_room *room) {
     if (NULL != room->fn_enter)
         room->fn_enter();
 
+    k__game.step_timestamp = k_get_timestamp();
     while (room->game_loop) {
 
         k__refresh_keyboard();

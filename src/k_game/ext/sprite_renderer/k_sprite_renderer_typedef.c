@@ -1,3 +1,5 @@
+#include <limits.h>
+
 #include "./_internal.h"
 
 /* region [renderer_init] */
@@ -11,13 +13,17 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     renderer->callback_draw_sprite = NULL;
     renderer->z_index = config->z_index;
 
-    renderer->callback_draw_rect = NULL;
     renderer->debug = 0;
+    renderer->callback_draw_rect = NULL;
 
     renderer->x = config->x;
     renderer->y = config->y;
 
     renderer->sprite = NULL;
+
+    renderer->loop = INT_MAX;
+    renderer->fn_loop_callback = NULL;
+    renderer->loop_callback_data = NULL;
 
     if (NULL == config->sprite) {
         renderer->frame_idx = 0;

@@ -2,35 +2,14 @@
 
 #include "../../core/sprite/_public.h"
 
-/* region [renderer_speed] */
-
-void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed) {
-
-    if (NULL == renderer->sprite)
-        return;
-
-    if (speed <= 0)
-        renderer->speed = 0;
-    else
-        renderer->speed = speed;
-}
-
-float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
-
-    if (NULL == renderer->sprite)
-        return 0;
-    else
-        return renderer->speed;
-}
-
-/* endregion */
-
 /* region [renderer_draw] */
 
 static void draw_sprite(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
 
     renderer->timer += k_get_step_delta() * renderer->speed;
+
+    int is_loop = 0;
 
     struct k_sprite *sprite = renderer->sprite;
     size_t frames_num = k_sprite_get_frames_num(sprite);
@@ -41,8 +20,17 @@ static void draw_sprite(struct k_component *component) {
 
         renderer->timer -= delay;
         renderer->frame_idx += 1;
-        if (frames_num <= renderer->frame_idx)
-            renderer->frame_idx = 0;
+        if (frames_num <= renderer->frame_idx) {
+
+            if (1 < renderer->loop) {
+                renderer->frame_idx = 0;
+                renderer->loop -= 1;
+                is_loop = 1;
+            }
+            else {
+                renderer->frame_idx = frames_num - 1;
+            }
+        }
     }
 
     if (transform_none == renderer->transform_flags) {
@@ -58,11 +46,14 @@ static void draw_sprite(struct k_component *component) {
 
         k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
     }
+
+    if (is_loop && NULL != renderer->fn_loop_callback)
+        renderer->fn_loop_callback(renderer->loop_callback_data);
 }
 
 /* endregion */
 
-/* region [renderer_sprite] */
+/* region [ref_sprite] */
 
 int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite) {
 
@@ -100,7 +91,7 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 
 /* endregion */
 
-/* region [renderer_z_index] */
+/* region [z_index] */
 
 int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_index) {
 
@@ -122,6 +113,46 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
 
 int k_sprite_renderer_get_z_index(struct k_sprite_renderer *renderer) {
     return renderer->z_index;
+}
+
+/* endregion */
+
+/* region [speed] */
+
+void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed) {
+
+    if (NULL == renderer->sprite)
+        return;
+
+    if (speed <= 0)
+        renderer->speed = 0;
+    else
+        renderer->speed = speed;
+}
+
+float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
+
+    if (NULL == renderer->sprite)
+        return 0;
+    else
+        return renderer->speed;
+}
+
+/* endregion */
+
+/* region [loop] */
+
+void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop) {
+
+    if (loop < 0)
+        renderer->loop = 0;
+    else
+        renderer->loop = loop;
+}
+
+void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(void *data), void *data) {
+    renderer->fn_loop_callback = fn_callback;
+    renderer->loop_callback_data = data;
 }
 
 /* endregion */

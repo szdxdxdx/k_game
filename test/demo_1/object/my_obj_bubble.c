@@ -1,8 +1,17 @@
+#include <stdio.h>
+#include <limits.h>
+
 #include "k_game.h"
 
 #include "./my_object.h"
 
 #include "../sprite/_public.h"
+
+void my_bubble_destroy(void *data) {
+    struct k_object *object = data;
+    //k_object_destroy(object);
+    printf("3 ");
+}
 
 struct k_object *my_bubble_create(float x, float y) {
 
@@ -18,6 +27,9 @@ struct k_object *my_bubble_create(float x, float y) {
     renderer_config.x       = &bubble->x;
     renderer_config.y       = &bubble->y;
     bubble->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
+
+    k_sprite_renderer_set_loop(bubble->spr_rdr, 3);
+    k_sprite_renderer_set_loop_callback(bubble->spr_rdr, my_bubble_destroy, object);
 
     return object;
 }

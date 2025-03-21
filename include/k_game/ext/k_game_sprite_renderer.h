@@ -128,6 +128,8 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer);
 
 void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop);
 
+void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(void *data), void *data);
+
 /* endregion */
 
 /* endregion */
