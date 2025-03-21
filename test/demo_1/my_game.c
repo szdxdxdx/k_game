@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./sprite/my_sprite.h"
+#include "./sprite/_public.h"
 #include "./room/my_room.h"
 
 static void load_sprite(void) {
     my_spr_player_load();
     my_spr_player_bullet_load();
     my_spr_enemy_load();
+
+    my_spr_ynx_load();
 }
 
 static void load_sound(void) {

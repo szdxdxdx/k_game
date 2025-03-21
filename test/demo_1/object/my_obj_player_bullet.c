@@ -1,6 +1,6 @@
 #include "./my_object.h"
 
-#include "../sprite/my_sprite.h"
+#include "../sprite/_public.h"
 
 static void bullet_step(struct k_object *object) {
     struct my_player_bullet *bullet = k_object_get_data(object);

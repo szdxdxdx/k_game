@@ -1,6 +1,6 @@
 #include "./my_object.h"
 
-#include "../sprite/my_sprite.h"
+#include "../sprite/_public.h"
 
 static void player_step_set_state(struct k_object *object) {
     struct my_player *player = k_object_get_data(object);
@@ -9,12 +9,10 @@ static void player_step_set_state(struct k_object *object) {
     if (player->next_x < player->x) {
         state = player_run;
         player->face = -1;
-        k_sprite_renderer_flip_x(player->spr_rdr, 1);
     }
     else if (player->next_x > player->x) {
         state = player_run;
         player->face = 1;
-        k_sprite_renderer_flip_x(player->spr_rdr, 0);
     }
     else if (player->next_y != player->y) {
         state = player_run;
@@ -22,21 +20,33 @@ static void player_step_set_state(struct k_object *object) {
 
     switch (state) {
         case player_run: {
-            if (player_run != player->state) {
-                player->state = player_run;
-                k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_run);
-                if (player->face == -1)
-                    k_sprite_renderer_flip_x(player->spr_rdr, 1);
+
+            switch (player->state) {
+                case player_run:
+                    if (player->face == 1)
+                        k_sprite_renderer_flip_x(player->spr_rdr, 1);
+                    else
+                        k_sprite_renderer_flip_x(player->spr_rdr, 0);
+                    break;
+                case player_idle:
+                    player->state = player_run;
+                    k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_ynx_run);
+                    if (player->face == 1)
+                        k_sprite_renderer_flip_x(player->spr_rdr, 1);
+                    break;
             }
             break;
         }
         case player_idle: {
-            if (player_idle != player->state) {
-                player->state = player_idle;
-                k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_idle);
 
-                if (player->face == -1)
-                    k_sprite_renderer_flip_x(player->spr_rdr, 1);
+            switch (player->state) {
+                case player_run:player->state = player_idle;
+                    k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_ynx_idle);
+
+                    if (player->face == 1)
+                        k_sprite_renderer_flip_x(player->spr_rdr, 1);
+                case player_idle:
+                    break;
             }
             break;
         }
@@ -101,7 +111,7 @@ static void player_step(struct k_object *object) {
         k_sprite_renderer_set_sprite(player->spr_rdr, NULL);
     }
     if (k_key_pressed('G')) {
-        k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_player_run);
+        k_sprite_renderer_set_sprite(player->spr_rdr, my_spr_ynx_run);
     }
 }
 
@@ -120,7 +130,7 @@ struct k_object *my_player_create(float x, float y) {
     player->next_x = x;
     player->next_y = y;
     player->state = player_idle;
-    player->face = 1;
+    player->face = -1;
 
     struct k_component_type *WASD = k_component_type_find("k/WASD");
     struct k_WASD_config WASD_config;
@@ -128,13 +138,13 @@ struct k_object *my_player_create(float x, float y) {
     WASD_config.key_left  = 'A';
     WASD_config.key_down  = 'S';
     WASD_config.key_right = 'D';
-    WASD_config.speed     = 150.0f;
+    WASD_config.speed     = 100.0f;
     WASD_config.x         = &player->next_x;
     WASD_config.y         = &player->next_y;
     player->WASD = k_object_add_component(object, WASD, &WASD_config);
 
     struct k_sprite_renderer_config renderer_config;
-    renderer_config.sprite  = my_spr_player_idle;
+    renderer_config.sprite  = my_spr_ynx_idle;
     renderer_config.z_index = 0;
     renderer_config.x       = &player->x;
     renderer_config.y       = &player->y;

@@ -5,7 +5,7 @@
 
 void k_room_clean_canvas(void *unused) {
     (void)unused;
-    SDL_SetRenderDrawColor(k__window.renderer, 30, 30, 30, 255);
+    SDL_SetRenderDrawColor(k__window.renderer, 80, 80, 80, 255);
     SDL_RenderClear(k__window.renderer);
 }
 
@@ -17,7 +17,7 @@ void k_room_draw_grid(void *unused) {
 
     /* 绘制全屏的网格 */
     {
-        SDL_SetRenderDrawColor(k__window.renderer, 40, 40, 40, 255);
+        SDL_SetRenderDrawColor(k__window.renderer, 100, 100, 100, 255);
 
         int window_w, window_h;
         SDL_GetWindowSize(k__window.window, &window_w, &window_h);
@@ -35,7 +35,7 @@ void k_room_draw_grid(void *unused) {
 
     /* 绘制鼠标周围的的网格 */
     {
-        SDL_SetRenderDrawColor(k__window.renderer, 83, 83, 83, 255);
+        SDL_SetRenderDrawColor(k__window.renderer, 130, 130, 130, 255);
 
         int center_x = k_mouse_x();
         int center_y = k_mouse_y();

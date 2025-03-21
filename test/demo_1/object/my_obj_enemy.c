@@ -1,6 +1,6 @@
 #include "./my_object.h"
 
-#include "../sprite/my_sprite.h"
+#include "../sprite/_public.h"
 
 struct k_object *my_enemy_create(float x, float y) {
     struct k_room *room = k_get_current_room();

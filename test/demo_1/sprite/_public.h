@@ -1,5 +1,5 @@
-#ifndef MY_SPRITE_H
-#define MY_SPRITE_H
+#ifndef MY_DEMO1_SPRITE_PUBLIC_H
+#define MY_DEMO1_SPRITE_PUBLIC_H
 
 struct k_sprite;
 
@@ -21,6 +21,15 @@ extern struct k_sprite *my_spr_player_bullet;
 int my_spr_enemy_load(void);
 
 extern struct k_sprite *my_spr_enemy_attack;
+
+/* endregion */
+
+/* region [ynx] */
+
+int my_spr_ynx_load(void);
+
+extern struct k_sprite *my_spr_ynx_run;
+extern struct k_sprite *my_spr_ynx_idle;
 
 /* endregion */
 
