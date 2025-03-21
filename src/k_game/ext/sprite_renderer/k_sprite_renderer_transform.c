@@ -104,11 +104,7 @@ float k_sprite_renderer_get_h(struct k_sprite_renderer *renderer) {
 
 void k_sprite_renderer_rotate(struct k_sprite_renderer *renderer, float angle) {
 
-    if (NULL == renderer->sprite)
-        return;
-
     renderer->angle = angle;
-
     if (0 != angle)
         renderer->transform_flags |= transform_rotate;
     else
@@ -129,9 +125,6 @@ float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer) {
 
 void k_sprite_renderer_flip_x(struct k_sprite_renderer *renderer, int flip) {
 
-    if (NULL == renderer->sprite)
-        return;
-
     if (flip)
         renderer->transform_flags |= transform_flip_x;
     else
@@ -151,9 +144,6 @@ int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer) {
 /* region [flip_y] */
 
 void k_sprite_renderer_flip_y(struct k_sprite_renderer *renderer, int flip) {
-
-    if (NULL == renderer->sprite)
-        return;
 
     if (flip)
         renderer->transform_flags |= transform_flip_y;

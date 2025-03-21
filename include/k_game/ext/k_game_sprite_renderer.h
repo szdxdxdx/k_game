@@ -154,9 +154,7 @@ float k_sprite_renderer_get_h(struct k_sprite_renderer *renderer);
  * 渲染器内部不会将角度限制在 0 到 360 度范围内，
  * 是否需要对角度值进行取模运算以限制其范围，取决于你。
  *
- * 更换渲染器引用的精灵将重置旋转角度为 0。
- *
- * 若渲染器没有引用精灵，则函数不做任何事。
+ * 更换渲染器引用的精灵，将重置旋转角度为 0。
  */
 void k_sprite_renderer_rotate(struct k_sprite_renderer *renderer, float angle);
 
@@ -177,9 +175,7 @@ float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer);
  * 若 `flip` 为非 0，则启用水平翻转，否则不启用。
  * 变换原点为精灵的原点。
  *
- * 更换渲染器引用的精灵，将取消翻转。
- *
- * 若渲染器没有引用精灵，则函数不做任何事。
+ * 更换渲染器引用的精灵，将取消水平翻转。
  */
 void k_sprite_renderer_flip_x(struct k_sprite_renderer *renderer, int flip);
 
@@ -201,9 +197,7 @@ int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
  * 若 `flip` 为非 0，则启用竖直翻转，否则不启用。
  * 变换原点为精灵的原点。
  *
- * 更换渲染器引用的精灵，将取消翻转。
- *
- * 若渲染器没有引用精灵，则函数不做任何事。
+ * 更换渲染器引用的精灵，将取消竖直翻转。
  */
 void k_sprite_renderer_flip_y(struct k_sprite_renderer *renderer, int flip);
 
@@ -223,7 +217,6 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
  * 重置宽高缩放倍率为 1.0f，旋转角度为 0，取消水平翻转与垂直翻转。
  * 即按精灵图的原样绘制，不缩放、不旋转、不翻转。
  *
- * 若渲染器没有引用精灵，则函数不做任何事。
  * 更改渲染器引用的精灵时，也会重置所有的变换。
  */
 void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
@@ -259,7 +252,6 @@ int k_sprite_renderer_get_z_index(struct k_sprite_renderer *renderer);
  * - 若 `speed` 为 0.5f，则 0.5 倍速慢速播放。
  * - 若 `speed` 为 0 或负值，则将其设置为 0，并暂停播放。
  *
- * 若渲染器没有引用精灵，则函数不做任何事。
  * 更换渲染器引用的精灵，将重置播放倍速为 1.0f。
  */
 void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed);

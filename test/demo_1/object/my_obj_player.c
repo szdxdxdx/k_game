@@ -125,12 +125,12 @@ struct k_object *my_player_create(float x, float y) {
     k_object_add_step_callback(object, player_step_shoot);
 
     struct my_player *player = k_object_get_data(object);
-    player->x = x;
-    player->y = y;
+    player->x      = x;
+    player->y      = y;
     player->next_x = x;
     player->next_y = y;
-    player->state = player_idle;
-    player->face = -1;
+    player->state  = player_idle;
+    player->face   = -1;
 
     struct k_component_type *WASD = k_component_type_find("k/WASD");
     struct k_WASD_config WASD_config;
