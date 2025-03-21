@@ -22,13 +22,15 @@ static void draw_sprite(struct k_component *component) {
         renderer->frame_idx += 1;
         if (frames_num <= renderer->frame_idx) {
 
-            if (1 < renderer->loop) {
-                renderer->frame_idx = 0;
+            if (0 < renderer->loop) {
                 renderer->loop -= 1;
                 is_loop = 1;
-            }
-            else {
-                renderer->frame_idx = frames_num - 1;
+
+                if (1 < renderer->loop) {
+                    renderer->frame_idx = 0;
+                } else {
+                    renderer->frame_idx = frames_num - 1;
+                }
             }
         }
     }
