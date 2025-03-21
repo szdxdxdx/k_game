@@ -9,7 +9,7 @@ static void draw_sprite(struct k_component *component) {
 
     renderer->timer += k_get_step_delta() * renderer->speed;
 
-    void (*fn_loop_callback)(void *) = NULL;
+    void (*fn_loop_callback)(struct k_object *object) = NULL;
 
     struct k_sprite *sprite = renderer->sprite;
     size_t frames_num = k_sprite_get_frames_num(sprite);
@@ -51,8 +51,9 @@ static void draw_sprite(struct k_component *component) {
         k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
     }
 
-    if (NULL != fn_loop_callback)
-        fn_loop_callback(renderer->loop_callback_data);
+    if (NULL != fn_loop_callback) {
+        fn_loop_callback(k_component_get_object(component));
+    }
 }
 
 /* endregion */
@@ -146,9 +147,8 @@ void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop) {
         renderer->loop = loop;
 }
 
-void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(void *data), void *data) {
+void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(struct k_object *object)) {
     renderer->fn_loop_callback = fn_callback;
-    renderer->loop_callback_data = data;
 }
 
 /* endregion */

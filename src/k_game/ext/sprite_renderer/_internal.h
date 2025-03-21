@@ -31,8 +31,7 @@ struct k_sprite_renderer {
     struct k_sprite *sprite;
 
     int loop;
-    void (*fn_loop_callback)(void *data);
-    void *loop_callback_data;
+    void (*fn_loop_callback)(struct k_object *object);
 
     size_t frame_idx;
     float  timer;

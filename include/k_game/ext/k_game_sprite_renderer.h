@@ -286,7 +286,7 @@ void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop);
  *
  * 更换渲染器引用的精灵，将取消回调。
  */
-void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(void *data), void *data);
+void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(struct k_object *object));
 
 /* region [ref_sprite] */
 
