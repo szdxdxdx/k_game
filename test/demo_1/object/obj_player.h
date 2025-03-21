@@ -1,5 +1,5 @@
-#ifndef MY_OBJ_PLAYER_H
-#define MY_OBJ_PLAYER_H
+#ifndef MY_GAME__OBJ_PLAYER_H
+#define MY_GAME__OBJ_PLAYER_H
 
 #include "k_game.h"
 

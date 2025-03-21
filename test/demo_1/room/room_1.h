@@ -1,5 +1,5 @@
-#ifndef MY_ROOM_1_H
-#define MY_ROOM_1_H
+#ifndef ROOM_1_H
+#define ROOM_1_H
 
 #include "k_game.h"
 

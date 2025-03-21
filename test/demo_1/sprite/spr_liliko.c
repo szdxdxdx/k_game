@@ -1,9 +1,7 @@
-#include "k_game.h"
+#include "./_internal.h"
 
-#include "./_public.h"
-
-struct k_sprite *my_spr_ynx_idle = NULL;
-struct k_sprite *my_spr_ynx_run  = NULL;
+struct k_sprite *my_spr_liliko_idle = NULL;
+struct k_sprite *my_spr_liliko_run  = NULL;
 
 static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, int delay) {
 
@@ -53,9 +51,9 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, 
     return k_sprite_create(&config);
 }
 
-int my_spr_ynx_load(void) {
+int my_spr_liliko_load(void) {
 
-    my_spr_ynx_idle = load_sprite_strip("./demo_1/sprite/ynx/idle.png", 2, 64 * 3);
-    my_spr_ynx_run  = load_sprite_strip("./demo_1/sprite/ynx/run.png",  6, 80);
+    my_spr_liliko_idle = load_sprite_strip("./demo_1/sprite/liliko/idle.png", 2, 64 * 3);
+    my_spr_liliko_run  = load_sprite_strip("./demo_1/sprite/liliko/run.png",  6, 80);
     return 0;
 }

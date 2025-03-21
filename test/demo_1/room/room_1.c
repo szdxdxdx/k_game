@@ -1,7 +1,8 @@
 #include <limits.h>
 
-#include "./my_room.h"
-#include "../object/my_object.h"
+#include "./_internal.h"
+
+#include "../object/_public.h"
 
 int fn_room_init(void *params) {
     (void)params;

@@ -1,5 +1,7 @@
-#ifndef MY_OBJ_BUBBLE_H
-#define MY_OBJ_BUBBLE_H
+#ifndef MY_GAME__OBJ_BUBBLE_H
+#define MY_GAME__OBJ_BUBBLE_H
+
+#include "k_game.h"
 
 struct my_bubble {
     struct k_sprite_renderer *spr_rdr;

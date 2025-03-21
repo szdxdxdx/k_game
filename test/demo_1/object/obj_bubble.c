@@ -1,8 +1,4 @@
-#include "k_game.h"
-
-#include "./my_object.h"
-
-#include "../sprite/_public.h"
+#include "./_internal.h"
 
 void my_bubble_del(struct k_object *object) {
     struct my_bubble *bubble = k_object_get_data(object);

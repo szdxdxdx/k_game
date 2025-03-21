@@ -1,5 +1,7 @@
-#ifndef MY_OBJ_PLAYER_BULLET_H
-#define MY_OBJ_PLAYER_BULLET_H
+#ifndef MY_GAME__OBJ_PLAYER_BULLET_H
+#define MY_GAME__OBJ_PLAYER_BULLET_H
+
+#include "k_game.h"
 
 struct my_player_bullet {
     float speed;

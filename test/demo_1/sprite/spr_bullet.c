@@ -1,6 +1,4 @@
-#include "k_game.h"
-
-#include "./_public.h"
+#include "./_internal.h"
 
 struct k_sprite *my_spr_player_bullet = NULL;
 

@@ -1,13 +1,11 @@
-#include "k_game.h"
+#include "./_internal.h"
 
-#include "./_public.h"
-
-struct k_sprite *my_spr_bubble_new = NULL;
-struct k_sprite *my_spr_bubble_del = NULL;
+struct k_sprite *my_spr_ynx_idle = NULL;
+struct k_sprite *my_spr_ynx_run  = NULL;
 
 static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, int delay) {
 
-    int scale = 2;
+    int scale = 3;
 
     struct k_image *img = k_image_load(filepath);
     int scaled_image_w = scale * k_image_get_width(img);
@@ -53,9 +51,9 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, 
     return k_sprite_create(&config);
 }
 
-int my_spr_bubble_load(void) {
+int my_spr_ynx_load(void) {
 
-    my_spr_bubble_new = load_sprite_strip("./demo_1/sprite/bubble/new.png", 11, 64);
-    my_spr_bubble_del = load_sprite_strip("./demo_1/sprite/bubble/del.png",  5, 64);
+    my_spr_ynx_idle = load_sprite_strip("./demo_1/sprite/ynx/idle.png", 2, 64 * 3);
+    my_spr_ynx_run  = load_sprite_strip("./demo_1/sprite/ynx/run.png",  6, 80);
     return 0;
 }

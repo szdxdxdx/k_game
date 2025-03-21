@@ -1,6 +1,4 @@
-#include "./my_object.h"
-
-#include "../sprite/_public.h"
+#include "./_internal.h"
 
 static void bullet_step(struct k_object *object) {
     struct my_player_bullet *bullet = k_object_get_data(object);
@@ -32,7 +30,7 @@ struct k_object *my_player_bullet_create(float x, float y, int face) {
     k_object_add_step_callback(object, bullet_step);
 
     struct k_sprite_renderer_config config;
-    config.sprite  = my_spr_player_bullet;
+    config.sprite  = NULL;
     config.z_index = 10;
     config.x       = &bullet->x;
     config.y       = &bullet->y;

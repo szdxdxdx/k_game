@@ -1,6 +1,4 @@
-#include "./my_object.h"
-
-#include "../sprite/_public.h"
+#include "./_internal.h"
 
 static void player_step_set_state(struct k_object *object) {
     struct my_player *player = k_object_get_data(object);

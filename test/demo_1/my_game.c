@@ -2,14 +2,11 @@
 #include <stdlib.h>
 
 #include "./sprite/_public.h"
-#include "./room/my_room.h"
+#include "./room/_public.h"
 
 static void load_sprite(void) {
-    my_spr_player_load();
-    my_spr_player_bullet_load();
-    my_spr_enemy_load();
-
     my_spr_ynx_load();
+    my_spr_liliko_load();
     my_spr_bubble_load();
 }
 
@@ -18,13 +15,17 @@ static void load_sound(void) {
     k_sound_BGM_loop(bgm, INT_MAX);
 }
 
-static int fn_init_game(void) {
-    load_sprite();
-    load_sound();
+static void create_room(void) {
 
     struct k_room *room = my_room_1_create();
 
     k_goto_room(room);
+}
+
+static int fn_init_game(void) {
+    load_sprite();
+    load_sound();
+    create_room();
     return 0;
 }
 
