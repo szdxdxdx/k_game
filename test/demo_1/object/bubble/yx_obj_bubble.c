@@ -18,7 +18,7 @@ struct k_object *yx_bubble_create(float x, float y) {
     bubble->position.x = x;
     bubble->position.y = y;
 
-    k_object_add_alarm_callback(object, bubble_dead, 2000 + rand() % 10000);
+    // k_object_add_alarm_callback(object, bubble_dead, 2000 + rand() % 10000);
 
     {
         struct k_sprite_renderer_config config;

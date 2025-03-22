@@ -15,7 +15,8 @@ static void player_step_set_state(struct k_object *object) {
         state = YX_OBJ_PLAYER_STATE_RUN;
         player->face = 1;
     }
-    else if (next_position->y != position->y) {
+
+    if (next_position->y != position->y) {
         state = YX_OBJ_PLAYER_STATE_RUN;
         k_sprite_renderer_set_z_index(player->spr_rdr, (int)next_position->y);
     }

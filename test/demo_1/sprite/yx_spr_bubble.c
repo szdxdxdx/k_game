@@ -56,6 +56,6 @@ int yx_load_spr_bubble(void) {
 
     yx_spr_bubble_appear = load_sprite_strip("./demo_1/sprite/bubble/appear.png", 11, 64);
     yx_spr_bubble_idle   = load_sprite_strip("./demo_1/sprite/bubble/float.png", 4, 192);
-    yx_spr_bubble_pop    = load_sprite_strip("./demo_1/sprite/bubble/pop.png", 5, 48);
+    yx_spr_bubble_pop    = load_sprite_strip("./demo_1/sprite/bubble/pop.png", 6, 48);
     return 0;
 }

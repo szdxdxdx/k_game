@@ -14,7 +14,7 @@ static void yx_bubble_maker_create_bubble(struct k_object *object, int timeout_d
 
     yx_bubble_create(rand_x, rand_y);
 
-    k_object_add_alarm_callback(object, yx_bubble_maker_create_bubble, 200 - timeout_diff);
+    k_object_add_alarm_callback(object, yx_bubble_maker_create_bubble, 200);
 }
 
 struct k_object *yx_obj_bubble_maker_create(const struct yx_obj_bubble_maker_config *config) {
