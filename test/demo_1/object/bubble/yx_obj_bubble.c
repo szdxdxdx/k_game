@@ -24,7 +24,7 @@ struct k_object *yx_bubble_create(float x, float y) {
         struct k_sprite_renderer_config config;
         config.position = &bubble->position;
         config.sprite   = yx_spr_bubble_appearing;
-        config.z_index  = 2;
+        config.z_index  = (int)y;
         bubble->spr_rdr = k_object_add_sprite_renderer(object, &config);
         k_sprite_renderer_set_loop(bubble->spr_rdr, 1);
         k_sprite_renderer_set_loop_callback(bubble->spr_rdr, bubble_floating);

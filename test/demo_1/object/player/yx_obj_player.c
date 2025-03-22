@@ -17,6 +17,7 @@ static void player_step_set_state(struct k_object *object) {
     }
     else if (next_position->y != position->y) {
         state = YX_OBJ_PLAYER_STATE_RUN;
+        k_sprite_renderer_set_z_index(player->spr_rdr, (int)next_position->y);
     }
 
     switch (state) {
@@ -137,7 +138,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     struct k_sprite_renderer_config renderer_config;
     renderer_config.position = &player->position;
     renderer_config.sprite   = player->spr_idle;
-    renderer_config.z_index  = 0;
+    renderer_config.z_index  = (int)config->y;
     player->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
 
     return object;
