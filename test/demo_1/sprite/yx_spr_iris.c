@@ -51,7 +51,7 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, 
     return k_sprite_create(&config);
 }
 
-int yx_load_spr_ynx(void) {
+int yx_load_spr_iris(void) {
 
     yx_spr_iris_gun = load_sprite_strip("./demo_1/sprite/iris/gun.png", 1, 32);
     yx_spr_iris_bullet  = load_sprite_strip("./demo_1/sprite/iris/bullet.png", 1, 32);

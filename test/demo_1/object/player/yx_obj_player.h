@@ -30,6 +30,8 @@ struct yx_obj_player {
 
     struct k_sprite *spr_idle;
     struct k_sprite *spr_run;
+
+    struct k_object *obj_weapon;
 };
 
 #endif

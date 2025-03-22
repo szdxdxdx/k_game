@@ -140,21 +140,31 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     player->spr_idle = config->spr_idle;
     player->spr_run  = config->spr_run;
 
-    struct k_component_type *WASD = k_component_type_find("k/WASD");
-    struct k_WASD_config WASD_config;
-    WASD_config.key_up    = 'W';
-    WASD_config.key_left  = 'A';
-    WASD_config.key_down  = 'S';
-    WASD_config.key_right = 'D';
-    WASD_config.speed     = 192.0f;
-    WASD_config.position = &player->position_next;
-    player->WASD = k_object_add_component(object, WASD, &WASD_config);
+    {
+        struct k_component_type *WASD = k_component_type_find("k/WASD");
+        struct k_WASD_config WASD_config;
+        WASD_config.key_up    = 'W';
+        WASD_config.key_left  = 'A';
+        WASD_config.key_down  = 'S';
+        WASD_config.key_right = 'D';
+        WASD_config.speed     = 192.0f;
+        WASD_config.position = &player->position_next;
+        player->WASD = k_object_add_component(object, WASD, &WASD_config);
+    }
 
-    struct k_sprite_renderer_config renderer_config;
-    renderer_config.position = &player->position;
-    renderer_config.sprite   = player->spr_idle;
-    renderer_config.z_index  = (int)config->y;
-    player->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
+    {
+        struct k_sprite_renderer_config renderer_config;
+        renderer_config.position = &player->position;
+        renderer_config.sprite   = player->spr_idle;
+        renderer_config.z_index  = (int)config->y;
+        player->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
+    }
+
+    {
+        struct yx_obj_weapon_config weapon_config;
+        weapon_config.position = &player->position;
+        player->obj_weapon = yx_obj_weapon_create(&weapon_config);
+    }
 
     return object;
 }

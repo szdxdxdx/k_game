@@ -6,4 +6,6 @@
 #include "./bubble/yx_obj_bubble.h"
 #include "./bubble/yx_obj_bubble_maker.h"
 
+#include "./weapon/yx_obj_weapon.h"
+
 #endif

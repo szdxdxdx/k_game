@@ -8,6 +8,7 @@ static void load_sprite(void) {
     yx_load_spr_ynx();
     yx_load_spr_liliko();
     yx_load_spr_bubble();
+    yx_load_spr_iris();
 }
 
 static void load_sound(void) {
