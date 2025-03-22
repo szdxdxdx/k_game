@@ -1,5 +1,5 @@
-#ifndef YX__OBJ_PLAYER_H
-#define YX__OBJ_PLAYER_H
+#ifndef YX_OBJ_PLAYER_H
+#define YX_OBJ_PLAYER_H
 
 #include "k_game.h"
 

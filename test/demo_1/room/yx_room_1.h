@@ -1,5 +1,5 @@
-#ifndef YX__ROOM_1_H
-#define YX__ROOM_1_H
+#ifndef YX_ROOM_1_H
+#define YX_ROOM_1_H
 
 #include "k_game.h"
 

@@ -1,5 +1,5 @@
-#ifndef YX__OBJ_BUBBLE_MAKER_H
-#define YX__OBJ_BUBBLE_MAKER_H
+#ifndef YX_OBJ_BUBBLE_MAKER_H
+#define YX_OBJ_BUBBLE_MAKER_H
 
 #include "k_game.h"
 
