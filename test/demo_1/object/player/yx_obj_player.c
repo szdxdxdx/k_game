@@ -19,6 +19,7 @@ static void player_step_set_state(struct k_object *object) {
     if (next_position->y != position->y) {
         state = YX_OBJ_PLAYER_STATE_RUN;
         k_sprite_renderer_set_z_index(player->spr_rdr, (int)next_position->y);
+        yx_obj_weapon_set_z_index(player->weapon, (int)next_position->y + 1);
     }
 
     switch (state) {
@@ -163,7 +164,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     {
         struct yx_obj_weapon_config weapon_config;
         weapon_config.position = &player->position;
-        player->obj_weapon = yx_obj_weapon_create(&weapon_config);
+        player->weapon = yx_obj_weapon_create(&weapon_config);
     }
 
     return object;

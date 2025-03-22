@@ -3,6 +3,8 @@
 
 #include "k_game.h"
 
+struct yx_obj_weapon;
+
 struct yx_obj_player_config {
     float x;
     float y;
@@ -31,7 +33,7 @@ struct yx_obj_player {
     struct k_sprite *spr_idle;
     struct k_sprite *spr_run;
 
-    struct k_object *obj_weapon;
+    struct yx_obj_weapon *weapon;
 };
 
 #endif
