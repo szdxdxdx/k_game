@@ -77,3 +77,7 @@ void k__json_arr_del(struct k__json_arr *json_arr, size_t idx) {
 
     k__destroy_json(val);
 }
+
+size_t k__json_arr_get_size(struct k__json_arr *json_arr) {
+    return json_arr->size;
+}

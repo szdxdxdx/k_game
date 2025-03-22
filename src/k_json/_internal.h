@@ -79,6 +79,7 @@ int k__json_arr_add(struct k__json_arr *json_arr, size_t idx, struct k_json *val
 int k__json_arr_push(struct k__json_arr *json_arr, struct k_json *val);
 struct k_json *k__json_arr_get(struct k__json_arr *json_arr, size_t idx);
 void k__json_arr_del(struct k__json_arr *json_arr, size_t idx);
+size_t k__json_arr_get_size(struct k__json_arr *json_arr);
 
 /* endregion */
 

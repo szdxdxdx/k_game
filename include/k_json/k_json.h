@@ -80,6 +80,8 @@ struct k_json *k_json_obj_get(struct k_json *json, const char *key);
 #define k_json_get_by_key(key) k_json_obj_get, (char *)(key)
 struct k_json *k_json_get(struct k_json *json, ...);
 
+size_t k_json_arr_get_size(struct k_json *json);
+
 int k_json_get_i(struct k_json *json, int *get_i);
 int k_json_get_f(struct k_json *json, double *get_f);
 int k_json_get_s(struct k_json *json, const char **get_s);

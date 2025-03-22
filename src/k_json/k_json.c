@@ -143,6 +143,13 @@ void k_json_obj_del(struct k_json *json, const char *key) {
     k__json_obj_del((struct k__json_obj *)json, key);
 }
 
+size_t k_json_arr_get_size(struct k_json *json) {
+    assert(NULL != json);
+    assert(K_JSON_ARR == json->type);
+
+    return k__json_arr_get_size((struct k__json_arr *)json);
+}
+
 int k_json_get_i(struct k_json *json, int *get_i) {
     assert(NULL != json);
     assert(NULL != get_i);

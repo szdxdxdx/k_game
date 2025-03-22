@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include "k_utils.h"
+#include "k_json.h"
+
 #include "./_internal.h"
 
 struct k_sprite *yx_spr_ynx_idle = NULL;
@@ -51,9 +55,42 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, 
     return k_sprite_create(&config);
 }
 
-int yx_load_spr_ynx(void) {
+int yx_load_spr_ynx_(void) {
 
     yx_spr_ynx_idle = load_sprite_strip("./demo_1/sprite/ynx/idle.png", 2, 64 * 3);
     yx_spr_ynx_run  = load_sprite_strip("./demo_1/sprite/ynx/run.png",  6, 80);
+    return 0;
+}
+
+int yx_load_spr_ynx(void) {
+
+    char buf_[64];
+    char *buf = k_read_txt_file("./demo_1/sprite/ynx/ynx.json", buf_, sizeof(buf_), NULL);
+    if (NULL == buf)
+        return -1;
+
+    struct k_json *json = k_json_parse(buf);
+
+    struct k_json *frames = k_json_obj_get(json, "frames");
+
+    {
+        struct k_json *meta = k_json_obj_get(json, "meta");
+        struct k_json *frame_tags = k_json_obj_get(meta, "frameTags");
+
+        size_t tags_num = k_json_arr_get_size(frame_tags);
+        size_t i = 0;
+        for (; i < tags_num; i++) {
+            struct k_json *tag = k_json_arr_get(frame_tags, i);
+
+            struct k_json *name = k_json_obj_get(tag, "name");
+            const char *name_s = k_json_str_get(name);
+
+            printf("%s\n", name_s);
+        }
+    }
+
+    if (buf != buf_)
+        free(buf);
+
     return 0;
 }
