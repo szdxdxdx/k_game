@@ -5,7 +5,7 @@ struct k_sprite *yx_spr_ynx_run  = NULL;
 
 static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, int delay) {
 
-    int scale = 3;
+    int scale = 2;
 
     struct k_image *img = k_image_load(filepath);
     int scaled_image_w = scale * k_image_get_width(img);

@@ -180,7 +180,10 @@ void k__callback_flag_dead_step(struct k_callback_base *callback) {
             step_callback->base.state = K_CALLBACK_DEAD;
             break;
         case K_CALLBACK_DELETED:
+            assert(0); // 已弃用 DELETED
             step_callback->base.state = K_CALLBACK_DEAD;
+            break;
+        case K_CALLBACK_DEAD:
             break;
         default:
             assert(0);
@@ -246,6 +249,8 @@ void k__callback_exec_step(struct k_step_callback_manager *manager) {
 
         if (K_CALLBACK_DEAD == step_callback->base.state)
             continue;
+
+        assert(K_CALLBACK_ACTIVE == step_callback->base.state);
 
         switch (step_callback->base.context) {
             case K_ROOM_CALLBACK: {

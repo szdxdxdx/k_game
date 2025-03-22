@@ -11,7 +11,6 @@ static void bubble_del(struct k_object *object) {
 struct k_object *yx_bubble_create(float x, float y) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_bubble));
-
     struct yx_obj_bubble *bubble = k_object_get_data(object);
     bubble->x = x;
     bubble->y = y;

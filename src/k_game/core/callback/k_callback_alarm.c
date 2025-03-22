@@ -197,8 +197,13 @@ void k__callback_flag_dead_alarm(struct k_callback_base *callback) {
             alarm_callback->base.state = K_CALLBACK_DEAD;
             break;
         case K_CALLBACK_EXECUTED:
-        case K_CALLBACK_DELETED:
             alarm_callback->base.state = K_CALLBACK_DEAD;
+            break;
+        case K_CALLBACK_DELETED:
+            assert(0); // 已弃用 DELETED
+            alarm_callback->base.state = K_CALLBACK_DEAD;
+            break;
+        case K_CALLBACK_DEAD:
             break;
         default:
             assert(0);
@@ -287,6 +292,8 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
 
         if (K_CALLBACK_DEAD == alarm_callback->base.state)
             continue;
+
+        assert(K_CALLBACK_ACTIVE == alarm_callback->base.state);
 
         int timeout_diff = (int)(current_ms - alarm_callback->timeout);
 

@@ -272,7 +272,10 @@ void k__callback_flag_dead_draw(struct k_callback_base *callback) {
             draw_callback->base.state = K_CALLBACK_DEAD;
             break;
         case K_CALLBACK_DELETED:
+            assert(0); // 已弃用 DELETED
             draw_callback->base.state = K_CALLBACK_DEAD;
+            break;
+        case K_CALLBACK_DEAD:
             break;
         default:
             assert(0);
@@ -370,6 +373,8 @@ void k__callback_exec_draw(struct k_draw_callback_manager *manager) {
 
             if (K_CALLBACK_DEAD == draw_callback->base.state)
                 continue;
+
+            assert(K_CALLBACK_ACTIVE == draw_callback->base.state);
 
             switch (draw_callback->base.context) {
                 case K_ROOM_CALLBACK: {
