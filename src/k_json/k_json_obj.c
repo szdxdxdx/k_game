@@ -37,7 +37,8 @@ err:
 
 void k__destroy_json_obj(struct k__json_obj *json_obj) {
 
-    for (size_t i = 0; i < json_obj->lists_num; i++) {
+    size_t i = 0;
+    for (; i < json_obj->lists_num; i++) {
 
         struct k_hash_list_node *node, *next;
         for (k_hash_list_for_each_s(&(json_obj->lists[i]), node, next)) {

@@ -26,8 +26,6 @@ struct json_parser {
     size_t      token_type;
 };
 
-static void init_parser(struct json_parser *parser, const char *str, va_list args);
-static void extract_token(struct json_parser *parser);
 static struct k_json *parse_token(struct json_parser *parser);
 
 static void init_parser(struct json_parser *parser, const char *str, va_list args) {
@@ -248,7 +246,7 @@ static struct k_json *parse_object(struct json_parser *parser) {
         goto obj_done;
 
     for (;;) {
-        if (parser->token_type != TOKEN_STR) /* TODO 支持格式化解析 */
+        if (parser->token_type != TOKEN_STR)
             goto obj_err;
         const char *key = parser->token_start + 1;
         size_t key_len  = parser->token_len - 2;
