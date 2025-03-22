@@ -30,5 +30,15 @@ struct k_object *yx_bubble_create(float x, float y) {
         k_sprite_renderer_set_loop_callback(bubble->spr_rdr, bubble_floating);
     }
 
+    {
+        struct k_collision_circle_config config;
+        config.group_id  = YX_COLLISION_GROUP_BUBBLE;
+        config.position  = &bubble->position;
+        config.offset_cx = 0;
+        config.offset_cy = 0;
+        config.r         = 16;
+        k_object_add_collision_circle(object, &config);
+    }
+
     return object;
 }

@@ -41,7 +41,7 @@ static struct k_collision_group *find_or_create_group(struct k_collision_manager
 int k__collision_manager_add(struct k_collision_manager *manager, struct k_collision_box *box, int group_id) {
 
     struct k_collision_group *group = find_or_create_group(manager, group_id);
-    if (NULL != group)
+    if (NULL == group)
         return -1;
 
     k_list_add_tail(&group->box_list, &box->list_node);
