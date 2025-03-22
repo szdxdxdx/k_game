@@ -94,9 +94,11 @@ void *k_component_get_manager_data(struct k_component *component) {
 /* region [object_add_component] */
 
 struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params) {
-    /* TODO assert(NULL != object && NULL == component_type) */
 
-    return k__component_create(component_type, object, params);
+    if (NULL == object || NULL == component_type)
+        return NULL;
+    else
+        return k__component_create(component_type, object, params);
 }
 
 void k_object_del_component(struct k_component *component) {

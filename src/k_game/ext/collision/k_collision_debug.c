@@ -6,8 +6,8 @@ void k__collision_debug_draw(struct k_component *component) {
 
     struct k_collision_box *box = k_component_get_data(component);
 
-    if (K_COLLISION_BOX_RECTANGLE == box->box_type) {
-        struct k_collision_rectangle *rect = &box->rectangle;
+    if (K_COLLISION_RECTANGLE == box->type) {
+        struct k_collision_rectangle *rect = &box->rect;
 
         float x1 = rect->position->x + rect->offset_x1;
         float y1 = rect->position->y + rect->offset_y1;
@@ -24,7 +24,7 @@ void k__collision_debug_draw(struct k_component *component) {
         SDL_RenderDrawRectF(k__window.renderer, &draw_rect);
     }
 
-    else if (K_COLLISION_BOX_CIRCLE == box->box_type) {
+    else if (K_COLLISION_CIRCLE == box->type) {
         struct k_collision_circle *circle = &box->circle;
 
         float center_x = circle->position->x + circle->offset_cx;

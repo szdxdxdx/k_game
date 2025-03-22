@@ -15,8 +15,8 @@ extern struct k_component_type *K__COMPONENT_TYPE_COLLISION;
 /* region [config] */
 
 enum k_collision_box_type {
-    K_COLLISION_BOX_RECTANGLE,
-    K_COLLISION_BOX_CIRCLE,
+    K_COLLISION_RECTANGLE,
+    K_COLLISION_CIRCLE,
 };
 
 struct k_collision_box_config {
@@ -29,6 +29,7 @@ struct k_collision_box_config {
 /* region [collision_box] */
 
 struct k_collision_rectangle {
+    struct k_float_vec2 *position;
     float offset_x1;
     float offset_y1;
     float offset_x2;
@@ -36,6 +37,7 @@ struct k_collision_rectangle {
 };
 
 struct k_collision_circle {
+    struct k_float_vec2 *position;
     float offset_cx;
     float offset_cy;
     float r;
@@ -47,11 +49,9 @@ struct k_collision_box {
 
     struct k_component *component;
 
-    struct k_float_vec2 *position;
-
-    enum k_collision_box_type box_type;
+    enum k_collision_box_type type;
     union {
-        struct k_collision_rectangle rectangle;
+        struct k_collision_rectangle rect;
         struct k_collision_circle    circle;
     };
 };

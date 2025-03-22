@@ -70,14 +70,16 @@ int k__component_def_sprite_renderer(void) {
 
 struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, const struct k_sprite_renderer_config *config) {
 
-    if (NULL == object || NULL == config)
+    if (NULL == config)
+        return NULL;
+    if (NULL == config->position)
         return NULL;
 
     struct k_component *component = k_object_add_component(object, k__component_type_sprite_renderer, (void*)config);
     if (NULL == component)
         return NULL;
-
-    return k_component_get_data(component);
+    else
+        return k_component_get_data(component);
 }
 
 void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer) {

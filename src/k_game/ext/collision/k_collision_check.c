@@ -19,9 +19,9 @@ struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, floa
     for (k_list_for_each(list, iter)) {
         box = container_of(iter, struct k_collision_box, list_node);
 
-        switch (box->box_type) {
-            case K_COLLISION_BOX_RECTANGLE: {
-                struct k_collision_rectangle *rect = &box->rectangle;
+        switch (box->type) {
+            case K_COLLISION_RECTANGLE: {
+                struct k_collision_rectangle *rect = &box->rect;
 
                 float x3 = rect->position->x + rect->offset_x1;
                 float y3 = rect->position->y + rect->offset_y1;
@@ -35,7 +35,7 @@ struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, floa
 
                 break;
             }
-            case K_COLLISION_BOX_CIRCLE: {
+            case K_COLLISION_CIRCLE: {
                 break;
             }
         }
