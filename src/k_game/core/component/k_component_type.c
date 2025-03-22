@@ -34,7 +34,6 @@ err:
     return -1;
 }
 
-
 static int step_malloc(void *context) {
     struct step_context *ctx = context;
 
@@ -130,9 +129,6 @@ struct k_component_type *k_component_define(const struct k_component_manager_con
     return ctx.component_type;
 }
 
-/* 取消组件类型的定义【】
- *
- */
 static void k__component_undef(struct k_component_type *component_type) {
 
     struct step_context ctx;

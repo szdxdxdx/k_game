@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <assert.h>
 
 #include "./_internal.h"
 
@@ -19,8 +20,7 @@ int k__collision_box_init(struct k_component *component, void *params) {
             struct k_collision_rectangle *rect = &box->rectangle;
 
             rect->box_type  = config->box_type;
-            rect->x         = config->x;
-            rect->y         = config->y;
+            rect->position  = config->position;
             rect->offset_x1 = config->offset_x1;
             rect->offset_y1 = config->offset_y1;
             rect->offset_x2 = config->offset_x2;
@@ -32,16 +32,17 @@ int k__collision_box_init(struct k_component *component, void *params) {
             struct k_collision_circle_config *config = &box_config->circle;
             struct k_collision_circle *circle = &box->circle;
 
-            circle->box_type = config->box_type;
-            circle->x        = config->x;
-            circle->y        = config->y;
-            circle->offset_x = config->offset_x;
-            circle->offset_y = config->offset_y;
-            circle->r        = config->r;
+            circle->box_type  = config->box_type;
+            circle->position  = config->position;
+            circle->offset_cx = config->offset_cx;
+            circle->offset_cy = config->offset_cy;
+            circle->r         = config->r;
             break;
         }
 
-        default: return -1;
+        default:
+            assert(0);
+            return -1;
     }
 
     if (0 != k__collision_manager_add(manager, box, 0)) // TODO 临时的 group_id 为 0

@@ -10,7 +10,7 @@
 
 #include "./_public.h"
 
-extern struct k_component_type *k__component_type_collision_box;
+extern struct k_component_type *K__COMPONENT_TYPE_COLLISIONX;
 
 /* region [collision_box] */
 
@@ -28,8 +28,8 @@ union k_collision_box_config {
 struct k_collision_rectangle {
     uint8_t box_type;
 
-    float *x;
-    float *y;
+    struct k_float_vec2 *position;
+
     float offset_x1;
     float offset_y1;
     float offset_x2;
@@ -39,10 +39,10 @@ struct k_collision_rectangle {
 struct k_collision_circle {
     uint8_t box_type;
 
-    float *x;
-    float *y;
-    float offset_x;
-    float offset_y;
+    struct k_float_vec2 *position;
+
+    float offset_cx;
+    float offset_cy;
     float r;
 };
 

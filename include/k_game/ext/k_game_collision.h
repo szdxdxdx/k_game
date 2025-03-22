@@ -21,8 +21,7 @@ struct k_collision_rectangle_config {
 
     int group_id;
 
-    float *x;
-    float *y;
+    struct k_float_vec2 *position;
 
     float offset_x1;
     float offset_y1;
@@ -39,11 +38,10 @@ struct k_collision_circle_config {
 
     int group_id;
 
-    float *x;
-    float *y;
+    struct k_float_vec2 *position;
 
-    float offset_x;
-    float offset_y;
+    float offset_cx;
+    float offset_cy;
     float r;
 };
 
