@@ -1,20 +1,23 @@
 #ifndef K_GAME_RECT_H
 #define K_GAME_RECT_H
 
-struct k_int_point {
-    int x, y;
-};
-
-struct k_int_vec2 {
-    int x, y;
+struct k_float_vec2 {
+    float x;
+    float y;
 };
 
 struct k_int_rect {
-    int x, y, w, h;
+    int x;
+    int y;
+    int w;
+    int h;
 };
 
 struct k_float_rect {
-    float x, y, w, h;
+    float x;
+    float y;
+    float w;
+    float h;
 };
 
 #endif

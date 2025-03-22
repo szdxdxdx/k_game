@@ -21,13 +21,12 @@ struct k_sprite_renderer;
 struct k_sprite_renderer_config {
 
     /**
-     * \brief 渲染器关联的坐标
+     * \brief 渲染器关联对象的坐标
      *
      * 对象的位置信息由对象自身维护，渲染器不存储坐标，而是存储坐标的指针。
-     * 绘制精灵时，渲染器通过指针读取坐标，并在该位置绘制精灵。
+     * 执行绘制时，渲染器通过指针读取坐标，并在该位置绘制精灵。
      */
-    float *x;
-    float *y;
+    struct k_float_vec2 *position;
 
     /**
      * \brief 指定渲染器引用的精灵

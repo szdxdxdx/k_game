@@ -30,8 +30,7 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     renderer->debug = 0;
     renderer->callback_draw_rect = NULL;
 
-    renderer->x = config->x;
-    renderer->y = config->y;
+    renderer->position = config->position;
 
     renderer->sprite = NULL;
 

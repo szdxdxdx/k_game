@@ -3,16 +3,19 @@
 static void player_step_set_state(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
+    struct k_float_vec2 *position = &player->position;
+    struct k_float_vec2 *next_position = &player->position_next;
+
     enum yx_obj_player_state state = YX_OBJ_PLAYER_STATE_IDLE;
-    if (player->next_x < player->x) {
+    if (next_position->x < position->x) {
         state = YX_OBJ_PLAYER_STATE_RUN;
         player->face = -1;
     }
-    else if (player->next_x > player->x) {
+    else if (next_position->x > position->x) {
         state = YX_OBJ_PLAYER_STATE_RUN;
         player->face = 1;
     }
-    else if (player->next_y != player->y) {
+    else if (next_position->y != position->y) {
         state = YX_OBJ_PLAYER_STATE_RUN;
     }
 
@@ -50,19 +53,8 @@ static void player_step_set_state(struct k_object *object) {
         }
     }
 
-    player->x = player->next_x;
-    player->y = player->next_y;
-}
-
-static void player_step_shoot(struct k_object *object) {
-    struct yx_obj_player *player = k_object_get_data(object);
-
-    if (k_key_pressed('Q')) {
-        yx_player_bullet_create(
-        player->x + (float)player->face * 40,
-        player->y - 10.f,
-        player->face);
-    }
+    position->x = next_position->x;
+    position->y = next_position->y;
 }
 
 static void player_step(struct k_object *object) {
@@ -122,12 +114,12 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     //k_object_add_step_callback(object, player_step_shoot);
 
     struct yx_obj_player *player = k_object_get_data(object);
-    player->x      = config->x;
-    player->y      = config->y;
-    player->next_x = config->x;
-    player->next_y = config->y;
-    player->state  = YX_OBJ_PLAYER_STATE_IDLE;
-    player->face   = -1;
+    player->position.x      = config->x;
+    player->position.y      = config->y;
+    player->position_next.x = config->x;
+    player->position_next.y = config->y;
+    player->state           = YX_OBJ_PLAYER_STATE_IDLE;
+    player->face            = -1;
 
     player->spr_idle = config->spr_idle;
     player->spr_run  = config->spr_run;
@@ -139,15 +131,13 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     WASD_config.key_down  = 'S';
     WASD_config.key_right = 'D';
     WASD_config.speed     = 150.0f;
-    WASD_config.x         = &player->next_x;
-    WASD_config.y         = &player->next_y;
+    WASD_config.position = &player->position_next;
     player->WASD = k_object_add_component(object, WASD, &WASD_config);
 
     struct k_sprite_renderer_config renderer_config;
-    renderer_config.sprite  = player->spr_idle;
-    renderer_config.z_index = 0;
-    renderer_config.x       = &player->x;
-    renderer_config.y       = &player->y;
+    renderer_config.position = &player->position;
+    renderer_config.sprite   = player->spr_idle;
+    renderer_config.z_index  = 0;
     player->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
 
     return object;

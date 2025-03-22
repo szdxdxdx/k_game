@@ -6,8 +6,7 @@
 struct yx_obj_bubble {
     struct k_sprite_renderer *spr_rdr;
 
-    float x;
-    float y;
+    struct k_float_vec2 position;
 };
 
 struct k_object *yx_bubble_create(float x, float y);

@@ -12,16 +12,20 @@ static void draw_sprite(struct k_component *component) {
     void (*fn_loop_callback)(struct k_object *object) = NULL;
 
     struct k_sprite *sprite = renderer->sprite;
-    size_t frames_num = k_sprite_get_frames_num(sprite);
+    size_t frame_idx_last = k_sprite_get_frames_num(sprite) - 1;
     while (1) {
         float delay = (float)k_sprite_get_frame_delay(sprite, renderer->frame_idx) / 1000;
-        if (renderer->timer < delay)
+
+        if (renderer->timer < delay) {
             break;
+        }
 
         renderer->timer -= delay;
-        renderer->frame_idx += 1;
-        if (frames_num <= renderer->frame_idx) {
 
+        if (renderer->frame_idx < frame_idx_last) {
+            renderer->frame_idx += 1;
+        }
+        else {
             if (2 <= renderer->loop) {
                 fn_loop_callback = renderer->fn_loop_callback;
                 renderer->loop -= 1;
@@ -30,16 +34,16 @@ static void draw_sprite(struct k_component *component) {
             else if (1 == renderer->loop) {
                 fn_loop_callback = renderer->fn_loop_callback;
                 renderer->loop -= 1;
-                renderer->frame_idx = frames_num - 1;
+                renderer->frame_idx = frame_idx_last;
             }
             else {
-                renderer->frame_idx = frames_num - 1;
+                renderer->frame_idx = frame_idx_last;
             }
         }
     }
 
     if (transform_none == renderer->transform_flags) {
-        k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
+        k_sprite_draw(sprite, renderer->frame_idx, renderer->position->x, renderer->position->y, NULL);
     }
     else {
         struct k_sprite_draw_options opts;
@@ -48,7 +52,7 @@ static void draw_sprite(struct k_component *component) {
         opts.angle    = renderer->angle;
         opts.flip_x   = renderer->transform_flags & transform_flip_x;
         opts.flip_y   = renderer->transform_flags & transform_flip_y;
-        k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
+        k_sprite_draw(sprite, renderer->frame_idx, renderer->position->x, renderer->position->y, &opts);
     }
 
     if (NULL != fn_loop_callback) {
