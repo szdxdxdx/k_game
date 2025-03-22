@@ -1,4 +1,14 @@
+#include <math.h>
+
 #include "./_internal.h"
+
+static int is_point_in_rect(float x, float y, float x1, float y1, float x2, float y2) {
+    return (x1 <= x == x <= x2) && (y1 <= y == y <= y2);
+}
+
+static int is_point_in_circle(float x, float y, float cx, float cy, float r) {
+    return (x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r;
+}
 
 struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2) {
 
@@ -17,7 +27,7 @@ struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, floa
     struct k_list *list = &group->box_list;
     struct k_list_node *iter;
     for (k_list_for_each(list, iter)) {
-        box = container_of(iter, struct k_collision_box, list_node);
+        box = container_of(iter, struct k_collision_box, box_list_node);
 
         switch (box->type) {
             case K_COLLISION_RECTANGLE: {
@@ -36,6 +46,24 @@ struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, floa
                 break;
             }
             case K_COLLISION_CIRCLE: {
+                struct k_collision_circle *circle = &box->circle;
+
+                float cx = circle->position->x + circle->offset_cx;
+                float cy = circle->position->y + circle->offset_cy;
+                float r  = circle->r;
+
+                if (   is_point_in_rect(cx - r, cy, x1, y1, x2, y2)
+                    || is_point_in_rect(cx + r, cy, x1, y1, x2, y2)
+                    || is_point_in_rect(cx, cy - r, x1, y1, x2, y2)
+                    || is_point_in_rect(cx, cy + r, x1, y1, x2, y2)
+                    || is_point_in_circle(x1, y1, cx, cy, r)
+                    || is_point_in_circle(x1, y2, cx, cy, r)
+                    || is_point_in_circle(x2, y1, cx, cy, r)
+                    || is_point_in_circle(x2, y2, cx, cy, r)
+                ) {
+                    return box;
+                }
+
                 break;
             }
         }

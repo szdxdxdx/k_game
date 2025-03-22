@@ -44,6 +44,6 @@ int k__collision_manager_add(struct k_collision_manager *manager, struct k_colli
     if (NULL == group)
         return -1;
 
-    k_list_add_tail(&group->box_list, &box->list_node);
+    k_list_add_tail(&group->box_list, &box->box_list_node);
     return 0;
 }

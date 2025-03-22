@@ -1,8 +1,8 @@
 #include "./_internal.h"
 
-struct k_sprite *yx_spr_bubble_appearing = NULL;
-struct k_sprite *yx_spr_bubble_floating  = NULL;
-struct k_sprite *yx_spr_bubble_popped    = NULL;
+struct k_sprite *yx_spr_bubble_appear = NULL;
+struct k_sprite *yx_spr_bubble_idle  = NULL;
+struct k_sprite *yx_spr_bubble_pop    = NULL;
 
 static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, int delay) {
 
@@ -17,8 +17,8 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, 
     int sprite_w = k_image_get_width(img_player) / frames_num;
     int sprite_h = k_image_get_height(img_player);
 
-    float origin_x = (float)sprite_w / 2;
-    float origin_y = (float)sprite_h / 2;
+    float origin_x = (float)scale * 15;
+    float origin_y = (float)scale * 23;
 
     /* 素材中的动画都不超过 15 帧，此处不需要动态申请内存 */
     struct k_sprite_frame_config frames_config[] = {
@@ -54,8 +54,8 @@ static struct k_sprite *load_sprite_strip(const char *filepath, int frames_num, 
 
 int yx_load_spr_bubble(void) {
 
-    yx_spr_bubble_appearing = load_sprite_strip("./demo_1/sprite/bubble/appearing.png", 11, 64);
-    yx_spr_bubble_floating  = load_sprite_strip("./demo_1/sprite/bubble/floating.png",  4, 192);
-    yx_spr_bubble_popped    = load_sprite_strip("./demo_1/sprite/bubble/popped.png",    5,  64);
+    yx_spr_bubble_appear = load_sprite_strip("./demo_1/sprite/bubble/appear.png", 11, 64);
+    yx_spr_bubble_idle   = load_sprite_strip("./demo_1/sprite/bubble/float.png", 4, 192);
+    yx_spr_bubble_pop    = load_sprite_strip("./demo_1/sprite/bubble/pop.png", 5, 48);
     return 0;
 }

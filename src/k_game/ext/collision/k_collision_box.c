@@ -6,8 +6,10 @@
 /* region [collision_box_init] */
 
 int k__collision_box_init(struct k_component *component, void *params) {
-    struct k_collision_box *box = k_component_get_data(component);
     struct k_collision_box_config *box_config = params;
+
+    struct k_collision_box *box = k_component_get_data(component);
+    box->component = component;
 
     int group_id;
 
@@ -47,8 +49,22 @@ int k__collision_box_init(struct k_component *component, void *params) {
     if (0 != k__collision_manager_add(manager, box, group_id)) // TODO 临时的 group_id 为 0
         return -1;
 
-    k_component_add_draw_callback(component, k__collision_debug_draw, INT_MAX - 2);  // <- tmp
+    // k_component_add_draw_callback(component, k__collision_debug_draw, INT_MAX - 2);  // <- tmp
     return 0;
+}
+
+void k__collision_box_fini(struct k_component *component) {
+    struct k_collision_box *box = k_component_get_data(component);
+
+    k_list_del(&box->box_list_node);
+}
+
+/* endregion */
+
+/* region [collision_box_get] */
+
+struct k_object *k_collision_box_get_object(struct k_collision_box *box) {
+    return k_component_get_object(box->component);
 }
 
 /* endregion */

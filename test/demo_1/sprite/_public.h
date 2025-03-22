@@ -25,9 +25,9 @@ extern struct k_sprite *yx_spr_liliko_idle;
 
 int yx_load_spr_bubble(void);
 
-extern struct k_sprite *yx_spr_bubble_appearing;
-extern struct k_sprite *yx_spr_bubble_floating;
-extern struct k_sprite *yx_spr_bubble_popped;
+extern struct k_sprite *yx_spr_bubble_appear;
+extern struct k_sprite *yx_spr_bubble_idle;
+extern struct k_sprite *yx_spr_bubble_pop;
 
 /* endregion */
 

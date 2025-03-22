@@ -99,17 +99,17 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 
 int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_index) {
 
-    if (NULL == renderer->sprite) {
-        renderer->z_index = z_index;
+    if (z_index == renderer->z_index)
         return 0;
+
+    if (NULL != renderer->sprite) {
+        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, draw_sprite, z_index);
+        if (NULL == callback)
+            return -1;
+
+        k_component_del_callback(renderer->callback_draw_sprite);
+        renderer->callback_draw_sprite = callback;
     }
-
-    struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, draw_sprite, z_index);
-    if (NULL == callback)
-        return -1;
-
-    k_component_del_callback(renderer->callback_draw_sprite);
-    renderer->callback_draw_sprite = callback;
 
     renderer->z_index = z_index;
     return 0;

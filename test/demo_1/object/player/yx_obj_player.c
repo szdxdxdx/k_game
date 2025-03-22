@@ -106,11 +106,25 @@ static void player_step(struct k_object *object) {
     }
 }
 
+static void player_touch_bubble(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    float padding = 6;
+    float x1 = player->position.x - padding;
+    float y1 = player->position.y - padding;
+    float x2 = player->position.x + padding;
+    float y2 = player->position.y + padding;
+    struct k_collision_box *box = k_collision_check_rectangle(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
+    if (NULL != box)
+        yx_bubble_pop(k_collision_box_get_object(box));
+}
+
 struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
     k_object_add_step_begin_callback(object, player_step_set_state);
+    k_object_add_step_callback(object, player_touch_bubble);
     //k_object_add_step_callback(object, player_step);
     //k_object_add_step_callback(object, player_step_shoot);
 
@@ -131,7 +145,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     WASD_config.key_left  = 'A';
     WASD_config.key_down  = 'S';
     WASD_config.key_right = 'D';
-    WASD_config.speed     = 150.0f;
+    WASD_config.speed     = 192.0f;
     WASD_config.position = &player->position_next;
     player->WASD = k_object_add_component(object, WASD, &WASD_config);
 

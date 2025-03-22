@@ -45,7 +45,7 @@ struct k_collision_circle {
 
 struct k_collision_box {
 
-    struct k_list_node list_node;
+    struct k_list_node box_list_node;
 
     struct k_component *component;
 
@@ -57,6 +57,8 @@ struct k_collision_box {
 };
 
 int k__collision_box_init(struct k_component *component, void *params);
+
+void k__collision_box_fini(struct k_component *component);
 
 /* endregion */
 
