@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-struct k_component_type *K__COMPONENT_TYPE_COLLISIONX = NULL;
+struct k_component_type *K__COMPONENT_TYPE_COLLISION = NULL;
 
 int k__component_def_collision_box(void) {
 
@@ -14,8 +14,8 @@ int k__component_def_collision_box(void) {
     entity_config.fn_init   = k__collision_box_init;
     entity_config.fn_fini   = NULL; // <- TODO
 
-    K__COMPONENT_TYPE_COLLISIONX = k_component_define(&manager_config, &entity_config);
-    if (NULL == K__COMPONENT_TYPE_COLLISIONX)
+    K__COMPONENT_TYPE_COLLISION = k_component_define(&manager_config, &entity_config);
+    if (NULL == K__COMPONENT_TYPE_COLLISION)
         return -1;
 
     return 0;
@@ -24,7 +24,7 @@ int k__component_def_collision_box(void) {
 /* region [room_add_collision_manager] */
 
 int k_room_add_collision_manager(void) {
-    return k_room_add_component_manager(K__COMPONENT_TYPE_COLLISIONX, NULL);;
+    return k_room_add_component_manager(K__COMPONENT_TYPE_COLLISION, NULL);;
 }
 
 /* endregion */
@@ -38,7 +38,7 @@ struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object
 
     config->box_type = K_COLLISION_BOX_RECTANGLE;
 
-    struct k_component *component = k_object_add_component(object, K__COMPONENT_TYPE_COLLISIONX, config);
+    struct k_component *component = k_object_add_component(object, K__COMPONENT_TYPE_COLLISION, config);
     if (NULL == component)
         return NULL;
 

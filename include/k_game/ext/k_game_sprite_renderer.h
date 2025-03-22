@@ -1,6 +1,7 @@
 #ifndef K_GAME_SPRITE_RENDERER_H
 #define K_GAME_SPRITE_RENDERER_H
 
+struct k_float_vec2;
 struct k_sprite;
 struct k_object;
 

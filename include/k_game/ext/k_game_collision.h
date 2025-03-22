@@ -1,9 +1,13 @@
 #ifndef K_GAME_COLLISION_H
 #define K_GAME_COLLISION_H
 
+struct k_float_vec2;
 struct k_room;
 struct k_object;
 
+/**
+ * TODO Docs
+ */
 struct k_collision_box;
 
 /* region [room_add_collision_box_manager] */
@@ -15,9 +19,6 @@ int k_room_add_collision_manager(void);
 /* region [object_add_collision_box] */
 
 struct k_collision_rectangle_config {
-
-    /* 本字段由 k_game 内部逻辑计算得出，无需手动设置 */
-    uint8_t box_type;
 
     int group_id;
 
@@ -32,9 +33,6 @@ struct k_collision_rectangle_config {
 struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, struct k_collision_rectangle_config *config);
 
 struct k_collision_circle_config {
-
-    /* 本字段由 k_game 内部逻辑计算得出，无需手动设置 */
-    uint8_t box_type;
 
     int group_id;
 
