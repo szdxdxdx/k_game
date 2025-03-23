@@ -21,7 +21,7 @@ struct k_room_callback *k_room_add_step_callback(void *data, void (*fn_callback)
 
 struct k_room_callback *k_room_add_draw_callback(void *data, void (*fn_callback)(void *data), int z_index) {
     struct k_room *room = k__game.current_room;
-    return k__callback_add_room_draw(&room->draw_callback_manager, room, data, fn_callback, z_index);
+    return k__callback_add_room_draw(&room->draw_callback_manager, room, data, fn_callback, 0, z_index);
 }
 
 struct k_room_callback *k_room_add_step_end_callback(void *data, void (*fn_callback)(void *data)) {
@@ -81,7 +81,7 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
 }
 
 struct k_object_callback *k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object), int z_index) {
-    return k__callback_add_object_draw(&object->room->draw_callback_manager, object, fn_callback, z_index);
+    return k__callback_add_object_draw(&object->room->draw_callback_manager, object, fn_callback, 0, z_index);
 }
 
 struct k_object_callback *k_object_add_step_end_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
@@ -139,7 +139,7 @@ struct k_component_callback *k_component_add_step_callback(struct k_component *c
 }
 
 struct k_component_callback *k_component_add_draw_callback(struct k_component *component, void (*fn_callback)(struct k_component *component), int z_index) {
-    return k__callback_add_component_draw(&component->object->room->draw_callback_manager, component, fn_callback, z_index);
+    return k__callback_add_component_draw(&component->object->room->draw_callback_manager, component, fn_callback, 0, z_index);
 }
 
 struct k_component_callback *k_component_add_step_end_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
