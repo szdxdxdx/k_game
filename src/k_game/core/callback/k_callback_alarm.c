@@ -138,7 +138,7 @@ struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_call
 
 /* region [del_callback] */
 
-void k__callback_flag_dead_alarm(struct k_callback_base *callback) {
+void k__callback_del_alarm(struct k_callback_base *callback) {
 
     if (K_CALLBACK_DELETED == callback->state)
         return;
@@ -285,7 +285,7 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
             }
         }
 
-        k__callback_flag_dead_alarm(&alarm_callback->base);
+        k__callback_del_alarm(&alarm_callback->base);
     }
 }
 

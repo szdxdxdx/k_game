@@ -124,7 +124,7 @@ struct k_component_callback *k__callback_add_component_step(struct k_step_callba
 
 /* region [del_callback] */
 
-void k__callback_flag_dead_step(struct k_callback_base *callback) {
+void k__callback_del_step(struct k_callback_base *callback) {
 
     if (K_CALLBACK_DELETED == callback->state)
         return;
