@@ -1,7 +1,6 @@
 #include "./_internal.h"
 
-/* 将 SDL 的键码转为 k_game 的键码
- */
+/* 将 SDL 的键码转为 k_game 的键码 */
 static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
 
     /* 请相信编译器的优化能力
@@ -148,34 +147,36 @@ static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
     }
 }
 
-/* 记录键盘按键的状态
- *
- * 每个按键用 3 个 bit 记录状态：
- * - 0b001 表示在上一帧到这一帧之间，该按键有被按下
- * - 0b010 表示在上一帧到这一帧之间，该按键有抬起
- * - 0b100 表示在上一帧结束时，该按键被按下或按住
- */
 static uint8_t key_state[K_KEY_ENUM_END + 1];
 
-void k__refresh_keyboard(void) {
+static void refresh_key_state(enum k_keyboard_key key) {
 
-    size_t i = 0;
-    for (; i < K_KEY_ENUM_END; i++) {
-        switch (key_state[i] & 0b11) {
-            case 0b00: key_state[i] &= 0b100; break;
-            case 0b01: key_state[i]  = 0b000; break;
-            case 0b10: key_state[i]  = 0b100; break;
-            case 0b11: key_state[i]  = 0b000; break;
-        }
+    /* 每个按键用 3 个 bit 记录状态：
+     * - 0b001 表示该按键在这一帧被按下
+     * - 0b010 表示该按键在这一帧抬起
+     * - 0b100 表示该按键在上一帧被按下或按住
+     */
+    switch (key_state[key] & 0b11) {
+        case 0b000: key_state[key] &= 0b100; break;
+        case 0b001: key_state[key]  = 0b000; break;
+        case 0b010: key_state[key]  = 0b100; break;
+        case 0b011: key_state[key]  = 0b000; break;
     }
 }
 
-void k__handle_SDL_key_down_event(SDL_KeyboardEvent *event) {
+void k__refresh_key_state(void) {
+
+    size_t key = 0;
+    for (; key < K_KEY_ENUM_END; key++)
+        refresh_key_state(key);
+}
+
+void k__handle_SDL_event_key_down(SDL_KeyboardEvent *event) {
     enum k_keyboard_key key = SDL_key_to_k_key(event->keysym.sym);
     key_state[key] |= 0b010;
 }
 
-void k__handle_SDL_key_up_event(SDL_KeyboardEvent *event) {
+void k__handle_SDL_event_key_up(SDL_KeyboardEvent *event) {
     enum k_keyboard_key key = SDL_key_to_k_key(event->keysym.sym);
     key_state[key] |= 0b001;
 }

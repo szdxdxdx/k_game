@@ -1,32 +1,109 @@
+#include <stdio.h>
+
 #include "./_internal.h"
 
-struct k_mouse_state {
-    int x;
-    int y;
-};
+static int mouse_x = 0;
+static int mouse_y = 0;
+static uint8_t button_state[3] = { 0 };
 
-static struct k_mouse_state mouse_state = {
-    .x = 0,
-    .y = 0,
-};
+static void refresh_button_state(enum k_mouse_button button) {
 
-void k__handle_SDL_mouse_motion_event(struct SDL_MouseMotionEvent *event) {
+    /* 每个按键用 3 个 bit 记录状态：
+     * - 0b001 表示该按键在这一帧被按下
+     * - 0b010 表示该按键在这一帧抬起
+     * - 0b100 表示该按键在上一帧被按下或按住
+     */
+    switch (button_state[button] & 0b11) {
+        case 0b000: button_state[button] &= 0b100; break;
+        case 0b001: button_state[button]  = 0b000; break;
+        case 0b010: button_state[button]  = 0b100; break;
+        case 0b011: button_state[button]  = 0b000; break;
+    }
+}
 
-   // printf("Mouse Motion Event:\n");
-   // printf("  Window ID: %u\n", event->windowID);
-   // printf("  Mouse Instance ID: %u\n", event->which);
-   // printf("  Button State: %u\n", event->state);
-   // printf("  Position: (%d, %d)\n", event->x, event->y);
-   // printf("  Relative Motion: (%d, %d)\n", event->xrel, event->yrel);
+void k__refresh_mouse_state(void) {
+    refresh_button_state(K_BUTTON_LEFT);
+    refresh_button_state(K_BUTTON_MIDDLE);
+    refresh_button_state(K_BUTTON_RIGHT);
+}
 
-    mouse_state.x = event->x;
-    mouse_state.y = event->y;
+void k__handle_SDL_event_mouse_button_down(SDL_MouseButtonEvent *event) {
+
+    printf("Mouse Button Down Event:\n");
+    printf("  Window ID: %u\n", event->windowID);
+    printf("  Mouse Instance ID: %u\n", event->which);
+    printf("  Button State: %u\n", event->state);
+    printf("  Button: %u\n", event->button);
+    printf("  Position: (%d, %d)\n", event->x, event->y);
+    printf("  Clicks: %u\n\n", event->clicks);
+
+    switch (event->button) {
+        case SDL_BUTTON_LEFT:   button_state[K_BUTTON_LEFT]   |= 0b010; break;
+        case SDL_BUTTON_MIDDLE: button_state[K_BUTTON_MIDDLE] |= 0b010; break;
+        case SDL_BUTTON_RIGHT:  button_state[K_BUTTON_RIGHT]  |= 0b010; break;
+    }
+}
+
+void k__handle_SDL_event_mouse_button_up(SDL_MouseButtonEvent *event) {
+
+    printf("Mouse Button Down Event:\n");
+    printf("  Window ID: %u\n", event->windowID);
+    printf("  Mouse Instance ID: %u\n", event->which);
+    printf("  Button State: %u\n", event->state);
+    printf("  Button: %u\n", event->button);
+    printf("  Position: (%d, %d)\n", event->x, event->y);
+    printf("  Clicks: %u\n\n", event->clicks);
+
+    switch (event->button) {
+        case SDL_BUTTON_LEFT:   button_state[K_BUTTON_LEFT]   |= 0b001; break;
+        case SDL_BUTTON_MIDDLE: button_state[K_BUTTON_MIDDLE] |= 0b001; break;
+        case SDL_BUTTON_RIGHT:  button_state[K_BUTTON_RIGHT]  |= 0b001; break;
+    }
+}
+
+void k__handle_SDL_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
+
+    printf("Mouse Motion Event:\n");
+    printf("  Window ID: %u\n", event->windowID);
+    printf("  Mouse Instance ID: %u\n", event->which);
+    printf("  Button State: %u\n", event->state);
+    printf("  Position: (%d, %d)\n", event->x, event->y);
+    printf("  Relative Motion: (%d, %d)\n\n", event->xrel, event->yrel);
+
+    mouse_x = event->x;
+    mouse_y = event->y;
 }
 
 int k_mouse_x(void) {
-    return mouse_state.x;
+    return mouse_x;
 }
 
 int k_mouse_y(void) {
-    return mouse_state.y;
+    return mouse_y;
+}
+
+int k_button_pressed(enum k_mouse_button button) {
+    return 0b010 == (button_state[button] & 0b110);
+}
+
+int k_button_released(enum k_mouse_button button) {
+    return 0b001 == (button_state[button] & 0b001);
+}
+
+int k_button_held(enum k_mouse_button button) {
+    return 0b100 == (button_state[button] & 0b101);
+}
+
+int k_button_idle(enum k_mouse_button button) {
+    return 0b000 == button_state[button];
+}
+
+int k_button_down(enum k_mouse_button button) {
+    return 0b010 == (button_state[button] & 0b110)
+        || 0b100 == (button_state[button] & 0b101);
+}
+
+int k_button_up(enum k_mouse_button button) {
+    return 0b010 != (button_state[button] & 0b110)
+        && 0b100 != (button_state[button] & 0b101);
 }

@@ -35,7 +35,7 @@ struct k_room_config {
      * 在此指定为房间附加的自定义数据的结构体大小，单位：字节。
      *
      * 创建房间时，k_game 会为房间的关联数据分配内存，
-     * 之后你可以通过 `k_room_get_data()` 读写该内存。
+     * 之后你可以通过 `k_get_room_data()` 读写该内存。
      *
      * 关联数据的内存由 k_game 管理，其生命周期与房间相同。
      * 销毁房间时 k_game 会释放该内存。
@@ -146,37 +146,37 @@ struct k_room *k_get_current_room(void);
  * 若当前房间的关联数据结构体大小为 0，则函数返回 `NULL`，
  * 否则返回关联数据内存段的指针。
  */
-void *k_room_get_data(void);
+void *k_get_room_data(void);
 
 /** \brief 获取当前房间的宽 */
-float k_room_get_width(void);
+float k_get_room_width(void);
 
 /** \brief 获取当前房间的高 */
-float k_room_get_height(void);
+float k_get_room_height(void);
 
 /* endregion */
 
 /* region [room_add_callback] */
 
-struct k_room_callback *k_room_add_step_begin_callback(void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k_add_room_step_begin_callback(void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_alarm_callback(void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
+struct k_room_callback *k_add_room_alarm_callback(void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
 
-struct k_room_callback *k_room_add_step_callback(void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k_add_room_step_callback(void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_draw_callback(void *data, void (*fn_callback)(void *data), int z_group, int z_layer);
+struct k_room_callback *k_add_room_draw_callback(void *data, void (*fn_callback)(void *data), int z_group, int z_layer);
 
-struct k_room_callback *k_room_add_step_end_callback(void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k_add_room_step_end_callback(void *data, void (*fn_callback)(void *data));
 
 /**
- * \brief 删除房间的事件回调
+ * \brief 删除当前房间的事件回调
  *
  * 若 `callback` 为 `NULL`，则函数不做任何事情。
  */
-void k_room_del_callback(struct k_room_callback *callback);
+void k_del_room_callback(struct k_room_callback *callback);
 
 /** \brief 删除当前房间所有的事件回调 */
-void k_room_del_all_callbacks(void);
+void k_del_room_all_callbacks(void);
 
 /* endregion */
 

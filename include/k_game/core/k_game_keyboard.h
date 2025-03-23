@@ -51,10 +51,6 @@ enum k_keyboard_key {
     K_KEY_DELETE         ,
     K_KEY_PRINT_SCREEN   ,
 
-    K_KEY_UNUSED_14      ,
-    K_KEY_UNUSED_15      ,
-    K_KEY_UNUSED_16      ,
-
     K_KEY_LEFT_CTRL      ,
     K_KEY_LEFT_SHIFT     ,
     K_KEY_LEFT_ALT       ,
@@ -62,6 +58,9 @@ enum k_keyboard_key {
     K_KEY_RIGHT_SHIFT    ,
     K_KEY_RIGHT_ALT      ,
 
+    K_KEY_UNUSED_20      ,
+    K_KEY_UNUSED_21      ,
+    K_KEY_UNUSED_22      ,
     K_KEY_UNUSED_23      ,
     K_KEY_UNUSED_24      ,
     K_KEY_UNUSED_25      ,

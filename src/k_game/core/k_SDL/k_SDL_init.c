@@ -65,7 +65,10 @@ static int step_init_SDL_mix(void *unused) {
         goto err;
     }
 
-    Mix_AllocateChannels(32);
+    Mix_AllocateChannels(48);
+
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
+    Mix_Volume(-1, MIX_MAX_VOLUME / 4);
     return 0;
 
 err:

@@ -9,8 +9,8 @@ static int my_rand(int min, int max) {
 static void yx_bubble_maker_create_bubble(struct k_object *object, int timeout_diff) {
 
     int padding = 32;
-    float rand_x = (float)my_rand(padding, k_room_get_width() - padding);
-    float rand_y = (float)my_rand(padding, k_room_get_height() - padding);
+    float rand_x = (float)my_rand(padding, k_get_room_width() - padding);
+    float rand_y = (float)my_rand(padding, k_get_room_height() - padding);
 
     yx_bubble_create(rand_x, rand_y);
 

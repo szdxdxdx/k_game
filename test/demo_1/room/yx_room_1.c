@@ -16,8 +16,8 @@ int fn_room_init(void *params) {
 
     /* region [room_callback] */
 
-    k_room_add_draw_callback(NULL, k_room_clean_canvas, INT_MIN, INT_MIN);
-    k_room_add_draw_callback(NULL, k_room_draw_grid,    INT_MIN, INT_MIN + 1);
+    k_add_room_draw_callback(NULL, k_room_clean_canvas, INT_MIN, INT_MIN);
+    k_add_room_draw_callback(NULL, k_room_draw_grid, INT_MIN, INT_MIN + 1);
 
     /* endregion */
 

@@ -29,9 +29,7 @@ extern struct k_game_window k__window;
 
 /* region [for room game loop] */
 
-void k__refresh_keyboard(void); /* <- TODO rename */
-
-void k__poll_SDL_events(void);
+void k__handle_SDL_event_with_frame_delay(uint64_t room_step_interval_ms);
 
 /* endregion */
 

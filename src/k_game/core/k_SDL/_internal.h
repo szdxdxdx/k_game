@@ -5,10 +5,21 @@
 
 #include "./_public.h"
 
-void k__handle_SDL_key_down_event(SDL_KeyboardEvent *event);
+/* region [keyboard] */
 
-void k__handle_SDL_key_up_event(SDL_KeyboardEvent *event);
+void k__refresh_key_state(void);
+void k__handle_SDL_event_key_down(SDL_KeyboardEvent *event);
+void k__handle_SDL_event_key_up(SDL_KeyboardEvent *event);
 
-void k__handle_SDL_mouse_motion_event(SDL_MouseMotionEvent *event);
+/* endregion */
+
+/* region [mouse] */
+
+void k__refresh_mouse_state(void);
+void k__handle_SDL_event_mouse_button_down(SDL_MouseButtonEvent *event);
+void k__handle_SDL_event_mouse_button_up(SDL_MouseButtonEvent *event);
+void k__handle_SDL_event_mouse_motion(SDL_MouseMotionEvent *event);
+
+/* endregion */
 
 #endif
