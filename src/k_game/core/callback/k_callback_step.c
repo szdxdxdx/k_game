@@ -126,23 +126,24 @@ struct k_component_callback *k__callback_add_component_step(struct k_step_callba
 
 void k__callback_flag_dead_step(struct k_callback_base *callback) {
 
+    if (K_CALLBACK_DELETED == callback->state)
+        return;
+
     struct k_step_callback *step_callback = container_of(callback, struct k_step_callback, base);
 
-    switch (step_callback->base.state) {
+    switch (callback->state) {
         case K_CALLBACK_PENDING:
-            step_callback->base.state = K_CALLBACK_DEAD;
+            callback->state = K_CALLBACK_DELETED;
             break;
         case K_CALLBACK_ACTIVE:
             k_list_add_tail(&step_callback->manager->pending_list, &step_callback->pending_list_node);
-            step_callback->base.state = K_CALLBACK_DEAD;
+            callback->state = K_CALLBACK_DELETED;
             break;
-        case K_CALLBACK_DEAD:
-            return;
         default:
             assert(0);
     }
 
-    switch (step_callback->base.context) {
+    switch (callback->context) {
         case K_ROOM_CALLBACK: {
             struct k_room_step_callback *room_callback = (struct k_room_step_callback *)step_callback;
             k_list_del(&room_callback->room_callback.list_node);
@@ -200,7 +201,7 @@ void k__callback_flush_step(struct k_step_callback_manager *manager) {
                 k_list_add_tail(callback_list, &step_callback->callback_list_node);
                 step_callback->base.state = K_CALLBACK_ACTIVE;
                 break;
-            case K_CALLBACK_DEAD:
+            case K_CALLBACK_DELETED:
                 k_list_del(&step_callback->callback_list_node);
                 k_list_del(&step_callback->pending_list_node);
                 k_free(step_callback);

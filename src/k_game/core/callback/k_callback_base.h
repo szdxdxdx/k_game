@@ -22,7 +22,7 @@ enum k_callback_state {
     K_CALLBACK_PENDING,
     K_CALLBACK_ACTIVE,
     K_CALLBACK_EXECUTED,
-    K_CALLBACK_DEAD,
+    K_CALLBACK_DELETED,
 };
 
 struct k_callback_base {
