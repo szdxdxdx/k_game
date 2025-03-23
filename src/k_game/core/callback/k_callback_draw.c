@@ -248,49 +248,6 @@ struct k_component_callback *k__callback_add_component_draw(struct k_draw_callba
 
 /* region [del_callback] */
 
-static void free_draw_callback(struct k_draw_callback *draw_callback) {
-
-    k_list_del(&draw_callback->callback_list_node);
-    k_list_del(&draw_callback->pending_list_node);
-
-    switch (draw_callback->base.context) {
-        case K_ROOM_CALLBACK: {
-            struct k_room_draw_callback *callback = (struct k_room_draw_callback *)draw_callback;
-            k_list_del(&callback->room_callback.list_node);
-            break;
-        }
-        case K_OBJECT_CALLBACK: {
-            struct k_object_draw_callback *callback = (struct k_object_draw_callback *)draw_callback;
-            k_list_del(&callback->object_callback.list_node);
-            break;
-        }
-        case K_COMPONENT_CALLBACK: {
-            struct k_component_draw_callback *callback = (struct k_component_draw_callback *)draw_callback;
-            k_list_del(&callback->component_callback.list_node);
-            break;
-        }
-    }
-
-    k_free(draw_callback);
-}
-
-void k__callback_flag_deleted_draw(struct k_callback_base *callback) {
-
-    struct k_draw_callback *draw_callback = container_of(callback, struct k_draw_callback, base);
-
-    switch (draw_callback->base.state) {
-        case K_CALLBACK_PENDING:
-            draw_callback->base.state = K_CALLBACK_DEAD;
-            break;
-        case K_CALLBACK_ACTIVE:
-            k_list_add_tail(&draw_callback->layer->group->manager->callback_pending_list, &draw_callback->pending_list_node);
-            draw_callback->base.state = K_CALLBACK_DELETED;
-            break;
-        default:
-            assert(0);
-    }
-}
-
 void k__callback_flag_dead_draw(struct k_callback_base *callback) {
 
     struct k_draw_callback *draw_callback = container_of(callback, struct k_draw_callback, base);
@@ -303,14 +260,28 @@ void k__callback_flag_dead_draw(struct k_callback_base *callback) {
             k_list_add_tail(&draw_callback->layer->group->manager->callback_pending_list, &draw_callback->pending_list_node);
             draw_callback->base.state = K_CALLBACK_DEAD;
             break;
-        case K_CALLBACK_DELETED:
-            assert(0); // 已弃用 DELETED
-            draw_callback->base.state = K_CALLBACK_DEAD;
-            break;
         case K_CALLBACK_DEAD:
-            break;
+            return;
         default:
             assert(0);
+    }
+
+    switch (draw_callback->base.context) {
+        case K_ROOM_CALLBACK: {
+            struct k_room_draw_callback *room_callback = (struct k_room_draw_callback *)draw_callback;
+            k_list_del(&room_callback->room_callback.list_node);
+            break;
+        }
+        case K_OBJECT_CALLBACK: {
+            struct k_object_draw_callback *object_callback = (struct k_object_draw_callback *)draw_callback;
+            k_list_del(&object_callback->object_callback.list_node);
+            break;
+        }
+        case K_COMPONENT_CALLBACK: {
+            struct k_component_draw_callback *component_callback = (struct k_component_draw_callback *)draw_callback;
+            k_list_del(&component_callback->component_callback.list_node);
+            break;
+        }
     }
 }
 
@@ -367,25 +338,24 @@ void k__callback_deinit_draw_manager(struct k_draw_callback_manager *manager) {
 
 void k__callback_flush_draw(struct k_draw_callback_manager *manager) {
 
-    struct k_draw_callback *callback;
+    struct k_draw_callback *draw_callback;
     struct k_list *callback_pending_list = &manager->callback_pending_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(callback_pending_list, iter, next)) {
-        callback = container_of(iter, struct k_draw_callback, pending_list_node);
+        draw_callback = container_of(iter, struct k_draw_callback, pending_list_node);
 
-        switch (callback->base.state) {
-            case K_CALLBACK_PENDING: {
-                k_list_del(&callback->pending_list_node);
-                k_list_node_loop(&callback->pending_list_node);
-                k_list_add_tail(&callback->layer->callback_list, &callback->callback_list_node);
-                callback->base.state = K_CALLBACK_ACTIVE;
+        switch (draw_callback->base.state) {
+            case K_CALLBACK_PENDING:
+                k_list_del(&draw_callback->pending_list_node);
+                k_list_node_loop(&draw_callback->pending_list_node);
+                k_list_add_tail(&draw_callback->layer->callback_list, &draw_callback->callback_list_node);
+                draw_callback->base.state = K_CALLBACK_ACTIVE;
                 break;
-            }
-            case K_CALLBACK_DELETED:
-            case K_CALLBACK_DEAD: {
-                free_draw_callback(callback);
+            case K_CALLBACK_DEAD:
+                k_list_del(&draw_callback->callback_list_node);
+                k_list_del(&draw_callback->pending_list_node);
+                k_free(draw_callback);
                 break;
-            }
             default:
                 assert(0);
         }
@@ -412,25 +382,23 @@ void k__callback_exec_draw(struct k_draw_callback_manager *manager) {
             for (k_list_for_each(callback_list, iter__)) {
                 draw_callback = container_of(iter__, struct k_draw_callback, callback_list_node);
 
-                if (K_CALLBACK_DEAD == draw_callback->base.state)
+                if (K_CALLBACK_ACTIVE != draw_callback->base.state)
                     continue;
-
-                assert(K_CALLBACK_ACTIVE == draw_callback->base.state);
 
                 switch (draw_callback->base.context) {
                     case K_ROOM_CALLBACK: {
-                        struct k_room_draw_callback *callback = (struct k_room_draw_callback *)draw_callback;
-                        callback->fn_callback(callback->data);
+                        struct k_room_draw_callback *room_callback = (struct k_room_draw_callback *)draw_callback;
+                        room_callback->fn_callback(room_callback->data);
                         break;
                     }
                     case K_OBJECT_CALLBACK: {
-                        struct k_object_draw_callback *callback = (struct k_object_draw_callback *)draw_callback;
-                        callback->fn_callback(callback->object);
+                        struct k_object_draw_callback *object_callback = (struct k_object_draw_callback *)draw_callback;
+                        object_callback->fn_callback(object_callback->object);
                         break;
                     }
                     case K_COMPONENT_CALLBACK: {
-                        struct k_component_draw_callback *callback = (struct k_component_draw_callback *)draw_callback;
-                        callback->fn_callback(callback->component);
+                        struct k_component_draw_callback *component_callback = (struct k_component_draw_callback *)draw_callback;
+                        component_callback->fn_callback(component_callback->component);
                         break;
                     }
                 }

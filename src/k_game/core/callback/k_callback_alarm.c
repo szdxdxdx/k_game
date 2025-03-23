@@ -138,52 +138,6 @@ struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_call
 
 /* region [del_callback] */
 
-static void free_alarm_callback(struct k_alarm_callback *alarm_callback) {
-
-    k_list_del(&alarm_callback->callback_list_node);
-    k_list_del(&alarm_callback->pending_list_node);
-
-    switch (alarm_callback->base.context) {
-        case K_ROOM_CALLBACK: {
-            struct k_room_alarm_callback *callback = (struct k_room_alarm_callback *)alarm_callback;
-            k_list_del(&callback->room_callback.list_node);
-            break;
-        }
-        case K_OBJECT_CALLBACK: {
-            struct k_object_alarm_callback *callback = (struct k_object_alarm_callback *)alarm_callback;
-            k_list_del(&callback->object_callback.list_node);
-            break;
-        }
-        case K_COMPONENT_CALLBACK: {
-            struct k_component_alarm_callback *callback = (struct k_component_alarm_callback *)alarm_callback;
-            k_list_del(&callback->component_callback.list_node);
-            break;
-        }
-    }
-
-    k_free(alarm_callback);
-}
-
-void k__callback_flag_deleted_alarm(struct k_callback_base *callback) {
-
-    struct k_alarm_callback *alarm_callback = container_of(callback, struct k_alarm_callback, base);
-
-    switch (alarm_callback->base.state)
-        case K_CALLBACK_PENDING: {
-            alarm_callback->base.state = K_CALLBACK_DELETED;
-            break;
-        case K_CALLBACK_ACTIVE:
-            k_list_add_tail(&alarm_callback->manager->pending_list, &alarm_callback->pending_list_node);
-            alarm_callback->base.state = K_CALLBACK_DELETED;
-            break;
-        case K_CALLBACK_EXECUTED:
-            alarm_callback->base.state = K_CALLBACK_DELETED;
-            break;
-        default:
-            assert(0);
-    }
-}
-
 void k__callback_flag_dead_alarm(struct k_callback_base *callback) {
 
     struct k_alarm_callback *alarm_callback = container_of(callback, struct k_alarm_callback, base);
@@ -199,14 +153,28 @@ void k__callback_flag_dead_alarm(struct k_callback_base *callback) {
         case K_CALLBACK_EXECUTED:
             alarm_callback->base.state = K_CALLBACK_DEAD;
             break;
-        case K_CALLBACK_DELETED:
-            assert(0); // 已弃用 DELETED
-            alarm_callback->base.state = K_CALLBACK_DEAD;
-            break;
         case K_CALLBACK_DEAD:
-            break;
+            return;
         default:
             assert(0);
+    }
+
+    switch (alarm_callback->base.context) {
+        case K_ROOM_CALLBACK: {
+            struct k_room_alarm_callback *room_callback = (struct k_room_alarm_callback *)alarm_callback;
+            k_list_del(&room_callback->room_callback.list_node);
+            break;
+        }
+        case K_OBJECT_CALLBACK: {
+            struct k_object_alarm_callback *object_callback = (struct k_object_alarm_callback *)alarm_callback;
+            k_list_del(&object_callback->object_callback.list_node);
+            break;
+        }
+        case K_COMPONENT_CALLBACK: {
+            struct k_component_alarm_callback *component_callback = (struct k_component_alarm_callback *)alarm_callback;
+            k_list_del(&component_callback->component_callback.list_node);
+            break;
+        }
     }
 }
 
@@ -240,7 +208,6 @@ void k__callback_flush_alarm(struct k_alarm_callback_manager *manager) {
     for (k_list_for_each_s(list, iter, next)) {
         alarm_callback = container_of(iter, struct k_alarm_callback, pending_list_node);
 
-
         switch (alarm_callback->base.state) {
             case K_CALLBACK_PENDING:
                 k_list_del(&alarm_callback->pending_list_node);
@@ -266,9 +233,10 @@ void k__callback_flush_alarm(struct k_alarm_callback_manager *manager) {
                 alarm_callback->base.state = K_CALLBACK_ACTIVE;
                 break;
             case K_CALLBACK_EXECUTED:
-            case K_CALLBACK_DELETED:
             case K_CALLBACK_DEAD:
-                free_alarm_callback(alarm_callback);
+                k_list_del(&alarm_callback->callback_list_node);
+                k_list_del(&alarm_callback->pending_list_node);
+                k_free(alarm_callback);
                 break;
             default:
                 assert(0);
@@ -290,10 +258,8 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
         if (current_ms < alarm_callback->timeout)
             break;
 
-        if (K_CALLBACK_DEAD == alarm_callback->base.state)
+        if (K_CALLBACK_ACTIVE != alarm_callback->base.state)
             continue;
-
-        assert(K_CALLBACK_ACTIVE == alarm_callback->base.state);
 
         int timeout_diff = (int)(current_ms - alarm_callback->timeout);
 
@@ -317,6 +283,8 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
                 break;
             }
         }
+
+        k__callback_flag_dead_alarm(&alarm_callback->base);
     }
 }
 

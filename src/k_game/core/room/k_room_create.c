@@ -149,7 +149,7 @@ static void step_del_all_callbacks(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__room_free_all_callbacks(room);
+    k__room_del_all_callbacks(room);
 }
 
 static int step_init_object_pool(void *context) {

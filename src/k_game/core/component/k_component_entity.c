@@ -43,7 +43,7 @@ static struct k_component *k__component_create(struct k_component_type *componen
 
 fn_create_failed:
     k_list_del(&component->list_node);
-    k__component_free_all_callbacks(component);
+    k_component_del_all_callbacks(component);
     k_free(component->data);
 malloc_data_failed:
     k_free(component);
@@ -60,7 +60,7 @@ static void k__component_destroy(struct k_component *component) {
     }
 
     k_list_del(&component->list_node);
-    k__component_free_all_callbacks(component);
+    k_component_del_all_callbacks(component);
 
     k_free(component->data);
     k_free(component);

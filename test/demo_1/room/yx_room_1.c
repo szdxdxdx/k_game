@@ -52,7 +52,6 @@ int fn_room_init(void *params) {
 
     /* endregion */
 
-    yx_bubble_create(500.0f, 300.0f);
     return 0;
 }
 

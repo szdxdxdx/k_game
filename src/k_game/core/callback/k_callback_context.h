@@ -30,10 +30,6 @@ struct k_component_callback {
     struct k_callback_base *base;
 };
 
-void k__room_free_all_callbacks(struct k_room *room);
-
-void k__object_free_all_callbacks(struct k_object *object);
-
-void k__component_free_all_callbacks(struct k_component *component);
+void k__room_del_all_callbacks(struct k_room *room);
 
 #endif
