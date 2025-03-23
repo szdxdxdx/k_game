@@ -30,8 +30,8 @@ static void bullet_move(struct k_object *object) {
     bullet->position.x += bullet->velocity_x * delta;
     bullet->position.y += bullet->velocity_y * delta;
 
-    if (   bullet->position.x < 0 || bullet->position.x > (float)k_room_get_width()
-        || bullet->position.y < 0 || bullet->position.y > (float)k_room_get_height()
+    if (   bullet->position.x < 0 || bullet->position.x > k_room_get_width()
+        || bullet->position.y < 0 || bullet->position.y > k_room_get_height()
     ) {
         k_object_destroy(object);
     }

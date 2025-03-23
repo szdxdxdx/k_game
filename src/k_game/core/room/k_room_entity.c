@@ -2,11 +2,11 @@
 
 #include "../game/_public.h"
 
-int k_room_get_width(void) {
+float k_room_get_width(void) {
     return k__game.current_room->room_w;
 }
 
-int k_room_get_height(void) {
+float k_room_get_height(void) {
     return k__game.current_room->room_h;
 }
 

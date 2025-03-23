@@ -23,8 +23,8 @@ struct k_room_callback;
 struct k_room_config {
 
     /** \brief 房间的宽高 */
-    int room_w;
-    int room_h;
+    float room_w;
+    float room_h;
 
     /** \brief 房间的运行速度，单位：步/秒（帧/秒） */
     int room_speed;
@@ -149,10 +149,10 @@ struct k_room *k_get_current_room(void);
 void *k_room_get_data(void);
 
 /** \brief 获取当前房间的宽 */
-int k_room_get_width(void);
+float k_room_get_width(void);
 
 /** \brief 获取当前房间的高 */
-int k_room_get_height(void);
+float k_room_get_height(void);
 
 /* endregion */
 

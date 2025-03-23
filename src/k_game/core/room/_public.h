@@ -41,8 +41,8 @@ struct k_room {
 
     struct k_object_pool object_pool;
 
-    int room_w;
-    int room_h;
+    float room_w;
+    float room_h;
 
     uint64_t step_interval_ms;
 
