@@ -75,7 +75,7 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         renderer->callback_draw_sprite = NULL;
     }
     else {
-        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, draw_sprite, renderer->z_index);
+        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, draw_sprite, renderer->z_group, renderer->z_layer);
         if (NULL == callback)
             return -1;
 
@@ -97,13 +97,13 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 
 /* region [z_index] */
 
-int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_index) {
+int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_group, int z_layer) {
 
-    if (z_index == renderer->z_index)
+    if (z_group == renderer->z_group && z_layer == renderer->z_layer)
         return 0;
 
     if (NULL != renderer->sprite) {
-        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, draw_sprite, z_index);
+        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, draw_sprite, z_group, z_layer);
         if (NULL == callback)
             return -1;
 
@@ -111,12 +111,31 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_inde
         renderer->callback_draw_sprite = callback;
     }
 
-    renderer->z_index = z_index;
+    renderer->z_group = z_group;
+    renderer->z_layer = z_layer;
     return 0;
 }
 
-int k_sprite_renderer_get_z_index(struct k_sprite_renderer *renderer) {
-    return renderer->z_index;
+int k_sprite_renderer_set_z_layer(struct k_sprite_renderer *renderer, int z_layer) {
+
+    if (z_layer == renderer->z_layer)
+        return 0;
+
+    if (NULL != renderer->sprite) {
+        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, draw_sprite, renderer->z_group, z_layer);
+        if (NULL == callback)
+            return -1;
+
+        k_component_del_callback(renderer->callback_draw_sprite);
+        renderer->callback_draw_sprite = callback;
+    }
+
+    renderer->z_layer = z_layer;
+    return 0;
+}
+
+int k_sprite_renderer_get_z_layer(struct k_sprite_renderer *renderer) {
+    return renderer->z_layer;
 }
 
 /* endregion */

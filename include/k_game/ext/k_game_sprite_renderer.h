@@ -40,7 +40,8 @@ struct k_sprite_renderer_config {
     struct k_sprite *sprite;
 
     /** \brief 指定渲染器的绘制深度 */
-    int z_index;
+    int z_group;
+    int z_layer;
 };
 
 /**
@@ -235,10 +236,11 @@ void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
-int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_index);
+int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_group, int z_layer);
+int k_sprite_renderer_set_z_layer(struct k_sprite_renderer *renderer, int z_layer);
 
 /** \brief 获取渲染器的绘制深度 */
-int k_sprite_renderer_get_z_index(struct k_sprite_renderer *renderer);
+int k_sprite_renderer_get_z_layer(struct k_sprite_renderer *renderer);
 
 /* endregion */
 
@@ -321,7 +323,6 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
  * 若 `debug` 为非 0 则开启调试模式，否则关闭。
  *
  * 调试模式下，渲染器将用绿色绘制精灵图的矩形边框，并在精灵原点处绘制十字。
- * 绘制图层深度为 `K_SPRITE_RENDERER_DEBUG_DRAW_LAYER`。
  *
  * 切换渲染器引用的精灵不会关闭调试模式。
  * 即使渲染器没有引用精灵，也可以修改开启或关闭调试模式。
@@ -331,7 +332,8 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug);
 
 /** \brief 精灵渲染器调试模式绘制图层深度 */
-#define K_SPRITE_RENDERER_DEBUG_DRAW_LAYER 100000
+#define K_SPRITE_RENDERER_DEBUG_Z_LAYER 100000
+#define K_SPRITE_RENDERER_DEBUG_Z_GROUP 100000
 
 /* endregion */
 

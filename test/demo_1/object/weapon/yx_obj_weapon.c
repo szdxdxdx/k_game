@@ -70,7 +70,8 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
     struct k_sprite_renderer_config renderer_config;
     renderer_config.position = &bullet->position;
     renderer_config.sprite   = yx_spr_iris_bullet;
-    renderer_config.z_index  = 10000;
+    renderer_config.z_group  = 0;
+    renderer_config.z_layer  = 10000;
     k_object_add_sprite_renderer(obj_bullet, &renderer_config);
 
     k_object_add_step_callback(obj_bullet, bullet_touch_bubble);
@@ -113,7 +114,8 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
         struct k_sprite_renderer_config renderer_config;
         renderer_config.position = config->position;
         renderer_config.sprite   = yx_spr_iris_gun;
-        renderer_config.z_index  = (int)config->position->y + 1;
+        renderer_config.z_group  = 0;
+        renderer_config.z_layer  = (int)config->position->y + 1;
         weapon->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
     }
 
@@ -130,7 +132,7 @@ void yx_obj_weapon_destroy(struct yx_obj_weapon *weapon) {
 }
 
 void yx_obj_weapon_set_z_index(struct yx_obj_weapon *weapon, int z_index) {
-    k_sprite_renderer_set_z_index(weapon->spr_rdr, z_index);
+    k_sprite_renderer_set_z_layer(weapon->spr_rdr, z_index);
 }
 
 /* endregion */

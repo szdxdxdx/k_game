@@ -24,8 +24,9 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
 
     renderer->component = component;
 
+    renderer->z_group = config->z_group;
+    renderer->z_layer = config->z_layer;
     renderer->callback_draw_sprite = NULL;
-    renderer->z_index = config->z_index;
 
     renderer->debug = 0;
     renderer->callback_draw_rect = NULL;

@@ -19,8 +19,9 @@ enum renderer_transform {
 struct k_sprite_renderer {
     struct k_component *component;
 
+    int z_group;
+    int z_layer;
     struct k_component_callback *callback_draw_sprite;
-    int z_index;
 
     int debug;
     struct k_component_callback *callback_draw_rect;
