@@ -67,30 +67,26 @@ void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器绘制精灵的宽度
  *
- * 渲染器将延原精灵图的水平方向缩放精灵，变换原点为精灵的原点。
- *
+ * 渲染器将延水平方向缩放绘制精灵，变换原点为精灵的原点。
  * - 若 `scaled_w` 为正值，则精灵图宽度将被拉伸或压缩至该值。
  * - 若 `scaled_w` 为 0 或负值，则将其设置为 0，此时精灵图被压缩至不可见。
  *
- * 更换渲染器引用的精灵，将重置缩放比率，按原图尺寸绘制。
- *
  * 若渲染器没有引用精灵，则函数不做任何事。
+ * 更换渲染器引用的精灵后，渲染器会重置缩放比率为原图尺寸。
  */
 void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, float scaled_w);
 
 /**
  * \brief 设置渲染器水平方向的缩放比率
  *
- * 渲染器将延原精灵图的水平按比率缩放精灵，变换原点为精灵的原点。
- *
+ * 渲染器将延水平方向按比率缩放精灵，变换原点为精灵的原点。
  * - 若 `scale_x` 为 1.0f，则按原图尺寸绘制。
  * - 若 `scale_x` 为 1.0f，则拉伸精灵图宽度到原图的两倍。
  * - 若 `scale_x` 为 0.5f，则压缩精灵图宽度到原图的一半。
  * - 若 `scale_x` 为 0 或负值，则将其设置为 0，此时精灵图被压缩至不可见。
  *
- * 更换渲染器引用的精灵，将重置缩放比率，按原图尺寸绘制。
- *
  * 若渲染器没有引用精灵，则函数不做任何事。
+ * 更换渲染器引用的精灵后，渲染器会重置缩放比率为原图尺寸。
  */
 void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x);
 
@@ -108,30 +104,26 @@ float k_sprite_renderer_get_w(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器绘制精灵的高度
  *
- * 渲染器将延原精灵图的竖直方向缩放精灵，变换原点为精灵的原点。
- *
+ * 渲染器将延竖直方向缩放精灵，变换原点为精灵的原点。
  * - 若 `scaled_h` 为正值，则精灵图高度将被拉伸或压缩至该值。
  * - 若 `scaled_h` 为 0 或负值，则将其设置为 0，此时精灵图被压缩至不可见。
  *
- * 更换渲染器引用的精灵，将重置缩放比率，按原图尺寸绘制。
- *
  * 若渲染器没有引用精灵，则函数不做任何事。
+ * 更换渲染器引用的精灵后，渲染器会重置缩放比率为原图尺寸。
  */
 void k_sprite_renderer_set_h(struct k_sprite_renderer *renderer, float scaled_h);
 
 /**
  * \brief 设置渲染器竖直方向的缩放比率
  *
- * 渲染器将延原精灵图的竖直按比率缩放精灵，变换原点为精灵的原点。
- *
+ * 渲染器将延竖直方向按比率缩放精灵，变换原点为精灵的原点。
  * - 若 `scale_y` 为 1.0f，则按原图尺寸绘制。
  * - 若 `scale_y` 为 1.0f，则拉伸精灵图高度到原图的两倍。
  * - 若 `scale_y` 为 0.5f，则压缩精灵图高度到原图的一半。
  * - 若 `scale_y` 为 0 或负值，则将其设置为 0，此时精灵图被压缩至不可见。
  *
- * 更换渲染器引用的精灵，将重置缩放比率，按原图尺寸绘制。
- *
  * 若渲染器没有引用精灵，则函数不做任何事。
+ * 更换渲染器引用的精灵后，渲染器会重置缩放比率为原图尺寸。
  */
 void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y);
 
@@ -155,14 +147,14 @@ float k_sprite_renderer_get_h(struct k_sprite_renderer *renderer);
  * 渲染器内部不会将角度限制在 0 到 360 度范围内，
  * 是否需要对角度值进行取模运算以限制其范围，取决于你。
  *
- * 更换渲染器引用的精灵，将重置旋转角度为 0。
+ * 更换渲染器引用的精灵后，渲染器会重置旋转角度为 0。
  */
 void k_sprite_renderer_rotate(struct k_sprite_renderer *renderer, float angle);
 
 /**
  * \brief 获取渲染器绘制精灵的旋转角度
  *
- * 函数返回渲染器绘制精灵的的旋转角度。若渲染器没有引用精灵，则函数返回 0。
+ * 函数返回渲染器绘制精灵的的旋转角度，若渲染器没有引用精灵则返回 0。
  */
 float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer);
 
@@ -176,7 +168,7 @@ float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer);
  * 若 `flip` 为非 0，则启用水平翻转，否则不启用。
  * 变换原点为精灵的原点。
  *
- * 更换渲染器引用的精灵，将取消水平翻转。
+ * 更换渲染器引用的精灵后，渲染器会取消水平翻转。
  */
 void k_sprite_renderer_flip_x(struct k_sprite_renderer *renderer, int flip);
 
@@ -198,7 +190,7 @@ int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
  * 若 `flip` 为非 0，则启用竖直翻转，否则不启用。
  * 变换原点为精灵的原点。
  *
- * 更换渲染器引用的精灵，将取消竖直翻转。
+ * 更换渲染器引用的精灵后，渲染器会取消竖直翻转。
  */
 void k_sprite_renderer_flip_y(struct k_sprite_renderer *renderer, int flip);
 
@@ -218,7 +210,7 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
  * 重置宽高缩放倍率为 1.0f，旋转角度为 0，取消水平翻转与垂直翻转。
  * 即按精灵图的原样绘制，不缩放、不旋转、不翻转。
  *
- * 更改渲染器引用的精灵时，也会重置所有的变换。
+ * 更换渲染器引用的精灵后，渲染器会重置所有的变换。
  */
 void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
 
@@ -231,15 +223,14 @@ void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
 /**
  * \brief 更改渲染器的绘制深度
  *
- * 即使渲染器没有引用精灵，也可以修改绘制深度。
- * 更换渲染器引用的精灵，不会改变渲染器的绘制深度。
- *
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_group, int z_layer);
+int k_sprite_renderer_set_z_group(struct k_sprite_renderer *renderer, int z_group);
 int k_sprite_renderer_set_z_layer(struct k_sprite_renderer *renderer, int z_layer);
 
 /** \brief 获取渲染器的绘制深度 */
+int k_sprite_renderer_get_z_group(struct k_sprite_renderer *renderer);
 int k_sprite_renderer_get_z_layer(struct k_sprite_renderer *renderer);
 
 /* endregion */
@@ -254,14 +245,14 @@ int k_sprite_renderer_get_z_layer(struct k_sprite_renderer *renderer);
  * - 若 `speed` 为 0.5f，则 0.5 倍速慢速播放。
  * - 若 `speed` 为 0 或负值，则将其设置为 0，并暂停播放。
  *
- * 更换渲染器引用的精灵，将重置播放倍速为 1.0f。
+ * 更换渲染器引用的精灵后，渲染器会重置播放倍速为 1.0f。
  */
 void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed);
 
 /**
  * \brief 获取渲染器播放精灵动画的速度
  *
- * 函数返回渲染器播放精灵动画的速度。若渲染器没有引用精灵，则函数返回 0。
+ * 函数返回渲染器播放精灵动画的速度，若渲染器没有引用精灵则返回 0。
  */
 float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer);
 
@@ -272,12 +263,12 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器播放精灵动画的次数
  *
- * 渲染器将循环播放精灵动画 `loop` 次，然后停在最后一帧。
+ * 渲染器将循环播放精灵动画 `loop` 次，并在循环结束后停在最后一帧。
  *
  * 渲染器不支持无限播放，但指定 `loop` 设为 `INT_MAX`，也能达到“无限”的效果。
  * 播放次数最少为 1，若指定 `loop` 为 0 或负值，渲染器仍会播放 1 次动画。
  *
- * 更换渲染器引用的精灵，将重置播放次数为 `INT_MAX`。
+ * 更换渲染器引用的精灵后，渲染器会重置循环播放的次数为 `INT_MAX`。
  */
 void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop);
 
@@ -286,8 +277,8 @@ void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop);
  *
  * 渲染器每播放完一次动画，便会执行一次该回调。
  *
- * 若 `fn_callback` 为 `NULL` 则取消回调。
- * 更换渲染器引用的精灵，也会移除该回调。
+ * 若指定 `fn_callback` 为 `NULL`，则移除当前的回调。
+ * 更换渲染器引用的精灵后，渲染器也会移除该回调。
  */
 void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(struct k_object *object));
 
@@ -305,7 +296,7 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
 /**
  * \brief 获取渲染器当前引用的精灵
  *
- * 函数返回渲染器当前引用的精灵，若没有则返回 `NULL`。
+ * 函数返回渲染器当前引用的精灵，若渲染器没有引用精灵则返回 `NULL`。
  */
 struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer);
 
@@ -323,9 +314,6 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
  * 若 `debug` 为非 0 则开启调试模式，否则关闭。
  *
  * 调试模式下，渲染器将用绿色绘制精灵图的矩形边框，并在精灵原点处绘制十字。
- *
- * 切换渲染器引用的精灵不会关闭调试模式。
- * 即使渲染器没有引用精灵，也可以修改开启或关闭调试模式。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
