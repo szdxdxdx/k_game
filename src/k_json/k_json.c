@@ -17,6 +17,7 @@ void k__destroy_json(struct k_json *json) {
 }
 
 struct k_json *k_json_parse(const char *fmt, ...) {
+
     if (NULL == fmt || '\0' == *fmt)
         return NULL;
 
@@ -34,8 +35,9 @@ void k_json_free(struct k_json *json) {
 }
 
 int k_json_arr_add(struct k_json *json, size_t idx, struct k_json *val) {
-    assert(NULL != json);
-    assert(K_JSON_ARR == json->type);
+
+    if (NULL == json || K_JSON_ARR != json->type)
+        return -1;
 
     if (NULL == val)
         return -1;
@@ -47,8 +49,9 @@ int k_json_arr_add(struct k_json *json, size_t idx, struct k_json *val) {
 }
 
 int k_json_obj_add(struct k_json *json, const char *key, struct k_json *val) {
-    assert(NULL != json);
-    assert(K_JSON_OBJ == json->type);
+
+    if (NULL == json || K_JSON_OBJ != json->type)
+        return -1;
 
     if (NULL == key || NULL == val)
         return -1;
@@ -60,8 +63,9 @@ int k_json_obj_add(struct k_json *json, const char *key, struct k_json *val) {
 }
 
 int k_json_arr_push(struct k_json *json, struct k_json *val) {
-    assert(NULL != json);
-    assert(K_JSON_ARR == json->type);
+
+    if (NULL == json || K_JSON_ARR != json->type)
+        return -1;
 
     if (NULL == val)
         return -1;
@@ -74,15 +78,17 @@ int k_json_arr_push(struct k_json *json, struct k_json *val) {
 }
 
 struct k_json *k_json_arr_get(struct k_json *json, size_t idx) {
-    assert(NULL != json);
-    assert(K_JSON_ARR == json->type);
+
+    if (NULL == json || K_JSON_ARR != json->type)
+        return NULL;
 
     return k__json_arr_get((struct k__json_arr *)json, idx);
 }
 
 struct k_json *k_json_obj_get(struct k_json *json, const char *key) {
-    assert(NULL != json);
-    assert(K_JSON_OBJ == json->type);
+
+    if (NULL == json || K_JSON_OBJ != json->type)
+        return NULL;
 
     if (NULL == key)
         return NULL;
@@ -95,8 +101,12 @@ struct k_json *k_json_obj_get(struct k_json *json, const char *key) {
 }
 
 struct k_json *k_json_get(struct k_json *json, ...) {
-    assert(NULL != json);
-    assert(K_JSON_OBJ == json->type || K_JSON_ARR == json->type);
+
+    if (NULL == json || K_JSON_OBJ != json->type)
+        return NULL;
+
+    if (K_JSON_OBJ != json->type && K_JSON_ARR != json->type)
+        return NULL;
 
     struct k_json *result = json;
     void *fn_get = NULL;
@@ -127,15 +137,17 @@ struct k_json *k_json_get(struct k_json *json, ...) {
 }
 
 void k_json_arr_del(struct k_json *json, size_t idx) {
-    assert(NULL != json);
-    assert(K_JSON_ARR == json->type);
+
+    if (NULL == json || K_JSON_ARR != json->type)
+        return;
 
     k__json_arr_del((struct k__json_arr *)json, idx);
 }
 
 void k_json_obj_del(struct k_json *json, const char *key) {
-    assert(NULL != json);
-    assert(K_JSON_OBJ == json->type);
+
+    if (NULL == json || K_JSON_OBJ != json->type)
+        return;
 
     if (NULL == key)
         return;

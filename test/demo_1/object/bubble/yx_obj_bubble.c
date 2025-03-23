@@ -8,7 +8,7 @@ static void bubble_dead(struct k_object *object, int timeout_diff) {
 
 static void bubble_floating(struct k_object *object) {
     struct yx_obj_bubble *bubble = k_object_get_data(object);
-    k_sprite_renderer_set_sprite(bubble->spr_rdr, yx_spr_bubble_idle);
+    k_sprite_renderer_set_sprite(bubble->spr_rdr, yx_spr_bubble_float);
 }
 
 struct k_object *yx_bubble_create(float x, float y) {

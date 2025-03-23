@@ -81,7 +81,7 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 /* region [gun] */
 
 static void shoot(struct k_object *object) {
-    if (k_key_pressed(K_KEY_SPACE))
+    if (k_key_down(K_KEY_SPACE))
         bullet_create(k_object_get_data(object));
 }
 

@@ -59,7 +59,7 @@ void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
 
 /* endregion */
 
-/* region [sprite_renderer transform] */
+/* region [sprite_renderer_transform] */
 
 /* region [scale_x] */
 
@@ -223,7 +223,7 @@ void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
 
 /* endregion */
 
-/* region [sprite_renderer set/get] */
+/* region [sprite_renderer_set/get] */
 
 /* region [z_index] */
 
@@ -313,7 +313,7 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 
 /* endregion */
 
-/* region [sprite_renderer debug] */
+/* region [sprite_renderer_debug] */
 
 /**
  * \brief 开启或关闭渲染器调试模式

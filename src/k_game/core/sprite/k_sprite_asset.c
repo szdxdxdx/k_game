@@ -133,6 +133,11 @@ float k_sprite_get_origin_y(struct k_sprite *sprite) {
     return sprite->origin_y;
 }
 
+void k_sprite_set_origin(struct k_sprite *sprite, float origin_x, float origin_y) {
+    sprite->origin_x = origin_x;
+    sprite->origin_y = origin_y;
+}
+
 int k_sprite_get_frames_num(struct k_sprite *sprite) {
     return sprite->frames_num;
 }
