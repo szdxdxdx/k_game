@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-struct k_collision_group *k__collision_group_find_or_create(struct k_collision_manager *manager, int group_id) {
+struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collision_manager *manager, int group_id) {
 
     struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_id);
     if (NULL != map_node) {

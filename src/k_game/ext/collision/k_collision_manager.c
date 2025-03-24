@@ -23,9 +23,9 @@ void k__collision_manager_fini(struct k_component_manager *component_manager) {
 
 /* endregion */
 
-int k__collision_manager_add(struct k_collision_manager *manager, struct k_collision_box *box, int group_id) {
+int k__collision_manager_add_box(struct k_collision_manager *manager, struct k_collision_box *box, int group_id) {
 
-    struct k_collision_group *group = k__collision_group_find_or_create(manager, group_id);
+    struct k_collision_group *group = k__collision_manager_find_or_add_group(manager, group_id);
     if (NULL == group)
         return -1;
 

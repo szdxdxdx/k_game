@@ -91,7 +91,7 @@ struct k_collision_group {
     struct k_list box_list;
 };
 
-struct k_collision_group *k__collision_group_find_or_create(struct k_collision_manager *manager, int group_id);
+struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collision_manager *manager, int group_id);
 
 /* endregion */
 
@@ -106,7 +106,7 @@ int k__collision_manager_init(struct k_component_manager *component_manager, voi
 
 void k__collision_manager_fini(struct k_component_manager *component_manager);
 
-int k__collision_manager_add(struct k_collision_manager *manager, struct k_collision_box *box, int group_idx);
+int k__collision_manager_add_box(struct k_collision_manager *manager, struct k_collision_box *box, int group_id);
 
 /* endregion */
 

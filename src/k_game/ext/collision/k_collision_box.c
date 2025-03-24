@@ -47,7 +47,7 @@ int k__collision_box_init(struct k_component *component, void *params) {
     if (NULL == manager)
         return -1;
 
-    if (0 != k__collision_manager_add(manager, box, group_id))
+    if (0 != k__collision_manager_add_box(manager, box, group_id))
         return -1;
 
     return 0;
