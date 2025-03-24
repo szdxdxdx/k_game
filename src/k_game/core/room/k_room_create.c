@@ -10,7 +10,7 @@
 
 static struct k_asset_registry room_registry;
 
-int k__room_registry_init(void) {
+int k__init_room_registry(void) {
     return k__asset_registry_init(&room_registry);
 }
 
@@ -19,7 +19,7 @@ static void fn_release_asset(struct k_asset_registry_node *node) {
     k_room_destroy(room);
 }
 
-void k__room_registry_cleanup(void) {
+void k__cleanup_room_registry(void) {
      k__asset_registry_cleanup(&room_registry, fn_release_asset);
 }
 

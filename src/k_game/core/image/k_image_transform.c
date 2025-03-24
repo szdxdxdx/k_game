@@ -2,7 +2,7 @@
 
 #include "./_internal.h"
 
-struct k_image *k_scale_image(struct k_image *image, int scaled_w, int scaled_h) {
+struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h) {
 
     SDL_Texture* scaled_texture = NULL;
 

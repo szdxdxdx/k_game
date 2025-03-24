@@ -4,7 +4,7 @@
 
 static struct k_asset_registry SFX_registry;
 
-int k__sound_SFX_registry_init(void) {
+int k__init_sound_SFX_registry(void) {
     return k__asset_registry_init(&SFX_registry);
 }
 
@@ -13,7 +13,7 @@ static void fn_release_SFX(struct k_asset_registry_node *registry_node) {
     k_sound_SFX_release(sound);
 }
 
-void k__sound_SFX_registry_cleanup(void) {
+void k__cleanup_sound_SFX_registry(void) {
     k__asset_registry_cleanup(&SFX_registry, fn_release_SFX);
 }
 

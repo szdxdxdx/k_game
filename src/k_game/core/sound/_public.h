@@ -1,12 +1,12 @@
 #ifndef K_SOUND_PUBLIC_H
 #define K_SOUND_PUBLIC_H
 
-int k__sound_BGM_registry_init(void);
+int k__init_sound_BGM_registry(void);
 
-void k__sound_BGM_registry_cleanup(void);
+void k__cleanup_sound_BGM_registry(void);
 
-int k__sound_SFX_registry_init(void);
+int k__init_sound_SFX_registry(void);
 
-void k__sound_SFX_registry_cleanup(void);
+void k__cleanup_sound_SFX_registry(void);
 
 #endif

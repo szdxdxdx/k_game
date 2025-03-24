@@ -6,7 +6,7 @@
 
 static struct k_asset_registry BGM_registry;
 
-int k__sound_BGM_registry_init(void) {
+int k__init_sound_BGM_registry(void) {
     return k__asset_registry_init(&BGM_registry);
 }
 
@@ -15,7 +15,7 @@ static void fn_release_BGM(struct k_asset_registry_node *registry_node) {
     k_sound_BGM_release(sound);
 }
 
-void k__sound_BGM_registry_cleanup(void) {
+void k__cleanup_sound_BGM_registry(void) {
     k__asset_registry_cleanup(&BGM_registry, fn_release_BGM);
 }
 

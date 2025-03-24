@@ -62,11 +62,11 @@ static void step_cleanup_image_registry(void *unused) {
 static int step_init_sound_registry(void *unused) {
     (void)unused;
 
-    if (0 != k__sound_BGM_registry_init())
+    if (0 != k__init_sound_BGM_registry())
         return -1;
 
-    if (0 != k__sound_SFX_registry_init()) {
-        k__sound_BGM_registry_cleanup();
+    if (0 != k__init_sound_SFX_registry()) {
+        k__cleanup_sound_BGM_registry();
         return -1;
     }
 
@@ -75,18 +75,18 @@ static int step_init_sound_registry(void *unused) {
 
 static void step_cleanup_sound_registry(void *unused) {
     (void)unused;
-    k__sound_BGM_registry_cleanup();
-    k__sound_SFX_registry_cleanup();
+    k__cleanup_sound_BGM_registry();
+    k__cleanup_sound_SFX_registry();
 }
 
 static int step_init_sprite_registry(void *unused) {
     (void)unused;
-    return k__sprite_registry_init();
+    return k__init_sprite_registry();
 }
 
 static void step_cleanup_sprite_registry(void *unused) {
     (void)unused;
-    k__sprite_registry_cleanup();
+    k__cleanup_sprite_registry();
 }
 
 static int step_init_component_registry(void *unused) {
@@ -121,12 +121,12 @@ static int step_define_components(void *unused) {
 
 static int step_init_room_registry(void *unused) {
     (void)unused;
-    return k__room_registry_init();
+    return k__init_room_registry();
 }
 
 static void step_cleanup_room_registry(void *unused) {
     (void)unused;
-    k__room_registry_cleanup();
+    k__cleanup_room_registry();
 }
 
 static int step_init_room_stack(void *unused) {

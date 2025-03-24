@@ -42,7 +42,7 @@ int k_image_get_height(struct k_image *image);
 
 /* region [image_transform] */
 
-struct k_image *k_scale_image(struct k_image *image, int scaled_w, int scaled_h);
+struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h);
 
 /* endregion */
 

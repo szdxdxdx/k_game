@@ -17,27 +17,27 @@ struct k_room_stack {
 
 static struct k_room_stack room_stack;
 
-static inline void room_stack_clear(void) {
+static void room_stack_clear(void) {
     room_stack.top = 0;
 }
 
-static inline int room_stack_is_full(void) {
+static int room_stack_is_full(void) {
     return K_ROOM_STACK_MAX_SIZE == room_stack.top;
 }
 
-static inline int room_stack_is_empty(void) {
+static int room_stack_is_empty(void) {
     return 0 == room_stack.top;
 }
 
-static inline void room_stack_push(struct k_room *room) {
+static void room_stack_push(struct k_room *room) {
     room_stack.rooms[room_stack.top++] = room;
 }
 
-static inline void room_stack_pop(void) {
+static void room_stack_pop(void) {
     room_stack.top--;
 }
 
-static inline struct k_room *room_stack_get_top(void) {
+static struct k_room *room_stack_get_top(void) {
     return room_stack.rooms[room_stack.top - 1];
 }
 

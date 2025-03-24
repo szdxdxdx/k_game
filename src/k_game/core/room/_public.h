@@ -12,9 +12,9 @@
 
 /* region [room_registry] */
 
-int k__room_registry_init(void);
+int k__init_room_registry(void);
 
-void k__room_registry_cleanup(void);
+void k__cleanup_room_registry(void);
 
 /* endregion */
 

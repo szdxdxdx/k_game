@@ -5,9 +5,9 @@
 
 struct k_image;
 
-int k__sprite_registry_init(void);
+int k__init_sprite_registry(void);
 
-void k__sprite_registry_cleanup(void);
+void k__cleanup_sprite_registry(void);
 
 struct k_sprite_frame {
 

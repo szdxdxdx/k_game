@@ -17,7 +17,7 @@ int yx_load_sprite_sheet(struct yx_sprite_sheet *sheet, const char *image_filepa
     if (1.0f != scale) {
         float scaled_w = (float)k_image_get_width(image) * scale;
         float scaled_h = (float)k_image_get_height(image) * scale;
-        struct k_image *scaled_image = k_scale_image(image, (int)scaled_w, (int)scaled_h);
+        struct k_image *scaled_image = k_image_scale(image, (int)scaled_w, (int)scaled_h);
         if (NULL == scaled_image) {
             k_image_release(image);
             return -1;
