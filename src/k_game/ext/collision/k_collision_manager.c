@@ -1,5 +1,7 @@
 #include "./_internal.h"
 
+/* region [collision_manager] */
+
 int k__collision_manager_init(struct k_component_manager *component_manager, void *params) {
     (void)params;
 
@@ -19,28 +21,11 @@ void k__collision_manager_fini(struct k_component_manager *component_manager) {
     /* TODO */
 }
 
-static struct k_collision_group *find_or_create_group(struct k_collision_manager *manager, int group_id) {
-
-    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_id);
-    if (NULL != map_node) {
-        struct k_collision_group *found_group = container_of(map_node, struct k_collision_group, map_node);
-        return found_group;
-    }
-    else {
-        struct k_collision_group *new_group = k_malloc(sizeof(struct k_collision_group));
-        if (NULL == new_group)
-            return NULL;
-
-        k_int_map_add_directly(&manager->group_map, group_id, &new_group->map_node);
-        k_list_init(&new_group->box_list);
-
-        return new_group;
-    }
-}
+/* endregion */
 
 int k__collision_manager_add(struct k_collision_manager *manager, struct k_collision_box *box, int group_id) {
 
-    struct k_collision_group *group = find_or_create_group(manager, group_id);
+    struct k_collision_group *group = k__collision_group_find_or_create(manager, group_id);
     if (NULL == group)
         return -1;
 

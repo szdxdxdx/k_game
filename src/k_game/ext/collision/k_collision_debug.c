@@ -9,10 +9,10 @@ void k__collision_debug_draw(struct k_component *component) {
     if (K_COLLISION_RECTANGLE == box->type) {
         struct k_collision_rectangle *rect = &box->rect;
 
-        float x1 = rect->position->x + rect->offset_x1;
-        float y1 = rect->position->y + rect->offset_y1;
-        float x2 = rect->position->x + rect->offset_x2;
-        float y2 = rect->position->y + rect->offset_y2;
+        float x1 = *(rect->x) + rect->offset_x1;
+        float y1 = *(rect->y) + rect->offset_y1;
+        float x2 = *(rect->x) + rect->offset_x2;
+        float y2 = *(rect->y) + rect->offset_y2;
 
         SDL_FRect draw_rect = {
             .x = x1 < x2 ? x1 : x2,
@@ -27,8 +27,8 @@ void k__collision_debug_draw(struct k_component *component) {
     else if (K_COLLISION_CIRCLE == box->type) {
         struct k_collision_circle *circle = &box->circle;
 
-        float center_x = circle->position->x + circle->offset_cx;
-        float center_y = circle->position->y + circle->offset_cy;
+        float center_x = *(circle->x) + circle->offset_cx;
+        float center_y = *(circle->y) + circle->offset_cy;
 
         SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 0, 255);
         /* SDL 没有绘制圆的 API，下述代码由 AI 给出

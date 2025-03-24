@@ -17,7 +17,8 @@ int k__collision_box_init(struct k_component *component, void *params) {
             struct k_collision_rectangle_config *rect_config = box_config->config;
             box->type           = K_COLLISION_RECTANGLE;
             group_id            = rect_config->group_id;
-            box->rect.position  = rect_config->position;
+            box->rect.x         = rect_config->x;
+            box->rect.y         = rect_config->y;
             box->rect.offset_x1 = rect_config->offset_x1;
             box->rect.offset_y1 = rect_config->offset_y1;
             box->rect.offset_x2 = rect_config->offset_x2;
@@ -29,7 +30,8 @@ int k__collision_box_init(struct k_component *component, void *params) {
             struct k_collision_circle_config *circle_config = box_config->config;
             box->type             = K_COLLISION_CIRCLE;
             group_id              = circle_config->group_id;
-            box->circle.position  = circle_config->position;
+            box->circle.x         = circle_config->x;
+            box->circle.y         = circle_config->y;
             box->circle.offset_cx = circle_config->offset_cx;
             box->circle.offset_cy = circle_config->offset_cy;
             box->circle.r         = circle_config->r;

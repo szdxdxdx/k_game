@@ -10,17 +10,30 @@
 
 #include "./_public.h"
 
+enum k_collision_box_type;
+struct k_collision_box_config;
+
+struct k_collision_box;
+struct k_collision_rectangle;
+struct k_collision_circle;
+
+struct k_collision_group;
+struct k_collision_manager;
+
 extern struct k_component_type *k__component_type_collision;
 
 /* region [config] */
 
 enum k_collision_box_type {
+
     K_COLLISION_RECTANGLE,
     K_COLLISION_CIRCLE,
 };
 
 struct k_collision_box_config {
+
     enum k_collision_box_type type;
+
     void *config;
 };
 
@@ -29,7 +42,10 @@ struct k_collision_box_config {
 /* region [collision_box] */
 
 struct k_collision_rectangle {
-    struct k_float_vec2 *position;
+
+    float *x;
+    float *y;
+
     float offset_x1;
     float offset_y1;
     float offset_x2;
@@ -37,7 +53,10 @@ struct k_collision_rectangle {
 };
 
 struct k_collision_circle {
-    struct k_float_vec2 *position;
+
+    float *x;
+    float *y;
+
     float offset_cx;
     float offset_cy;
     float r;
@@ -50,6 +69,7 @@ struct k_collision_box {
     struct k_component *component;
 
     enum k_collision_box_type type;
+
     union {
         struct k_collision_rectangle rect;
         struct k_collision_circle    circle;
@@ -71,11 +91,14 @@ struct k_collision_group {
     struct k_list box_list;
 };
 
+struct k_collision_group *k__collision_group_find_or_create(struct k_collision_manager *manager, int group_id);
+
 /* endregion */
 
 /* region [collision_manager] */
 
 struct k_collision_manager {
+
     struct k_int_map group_map;
 };
 

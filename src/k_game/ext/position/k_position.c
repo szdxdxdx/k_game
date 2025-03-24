@@ -25,7 +25,7 @@ static void world_init(void) {
 
 /* endregion */
 
-/* region [position_set] */
+/* region [position_update] */
 
 static void k__position_update(struct k_position *self) {
 
@@ -41,6 +41,10 @@ static void k__position_update(struct k_position *self) {
         k__position_update(child);
     }
 }
+
+/* endregion */
+
+/* region [position_set] */
 
 void k_position_set_world_position(struct k_position *self, float world_x, float world_y) {
 

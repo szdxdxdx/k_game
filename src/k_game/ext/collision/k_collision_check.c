@@ -33,10 +33,10 @@ struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, floa
             case K_COLLISION_RECTANGLE: {
                 struct k_collision_rectangle *rect = &box->rect;
 
-                float x3 = rect->position->x + rect->offset_x1;
-                float y3 = rect->position->y + rect->offset_y1;
-                float x4 = rect->position->x + rect->offset_x2;
-                float y4 = rect->position->y + rect->offset_y2;
+                float x3 = *(rect->x) + rect->offset_x1;
+                float y3 = *(rect->y) + rect->offset_y1;
+                float x4 = *(rect->x) + rect->offset_x2;
+                float y4 = *(rect->y) + rect->offset_y2;
                 if (   ((x1 < x4) != (x2 < x3) && (y1 < y4) != (y2 < y3))
                     || ((x1 < x3) != (x2 < x4) && (y1 < y3) != (y2 < y4))
                 ) {
@@ -48,8 +48,8 @@ struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, floa
             case K_COLLISION_CIRCLE: {
                 struct k_collision_circle *circle = &box->circle;
 
-                float cx = circle->position->x + circle->offset_cx;
-                float cy = circle->position->y + circle->offset_cy;
+                float cx = *(circle->x) + circle->offset_cx;
+                float cy = *(circle->y) + circle->offset_cy;
                 float r  = circle->r;
 
                 if (   is_point_in_rect(cx - r, cy, x1, y1, x2, y2)
