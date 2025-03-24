@@ -45,9 +45,9 @@ struct k_sprite_renderer_config {
 };
 
 /**
- * \brief 为对象添加一个精灵渲染器组件
+ * \brief 给对象挂载一个精灵渲染器组件
  *
- * 若成功，函数返回渲染器组件指针，否则返回 `NULL`。
+ * 若成功，函数返回渲染器组件的指针，否则返回 `NULL`。
  */
 struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, const struct k_sprite_renderer_config *config);
 
