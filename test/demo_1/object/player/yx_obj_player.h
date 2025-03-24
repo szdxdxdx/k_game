@@ -21,7 +21,7 @@ enum yx_obj_player_state {
 };
 
 struct yx_obj_player {
-    struct k_float_vec2 position;
+    struct k_position position;
 
     struct k_float_vec2 position_next;
 

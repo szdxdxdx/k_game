@@ -23,8 +23,11 @@ void k_position_init(struct k_position *self, struct k_position *parent, float r
     self->rel_x = rel_x;
     self->rel_y = rel_y;
 
-    self->x = parent->x + self->rel_x;
-    self->y = parent->y + self->rel_y;
+    self->x = self->parent->x + self->rel_x;
+    self->y = self->parent->y + self->rel_y;
+
+    self->data = NULL;
+    self->fn_after_move = NULL;
 }
 
 static void update_position(struct k_position *self) {
@@ -40,6 +43,9 @@ static void update_position(struct k_position *self) {
 
         update_position(child);
     }
+
+    if (self->fn_after_move != NULL)
+        self->fn_after_move(self->data);
 }
 
 void k_position_set(struct k_position *self, float rel_x, float rel_y) {

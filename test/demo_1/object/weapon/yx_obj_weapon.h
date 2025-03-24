@@ -7,14 +7,14 @@ struct yx_obj_weapon {
 
     struct k_object *object;
 
-    struct k_float_vec2 *position;
+    struct k_position position;
 
     struct k_sprite_renderer *spr_rdr;
 };
 
 struct yx_obj_weapon_config {
 
-    struct k_float_vec2 *position;
+    struct k_position *parent_position;
 };
 
 struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *config);

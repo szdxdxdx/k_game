@@ -15,6 +15,10 @@ struct k_position {
     struct k_position *parent;
     float rel_x;
     float rel_y;
+
+    void *data;
+
+    void (*fn_after_move)(void *data);
 };
 
 void k_position_init(struct k_position *self, struct k_position *parent, float rel_x, float rel_y);

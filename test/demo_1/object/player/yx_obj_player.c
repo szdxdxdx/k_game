@@ -3,7 +3,7 @@
 static void player_step_set_state(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    struct k_float_vec2 *position = &player->position;
+    struct k_position *position = &player->position;
     struct k_float_vec2 *next_position = &player->position_next;
 
     enum yx_obj_player_state state = YX_OBJ_PLAYER_STATE_IDLE;
@@ -19,7 +19,6 @@ static void player_step_set_state(struct k_object *object) {
     if (next_position->y != position->y) {
         state = YX_OBJ_PLAYER_STATE_RUN;
         k_sprite_renderer_set_z_layer(player->spr_rdr, (int)next_position->y);
-        yx_obj_weapon_set_z_index(player->weapon, (int)next_position->y + 1);
     }
 
     switch (state) {
@@ -27,10 +26,7 @@ static void player_step_set_state(struct k_object *object) {
 
             switch (player->state) {
                 case YX_OBJ_PLAYER_STATE_RUN:
-                    if (player->face == 1)
-                        k_sprite_renderer_flip_x(player->spr_rdr, 1);
-                    else
-                        k_sprite_renderer_flip_x(player->spr_rdr, 0);
+                    k_sprite_renderer_flip_x(player->spr_rdr, player->face == 1 ? 1 : 0);
                     break;
                 case YX_OBJ_PLAYER_STATE_IDLE:
                     player->state = YX_OBJ_PLAYER_STATE_RUN;
@@ -56,8 +52,7 @@ static void player_step_set_state(struct k_object *object) {
         }
     }
 
-    position->x = next_position->x;
-    position->y = next_position->y;
+    k_position_set(position, next_position->x, next_position->y);
 }
 
 static void player_step(struct k_object *object) {
@@ -131,12 +126,14 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     //k_object_add_step_callback(object, player_step_shoot);
 
     struct yx_obj_player *player = k_object_get_data(object);
-    player->position.x      = config->x;
-    player->position.y      = config->y;
+
+    k_position_init(&player->position, NULL, config->x, config->y);
+
     player->position_next.x = config->x;
     player->position_next.y = config->y;
-    player->state           = YX_OBJ_PLAYER_STATE_IDLE;
-    player->face            = -1;
+
+    player->state = YX_OBJ_PLAYER_STATE_IDLE;
+    player->face  = -1;
 
     player->spr_idle = config->spr_idle;
     player->spr_run  = config->spr_run;
@@ -166,7 +163,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     {
         struct yx_obj_weapon_config weapon_config;
-        weapon_config.position = &player->position;
+        weapon_config.parent_position = &player->position;
         player->weapon = yx_obj_weapon_create(&weapon_config);
     }
 
