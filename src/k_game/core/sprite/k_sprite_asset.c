@@ -13,13 +13,13 @@ int k__init_sprite_registry(void) {
     return k__asset_registry_init(&sprite_registry);
 }
 
-static void fn_release_asset(struct k_asset_registry_node *registry_node) {
+static void release_asset(struct k_asset_registry_node *registry_node) {
     struct k_sprite *sprite = container_of(registry_node, struct k_sprite, registry_node);
     k_sprite_destroy(sprite);
 }
 
 void k__cleanup_sprite_registry(void) {
-     k__asset_registry_cleanup(&sprite_registry, fn_release_asset);
+    k__asset_registry_cleanup(&sprite_registry, release_asset);
 }
 
 int k_sprite_set_name(struct k_sprite *sprite, const char *sprite_name) {

@@ -17,10 +17,10 @@ struct k_mem_chunk {
 /* 分配给用户使用的内存块的头部 */
 struct k_mem_block {
 
-    /* 分配出的 block 启用 `list` 字段，记录其所属的 free_list，方便归还时直接链入。
+    /* 分配出的 block 启用 `child_list` 字段，记录其所属的 free_list，方便归还时直接链入。
      * 已归入 free_list 的空闲 block 启用 `next` 字段链向下一个 block。
      *
-     * 若 block 由 `fn_malloc()` 分配，则 `list` 标记为 NULL，归还时调用 `fn_free()`。
+     * 若 block 由 `fn_malloc()` 分配，则 `child_list` 标记为 NULL，归还时调用 `fn_free()`。
      */
     union {
         struct k_mem_block **list;

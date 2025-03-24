@@ -14,13 +14,13 @@ int k__init_room_registry(void) {
     return k__asset_registry_init(&room_registry);
 }
 
-static void fn_release_asset(struct k_asset_registry_node *node) {
+static void release_asset(struct k_asset_registry_node *node) {
     struct k_room *room = container_of(node, struct k_room, registry_node);
     k_room_destroy(room);
 }
 
 void k__cleanup_room_registry(void) {
-     k__asset_registry_cleanup(&room_registry, fn_release_asset);
+    k__asset_registry_cleanup(&room_registry, release_asset);
 }
 
 int k_room_set_name(struct k_room *room, const char *room_name) {

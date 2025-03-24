@@ -12,13 +12,13 @@ int k__init_image_registry(void) {
     return k__asset_registry_init(&image_registry);
 }
 
-static void fn_release_asset(struct k_asset_registry_node *node) {
+static void k__release_image_asset(struct k_asset_registry_node *node) {
     struct k_image *image = container_of(node, struct k_image, registry_node);
     k_image_release(image);
 }
 
 void k__cleanup_image_registry(void) {
-     k__asset_registry_cleanup(&image_registry, fn_release_asset);
+    k__asset_registry_cleanup(&image_registry, k__release_image_asset);
 }
 
 int k_image_set_name(struct k_image *image, const char *image_name) {

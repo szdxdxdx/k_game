@@ -4,7 +4,7 @@
 
 #include "./_internal.h"
 
-static void draw_debug_rect(struct k_component *component) {
+static void k__sprite_renderer_draw_debug_rect(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
 
     float scale_x = (float)renderer->scaled_w / (float)k_sprite_get_width(renderer->sprite);
@@ -117,7 +117,8 @@ int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
     if (NULL == renderer->callback_draw_rect) {
         if (0 != debug) {
             struct k_component_callback *callback;
-            callback = k_component_add_draw_callback(renderer->component, draw_debug_rect, K_SPRITE_RENDERER_DEBUG_Z_GROUP, K_SPRITE_RENDERER_DEBUG_Z_LAYER);
+            callback = k_component_add_draw_callback(renderer->component, k__sprite_renderer_draw_debug_rect,
+            K_SPRITE_RENDERER_DEBUG_Z_GROUP, K_SPRITE_RENDERER_DEBUG_Z_LAYER);
             if (NULL == callback)
                 return -1;
 

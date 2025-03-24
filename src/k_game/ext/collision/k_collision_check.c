@@ -12,7 +12,7 @@ static int is_point_in_circle(float x, float y, float cx, float cy, float r) {
 
 struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2) {
 
-    struct k_component_manager *component_manager = k_room_get_component_manager(K__COMPONENT_TYPE_COLLISION);
+    struct k_component_manager *component_manager = k_room_get_component_manager(k__component_type_collision);
     if (NULL == component_manager)
         return NULL;
 

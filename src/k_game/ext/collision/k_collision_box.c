@@ -1,4 +1,3 @@
-#include <limits.h>
 #include <assert.h>
 
 #include "./_internal.h"
@@ -46,10 +45,9 @@ int k__collision_box_init(struct k_component *component, void *params) {
     if (NULL == manager)
         return -1;
 
-    if (0 != k__collision_manager_add(manager, box, group_id)) // TODO 临时的 group_id 为 0
+    if (0 != k__collision_manager_add(manager, box, group_id))
         return -1;
 
-    // k_component_add_draw_callback(component, k__collision_debug_draw, INT_MAX - 2);  // <- tmp
     return 0;
 }
 

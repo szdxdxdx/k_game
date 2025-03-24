@@ -2,7 +2,7 @@
 
 /* region [component_define] */
 
-struct k_component_type *K__COMPONENT_TYPE_COLLISION = NULL;
+struct k_component_type *k__component_type_collision = NULL;
 
 int k__define_component_collision_box(void) {
 
@@ -16,10 +16,11 @@ int k__define_component_collision_box(void) {
     manager_config.fn_init   = k__collision_manager_init;
     manager_config.fn_fini   = k__collision_manager_fini;
 
-    K__COMPONENT_TYPE_COLLISION = k_component_define(&manager_config, &entity_config);
-    if (NULL == K__COMPONENT_TYPE_COLLISION)
+    struct k_component_type *type = k_component_define(&manager_config, &entity_config);
+    if (NULL == type)
         return -1;
 
+    k__component_type_collision = type;
     return 0;
 }
 
@@ -28,24 +29,24 @@ int k__define_component_collision_box(void) {
 /* region [room_add_component_manager] */
 
 int k_room_add_collision_manager(void) {
-    return k_room_add_component_manager(K__COMPONENT_TYPE_COLLISION, NULL);;
+    return k_room_add_component_manager(k__component_type_collision, NULL);;
 }
 
 /* endregion */
 
 /* region [object_add_component] */
 
-static struct k_collision_box *k_object_add_collision_box(struct k_object *object, enum k_collision_box_type type, void *config) {
+static struct k_collision_box *k__object_add_collision_box(struct k_object *object, enum k_collision_box_type type, void *config) {
 
-    struct k_collision_box_config config_;
-    config_.type   = type;
-    config_.config = config;
+    struct k_collision_box_config box_config;
+    box_config.type   = type;
+    box_config.config = config;
 
-    struct k_component *component = k_object_add_component(object, K__COMPONENT_TYPE_COLLISION, &config_);
+    struct k_component *component = k_object_add_component(object, k__component_type_collision, &box_config);
     if (NULL == component)
         return NULL;
-    else
-        return k_component_get_data(component);
+
+    return k_component_get_data(component);
 }
 
 struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, struct k_collision_rectangle_config *config) {
@@ -55,7 +56,7 @@ struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object
     if (NULL == config->position)
         return NULL;
 
-    return k_object_add_collision_box(object, K_COLLISION_RECTANGLE, config);
+    return k__object_add_collision_box(object, K_COLLISION_RECTANGLE, config);
 }
 
 struct k_collision_box *k_object_add_collision_circle(struct k_object *object, struct k_collision_circle_config *config) {
@@ -67,7 +68,7 @@ struct k_collision_box *k_object_add_collision_circle(struct k_object *object, s
     if (config->r <= 0)
         return NULL;
 
-    return k_object_add_collision_box(object, K_COLLISION_CIRCLE, config);
+    return k__object_add_collision_box(object, K_COLLISION_CIRCLE, config);
 }
 
 void k_object_del_collision_box(struct k_collision_box *box) {

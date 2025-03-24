@@ -8,7 +8,7 @@
 
 struct k_position {
 
-    struct k_list_node list_node;
+    struct k_list_node child_list_node;
 
     struct k_component *component;
 
@@ -20,7 +20,7 @@ struct k_position {
     float local_x;
     float local_y;
 
-    struct k_list list;
+    struct k_list child_list;
 };
 
 #endif

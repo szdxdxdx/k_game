@@ -10,7 +10,7 @@
 
 #include "./_public.h"
 
-extern struct k_component_type *K__COMPONENT_TYPE_COLLISION;
+extern struct k_component_type *k__component_type_collision;
 
 /* region [config] */
 
