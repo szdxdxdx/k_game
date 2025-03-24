@@ -147,6 +147,7 @@ static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
     }
 }
 
+/* 记录按键状态 */
 static uint8_t key_state[K_KEY_ENUM_END + 1];
 
 static void refresh_key_state(enum k_keyboard_key key) {

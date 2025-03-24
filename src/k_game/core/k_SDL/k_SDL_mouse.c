@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "./_internal.h"
 
 static int mouse_x = 0;
@@ -28,15 +26,6 @@ void k__refresh_mouse_state(void) {
 }
 
 void k__handle_SDL_event_mouse_button_down(SDL_MouseButtonEvent *event) {
-
-    printf("Mouse Button Down Event:\n");
-    printf("  Window ID: %u\n", event->windowID);
-    printf("  Mouse Instance ID: %u\n", event->which);
-    printf("  Button State: %u\n", event->state);
-    printf("  Button: %u\n", event->button);
-    printf("  Position: (%d, %d)\n", event->x, event->y);
-    printf("  Clicks: %u\n\n", event->clicks);
-
     switch (event->button) {
         case SDL_BUTTON_LEFT:   button_state[K_BUTTON_LEFT]   |= 0b010; break;
         case SDL_BUTTON_MIDDLE: button_state[K_BUTTON_MIDDLE] |= 0b010; break;
@@ -45,15 +34,6 @@ void k__handle_SDL_event_mouse_button_down(SDL_MouseButtonEvent *event) {
 }
 
 void k__handle_SDL_event_mouse_button_up(SDL_MouseButtonEvent *event) {
-
-    printf("Mouse Button Down Event:\n");
-    printf("  Window ID: %u\n", event->windowID);
-    printf("  Mouse Instance ID: %u\n", event->which);
-    printf("  Button State: %u\n", event->state);
-    printf("  Button: %u\n", event->button);
-    printf("  Position: (%d, %d)\n", event->x, event->y);
-    printf("  Clicks: %u\n\n", event->clicks);
-
     switch (event->button) {
         case SDL_BUTTON_LEFT:   button_state[K_BUTTON_LEFT]   |= 0b001; break;
         case SDL_BUTTON_MIDDLE: button_state[K_BUTTON_MIDDLE] |= 0b001; break;
@@ -62,14 +42,6 @@ void k__handle_SDL_event_mouse_button_up(SDL_MouseButtonEvent *event) {
 }
 
 void k__handle_SDL_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
-
-    printf("Mouse Motion Event:\n");
-    printf("  Window ID: %u\n", event->windowID);
-    printf("  Mouse Instance ID: %u\n", event->which);
-    printf("  Button State: %u\n", event->state);
-    printf("  Position: (%d, %d)\n", event->x, event->y);
-    printf("  Relative Motion: (%d, %d)\n\n", event->xrel, event->yrel);
-
     mouse_x = event->x;
     mouse_y = event->y;
 }
