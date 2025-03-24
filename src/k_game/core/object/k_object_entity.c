@@ -5,7 +5,7 @@
 
 /* region [object_create] */
 
-struct k_object *k_create_object(size_t object_data_size) {
+struct k_object *k_object_create(size_t object_data_size) {
 
     struct k_room *room = k__game.current_room;
     if (NULL == room)
@@ -36,7 +36,7 @@ err:
     return NULL;
 }
 
-void k_destroy_object(struct k_object *object) {
+void k_object_destroy(struct k_object *object) {
 
     if (NULL == object)
         return;

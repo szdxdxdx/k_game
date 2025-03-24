@@ -5,12 +5,12 @@
 
 #include "./yx_sprite_sheet.h"
 
-int yx_sprite_sheet_init(struct yx_sprite_sheet *sheet, const char *image_filepath, float scale, const char *config_filepath) {
+int yx_load_sprite_sheet(struct yx_sprite_sheet *sheet, const char *image_filepath, float scale, const char *config_filepath) {
 
     if (scale <= 0)
         return -1;
 
-    struct k_image *image = k_load_image(image_filepath);
+    struct k_image *image = k_image_load(image_filepath);
     if (NULL == image)
         return -1;
 
@@ -19,7 +19,7 @@ int yx_sprite_sheet_init(struct yx_sprite_sheet *sheet, const char *image_filepa
         float scaled_h = (float)k_image_get_height(image) * scale;
         struct k_image *scaled_image = k_scale_image(image, (int)scaled_w, (int)scaled_h);
         if (NULL == scaled_image) {
-            k_release_image(image);
+            k_image_release(image);
             return -1;
         }
 
@@ -28,13 +28,13 @@ int yx_sprite_sheet_init(struct yx_sprite_sheet *sheet, const char *image_filepa
 
     char *buf = k_read_txt_file(config_filepath, NULL, 0, NULL);
     if (NULL == buf) {
-        k_release_image(image);
+        k_image_release(image);
         return -1;
     }
 
     struct k_json *config = k_json_parse(buf);
     if (NULL == config) {
-        k_release_image(image);
+        k_image_release(image);
         free(buf);
         return -1;
     }
@@ -49,7 +49,7 @@ void yx_sprite_sheet_fini(struct yx_sprite_sheet *sheet) {
     k_json_free(sheet->config);
 }
 
-struct k_sprite *yx_sprite_load_from_sheet(struct yx_sprite_sheet *sheet, const char *tag_name, float origin_x, float origin_y) {
+struct k_sprite *yx_load_sprite_from_sheet(struct yx_sprite_sheet *sheet, const char *tag_name, float origin_x, float origin_y) {
 
     struct k_sprite_frame_config *frame_config = NULL;
 
@@ -115,7 +115,7 @@ struct k_sprite *yx_sprite_load_from_sheet(struct yx_sprite_sheet *sheet, const 
         frame_config[frame_idx].delay    = delay;
     }
 
-    struct k_sprite *sprite = k_create_sprite(&spr_config);
+    struct k_sprite *sprite = k_sprite_create(&spr_config);
 
     free(frame_config);
     return sprite;

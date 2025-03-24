@@ -9,10 +9,10 @@ int yx_load_spr_iris(void) {
 
     const char *config = "./demo_1/sprite/iris.json";
     const char *image  = "./demo_1/sprite/iris.png";
-    yx_sprite_sheet_init(&sheet, image, 2.0f, config);
+    yx_load_sprite_sheet(&sheet, image, 2.0f, config);
 
-    yx_spr_iris_gun = yx_sprite_load_from_sheet(&sheet, "gun", 15, 23);
-    yx_spr_iris_bullet  = yx_sprite_load_from_sheet(&sheet, "bullet", 16, 16);
+    yx_spr_iris_gun = yx_load_sprite_from_sheet(&sheet, "gun", 15, 23);
+    yx_spr_iris_bullet  = yx_load_sprite_from_sheet(&sheet, "bullet", 16, 16);
 
     yx_sprite_sheet_fini(&sheet);
     return 0;

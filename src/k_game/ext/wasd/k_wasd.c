@@ -39,7 +39,7 @@ int k__define_component_WASD(void) {
     config.data_size = sizeof(struct k_WASD);
     config.fn_init = WASD_init;
 
-    struct k_component_type *type = k_define_component(NULL, &config);
+    struct k_component_type *type = k_component_define(NULL, &config);
     if (NULL == type)
         return -1;
 

@@ -114,7 +114,7 @@ static struct k_seq_step steps[] = {
 
 /* endregion */
 
-struct k_component_type *k_define_component(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
+struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
 
     struct step_context ctx;
     ctx.manager_config = manager_config;
@@ -143,7 +143,7 @@ static void k__component_undef(struct k_component_type *component_type) {
 
 /* region [component_type_registry] */
 
-int k__component_type_registry_init(void) {
+int k__init_component_type_registry(void) {
     return k__asset_registry_init(&component_type_registry);
 }
 
@@ -152,7 +152,7 @@ static void fn_release_asset(struct k_asset_registry_node *registry_node) {
     k__component_undef(component_type);
 }
 
-void k__component_type_registry_cleanup(void) {
+void k__cleanup_component_type_registry(void) {
     k__asset_registry_cleanup(&component_type_registry, fn_release_asset);
 }
 

@@ -116,13 +116,13 @@ static int step_init_callback_managers(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    if (0 != k__init_draw_callback_manager(&room->draw_callback_manager))
+    if (0 != k__draw_callback_manager_init(&room->draw_callback_manager))
         return -1;
 
-    k__init_step_callback_manager(&room->step_begin_callback_manager);
-    k__init_alarm_callback_manager(&room->alarm_callback_manager);
-    k__init_step_callback_manager(&room->step_callback_manager);
-    k__init_step_callback_manager(&room->step_end_callback_manager);
+    k__step_callback_manager_init(&room->step_begin_callback_manager);
+    k__alarm_callback_manager_init(&room->alarm_callback_manager);
+    k__step_callback_manager_init(&room->step_callback_manager);
+    k__step_callback_manager_init(&room->step_end_callback_manager);
     return 0;
 }
 
@@ -130,11 +130,11 @@ static void step_deinit_callback_managers(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__deinit_step_callback_manager(&room->step_begin_callback_manager);
-    k__deinit_alarm_callback_manager(&room->alarm_callback_manager);
-    k__deinit_step_callback_manager(&room->step_callback_manager);
-    k__deinit_draw_callback_manager(&room->draw_callback_manager);
-    k__deinit_step_callback_manager(&room->step_end_callback_manager);
+    k__step_callback_manager_deinit(&room->step_begin_callback_manager);
+    k__alarm_callback_manager_deinit(&room->alarm_callback_manager);
+    k__step_callback_manager_deinit(&room->step_callback_manager);
+    k__draw_callback_manager_deinit(&room->draw_callback_manager);
+    k__step_callback_manager_deinit(&room->step_end_callback_manager);
 }
 
 static int step_init_callback_list(void *context) {
@@ -249,7 +249,7 @@ static const struct k_seq_step steps[] = {
 
 /* endregion */
 
-struct k_room *k_create_room(const struct k_room_config *config, void *params) {
+struct k_room *k_room_create(const struct k_room_config *config, void *params) {
 
     if (0 != check_config(config))
         goto err;

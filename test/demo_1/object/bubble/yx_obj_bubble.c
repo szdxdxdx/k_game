@@ -13,7 +13,7 @@ static void bubble_floating(struct k_object *object) {
 
 struct k_object *yx_bubble_create(float x, float y) {
 
-    struct k_object *object = k_create_object(sizeof(struct yx_obj_bubble));
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_bubble));
     struct yx_obj_bubble *bubble = k_object_get_data(object);
     bubble->position.x = x;
     bubble->position.y = y;
@@ -61,5 +61,5 @@ void yx_bubble_pop(struct k_object *obj_bubble) {
 
     k_sprite_renderer_set_sprite(bubble->spr_rdr, yx_spr_bubble_pop);
     k_sprite_renderer_set_loop(bubble->spr_rdr, 1);
-    k_sprite_renderer_set_loop_callback(bubble->spr_rdr, k_destroy_object);
+    k_sprite_renderer_set_loop_callback(bubble->spr_rdr, k_object_destroy);
 }

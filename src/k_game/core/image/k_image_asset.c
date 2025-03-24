@@ -8,16 +8,16 @@
 
 static struct k_asset_registry image_registry;
 
-int k__image_registry_init(void) {
+int k__init_image_registry(void) {
     return k__asset_registry_init(&image_registry);
 }
 
 static void fn_release_asset(struct k_asset_registry_node *node) {
     struct k_image *image = container_of(node, struct k_image, registry_node);
-    k_release_image(image);
+    k_image_release(image);
 }
 
-void k__image_registry_cleanup(void) {
+void k__cleanup_image_registry(void) {
      k__asset_registry_cleanup(&image_registry, fn_release_asset);
 }
 
@@ -54,7 +54,7 @@ err:
     return NULL;
 }
 
-void k_release_image(struct k_image *image) {
+void k_image_release(struct k_image *image) {
 
     if (NULL == image)
         return;
@@ -69,7 +69,7 @@ void k_release_image(struct k_image *image) {
 
 /* region [image_load] */
 
-struct k_image *k_load_image(const char *filepath) {
+struct k_image *k_image_load(const char *filepath) {
 
     if (NULL == filepath || '\0' == filepath[0])
         goto err;

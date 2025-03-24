@@ -51,12 +51,12 @@ static void step_quit_SDL(void *unused) {
 
 static int step_init_image_registry(void *unused) {
     (void)unused;
-    return k__image_registry_init();
+    return k__init_image_registry();
 }
 
 static void step_cleanup_image_registry(void *unused) {
     (void)unused;
-    k__image_registry_cleanup();
+    k__cleanup_image_registry();
 }
 
 static int step_init_sound_registry(void *unused) {
@@ -91,22 +91,22 @@ static void step_cleanup_sprite_registry(void *unused) {
 
 static int step_init_component_registry(void *unused) {
     (void)unused;
-    return k__component_type_registry_init();
+    return k__init_component_type_registry();
 }
 
 static void step_cleanup_component_registry(void *unused) {
     (void)unused;
-    k__component_type_registry_cleanup();
+    k__cleanup_component_type_registry();
 }
 
 static int step_init_component_manager_map(void *unused) {
     (void)unused;
-    return k__component_manager_map_init();
+    return k__init_component_manager_map();
 }
 
 static void step_free_component_manager_map(void *unused) {
     (void)unused;
-    k__component_manager_map_free();
+    k__deinit_component_manager_map();
 }
 
 static int step_define_components(void *unused) {
@@ -132,13 +132,13 @@ static void step_cleanup_room_registry(void *unused) {
 static int step_init_room_stack(void *unused) {
     (void)unused;
 
-    k__room_stack_init();
+    k__init_room_stack();
     return 0;
 }
 
 static void step_cleanup_room_stack(void *unused) {
     (void)unused;
-    k__room_stack_cleanup();
+    k__cleanup_room_stack();
 }
 
 static int step_call_fn_init(void *context) {

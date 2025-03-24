@@ -15,7 +15,7 @@ int k__sprite_registry_init(void) {
 
 static void fn_release_asset(struct k_asset_registry_node *registry_node) {
     struct k_sprite *sprite = container_of(registry_node, struct k_sprite, registry_node);
-    k_destroy_sprite(sprite);
+    k_sprite_destroy(sprite);
 }
 
 void k__sprite_registry_cleanup(void) {
@@ -69,7 +69,7 @@ err:
     return -1;
 }
 
-struct k_sprite *k_create_sprite(const struct k_sprite_config *config) {
+struct k_sprite *k_sprite_create(const struct k_sprite_config *config) {
 
     if (0 != check_config(config))
         goto err;
@@ -104,7 +104,7 @@ err:
     return NULL;
 }
 
-void k_destroy_sprite(struct k_sprite *sprite) {
+void k_sprite_destroy(struct k_sprite *sprite) {
 
     if (NULL == sprite)
         return;

@@ -16,7 +16,7 @@ void k__object_pool_cleanup(struct k_object_pool *pool) {
     for (k_list_for_each_s(list, iter, next)) {
         object = container_of(iter, struct k_object, pool_node);
 
-        k_destroy_object(object);
+        k_object_destroy(object);
     }
 }
 

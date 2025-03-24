@@ -31,15 +31,15 @@ static void bullet_move(struct k_object *object) {
     bullet->position.x += bullet->velocity_x * delta;
     bullet->position.y += bullet->velocity_y * delta;
 
-    if (   bullet->position.x < 0 || bullet->position.x > k_get_room_width()
-        || bullet->position.y < 0 || bullet->position.y > k_get_room_height()
+    if (   bullet->position.x < 0 || bullet->position.x > k_room_get_width()
+        || bullet->position.y < 0 || bullet->position.y > k_room_get_height()
     ) {
-        k_destroy_object(object);
+        k_object_destroy(object);
     }
 }
 
 static void bullet_create(struct yx_obj_weapon *weapon) {
-    struct k_object *obj_bullet = k_create_object(sizeof(struct yx_obj_bullet));
+    struct k_object *obj_bullet = k_object_create(sizeof(struct yx_obj_bullet));
     struct yx_obj_bullet *bullet = k_object_get_data(obj_bullet);
 
     float mouse_x = (float)k_mouse_x();
@@ -124,7 +124,7 @@ void after_move(void *data) {
 
 struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *config) {
 
-    struct k_object *object = k_create_object(sizeof(struct yx_obj_weapon));
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_weapon));
 
     k_object_add_step_callback(object, draw_weapon);
     k_object_add_step_callback(object, shoot);
@@ -160,7 +160,7 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
 void yx_obj_weapon_destroy(struct yx_obj_weapon *weapon) {
 
     if (NULL != weapon)
-        k_destroy_object(weapon->object);
+        k_object_destroy(weapon->object);
 }
 
 /* endregion */

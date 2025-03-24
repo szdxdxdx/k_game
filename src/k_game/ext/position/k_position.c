@@ -117,7 +117,7 @@ int k__define_component_position(void) {
     config.fn_init   = position_init;
     config.fn_fini   = position_fini;
 
-    K__COMPONENT_TYPE_POSITION = k_define_component(NULL, &config);
+    K__COMPONENT_TYPE_POSITION = k_component_define(NULL, &config);
     if (NULL == K__COMPONENT_TYPE_POSITION)
         return -1;
 

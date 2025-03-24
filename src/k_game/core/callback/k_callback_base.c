@@ -2,17 +2,17 @@
 
 #include "./_internal.h"
 
-void k__del_callback(struct k_callback_base *callback) {
+void k__callback_del(struct k_callback_base *callback) {
 
     switch (callback->event) {
         case K_ALARM_CALLBACK:
-            k__del_alarm_callback(callback);
+            k__alarm_callback_manager_del_callback(callback);
             break;
         case K_STEP_CALLBACK:
-            k__del_step_callback(callback);
+            k__step_callback_manager_del_callback(callback);
             break;
         case K_DRAW_CALLBACK:
-            k__del_draw_callback(callback);
+            k__draw_callback_manager_del_callback(callback);
             break;
         default:
             assert(0);

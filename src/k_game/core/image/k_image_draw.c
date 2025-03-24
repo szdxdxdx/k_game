@@ -2,7 +2,7 @@
 
 #include "./_internal.h"
 
-int k_draw_image(struct k_image *image, const struct k_int_rect *src_rect, const struct k_float_rect *dst_rect, struct k_image_draw_options *options) {
+int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const struct k_float_rect *dst_rect, struct k_image_draw_options *options) {
 
     if (NULL == image || NULL == dst_rect)
         return -1;

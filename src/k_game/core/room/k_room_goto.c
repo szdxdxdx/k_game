@@ -41,11 +41,11 @@ static inline struct k_room *room_stack_get_top(void) {
     return room_stack.rooms[room_stack.top - 1];
 }
 
-void k__room_stack_init(void) {
+void k__init_room_stack(void) {
     room_stack_clear();
 }
 
-void k__room_stack_cleanup(void) {
+void k__cleanup_room_stack(void) {
     room_stack_clear();
 }
 

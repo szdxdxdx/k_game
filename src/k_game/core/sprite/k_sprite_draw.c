@@ -2,7 +2,7 @@
 
 #include "./_internal.h"
 
-int k_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_sprite_draw_options *options) {
+int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_sprite_draw_options *options) {
 
     if (NULL == sprite)
         return -1;
@@ -27,7 +27,7 @@ int k_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
         dst.w = (float)sprite->sprite_w;
         dst.h = (float)sprite->sprite_h;
 
-        return k_draw_image(frame->image, &src, &dst, NULL);
+        return k_image_draw(frame->image, &src, &dst, NULL);
     }
 
     /* 应用变换，使用复杂绘制 */
@@ -60,6 +60,6 @@ int k_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
         opts.flip_x   = options->flip_x;
         opts.flip_y   = options->flip_y;
 
-        return k_draw_image(frame->image, &src, &dst, &opts);
+        return k_image_draw(frame->image, &src, &dst, &opts);
     }
 }

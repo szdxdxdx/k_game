@@ -16,7 +16,7 @@ int k__define_component_collision_box(void) {
     manager_config.fn_init   = k__collision_manager_init;
     manager_config.fn_fini   = k__collision_manager_fini;
 
-    K__COMPONENT_TYPE_COLLISION = k_define_component(&manager_config, &entity_config);
+    K__COMPONENT_TYPE_COLLISION = k_component_define(&manager_config, &entity_config);
     if (NULL == K__COMPONENT_TYPE_COLLISION)
         return -1;
 

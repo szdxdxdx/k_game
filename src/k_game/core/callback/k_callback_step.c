@@ -51,7 +51,7 @@ struct k_component_step_callback {
 
 /* region [add_callback] */
 
-struct k_room_callback *k__add_room_step_callback(struct k_step_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data)) {
+struct k_room_callback *k__step_callback_manager_add_room_callback(struct k_step_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data)) {
 
     struct k_room_step_callback *callback = k_malloc(sizeof(struct k_room_step_callback));
     if (NULL == callback)
@@ -74,7 +74,7 @@ struct k_room_callback *k__add_room_step_callback(struct k_step_callback_manager
     return &callback->room_callback;
 }
 
-struct k_object_callback *k__add_object_step_callback(struct k_step_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object)) {
+struct k_object_callback *k__step_callback_manager_add_object_callback(struct k_step_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object)) {
 
     struct k_object_step_callback *callback = k_malloc(sizeof(struct k_object_step_callback));
     if (NULL == callback)
@@ -97,7 +97,7 @@ struct k_object_callback *k__add_object_step_callback(struct k_step_callback_man
     return &callback->object_callback;
 }
 
-struct k_component_callback *k__add_component_step_callback(struct k_step_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component)) {
+struct k_component_callback *k__step_callback_manager_add_component_callback(struct k_step_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component)) {
 
     struct k_component_step_callback *callback = k_malloc(sizeof(struct k_component_step_callback));
     if (NULL == callback)
@@ -124,7 +124,7 @@ struct k_component_callback *k__add_component_step_callback(struct k_step_callba
 
 /* region [del_callback] */
 
-void k__del_step_callback(struct k_callback_base *callback) {
+void k__step_callback_manager_del_callback(struct k_callback_base *callback) {
 
     if (K_CALLBACK_DELETED == callback->state)
         return;
@@ -166,15 +166,15 @@ void k__del_step_callback(struct k_callback_base *callback) {
 
 /* region [callback_manager] */
 
-void k__init_step_callback_manager(struct k_step_callback_manager *manager) {
+void k__step_callback_manager_init(struct k_step_callback_manager *manager) {
 
     k_list_init(&manager->callback_list);
     k_list_init(&manager->pending_list);
 }
 
-void k__deinit_step_callback_manager(struct k_step_callback_manager *manager) {
+void k__step_callback_manager_deinit(struct k_step_callback_manager *manager) {
 
-    k__flush_pending_step_callback(manager);
+    k__step_callback_manager_flush(manager);
 
     struct k_step_callback *step_callback;
     struct k_list *list = &manager->callback_list;
@@ -185,7 +185,7 @@ void k__deinit_step_callback_manager(struct k_step_callback_manager *manager) {
     }
 }
 
-void k__flush_pending_step_callback(struct k_step_callback_manager *manager) {
+void k__step_callback_manager_flush(struct k_step_callback_manager *manager) {
 
     struct k_step_callback *step_callback;
     struct k_list *callback_list = &manager->callback_list;
@@ -212,7 +212,7 @@ void k__flush_pending_step_callback(struct k_step_callback_manager *manager) {
     }
 }
 
-void k__exec_step_callbacks(struct k_step_callback_manager *manager) {
+void k__step_callback_manager_exec(struct k_step_callback_manager *manager) {
 
     struct k_step_callback *step_callback;
     struct k_list *callback_list = &manager->callback_list;

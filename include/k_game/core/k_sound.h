@@ -7,9 +7,9 @@ struct k_sound_SFX;
 
 /* region [BGM_load] */
 
-struct k_sound_BGM *k_load_sound_BGM(const char *filepath);
+struct k_sound_BGM *k_sound_BGM_load(const char *filepath);
 
-void k_release_sound_BGM(struct k_sound_BGM *sound);
+void k_sound_BGM_release(struct k_sound_BGM *sound);
 
 int k_sound_BGM_set_name(struct k_sound_BGM *sound, const char *BGM_name);
 
@@ -19,7 +19,7 @@ struct k_sound_BGM *k_find_sound_BGM(const char *BGM_name);
 
 /* region [BGM_play] */
 
-int k_loop_sound_BGM(struct k_sound_BGM *sound, int loops);
+int k_sound_BGM_loop(struct k_sound_BGM *sound, int loops);
 
 // int k_sound_BGM_is_playing(void);
 
@@ -31,9 +31,9 @@ int k_loop_sound_BGM(struct k_sound_BGM *sound, int loops);
 
 /* region [SFX_load] */
 
-struct k_sound_SFX *k_load_sound_SFX(const char *filepath);
+struct k_sound_SFX *k_sound_SFX_load(const char *filepath);
 
-void k_release_sound_SFX(struct k_sound_SFX *sound);
+void k_sound_SFX_release(struct k_sound_SFX *sound);
 
 int k_sound_SFX_set_name(struct k_sound_SFX *sound, const char *SFX_name);
 
@@ -43,9 +43,9 @@ struct k_sound_SFX *k_find_sound_SFX(const char *SFX_name);
 
 /* region [SFX_play] */
 
-void k_play_sound_SFX(struct k_sound_SFX *sound);
+void k_sound_SFX_play(struct k_sound_SFX *sound);
 
-void k_loop_sound_SFX(struct k_sound_SFX *sound, int loops);
+void k_sound_SFX_loop(struct k_sound_SFX *sound, int loops);
 
 /* endregion */
 

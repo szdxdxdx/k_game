@@ -89,14 +89,14 @@ struct k_sprite_config {
  *
  * 若创建成功，函数返回精灵指针，否则返回 `NULL`。
  */
-struct k_sprite *k_create_sprite(const struct k_sprite_config *config);
+struct k_sprite *k_sprite_create(const struct k_sprite_config *config);
 
 /**
  * \brief 销毁精灵
  *
  * 若 `sprite` 为 `NULL`，则函数不做任何事。
  */
-void k_destroy_sprite(struct k_sprite *sprite);
+void k_sprite_destroy(struct k_sprite *sprite);
 
 /**
  * \brief 设置精灵的名字
@@ -200,7 +200,7 @@ struct k_sprite_draw_options {
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
-int k_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_sprite_draw_options *options);
+int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_sprite_draw_options *options);
 
 /* endregion */
 
