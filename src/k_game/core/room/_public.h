@@ -1,5 +1,5 @@
-#ifndef K_GAME__ROOM__PUBLIC_H
-#define K_GAME__ROOM__PUBLIC_H
+#ifndef K_ROOM_PUBLIC_H
+#define K_ROOM_PUBLIC_H
 
 #include <stddef.h>
 #include <stdint.h>

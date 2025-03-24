@@ -1,5 +1,5 @@
-#ifndef K_GAME_COLLISION_H
-#define K_GAME_COLLISION_H
+#ifndef K_COLLISION_H
+#define K_COLLISION_H
 
 struct k_float_vec2;
 struct k_room;

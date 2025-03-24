@@ -1,5 +1,5 @@
-#ifndef K_GAME__CALLBACK_STEP_H
-#define K_GAME__CALLBACK_STEP_H
+#ifndef K_CALLBACK_STEP_H
+#define K_CALLBACK_STEP_H
 
 #include "k_list.h"
 

@@ -1,5 +1,5 @@
-#ifndef K_GAME__CALLBACK_CONTEXT_H
-#define K_GAME__CALLBACK_CONTEXT_H
+#ifndef K_CALLBACK_CONTEXT_H
+#define K_CALLBACK_CONTEXT_H
 
 #include "k_list.h"
 

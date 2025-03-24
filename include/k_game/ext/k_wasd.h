@@ -1,5 +1,5 @@
-#ifndef K_GAME_WASD_H
-#define K_GAME_WASD_H
+#ifndef K_WASD_H
+#define K_WASD_H
 
 struct k_float_vec2;
 enum k_keyboard_key;

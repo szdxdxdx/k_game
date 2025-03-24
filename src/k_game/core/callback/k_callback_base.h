@@ -1,5 +1,5 @@
-#ifndef K_GAME__CALLBACK_BASE_H
-#define K_GAME__CALLBACK_BASE_H
+#ifndef K_CALLBACK_BASE_H
+#define K_CALLBACK_BASE_H
 
 #include <stdint.h>
 

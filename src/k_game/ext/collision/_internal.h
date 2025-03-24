@@ -1,5 +1,5 @@
-#ifndef K_GAME__COLLISION__INTERNAL_H
-#define K_GAME__COLLISION__INTERNAL_H
+#ifndef K_COLLISION_INTERNAL_H
+#define K_COLLISION_INTERNAL_H
 
 #include <stdint.h>
 

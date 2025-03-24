@@ -1,5 +1,5 @@
-#ifndef K__JSON_PRIVATE_H
-#define K__JSON_PRIVATE_H
+#ifndef K_JSON_INTERNAL_H
+#define K_JSON_INTERNAL_H
 
 #include <string.h>
 #include <stdint.h>

@@ -1,5 +1,5 @@
-#ifndef K_GAME__COLLISION__PUBLIC_H
-#define K_GAME__COLLISION__PUBLIC_H
+#ifndef K_COLLISION_PUBLIC_H
+#define K_COLLISION_PUBLIC_H
 
 int k__define_component_collision_box(void);
 

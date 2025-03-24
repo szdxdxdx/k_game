@@ -1,5 +1,5 @@
-#ifndef K_GAME__CALLBACK__INTERNAL_H
-#define K_GAME__CALLBACK__INTERNAL_H
+#ifndef K_CALLBACK_INTERNAL_H
+#define K_CALLBACK_INTERNAL_H
 
 #include "k_game.h"
 

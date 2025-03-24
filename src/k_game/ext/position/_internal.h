@@ -1,5 +1,5 @@
-#ifndef K_GAME__POSITION__INTERNAL_H
-#define K_GAME__POSITION__INTERNAL_H
+#ifndef K_POSITION_INTERNAL_H
+#define K_POSITION_INTERNAL_H
 
 #include "k_list.h"
 

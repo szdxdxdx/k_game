@@ -1,5 +1,5 @@
-#ifndef K_GAME__CALLBACK__PUBLIC_H
-#define K_GAME__CALLBACK__PUBLIC_H
+#ifndef K_CALLBACK_PUBLIC_H
+#define K_CALLBACK_PUBLIC_H
 
 #include "./k_callback_alarm.h"
 #include "./k_callback_step.h"

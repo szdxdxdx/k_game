@@ -1,5 +1,5 @@
-#ifndef K_GAME__IMAGE__INTERNAL_H
-#define K_GAME__IMAGE__INTERNAL_H
+#ifndef K_IMAGE_INTERNAL_H
+#define K_IMAGE_INTERNAL_H
 
 #include "k_game.h"
 

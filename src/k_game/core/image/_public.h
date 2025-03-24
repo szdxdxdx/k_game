@@ -1,5 +1,5 @@
-#ifndef K_GAME__IMAGE__PUBLIC_H
-#define K_GAME__IMAGE__PUBLIC_H
+#ifndef K_IMAGE_PUBLIC_H
+#define K_IMAGE_PUBLIC_H
 
 #include "SDL_render.h"
 

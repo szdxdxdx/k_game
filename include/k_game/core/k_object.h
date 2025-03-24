@@ -1,5 +1,5 @@
-#ifndef K_GAME_OBJECT_H
-#define K_GAME_OBJECT_H
+#ifndef K_OBJECT_H
+#define K_OBJECT_H
 
 #include <stddef.h>
 

@@ -1,5 +1,5 @@
-#ifndef K_GAME_SPRITE_H
-#define K_GAME_SPRITE_H
+#ifndef K_SPRITE_H
+#define K_SPRITE_H
 
 #include <stddef.h>
 

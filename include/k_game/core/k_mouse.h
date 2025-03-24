@@ -1,5 +1,5 @@
-#ifndef K_GAME_MOUSE_H
-#define K_GAME_MOUSE_H
+#ifndef K_MOUSE_H
+#define K_MOUSE_H
 
 int k_mouse_x(void);
 

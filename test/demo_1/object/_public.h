@@ -1,5 +1,5 @@
-#ifndef YX__OBJECT__PUBLIC_H
-#define YX__OBJECT__PUBLIC_H
+#ifndef YX_OBJECT_PUBLIC_H
+#define YX_OBJECT_PUBLIC_H
 
 #include "./player/yx_obj_player.h"
 

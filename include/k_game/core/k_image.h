@@ -1,9 +1,9 @@
-#ifndef K_GAME_IMAGE_H
-#define K_GAME_IMAGE_H
+#ifndef K_IMAGE_H
+#define K_IMAGE_H
 
 #include <stdint.h>
 
-#include "./k_game_rect.h"
+#include "./k_rect.h"
 
 /**
  * TODO docs

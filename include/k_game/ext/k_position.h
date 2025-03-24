@@ -1,9 +1,9 @@
-#ifndef K_GAME_POSITION_H
-#define K_GAME_POSITION_H
+#ifndef K_POSITION_H
+#define K_POSITION_H
 
 #include "k_list.h"
 
-#include "../core/k_game_rect.h"
+#include "../core/k_rect.h"
 
 struct k_position;
 

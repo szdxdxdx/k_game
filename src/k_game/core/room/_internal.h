@@ -1,5 +1,5 @@
-#ifndef K_GAME__ROOM__INTERNAL_H
-#define K_GAME__ROOM__INTERNAL_H
+#ifndef K_ROOM_INTERNAL_H
+#define K_ROOM_INTERNAL_H
 
 #include "k_game.h"
 

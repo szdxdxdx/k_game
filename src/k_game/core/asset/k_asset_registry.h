@@ -1,5 +1,5 @@
-#ifndef K_GAME__ASSET_REGISTRY_H
-#define K_GAME__ASSET_REGISTRY_H
+#ifndef K_ASSET_REGISTRY_H
+#define K_ASSET_REGISTRY_H
 
 #include "k_list.h"
 #include "k_str_map.h"

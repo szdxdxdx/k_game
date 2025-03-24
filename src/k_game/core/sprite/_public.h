@@ -1,5 +1,5 @@
-#ifndef K_GAME__SPRITE__PUBLIC_H
-#define K_GAME__SPRITE__PUBLIC_H
+#ifndef K_SPRITE_PUBLIC_H
+#define K_SPRITE_PUBLIC_H
 
 #include "../asset/k_asset_registry.h"
 

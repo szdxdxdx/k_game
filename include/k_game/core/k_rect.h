@@ -1,5 +1,5 @@
-#ifndef K_GAME_RECT_H
-#define K_GAME_RECT_H
+#ifndef K_RECT_H
+#define K_RECT_H
 
 struct k_float_vec2 {
     float x;

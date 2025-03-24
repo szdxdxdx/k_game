@@ -1,5 +1,5 @@
-#ifndef YX__SPRITE__INTERNAL_H
-#define YX__SPRITE__INTERNAL_H
+#ifndef YX_SPRITE_INTERNAL_H
+#define YX_SPRITE_INTERNAL_H
 
 #include "k_game.h"
 

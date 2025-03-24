@@ -1,5 +1,5 @@
-#ifndef YX__ROOM__PUBLIC_H
-#define YX__ROOM__PUBLIC_H
+#ifndef YX_ROOM_PUBLIC_H
+#define YX_ROOM_PUBLIC_H
 
 #include "./yx_room_1.h"
 

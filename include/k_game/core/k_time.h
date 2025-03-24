@@ -1,5 +1,5 @@
-#ifndef K_GAME_TIME_H
-#define K_GAME_TIME_H
+#ifndef K_TIME_H
+#define K_TIME_H
 
 #include <stdint.h>
 

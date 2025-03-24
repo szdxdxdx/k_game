@@ -1,5 +1,5 @@
-#ifndef K_GAME__K_SDL__INTERNAL_H
-#define K_GAME__K_SDL__INTERNAL_H
+#ifndef K_SDL_INTERNAL_H
+#define K_SDL_INTERNAL_H
 
 #include "k_game.h"
 

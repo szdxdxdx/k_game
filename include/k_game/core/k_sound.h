@@ -1,5 +1,5 @@
-#ifndef K_GAME_SOUND_H
-#define K_GAME_SOUND_H
+#ifndef K_SOUND_H
+#define K_SOUND_H
 
 struct k_sound_BGM;
 

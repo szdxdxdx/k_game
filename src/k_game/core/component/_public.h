@@ -1,5 +1,5 @@
-#ifndef K_GAME__COMPONENT__PUBLIC_H
-#define K_GAME__COMPONENT__PUBLIC_H
+#ifndef K_COMPONENT_PUBLIC_H
+#define K_COMPONENT_PUBLIC_H
 
 #include <stddef.h>
 

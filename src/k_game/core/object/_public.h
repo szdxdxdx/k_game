@@ -1,5 +1,5 @@
-#ifndef K_GAME__OBJECT__PUBLIC_H
-#define K_GAME__OBJECT__PUBLIC_H
+#ifndef K_OBJECT_PUBLIC_H
+#define K_OBJECT_PUBLIC_H
 
 #include "k_list.h"
 

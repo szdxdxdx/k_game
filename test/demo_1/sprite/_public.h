@@ -1,5 +1,5 @@
-#ifndef YX__SPRITE__PUBLIC_H
-#define YX__SPRITE__PUBLIC_H
+#ifndef YX_SPRITE_PUBLIC_H
+#define YX_SPRITE_PUBLIC_H
 
 #include "./yx_spr_ynx.h"
 #include "./yx_spr_liliko.h"

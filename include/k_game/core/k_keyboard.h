@@ -1,5 +1,5 @@
-#ifndef K_GAME_KEYBOARD_H
-#define K_GAME_KEYBOARD_H
+#ifndef K_KEYBOARD_H
+#define K_KEYBOARD_H
 
 enum k_keyboard_key;
 

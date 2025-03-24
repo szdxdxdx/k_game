@@ -1,5 +1,5 @@
-#ifndef K_GAME_ROOM_H
-#define K_GAME_ROOM_H
+#ifndef K_ROOM_H
+#define K_ROOM_H
 
 #include <stddef.h>
 
@@ -35,7 +35,7 @@ struct k_room_config {
      * 在此指定为房间附加的自定义数据的结构体大小，单位：字节。
      *
      * 创建房间时，k_game 会为房间的关联数据分配内存，
-     * 之后你可以通过 `k_get_room_data()` 读写该内存。
+     * 之后你可以通过 `k_get_room_data()` 来访问该内存。
      *
      * 关联数据的内存由 k_game 管理，其生命周期与房间相同。
      * 销毁房间时 k_game 会释放该内存。

@@ -1,5 +1,5 @@
-#ifndef K_GAME_SPRITE_RENDERER_H
-#define K_GAME_SPRITE_RENDERER_H
+#ifndef K_SPRITE_RENDERER_H
+#define K_SPRITE_RENDERER_H
 
 struct k_sprite;
 struct k_object;
