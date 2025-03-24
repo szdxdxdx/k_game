@@ -15,14 +15,16 @@ struct yx_obj_bullet {
 static void bullet_touch_bubble(struct k_object *object) {
     struct yx_obj_bullet *bullet = k_object_get_data(object);
 
-    float padding = 2;
-    float x1 = bullet->x - padding;
-    float y1 = bullet->y - padding;
-    float x2 = bullet->x + padding;
-    float y2 = bullet->y + padding;
-    struct k_collision_box *box = k_collision_check_rectangle(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
-    if (NULL != box)
-        yx_bubble_pop(k_collision_box_get_object(box));
+    {
+        float padding = 2;
+        float x1 = bullet->x - padding;
+        float y1 = bullet->y - padding;
+        float x2 = bullet->x + padding;
+        float y2 = bullet->y + padding;
+        struct k_collision_box *box = k_collision_check_rectangle(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
+        if (NULL != box)
+            yx_bubble_pop(k_collision_box_get_object(box));
+    }
 }
 
 static void bullet_move(struct k_object *object) {

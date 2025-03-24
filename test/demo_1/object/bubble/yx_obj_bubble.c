@@ -42,6 +42,18 @@ struct k_object *yx_bubble_create(float x, float y) {
         bubble->collision_box = k_object_add_collision_circle(object, &config);
     }
 
+    {
+        struct k_collision_rectangle_config config;
+        config.group_id  = YX_COLLISION_GROUP_BUBBLE;
+        config.x         = &bubble->position.x;
+        config.y         = &bubble->position.y;
+        config.offset_x1 = -8;
+        config.offset_y1 = -8;
+        config.offset_x2 = 8;
+        config.offset_y2 = 8;
+        // bubble->collision_box = k_object_add_collision_rectangle(object, &config);
+    }
+
     return object;
 }
 
