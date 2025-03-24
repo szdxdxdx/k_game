@@ -23,6 +23,8 @@ struct k_position {
 
 void k_position_init(struct k_position *self, struct k_position *parent, float rel_x, float rel_y);
 
+void k_position_fini(struct k_position *self);
+
 void k_position_set(struct k_position *self, float rel_x, float rel_y);
 
 #endif

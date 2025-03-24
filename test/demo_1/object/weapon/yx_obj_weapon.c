@@ -45,7 +45,12 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
     float mouse_y = (float)k_mouse_y();
     float weapon_x = weapon->position.x;
     float weapon_y = weapon->position.y;
-    float angle = atanf((mouse_y - weapon_y) / (mouse_x - weapon_x));
+
+    float angle;
+    if (mouse_x != weapon_x)
+        angle = atanf((mouse_y - weapon_y) / (mouse_x - weapon_x));
+    else
+        angle = 0.0f;
 
     float cos_angle;
     float sin_angle;
@@ -85,11 +90,12 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 static void shoot(struct k_object *object) {
 
     if (k_button_pressed(K_BUTTON_LEFT) || k_button_down(K_BUTTON_MIDDLE) || k_button_pressed(K_BUTTON_RIGHT)) {
-        bullet_create(k_object_get_data(object));
+        struct yx_obj_weapon *weapon = k_object_get_data(object);
+        bullet_create(weapon);
     }
 }
 
-static void rotate_spr(struct k_object *object) {
+static void draw_weapon(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
     float mouse_x = (float)k_mouse_x();
@@ -104,6 +110,17 @@ static void rotate_spr(struct k_object *object) {
         k_sprite_renderer_flip_x(weapon->spr_rdr, 0);
 
     k_sprite_renderer_rotate(weapon->spr_rdr, angle);
+}
+
+void mouse_drag(struct k_object *object) {
+    struct yx_obj_weapon *weapon = k_object_get_data(object);
+
+    if (k_key_down(K_KEY_LEFT_SHIFT)) {
+
+        float x = (float)k_mouse_x() - weapon->position.parent->x - 4;
+        float y = (float)k_mouse_y() - weapon->position.parent->y + 2;
+        k_position_set(&weapon->position, x, y);
+    }
 }
 
 void after_move(void *data) {
@@ -131,8 +148,10 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
         weapon->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
     }
 
-    k_object_add_step_callback(object, rotate_spr);
+    k_object_add_step_callback(object, draw_weapon);
     k_object_add_step_callback(object, shoot);
+
+    k_object_add_step_callback(object, mouse_drag);
 
     return weapon;
 }

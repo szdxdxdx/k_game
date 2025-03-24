@@ -3,7 +3,6 @@
 #include "k_game.h"
 
 static struct k_position world = {
-    .parent = NULL,
     .x = 0,
     .y = 0,
 };
@@ -25,9 +24,36 @@ void k_position_init(struct k_position *self, struct k_position *parent, float r
 
     self->x = self->parent->x + self->rel_x;
     self->y = self->parent->y + self->rel_y;
+}
 
-    self->data = NULL;
-    self->fn_after_move = NULL;
+void k_position_fini(struct k_position *self) {
+
+    struct k_position *parent = self->parent;
+
+    if (&world == parent) {
+        struct k_position *child;
+        struct k_list *list = &self->list;
+        struct k_list_node *iter, *next;
+        for (k_list_for_each_s(list, iter, next)) {
+            child = container_of(iter, struct k_position, list_node);
+
+            k_list_node_loop(&child->list_node);
+            child->parent = &world;
+        }
+    }
+    else {
+        struct k_position *child;
+        struct k_list *list = &self->list;
+        struct k_list_node *iter, *next;
+        for (k_list_for_each_s(list, iter, next)) {
+            child = container_of(iter, struct k_position, list_node);
+
+            k_list_add_tail(&parent->list, &child->list_node);
+            child->parent = parent;
+        }
+    }
+
+    k_list_init(&self->list);
 }
 
 static void update_position(struct k_position *self) {
@@ -37,15 +63,12 @@ static void update_position(struct k_position *self) {
 
     struct k_position *child;
     struct k_list *list = &self->list;
-    struct k_list_node *iter;
-    for (k_list_for_each(list, iter)) {
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(list, iter, next)) {
         child = container_of(iter, struct k_position, list_node);
 
         update_position(child);
     }
-
-    if (self->fn_after_move != NULL)
-        self->fn_after_move(self->data);
 }
 
 void k_position_set(struct k_position *self, float rel_x, float rel_y) {

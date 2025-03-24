@@ -116,14 +116,24 @@ static void player_touch_bubble(struct k_object *object) {
         yx_bubble_pop(k_collision_box_get_object(box));
 }
 
+static void player_destroy(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    if (k_key_pressed('K')) {
+
+        k_position_fini(&player->position);
+        k_object_destroy(object);
+    }
+}
+
 struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
     k_object_add_step_begin_callback(object, player_step_set_state);
     k_object_add_step_callback(object, player_touch_bubble);
-    //k_object_add_step_callback(object, player_step);
-    //k_object_add_step_callback(object, player_step_shoot);
+    k_object_add_step_callback(object, player_step);
+    k_object_add_step_callback(object, player_destroy);
 
     struct yx_obj_player *player = k_object_get_data(object);
 
@@ -153,11 +163,11 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     {
         struct k_sprite_renderer_config renderer_config;
-        renderer_config.x        = &player->position.x;
-        renderer_config.y        = &player->position.y;
-        renderer_config.sprite   = player->spr_idle;
-        renderer_config.z_group  = 0;
-        renderer_config.z_layer  = (int)config->y;
+        renderer_config.x       = &player->position.x;
+        renderer_config.y       = &player->position.y;
+        renderer_config.sprite  = player->spr_idle;
+        renderer_config.z_group = 0;
+        renderer_config.z_layer = (int)config->y;
         player->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
     }
 
