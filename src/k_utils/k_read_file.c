@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "k_utils.h"
+#include "k_read_file.h"
 
 char *k_read_txt_file(const char *file_path, char *buf, size_t buf_size, size_t *get_len) {
 

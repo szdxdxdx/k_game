@@ -1,5 +1,5 @@
-#ifndef K_UTILS_H
-#define K_UTILS_H
+#ifndef K_READ_FILE_H
+#define K_READ_FILE_H
 
 #include <stddef.h>
 

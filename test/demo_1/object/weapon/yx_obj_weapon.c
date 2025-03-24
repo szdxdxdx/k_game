@@ -91,18 +91,18 @@ static void draw_weapon(struct k_object *object) {
     float weapon_x = weapon->x;
 
     if (mouse_x != weapon_x) {
-        float mouse_y = (float)k_mouse_y();
-        float weapon_y = weapon->y;
 
-        float angle = atanf((mouse_y - weapon_y) / (mouse_x - weapon_x));
+        if (weapon_x < mouse_x) {
+            k_sprite_renderer_flip_x(weapon->spr_rdr, 1);
+        }
+        else {
+            k_sprite_renderer_flip_x(weapon->spr_rdr, 0);
+        }
+
+        float angle = atanf(((float)k_mouse_y() - weapon->y) / (mouse_x - weapon_x));
         angle *= 180.0f / 3.1415926f;
 
         k_sprite_renderer_rotate(weapon->spr_rdr, angle);
-
-        if (weapon_x < mouse_x)
-            k_sprite_renderer_flip_x(weapon->spr_rdr, 1);
-        else
-            k_sprite_renderer_flip_x(weapon->spr_rdr, 0);
     }
 }
 

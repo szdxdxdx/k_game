@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "k_utils.h"
+#include "k_read_file.h"
 
 #include "./yx_sprite_sheet.h"
 
