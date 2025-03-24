@@ -149,13 +149,15 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
         WASD_config.key_down  = 'S';
         WASD_config.key_right = 'D';
         WASD_config.speed     = 192.0f;
-        WASD_config.position = &player->position_next;
+        WASD_config.x         = &player->position_next.x;
+        WASD_config.y         = &player->position_next.y;
         player->WASD = k_object_add_component(object, WASD, &WASD_config);
     }
 
     {
         struct k_sprite_renderer_config renderer_config;
-        renderer_config.position = &player->position;
+        renderer_config.x        = &player->position.x;
+        renderer_config.y        = &player->position.y;
         renderer_config.sprite   = player->spr_idle;
         renderer_config.z_group  = 0;
         renderer_config.z_layer  = (int)config->y;

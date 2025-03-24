@@ -24,8 +24,8 @@ static int WASD_init(struct k_component *component, void *params) {
     WASD->key_left  = config->key_left;
     WASD->key_right = config->key_right;
     WASD->speed     = config->speed;
-    WASD->x         = &config->position->x;
-    WASD->y         = &config->position->y;
+    WASD->x         = config->x;
+    WASD->y         = config->y;
 
     if (NULL == k_component_add_step_callback(component, WASD_step))
         return -1;

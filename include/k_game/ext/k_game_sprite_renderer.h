@@ -1,7 +1,6 @@
 #ifndef K_GAME_SPRITE_RENDERER_H
 #define K_GAME_SPRITE_RENDERER_H
 
-struct k_float_vec2;
 struct k_sprite;
 struct k_object;
 
@@ -27,7 +26,8 @@ struct k_sprite_renderer_config {
      * 渲染器不存储坐标，而是存储坐标的指针。
      * 在绘制时，渲染器通过该指针读取坐标，并在该位置绘制精灵。
      */
-    struct k_float_vec2 *position;
+    float *x;
+    float *y;
 
     /**
      * \brief 指定渲染器引用的精灵

@@ -17,8 +17,8 @@ static void draw_debug_rect(struct k_component *component) {
     float angle  = renderer->angle;
     int   flip_x = renderer->transform_flags & transform_flip_x;
     int   flip_y = renderer->transform_flags & transform_flip_y;
-    float dst_x  = renderer->position->x;
-    float dst_y  = renderer->position->y;
+    float dst_x  = *(renderer->x);
+    float dst_y  = *(renderer->y);
 
     /* ------------------------------------------------------------------------ */
 

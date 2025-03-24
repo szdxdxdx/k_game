@@ -68,10 +68,11 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
     k_object_add_step_callback(obj_bullet, bullet_move);
 
     struct k_sprite_renderer_config renderer_config;
-    renderer_config.position = &bullet->position;
-    renderer_config.sprite   = yx_spr_iris_bullet;
-    renderer_config.z_group  = 0;
-    renderer_config.z_layer  = 10000;
+    renderer_config.x       = &bullet->position.x;
+    renderer_config.y       = &bullet->position.y;
+    renderer_config.sprite  = yx_spr_iris_bullet;
+    renderer_config.z_group = 0;
+    renderer_config.z_layer = 10000;
     k_object_add_sprite_renderer(obj_bullet, &renderer_config);
 
     k_object_add_step_callback(obj_bullet, bullet_touch_bubble);
@@ -82,8 +83,10 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 /* region [gun] */
 
 static void shoot(struct k_object *object) {
-    if (k_button_pressed(K_BUTTON_LEFT) || k_button_pressed(K_BUTTON_RIGHT))
+
+    if (k_button_pressed(K_BUTTON_LEFT) || k_button_down(K_BUTTON_MIDDLE) || k_button_pressed(K_BUTTON_RIGHT)) {
         bullet_create(k_object_get_data(object));
+    }
 }
 
 static void rotate_spr(struct k_object *object) {
@@ -112,10 +115,11 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
 
     {
         struct k_sprite_renderer_config renderer_config;
-        renderer_config.position = config->position;
-        renderer_config.sprite   = yx_spr_iris_gun;
-        renderer_config.z_group  = 0;
-        renderer_config.z_layer  = (int)config->position->y + 1;
+        renderer_config.x       = &config->position->x;
+        renderer_config.y       = &config->position->y;
+        renderer_config.sprite  = yx_spr_iris_gun;
+        renderer_config.z_group = 0;
+        renderer_config.z_layer = (int)config->position->y + 1;
         weapon->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
     }
 

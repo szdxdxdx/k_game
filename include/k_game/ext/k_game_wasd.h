@@ -6,7 +6,8 @@ enum k_keyboard_key;
 
 struct k_WASD_config {
 
-    struct k_float_vec2 *position;
+    float *x;
+    float *y;
 
     enum k_keyboard_key key_up;
     enum k_keyboard_key key_left;

@@ -26,7 +26,8 @@ struct k_sprite_renderer {
     int debug;
     struct k_component_callback *callback_draw_rect;
 
-    struct k_float_vec2 *position;
+    float *x;
+    float *y;
 
     struct k_sprite *sprite;
 

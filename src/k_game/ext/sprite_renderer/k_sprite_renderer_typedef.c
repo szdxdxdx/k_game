@@ -31,7 +31,8 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
     renderer->debug = 0;
     renderer->callback_draw_rect = NULL;
 
-    renderer->position = config->position;
+    renderer->x = config->x;
+    renderer->y = config->y;
 
     renderer->sprite = NULL;
 
@@ -73,7 +74,7 @@ struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, 
 
     if (NULL == config)
         return NULL;
-    if (NULL == config->position)
+    if (NULL == config->x || NULL == config->y)
         return NULL;
 
     struct k_component *component = k_object_add_component(object, k__component_type_sprite_renderer, (void*)config);
