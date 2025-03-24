@@ -4,11 +4,11 @@
 
 static struct k_position world = {
     .parent = NULL,
-    .position.x = 0,
-    .position.y = 0,
+    .x = 0,
+    .y = 0,
 };
 
-void k_position_init(struct k_position *self, struct k_position *parent, float offset_x, float offset_y) {
+void k_position_init(struct k_position *self, struct k_position *parent, float rel_x, float rel_y) {
 
     k_list_init(&self->list);
 
@@ -20,17 +20,17 @@ void k_position_init(struct k_position *self, struct k_position *parent, float o
         self->parent = &world;
     }
 
-    self->offset.x = offset_x;
-    self->offset.y = offset_y;
+    self->rel_x = rel_x;
+    self->rel_y = rel_y;
 
-    self->position.x = parent->position.x + self->offset.x;
-    self->position.y = parent->position.y + self->offset.y;
+    self->x = parent->x + self->rel_x;
+    self->y = parent->y + self->rel_y;
 }
 
 static void update_position(struct k_position *self) {
 
-    self->position.x = self->parent->position.x + self->offset.x;
-    self->position.y = self->parent->position.y + self->offset.y;
+    self->x = self->parent->x + self->rel_x;
+    self->y = self->parent->y + self->rel_y;
 
     struct k_position *child;
     struct k_list *list = &self->list;
@@ -42,10 +42,10 @@ static void update_position(struct k_position *self) {
     }
 }
 
-void k_position_set_offset(struct k_position *self, float x, float y) {
+void k_position_set(struct k_position *self, float rel_x, float rel_y) {
 
-    self->offset.x = x;
-    self->offset.y = y;
+    self->rel_x = rel_x;
+    self->rel_y = rel_y;
 
     update_position(self);
 }
