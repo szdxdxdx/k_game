@@ -89,14 +89,14 @@ struct k_sprite_config {
  *
  * 若创建成功，函数返回精灵指针，否则返回 `NULL`。
  */
-struct k_sprite *k_sprite_create(const struct k_sprite_config *config);
+struct k_sprite *k_create_sprite(const struct k_sprite_config *config);
 
 /**
  * \brief 销毁精灵
  *
  * 若 `sprite` 为 `NULL`，则函数不做任何事。
  */
-void k_sprite_destroy(struct k_sprite *sprite);
+void k_destroy_sprite(struct k_sprite *sprite);
 
 /**
  * \brief 设置精灵的名字
@@ -104,7 +104,7 @@ void k_sprite_destroy(struct k_sprite *sprite);
  * 精灵名字是可选的，默认情况下精灵没有名字。
  *
  * 你可以为精灵设置唯一名字，k_game 将基于该名字为精灵建立索引，
- * 之后可使用 `k_sprite_find()` 根据名字查找精灵。
+ * 之后可使用 `k_find_sprite()` 根据名字查找精灵。
  *
  * 若名字设为空字符串 "" 或 `NULL`，则清除名字，并删除索引。
  *
@@ -120,7 +120,7 @@ int k_sprite_set_name(struct k_sprite *sprite, const char *sprite_name);
  *
  * 若找到，函数返回精灵指针，否则返回 `NULL`。
  */
-struct k_sprite *k_sprite_find(const char *sprite_name);
+struct k_sprite *k_find_sprite(const char *sprite_name);
 
 /* endregion */
 
@@ -200,7 +200,7 @@ struct k_sprite_draw_options {
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
-int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_sprite_draw_options *options);
+int k_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_sprite_draw_options *options);
 
 /* endregion */
 

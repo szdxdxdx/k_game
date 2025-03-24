@@ -31,6 +31,6 @@ struct k_callback_base {
     uint8_t state;
 };
 
-void k__callback_del(struct k_callback_base *callback);
+void k__del_callback(struct k_callback_base *callback);
 
 #endif

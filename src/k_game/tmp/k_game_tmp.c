@@ -3,13 +3,13 @@
 #include "k_game.h"
 #include "../core/k_SDL/_public.h"
 
-void k_room_clean_canvas(void *unused) {
+void k_clean_room_canvas(void *unused) {
     (void)unused;
     SDL_SetRenderDrawColor(k__window.renderer, 80, 80, 80, 255);
     SDL_RenderClear(k__window.renderer);
 }
 
-void k_room_draw_grid(void *unused) {
+void k_draw_grid(void *unused) {
     (void)unused;
 
     int flashlight_R = 96;

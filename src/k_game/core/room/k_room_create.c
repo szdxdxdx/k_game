@@ -27,7 +27,7 @@ int k_room_set_name(struct k_room *room, const char *room_name) {
     return k__asset_set_name(&room_registry, &room->registry_node, room_name);
 }
 
-struct k_room *k_room_find(const char *room_name) {
+struct k_room *k_find_room(const char *room_name) {
     struct k_asset_registry_node *registry_node = k__asset_registry_find(&room_registry, room_name);
     if (NULL == registry_node)
         return NULL;
@@ -116,13 +116,13 @@ static int step_init_callback_managers(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    if (0 != k__callback_init_draw_manager(&room->draw_callback_manager))
+    if (0 != k__init_draw_callback_manager(&room->draw_callback_manager))
         return -1;
 
-    k__callback_init_step_manager(&room->step_begin_callback_manager);
-    k__callback_init_alarm_manager(&room->alarm_callback_manager);
-    k__callback_init_step_manager(&room->step_callback_manager);
-    k__callback_init_step_manager(&room->step_end_callback_manager);
+    k__init_step_callback_manager(&room->step_begin_callback_manager);
+    k__init_alarm_callback_manager(&room->alarm_callback_manager);
+    k__init_step_callback_manager(&room->step_callback_manager);
+    k__init_step_callback_manager(&room->step_end_callback_manager);
     return 0;
 }
 
@@ -130,11 +130,11 @@ static void step_deinit_callback_managers(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__callback_deinit_step_manager(&room->step_begin_callback_manager);
-    k__callback_deinit_alarm_manager(&room->alarm_callback_manager);
-    k__callback_deinit_step_manager(&room->step_callback_manager);
-    k__callback_deinit_draw_manager(&room->draw_callback_manager);
-    k__callback_deinit_step_manager(&room->step_end_callback_manager);
+    k__deinit_step_callback_manager(&room->step_begin_callback_manager);
+    k__deinit_alarm_callback_manager(&room->alarm_callback_manager);
+    k__deinit_step_callback_manager(&room->step_callback_manager);
+    k__deinit_draw_callback_manager(&room->draw_callback_manager);
+    k__deinit_step_callback_manager(&room->step_end_callback_manager);
 }
 
 static int step_init_callback_list(void *context) {
@@ -249,7 +249,7 @@ static const struct k_seq_step steps[] = {
 
 /* endregion */
 
-struct k_room *k_room_create(const struct k_room_config *config, void *params) {
+struct k_room *k_create_room(const struct k_room_config *config, void *params) {
 
     if (0 != check_config(config))
         goto err;

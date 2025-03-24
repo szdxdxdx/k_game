@@ -16,8 +16,8 @@ int fn_room_init(void *params) {
 
     /* region [room_callback] */
 
-    k_add_room_draw_callback(NULL, k_room_clean_canvas, INT_MIN, INT_MIN);
-    k_add_room_draw_callback(NULL, k_room_draw_grid, INT_MIN, INT_MIN + 1);
+    k_add_room_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
+    k_add_room_draw_callback(NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
 
     /* endregion */
 
@@ -60,5 +60,5 @@ struct k_room *yx_room_1_create(void) {
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.fn_init = fn_room_init;
 
-    return k_room_create(&config, NULL);
+    return k_create_room(&config, NULL);
 }

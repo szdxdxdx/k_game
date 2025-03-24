@@ -116,12 +116,12 @@ static void player_touch_bubble(struct k_object *object) {
 static void player_destroy(struct k_object *object) {
 
     if (k_key_pressed('K'))
-        k_object_destroy(object);
+        k_destroy_object(object);
 }
 
 struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
-    struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
+    struct k_object *object = k_create_object(sizeof(struct yx_obj_player));
 
     k_object_add_step_begin_callback(object, player_step_set_state);
     k_object_add_step_callback(object, player_touch_bubble);
@@ -144,7 +144,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     }
 
     {
-        struct k_component_type *WASD = k_component_type_find("k/WASD");
+        struct k_component_type *WASD = k_find_component_type("k/WASD");
         struct k_WASD_config WASD_config;
         WASD_config.key_up    = 'W';
         WASD_config.key_left  = 'A';

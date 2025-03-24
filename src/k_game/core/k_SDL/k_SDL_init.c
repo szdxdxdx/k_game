@@ -165,7 +165,7 @@ static struct k_seq_step steps[] = {
 
 /* endregion */
 
-int k__SDL_init(const struct k_game_config *config) {
+int k__init_SDL(const struct k_game_config *config) {
 
     if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), (void *)config)) {
         k_log_error("Failed to initialize SDL");
@@ -175,6 +175,6 @@ int k__SDL_init(const struct k_game_config *config) {
     return 0;
 }
 
-void k__SDL_quit(void) {
+void k__quit_SDL(void) {
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), NULL);
 }

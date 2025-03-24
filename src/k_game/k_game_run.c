@@ -41,12 +41,12 @@ err:
 
 static int step_init_SDL(void *context) {
     const struct k_game_config *config = context;
-    return k__SDL_init(config);
+    return k__init_SDL(config);
 }
 
 static void step_quit_SDL(void *unused) {
     (void)unused;
-    k__SDL_quit();
+    k__quit_SDL();
 }
 
 static int step_init_image_registry(void *unused) {
@@ -112,10 +112,10 @@ static void step_free_component_manager_map(void *unused) {
 static int step_define_components(void *unused) {
     (void)unused;
 
-    return k__component_def_WASD()
-        || k__component_def_sprite_renderer()
-        || k__component_def_collision_box()
-        || k__component_def_position()
+    return k__define_component_WASD()
+           || k__define_component_sprite_renderer()
+           || k__define_component_collision_box()
+           || k__define_component_position()
      ? -1 : 0;
 }
 
@@ -201,7 +201,7 @@ static void run_game() {
     k__room_run(room);
 }
 
-int k_game_run(const struct k_game_config *config) {
+int k_run_game(const struct k_game_config *config) {
 
     if (0 != init_game(config))
         return -1;

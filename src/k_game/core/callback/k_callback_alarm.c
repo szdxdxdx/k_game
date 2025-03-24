@@ -53,7 +53,7 @@ struct k_component_alarm_callback {
 
 /* region [add_callback] */
 
-struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
+struct k_room_callback *k__add_room_alarm_callback(struct k_alarm_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
 
     struct k_room_alarm_callback *callback = k_malloc(sizeof(struct k_room_alarm_callback));
     if (NULL == callback)
@@ -80,7 +80,7 @@ struct k_room_callback *k__callback_add_room_alarm(struct k_alarm_callback_manag
     return &callback->room_callback;
 }
 
-struct k_object_callback *k__callback_add_object_alarm(struct k_alarm_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
+struct k_object_callback *k__add_object_alarm_callback(struct k_alarm_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
 
     struct k_object_alarm_callback *callback = k_malloc(sizeof(struct k_object_alarm_callback));
     if (NULL == callback)
@@ -107,7 +107,7 @@ struct k_object_callback *k__callback_add_object_alarm(struct k_alarm_callback_m
     return &callback->object_callback;
 }
 
-struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms) {
+struct k_component_callback *k__add_component_alarm_callback(struct k_alarm_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms) {
 
     struct k_component_alarm_callback *callback = k_malloc(sizeof(struct k_component_alarm_callback));
     if (NULL == callback)
@@ -138,7 +138,7 @@ struct k_component_callback *k__callback_add_component_alarm(struct k_alarm_call
 
 /* region [del_callback] */
 
-void k__callback_del_alarm(struct k_callback_base *callback) {
+void k__del_alarm_callback(struct k_callback_base *callback) {
 
     if (K_CALLBACK_DELETED == callback->state)
         return;
@@ -183,14 +183,14 @@ void k__callback_del_alarm(struct k_callback_base *callback) {
 
 /* region [callback_manager] */
 
-void k__callback_init_alarm_manager(struct k_alarm_callback_manager *manager) {
+void k__init_alarm_callback_manager(struct k_alarm_callback_manager *manager) {
     k_list_init(&manager->callback_list);
     k_list_init(&manager->pending_list);
 }
 
-void k__callback_deinit_alarm_manager(struct k_alarm_callback_manager *manager) {
+void k__deinit_alarm_callback_manager(struct k_alarm_callback_manager *manager) {
 
-    k__callback_flush_alarm(manager);
+    k__flush_pending_alarm_callbacks(manager);
 
     struct k_alarm_callback *alarm_callback;
     struct k_list *list = &manager->callback_list;
@@ -201,7 +201,7 @@ void k__callback_deinit_alarm_manager(struct k_alarm_callback_manager *manager) 
     }
 }
 
-void k__callback_flush_alarm(struct k_alarm_callback_manager *manager) {
+void k__flush_pending_alarm_callbacks(struct k_alarm_callback_manager *manager) {
 
     struct k_alarm_callback *alarm_callback;
     struct k_list *list = &manager->pending_list;
@@ -245,7 +245,7 @@ void k__callback_flush_alarm(struct k_alarm_callback_manager *manager) {
     }
 }
 
-void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
+void k__exec_alarm_callbacks(struct k_alarm_callback_manager *manager) {
 
     /* [?] 应该使用当前时间，还是当前帧时间 */
     const uint64_t current_ms = k_get_step_timestamp();
@@ -285,7 +285,7 @@ void k__callback_exec_alarm(struct k_alarm_callback_manager *manager) {
             }
         }
 
-        k__callback_del_alarm(&alarm_callback->base);
+        k__del_alarm_callback(&alarm_callback->base);
     }
 }
 

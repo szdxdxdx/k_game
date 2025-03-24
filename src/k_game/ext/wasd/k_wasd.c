@@ -33,13 +33,13 @@ static int WASD_init(struct k_component *component, void *params) {
     return 0;
 }
 
-int k__component_def_WASD(void) {
+int k__define_component_WASD(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_WASD);
     config.fn_init = WASD_init;
 
-    struct k_component_type *type = k_component_define(NULL, &config);
+    struct k_component_type *type = k_define_component(NULL, &config);
     if (NULL == type)
         return -1;
 

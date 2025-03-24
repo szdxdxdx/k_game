@@ -8,9 +8,9 @@
 
 struct k_game_config;
 
-int k__SDL_init(const struct k_game_config *config);
+int k__init_SDL(const struct k_game_config *config);
 
-void k__SDL_quit(void);
+void k__quit_SDL(void);
 
 /* endregion */
 

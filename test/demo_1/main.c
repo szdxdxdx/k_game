@@ -13,8 +13,8 @@ static void load_sprite(void) {
 }
 
 static void load_sound(void) {
-    struct k_sound_BGM *bgm = k_sound_BGM_load("./demo_1/sound/bgm.wav");
-    k_sound_BGM_loop(bgm, INT_MAX);
+    struct k_sound_BGM *bgm = k_load_sound_BGM("./demo_1/sound/bgm.wav");
+    k_loop_sound_BGM(bgm, INT_MAX);
 }
 
 static void create_room(void) {
@@ -40,5 +40,5 @@ int main(int argc, char **argv) {
     config.window_title = "demo 1";
     config.fn_init = fn_init_game;
 
-    return k_game_run(&config);
+    return k_run_game(&config);
 }

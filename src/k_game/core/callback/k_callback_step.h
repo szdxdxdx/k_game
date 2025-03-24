@@ -12,20 +12,20 @@ struct k_step_callback_manager {
     struct k_list pending_list;
 };
 
-void k__callback_init_step_manager(struct k_step_callback_manager *manager);
+void k__init_step_callback_manager(struct k_step_callback_manager *manager);
 
-void k__callback_deinit_step_manager(struct k_step_callback_manager *manager);
+void k__deinit_step_callback_manager(struct k_step_callback_manager *manager);
 
-void k__callback_flush_step(struct k_step_callback_manager *manager);
+void k__flush_pending_step_callback(struct k_step_callback_manager *manager);
 
-void k__callback_exec_step(struct k_step_callback_manager *manager);
+void k__exec_step_callbacks(struct k_step_callback_manager *manager);
 
-struct k_room_callback *k__callback_add_room_step(struct k_step_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k__add_room_step_callback(struct k_step_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data));
 
-struct k_object_callback *k__callback_add_object_step(struct k_step_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object));
+struct k_object_callback *k__add_object_step_callback(struct k_step_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object));
 
-struct k_component_callback *k__callback_add_component_step(struct k_step_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component));
+struct k_component_callback *k__add_component_step_callback(struct k_step_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component));
 
-void k__callback_del_step(struct k_callback_base *callback);
+void k__del_step_callback(struct k_callback_base *callback);
 
 #endif

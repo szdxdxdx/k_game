@@ -53,13 +53,13 @@ static int sprite_renderer_init(struct k_component *component, void *params) {
 
 static struct k_component_type *K__COMPONENT_TYPE_SPRITE_RENDERER = NULL;
 
-int k__component_def_sprite_renderer(void) {
+int k__define_component_sprite_renderer(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_sprite_renderer);
     config.fn_init = sprite_renderer_init;
 
-    K__COMPONENT_TYPE_SPRITE_RENDERER = k_component_define(NULL, &config);
+    K__COMPONENT_TYPE_SPRITE_RENDERER = k_define_component(NULL, &config);
     if (NULL == K__COMPONENT_TYPE_SPRITE_RENDERER)
         return -1;
 

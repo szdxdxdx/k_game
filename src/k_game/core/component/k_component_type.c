@@ -114,7 +114,7 @@ static struct k_seq_step steps[] = {
 
 /* endregion */
 
-struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
+struct k_component_type *k_define_component(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
 
     struct step_context ctx;
     ctx.manager_config = manager_config;
@@ -160,7 +160,7 @@ int k_component_type_set_name(struct k_component_type *component_type, const cha
     return k__asset_set_name(&component_type_registry, &component_type->registry_node, type_name);
 }
 
-struct k_component_type *k_component_type_find(const char *type_name) {
+struct k_component_type *k_find_component_type(const char *type_name) {
 
     struct k_asset_registry_node *registry_node = k__asset_registry_find(&component_type_registry, type_name);
     if (NULL == registry_node)

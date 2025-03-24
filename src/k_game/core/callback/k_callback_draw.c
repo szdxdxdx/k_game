@@ -163,7 +163,7 @@ struct k_component_draw_callback {
 
 /* region [add_callback] */
 
-struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data), int z_group, int z_layer) {
+struct k_room_callback *k__add_room_draw_callback(struct k_draw_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data), int z_group, int z_layer) {
 
     struct k_draw_callback_layer *layer = find_or_create_layer(manager, z_group, z_layer);
     if (NULL == layer)
@@ -190,7 +190,7 @@ struct k_room_callback *k__callback_add_room_draw(struct k_draw_callback_manager
     return &callback->room_callback;
 }
 
-struct k_object_callback *k__callback_add_object_draw(struct k_draw_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object), int z_group, int z_layer) {
+struct k_object_callback *k__add_object_draw_callback(struct k_draw_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object), int z_group, int z_layer) {
 
     struct k_draw_callback_layer *layer = find_or_create_layer(manager, z_group, z_layer);
     if (NULL == layer)
@@ -217,7 +217,7 @@ struct k_object_callback *k__callback_add_object_draw(struct k_draw_callback_man
     return &callback->object_callback;
 }
 
-struct k_component_callback *k__callback_add_component_draw(struct k_draw_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component), int z_group, int z_layer) {
+struct k_component_callback *k__add_component_draw_callback(struct k_draw_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component), int z_group, int z_layer) {
 
     struct k_draw_callback_layer *layer = find_or_create_layer(manager, z_group, z_layer);
     if (NULL == layer)
@@ -248,7 +248,7 @@ struct k_component_callback *k__callback_add_component_draw(struct k_draw_callba
 
 /* region [del_callback] */
 
-void k__callback_del_draw(struct k_callback_base *callback) {
+void k__del_draw_callback(struct k_callback_base *callback) {
 
     if (K_CALLBACK_DELETED == callback->state)
         return;
@@ -290,7 +290,7 @@ void k__callback_del_draw(struct k_callback_base *callback) {
 
 /* region [callback_manager] */
 
-int k__callback_init_draw_manager(struct k_draw_callback_manager *manager) {
+int k__init_draw_callback_manager(struct k_draw_callback_manager *manager) {
 
     size_t buckets_num = 16;
     struct k_hash_list *buckets = k_malloc(sizeof(struct k_hash_list) * buckets_num);
@@ -306,9 +306,9 @@ int k__callback_init_draw_manager(struct k_draw_callback_manager *manager) {
     return 0;
 }
 
-void k__callback_deinit_draw_manager(struct k_draw_callback_manager *manager) {
+void k__deinit_draw_callback_manager(struct k_draw_callback_manager *manager) {
 
-    k__callback_flush_draw(manager);
+    k__flush_pending_draw_callbacks(manager);
 
     struct k_draw_callback_group *group;
     struct k_list *group_list = &manager->group_list;
@@ -337,7 +337,7 @@ void k__callback_deinit_draw_manager(struct k_draw_callback_manager *manager) {
     k_free(manager->group_map.buckets);
 }
 
-void k__callback_flush_draw(struct k_draw_callback_manager *manager) {
+void k__flush_pending_draw_callbacks(struct k_draw_callback_manager *manager) {
 
     struct k_draw_callback *draw_callback;
     struct k_list *callback_pending_list = &manager->callback_pending_list;
@@ -363,7 +363,7 @@ void k__callback_flush_draw(struct k_draw_callback_manager *manager) {
     }
 }
 
-void k__callback_exec_draw(struct k_draw_callback_manager *manager) {
+void k__exec_draw_callbacks(struct k_draw_callback_manager *manager) {
 
     struct k_draw_callback_group *group;
     struct k_list *group_list = &manager->group_list;

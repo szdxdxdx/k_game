@@ -110,14 +110,14 @@ void position_fini(struct k_component *component) {
 
 static struct k_component_type *K__COMPONENT_TYPE_POSITION = NULL;
 
-int k__component_def_position(void) {
+int k__define_component_position(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_position);
     config.fn_init   = position_init;
     config.fn_fini   = position_fini;
 
-    K__COMPONENT_TYPE_POSITION = k_component_define(NULL, &config);
+    K__COMPONENT_TYPE_POSITION = k_define_component(NULL, &config);
     if (NULL == K__COMPONENT_TYPE_POSITION)
         return -1;
 

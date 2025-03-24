@@ -10,16 +10,16 @@ int yx_sprite_sheet_init(struct yx_sprite_sheet *sheet, const char *image_filepa
     if (scale <= 0)
         return -1;
 
-    struct k_image *image = k_image_load(image_filepath);
+    struct k_image *image = k_load_image(image_filepath);
     if (NULL == image)
         return -1;
 
     if (1.0f != scale) {
         float scaled_w = (float)k_image_get_width(image) * scale;
         float scaled_h = (float)k_image_get_height(image) * scale;
-        struct k_image *scaled_image = k_image_scale(image, (int)scaled_w, (int)scaled_h);
+        struct k_image *scaled_image = k_scale_image(image, (int)scaled_w, (int)scaled_h);
         if (NULL == scaled_image) {
-            k_image_release(image);
+            k_release_image(image);
             return -1;
         }
 
@@ -28,13 +28,13 @@ int yx_sprite_sheet_init(struct yx_sprite_sheet *sheet, const char *image_filepa
 
     char *buf = k_read_txt_file(config_filepath, NULL, 0, NULL);
     if (NULL == buf) {
-        k_image_release(image);
+        k_release_image(image);
         return -1;
     }
 
     struct k_json *config = k_json_parse(buf);
     if (NULL == config) {
-        k_image_release(image);
+        k_release_image(image);
         free(buf);
         return -1;
     }
@@ -115,7 +115,7 @@ struct k_sprite *yx_sprite_load_from_sheet(struct yx_sprite_sheet *sheet, const 
         frame_config[frame_idx].delay    = delay;
     }
 
-    struct k_sprite *sprite = k_sprite_create(&spr_config);
+    struct k_sprite *sprite = k_create_sprite(&spr_config);
 
     free(frame_config);
     return sprite;

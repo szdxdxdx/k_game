@@ -12,11 +12,11 @@ struct k_image;
 
 /* region [image_load] */
 
-struct k_image *k_image_load(const char *filepath);
+struct k_image *k_load_image(const char *filepath);
 
 int k_image_set_name(struct k_image *image, const char *image_name);
 
-struct k_image *k_image_find(const char *image_name);
+struct k_image *k_find_image(const char *image_name);
 
 /**
  * \brief 释放图片资源
@@ -24,7 +24,7 @@ struct k_image *k_image_find(const char *image_name);
  * 释放图片资源前，请确保该图片没有被引用。
  * 若有精灵引用了该图片，释放图片后，精灵持有的图片指针将变为悬空指针。
  */
-void k_image_release(struct k_image *image);
+void k_release_image(struct k_image *image);
 
 /* endregion */
 
@@ -38,7 +38,7 @@ int k_image_get_height(struct k_image *image);
 
 /* region [image_transform] */
 
-struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h);
+struct k_image *k_scale_image(struct k_image *image, int scaled_w, int scaled_h);
 
 /* endregion */
 
@@ -76,7 +76,7 @@ struct k_image_draw_options {
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
-int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const struct k_float_rect *dst_rect, struct k_image_draw_options *options);
+int k_draw_image(struct k_image *image, const struct k_int_rect *src_rect, const struct k_float_rect *dst_rect, struct k_image_draw_options *options);
 
 /* endregion */
 

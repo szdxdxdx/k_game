@@ -3,9 +3,9 @@
 
 /* region [room_callback] */
 
-void k_room_clean_canvas(void *unused);
+void k_clean_room_canvas(void *unused);
 
-void k_room_draw_grid(void *unused);
+void k_draw_grid(void *unused);
 
 /* endregion */
 
