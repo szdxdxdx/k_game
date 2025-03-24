@@ -1,5 +1,7 @@
 #include "./_internal.h"
 
+/* region [component_define] */
+
 struct k_component_type *K__COMPONENT_TYPE_COLLISION = NULL;
 
 int k__component_def_collision_box(void) {
@@ -21,7 +23,9 @@ int k__component_def_collision_box(void) {
     return 0;
 }
 
-/* region [room_add_collision_manager] */
+/* endregion */
+
+/* region [room_add_component_manager] */
 
 int k_room_add_collision_manager(void) {
     return k_room_add_component_manager(K__COMPONENT_TYPE_COLLISION, NULL);;
@@ -29,7 +33,7 @@ int k_room_add_collision_manager(void) {
 
 /* endregion */
 
-/* region [object_add_collision_box] */
+/* region [object_add_component] */
 
 static struct k_collision_box *k_object_add_collision_box(struct k_object *object, enum k_collision_box_type type, void *config) {
 

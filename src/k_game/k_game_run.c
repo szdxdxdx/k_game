@@ -15,6 +15,7 @@
 #include "./ext/wasd/_public.h"
 #include "./ext/sprite_renderer/_public.h"
 #include "./ext/collision/_public.h"
+#include "./ext/position/_public.h"
 
 /* region [steps] */
 
@@ -114,6 +115,7 @@ static int step_define_components(void *unused) {
     return k__component_def_WASD()
         || k__component_def_sprite_renderer()
         || k__component_def_collision_box()
+        || k__component_def_position()
      ? -1 : 0;
 }
 

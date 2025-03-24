@@ -1,4 +1,5 @@
-#include <math.h>
+#include "k_math.h"
+
 #include "../_internal.h"
 
 /* region [bullet] */
@@ -43,32 +44,20 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 
     float mouse_x = (float)k_mouse_x();
     float mouse_y = (float)k_mouse_y();
-    float weapon_x = weapon->position.x;
-    float weapon_y = weapon->position.y;
-
-    float angle;
-    if (mouse_x != weapon_x)
-        angle = atanf((mouse_y - weapon_y) / (mouse_x - weapon_x));
-    else
-        angle = 0.0f;
+    float weapon_x = weapon->x;
+    float weapon_y = weapon->y;
 
     float cos_angle;
     float sin_angle;
-    float speed = 300.0f;
-    if (mouse_x < weapon_x) {
-        cos_angle = -cosf(angle);
-        sin_angle = -sinf(angle);
-    } else {
-        cos_angle = cosf(angle);
-        sin_angle = sinf(angle);
+    calc_vec_cos_and_sin(weapon_x, weapon_y, mouse_x, mouse_y, &cos_angle, &sin_angle);
 
-    }
+    float speed = 300.0f;
 
     bullet->velocity_x = cos_angle * speed;
     bullet->velocity_y = sin_angle * speed;
 
-    bullet->position.x = weapon->position.x + cos_angle * 20;
-    bullet->position.y = weapon->position.y + sin_angle * 20;
+    bullet->position.x = weapon->x + cos_angle * 20;
+    bullet->position.y = weapon->y + sin_angle * 20;
 
     k_object_add_step_callback(obj_bullet, bullet_move);
 
@@ -99,17 +88,22 @@ static void draw_weapon(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
     float mouse_x = (float)k_mouse_x();
-    float mouse_y = (float)k_mouse_y();
-    float weapon_x = weapon->position.x;
-    float weapon_y = weapon->position.y;
-    float angle = atanf((mouse_y - weapon_y) / (mouse_x - weapon_x)) / 3.14159265358979323846f * 180;
+    float weapon_x = weapon->x;
 
-    if (weapon_x < mouse_x)
-        k_sprite_renderer_flip_x(weapon->spr_rdr, 1);
-    else
-        k_sprite_renderer_flip_x(weapon->spr_rdr, 0);
+    if (mouse_x != weapon_x) {
+        float mouse_y = (float)k_mouse_y();
+        float weapon_y = weapon->y;
 
-    k_sprite_renderer_rotate(weapon->spr_rdr, angle);
+        float angle = atanf((mouse_y - weapon_y) / (mouse_x - weapon_x));
+        angle *= 180.0f / 3.1415926f;
+
+        k_sprite_renderer_rotate(weapon->spr_rdr, angle);
+
+        if (weapon_x < mouse_x)
+            k_sprite_renderer_flip_x(weapon->spr_rdr, 1);
+        else
+            k_sprite_renderer_flip_x(weapon->spr_rdr, 0);
+    }
 }
 
 void mouse_drag(struct k_object *object) {
@@ -117,41 +111,48 @@ void mouse_drag(struct k_object *object) {
 
     if (k_key_down(K_KEY_LEFT_SHIFT)) {
 
-        float x = (float)k_mouse_x() - weapon->position.parent->x - 4;
-        float y = (float)k_mouse_y() - weapon->position.parent->y + 2;
-        k_position_set(&weapon->position, x, y);
+        float x = (float)k_mouse_x();
+        float y = (float)k_mouse_y();
+        k_position_set(weapon->position, x, y);
     }
 }
 
 void after_move(void *data) {
     struct yx_obj_weapon *weapon = data;
-    k_sprite_renderer_set_z_layer(weapon->spr_rdr, (int)weapon->position.y);
+    k_sprite_renderer_set_z_layer(weapon->spr_rdr, (int)weapon->y);
 }
 
 struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *config) {
+
     struct k_object *object = k_object_create(sizeof(struct yx_obj_weapon));
-
-    struct yx_obj_weapon *weapon = k_object_get_data(object);
-    weapon->object = object;
-
-    k_position_init(&weapon->position, config->parent_position, 0, 1);
-    weapon->position.data = weapon;
-    weapon->position.fn_after_move = after_move;
-
-    {
-        struct k_sprite_renderer_config renderer_config;
-        renderer_config.x       = &weapon->position.x;
-        renderer_config.y       = &weapon->position.y;
-        renderer_config.sprite  = yx_spr_iris_gun;
-        renderer_config.z_group = 0;
-        renderer_config.z_layer = (int)weapon->position.y;
-        weapon->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
-    }
 
     k_object_add_step_callback(object, draw_weapon);
     k_object_add_step_callback(object, shoot);
-
     k_object_add_step_callback(object, mouse_drag);
+
+    struct yx_obj_weapon *weapon = k_object_get_data(object);
+
+    weapon->object = object;
+
+    {
+        struct k_position_config position_config;
+        position_config.x      = &weapon->x;
+        position_config.y      = &weapon->y;
+        position_config.parent = config->parent;
+        position_config.rel_x  = 0;
+        position_config.rel_y  = 1;
+        weapon->position = k_object_add_position(object, &position_config);
+    }
+
+    {
+        struct k_sprite_renderer_config renderer_config;
+        renderer_config.x       = &weapon->x;
+        renderer_config.y       = &weapon->y;
+        renderer_config.sprite  = yx_spr_iris_gun;
+        renderer_config.z_group = 0;
+        renderer_config.z_layer = (int)weapon->y;
+        weapon->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
+    }
 
     return weapon;
 }

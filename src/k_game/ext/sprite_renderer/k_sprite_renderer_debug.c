@@ -47,7 +47,7 @@ static void draw_debug_rect(struct k_component *component) {
         y4 = -oy;
     }
 
-    angle *= (3.14159265358979323846f / 180.0f);
+    angle *= (3.1415926f / 180.0f);
     float s = sinf(angle);
     float c = cosf(angle);
     {

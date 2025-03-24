@@ -14,7 +14,7 @@ static void draw_sprite(struct k_component *component) {
     struct k_sprite *sprite = renderer->sprite;
     size_t frame_idx_last = k_sprite_get_frames_num(sprite) - 1;
     while (1) {
-        float delay = (float)k_sprite_get_frame_delay(sprite, renderer->frame_idx) / 1000;
+        float delay = (float)k_sprite_get_frame_delay(sprite, renderer->frame_idx) / 1000.0f;
 
         if (renderer->timer < delay) {
             break;

@@ -3,22 +3,19 @@
 static void player_step_set_state(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    struct k_position *position = &player->position;
-    struct k_float_vec2 *next_position = &player->position_next;
-
     enum yx_obj_player_state state = YX_OBJ_PLAYER_STATE_IDLE;
-    if (next_position->x < position->x) {
+    if (player->next_x < player->x) {
         state = YX_OBJ_PLAYER_STATE_RUN;
         player->face = -1;
     }
-    else if (next_position->x > position->x) {
+    else if (player->next_x > player->x) {
         state = YX_OBJ_PLAYER_STATE_RUN;
         player->face = 1;
     }
 
-    if (next_position->y != position->y) {
+    if (player->next_y != player->y) {
         state = YX_OBJ_PLAYER_STATE_RUN;
-        k_sprite_renderer_set_z_layer(player->spr_rdr, (int)next_position->y);
+        k_sprite_renderer_set_z_layer(player->spr_rdr, (int)player->next_y);
     }
 
     switch (state) {
@@ -52,7 +49,7 @@ static void player_step_set_state(struct k_object *object) {
         }
     }
 
-    k_position_set(position, next_position->x, next_position->y);
+    k_position_set_rel(player->position, player->next_x, player->next_y);
 }
 
 static void player_step(struct k_object *object) {
@@ -107,23 +104,19 @@ static void player_touch_bubble(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     float padding = 6;
-    float x1 = player->position.x - padding;
-    float y1 = player->position.y - padding;
-    float x2 = player->position.x + padding;
-    float y2 = player->position.y + padding;
+    float x1 = player->x - padding;
+    float y1 = player->y - padding;
+    float x2 = player->x + padding;
+    float y2 = player->y + padding;
     struct k_collision_box *box = k_collision_check_rectangle(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
     if (NULL != box)
         yx_bubble_pop(k_collision_box_get_object(box));
 }
 
 static void player_destroy(struct k_object *object) {
-    struct yx_obj_player *player = k_object_get_data(object);
 
-    if (k_key_pressed('K')) {
-
-        k_position_fini(&player->position);
+    if (k_key_pressed('K'))
         k_object_destroy(object);
-    }
 }
 
 struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
@@ -137,16 +130,18 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     struct yx_obj_player *player = k_object_get_data(object);
 
-    k_position_init(&player->position, NULL, config->x, config->y);
-
-    player->position_next.x = config->x;
-    player->position_next.y = config->y;
-
     player->state = YX_OBJ_PLAYER_STATE_IDLE;
     player->face  = -1;
 
-    player->spr_idle = config->spr_idle;
-    player->spr_run  = config->spr_run;
+    {
+        struct k_position_config position_config;
+        position_config.parent = NULL;
+        position_config.x     = &player->x;
+        position_config.y     = &player->y;
+        position_config.rel_x = config->x;
+        position_config.rel_y = config->y;
+        player->position = k_object_add_position(object, &position_config);
+    }
 
     {
         struct k_component_type *WASD = k_component_type_find("k/WASD");
@@ -156,15 +151,21 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
         WASD_config.key_down  = 'S';
         WASD_config.key_right = 'D';
         WASD_config.speed     = 192.0f;
-        WASD_config.x         = &player->position_next.x;
-        WASD_config.y         = &player->position_next.y;
+        WASD_config.x         = &player->next_x;
+        WASD_config.y         = &player->next_y;
         player->WASD = k_object_add_component(object, WASD, &WASD_config);
+
+        player->next_x = config->x;
+        player->next_y = config->y;
     }
 
     {
+        player->spr_idle = config->spr_idle;
+        player->spr_run  = config->spr_run;
+
         struct k_sprite_renderer_config renderer_config;
-        renderer_config.x       = &player->position.x;
-        renderer_config.y       = &player->position.y;
+        renderer_config.x       = &player->x;
+        renderer_config.y       = &player->y;
         renderer_config.sprite  = player->spr_idle;
         renderer_config.z_group = 0;
         renderer_config.z_layer = (int)config->y;
@@ -173,7 +174,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     {
         struct yx_obj_weapon_config weapon_config;
-        weapon_config.parent_position = &player->position;
+        weapon_config.parent = player->position;
         player->weapon = yx_obj_weapon_create(&weapon_config);
     }
 

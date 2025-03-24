@@ -21,16 +21,19 @@ enum yx_obj_player_state {
 };
 
 struct yx_obj_player {
-    struct k_position position;
 
-    struct k_float_vec2 position_next;
+    struct k_position *position;
+    float x;
+    float y;
+
+    struct k_component *WASD;
+    float next_x;
+    float next_y;
 
     int state;
     int face;
 
-    struct k_component *WASD;
     struct k_sprite_renderer *spr_rdr;
-
     struct k_sprite *spr_idle;
     struct k_sprite *spr_run;
 

@@ -5,26 +5,25 @@
 
 #include "../core/k_game_rect.h"
 
-struct k_position {
-    struct k_list_node list_node;
-    struct k_list list;
+struct k_position;
 
-    float x;
-    float y;
+struct k_position_config {
+
+    float *x;
+    float *y;
 
     struct k_position *parent;
+
     float rel_x;
     float rel_y;
-
-    void *data;
-
-    void (*fn_after_move)(void *data);
 };
 
-void k_position_init(struct k_position *self, struct k_position *parent, float rel_x, float rel_y);
+struct k_position *k_object_add_position(struct k_object *object, const struct k_position_config *config);
 
-void k_position_fini(struct k_position *self);
+void k_object_del_position(struct k_position *position);
 
-void k_position_set(struct k_position *self, float rel_x, float rel_y);
+void k_position_set(struct k_position *self, float x, float y);
+
+void k_position_set_rel(struct k_position *self, float rel_x, float rel_y);
 
 #endif
