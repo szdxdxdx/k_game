@@ -49,7 +49,7 @@ static void player_step_set_state(struct k_object *object) {
         }
     }
 
-    k_position_set_rel(player->position, player->next_x, player->next_y);
+    k_position_set_local_position(player->position, player->next_x, player->next_y);
 }
 
 static void player_step(struct k_object *object) {
@@ -136,10 +136,10 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     {
         struct k_position_config position_config;
         position_config.parent = NULL;
-        position_config.x     = &player->x;
-        position_config.y     = &player->y;
-        position_config.rel_x = config->x;
-        position_config.rel_y = config->y;
+        position_config.world_x     = &player->x;
+        position_config.world_y     = &player->y;
+        position_config.local_x = config->x;
+        position_config.local_y = config->y;
         player->position = k_object_add_position(object, &position_config);
     }
 

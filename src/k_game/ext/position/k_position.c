@@ -13,12 +13,12 @@ static void world_init(void) {
 
     world.component = NULL;
 
-    world.x = &x;
-    world.y = &y;
+    world.world_x = &x;
+    world.world_y = &y;
 
     world.parent = NULL;
-    world.rel_x  = 0;
-    world.rel_y  = 0;
+    world.local_x  = 0;
+    world.local_y  = 0;
 
     k_list_init(&world.list);
 }
@@ -29,31 +29,31 @@ static void world_init(void) {
 
 static void update_position(struct k_position *self) {
 
-    *(self->x) = *(self->parent->x) + self->rel_x;
-    *(self->y) = *(self->parent->y) + self->rel_y;
+    *(self->world_x) = *(self->parent->world_x) + self->local_x;
+    *(self->world_y) = *(self->parent->world_y) + self->local_y;
 
     struct k_position *child;
     struct k_list *list = &self->list;
-    struct k_list_node *iter, *next;
-    for (k_list_for_each_s(list, iter, next)) {
+    struct k_list_node *iter;
+    for (k_list_for_each(list, iter)) {
         child = container_of(iter, struct k_position, list_node);
 
         update_position(child);
     }
 }
 
-void k_position_set(struct k_position *self, float x, float y) {
+void k_position_set_world_position(struct k_position *self, float world_x, float world_y) {
 
-    self->rel_x = x - *(self->parent->x);
-    self->rel_y = y - *(self->parent->y);
+    self->local_x = world_x - *(self->parent->world_x);
+    self->local_y = world_y - *(self->parent->world_y);
 
     update_position(self);
 }
 
-void k_position_set_rel(struct k_position *self, float rel_x, float rel_y) {
+void k_position_set_local_position(struct k_position *self, float local_x, float local_y) {
 
-    self->rel_x = rel_x;
-    self->rel_y = rel_y;
+    self->local_x = local_x;
+    self->local_y = local_y;
 
     update_position(self);
 }
@@ -74,15 +74,16 @@ int position_init(struct k_component *component, void *params) {
 
     k_list_add_tail(&parent->list, &self->list_node);
 
-    self->x = config->x;
-    self->y = config->y;
+    self->world_x = config->world_x;
+    self->world_y = config->world_y;
 
     self->parent = parent;
-    self->rel_x = config->rel_x;
-    self->rel_y = config->rel_y;
 
-    *(self->x) = *(self->parent->x) + self->rel_x;
-    *(self->y) = *(self->parent->y) + self->rel_y;
+    self->local_x = config->local_x;
+    self->local_y = config->local_y;
+
+    *(self->world_x) = *(self->parent->world_x) + self->local_x;
+    *(self->world_y) = *(self->parent->world_y) + self->local_y;
     return 0;
 }
 
@@ -99,8 +100,8 @@ void position_fini(struct k_component *component) {
 
         k_list_add_tail(&parent->list, &child->list_node);
         child->parent = parent;
-        child->rel_x += self->rel_x;
-        child->rel_y += self->rel_y;
+        child->local_x += self->local_x;
+        child->local_y += self->local_y;
     }
 }
 

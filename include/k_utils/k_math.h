@@ -6,8 +6,8 @@
 /**
  * \brief 计算向量方向角的余弦值和正弦值
  *
- * 函数计算从 (ox, oy) 到 (x, y) 的向量的方向角的余弦值和正弦值。
- * 零向量的方向定义为 x 轴正方向。
+ * 函数计算从 (ox, oy) 到 (world_x, world_y) 的向量的方向角的余弦值和正弦值。
+ * 零向量的方向定义为 world_x 轴正方向。
  */
 static inline void k_calc_vec_cos_and_sin(float ox, float oy, float x, float y, float *get_cos, float *get_sin) {
 

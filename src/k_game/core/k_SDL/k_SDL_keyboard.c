@@ -165,7 +165,7 @@ static void refresh_key_state(enum k_keyboard_key key) {
     }
 }
 
-void k__refresh_key_state(void) {
+void k__refresh_keyboard_key_state(void) {
 
     size_t key = 0;
     for (; key < K_KEY_ENUM_END; key++)

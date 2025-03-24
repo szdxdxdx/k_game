@@ -7,7 +7,7 @@
 
 /* region [keyboard] */
 
-void k__refresh_key_state(void);
+void k__refresh_keyboard_key_state(void);
 void k__handle_SDL_event_key_down(SDL_KeyboardEvent *event);
 void k__handle_SDL_event_key_up(SDL_KeyboardEvent *event);
 

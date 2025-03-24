@@ -8,17 +8,18 @@ struct yx_obj_bullet {
 
     float velocity_x;
     float velocity_y;
-    struct k_float_vec2 position;
+    float x;
+    float y;
 };
 
 static void bullet_touch_bubble(struct k_object *object) {
     struct yx_obj_bullet *bullet = k_object_get_data(object);
 
     float padding = 2;
-    float x1 = bullet->position.x - padding;
-    float y1 = bullet->position.y - padding;
-    float x2 = bullet->position.x + padding;
-    float y2 = bullet->position.y + padding;
+    float x1 = bullet->x - padding;
+    float y1 = bullet->y - padding;
+    float x2 = bullet->x + padding;
+    float y2 = bullet->y + padding;
     struct k_collision_box *box = k_collision_check_rectangle(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
     if (NULL != box)
         yx_bubble_pop(k_collision_box_get_object(box));
@@ -28,11 +29,11 @@ static void bullet_move(struct k_object *object) {
     struct yx_obj_bullet *bullet = k_object_get_data(object);
 
     float delta = k_get_step_delta();
-    bullet->position.x += bullet->velocity_x * delta;
-    bullet->position.y += bullet->velocity_y * delta;
+    bullet->x += bullet->velocity_x * delta;
+    bullet->y += bullet->velocity_y * delta;
 
-    if (   bullet->position.x < 0 || bullet->position.x > k_room_get_width()
-        || bullet->position.y < 0 || bullet->position.y > k_room_get_height()
+    if (   bullet->x < 0 || bullet->x > k_room_get_width()
+        || bullet->y < 0 || bullet->y > k_room_get_height()
     ) {
         k_object_destroy(object);
     }
@@ -56,14 +57,14 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
     bullet->velocity_x = cos_angle * speed;
     bullet->velocity_y = sin_angle * speed;
 
-    bullet->position.x = weapon->x + cos_angle * 20;
-    bullet->position.y = weapon->y + sin_angle * 20;
+    bullet->x = weapon->x + cos_angle * 20;
+    bullet->y = weapon->y + sin_angle * 20;
 
     k_object_add_step_callback(obj_bullet, bullet_move);
 
     struct k_sprite_renderer_config renderer_config;
-    renderer_config.x       = &bullet->position.x;
-    renderer_config.y       = &bullet->position.y;
+    renderer_config.x       = &bullet->x;
+    renderer_config.y       = &bullet->y;
     renderer_config.sprite  = yx_spr_iris_bullet;
     renderer_config.z_group = 0;
     renderer_config.z_layer = 10000;
@@ -110,15 +111,12 @@ void mouse_drag(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
     if (k_key_down(K_KEY_LEFT_SHIFT)) {
-
-        float x = (float)k_mouse_x();
-        float y = (float)k_mouse_y();
-        k_position_set(weapon->position, x, y);
+        k_position_set_world_position(weapon->position, (float)k_mouse_x(), (float)k_mouse_y());
     }
 }
 
-void after_move(void *data) {
-    struct yx_obj_weapon *weapon = data;
+void after_move(struct k_object *object) {
+    struct yx_obj_weapon *weapon = k_object_get_data(object);
     k_sprite_renderer_set_z_layer(weapon->spr_rdr, (int)weapon->y);
 }
 
@@ -129,6 +127,7 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
     k_object_add_step_callback(object, draw_weapon);
     k_object_add_step_callback(object, shoot);
     k_object_add_step_callback(object, mouse_drag);
+    k_object_add_step_end_callback(object, after_move);
 
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
@@ -136,11 +135,11 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
 
     {
         struct k_position_config position_config;
-        position_config.x      = &weapon->x;
-        position_config.y      = &weapon->y;
+        position_config.world_x      = &weapon->x;
+        position_config.world_y      = &weapon->y;
         position_config.parent = config->parent;
-        position_config.rel_x  = 0;
-        position_config.rel_y  = 1;
+        position_config.local_x  = 0;
+        position_config.local_y  = 1;
         weapon->position = k_object_add_position(object, &position_config);
     }
 

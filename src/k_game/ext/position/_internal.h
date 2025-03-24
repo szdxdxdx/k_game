@@ -12,13 +12,13 @@ struct k_position {
 
     struct k_component *component;
 
-    float *x;
-    float *y;
+    float *world_x;
+    float *world_y;
 
     struct k_position *parent;
 
-    float rel_x;
-    float rel_y;
+    float local_x;
+    float local_y;
 
     struct k_list list;
 };

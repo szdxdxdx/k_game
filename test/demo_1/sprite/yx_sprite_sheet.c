@@ -105,8 +105,8 @@ struct k_sprite *yx_load_sprite_from_sheet(struct yx_sprite_sheet *sheet, const 
         struct k_json *j_frame_i = k_json_arr_get(j_frames, from + frame_idx);
         j_frame = k_json_obj_get(j_frame_i, "frame");
 
-        int x     = k_json_num_get_i(k_json_obj_get(j_frame, "x"));
-        int y     = k_json_num_get_i(k_json_obj_get(j_frame, "y"));
+        int x     = k_json_num_get_i(k_json_obj_get(j_frame, "world_x"));
+        int y     = k_json_num_get_i(k_json_obj_get(j_frame, "world_y"));
         int delay = k_json_num_get_i(k_json_obj_get(j_frame_i, "duration"));
 
         frame_config[frame_idx].image    = sheet->image;

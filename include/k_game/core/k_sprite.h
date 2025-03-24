@@ -193,7 +193,7 @@ struct k_sprite_draw_options {
 /**
  * \brief 绘制精灵帧
  *
- * `frame_idx` 指定要绘制帧的索引，`x` 和 `y` 指定精灵原点的绘制位置坐标。
+ * `frame_idx` 指定要绘制帧的索引，`world_x` 和 `world_y` 指定精灵原点的绘制位置坐标。
  * `options` 用于执行缩放、旋转和翻转变换，若为 `NULL` 则不应用任何变换。
  *
  * 请确保 `sprite` 是有效的指针，`frame_idx` 是有效的索引值。

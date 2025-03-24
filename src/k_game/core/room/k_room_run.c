@@ -12,6 +12,8 @@ void k__room_run(struct k_room *room) {
         room->fn_enter();
 
     k__game.step_timestamp = k_get_timestamp();
+    k__game.step_delta_ms  = 0;
+    k__game.step_delta     = 0.0f;
     while (room->game_loop) {
 
         k__handle_SDL_event_with_frame_delay(room->step_interval_ms);
@@ -25,13 +27,13 @@ void k__room_run(struct k_room *room) {
         k__step_callback_manager_flush(&room->step_callback_manager);
         k__step_callback_manager_exec(&room->step_callback_manager);
 
+        k__step_callback_manager_flush(&room->step_end_callback_manager);
+        k__step_callback_manager_exec(&room->step_end_callback_manager);
+
         k__draw_callback_manager_flush(&room->draw_callback_manager);
         k__draw_callback_manager_exec(&room->draw_callback_manager);
 
         SDL_RenderPresent(k__window.renderer);
-
-        k__step_callback_manager_flush(&room->step_end_callback_manager);
-        k__step_callback_manager_exec(&room->step_end_callback_manager);
     }
 
     if (NULL != room->fn_leave)
