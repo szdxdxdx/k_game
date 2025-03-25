@@ -43,11 +43,19 @@ struct k_collision_box_config {
 
 /* region [collision_box] */
 
+struct k_collision_point {
+    float offset_x;
+    float offset_y;
+};
+
+struct k_collision_line {
+    float offset_x1;
+    float offset_y1;
+    float offset_x2;
+    float offset_y2;
+};
+
 struct k_collision_rectangle {
-
-    float *x;
-    float *y;
-
     float offset_x1;
     float offset_y1;
     float offset_x2;
@@ -55,10 +63,6 @@ struct k_collision_rectangle {
 };
 
 struct k_collision_circle {
-
-    float *x;
-    float *y;
-
     float offset_cx;
     float offset_cy;
     float r;
@@ -70,11 +74,16 @@ struct k_collision_box {
 
     struct k_component *component;
 
+    float *x;
+    float *y;
+
     enum k_collision_box_type type;
 
     union {
+        struct k_collision_point point;
+        struct k_collision_line line;
         struct k_collision_rectangle rect;
-        struct k_collision_circle    circle;
+        struct k_collision_circle circle;
     };
 };
 
@@ -88,7 +97,7 @@ void k__collision_box_fini(struct k_component *component);
 
 struct k_collision_group {
 
-    struct k_int_map_node map_node;
+    struct k_int_map_node group_map_node;
 
     struct k_list box_list;
 };
