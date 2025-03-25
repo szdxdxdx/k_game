@@ -94,11 +94,15 @@ static int check_collision_line_rect(float lx1, float ly1, float lx2, float ly2,
  */
 static int check_collision_line_circle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
 
+    if (check_collision_point_circle(x1, y1, cx, cy, r)) return 1;
+    if (check_collision_point_circle(x2, y2, cx, cy, r)) return 1;
+
     float dx = x2 - x1;
     float dy = y2 - y1;
     float t = ((cx - x1) * dx + (cy - y1) * dy) / (dx * dx + dy * dy);
-    float px = cx + t * dx;
-    float py = cy + t * dy;
+    float px = x1 + t * dx;
+    float py = y1 + t * dy;
+
     return check_collision_point_rect(px, py, x1, y1, x2, y2)
         && check_collision_point_circle(px, py, cx, cy, r);
 }

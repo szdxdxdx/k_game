@@ -15,8 +15,6 @@ struct k_object;
  * 例如：若子弹和敌人都是对象，要实现子弹击中敌人的效果，
  * 可以给敌人挂载碰撞盒，在子弹移动过程中，检测自身是否击中敌人；
  * 或给子弹挂载碰撞盒，在敌人移动过程中，检测自身是否被子弹击中。
- *
- * k_game 提供了四种不同形状的碰撞盒：点、线段、矩形和圆形。
  */
 struct k_collision_box;
 
@@ -90,7 +88,7 @@ struct k_collision_line_config {
     /**
      * \brief 线段端点坐标相对于关联坐标的偏移量
      *
-     * 若线段的端点重合，则碰撞盒退化成一个点。
+     * 若线段的端点重合，则退化成一个点。
      */
     float offset_x1;
     float offset_y1;
@@ -122,8 +120,9 @@ struct k_collision_rectangle_config {
     /**
      * \brief 矩形对角坐标相对于关联坐标的偏移量
      *
-     * 矩形的对角坐标，可以是左上角与右下角的坐标，或是左下角与右上角的坐标。
-     * 若矩形的对边或对角重合，则碰撞盒退化为一条线段或一个点。
+     * 矩形的对角坐标，可以是左上角与右下角的坐标，也可以是左下角与右上角的坐标。
+     *
+     * 若矩形的对边或对角重合，则退化成一条线段或一个点。
      */
     float offset_x1;
     float offset_y1;
@@ -158,7 +157,7 @@ struct k_collision_circle_config {
 
     /** \brief 圆的半径
      *
-     * 若半径为 0.0f 或负值，则碰撞盒退化为一个点。
+     * 若半径为 0.0f 或负值，则退化成一个点。
      */
     float r;
 };
@@ -220,6 +219,7 @@ struct k_collision_box *k_collision_check_line(int group_id, float x1, float y1,
  * 函数检查 `group_id` 的碰撞组中是否存在与该区域相交的碰撞盒，
  * 若存在，函数返回找到的第一个碰撞盒，否则返回 `NULL`。
  *
+ * 矩形的对角坐标，可以是左上角与右下角的坐标，也可以是左下角与右上角的坐标。
  * 若矩形的对边或对角重合，则检测区域退化成一条线段或一个点。
  */
 struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2);

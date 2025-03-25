@@ -20,10 +20,10 @@ static void bubble_set_state_float(struct k_object *object) {
         config.x         = &bubble->position.x;
         config.y         = &bubble->position.y;
         config.offset_x1 = 0;
-        config.offset_y1 = 0;
-        config.offset_x2 = 0;
+        config.offset_y1 = 30;
+        config.offset_x2 = 30;
         config.offset_y2 = 0;
-        // bubble->collision_box = k_object_add_collision_line(object, &config);
+        bubble->collision_box = k_object_add_collision_line(object, &config);
     }
 
     {
@@ -46,7 +46,7 @@ static void bubble_set_state_float(struct k_object *object) {
         config.offset_cx = 0;
         config.offset_cy = -8;
         config.r         = 16;
-        bubble->collision_box = k_object_add_collision_circle(object, &config);
+        // bubble->collision_box = k_object_add_collision_circle(object, &config);
     }
 }
 

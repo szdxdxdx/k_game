@@ -62,6 +62,12 @@ struct k_collision_box *k_object_add_collision_line(struct k_object *object, con
         return NULL;
 
     if (config->offset_x1 == config->offset_x2 || config->offset_y1 == config->offset_y2) {
+        /* 虽然函数的文档中说，对边重合的矩形退化成线段，但这是数学角度。
+         * 从算法角度看，矩形的碰撞检测算法更简单，所以这里将水平或竖直的线段转化为矩形。
+         *
+         * 这种“转化”不算是“退化”，其实线段的碰撞检测算法也能应对水平或竖直的边界情况，
+         * 只是说，当处于这种边界情况时，换另一个算法会更简单。
+         */
         struct k_collision_rectangle_config rect_config;
         rect_config.group_id  = config->group_id;
         rect_config.x         = config->x;

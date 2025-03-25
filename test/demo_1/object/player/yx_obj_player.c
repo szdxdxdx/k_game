@@ -107,7 +107,7 @@ static void player_touch_bubble(struct k_object *object) {
     float y1 = player->y;
     float x2 = player->weapon->x;
     float y2 = player->weapon->y;
-    struct k_collision_box *box = k_collision_check_rectangle(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
+    struct k_collision_box *box = k_collision_check_line(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
     if (NULL != box)
         yx_bubble_pop(k_collision_box_get_object(box));
 }
