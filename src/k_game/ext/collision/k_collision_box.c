@@ -14,7 +14,7 @@ int k__collision_box_init(struct k_component *component, void *params) {
 
     switch (box_config->type) {
         case K_COLLISION_RECTANGLE: {
-            struct k_collision_rectangle_config *rect_config = box_config->config;
+            const struct k_collision_rectangle_config *rect_config = box_config->config;
             box->type           = K_COLLISION_RECTANGLE;
             group_id            = rect_config->group_id;
             box->rect.x         = rect_config->x;
@@ -27,7 +27,7 @@ int k__collision_box_init(struct k_component *component, void *params) {
         }
 
         case K_COLLISION_CIRCLE: {
-            struct k_collision_circle_config *circle_config = box_config->config;
+            const struct k_collision_circle_config *circle_config = box_config->config;
             box->type             = K_COLLISION_CIRCLE;
             group_id              = circle_config->group_id;
             box->circle.x         = circle_config->x;

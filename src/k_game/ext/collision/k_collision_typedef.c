@@ -36,7 +36,7 @@ int k_room_add_collision_manager(void) {
 
 /* region [object_add_component] */
 
-struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, struct k_collision_rectangle_config *config) {
+struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, const struct k_collision_rectangle_config *config) {
 
     if (NULL == config)
         return NULL;
@@ -54,7 +54,7 @@ struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object
     return k_component_get_data(component);
 }
 
-struct k_collision_box *k_object_add_collision_circle(struct k_object *object, struct k_collision_circle_config *config) {
+struct k_collision_box *k_object_add_collision_circle(struct k_object *object, const struct k_collision_circle_config *config) {
 
     if (NULL == config)
         return NULL;

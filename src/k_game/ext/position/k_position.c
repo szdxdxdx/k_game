@@ -68,7 +68,7 @@ void k_position_set_local_position(struct k_position *self, float local_x, float
 
 int position_init(struct k_component *component, void *params) {
     struct k_position *self = k_component_get_data(component);
-    struct k_position_config *config = params;
+    const struct k_position_config *config = params;
 
     k_list_init(&self->child_list);
 

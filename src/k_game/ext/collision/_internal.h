@@ -28,13 +28,14 @@ enum k_collision_box_type {
 
     K_COLLISION_RECTANGLE,
     K_COLLISION_CIRCLE,
+    K_COLLISION_LINE,
 };
 
 struct k_collision_box_config {
 
     enum k_collision_box_type type;
 
-    void *config;
+    const void *config;
 };
 
 /* endregion */
