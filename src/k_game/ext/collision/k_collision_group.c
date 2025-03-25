@@ -18,3 +18,15 @@ struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collis
         return new_group;
     }
 }
+
+void k__collision_manager_del_group(struct k_collision_group *group) {
+
+    struct k_collision_box *box;
+    struct k_list *list = &group->box_list;
+    struct k_list_node *iter_, *next_;
+    for (k_list_for_each_s(list, iter_, next_)) {
+        box = container_of(iter_, struct k_collision_box, box_list_node);
+
+        k_object_del_component(box->component);
+    }
+}

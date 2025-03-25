@@ -102,6 +102,8 @@ struct k_collision_group {
 
 struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collision_manager *manager, int group_id);
 
+void k__collision_manager_del_group(struct k_collision_group *group);
+
 /* endregion */
 
 /* region [collision_manager] */
