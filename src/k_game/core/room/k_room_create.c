@@ -153,6 +153,13 @@ static void step_del_all_callbacks(void *context) {
     k__room_del_all_callbacks(room);
 }
 
+static void step_del_component_managers(void *context) {
+    struct step_context *ctx = context;
+    struct k_room *room = ctx->room;
+
+    k__room_del_all_component_managers(room);
+}
+
 static int step_init_object_pool(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
@@ -165,13 +172,6 @@ static void step_cleanup_object_pool(void *context) {
     struct k_room *room = ctx->room;
 
     k__object_pool_cleanup(&room->object_pool);
-}
-
-static void step_del_component_managers(void *context) {
-    struct step_context *ctx = context;
-    struct k_room *room = ctx->room;
-
-    k__room_del_all_component_managers(room);
 }
 
 static size_t id_counter = 0;
@@ -242,8 +242,8 @@ static const struct k_seq_step steps[] = {
     { step_set_properties,         NULL                          },
     { step_init_callback_managers, step_deinit_callback_managers },
     { step_init_callback_list,     step_del_all_callbacks        },
-    { step_init_object_pool,       step_cleanup_object_pool      },
     { NULL,                        step_del_component_managers   },
+    { step_init_object_pool,       step_cleanup_object_pool      },
     { step_registry_add,           step_registry_del             },
     { step_call_fn_init,           step_call_fn_cleanup          },
 };

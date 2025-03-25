@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "./_internal.h"
 
 int k__collision_manager_init(struct k_component_manager *component_manager, void *params) {
@@ -15,6 +16,32 @@ int k__collision_manager_init(struct k_component_manager *component_manager, voi
 }
 
 void k__collision_manager_fini(struct k_component_manager *component_manager) {
+    struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
 
-    /* TODO */
+    {
+        struct k_int_map *group_map = &manager->group_map;
+        struct k_hash_list *bucket;
+        struct k_hash_list_node *iter, *next;
+        for (bucket = group_map->buckets; bucket < group_map->buckets + group_map->buckets_num; bucket++) {
+            for (k_hash_list_for_each_s(bucket, iter, next)) {
+                struct k_int_map_node *map_node = container_of(iter, struct k_int_map_node, list_node);
+                struct k_collision_group *group = container_of(map_node, struct k_collision_group, group_map_node);
+
+                struct k_collision_box *box;
+                struct k_list *list = &group->box_list;
+
+                /* 销毁房间对象的时候，碰撞盒在随之被销毁了，所以每个 group 都应该是空的 */
+                assert( k_list_is_empty(list) );
+
+                struct k_list_node *iter_, *next_;
+                for (k_list_for_each_s(list, iter_, next_)) {
+                    box = container_of(iter_, struct k_collision_box, box_list_node);
+
+                    k_object_del_component(box->component);
+                }
+            }
+        }
+    }
+
+    k_free(manager->group_map.buckets);
 }

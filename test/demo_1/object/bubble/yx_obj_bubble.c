@@ -66,7 +66,7 @@ struct k_object *yx_bubble_create(float x, float y) {
         config.z_layer  = (int)y;
         bubble->spr_rdr = k_object_add_sprite_renderer(object, &config);
 
-       // k_sprite_renderer_set_loop_callback(bubble->spr_rdr, bubble_set_state_float);
+        k_sprite_renderer_set_loop_callback(bubble->spr_rdr, bubble_set_state_float);
         k_sprite_renderer_set_loop(bubble->spr_rdr, 1);
     }
 

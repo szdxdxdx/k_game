@@ -69,19 +69,19 @@ static inline struct k_list_node *k_list_tail(struct k_list *list) {
     return &list->head;
 }
 
-#define k_list_for_each(list_, node_) \
-    node_ = (list_)->head.next; \
-    node_ != &((list_)->head); \
-    node_ = node_->next
+#define k_list_for_each(list_, iter_) \
+    iter_ = (list_)->head.next; \
+    iter_ != &((list_)->head); \
+    iter_ = iter_->next
 
-#define k_list_reversed_for_each(list_, node_) \
-    node_ = (list_)->head.prev; \
-    node_ != &((list_)->head); \
-    node_ = node_->prev
+#define k_list_reversed_for_each(list_, iter_) \
+    iter_ = (list_)->head.prev; \
+    iter_ != &((list_)->head); \
+    iter_ = iter_->prev
 
-#define k_list_for_each_s(list_, node_, next_) \
-    node_ = (list_)->head.next, next_ = node_->next; \
-    node_ != &((list_)->head); \
-    node_ = next_, next_ = node_->next
+#define k_list_for_each_s(list_, iter_, next_) \
+    iter_ = (list_)->head.next, next_ = iter_->next; \
+    iter_ != &((list_)->head); \
+    iter_ = next_, next_ = iter_->next
 
 #endif
