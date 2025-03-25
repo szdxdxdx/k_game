@@ -72,7 +72,7 @@ struct k_collision_box {
 
     struct k_component *component;
 
-    int debug;
+    /* group 也支持 debug，如果 group 开启了 debug，新增 box 时也自动启用 debug */
     struct k_component_callback *cb_debug_draw;
 
     float *x;

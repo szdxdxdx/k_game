@@ -91,4 +91,19 @@ void k__collision_debug_draw(struct k_component *component) {
 
 int k_collision_set_box_debug(struct k_collision_box *box, int debug) {
 
+    if (0 == debug) {
+        if (NULL != box->cb_debug_draw) {
+            k_component_del_callback(box->cb_debug_draw);
+            box->cb_debug_draw = NULL;
+        }
+        return 0;
+    }
+
+    if (NULL == box->cb_debug_draw) {
+        box->cb_debug_draw = k_component_add_draw_callback(box->component, k__collision_debug_draw, 10000, 10000);
+        if (NULL == box->cb_debug_draw)
+            return -1;
+    }
+
+    return 0;
 }

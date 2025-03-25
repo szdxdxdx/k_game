@@ -116,13 +116,16 @@ int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
 
     if (NULL == renderer->cb_debug_draw) {
         if (0 != debug) {
-            struct k_component_callback *callback;
-            callback = k_component_add_draw_callback(renderer->component, k__sprite_renderer_debug_draw,
-            K_SPRITE_RENDERER_DEBUG_Z_GROUP, K_SPRITE_RENDERER_DEBUG_Z_LAYER);
-            if (NULL == callback)
-                return -1;
 
-            renderer->cb_debug_draw = callback;
+            renderer->cb_debug_draw = k_component_add_draw_callback(
+                renderer->component,
+                k__sprite_renderer_debug_draw,
+                K_SPRITE_RENDERER_DEBUG_Z_GROUP,
+                K_SPRITE_RENDERER_DEBUG_Z_LAYER
+            );
+
+            if (NULL == renderer->cb_debug_draw)
+                return -1;
         }
     } else {
         if (0 == debug) {
