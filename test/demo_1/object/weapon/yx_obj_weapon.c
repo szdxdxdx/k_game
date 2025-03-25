@@ -52,7 +52,7 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 
     float cos_angle;
     float sin_angle;
-    k_calc_vec_cos_and_sin(weapon_x, weapon_y, mouse_x, mouse_y, &cos_angle, &sin_angle);
+    k_calc_vector_direction(weapon_x, weapon_y, mouse_x, mouse_y, &cos_angle, &sin_angle);
 
     float speed = 300.0f;
 
