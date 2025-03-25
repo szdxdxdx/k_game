@@ -7,21 +7,6 @@ static float calc_vector_cross(float x1, float y1, float x2, float y2) {
     return x1 * y2 - x2 * y1;
 }
 
-/* 计算点到直线的投影坐标
- *
- * `(x, y)` 是直线外的点，`(lx1, ly1)` 和 `(lx2, ly2)` 是直线上不同的两点，
- * `(get_px, get_py)` 返回投影点的坐标。
- */
-static void calc_point_projection(float x, float y, float lx1, float ly1, float lx2, float ly2, float *get_px, float *get_py) {
-    float dx = lx2 - lx1;
-    float dy = ly2 - ly1;
-    float fx = x - lx1;
-    float fy = y - ly1;
-    float t = (fx * dx + fy * dy) / (dx * dx + dy * dy);
-    *get_px = x + t * dx;
-    *get_py = y + t * dy;
-}
-
 /* 检测点与点是否发生碰撞
  *
  * `(x1, y1)` 是第一个点的坐标，`(x2, y2)` 是第二个点的坐标。
@@ -341,6 +326,9 @@ struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, floa
 }
 
 struct k_collision_box *k_collision_check_circle(int group_id, float cx, float cy, float r) {
+
+    if (r <= 0.0f)
+        return k_collision_check_point(group_id, cx, cy);
 
     struct k_collision_group *group = k__collision_manager_find_group(group_id);
     if (NULL == group)
