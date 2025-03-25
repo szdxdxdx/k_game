@@ -4,8 +4,8 @@
 #include <stddef.h>
 
 #ifndef container_of
-#define container_of(ptr, type, member) \
-    ((type *)((char *)(ptr) - offsetof(type, member)))
+#define container_of(p, type, member) \
+    ((type *)((char *)(p) - offsetof(type, member)))
 #endif
 
 struct k_hash_list_node {

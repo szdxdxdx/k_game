@@ -33,4 +33,12 @@ void k_str_map_del(struct k_str_map_node *node);
 
 struct k_hash_list *k_str_map_rehash(struct k_str_map *map, struct k_hash_list *new_buckets, size_t new_buckets_num);
 
+#define k_str_map_for_each_bucket(map, bucket) \
+    bucket = map->buckets; \
+    bucket < map->buckets + map->buckets_num; \
+    bucket++
+
+#define k_str_map_container_of(hash_list_iter, type, member) \
+    container_of( container_of(hash_list_iter, struct k_str_map_node, list_node), type, member )
+
 #endif

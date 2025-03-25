@@ -19,13 +19,13 @@ void k__collision_manager_fini(struct k_component_manager *component_manager) {
     struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
 
     {
+        struct k_collision_group *group;
         struct k_int_map *group_map = &manager->group_map;
         struct k_hash_list *bucket;
         struct k_hash_list_node *iter, *next;
-        for (bucket = group_map->buckets; bucket < group_map->buckets + group_map->buckets_num; bucket++) {
+        for (k_int_map_for_each_bucket(group_map, bucket)) {
             for (k_hash_list_for_each_s(bucket, iter, next)) {
-                struct k_int_map_node *map_node = container_of(iter, struct k_int_map_node, list_node);
-                struct k_collision_group *group = container_of(map_node, struct k_collision_group, group_map_node);
+                group = k_int_map_container_of(iter, struct k_collision_group, group_map_node);
 
                 struct k_collision_box *box;
                 struct k_list *list = &group->box_list;
