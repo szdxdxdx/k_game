@@ -287,14 +287,14 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer);
 /**
  * \brief 设置渲染器播放精灵动画的次数
  *
- * 渲染器将循环播放精灵动画 `loop` 次，并在循环结束后停在最后一帧。
+ * 渲染器将循环播放精灵动画 `loop_count` 次，并在循环结束后停在最后一帧。
  *
- * 渲染器不支持无限播放，但指定 `loop` 设为 `INT_MAX`，也能达到“无限”的效果。
- * 播放次数最少为 1，若指定 `loop` 为 0 或负值，渲染器仍会播放 1 次动画。
+ * 渲染器不支持无限播放，但指定循环播放的次数设为 `INT_MAX`，也能达到“无限”的效果。
+ * 播放次数最少为 1，若指定循环的次数为 0 或负值，渲染器仍会播放 1 次动画。
  *
  * 更换渲染器引用的精灵后，渲染器会重置循环播放的次数为 `INT_MAX`。
  */
-void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop);
+void k_sprite_renderer_set_loop_count(struct k_sprite_renderer *renderer, int loop_count);
 
 /**
  * \brief 设置渲染器每播放完一次动画后执行的回调函数

@@ -6,7 +6,7 @@
 
 void k__sprite_renderer_reset(struct k_sprite_renderer *renderer) {
 
-    renderer->loop = INT_MAX;
+    renderer->loop_count = INT_MAX;
     renderer->fn_loop_callback = NULL;
 
     renderer->frame_idx = 0;

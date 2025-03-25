@@ -21,7 +21,7 @@ static void bubble_set_state_float(struct k_object *object) {
         config.y         = &bubble->position.y;
         config.offset_x1 = 0;
         config.offset_y1 = 30;
-        config.offset_x2 = 30;
+        config.offset_x2 = 0;
         config.offset_y2 = 0;
         bubble->collision_box = k_object_add_collision_line(object, &config);
     }
@@ -66,8 +66,8 @@ struct k_object *yx_bubble_create(float x, float y) {
         config.z_layer  = (int)y;
         bubble->spr_rdr = k_object_add_sprite_renderer(object, &config);
 
+        k_sprite_renderer_set_loop_count(bubble->spr_rdr, 1);
         k_sprite_renderer_set_loop_callback(bubble->spr_rdr, bubble_set_state_float);
-        k_sprite_renderer_set_loop(bubble->spr_rdr, 1);
     }
 
     return object;
@@ -88,6 +88,6 @@ void yx_bubble_pop(struct k_object *obj_bubble) {
     k_object_del_collision_box(box);
 
     k_sprite_renderer_set_sprite(bubble->spr_rdr, yx_spr_bubble_pop);
-    k_sprite_renderer_set_loop(bubble->spr_rdr, 1);
+    k_sprite_renderer_set_loop_count(bubble->spr_rdr, 1);
     k_sprite_renderer_set_loop_callback(bubble->spr_rdr, k_object_destroy);
 }

@@ -26,14 +26,14 @@ static void k__sprite_renderer_draw_sprite(struct k_component *component) {
             renderer->frame_idx += 1;
         }
         else {
-            if (2 <= renderer->loop) {
+            if (2 <= renderer->loop_count) {
                 fn_loop_callback = renderer->fn_loop_callback;
-                renderer->loop -= 1;
+                renderer->loop_count -= 1;
                 renderer->frame_idx = 0;
             }
-            else if (1 == renderer->loop) {
+            else if (1 == renderer->loop_count) {
                 fn_loop_callback = renderer->fn_loop_callback;
-                renderer->loop -= 1;
+                renderer->loop_count -= 1;
                 renderer->frame_idx = frame_idx_last;
             }
             else {
@@ -172,14 +172,14 @@ float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
 
 /* endregion */
 
-/* region [loop] */
+/* region [loop_count] */
 
-void k_sprite_renderer_set_loop(struct k_sprite_renderer *renderer, int loop) {
+void k_sprite_renderer_set_loop_count(struct k_sprite_renderer *renderer, int loop_count) {
 
-    if (loop <= 1)
-        renderer->loop = 1;
+    if (loop_count <= 1)
+        renderer->loop_count = 1;
     else
-        renderer->loop = loop;
+        renderer->loop_count = loop_count;
 }
 
 void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(struct k_object *object)) {

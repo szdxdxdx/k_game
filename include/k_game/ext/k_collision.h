@@ -238,7 +238,9 @@ struct k_collision_box *k_collision_check_circle(int group_id, float x, float y,
 
 /* region [debug] */
 
-int k_collision_set_debug(int group_id, int debug);
+int k_collision_set_box_debug(struct k_collision_box *box, int debug);
+
+int k_collision_set_group_debug(int group_id, int debug);
 
 /* endregion */
 

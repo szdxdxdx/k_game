@@ -31,7 +31,7 @@ struct k_sprite_renderer {
 
     struct k_sprite *sprite;
 
-    int loop;
+    int loop_count;
     void (*fn_loop_callback)(struct k_object *object);
 
     size_t frame_idx;
