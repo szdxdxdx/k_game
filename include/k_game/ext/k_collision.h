@@ -1,17 +1,34 @@
 #ifndef K_COLLISION_H
 #define K_COLLISION_H
 
-struct k_float_vec2;
 struct k_room;
 struct k_object;
 
 /**
- * TODO Docs
+ * \brief 碰撞盒
+ *
+ * 碰撞盒的本质是一个配有管理器的组件。
+ * 需要先给房间添加碰撞盒管理器，房间内的对象才能挂载碰撞盒。
+ *
+ * 碰撞盒使对象能感知彼此的存在，从而实现交互。
+ *
+ * 例如：若子弹和敌人都是对象，要实现子弹击中敌人的效果，
+ * 可以给敌人挂载碰撞盒，在子弹移动过程中，检测自身是否击中敌人；
+ * 或给子弹挂载碰撞盒，在敌人移动过程中，检测自身是否被子弹击中。
+ *
+ * k_game 提供了四种不同形状的碰撞盒：点、线段、矩形和圆形。
  */
 struct k_collision_box;
 
 /* region [room_add_collision_box_manager] */
 
+/**
+ * \brief 给房间添加碰撞盒管理器
+ *
+ * 需要先给房间添加碰撞盒管理器，房间内的对象才能挂载碰撞盒。
+ *
+ * 若成功，函数返回非 0，否则返回 0。
+ */
 int k_room_add_collision_manager(void);
 
 /* endregion */
@@ -20,49 +37,61 @@ int k_room_add_collision_manager(void);
 
 /* region [point] */
 
+/** \brief 点碰撞盒的配置 */
 struct k_collision_point_config {
 
+    /**
+     * \brief 碰撞组
+     *
+     * 通过指定不同的 `group_id` 来给碰撞盒分组，
+     * 碰撞检测时，只检测指定组内的碰撞盒。
+     *
+     * `group_id` 可以是任意整数。
+     */
     int group_id;
 
+    /**
+     * \brief 碰撞盒关联的坐标
+     *
+     * 碰撞盒通过指针关联一个外部的坐标。
+     * 碰撞盒的位置会随着外部坐标的变化而自动更新。
+     *
+     * 碰撞检测时，将根据关联坐标以及偏移量，计算出碰撞盒的实际位置。
+     */
     float *x;
     float *y;
 
+    /** \brief 碰撞点相对于关联坐标的偏移量 */
     float offset_x;
     float offset_y;
 };
 
+/**
+ * \brief 给对象挂载一个点碰撞盒
+ *
+ * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
+ */
 struct k_collision_box *k_object_add_collision_point(struct k_object *object, const struct k_collision_point_config *config);
 
 /* endregion */
 
 /* region [line] */
 
+/** \brief 线段碰撞盒的配置 */
 struct k_collision_line_config {
 
+    /** \brief 碰撞组 */
     int group_id;
 
+    /** \brief 碰撞盒关联的坐标 */
     float *x;
     float *y;
 
-    float offset_x1;
-    float offset_y1;
-    float offset_x2;
-    float offset_y2;
-};
-
-struct k_collision_box *k_object_add_collision_line(struct k_object *object, const struct k_collision_line_config *config);
-
-/* endregion */
-
-/* region [rectangle] */
-
-struct k_collision_rectangle_config {
-
-    int group_id;
-
-    float *x;
-    float *y;
-
+    /**
+     * \brief 线段端点坐标相对于关联坐标的偏移量
+     *
+     * 若线段的端点重合，则碰撞盒退化成一个点。
+     */
     float offset_x1;
     float offset_y1;
     float offset_x2;
@@ -70,9 +99,42 @@ struct k_collision_rectangle_config {
 };
 
 /**
- * \brief 给对象挂载一个矩形的碰撞盒组件
+ * \brief 给对象挂载一个线段碰撞盒
  *
- * 若成功，函数返回碰撞盒组件的指针，否则返回 `NULL`。
+ * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
+ */
+struct k_collision_box *k_object_add_collision_line(struct k_object *object, const struct k_collision_line_config *config);
+
+/* endregion */
+
+/* region [rectangle] */
+
+/** \brief 矩形碰撞盒的配置 */
+struct k_collision_rectangle_config {
+
+    /** \brief 碰撞组 */
+    int group_id;
+
+    /** \brief 碰撞盒关联的坐标 */
+    float *x;
+    float *y;
+
+    /**
+     * \brief 矩形对角坐标相对于关联坐标的偏移量
+     *
+     * 矩形的对角坐标，可以是左上角与右下角的坐标，或是左下角与右上角的坐标。
+     * 若矩形的对边或对角重合，则碰撞盒退化为一条线段或一个点。
+     */
+    float offset_x1;
+    float offset_y1;
+    float offset_x2;
+    float offset_y2;
+};
+
+/**
+ * \brief 给对象挂载一个矩形碰撞盒
+ *
+ * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
 struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, const struct k_collision_rectangle_config *config);
 
@@ -80,29 +142,38 @@ struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object
 
 /* region [circle] */
 
+/** \brief 圆形碰撞盒的配置 */
 struct k_collision_circle_config {
 
+    /** \brief 碰撞组 */
     int group_id;
 
+    /** \brief 碰撞盒关联的坐标 */
     float *x;
     float *y;
 
+    /** \brief 圆心坐标相对于关联坐标的偏移量 */
     float offset_cx;
     float offset_cy;
+
+    /** \brief 圆的半径
+     *
+     * 若半径为 0.0f 或负值，则碰撞盒退化为一个点。
+     */
     float r;
 };
 
 /**
- * \brief 给对象挂载一个圆形的碰撞盒组件
+ * \brief 给对象挂载一个圆形碰撞盒
  *
- * 若成功，函数返回碰撞盒组件的指针，否则返回 `NULL`。
+ * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
 struct k_collision_box *k_object_add_collision_circle(struct k_object *object, const struct k_collision_circle_config *config);
 
 /* endregion */
 
 /**
- * \brief 移除对象上挂载的碰撞盒组件
+ * \brief 移除对象上挂载的碰撞盒
  *
  * 若 `box` 为 `NULL`，则函数不做任何事。
  */
@@ -134,27 +205,33 @@ struct k_collision_box *k_collision_check_point(int group_id, float x, float y);
 /**
  * \brief 检测是否有碰撞盒与指定的线段相交
  *
- * 由两端点坐标为 `(x1, y1)` 和 `(x2, y2)` 定义一条线段，
+ * 指定一条线段，其端点坐标为 `(x1, y1)` 和 `(x2, y2)`，
  * 函数检查 `group_id` 的碰撞组中是否存在与该线段相交的碰撞盒，
  * 若存在，函数返回找到的第一个碰撞盒，否则返回 `NULL`。
+ *
+ * 若线段的端点重合，则检测区域退化成一个点。
  */
 struct k_collision_box *k_collision_check_line(int group_id, float x1, float y1, float x2, float y2);
 
 /**
  * \brief 检测是否有碰撞盒与指定的矩形相交
  *
- * 由对角坐标 `(x1, y1)` 和 `(x2, y2)` 定义一个矩形区域，
+ * 指定一个矩形区域，其对角坐标为 `(x1, y1)` 和 `(x2, y2)`，
  * 函数检查 `group_id` 的碰撞组中是否存在与该区域相交的碰撞盒，
  * 若存在，函数返回找到的第一个碰撞盒，否则返回 `NULL`。
+ *
+ * 若矩形的对边或对角重合，则检测区域退化成一条线段或一个点。
  */
 struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2);
 
 /**
  * \brief 检测是否有碰撞盒与指定的圆相交
  *
- * 由圆心坐标 `(x, y)` 及半径 `r` 定义一个圆形区域，
+ * 指定一个圆形区域，圆心坐标为 `(x, y)`，半径为 `r`，
  * 函数检查 `group_id` 的碰撞组中是否存在与该区域相交的碰撞盒，
  * 若存在，函数返回找到的第一个碰撞盒，否则返回 `NULL`。
+ *
+ * 若圆的半径为 0.0f 或负值，则检测区域退化成一个点。
  */
 struct k_collision_box *k_collision_check_circle(int group_id, float x, float y, float r);
 

@@ -1,29 +1,8 @@
 #include "../_internal.h"
 
-static void bubble_floating(struct k_object *object) {
+static void bubble_set_state_float(struct k_object *object) {
     struct yx_obj_bubble *bubble = k_object_get_data(object);
     k_sprite_renderer_set_sprite(bubble->spr_rdr, yx_spr_bubble_float);
-}
-
-struct k_object *yx_bubble_create(float x, float y) {
-
-    struct k_object *object = k_object_create(sizeof(struct yx_obj_bubble));
-    struct yx_obj_bubble *bubble = k_object_get_data(object);
-    bubble->position.x = x;
-    bubble->position.y = y;
-
-    {
-        struct k_sprite_renderer_config config;
-        config.x        = &bubble->position.x;
-        config.y        = &bubble->position.y;
-        config.sprite   = yx_spr_bubble_appear;
-        config.z_group  = 0;
-        config.z_layer  = (int)y;
-        bubble->spr_rdr = k_object_add_sprite_renderer(object, &config);
-
-        k_sprite_renderer_set_loop(bubble->spr_rdr, 1);
-        k_sprite_renderer_set_loop_callback(bubble->spr_rdr, bubble_floating);
-    }
 
     {
         struct k_collision_point_config config;
@@ -52,11 +31,11 @@ struct k_object *yx_bubble_create(float x, float y) {
         config.group_id  = YX_COLLISION_GROUP_BUBBLE;
         config.x         = &bubble->position.x;
         config.y         = &bubble->position.y;
-        config.offset_x1 = 0;
-        config.offset_y1 = 0;
-        config.offset_x2 = 0;
-        config.offset_y2 = 0;
-        bubble->collision_box = k_object_add_collision_rectangle(object, &config);
+        config.offset_x1 = -8;
+        config.offset_y1 = -6;
+        config.offset_x2 = 8;
+        config.offset_y2 = 10;
+        // bubble->collision_box = k_object_add_collision_rectangle(object, &config);
     }
 
     {
@@ -67,7 +46,28 @@ struct k_object *yx_bubble_create(float x, float y) {
         config.offset_cx = 0;
         config.offset_cy = -8;
         config.r         = 16;
-        //bubble->collision_box = k_object_add_collision_circle(object, &config);
+        bubble->collision_box = k_object_add_collision_circle(object, &config);
+    }
+}
+
+struct k_object *yx_bubble_create(float x, float y) {
+
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_bubble));
+    struct yx_obj_bubble *bubble = k_object_get_data(object);
+    bubble->position.x = x;
+    bubble->position.y = y;
+
+    {
+        struct k_sprite_renderer_config config;
+        config.x        = &bubble->position.x;
+        config.y        = &bubble->position.y;
+        config.sprite   = yx_spr_bubble_appear;
+        config.z_group  = 0;
+        config.z_layer  = (int)y;
+        bubble->spr_rdr = k_object_add_sprite_renderer(object, &config);
+
+        k_sprite_renderer_set_loop(bubble->spr_rdr, 1);
+        k_sprite_renderer_set_loop_callback(bubble->spr_rdr, bubble_set_state_float);
     }
 
     return object;

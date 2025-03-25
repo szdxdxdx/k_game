@@ -10,7 +10,7 @@ struct k_object;
  * 精灵渲染器的本质是一个组件。
  *
  * 一般来说，对象至少关联有一个精灵作为其外观表现。
- * 给对象挂载上精灵渲染器组件，并指定引用的精灵图，
+ * 给对象挂载上精灵渲染器，并指定引用的精灵图，
  * 渲染器能重复循环绘制精灵帧，形成动画效果。
  */
 struct k_sprite_renderer;
@@ -23,14 +23,16 @@ struct k_sprite_renderer_config {
     /**
      * \brief 渲染器关联的坐标
      *
-     * 渲染器不存储坐标，而是存储坐标的指针。
-     * 在绘制时，渲染器通过该指针读取坐标，并在该位置绘制精灵。
+     * 渲染器通过指针关联一个外部的坐标。
+     * 渲染器的绘制位置会随着外部坐标的变化而自动更新。
+     *
+     * 在绘制时，渲染器通过指针读取坐标，并在该位置绘制精灵。
      */
     float *x;
     float *y;
 
     /**
-     * \brief 指定渲染器引用的精灵
+     * \brief 渲染器引用的精灵
      *
      * 指定渲染器初始化时引用的精灵。若为 `NULL`，则不引用任何精灵。
      *
@@ -39,20 +41,20 @@ struct k_sprite_renderer_config {
      */
     struct k_sprite *sprite;
 
-    /** \brief 指定渲染器的绘制深度 */
+    /** \brief 渲染器的绘制深度 */
     int z_group;
     int z_layer;
 };
 
 /**
- * \brief 给对象挂载一个精灵渲染器组件
+ * \brief 给对象挂载一个精灵渲染器
  *
- * 若成功，函数返回渲染器组件的指针，否则返回 `NULL`。
+ * 若成功，函数返回渲染器的指针，否则返回 `NULL`。
  */
 struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, const struct k_sprite_renderer_config *config);
 
 /**
- * \brief 移除对象上挂载的精灵渲染器组件
+ * \brief 移除对象上挂载的精灵渲染器
  *
  * 若 `renderer` 为 `NULL`，则函数不做任何事。
  */
