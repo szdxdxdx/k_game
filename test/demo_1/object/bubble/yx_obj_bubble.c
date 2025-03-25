@@ -44,7 +44,7 @@ struct k_object *yx_bubble_create(float x, float y) {
         config.offset_y1 = 0;
         config.offset_x2 = 0;
         config.offset_y2 = 0;
-        bubble->collision_box = k_object_add_collision_line(object, &config);
+        // bubble->collision_box = k_object_add_collision_line(object, &config);
     }
 
     {
@@ -52,11 +52,11 @@ struct k_object *yx_bubble_create(float x, float y) {
         config.group_id  = YX_COLLISION_GROUP_BUBBLE;
         config.x         = &bubble->position.x;
         config.y         = &bubble->position.y;
-        config.offset_x1 = -8;
-        config.offset_y1 = -8;
-        config.offset_x2 = 8;
-        config.offset_y2 = 8;
-        // bubble->collision_box = k_object_add_collision_rectangle(object, &config);
+        config.offset_x1 = 0;
+        config.offset_y1 = 0;
+        config.offset_x2 = 0;
+        config.offset_y2 = 0;
+        bubble->collision_box = k_object_add_collision_rectangle(object, &config);
     }
 
     {

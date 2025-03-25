@@ -57,42 +57,66 @@ struct k_collision_box *k_object_add_collision_point(struct k_object *object, co
 }
 
 struct k_collision_box *k_object_add_collision_line(struct k_object *object, const struct k_collision_line_config *config) {
-    if (NULL == config)    return NULL;
-    if (NULL == config->x) return NULL;
-    if (NULL == config->y) return NULL;
 
-    if (config->offset_x1 == config->offset_x2) return NULL;
-    if (config->offset_y1 == config->offset_y2) return NULL;
+    if (NULL == config)
+        return NULL;
+
+    if (config->offset_x1 == config->offset_x2 && config->offset_y1 == config->offset_y2) {
+        struct k_collision_point_config point_config;
+        point_config.group_id = config->group_id;
+        point_config.x        = config->x;
+        point_config.y        = config->y;
+        point_config.offset_x = config->offset_x1;
+        point_config.offset_y = config->offset_y1;
+        return k_object_add_collision_point(object, &point_config);
+    }
+
+    if (NULL == config->x || NULL == config->y)
+        return NULL;
 
     return k__object_add_collision_box(object, K_COLLISION_LINE, config);
 }
 
 struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, const struct k_collision_rectangle_config *config) {
-    if (NULL == config)    return NULL;
-    if (NULL == config->x) return NULL;
-    if (NULL == config->y) return NULL;
 
-    if (config->offset_x1 == config->offset_x2) return NULL;
-    if (config->offset_y1 == config->offset_y2) return NULL;
+    if (NULL == config)
+        return NULL;
+
+    if (config->offset_x1 == config->offset_x2 || config->offset_y1 == config->offset_y2) {
+        struct k_collision_line_config line_config;
+        line_config.group_id  = config->group_id;
+        line_config.x         = config->x;
+        line_config.y         = config->y;
+        line_config.offset_x1 = config->offset_x1;
+        line_config.offset_x2 = config->offset_x2;
+        line_config.offset_y1 = config->offset_y1;
+        line_config.offset_y2 = config->offset_y2;
+        return k_object_add_collision_line(object, &line_config);
+    }
+
+    if (NULL == config->x || NULL == config->y)
+        return NULL;
 
     return k__object_add_collision_box(object, K_COLLISION_RECTANGLE, config);
 }
 
 struct k_collision_box *k_object_add_collision_circle(struct k_object *object, const struct k_collision_circle_config *config) {
-    if (NULL == config) return NULL;
+
+    if (NULL == config)
+        return NULL;
 
     if (config->r <= 0.0f) {
         struct k_collision_point_config point_config;
         point_config.group_id = config->group_id;
-        point_config.offset_x = config->offset_cx;
-        point_config.offset_y = config->offset_cy;
         point_config.x        = config->x;
         point_config.y        = config->y;
-        return k__object_add_collision_box(object, K_COLLISION_POINT, &point_config);
+        point_config.offset_x = config->offset_cx;
+        point_config.offset_y = config->offset_cy;
+        return k_object_add_collision_point(object, &point_config);
     }
 
-    if (NULL == config->x) return NULL;
-    if (NULL == config->y) return NULL;
+    if (NULL == config->x || NULL == config->y)
+        return NULL;
 
     return k__object_add_collision_box(object, K_COLLISION_CIRCLE, config);
 }
