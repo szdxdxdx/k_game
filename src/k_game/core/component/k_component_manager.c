@@ -246,9 +246,6 @@ struct k_component_manager *k_room_get_component_manager(struct k_component_type
 void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
     /* 【暂未公布的 API】 */
 
-    if (NULL == room || NULL == component_type)
-        return;
-
     struct k_component_manager *manager = k__component_manager_map_find(room, component_type->manager_type);
     if (NULL == manager)
         return;

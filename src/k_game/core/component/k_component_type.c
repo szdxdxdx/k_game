@@ -15,25 +15,6 @@ struct step_context {
     struct k_component_type *component_type;
 };
 
-static int step_check_config(void *context) {
-    struct step_context *ctx = context;
-    const struct k_component_entity_config *entity_config = ctx->entity_config;
-
-    const char *err_msg;
-
-#define check_config_assert(cond) \
-    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
-
-    check_config_assert(NULL != entity_config);
-    check_config_assert(NULL != entity_config->fn_init);
-
-    return 0;
-
-err:
-    k_log_error("Invalid component config: %s", err_msg);
-    return -1;
-}
-
 static int step_malloc(void *context) {
     struct step_context *ctx = context;
 
@@ -106,7 +87,6 @@ static void step_registry_del(void *context) {
 }
 
 static struct k_seq_step steps[] = {
-    { step_check_config,   NULL              },
     { step_malloc,         step_free         },
     { step_set_properties, NULL              },
     { step_registry_add,   step_registry_del },
@@ -114,19 +94,41 @@ static struct k_seq_step steps[] = {
 
 /* endregion */
 
+static int check_config(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
+
+    const char *err_msg;
+
+#define check_config_assert(cond) \
+    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
+
+    check_config_assert(NULL != entity_config);
+    check_config_assert(NULL != entity_config->fn_init);
+
+    return 0;
+
+err:
+    k_log_error("Invalid component config: %s", err_msg);
+    return -1;
+}
+
 struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
+
+    if (0 != check_config(manager_config, entity_config))
+        goto err;
 
     struct step_context ctx;
     ctx.manager_config = manager_config;
     ctx.entity_config  = entity_config;
     ctx.component_type = NULL;
 
-    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx)) {
-        k_log_error("Failed to define component type");
-        return NULL;
-    }
+    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx))
+        goto err;
 
     return ctx.component_type;
+
+err:
+    k_log_error("Failed to define component type");
+    return NULL;
 }
 
 static void k__component_undef(struct k_component_type *component_type) {

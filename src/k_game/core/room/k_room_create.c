@@ -5,6 +5,7 @@
 #include "./_internal.h"
 
 #include "../game/_public.h"
+#include "../component/_public.h"
 
 /* region [room_registry] */
 
