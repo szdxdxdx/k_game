@@ -1,8 +1,6 @@
 #ifndef K_COLLISION_INTERNAL_H
 #define K_COLLISION_INTERNAL_H
 
-#include <stdint.h>
-
 #include "k_list.h"
 #include "k_int_map.h"
 
@@ -80,10 +78,10 @@ struct k_collision_box {
     enum k_collision_box_type type;
 
     union {
-        struct k_collision_point point;
-        struct k_collision_line line;
+        struct k_collision_point     point;
+        struct k_collision_line      line;
         struct k_collision_rectangle rect;
-        struct k_collision_circle circle;
+        struct k_collision_circle    circle;
     };
 };
 

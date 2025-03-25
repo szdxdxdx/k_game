@@ -146,6 +146,22 @@ void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed
         renderer->speed = speed;
 }
 
+void k_sprite_renderer_set_duration(struct k_sprite_renderer *renderer, float duration) {
+
+    if (NULL == renderer->sprite || duration <= 0.0f)
+        return;
+
+    int sum_delay = 0;
+
+    size_t i = 0;
+    size_t frames_num = k_sprite_get_frames_num(renderer->sprite);
+    for (; i < frames_num; i++) {
+        sum_delay += k_sprite_get_frame_delay(renderer->sprite, i);
+    }
+
+    renderer->speed = ((float)(sum_delay) / 1000.0f) / duration;
+}
+
 float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
 
     if (NULL == renderer->sprite)

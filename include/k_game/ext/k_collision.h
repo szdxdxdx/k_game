@@ -54,12 +54,12 @@ struct k_collision_point_config {
      * 碰撞盒通过指针关联一个外部的坐标。
      * 碰撞盒的位置会随着外部坐标的变化而自动更新。
      *
-     * 碰撞检测时，将根据关联坐标以及偏移量，计算出碰撞盒的实际位置。
+     * 碰撞检测时，将根据关联坐标计算出碰撞盒的实际位置。
      */
     float *x;
     float *y;
 
-    /** \brief 碰撞点相对于关联坐标的偏移量 */
+    /** \brief 点碰撞盒相对于关联坐标的偏移量 */
     float offset_x;
     float offset_y;
 };
@@ -121,7 +121,6 @@ struct k_collision_rectangle_config {
      * \brief 矩形对角坐标相对于关联坐标的偏移量
      *
      * 矩形的对角坐标，可以是左上角与右下角的坐标，也可以是左下角与右上角的坐标。
-     *
      * 若矩形的对边或对角重合，则退化成一条线段或一个点。
      */
     float offset_x1;
@@ -234,6 +233,12 @@ struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, floa
  * 若圆的半径为 0.0f 或负值，则检测区域退化成一个点。
  */
 struct k_collision_box *k_collision_check_circle(int group_id, float x, float y, float r);
+
+/* endregion */
+
+/* region [debug] */
+
+int k_collision_set_debug(int group_id, int debug);
 
 /* endregion */
 

@@ -62,7 +62,7 @@ void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
 
 /* endregion */
 
-/* region [sprite_renderer_transform] */
+/* region [transform] */
 
 /* region [scale_x] */
 
@@ -218,8 +218,6 @@ void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
 
 /* endregion */
 
-/* region [sprite_renderer_set/get] */
-
 /* region [z_index] */
 
 /**
@@ -228,11 +226,25 @@ void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_group, int z_layer);
+
+/**
+ * \brief 更改渲染器的绘制深度（组）
+ *
+ * 若成功，函数返回 0，否则返回非 0。
+ */
 int k_sprite_renderer_set_z_group(struct k_sprite_renderer *renderer, int z_group);
+
+/**
+ * \brief 更改渲染器的绘制深度（层）
+ *
+ * 若成功，函数返回 0，否则返回非 0。
+ */
 int k_sprite_renderer_set_z_layer(struct k_sprite_renderer *renderer, int z_layer);
 
-/** \brief 获取渲染器的绘制深度 */
+/** \brief 获取渲染器的绘制深度（组） */
 int k_sprite_renderer_get_z_group(struct k_sprite_renderer *renderer);
+
+/** \brief 获取渲染器的绘制深度（层） */
 int k_sprite_renderer_get_z_layer(struct k_sprite_renderer *renderer);
 
 /* endregion */
@@ -250,6 +262,16 @@ int k_sprite_renderer_get_z_layer(struct k_sprite_renderer *renderer);
  * 更换渲染器引用的精灵后，渲染器会重置播放倍速为 1.0f。
  */
 void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed);
+
+/**
+ * \brief 设置渲染器播放精灵动画的时长，单位：秒
+ *
+ * 设置渲染器的动画播放时长，本质是修改其播放速度。
+ * 渲染器将计算出合适的播放倍速并自动应用，使其播放一轮动画所用时间为指定的 `duration` 秒。
+ *
+ * 若渲染器没有引用精灵，或是 `duration` 为 0.0f 或负值，则函数不做任何事。
+ */
+void k_sprite_renderer_set_duration(struct k_sprite_renderer *renderer, float duration);
 
 /**
  * \brief 获取渲染器播放精灵动画的速度
@@ -306,9 +328,7 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 
 /* endregion */
 
-/* endregion */
-
-/* region [sprite_renderer_debug] */
+/* region [debug] */
 
 /**
  * \brief 开启或关闭渲染器调试模式

@@ -144,7 +144,7 @@ void k_sprite_set_origin(struct k_sprite *sprite, float origin_x, float origin_y
 /** \brief 获取精灵的帧数 */
 int k_sprite_get_frames_num(struct k_sprite *sprite);
 
-/** \brief 获取精灵帧的延时 */
+/** \brief 获取精灵帧的延时，单位：毫秒 */
 int k_sprite_get_frame_delay(struct k_sprite *sprite, size_t frame_idx);
 
 /* endregion */
