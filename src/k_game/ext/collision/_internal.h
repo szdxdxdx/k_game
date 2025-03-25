@@ -26,9 +26,10 @@ extern struct k_component_type *k__component_type_collision;
 
 enum k_collision_box_type {
 
+    K_COLLISION_POINT,
+    K_COLLISION_LINE,
     K_COLLISION_RECTANGLE,
     K_COLLISION_CIRCLE,
-    K_COLLISION_LINE,
 };
 
 struct k_collision_box_config {

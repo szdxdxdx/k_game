@@ -137,9 +137,9 @@ int k__define_component_position(void) {
 /* region [object_add_component] */
 
 struct k_position *k_object_add_position(struct k_object *object, const struct k_position_config *config) {
-
-    if (NULL == config)
-        return NULL;
+    if (NULL == config)          return NULL;
+    if (NULL == config->world_x) return NULL;
+    if (NULL == config->world_y) return NULL;
 
     struct k_component *component = k_object_add_component(object, k__component_type_position, (void*)config);
     if (NULL == component)

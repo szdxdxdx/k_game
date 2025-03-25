@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "./_internal.h"
 
 /* region [utils] */
@@ -72,6 +73,18 @@ static struct k_collision_group *k__collision_manager_find_group(int group_id) {
     return group;
 }
 
+struct k_collision_box *k_collision_check_point(int group_id, float x, float y) {
+
+
+    return NULL;
+}
+
+struct k_collision_box *k_collision_check_line(int group_id, float x1, float y1, float x2, float y2) {
+
+
+    return NULL;
+}
+
 struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2) {
 
     struct k_collision_group *group = k__collision_manager_find_group(group_id);
@@ -85,6 +98,8 @@ struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, floa
         box = container_of(iter, struct k_collision_box, box_list_node);
 
         switch (box->type) {
+            case K_COLLISION_POINT: assert(0);
+            case K_COLLISION_LINE: assert(0);
             case K_COLLISION_RECTANGLE: {
                 struct k_collision_rectangle *rect = &box->rect;
 
@@ -127,6 +142,8 @@ struct k_collision_box *k_collision_check_circle(int group_id, float cx, float c
         box = container_of(iter, struct k_collision_box, box_list_node);
 
         switch (box->type) {
+            case K_COLLISION_POINT: assert(0);
+            case K_COLLISION_LINE: assert(0);
             case K_COLLISION_RECTANGLE: {
                 struct k_collision_rectangle *rect = &box->rect;
 
@@ -152,12 +169,6 @@ struct k_collision_box *k_collision_check_circle(int group_id, float cx, float c
             }
         }
     }
-
-    return NULL;
-}
-
-struct k_collision_box *k_collision_check_line(int group_id, float x1, float y1, float x2, float y2) {
-
 
     return NULL;
 }

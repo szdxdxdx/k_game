@@ -72,11 +72,9 @@ int k__define_component_sprite_renderer(void) {
 /* region [object_add_component] */
 
 struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, const struct k_sprite_renderer_config *config) {
-
-    if (NULL == config)
-        return NULL;
-    if (NULL == config->x || NULL == config->y)
-        return NULL;
+    if (NULL == config)    return NULL;
+    if (NULL == config->x) return NULL;
+    if (NULL == config->y) return NULL;
 
     struct k_component *component = k_object_add_component(object, k__component_type_sprite_renderer, (void*)config);
     if (NULL == component)
