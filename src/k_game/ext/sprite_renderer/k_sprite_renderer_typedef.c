@@ -26,10 +26,10 @@ static int k__sprite_renderer_init(struct k_component *component, void *params) 
 
     renderer->z_group = config->z_group;
     renderer->z_layer = config->z_layer;
-    renderer->callback_draw_sprite = NULL;
+    renderer->cb_draw_sprite = NULL;
 
     renderer->debug = 0;
-    renderer->callback_draw_rect = NULL;
+    renderer->cb_debug_draw = NULL;
 
     renderer->x = config->x;
     renderer->y = config->y;

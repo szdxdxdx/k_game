@@ -7,8 +7,15 @@
 int k__collision_box_init(struct k_component *component, void *params) {
     struct k_collision_box_config *box_config = params;
 
+    struct k_collision_manager *manager = k_component_get_manager_data(component);
+    if (NULL == manager)
+        return -1;
+
     struct k_collision_box *box = k_component_get_data(component);
     box->component = component;
+
+    box->debug = 0;
+    box->cb_debug_draw = NULL;
 
     int group_id;
 
@@ -24,7 +31,6 @@ int k__collision_box_init(struct k_component *component, void *params) {
             box->point.offset_y = point_config->offset_y;
             break;
         }
-
         case K_COLLISION_LINE: {
             const struct k_collision_line_config *line_config = box_config->config;
             group_id  = line_config->group_id;
@@ -37,7 +43,6 @@ int k__collision_box_init(struct k_component *component, void *params) {
             box->line.offset_y2 = line_config->offset_y2;
             break;
         }
-
         case K_COLLISION_RECTANGLE: {
             const struct k_collision_rectangle_config *rect_config = box_config->config;
             group_id  = rect_config->group_id;
@@ -50,7 +55,6 @@ int k__collision_box_init(struct k_component *component, void *params) {
             box->rect.offset_y2 = rect_config->offset_y2;
             break;
         }
-
         case K_COLLISION_CIRCLE: {
             const struct k_collision_circle_config *circle_config = box_config->config;
             group_id  = circle_config->group_id;
@@ -62,26 +66,14 @@ int k__collision_box_init(struct k_component *component, void *params) {
             box->circle.r         = circle_config->r;
             break;
         }
-
-        default:
-            assert(0);
-            return -1;
     }
 
-    struct k_collision_manager *manager = k_component_get_manager_data(component);
-    if (NULL == manager)
-        return -1;
-
     struct k_collision_group *group = k__collision_manager_find_or_add_group(manager, group_id);
-    if (NULL == group)
+    if (NULL == group) {
         return -1;
-
-    k_list_add_tail(&group->box_list, &box->box_list_node);
-
-    /* ------------------------------------------------------------------------ */
-
-    /* tmp */
-    k_component_add_draw_callback(component, k__collision_debug_draw, 10000, 0);
+    } else {
+        k_list_add_tail(&group->box_list, &box->box_list_node);
+    }
 
     return 0;
 }

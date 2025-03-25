@@ -72,6 +72,9 @@ struct k_collision_box {
 
     struct k_component *component;
 
+    int debug;
+    struct k_component_callback *cb_debug_draw;
+
     float *x;
     float *y;
 

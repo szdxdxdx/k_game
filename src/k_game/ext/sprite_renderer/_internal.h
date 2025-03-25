@@ -21,10 +21,10 @@ struct k_sprite_renderer {
 
     int z_group;
     int z_layer;
-    struct k_component_callback *callback_draw_sprite;
+    struct k_component_callback *cb_draw_sprite;
 
     int debug;
-    struct k_component_callback *callback_draw_rect;
+    struct k_component_callback *cb_debug_draw;
 
     float *x;
     float *y;

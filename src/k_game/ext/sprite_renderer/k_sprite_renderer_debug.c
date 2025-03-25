@@ -4,7 +4,7 @@
 
 #include "./_internal.h"
 
-static void k__sprite_renderer_draw_debug_rect(struct k_component *component) {
+static void k__sprite_renderer_debug_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
 
     float scale_x = (float)renderer->scaled_w / (float)k_sprite_get_width(renderer->sprite);
@@ -105,29 +105,29 @@ int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
 
     if (NULL == renderer->sprite) {
 
-        if (NULL != renderer->callback_draw_rect) {
-            k_component_del_callback(renderer->callback_draw_rect);
-            renderer->callback_draw_rect = NULL;
+        if (NULL != renderer->cb_debug_draw) {
+            k_component_del_callback(renderer->cb_debug_draw);
+            renderer->cb_debug_draw = NULL;
         }
 
         renderer->debug = debug;
         return 0;
     }
 
-    if (NULL == renderer->callback_draw_rect) {
+    if (NULL == renderer->cb_debug_draw) {
         if (0 != debug) {
             struct k_component_callback *callback;
-            callback = k_component_add_draw_callback(renderer->component, k__sprite_renderer_draw_debug_rect,
+            callback = k_component_add_draw_callback(renderer->component, k__sprite_renderer_debug_draw,
             K_SPRITE_RENDERER_DEBUG_Z_GROUP, K_SPRITE_RENDERER_DEBUG_Z_LAYER);
             if (NULL == callback)
                 return -1;
 
-            renderer->callback_draw_rect = callback;
+            renderer->cb_debug_draw = callback;
         }
     } else {
         if (0 == debug) {
-            k_component_del_callback(renderer->callback_draw_rect);
-            renderer->callback_draw_rect = NULL;
+            k_component_del_callback(renderer->cb_debug_draw);
+            renderer->cb_debug_draw = NULL;
         }
     }
 

@@ -88,3 +88,7 @@ void k__collision_debug_draw(struct k_component *component) {
         }
     }
 }
+
+int k_collision_set_box_debug(struct k_collision_box *box, int debug) {
+
+}
