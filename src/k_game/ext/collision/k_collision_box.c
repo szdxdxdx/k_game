@@ -77,6 +77,12 @@ int k__collision_box_init(struct k_component *component, void *params) {
         return -1;
 
     k_list_add_tail(&group->box_list, &box->box_list_node);
+
+    /* ------------------------------------------------------------------------ */
+
+    /* tmp */
+    k_component_add_draw_callback(component, k__collision_debug_draw, 10000, 0);
+
     return 0;
 }
 

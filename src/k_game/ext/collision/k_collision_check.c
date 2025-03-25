@@ -1,8 +1,26 @@
-#include <assert.h>
-
 #include "./_internal.h"
 
 /* region [utils] */
+
+/* 计算向量 `(x1, y1)` 与 `(x2, y2)` 的叉积 */
+static float calc_vector_cross(float x1, float y1, float x2, float y2) {
+    return x1 * y2 - x2 * y1;
+}
+
+/* 计算点到直线的投影坐标
+ *
+ * `(x, y)` 是直线外的点，`(lx1, ly1)` 和 `(lx2, ly2)` 是直线上不同的两点，
+ * `(get_px, get_py)` 返回投影点的坐标。
+ */
+static void calc_point_projection(float x, float y, float lx1, float ly1, float lx2, float ly2, float *get_px, float *get_py) {
+    float dx = lx2 - lx1;
+    float dy = ly2 - ly1;
+    float fx = x - lx1;
+    float fy = y - ly1;
+    float t = (fx * dx + fy * dy) / (dx * dx + dy * dy);
+    *get_px = x + t * dx;
+    *get_py = y + t * dy;
+}
 
 /* 检测点与点是否发生碰撞
  *
@@ -17,8 +35,9 @@ static int check_collision_point_point(float x1, float y1, float x2, float y2) {
  * `(x, y)` 是点的坐标，`(x1, y1)` 和 `(x2, y2)` 是线段的端点坐标。
  */
 static int check_collision_point_line(float x, float y, float x1, float y1, float x2, float y2) {
-    assert(0);
-    return 0;
+    return (x1 <= x == x <= x2)
+        && (y1 <= y == y <= y2)
+        && calc_vector_cross(x2 - x1, y - y1, y2 - y1, x - x1);
 }
 
 /* 检测点与矩形是否发生碰撞
@@ -43,7 +62,29 @@ static int check_collision_point_circle(float x, float y, float cx, float cy, fl
  * `(x3, y3)` 和 `(x4, y4)` 是第二条线段的端点坐标。
  */
 static int check_collision_line_line(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-    assert(0);
+
+    float max_x12, min_x12; if (x1 < x2) { max_x12 = x2; min_x12 = x1; } else { max_x12 = x1; min_x12 = x2; }
+    float max_x34, min_x34; if (x3 < x4) { max_x34 = x4; min_x34 = x3; } else { max_x34 = x3; min_x34 = x3; }
+    if (max_x12 < min_x34 || max_x34 < min_x12)
+        return 0;
+
+    float max_y12, min_y12; if (y1 < y2) { max_y12 = y2; min_y12 = y1; } else { max_y12 = y1; min_y12 = y2; }
+    float max_y34, min_y34; if (y3 < y4) { max_y34 = y4; min_y34 = y3; } else { max_y34 = y3; min_y34 = y3; }
+    if (max_y12 < min_y34 || max_y34 < min_y12)
+        return 0;
+
+    float c1 = calc_vector_cross(x3 - x1, y3 - y1, x2 - x1, y2 - y1);
+    float c2 = calc_vector_cross(x4 - x1, y4 - y1, x2 - x1, y2 - y1);
+    float c3 = calc_vector_cross(x1 - x3, y1 - y3, x4 - x3, y4 - y3);
+    float c4 = calc_vector_cross(x2 - x3, y2 - y3, x4 - x3, y4 - y3);
+    if (c1 * c2 < 0 && c3 * c4 < 0)
+        return 1;
+
+    if (c1 == 0 && min_x12 <= x3 && x3 <= max_x12 && min_y12 <= y3 && y3 <= max_y12) return 1;
+    if (c2 == 0 && min_x12 <= x4 && x4 <= max_x12 && min_y12 <= y4 && y4 <= max_y12) return 1;
+    if (c3 == 0 && min_x34 <= x1 && x1 <= max_x34 && min_y34 <= y1 && y1 <= max_y34) return 1;
+    if (c4 == 0 && min_x34 <= x2 && x2 <= max_x34 && min_y34 <= y2 && y2 <= max_y34) return 1;
+
     return 0;
 }
 
@@ -53,8 +94,12 @@ static int check_collision_line_line(float x1, float y1, float x2, float y2, flo
  * `(rx1, ry1)` 和 `(rx2, ry2)` 是矩形的对角坐标。
  */
 static int check_collision_line_rect(float lx1, float ly1, float lx2, float ly2, float rx1, float ry1, float rx2, float ry2) {
-    assert(0);
-    return 0;
+    return check_collision_point_rect(lx1, ly1, rx1, ry1, rx2, ry2)
+        || check_collision_point_rect(lx2, ly1, rx1, ry1, rx2, ry2)
+        || check_collision_line_line(lx1, ly1, lx2, ly2, rx1, ry1, rx2, ry1)
+        || check_collision_line_line(lx1, ly1, lx2, ly2, rx2, ry1, rx2, ry2)
+        || check_collision_line_line(lx1, ly1, lx2, ly2, rx2, ry2, rx1, ry2)
+        || check_collision_line_line(lx1, ly1, lx2, ly2, rx1, ry2, rx1, ry1);
 }
 
 /* 检测线段与圆是否发生碰撞
@@ -63,8 +108,14 @@ static int check_collision_line_rect(float lx1, float ly1, float lx2, float ly2,
  * `(cx, cy)` 和 `r` 是圆的圆心坐标和半径。
  */
 static int check_collision_line_circle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
-    assert(0);
-    return 0;
+
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    float t = ((cx - x1) * dx + (cy - y1) * dy) / (dx * dx + dy * dy);
+    float px = cx + t * dx;
+    float py = cy + t * dy;
+    return check_collision_point_rect(px, py, x1, y1, x2, y2)
+        && check_collision_point_circle(px, py, cx, cy, r);
 }
 
 /* 检测两个矩形是否发生碰撞
