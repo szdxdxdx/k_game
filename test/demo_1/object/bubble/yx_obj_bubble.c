@@ -5,28 +5,6 @@ static void bubble_set_state_float(struct k_object *object) {
     k_sprite_renderer_set_sprite(bubble->spr_rdr, yx_spr_bubble_float);
 
     {
-        struct k_collision_point_config config;
-        config.group_id = YX_COLLISION_GROUP_BUBBLE;
-        config.x        = &bubble->position.x;
-        config.y        = &bubble->position.y;
-        config.offset_x = 0;
-        config.offset_y = 0;
-        // bubble->collision_box = k_object_add_collision_point(object, &config);
-    }
-
-    {
-        struct k_collision_line_config config;
-        config.group_id  = YX_COLLISION_GROUP_BUBBLE;
-        config.x         = &bubble->position.x;
-        config.y         = &bubble->position.y;
-        config.offset_x1 = 0;
-        config.offset_y1 = 30;
-        config.offset_x2 = 0;
-        config.offset_y2 = 0;
-        bubble->collision_box = k_object_add_collision_line(object, &config);
-    }
-
-    {
         struct k_collision_rectangle_config config;
         config.group_id  = YX_COLLISION_GROUP_BUBBLE;
         config.x         = &bubble->position.x;
@@ -35,18 +13,7 @@ static void bubble_set_state_float(struct k_object *object) {
         config.offset_y1 = -6;
         config.offset_x2 = 8;
         config.offset_y2 = 10;
-        // bubble->collision_box = k_object_add_collision_rectangle(object, &config);
-    }
-
-    {
-        struct k_collision_circle_config config;
-        config.group_id  = YX_COLLISION_GROUP_BUBBLE;
-        config.x         = &bubble->position.x;
-        config.y         = &bubble->position.y;
-        config.offset_cx = 0;
-        config.offset_cy = -8;
-        config.r         = 16;
-        // bubble->collision_box = k_object_add_collision_circle(object, &config);
+        bubble->collision_box = k_object_add_collision_rectangle(object, &config);
     }
 }
 
