@@ -7,23 +7,25 @@
 static void k__sprite_renderer_debug_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
 
-    float scale_x = (float)renderer->scaled_w / (float)k_sprite_get_width(renderer->sprite);
-    float scale_y = (float)renderer->scaled_h / (float)k_sprite_get_height(renderer->sprite);
+    if (NULL == renderer->sprite)
+        return;
 
-    float w      = (float)renderer->scaled_w;
-    float h      = (float)renderer->scaled_h;
-    float ox     = scale_x * k_sprite_get_origin_x(renderer->sprite);
-    float oy     = scale_y * k_sprite_get_origin_y(renderer->sprite);
-    float angle  = renderer->angle;
-    int   flip_x = renderer->transform_flags & transform_flip_x;
-    int   flip_y = renderer->transform_flags & transform_flip_y;
-    float dst_x  = *(renderer->x);
-    float dst_y  = *(renderer->y);
+    float dst_x = *(renderer->x);
+    float dst_y = *(renderer->y);
+
+    float w       = renderer->scaled_w;
+    float h       = renderer->scaled_h;
+    float scale_x = renderer->scaled_w / (float)k_sprite_get_width(renderer->sprite);
+    float scale_y = renderer->scaled_h / (float)k_sprite_get_height(renderer->sprite);
+    float ox      = scale_x * k_sprite_get_origin_x(renderer->sprite);
+    float oy      = scale_y * k_sprite_get_origin_y(renderer->sprite);
+    float angle   = renderer->angle;
+    int   flip_x  = renderer->transform_flags & transform_flip_x;
+    int   flip_y  = renderer->transform_flags & transform_flip_y;
 
     /* ------------------------------------------------------------------------ */
 
-    float x1, y1, x2, y2;
-    float x3, y3, x4, y4;
+    float x1, x2, x3, x4;
     if (flip_x) {
         x1 = ox;
         x2 = ox - w;
@@ -35,6 +37,8 @@ static void k__sprite_renderer_debug_draw(struct k_component *component) {
         x3 = -ox;
         x4 = w - ox;
     }
+
+    float y1, y2, y3, y4;
     if (flip_y) {
         y1 = oy;
         y2 = oy;
@@ -47,12 +51,15 @@ static void k__sprite_renderer_debug_draw(struct k_component *component) {
         y4 = -oy;
     }
 
-    angle *= (3.1415926f / 180.0f);
+    angle *= 3.1415926f / 180.0f;
     float s = sinf(angle);
     float c = cosf(angle);
     {
-        float x_new = x1 * c - y1 * s;
-        float y_new = x1 * s + y1 * c;
+        float x_new;
+        float y_new;
+
+        x_new = x1 * c - y1 * s;
+        y_new = x1 * s + y1 * c;
         x1 = x_new;
         y1 = y_new;
 
@@ -103,19 +110,14 @@ static void k__sprite_renderer_debug_draw(struct k_component *component) {
 
 int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
 
-    if (NULL == renderer->sprite) {
-
+    if (0 == debug) {
         if (NULL != renderer->cb_debug_draw) {
             k_component_del_callback(renderer->cb_debug_draw);
             renderer->cb_debug_draw = NULL;
         }
-
-        renderer->debug = debug;
-        return 0;
     }
-
-    if (NULL == renderer->cb_debug_draw) {
-        if (0 != debug) {
+    else {
+        if (NULL == renderer->cb_debug_draw) {
 
             renderer->cb_debug_draw = k_component_add_draw_callback(
                 renderer->component,
@@ -123,17 +125,10 @@ int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
                 K_SPRITE_RENDERER_DEBUG_Z_GROUP,
                 K_SPRITE_RENDERER_DEBUG_Z_LAYER
             );
-
             if (NULL == renderer->cb_debug_draw)
                 return -1;
         }
-    } else {
-        if (0 == debug) {
-            k_component_del_callback(renderer->cb_debug_draw);
-            renderer->cb_debug_draw = NULL;
-        }
     }
 
-    renderer->debug = debug;
     return 0;
 }

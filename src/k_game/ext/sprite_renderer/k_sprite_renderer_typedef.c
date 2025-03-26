@@ -14,8 +14,6 @@ void k__sprite_renderer_reset(struct k_sprite_renderer *renderer) {
     renderer->speed = 1.0f;
 
     k_sprite_renderer_reset_transforms(renderer);
-
-    k_sprite_renderer_set_debug(renderer, renderer->debug);
 }
 
 static int k__sprite_renderer_init(struct k_component *component, void *params) {
@@ -28,7 +26,6 @@ static int k__sprite_renderer_init(struct k_component *component, void *params) 
     renderer->z_layer = config->z_layer;
     renderer->cb_draw_sprite = NULL;
 
-    renderer->debug = 0;
     renderer->cb_debug_draw = NULL;
 
     renderer->x = config->x;
