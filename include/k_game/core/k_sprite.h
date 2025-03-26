@@ -138,9 +138,6 @@ float k_sprite_get_origin_x(struct k_sprite *sprite);
 /** \brief 获取精灵原点的竖直偏移量 */
 float k_sprite_get_origin_y(struct k_sprite *sprite);
 
-/** \brief 修改精灵原点的偏移量 */
-void k_sprite_set_origin(struct k_sprite *sprite, float origin_x, float origin_y);
-
 /** \brief 获取精灵的帧数 */
 int k_sprite_get_frames_num(struct k_sprite *sprite);
 

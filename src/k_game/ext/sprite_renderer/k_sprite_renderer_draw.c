@@ -2,7 +2,7 @@
 
 #include "../../core/sprite/_public.h"
 
-/* region [renderer_draw] */
+/* region [draw_sprite] */
 
 static void k__sprite_renderer_draw_sprite(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);

@@ -2,6 +2,8 @@
 
 #include "../../core/k_SDL/_public.h"
 
+/* region [debug_draw] */
+
 static void draw_point(float x, float y) {
     float r = 3.0f;
     SDL_RenderDrawLineF(k__window.renderer, x - r, y, x + r, y);
@@ -89,6 +91,10 @@ void k__collision_debug_draw(struct k_component *component) {
     }
 }
 
+/* endregion */
+
+/* region [set_debug] */
+
 int k_collision_set_box_debug(struct k_collision_box *box, int debug) {
 
     if (0 == debug) {
@@ -107,3 +113,27 @@ int k_collision_set_box_debug(struct k_collision_box *box, int debug) {
 
     return 0;
 }
+
+static struct k_collision_group *k__collision_find_or_add_group(int group_id) {
+
+    struct k_component_manager *component_manager = k_room_get_component_manager(k__component_type_collision);
+    if (NULL == component_manager)
+        return NULL;
+
+    struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
+    struct k_collision_group *group = k__collision_manager_find_or_add_group(manager, group_id);
+    return group;
+}
+
+int k_collision_set_debug(int group_id, int debug) {
+
+    struct k_collision_group *group = k__collision_find_or_add_group(group_id);
+    if (NULL == group)
+        return -1;
+
+
+
+    return 0;
+}
+
+/* endregion */

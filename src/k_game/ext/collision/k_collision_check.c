@@ -144,9 +144,9 @@ static int check_collision_circle_circle(float x1, float y1, float r1, float x2,
 
 /* endregion */
 
-/* region [collision_check] */
+/* region [find_group] */
 
-static struct k_collision_group *k__collision_manager_find_group(int group_id) {
+static struct k_collision_group *k__collision_find_group(int group_id) {
 
     struct k_component_manager *component_manager = k_room_get_component_manager(k__component_type_collision);
     if (NULL == component_manager)
@@ -161,9 +161,13 @@ static struct k_collision_group *k__collision_manager_find_group(int group_id) {
     return group;
 }
 
+/* endregion */
+
+/* region [collision_check] */
+
 struct k_collision_box *k_collision_check_point(int group_id, float x, float y) {
 
-    struct k_collision_group *group = k__collision_manager_find_group(group_id);
+    struct k_collision_group *group = k__collision_find_group(group_id);
     if (NULL == group)
         return NULL;
 
@@ -219,7 +223,7 @@ struct k_collision_box *k_collision_check_point(int group_id, float x, float y) 
 
 struct k_collision_box *k_collision_check_line(int group_id, float x1, float y1, float x2, float y2) {
 
-    struct k_collision_group *group = k__collision_manager_find_group(group_id);
+    struct k_collision_group *group = k__collision_find_group(group_id);
     if (NULL == group)
         return NULL;
 
@@ -275,7 +279,7 @@ struct k_collision_box *k_collision_check_line(int group_id, float x1, float y1,
 
 struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2) {
 
-    struct k_collision_group *group = k__collision_manager_find_group(group_id);
+    struct k_collision_group *group = k__collision_find_group(group_id);
     if (NULL == group)
         return NULL;
 
@@ -334,7 +338,7 @@ struct k_collision_box *k_collision_check_circle(int group_id, float cx, float c
     if (r <= 0.0f)
         return k_collision_check_point(group_id, cx, cy);
 
-    struct k_collision_group *group = k__collision_manager_find_group(group_id);
+    struct k_collision_group *group = k__collision_find_group(group_id);
     if (NULL == group)
         return NULL;
 
