@@ -7,7 +7,7 @@
 static void k__sprite_renderer_debug_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
 
-    SDL_SetRenderDrawColor(k__window.renderer, 78, 204, 89, 255);
+    SDL_SetRenderDrawColor(k__window.renderer, 255, 102, 0, 255);
 
     float dst_x = *(renderer->x);
     float dst_y = *(renderer->y);
@@ -117,24 +117,29 @@ draw_position:
 int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
 
     if (0 == debug) {
-        if (NULL != renderer->cb_debug_draw) {
-            k_component_del_callback(renderer->cb_debug_draw);
-            renderer->cb_debug_draw = NULL;
-        }
+
+        if (NULL == renderer->cb_debug_draw)
+            return 0;
+
+        k_component_del_callback(renderer->cb_debug_draw);
+        renderer->cb_debug_draw = NULL;
+        return 0;
     }
     else {
-        if (NULL == renderer->cb_debug_draw) {
 
-            renderer->cb_debug_draw = k_component_add_draw_callback(
-                renderer->component,
-                k__sprite_renderer_debug_draw,
-                K_SPRITE_RENDERER_DEBUG_Z_GROUP,
-                K_SPRITE_RENDERER_DEBUG_Z_LAYER
-            );
-            if (NULL == renderer->cb_debug_draw)
-                return -1;
-        }
+        if (NULL != renderer->cb_debug_draw)
+            return 0;
+
+        renderer->cb_debug_draw = k_component_add_draw_callback(
+            renderer->component,
+            k__sprite_renderer_debug_draw,
+            K_SPRITE_RENDERER_DEBUG_Z_GROUP,
+            K_SPRITE_RENDERER_DEBUG_Z_LAYER
+        );
+
+        if (NULL == renderer->cb_debug_draw)
+            return -1;
+
+        return 0;
     }
-
-    return 0;
 }

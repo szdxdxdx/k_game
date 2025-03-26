@@ -101,6 +101,8 @@ struct k_collision_group {
     struct k_int_map_node group_map_node;
 
     struct k_list box_list;
+
+    struct k_room_callback *cb_debug_draw;
 };
 
 int k__collision_manager_init_group_map(struct k_collision_manager *manager);
@@ -110,6 +112,10 @@ void k__collision_manager_fini_group_map(struct k_collision_manager *manager);
 struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collision_manager *manager, int group_id);
 
 void k__collision_manager_del_group(struct k_collision_group *group);
+
+struct k_collision_group *k__collision_find_or_add_group(int group_id);
+
+struct k_collision_group *k__collision_find_group(int group_id);
 
 /* endregion */
 

@@ -144,25 +144,6 @@ static int check_collision_circle_circle(float x1, float y1, float r1, float x2,
 
 /* endregion */
 
-/* region [find_group] */
-
-static struct k_collision_group *k__collision_find_group(int group_id) {
-
-    struct k_component_manager *component_manager = k_room_get_component_manager(k__component_type_collision);
-    if (NULL == component_manager)
-        return NULL;
-
-    struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
-    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_id);
-    if (NULL == map_node)
-        return NULL;
-
-    struct k_collision_group *group = container_of(map_node, struct k_collision_group, group_map_node);
-    return group;
-}
-
-/* endregion */
-
 /* region [collision_check] */
 
 struct k_collision_box *k_collision_check_point(int group_id, float x, float y) {

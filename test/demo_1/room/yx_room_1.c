@@ -5,12 +5,24 @@
 #include "../sprite/_public.h"
 #include "../object/_public.h"
 
+static void set_debug(void *data) {
+
+    if (k_key_pressed('B')) {
+
+        if (k_key_down(K_KEY_LEFT_SHIFT))
+            k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 0);
+        else
+            k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 1);
+    }
+}
+
 int fn_room_init(void *params) {
     (void)params;
 
     /* region [component_manager] */
 
     k_room_add_collision_manager();
+    k_room_add_step_callback(NULL, set_debug);
 
     /* endregion */
 

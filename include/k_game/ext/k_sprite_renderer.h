@@ -335,7 +335,8 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
  *
  * 若 `debug` 为非 0 则开启调试模式，否则关闭。
  *
- * 调试模式下，渲染器将用绿色绘制精灵图的矩形边框，并在精灵原点处绘制十字。
+ * 调试模式下，渲染器将在关联的坐标处绘制十字标记。
+ * 若渲染器引用了精灵，则额外显示精灵图的矩形边框。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */

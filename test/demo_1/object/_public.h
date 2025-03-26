@@ -8,4 +8,8 @@
 
 #include "./weapon/yx_obj_weapon.h"
 
+enum yx_collision_group_id {
+    YX_COLLISION_GROUP_BUBBLE,
+};
+
 #endif
