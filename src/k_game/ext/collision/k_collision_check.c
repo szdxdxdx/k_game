@@ -89,7 +89,7 @@ static int check_collision_rect_rect(float x1, float y1, float x2, float y2, flo
         || ( (x1 < x3) != (x2 < x4) && (y1 < y3) != (y2 < y4) );
 }
 
-/* 检测矩形和圆形是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是矩形的一组对角坐标，`(cx, cy)` 和 `r` 是圆形的圆心坐标和半径 */
+/* 检测矩形和圆是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是矩形的一组对角坐标，`(cx, cy)` 和 `r` 是圆形的圆心坐标和半径 */
 static int check_collision_rect_circle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
     return check_collision_point_rect(cx - r, cy, x1, y1, x2, y2)
         || check_collision_point_rect(cx + r, cy, x1, y1, x2, y2)
@@ -319,12 +319,122 @@ struct k_collision_box *k_collision_check_circle(int group_id, float cx, float c
 
 /* endregion */
 
-/* region [tmp] */
+/* region [collision_query] */
+
+size_t k_collision_query_point(struct k_collision_box **result, size_t n, int group_id, float x, float y) {
+
+    if (NULL == result || 0 == n)
+        return 0;
+
+    struct k_collision_group *group = k__collision_find_group(group_id);
+    if (NULL == group)
+        return 0;
+
+    size_t count = 0;
+
+    struct k_collision_box *box;
+    struct k_list *list = &group->box_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(list, iter)) {
+        box = container_of(iter, struct k_collision_box, box_list_node);
+
+        if (check_collision_point_box(x, y, box)) {
+            result[count] = box;
+
+            count += 1;
+            if (n <= count)
+                break;
+        }
+    }
+
+    return count;
+}
+
+size_t k_collision_query_line(struct k_collision_box **result, size_t n, int group_id, float x1, float y1, float x2, float y2) {
+
+    if (NULL == result || 0 == n)
+        return 0;
+
+    struct k_collision_group *group = k__collision_find_group(group_id);
+    if (NULL == group)
+        return 0;
+
+    size_t count = 0;
+
+    struct k_collision_box *box;
+    struct k_list *list = &group->box_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(list, iter)) {
+        box = container_of(iter, struct k_collision_box, box_list_node);
+
+        if (check_collision_line_box(x1, y1, x2, y2, box)) {
+            result[count] = box;
+
+            count += 1;
+            if (n <= count)
+                break;
+        }
+    }
+
+    return count;
+}
 
 size_t k_collision_query_rectangle(struct k_collision_box **result, size_t n, int group_id, float x1, float y1, float x2, float y2) {
 
-    return 0;
+    if (NULL == result || 0 == n)
+        return 0;
+
+    struct k_collision_group *group = k__collision_find_group(group_id);
+    if (NULL == group)
+        return 0;
+
+    size_t count = 0;
+
+    struct k_collision_box *box;
+    struct k_list *list = &group->box_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(list, iter)) {
+        box = container_of(iter, struct k_collision_box, box_list_node);
+
+        if (check_collision_rect_box(x1, y1, x2, y2, box)) {
+            result[count] = box;
+
+            count += 1;
+            if (n <= count)
+                break;
+        }
+    }
+
+    return count;
+}
+
+size_t k_collision_query_circle(struct k_collision_box **result, size_t n, int group_id, float cx, float cy, float r) {
+
+    if (NULL == result || 0 == n)
+        return 0;
+
+    struct k_collision_group *group = k__collision_find_group(group_id);
+    if (NULL == group)
+        return 0;
+
+    size_t count = 0;
+
+    struct k_collision_box *box;
+    struct k_list *list = &group->box_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(list, iter)) {
+        box = container_of(iter, struct k_collision_box, box_list_node);
+
+        if (check_collision_circle_box(cx, cy, r, box)) {
+            result[count] = box;
+
+            count += 1;
+            if (n <= count)
+                break;
+        }
+    }
+
+    return count;
 }
 
 /* endregion */
-
