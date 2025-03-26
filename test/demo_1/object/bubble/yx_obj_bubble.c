@@ -7,8 +7,8 @@ static void bubble_set_state_float(struct k_object *object) {
     {
         struct k_collision_rectangle_config config;
         config.group_id  = YX_COLLISION_GROUP_BUBBLE;
-        config.x         = &bubble->position.x;
-        config.y         = &bubble->position.y;
+        config.x         = &bubble->x;
+        config.y         = &bubble->y;
         config.offset_x1 = -8;
         config.offset_y1 = -6;
         config.offset_x2 = 8;
@@ -21,13 +21,13 @@ struct k_object *yx_bubble_create(float x, float y) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_bubble));
     struct yx_obj_bubble *bubble = k_object_get_data(object);
-    bubble->position.x = x;
-    bubble->position.y = y;
+    bubble->x = x;
+    bubble->y = y;
 
     {
         struct k_sprite_renderer_config config;
-        config.x        = &bubble->position.x;
-        config.y        = &bubble->position.y;
+        config.x        = &bubble->x;
+        config.y        = &bubble->y;
         config.sprite   = yx_spr_bubble_appear;
         config.z_group  = 0;
         config.z_layer  = (int)y;

@@ -332,10 +332,10 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 /**
  * \brief 开启或关闭渲染器的调试显示功能
  *
+ * 若 `debug` 为非 0 则启用调试，否则关闭。
  * 启用调试后，渲染器将在关联的坐标处绘制十字标记。
- * 若渲染器引用了精灵，则额外显示精灵图的矩形边框。
+ * 若渲染器引用了精灵，则额外显示精灵图的边框。
  *
- * 若 `debug` 为非 0 则启用调试后，否则关闭。
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug);

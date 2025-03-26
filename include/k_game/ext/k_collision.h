@@ -241,8 +241,8 @@ struct k_collision_box *k_collision_check_circle(int group_id, float x, float y,
 /**
  * \brief 开启或关闭指定碰撞组的调试显示功能
  *
- * 若 `debug` 为非 0 则开启 `group_id` 碰撞组的调试显示功能，否则关闭。
- * 启用调试后，该碰撞组内所有碰撞盒将以可视化形式显示。
+ * 若 `debug` 为非 0 则启用调试，否则关闭。
+ * 启用调试后，将绘制 `group_id` 碰撞组内所有碰撞盒。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
