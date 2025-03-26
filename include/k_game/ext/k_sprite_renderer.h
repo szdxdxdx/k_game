@@ -165,19 +165,19 @@ float k_sprite_renderer_get_rotation(struct k_sprite_renderer *renderer);
 /* region [flip_x] */
 
 /**
- * \brief 设置渲染器延水平方向翻转绘制精灵
+ * \brief 设置渲染器延水平方向镜像翻转绘制精灵
  *
- * 若 `flip` 为非 0，则启用水平翻转，否则不启用。
+ * 若 `flip` 为非 0，则启用水平镜像翻转，否则不启用。
  * 变换原点为精灵的原点。
  *
- * 更换渲染器引用的精灵后，渲染器会取消水平翻转。
+ * 更换渲染器引用的精灵后，渲染器会取消镜像翻转。
  */
 void k_sprite_renderer_flip_x(struct k_sprite_renderer *renderer, int flip);
 
 /**
- * \brief 检查渲染器是否启用水平翻转
+ * \brief 检查渲染器是否启用水平镜像翻转
  *
- * 若渲染器启用水平翻转，则函数返回非 0，否则返回 0。
+ * 若渲染器启用水平镜像翻转，则函数返回非 0，否则返回 0。
  * 若渲染器没有引用精灵，则函数返回 0。
  */
 int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
@@ -187,19 +187,19 @@ int k_sprite_renderer_is_flipped_x(struct k_sprite_renderer *renderer);
 /* region [flip_y] */
 
 /**
- * \brief 设置渲染器延竖直方向翻转绘制精灵
+ * \brief 设置渲染器延竖直方向镜像翻转绘制精灵
  *
- * 若 `flip` 为非 0，则启用竖直翻转，否则不启用。
+ * 若 `flip` 为非 0，则启用竖直镜像翻转，否则不启用。
  * 变换原点为精灵的原点。
  *
- * 更换渲染器引用的精灵后，渲染器会取消竖直翻转。
+ * 更换渲染器引用的精灵后，渲染器会取消镜像翻转。
  */
 void k_sprite_renderer_flip_y(struct k_sprite_renderer *renderer, int flip);
 
 /**
- * \brief 检查渲染器是否启用竖直翻转
+ * \brief 检查渲染器是否启用竖直镜像翻转
  *
- * 若渲染器启用竖直翻转，则函数返回非 0，否则返回 0。
+ * 若渲染器启用竖直镜像翻转，则函数返回非 0，否则返回 0。
  * 若渲染器没有引用精灵，则函数返回 0。
  */
 int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
@@ -209,10 +209,9 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
 /**
  * \brief 重置渲染器对精灵图的所有变换操作
  *
- * 重置宽高缩放倍率为 1.0f，旋转角度为 0.0f，取消水平翻转与垂直翻转。
- * 即按精灵图的原样绘制，不缩放、不旋转、不翻转。
+ * 重置宽高缩放倍率为 1.0f，旋转角度为 0.0f，取消镜像翻转。
  *
- * 更换渲染器引用的精灵后，渲染器会重置所有的变换。
+ * 更换渲染器引用的精灵后，渲染器也会重置所有的变换。
  */
 void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
 
@@ -331,13 +330,12 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 /* region [debug] */
 
 /**
- * \brief 开启或关闭渲染器调试模式
+ * \brief 开启或关闭渲染器的调试显示功能
  *
- * 若 `debug` 为非 0 则开启调试模式，否则关闭。
- *
- * 调试模式下，渲染器将在关联的坐标处绘制十字标记。
+ * 启用调试后，渲染器将在关联的坐标处绘制十字标记。
  * 若渲染器引用了精灵，则额外显示精灵图的矩形边框。
  *
+ * 若 `debug` 为非 0 则启用调试后，否则关闭。
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug);

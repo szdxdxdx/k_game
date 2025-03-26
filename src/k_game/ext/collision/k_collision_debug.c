@@ -53,45 +53,7 @@ static void draw_circle(float cx, float cy, float r) {
     }
 }
 
-void k__collision_debug_draw(struct k_component *component) {
-
-    SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 0, 255);
-
-    struct k_collision_box *box = k_component_get_data(component);
-    switch (box->type) {
-        case K_COLLISION_POINT: {
-            float x = *(box->x) + box->point.offset_x;
-            float y = *(box->y) + box->point.offset_y;
-            draw_point(x, y);
-            break;
-        }
-        case K_COLLISION_LINE: {
-            float x1 = *(box->x) + box->line.offset_x1;
-            float y1 = *(box->y) + box->line.offset_y1;
-            float x2 = *(box->x) + box->line.offset_x2;
-            float y2 = *(box->y) + box->line.offset_y2;
-            draw_line(x1, y1, x2, y2);
-            break;
-        }
-        case K_COLLISION_RECTANGLE: {
-            float x1 = *(box->x) + box->rect.offset_x1;
-            float y1 = *(box->y) + box->rect.offset_y1;
-            float x2 = *(box->x) + box->rect.offset_x2;
-            float y2 = *(box->y) + box->rect.offset_y2;
-            draw_rect(x1, y1, x2, y2);
-            break;
-        }
-        case K_COLLISION_CIRCLE: {
-            float cx = *(box->x) + box->circle.offset_cx;
-            float cy = *(box->y) + box->circle.offset_cy;
-            float r  = box->circle.r;
-            draw_circle(cx, cy, r);
-            break;
-        }
-    }
-}
-
-void k__collision_box_debug_draw(struct k_collision_box *box) {
+static void k__collision_box_debug_draw(struct k_collision_box *box) {
 
     switch (box->type) {
         case K_COLLISION_POINT: {
@@ -126,10 +88,10 @@ void k__collision_box_debug_draw(struct k_collision_box *box) {
     }
 }
 
-void k__collision_group_debug_draw(void *data) {
+static void k__collision_group_debug_draw(void *data) {
     struct k_collision_group *group = data;
 
-    SDL_SetRenderDrawColor(k__window.renderer, 233, 66, 66, 255);
+    SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 102, 255);
 
     struct k_collision_box *box;
     struct k_list *list = &group->box_list;

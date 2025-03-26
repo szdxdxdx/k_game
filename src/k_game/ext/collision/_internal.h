@@ -134,10 +134,4 @@ int k__collision_manager_add_box(struct k_collision_manager *manager, struct k_c
 
 /* endregion */
 
-/* region [debug] */
-
-void k__collision_debug_draw(struct k_component *component);
-
-/* endregion */
-
 #endif
