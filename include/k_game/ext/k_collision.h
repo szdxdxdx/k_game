@@ -236,6 +236,12 @@ struct k_collision_box *k_collision_check_circle(int group_id, float x, float y,
 
 /* endregion */
 
+/* region [collision_query] */
+
+size_t k_collision_query_rectangle(struct k_collision_box **result, size_t n, int group_id, float x1, float y1, float x2, float y2);
+
+/* endregion */
+
 /* region [debug] */
 
 /**
