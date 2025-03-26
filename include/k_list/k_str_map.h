@@ -38,7 +38,7 @@ struct k_hash_list *k_str_map_rehash(struct k_str_map *map, struct k_hash_list *
     bucket < map->buckets + map->buckets_num; \
     bucket++
 
-#define k_str_map_container_of(hash_list_iter, type, member) \
+#define k_str_map_node_container_of(hash_list_iter, type, member) \
     container_of( container_of(hash_list_iter, struct k_str_map_node, list_node), type, member )
 
 #endif

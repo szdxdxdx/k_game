@@ -20,10 +20,10 @@ void k__collision_manager_fini_group_map(struct k_collision_manager *manager) {
     struct k_collision_group *group;
     struct k_int_map *group_map = &manager->group_map;
     struct k_hash_list *bucket;
-    struct k_hash_list_node *iter, *next;
     for (k_int_map_for_each_bucket(group_map, bucket)) {
+        struct k_hash_list_node *iter, *next;
         for (k_hash_list_for_each_s(bucket, iter, next)) {
-            group = k_int_map_container_of(iter, struct k_collision_group, group_map_node);
+            group = k_int_map_node_container_of(iter, struct k_collision_group, group_map_node);
 
             k__collision_manager_del_group(group);
         }
@@ -61,4 +61,7 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
 
         k_object_del_component(box->component);
     }
+
+    k_int_map_del(&group->group_map_node);
+    k_free(group);
 }
