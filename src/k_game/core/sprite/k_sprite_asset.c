@@ -65,7 +65,7 @@ static int check_config(const struct k_sprite_config *config) {
     return 0;
 
 err:
-    k_log_error("Invalid sprite config: %s", err_msg);
+    k_log_error("Invalid sprite j_config: %s", err_msg);
     return -1;
 }
 

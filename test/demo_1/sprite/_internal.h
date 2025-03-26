@@ -5,6 +5,6 @@
 
 #include "./_public.h"
 
-#include "./yx_sprite_sheet.h"
+#include "../utils/sprite_sheet/yx_sprite_sheet.h"
 
 #endif

@@ -5,15 +5,15 @@ struct k_sprite *yx_spr_liliko_run  = NULL;
 
 int yx_load_spr_liliko(void) {
 
-    struct yx_sprite_sheet sheet;
+    struct yx_sprite_sheet_config config = YX_SPRITE_SHEET_CONFIG_INIT;
+    config.image_filepath  = "./demo_1/sprite/liliko.png";
+    config.config_filepath = "./demo_1/sprite/liliko.json";
+    config.scale = 2.0f;
+    config.sprites = (struct yx_sprite_sheet_sprite_config[]){
+        { &yx_spr_liliko_idle, "idle", 15, 23 },
+        { &yx_spr_liliko_run,   "run", 15, 23 },
+        { NULL }
+    };
 
-    const char *config = "./demo_1/sprite/liliko.json";
-    const char *image  = "./demo_1/sprite/liliko.png";
-    yx_load_sprite_sheet(&sheet, image, 2.0f, config);
-
-    yx_spr_liliko_idle = yx_load_sprite_from_sheet(&sheet, "idle", 15, 23);
-    yx_spr_liliko_run = yx_load_sprite_from_sheet(&sheet, "run", 15, 23);
-
-    yx_sprite_sheet_fini(&sheet);
-    return 0;
+    return yx_sprite_load_from_sheet(&config);
 }

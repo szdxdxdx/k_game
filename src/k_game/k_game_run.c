@@ -35,7 +35,7 @@ static int step_check_config(void *context) {
     return 0;
 
 err:
-    k_log_error("Invalid game config: %s", err_msg);
+    k_log_error("Invalid game j_config: %s", err_msg);
     return -1;
 }
 
