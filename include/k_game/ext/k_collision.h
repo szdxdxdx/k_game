@@ -85,7 +85,7 @@ struct k_collision_line_config {
     /**
      * \brief 线段端点坐标相对于关联坐标的偏移量
      *
-     * 若线段的端点重合，则退化成一个点。
+     * 若端点重合，则线段退化成一个点。
      */
     float offset_x1;
     float offset_y1;
@@ -118,7 +118,7 @@ struct k_collision_rectangle_config {
      * \brief 矩形对角坐标相对于关联坐标的偏移量
      *
      * 矩形的对角坐标，可以是左上角与右下角的坐标，也可以是左下角与右上角的坐标。
-     * 若矩形的对边或对角重合，则退化成一条线段或一个点。
+     * 若对边或对角重合，则矩形退化成一条线段或一个点。
      */
     float offset_x1;
     float offset_y1;
@@ -153,7 +153,7 @@ struct k_collision_circle_config {
 
     /** \brief 圆的半径
      *
-     * 若半径为 0.0f 或负值，则退化成一个点。
+     * 若半径为 0.0f 或负值，则圆退化成一个点。
      */
     float r;
 };
@@ -178,11 +178,7 @@ void k_object_del_collision_box(struct k_collision_box *box);
 
 /* region [collision_box_get] */
 
-/**
- * \brief 获取碰撞盒关联的对象
- *
- * 函数返回挂载了该碰撞盒的对象。
- */
+/** \brief 获取碰撞盒关联的对象 */
 struct k_object *k_collision_box_get_object(struct k_collision_box *box);
 
 /* endregion */
