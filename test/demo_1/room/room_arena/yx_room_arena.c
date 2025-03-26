@@ -1,9 +1,9 @@
 #include <limits.h>
 
-#include "./_internal.h"
+#include "../_internal.h"
 
-#include "../sprite/_public.h"
-#include "../object/_public.h"
+#include "../../sprite/_public.h"
+#include "../../object/_public.h"
 
 static void set_debug(void *data) {
 
@@ -67,7 +67,7 @@ int fn_room_init(void *params) {
     return 0;
 }
 
-struct k_room *yx_room_1_create(void) {
+struct k_room *yx_room_arena_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.fn_init = fn_room_init;
