@@ -88,8 +88,6 @@ err:
     return NULL;
 }
 
-/* ------------------------------------------------------------------------ */
-
 static int check_config(const struct yx_sprite_sheet_config *config) {
 
     if (NULL == config)
@@ -150,10 +148,6 @@ err:
     return -1;
 }
 
-static void sprite_sheet_release(struct yx_sprite_sheet *sheet) {
-    k_json_free(sheet->j_config);
-}
-
 static int sprite_sheet_extract_all(struct yx_sprite_sheet *sheet, const struct yx_sprite_sheet_config *config) {
 
     struct yx_sprite_sheet_sprite_config *spr_config = config->sprites;
@@ -177,8 +171,10 @@ static int sprite_sheet_extract_all(struct yx_sprite_sheet *sheet, const struct 
     return 0;
 
 err:
+    spr_config--;
     while (1) {
         k_sprite_destroy(*(spr_config->get_sprite));
+        *(spr_config->get_sprite) = NULL;
 
         if (spr_config == config->sprites)
             break;
@@ -198,10 +194,13 @@ int yx_sprite_load_from_sheet(const struct yx_sprite_sheet_config *config) {
     if (0 != sprite_sheet_load(&sheet, config))
         return -1;
 
-    int ret = 0;
-    if (0 != sprite_sheet_extract_all(&sheet, config))
-        ret = -1;
-
-    sprite_sheet_release(&sheet);
-    return ret;
+    if (0 != sprite_sheet_extract_all(&sheet, config)) {
+        k_image_release(sheet.image);
+        k_json_free(sheet.j_config);
+        return -1;
+    }
+    else {
+        k_json_free(sheet.j_config);
+        return 0;
+    }
 }

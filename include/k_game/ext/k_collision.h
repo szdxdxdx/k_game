@@ -218,7 +218,7 @@ struct k_collision_box *k_collision_check_line(int group_id, float x1, float y1,
  * 矩形的对角坐标，可以是左上角与右下角的坐标，也可以是左下角与右上角的坐标。
  * 若矩形的对边或对角重合，则检测区域退化成一条线段或一个点。
  */
-struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2);
+struct k_collision_box *k_collision_check_rect(int group_id, float x1, float y1, float x2, float y2);
 
 /**
  * \brief 检测是否有碰撞盒与指定的圆相交
@@ -265,7 +265,7 @@ size_t k_collision_query_line(struct k_collision_box **result, size_t n, int gro
  *
  * 函数返回实际写入缓冲区的碰撞盒个数，不超过 `n`。
  */
-size_t k_collision_query_rectangle(struct k_collision_box **result, size_t n, int group_id, float x1, float y1, float x2, float y2);
+size_t k_collision_query_rect(struct k_collision_box **result, size_t n, int group_id, float x1, float y1, float x2, float y2);
 
 /**
  * \brief 检测是否有碰撞盒与指定的圆相交

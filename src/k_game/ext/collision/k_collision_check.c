@@ -276,7 +276,7 @@ struct k_collision_box *k_collision_check_line(int group_id, float x1, float y1,
     return NULL;
 }
 
-struct k_collision_box *k_collision_check_rectangle(int group_id, float x1, float y1, float x2, float y2) {
+struct k_collision_box *k_collision_check_rect(int group_id, float x1, float y1, float x2, float y2) {
 
     struct k_collision_group *group = k__collision_find_group(group_id);
     if (NULL == group)
@@ -379,7 +379,7 @@ size_t k_collision_query_line(struct k_collision_box **result, size_t n, int gro
     return count;
 }
 
-size_t k_collision_query_rectangle(struct k_collision_box **result, size_t n, int group_id, float x1, float y1, float x2, float y2) {
+size_t k_collision_query_rect(struct k_collision_box **result, size_t n, int group_id, float x1, float y1, float x2, float y2) {
 
     if (NULL == result || 0 == n)
         return 0;
