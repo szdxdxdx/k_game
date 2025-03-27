@@ -87,10 +87,14 @@ draw_rect:
         x4 = x_new + dst_x;
         y4 = y_new + dst_y;
 
-        SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2);
-        SDL_RenderDrawLineF(k__window.renderer, x2, y2, x3, y3);
-        SDL_RenderDrawLineF(k__window.renderer, x3, y3, x4, y4);
-        SDL_RenderDrawLineF(k__window.renderer, x4, y4, x1, y1);
+        SDL_FPoint points[5] = {
+            { x1, y1 },
+            { x2, y2 },
+            { x3, y3 },
+            { x4, y4 },
+            { x1, y1 },
+        };
+        SDL_RenderDrawLinesF(k__window.renderer, points, 5);
     }
 
 draw_position:

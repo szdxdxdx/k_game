@@ -5,7 +5,7 @@
 /* region [debug_draw] */
 
 static void draw_point(float x, float y) {
-    float r = 3.0f;
+    float r = 1.0f;
     SDL_RenderDrawLineF(k__window.renderer, x - r, y, x + r, y);
     SDL_RenderDrawLineF(k__window.renderer, x, y - r, x, y + r);
 }
@@ -15,13 +15,14 @@ static void draw_line(float x1, float y1, float x2, float y2) {
 }
 
 static void draw_rect(float x1, float y1, float x2, float y2) {
-    SDL_FRect draw_rect = {
-        .x = x1 < x2 ? x1 : x2,
-        .y = y1 < y2 ? y1 : y2,
-        .w = x1 < x2 ? x2 - x1 : x1 - x2,
-        .h = y1 < y2 ? y2 - y1 : y1 - y2,
+    SDL_FPoint points[] = {
+        { x1, y1 },
+        { x1, y2 },
+        { x2, y2 },
+        { x2, y1 },
+        { x1, y1 },
     };
-    SDL_RenderDrawRectF(k__window.renderer, &draw_rect);
+    SDL_RenderDrawLinesF(k__window.renderer, points, 5);
 }
 
 static void draw_circle(float cx, float cy, float r) {
@@ -53,7 +54,7 @@ static void draw_circle(float cx, float cy, float r) {
     }
 }
 
-static void k__collision_box_debug_draw(struct k_collision_box *box) {
+static void draw_box(struct k_collision_box *box) {
 
     switch (box->type) {
         case K_COLLISION_POINT: {
@@ -88,7 +89,7 @@ static void k__collision_box_debug_draw(struct k_collision_box *box) {
     }
 }
 
-static void k__collision_group_debug_draw(void *data) {
+static void draw_group(void *data) {
     struct k_collision_group *group = data;
 
     SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 102, 255);
@@ -99,7 +100,7 @@ static void k__collision_group_debug_draw(void *data) {
     for (k_list_for_each(list, iter)) {
         box = container_of(iter, struct k_collision_box, box_list_node);
 
-        k__collision_box_debug_draw(box);
+        draw_box(box);
     }
 }
 
@@ -130,10 +131,8 @@ int k_collision_set_debug(int group_id, int debug) {
             return 0;
 
         group->cb_debug_draw = k_room_add_draw_callback(
-            group,
-            k__collision_group_debug_draw,
-            10000,
-            10000
+        group, draw_group,
+        K_COLLISION_DEBUG_Z_GROUP, K_COLLISION_DEBUG_Z_LAYER
         );
 
         if (NULL == group->cb_debug_draw)
