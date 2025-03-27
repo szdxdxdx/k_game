@@ -5,6 +5,9 @@
 
 #include "../core/k_rect.h"
 
+struct k_object;
+
+/* TODO docs */
 struct k_position;
 
 struct k_position_config {
