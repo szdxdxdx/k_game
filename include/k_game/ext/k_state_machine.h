@@ -48,6 +48,7 @@ struct k_state_machine_state {
 /**
  * \brief 切换状态机的状态结点
  *
+ * 若 `state` 为 `NULL`，则仅退出当前的状态结点。
  */
 void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state *state);
 

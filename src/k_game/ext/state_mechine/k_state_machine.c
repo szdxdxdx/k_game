@@ -43,6 +43,14 @@ int state_machine_init(struct k_component *component, void *params) {
     return 0;
 }
 
+void state_machine_fini(struct k_component *component) {
+    struct k_state_machine *machine = k_component_get_data(component);
+
+    if (NULL != machine->fn_exit) {
+        machine->fn_exit(machine->object);
+    }
+}
+
 static struct k_component_type *yx_component_type_state_machine;
 
 int k__define_component_state_machine(void) {
@@ -50,6 +58,7 @@ int k__define_component_state_machine(void) {
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_state_machine);
     config.fn_init   = state_machine_init;
+    config.fn_fini   = state_machine_fini;
 
     struct k_component_type *type = k_component_define(NULL, &config);
     if (NULL == type)
