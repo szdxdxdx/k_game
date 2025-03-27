@@ -3,8 +3,6 @@
 
 #include "k_list.h"
 
-#include "../core/k_rect.h"
-
 struct k_object;
 
 /* TODO docs */

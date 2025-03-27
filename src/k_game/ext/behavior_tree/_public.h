@@ -1,0 +1,4 @@
+#ifndef K_BEHAVIOR_TREE_PUBLIC_H
+#define K_BEHAVIOR_TREE_PUBLIC_H
+
+#endif
