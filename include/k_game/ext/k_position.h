@@ -22,8 +22,8 @@ struct k_position *k_object_add_position(struct k_object *object, const struct k
 
 void k_object_del_position(struct k_position *position);
 
-void k_position_set_world_position(struct k_position *self, float world_x, float world_y);
+void k_position_set_local_position(struct k_position *position, float local_x, float local_y);
 
-void k_position_set_local_position(struct k_position *self, float local_x, float local_y);
+void k_position_set_world_position(struct k_position *position, float world_x, float world_y);
 
 #endif

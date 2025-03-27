@@ -10,17 +10,17 @@ struct k_position {
 
     struct k_list_node child_list_node;
 
-    struct k_component *component;
-
-    float *world_x;
-    float *world_y;
-
     struct k_position *parent;
+
+    struct k_list child_list;
+
+    struct k_component *component;
 
     float local_x;
     float local_y;
 
-    struct k_list child_list;
+    float *world_x;
+    float *world_y;
 };
 
 #endif

@@ -14,7 +14,7 @@
 #include "./core/k_object.h"
 #include "./core/k_component.h"
 
-/* component */
+/* ext */
 #include "./ext/k_wasd.h"
 #include "./ext/k_sprite_renderer.h"
 #include "./ext/k_collision.h"

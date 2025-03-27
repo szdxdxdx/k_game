@@ -193,5 +193,28 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
         player->weapon = yx_obj_weapon_create(&weapon_config);
     }
 
+    /* ------------------------------------------------------------------------ */
+
+    {
+
+    }
+
     return object;
+}
+
+/* ------------------------------------------------------------------------ */
+
+void state_idle_enter(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+}
+
+void state_idle_update(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+}
+
+void state_idle_exit(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
 }

@@ -6,21 +6,21 @@ static struct k_position world;
 
 static void world_init(void) {
 
-    static float x = 0;
-    static float y = 0;
-
     k_list_node_loop(&world.child_list_node);
+    world.parent = NULL;
+
+    k_list_init(&world.child_list);
 
     world.component = NULL;
 
+    world.local_x = 0;
+    world.local_y = 0;
+
+    static float x = 0;
+    static float y = 0;
     world.world_x = &x;
     world.world_y = &y;
 
-    world.parent = NULL;
-    world.local_x  = 0;
-    world.local_y  = 0;
-
-    k_list_init(&world.child_list);
 }
 
 /* endregion */
@@ -46,20 +46,20 @@ static void k__position_update(struct k_position *self) {
 
 /* region [position_set] */
 
-void k_position_set_world_position(struct k_position *self, float world_x, float world_y) {
+void k_position_set_local_position(struct k_position *position, float local_x, float local_y) {
 
-    self->local_x = world_x - *(self->parent->world_x);
-    self->local_y = world_y - *(self->parent->world_y);
+    position->local_x = local_x;
+    position->local_y = local_y;
 
-    k__position_update(self);
+    k__position_update(position);
 }
 
-void k_position_set_local_position(struct k_position *self, float local_x, float local_y) {
+void k_position_set_world_position(struct k_position *position, float world_x, float world_y) {
 
-    self->local_x = local_x;
-    self->local_y = local_y;
+    position->local_x = world_x - *(position->parent->world_x);
+    position->local_y = world_y - *(position->parent->world_y);
 
-    k__position_update(self);
+    k__position_update(position);
 }
 
 /* endregion */
@@ -70,21 +70,19 @@ int position_init(struct k_component *component, void *params) {
     struct k_position *self = k_component_get_data(component);
     const struct k_position_config *config = params;
 
-    k_list_init(&self->child_list);
-
     struct k_position *parent = config->parent;
     if (NULL == parent)
         parent = &world;
 
+    self->parent = parent;
     k_list_add_tail(&parent->child_list, &self->child_list_node);
 
-    self->world_x = config->world_x;
-    self->world_y = config->world_y;
-
-    self->parent = parent;
+    k_list_init(&self->child_list);
 
     self->local_x = config->local_x;
     self->local_y = config->local_y;
+    self->world_x = config->world_x;
+    self->world_y = config->world_y;
 
     *(self->world_x) = *(self->parent->world_x) + self->local_x;
     *(self->world_y) = *(self->parent->world_y) + self->local_y;
