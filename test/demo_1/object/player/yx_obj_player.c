@@ -174,15 +174,11 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
-    //k_object_add_step_begin_callback(object, player_step_set_state);
     k_object_add_step_callback(object, player_touch_bubble);
     k_object_add_step_callback(object, player_step);
     k_object_add_step_callback(object, player_destroy);
 
     struct yx_obj_player *player = k_object_get_data(object);
-
-    player->state = YX_OBJ_PLAYER_STATE_IDLE;
-    player->face  = -1;
 
     {
         struct k_position_config position_config;
@@ -238,5 +234,3 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     return object;
 }
-
-/* ------------------------------------------------------------------------ */
