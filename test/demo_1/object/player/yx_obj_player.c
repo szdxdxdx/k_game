@@ -6,18 +6,14 @@ static void state_enter_idle(struct k_object *object);
 static void state_step_idle(struct k_object *object);
 static void state_exit_idle(struct k_object *object);
 static struct yx_state_machine_state state_idle = {
-    .fn_enter = state_enter_idle,
-    .fn_step  = state_step_idle,
-    .fn_exit  = state_exit_idle,
+    state_enter_idle, state_step_idle, state_exit_idle,
 };
 
 static void state_enter_run(struct k_object *object);
 static void state_step_run(struct k_object *object);
 static void state_exit_run(struct k_object *object);
 static struct yx_state_machine_state state_run = {
-    .fn_enter = state_enter_run,
-    .fn_step  = state_step_run,
-    .fn_exit  = state_exit_run,
+    state_enter_run, state_step_run, state_exit_run,
 };
 
 /* region [state_idle] */
@@ -35,8 +31,9 @@ static void state_enter_idle(struct k_object *object) {
 static void state_step_idle(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    if (player->next_x != player->x || player->next_y != player->y)
+    if (player->next_x != player->x || player->next_y != player->y) {
         yx_state_machine_change_state(player->state_machine, &state_run);
+    }
 }
 
 static void state_exit_idle(struct k_object *object) {
@@ -60,21 +57,19 @@ static void state_enter_run(struct k_object *object) {
 static void state_step_run(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    if (player->next_y == player->y) {
-        if (player->next_x == player->x) {
-            yx_state_machine_change_state(player->state_machine, &state_idle);
-            return;
-        }
-    }
-    else {
-        k_sprite_renderer_set_z_layer(player->spr_rdr, (int)player->next_y);
+    if (player->next_x == player->x && player->next_y == player->y) {
+        yx_state_machine_change_state(player->state_machine, &state_idle);
+        return;
     }
 
     if (player->next_x < player->x) {
         k_sprite_renderer_flip_x(player->spr_rdr, 0);
-    }
-    else if (player->next_x > player->x) {
+    } else {
         k_sprite_renderer_flip_x(player->spr_rdr, 1);
+    }
+
+    if (player->next_y != player->y) {
+        k_sprite_renderer_set_z_layer(player->spr_rdr, (int)player->next_y);
     }
 
     k_position_set_local_position(player->position, player->next_x, player->next_y);
