@@ -151,10 +151,7 @@ err:
 static int sprite_sheet_extract_all(struct yx_sprite_sheet *sheet, const struct yx_sprite_sheet_config *config) {
 
     struct yx_sprite_sheet_sprite_config *spr_config = config->sprites;
-    while (1) {
-
-        if (NULL == spr_config->get_sprite)
-            break;
+    for (; NULL != spr_config->get_sprite; spr_config++) {
 
         const char *tag = spr_config->tag;
         float origin_x  = spr_config->origin_x;
@@ -165,7 +162,6 @@ static int sprite_sheet_extract_all(struct yx_sprite_sheet *sheet, const struct 
             goto err;
 
         *spr_config->get_sprite = sprite;
-        spr_config++;
     }
 
     return 0;

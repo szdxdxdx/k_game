@@ -11,7 +11,7 @@ int yx_load_spr_ynx(void) {
     config.scale = 2.0f;
     config.sprites = (struct yx_sprite_sheet_sprite_config[]){
         { &yx_spr_ynx_idle, "idle", 15, 23 },
-        { &yx_spr_ynx_run,   "run", 15, 23 },
+        { &yx_spr_ynx_run,  "run",  15, 23 },
         { NULL }
     };
 
