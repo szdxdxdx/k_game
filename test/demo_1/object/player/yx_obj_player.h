@@ -30,7 +30,7 @@ struct yx_obj_player {
     float next_x;
     float next_y;
 
-    struct yx_state_machine *state_machine;
+    struct k_state_machine *state_machine;
 
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;

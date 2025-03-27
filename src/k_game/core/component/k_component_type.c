@@ -107,7 +107,7 @@ static int check_config(const struct k_component_manager_config *manager_config,
     return 0;
 
 err:
-    k_log_error("Invalid component j_config: %s", err_msg);
+    k_log_error("Invalid component config: %s", err_msg);
     return -1;
 }
 

@@ -5,17 +5,18 @@
 
 #include "k_game.h"
 
-#include "./core/k_SDL/_public.h"
-#include "./core/image/_public.h"
-#include "./core/sound/_public.h"
-#include "./core/sprite/_public.h"
-#include "./core/room/_public.h"
-#include "./core/component/_public.h"
+#include "../k_SDL/_public.h"
+#include "../image/_public.h"
+#include "../sound/_public.h"
+#include "../sprite/_public.h"
+#include "../room/_public.h"
+#include "../component/_public.h"
 
-#include "./ext/wasd/_public.h"
-#include "./ext/sprite_renderer/_public.h"
-#include "./ext/collision/_public.h"
-#include "./ext/position/_public.h"
+#include "../../ext/wasd/_public.h"
+#include "../../ext/sprite_renderer/_public.h"
+#include "../../ext/collision/_public.h"
+#include "../../ext/position/_public.h"
+#include "../../ext/state_mechine/_public.h"
 
 /* region [steps] */
 
@@ -35,7 +36,7 @@ static int step_check_config(void *context) {
     return 0;
 
 err:
-    k_log_error("Invalid game j_config: %s", err_msg);
+    k_log_error("Invalid game config: %s", err_msg);
     return -1;
 }
 
@@ -116,6 +117,7 @@ static int step_define_components(void *unused) {
            || k__define_component_sprite_renderer()
            || k__define_component_collision_box()
            || k__define_component_position()
+           || k__define_component_state_machine()
      ? -1 : 0;
 }
 
@@ -176,7 +178,7 @@ static const struct k_seq_step steps[] = {
 
 /* endregion */
 
-static int init_game(const struct k_game_config *config) {
+int k__init_game(const struct k_game_config *config) {
 
     if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), (void *)config)) {
         k_log_error("Failed to initialize game");
@@ -186,28 +188,6 @@ static int init_game(const struct k_game_config *config) {
     return 0;
 }
 
-static void deinit_game(const struct k_game_config *config) {
+void k__deinit_game(const struct k_game_config *config) {
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), (void *)config);
-}
-
-static void run_game() {
-
-    struct k_room *room = k__room_stack_get_top();
-    if (NULL == room) {
-        k_log_error("No room to run");
-        return;
-    }
-
-    k__room_run(room);
-}
-
-int k_run_game(const struct k_game_config *config) {
-
-    if (0 != init_game(config))
-        return -1;
-
-    run_game();
-
-    deinit_game(config);
-    return 0;
 }

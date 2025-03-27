@@ -20,7 +20,7 @@ struct k_collision_manager;
 
 extern struct k_component_type *k__component_type_collision;
 
-/* region [j_config] */
+/* region [config] */
 
 enum k_collision_box_type {
 

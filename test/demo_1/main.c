@@ -3,7 +3,6 @@
 
 #include "./sprite/_public.h"
 #include "./room/_public.h"
-#include "./utils/state_mechine/yx_state_machine.h"
 
 static void load_sprite(void) {
     yx_load_spr_ynx();
@@ -27,9 +26,6 @@ static void create_room(void) {
 static int fn_init_game(void) {
     load_sprite();
     load_sound();
-
-    yx_define_component_state_machine();
-
     create_room();
     return 0;
 }

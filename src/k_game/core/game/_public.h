@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+struct k_game_config;
 struct k_room;
 
 struct k_game_context {

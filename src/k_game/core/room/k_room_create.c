@@ -55,7 +55,7 @@ static int check_config(const struct k_room_config *config) {
     return 0;
 
 err:
-    k_log_error("Invalid room j_config: %s", err_msg);
+    k_log_error("Invalid room config: %s", err_msg);
     return -1;
 }
 
