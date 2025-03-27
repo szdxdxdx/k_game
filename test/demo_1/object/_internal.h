@@ -4,5 +4,6 @@
 #include "./_public.h"
 
 #include "../sprite/_public.h"
+#include "../utils/state_mechine/yx_state_machine.h"
 
 #endif

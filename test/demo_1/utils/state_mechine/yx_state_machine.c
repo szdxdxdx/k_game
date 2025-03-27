@@ -43,6 +43,7 @@ int state_machine_init(struct k_component *component, void *params) {
         return -1;
 
     struct yx_state_machine *machine = k_component_get_data(component);
+    machine->component = component;
     machine->fn_step = NULL;
     machine->fn_exit = NULL;
     return 0;

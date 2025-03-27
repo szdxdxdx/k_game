@@ -1,56 +1,92 @@
 #include "../_internal.h"
 
-static void player_step_set_state(struct k_object *object) {
+/* region [state] */
+
+static void state_enter_idle(struct k_object *object);
+static void state_step_idle(struct k_object *object);
+static void state_exit_idle(struct k_object *object);
+static struct yx_state_machine_state state_idle = {
+    .fn_enter = state_enter_idle,
+    .fn_step  = state_step_idle,
+    .fn_exit  = state_exit_idle,
+};
+
+static void state_enter_run(struct k_object *object);
+static void state_step_run(struct k_object *object);
+static void state_exit_run(struct k_object *object);
+static struct yx_state_machine_state state_run = {
+    .fn_enter = state_enter_run,
+    .fn_step  = state_step_run,
+    .fn_exit  = state_exit_run,
+};
+
+/* region [state_idle] */
+
+static void state_enter_idle(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    enum yx_obj_player_state state = YX_OBJ_PLAYER_STATE_IDLE;
-    if (player->next_x < player->x) {
-        state = YX_OBJ_PLAYER_STATE_RUN;
-        player->face = -1;
-    }
-    else if (player->next_x > player->x) {
-        state = YX_OBJ_PLAYER_STATE_RUN;
-        player->face = 1;
-    }
+    int flip_x = k_sprite_renderer_is_flipped_x(player->spr_rdr);
 
-    if (player->next_y != player->y) {
-        state = YX_OBJ_PLAYER_STATE_RUN;
+    k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_idle);
+
+    k_sprite_renderer_flip_x(player->spr_rdr, flip_x);
+}
+
+static void state_step_idle(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    if (player->next_x != player->x || player->next_y != player->y)
+        yx_state_machine_change_state(player->state_machine, &state_run);
+}
+
+static void state_exit_idle(struct k_object *object) {
+
+}
+
+/* endregion */
+
+/* region [state_run] */
+
+static void state_enter_run(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    int flip_x = k_sprite_renderer_is_flipped_x(player->spr_rdr);
+
+    k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_run);
+
+    k_sprite_renderer_flip_x(player->spr_rdr, flip_x);
+}
+
+static void state_step_run(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    if (player->next_y == player->y) {
+        if (player->next_x == player->x) {
+            yx_state_machine_change_state(player->state_machine, &state_idle);
+            return;
+        }
+    }
+    else {
         k_sprite_renderer_set_z_layer(player->spr_rdr, (int)player->next_y);
     }
 
-    switch (state) {
-        case YX_OBJ_PLAYER_STATE_RUN: {
-
-            switch (player->state) {
-                case YX_OBJ_PLAYER_STATE_RUN:
-                    k_sprite_renderer_flip_x(player->spr_rdr, player->face == 1 ? 1 : 0);
-                    break;
-                case YX_OBJ_PLAYER_STATE_IDLE:
-                    player->state = YX_OBJ_PLAYER_STATE_RUN;
-                    k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_run);
-                    if (player->face == 1)
-                        k_sprite_renderer_flip_x(player->spr_rdr, 1);
-                    break;
-            }
-            break;
-        }
-        case YX_OBJ_PLAYER_STATE_IDLE: {
-
-            switch (player->state) {
-                case YX_OBJ_PLAYER_STATE_RUN:player->state = YX_OBJ_PLAYER_STATE_IDLE;
-                    k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_idle);
-
-                    if (player->face == 1)
-                        k_sprite_renderer_flip_x(player->spr_rdr, 1);
-                case YX_OBJ_PLAYER_STATE_IDLE:
-                    break;
-            }
-            break;
-        }
+    if (player->next_x < player->x) {
+        k_sprite_renderer_flip_x(player->spr_rdr, 0);
+    }
+    else if (player->next_x > player->x) {
+        k_sprite_renderer_flip_x(player->spr_rdr, 1);
     }
 
     k_position_set_local_position(player->position, player->next_x, player->next_y);
 }
+
+static void state_exit_run(struct k_object *object) {
+
+}
+
+/* endregion */
+
+/* endregion */
 
 static void player_step(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
@@ -138,7 +174,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
-    k_object_add_step_begin_callback(object, player_step_set_state);
+    //k_object_add_step_begin_callback(object, player_step_set_state);
     k_object_add_step_callback(object, player_touch_bubble);
     k_object_add_step_callback(object, player_step);
     k_object_add_step_callback(object, player_destroy);
@@ -196,25 +232,11 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     /* ------------------------------------------------------------------------ */
 
     {
-
+        player->state_machine = yx_object_add_state_machine(object);
+        yx_state_machine_change_state(player->state_machine, &state_idle);
     }
 
     return object;
 }
 
 /* ------------------------------------------------------------------------ */
-
-void state_idle_enter(struct k_object *object) {
-    struct yx_obj_player *player = k_object_get_data(object);
-
-}
-
-void state_idle_update(struct k_object *object) {
-    struct yx_obj_player *player = k_object_get_data(object);
-
-}
-
-void state_idle_exit(struct k_object *object) {
-    struct yx_obj_player *player = k_object_get_data(object);
-
-}

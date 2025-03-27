@@ -29,8 +29,22 @@ static void world_init(void) {
 
 static void k__position_update(struct k_position *self) {
 
+#define K_POSITION_UPDATE_OPTIMIZE 1
+
+#if K_POSITION_UPDATE_OPTIMIZE == 1
+    float old_x = *(self->world_x);
+    float old_y = *(self->world_y);
+
     *(self->world_x) = *(self->parent->world_x) + self->local_x;
     *(self->world_y) = *(self->parent->world_y) + self->local_y;
+
+    if (old_x == *(self->world_x) && old_y == *(self->world_y)) {
+        return;
+    }
+#else
+    *(self->world_x) = *(self->parent->world_x) + self->local_x;
+    *(self->world_y) = *(self->parent->world_y) + self->local_y;
+#endif
 
     struct k_position *child;
     struct k_list *list = &self->child_list;
