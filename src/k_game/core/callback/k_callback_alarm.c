@@ -176,6 +176,8 @@ void k__alarm_callback_manager_del_callback(struct k_callback_base *callback) {
             k_list_del(&component_callback->component_callback.list_node);
             break;
         }
+        default:
+            assert(0);
     }
 }
 
@@ -283,6 +285,8 @@ void k__alarm_callback_manager_exec(struct k_alarm_callback_manager *manager) {
                 callback->fn_callback(callback->component, timeout_diff);
                 break;
             }
+            default:
+                assert(0);
         }
 
         k__alarm_callback_manager_del_callback(&alarm_callback->base);

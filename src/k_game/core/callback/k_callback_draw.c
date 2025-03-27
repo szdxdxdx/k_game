@@ -283,6 +283,8 @@ void k__draw_callback_manager_del_callback(struct k_callback_base *callback) {
             k_list_del(&component_callback->component_callback.list_node);
             break;
         }
+        default:
+            assert(0);
     }
 }
 
@@ -402,6 +404,8 @@ void k__draw_callback_manager_exec(struct k_draw_callback_manager *manager) {
                         component_callback->fn_callback(component_callback->component);
                         break;
                     }
+                    default:
+                        assert(0);
                 }
             }
         }

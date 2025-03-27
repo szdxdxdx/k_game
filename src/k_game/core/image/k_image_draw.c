@@ -41,7 +41,8 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
             return -1;
         }
-    } else {
+    }
+    else {
         SDL_FPoint center;
         center.x = options->pivot_x;
         center.y = options->pivot_y;

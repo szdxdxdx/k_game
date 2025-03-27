@@ -11,7 +11,7 @@ int k__init_sound_BGM_registry(void) {
 }
 
 static void release_asset(struct k_asset_registry_node *registry_node) {
-    struct k_sound_BGM *sound = (struct k_sound_BGM *)registry_node;
+    struct k_sound_BGM *sound = container_of(registry_node, struct k_sound_BGM, registry_node);
     k_sound_BGM_release(sound);
 }
 
@@ -33,6 +33,9 @@ struct k_sound_BGM *k_find_sound_BGM(const char *BGM_name) {
 /* region [sound_load] */
 
 struct k_sound_BGM *k_sound_BGM_load(const char *filepath) {
+
+    if (NULL == filepath || '\0' == filepath[0])
+        return NULL;
 
     struct k_sound_BGM *sound = k_malloc(sizeof(struct k_sound_BGM));
     if (NULL == sound)

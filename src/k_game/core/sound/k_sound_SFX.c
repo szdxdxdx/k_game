@@ -9,7 +9,7 @@ int k__init_sound_SFX_registry(void) {
 }
 
 static void release_asset(struct k_asset_registry_node *registry_node) {
-    struct k_sound_SFX *sound = (struct k_sound_SFX *)registry_node;
+    struct k_sound_SFX *sound = container_of(registry_node, struct k_sound_SFX, registry_node);
     k_sound_SFX_release(sound);
 }
 
@@ -31,6 +31,9 @@ struct k_sound_SFX *k_find_sound_SFX(const char *SFX_name) {
 /* region [sound_load] */
 
 struct k_sound_SFX *k_sound_SFX_load(const char *filepath) {
+
+    if (NULL == filepath || '\0' == filepath[0])
+        return NULL;
 
     struct k_sound_SFX *sound = k_malloc(sizeof(struct k_sound_SFX));
     if (NULL == sound)

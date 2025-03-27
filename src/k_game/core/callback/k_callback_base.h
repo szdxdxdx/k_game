@@ -26,9 +26,9 @@ enum k_callback_state {
 };
 
 struct k_callback_base {
-    uint8_t context;
-    uint8_t event;
-    uint8_t state;
+    enum k_callback_context context : 8;
+    enum k_callback_event   event   : 8;
+    enum k_callback_state   state   : 8;
 };
 
 void k__callback_del(struct k_callback_base *callback);
