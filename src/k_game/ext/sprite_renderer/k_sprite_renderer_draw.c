@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "./_internal.h"
 
 #include "../../core/sprite/_public.h"
@@ -71,24 +72,33 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         if (NULL == renderer->sprite)
             return 0;
 
+        assert(NULL != renderer->cb_draw_sprite);
+
         k_component_del_callback(renderer->cb_draw_sprite);
         renderer->cb_draw_sprite = NULL;
+
+        renderer->sprite = NULL;
+        return 0;
     }
     else {
+        if (NULL == renderer->sprite) {
 
-        /* TODO ? */
-        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, k__sprite_renderer_draw_sprite, renderer->z_group, renderer->z_layer);
-        if (NULL == callback)
-            return -1;
+            assert(NULL == renderer->cb_draw_sprite);
 
-        k_component_del_callback(renderer->cb_draw_sprite);
-        renderer->cb_draw_sprite = callback;
+            renderer->cb_draw_sprite = k_component_add_draw_callback(
+                renderer->component,
+                k__sprite_renderer_draw_sprite,
+                renderer->z_group,
+                renderer->z_layer
+            );
+            if (NULL == renderer->cb_draw_sprite)
+                return -1;
+        }
+
+        renderer->sprite = sprite;
+        k__sprite_renderer_reset(renderer);
+        return 0;
     }
-
-    renderer->sprite = sprite;
-
-    k__sprite_renderer_reset(renderer);
-    return 0;
 }
 
 struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer) {
