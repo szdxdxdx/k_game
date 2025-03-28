@@ -210,8 +210,6 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
         player->weapon = yx_obj_weapon_create(&weapon_config);
     }
 
-    /* ------------------------------------------------------------------------ */
-
     {
         player->state_machine = k_object_add_state_machine(object);
         k_state_machine_change_state(player->state_machine, STATE_IDLE);

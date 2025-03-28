@@ -19,50 +19,34 @@ static void set_debug(void *data) {
 int fn_room_init(void *params) {
     (void)params;
 
-    /* region [component_manager] */
-
     k_add_room_collision_manager();
 
     k_add_room_step_callback(NULL, set_debug);
-
-    /* endregion */
-
-    /* region [room_callback] */
-
     k_add_room_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
     k_add_room_draw_callback(NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
-
-    /* endregion */
-
-    /* region [create_bubble_maker] */
 
     {
         struct yx_obj_bubble_maker_config config;
         //yx_obj_bubble_maker_create(&config);
     }
 
-    /* endregion */
-
-    /* region [create_player] */
-
     {
         struct yx_obj_player_config config;
-        config.x = 300;
+        config.x = 200;
         config.y = 300;
         config.spr_idle = yx_spr_ynx_idle;
         config.spr_run  = yx_spr_ynx_run;
         yx_player_create(&config);
     }
 
-    /* endregion */
-
-    /* region [tmp] */
-
     {
-        struct k_object *object = k_object_create(0);
+        struct yx_obj_rival_config config;
+        config.x = 500;
+        config.y = 300;
+        config.spr_idle = yx_spr_liliko_idle;
+        config.spr_run  = yx_spr_liliko_run;
+        yx_rival_create(&config);
     }
-
-    /* endregion */
 
     return 0;
 }

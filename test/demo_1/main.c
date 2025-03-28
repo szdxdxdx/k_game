@@ -30,7 +30,7 @@ static int fn_init_game(void) {
     return 0;
 }
 
-int main_(int argc, char **argv) {
+int main(int argc, char **argv) {
     system("chcp 65001");
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);
