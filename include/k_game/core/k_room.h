@@ -60,7 +60,7 @@ struct k_room_config {
      *
      * 此回调的入参 `params` 由 `k_room_create()` 传入。
      *
-     * 此回调是可选的，指定值为 `NULL` 则不执行回调。
+     * 此回调是可选的，设为 `NULL` 则不执行回调。
      */
     int (*fn_init)(void *params);
 
@@ -73,7 +73,7 @@ struct k_room_config {
      * 注意：房间 `fn_init()` 初始化失败后不会执行本回调，
      * 你需保证初始化回调能在失败时自行回滚。
      *
-     * 此回调是可选的，指定值为 `NULL` 则不执行回调。
+     * 此回调是可选的，设为 `NULL` 则不执行回调。
      */
     void (*fn_cleanup)(void);
 

@@ -45,14 +45,14 @@ struct k_sprite_renderer_config {
 };
 
 /**
- * \brief 给对象挂载一个精灵渲染器
+ * \brief 给对象挂载一个精灵渲染器组件
  *
  * 若成功，函数返回渲染器的指针，否则返回 `NULL`。
  */
 struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, const struct k_sprite_renderer_config *config);
 
 /**
- * \brief 移除对象上挂载的精灵渲染器
+ * \brief 移除对象上挂载的精灵渲染器组件
  *
  * 若 `renderer` 为 `NULL`，则函数不做任何事。
  */

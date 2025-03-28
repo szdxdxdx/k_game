@@ -18,9 +18,9 @@ struct k_collision_box;
 /* region [room_add_collision_box_manager] */
 
 /**
- * \brief 给房间添加碰撞盒管理器
+ * \brief 给房间添加碰撞盒组件管理器
  *
- * 需要先给房间添加碰撞盒管理器，房间内的对象才能挂载碰撞盒。
+ * 必须先给房间添加碰撞盒管理器，才能给房间内的对象挂载碰撞盒。
  *
  * 若成功，函数返回非 0，否则返回 0。
  */
@@ -32,7 +32,7 @@ int k_room_add_collision_manager(void);
 
 /* region [point] */
 
-/** \brief 点碰撞盒的配置 */
+/** \brief 点形碰撞盒的配置 */
 struct k_collision_point_config {
 
     /**
@@ -59,7 +59,7 @@ struct k_collision_point_config {
 };
 
 /**
- * \brief 给对象挂载一个点碰撞盒
+ * \brief 给对象挂载一个点形碰撞盒组件
  *
  * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
@@ -91,7 +91,7 @@ struct k_collision_line_config {
 };
 
 /**
- * \brief 给对象挂载一个线段碰撞盒
+ * \brief 给对象挂载一个线段碰撞盒组件
  *
  * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
@@ -124,7 +124,7 @@ struct k_collision_rectangle_config {
 };
 
 /**
- * \brief 给对象挂载一个矩形碰撞盒
+ * \brief 给对象挂载一个矩形碰撞盒组件
  *
  * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
@@ -156,7 +156,7 @@ struct k_collision_circle_config {
 };
 
 /**
- * \brief 给对象挂载一个圆形碰撞盒
+ * \brief 给对象挂载一个圆形碰撞盒组件
  *
  * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
@@ -165,7 +165,7 @@ struct k_collision_box *k_object_add_collision_circle(struct k_object *object, c
 /* endregion */
 
 /**
- * \brief 移除对象上挂载的碰撞盒
+ * \brief 移除对象上挂载的碰撞盒组件
  *
  * 若 `box` 为 `NULL`，则函数不做任何事。
  */
@@ -232,9 +232,8 @@ struct k_collision_box *k_collision_check_circle(int group_id, float cx, float c
  * \brief 查询与指定的点相交的碰撞盒
  *
  * 函数查询 `group_id` 指定的碰撞组中与点 `(x, y)` 相交的碰撞盒，
- * 将查询结果写入 `result` 指向的数组缓冲区中，`n` 指定缓冲区的大小。
- *
- * 函数返回实际写入缓冲区的碰撞盒个数，不超过 `n`。
+ * 将查询结果写入 `result` 指向的数组缓冲区中，
+ * 最多写入 `n` 个，并返回实际写入的个数。
  */
 size_t k_collision_query_point(struct k_collision_box **result, size_t n, int group_id, float x, float y);
 
@@ -243,31 +242,33 @@ size_t k_collision_query_point(struct k_collision_box **result, size_t n, int gr
  *
  * 指定一条线段，其端点坐标为 `(x1, y1)` 和 `(x2, y2)`，
  * 函数查询 `group_id` 指定的碰撞组中与该线段相交的碰撞盒，
- * 将查询结果写入 `result` 指向的数组缓冲区中，`n` 指定缓冲区的大小。
+ * 将查询结果写入 `result` 指向的数组缓冲区中，
+ * 最多写入 `n` 个，并返回实际写入的个数。
  *
- * 函数返回实际写入缓冲区的碰撞盒个数，不超过 `n`。
+ * 若线段的端点重合，则检测区域退化成一个点。
  */
 size_t k_collision_query_line(struct k_collision_box **result, size_t n, int group_id, float x1, float y1, float x2, float y2);
 
 /**
- * \brief 查询与指定的矩形相交的碰撞盒
+ * \brief 查询与指定的矩形区域相交的碰撞盒
  *
  * 指定一个矩形区域，其对角坐标为 `(x1, y1)` 和 `(x2, y2)`，
  * 函数查询 `group_id` 指定的碰撞组中与该矩形区域相交的碰撞盒，
- * 将查询结果写入 `result` 指向的数组缓冲区中，`n` 指定缓冲区的大小。
+ * 将查询结果写入 `result` 指向的数组缓冲区中，最多写入 `n` 个，并返回实际写入的个数。
  *
- * 函数返回实际写入缓冲区的碰撞盒个数，不超过 `n`。
+ * 矩形的对角坐标，可以是左上角与右下角的坐标，也可以是左下角与右上角的坐标。
+ * 若矩形的对边或对角重合，则检测区域退化成一条线段或一个点。
  */
 size_t k_collision_query_rect(struct k_collision_box **result, size_t n, int group_id, float x1, float y1, float x2, float y2);
 
 /**
- * \brief 检测是否有碰撞盒与指定的圆相交
+ * \brief 查询与指定的圆形区域相交的碰撞盒
  *
  * 指定一个圆形区域，圆心坐标为 `(cx, cy)`，半径为 `r`，
  * 函数查询 `group_id` 指定的碰撞组中与该圆形区域相交的碰撞盒，
- * 将查询结果写入 `result` 指向的数组缓冲区中，`n` 指定缓冲区的大小。
+ * 将查询结果写入 `result` 指向的数组缓冲区中，最多写入 `n` 个，并返回实际写入的个数。
  *
- * 函数返回实际写入缓冲区的碰撞盒个数，不超过 `n`。
+ * 若圆的半径为 0.0f 或负值，则检测区域退化成一个点。
  */
 size_t k_collision_query_circle(struct k_collision_box **result, size_t n, int group_id, float cx, float cy, float r);
 

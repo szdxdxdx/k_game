@@ -19,20 +19,29 @@ struct k_object;
 struct k_state_machine;
 
 /**
- * \brief 为对象挂载一个状态机
+ * \brief 为对象挂载一个状态机组件
  *
  * 若成功，函数返回状态机的指针，否则返回 `NULL`。
  */
 struct k_state_machine *k_object_add_state_machine(struct k_object *object);
 
 /**
- * \brief 移除对象上挂载的状态机
+ * \brief 移除对象上挂载的状态机组件
  *
  * 若 `machine` 为 `NULL`，则函数不做任何事。
  */
 void k_object_del_state_machine(struct k_state_machine *machine);
 
-/** \brief 状态机的状态结点 */
+/**
+ * \brief 状态机的状态结点
+ *
+ * 切换状态机的结点时，先执行当前结点的 `fn_exit()`，
+ * 然后将当前结点设为新结点，并执行新结点的 `fn_enter()`，
+ * 之后每帧执行该结点的 `fn_step()`。
+ *
+ * 状态结点的回调都是可选的，设为 `NULL` 则不执行回调。
+ * 通常来说，不会将 `fn_step()` 设为 `NULL`。
+ */
 struct k_state_machine_state {
 
     /** \brief 进入该状态时触发的回调 */

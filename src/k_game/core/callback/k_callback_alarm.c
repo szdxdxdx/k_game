@@ -271,18 +271,18 @@ void k__alarm_callback_manager_exec(struct k_alarm_callback_manager *manager) {
 
         switch (alarm_callback->base.context) {
             case K_ROOM_CALLBACK: {
-                struct k_room_alarm_callback *callback = (struct k_room_alarm_callback *)alarm_callback;
-                callback->fn_callback(callback->data, timeout_diff);
+                struct k_room_alarm_callback *room_callback = (struct k_room_alarm_callback *)alarm_callback;
+                room_callback->fn_callback(room_callback->data, timeout_diff);
                 break;
             }
             case K_OBJECT_CALLBACK: {
-                struct k_object_alarm_callback *callback = (struct k_object_alarm_callback *)alarm_callback;
-                callback->fn_callback(callback->object, timeout_diff);
+                struct k_object_alarm_callback *object_callback = (struct k_object_alarm_callback *)alarm_callback;
+                object_callback->fn_callback(object_callback->object, timeout_diff);
                 break;
             }
             case K_COMPONENT_CALLBACK: {
-                struct k_component_alarm_callback *callback = (struct k_component_alarm_callback *)alarm_callback;
-                callback->fn_callback(callback->component, timeout_diff);
+                struct k_component_alarm_callback *component_callback = (struct k_component_alarm_callback *)alarm_callback;
+                component_callback->fn_callback(component_callback->component, timeout_diff);
                 break;
             }
             default:
