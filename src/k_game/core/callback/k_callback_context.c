@@ -31,15 +31,6 @@ struct k_room_callback *k_add_room_step_callback(void *data, void (*fn_callback)
     return k__step_callback_manager_add_room_callback(&room->step_callback_manager, room, data, fn_callback);
 }
 
-struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void *data, void (*fn_callback)(void *data), int z_group, int z_layer) {
-    return k__draw_callback_manager_add_room_callback(&room->draw_callback_manager, room, data, fn_callback, z_group, z_layer);
-}
-
-struct k_room_callback *k_add_room_draw_callback(void *data, void (*fn_callback)(void *data), int z_group, int z_layer) {
-    struct k_room *room = k__game.current_room;
-    return k__draw_callback_manager_add_room_callback(&room->draw_callback_manager, room, data, fn_callback, z_group, z_layer);
-}
-
 struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *data, void (*fn_callback)(void *data)) {
     return k__step_callback_manager_add_room_callback(&room->step_end_callback_manager, room, data, fn_callback);
 }
@@ -47,6 +38,15 @@ struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *
 struct k_room_callback *k_add_room_step_end_callback(void *data, void (*fn_callback)(void *data)) {
     struct k_room *room = k__game.current_room;
     return k__step_callback_manager_add_room_callback(&room->step_end_callback_manager, room, data, fn_callback);
+}
+
+struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void *data, void (*fn_callback)(void *data), int z_group, int z_layer) {
+    return k__draw_callback_manager_add_room_callback(&room->draw_callback_manager, room, data, fn_callback, z_group, z_layer);
+}
+
+struct k_room_callback *k_add_room_draw_callback(void *data, void (*fn_callback)(void *data), int z_group, int z_layer) {
+    struct k_room *room = k__game.current_room;
+    return k__draw_callback_manager_add_room_callback(&room->draw_callback_manager, room, data, fn_callback, z_group, z_layer);
 }
 
 void k_room_del_callback(struct k_room_callback *callback) {
@@ -85,12 +85,12 @@ struct k_object_callback *k_object_add_step_callback(struct k_object *object, vo
     return k__step_callback_manager_add_object_callback(&object->room->step_callback_manager, object, fn_callback);
 }
 
-struct k_object_callback *k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object), int z_group, int z_layer) {
-    return k__draw_callback_manager_add_object_callback(&object->room->draw_callback_manager, object, fn_callback, z_group, z_layer);
-}
-
 struct k_object_callback *k_object_add_step_end_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
     return k__step_callback_manager_add_object_callback(&object->room->step_end_callback_manager, object, fn_callback);
+}
+
+struct k_object_callback *k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object), int z_group, int z_layer) {
+    return k__draw_callback_manager_add_object_callback(&object->room->draw_callback_manager, object, fn_callback, z_group, z_layer);
 }
 
 void k_object_del_callback(struct k_object_callback *callback) {
@@ -129,12 +129,12 @@ struct k_component_callback *k_component_add_step_callback(struct k_component *c
     return k__step_callback_manager_add_component_callback(&component->object->room->step_callback_manager, component, fn_callback);
 }
 
-struct k_component_callback *k_component_add_draw_callback(struct k_component *component, void (*fn_callback)(struct k_component *component), int z_group, int z_layer) {
-    return k__draw_callback_manager_add_component_callback(&component->object->room->draw_callback_manager, component, fn_callback, z_group, z_layer);
-}
-
 struct k_component_callback *k_component_add_step_end_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
     return k__step_callback_manager_add_component_callback(&component->object->room->step_end_callback_manager, component, fn_callback);
+}
+
+struct k_component_callback *k_component_add_draw_callback(struct k_component *component, void (*fn_callback)(struct k_component *component), int z_group, int z_layer) {
+    return k__draw_callback_manager_add_component_callback(&component->object->room->draw_callback_manager, component, fn_callback, z_group, z_layer);
 }
 
 void k_component_del_callback(struct k_component_callback *callback) {

@@ -130,7 +130,7 @@ int k_collision_set_debug(int group_id, int debug) {
         if (NULL != group->cb_debug_draw)
             return 0;
 
-        /* FIXME: 不应该把回调绑定在房间上，否则 `k_room_del_all_callbacks()` 会导致 bug */
+        /* FIXME: 不应该把回调绑定在房间上，否则会受到 `k_room_del_all_callbacks()` 的影响 */
         group->cb_debug_draw = k_add_room_draw_callback(
             group,
             k__collision_draw_group,

@@ -183,13 +183,13 @@ struct k_room_callback *k_room_add_step_callback(struct k_room *room, void *data
 
 struct k_room_callback *k_add_room_step_callback(void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void *data, void (*fn_callback)(void *data), int z_group, int z_layer);
-
-struct k_room_callback *k_add_room_draw_callback(void *data, void (*fn_callback)(void *data), int z_group, int z_layer);
-
 struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
 
 struct k_room_callback *k_add_room_step_end_callback(void *data, void (*fn_callback)(void *data));
+
+struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void *data, void (*fn_callback)(void *data), int z_group, int z_layer);
+
+struct k_room_callback *k_add_room_draw_callback(void *data, void (*fn_callback)(void *data), int z_group, int z_layer);
 
 /**
  * \brief 删除房间的事件回调
