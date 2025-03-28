@@ -36,7 +36,7 @@ void k_object_del_state_machine(struct k_state_machine *machine);
 /**
  * \brief 状态机的状态结点
  *
- * 切换状态机的结点时，先执行当前结点的 `fn_exit()`，
+ * 切换状态机的状态结点时，先执行当前旧结点的 `fn_exit()`，
  * 然后将当前结点设为新结点，并执行新结点的 `fn_enter()`，
  * 之后每帧执行该结点的 `fn_step()`。
  *
