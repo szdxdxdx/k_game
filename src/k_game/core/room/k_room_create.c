@@ -150,7 +150,7 @@ static void step_del_all_callbacks(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__room_del_all_callbacks(room);
+    k_room_del_all_callbacks(room);
 }
 
 static void step_del_component_managers(void *context) {

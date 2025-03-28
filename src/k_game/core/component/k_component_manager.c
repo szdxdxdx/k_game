@@ -225,22 +225,29 @@ static void k__component_manager_destroy(struct k_component_manager *manager) {
 
 /* region [room_add_component_manager] */
 
-int k_room_add_component_manager(struct k_component_type *component_type, void *params) {
+int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params) {
 
-    struct k_room *room = k__game.current_room;
     if (NULL == room || NULL == component_type)
         return -1;
 
     return k__component_manager_create(room, component_type, params);
 }
 
-struct k_component_manager *k_room_get_component_manager(struct k_component_type *component_type) {
 
-    struct k_room *room = k__game.current_room;
-    if (NULL == room)
+int k_add_room_component_manager(struct k_component_type *component_type, void *params) {
+    return k_room_add_component_manager(k__game.current_room, component_type, params);
+}
+
+struct k_component_manager *k_room_get_component_manager(struct k_room *room, struct k_component_type *component_type) {
+
+    if (NULL == room || NULL == component_type)
         return NULL;
 
     return k__component_manager_map_find(room, component_type->manager_type);
+}
+
+struct k_component_manager *k_get_room_component_manager(struct k_component_type *component_type) {
+    return k_room_get_component_manager(k__game.current_room, component_type);
 }
 
 void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {

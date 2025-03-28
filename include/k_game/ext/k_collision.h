@@ -24,7 +24,10 @@ struct k_collision_box;
  *
  * 若成功，函数返回非 0，否则返回 0。
  */
-int k_room_add_collision_manager(void);
+int k_room_add_collision_manager(struct k_room *room);
+
+/** \brief 给当前房间添加碰撞盒组件管理器 */
+int k_add_room_collision_manager(void);
 
 /* endregion */
 

@@ -21,15 +21,16 @@ int fn_room_init(void *params) {
 
     /* region [component_manager] */
 
-    k_room_add_collision_manager();
-    k_room_add_step_callback(NULL, set_debug);
+    k_add_room_collision_manager();
+
+    k_add_room_step_callback(NULL, set_debug);
 
     /* endregion */
 
     /* region [room_callback] */
 
-    k_room_add_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
-    k_room_add_draw_callback(NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
+    k_add_room_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
+    k_add_room_draw_callback(NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
 
     /* endregion */
 

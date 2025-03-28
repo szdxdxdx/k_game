@@ -130,7 +130,7 @@ int k_collision_set_debug(int group_id, int debug) {
         if (NULL != group->cb_debug_draw)
             return 0;
 
-        group->cb_debug_draw = k_room_add_draw_callback(
+        group->cb_debug_draw = k_add_room_draw_callback(
         group, draw_group,
         K_COLLISION_DEBUG_Z_GROUP, K_COLLISION_DEBUG_Z_LAYER
         );
