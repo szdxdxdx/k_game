@@ -1,4 +1,13 @@
+#include <stdio.h>
+
 #include "../_internal.h"
+
+enum k_bt_state bt_action_log(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+
+    printf("rival: %f, %f\n", rival->x, rival->y);
+    return K_BT_SUCCESS;
+}
 
 struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
 
@@ -27,6 +36,12 @@ struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
         renderer_config.z_group = 0;
         renderer_config.z_layer = (int)config->y;
         rival->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
+    }
+
+    {
+        struct k_behavior_tree *tree = k_object_add_behavior_tree(object);
+        struct k_bt_node *root = k_bt_get_root(tree);
+        k_bt_add_action(root, bt_action_log);
     }
 
     return object;
