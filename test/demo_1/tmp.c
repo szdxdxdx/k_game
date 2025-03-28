@@ -97,6 +97,8 @@ int main(int argc, char **argv) {
 
     k_behavior_tree_run(tree);
 
+
+
     return 0;
 }
 
