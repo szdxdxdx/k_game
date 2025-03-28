@@ -6,6 +6,7 @@ enum k_bt_state bt_action_log(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
 
     printf("rival: %f, %f\n", rival->x, rival->y);
+
     return K_BT_SUCCESS;
 }
 

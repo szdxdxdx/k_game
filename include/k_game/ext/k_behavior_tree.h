@@ -60,12 +60,6 @@ struct k_bt_node *k_bt_add_inverter(struct k_bt_node *node);
 
 /* endregion */
 
-/* region [utility] */
-
-struct k_bt_node *k_bt_add_subtree(struct k_bt_node *node);
-
-/* endregion */
-
 /* endregion */
 
 #endif
