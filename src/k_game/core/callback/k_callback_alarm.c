@@ -64,7 +64,7 @@ struct k_room_callback *k__alarm_callback_manager_add_room_callback(struct k_ala
 
     callback->alarm_callback.base.context = K_ROOM_CALLBACK;
     callback->alarm_callback.base.event   = K_ALARM_CALLBACK;
-    callback->alarm_callback.base.state   = K_CALLBACK_PENDING;
+    callback->alarm_callback.base.state   = K_CALLBACK_INACTIVE;
 
     callback->alarm_callback.timeout = timeout;
     callback->alarm_callback.manager = manager;
@@ -91,7 +91,7 @@ struct k_object_callback *k__alarm_callback_manager_add_object_callback(struct k
 
     callback->alarm_callback.base.context = K_OBJECT_CALLBACK;
     callback->alarm_callback.base.event   = K_ALARM_CALLBACK;
-    callback->alarm_callback.base.state   = K_CALLBACK_PENDING;
+    callback->alarm_callback.base.state   = K_CALLBACK_INACTIVE;
 
     callback->alarm_callback.timeout = timeout;
     callback->alarm_callback.manager = manager;
@@ -118,7 +118,7 @@ struct k_component_callback *k__alarm_callback_manager_add_component_callback(st
 
     callback->alarm_callback.base.context = K_COMPONENT_CALLBACK;
     callback->alarm_callback.base.event   = K_ALARM_CALLBACK;
-    callback->alarm_callback.base.state   = K_CALLBACK_PENDING;
+    callback->alarm_callback.base.state   = K_CALLBACK_INACTIVE;
 
     callback->alarm_callback.timeout = timeout;
     callback->alarm_callback.manager = manager;
@@ -146,7 +146,7 @@ void k__alarm_callback_manager_del_callback(struct k_callback_base *callback) {
     struct k_alarm_callback *alarm_callback = container_of(callback, struct k_alarm_callback, base);
 
     switch (callback->state)
-        case K_CALLBACK_PENDING: {
+        case K_CALLBACK_INACTIVE: {
             callback->state = K_CALLBACK_DELETED;
             break;
         case K_CALLBACK_ACTIVE:
@@ -212,7 +212,7 @@ void k__alarm_callback_manager_flush(struct k_alarm_callback_manager *manager) {
         alarm_callback = container_of(iter, struct k_alarm_callback, pending_list_node);
 
         switch (alarm_callback->base.state) {
-            case K_CALLBACK_PENDING:
+            case K_CALLBACK_INACTIVE:
                 k_list_del(&alarm_callback->pending_list_node);
                 k_list_node_loop(&alarm_callback->pending_list_node);
 
