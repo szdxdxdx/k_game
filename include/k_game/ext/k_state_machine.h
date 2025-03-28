@@ -41,7 +41,6 @@ void k_object_del_state_machine(struct k_state_machine *machine);
  * 之后每帧执行该结点的 `fn_step()`。
  *
  * 状态结点的回调都是可选的，设为 `NULL` 则不执行回调。
- * 通常来说，不会将 `fn_step()` 设为 `NULL`。
  */
 struct k_state_machine_state {
 
@@ -55,11 +54,7 @@ struct k_state_machine_state {
     void (*fn_exit)(struct k_object *object);
 };
 
-/**
- * \brief 切换状态机的状态结点
- *
- * 若 `state` 为 `NULL`，则仅退出当前的状态结点。
- */
-void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state *state);
+/** \brief 切换状态机的状态结点 */
+void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state state);
 
 #endif

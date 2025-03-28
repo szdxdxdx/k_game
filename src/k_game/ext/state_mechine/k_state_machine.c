@@ -1,37 +1,30 @@
 #include "./_internal.h"
 
-/* region [change_state] */
+/* region [machine_state] */
 
-void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state *state) {
+void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state state) {
+
+    /* FIXME 应限制  `machine->fn_exit()` 和 `state->fn_enter()` 回调的行为
+     * - 不能删除状态机组件自身，不能销毁对象，否则退出回调后会访问到无效内存
+     */
 
     if (NULL != machine->fn_exit) {
         machine->fn_exit(machine->object);
         machine->fn_exit = NULL;
     }
 
-    if (NULL == state) {
-        machine->fn_step = NULL;
-        machine->fn_exit = NULL;
-        return;
-    }
+    if (NULL != state.fn_enter)
+        state.fn_enter(machine->object);
 
-    if (state->fn_enter != NULL)
-        state->fn_enter(machine->object);
-
-    machine->fn_step = state->fn_step;
-    machine->fn_exit = state->fn_exit;
+    machine->fn_step = state.fn_step;
+    machine->fn_exit = state.fn_exit;
 }
-
-/* endregion */
-
-/* region [machine_step] */
 
 static void k__state_machine_step(struct k_component *component) {
     struct k_state_machine *machine = k_component_get_data(component);
 
-    if (machine->fn_step != NULL) {
+    if (machine->fn_step != NULL)
         machine->fn_step(machine->object);
-    }
 }
 
 /* endregion */

@@ -34,7 +34,7 @@ static void state_step_idle(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     if (player->next_x != player->x || player->next_y != player->y) {
-        k_state_machine_change_state(player->state_machine, &state_run);
+        k_state_machine_change_state(player->state_machine, state_run);
     }
 }
 
@@ -56,7 +56,7 @@ static void state_step_run(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     if (player->next_x == player->x && player->next_y == player->y) {
-        k_state_machine_change_state(player->state_machine, &state_idle);
+        k_state_machine_change_state(player->state_machine, state_idle);
         return;
     }
 
@@ -214,7 +214,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
 
     {
         player->state_machine = k_object_add_state_machine(object);
-        k_state_machine_change_state(player->state_machine, &state_idle);
+        k_state_machine_change_state(player->state_machine, state_idle);
     }
 
     return object;

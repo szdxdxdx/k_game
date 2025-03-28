@@ -81,7 +81,7 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 
 static void shoot(struct k_object *object) {
 
-    if (k_button_pressed(K_BUTTON_LEFT) || k_button_down(K_BUTTON_MIDDLE) || k_button_pressed(K_BUTTON_RIGHT)) {
+    if (k_button_down(K_BUTTON_LEFT) || k_button_pressed(K_BUTTON_RIGHT)) {
         struct yx_obj_weapon *weapon = k_object_get_data(object);
         bullet_create(weapon);
     }
