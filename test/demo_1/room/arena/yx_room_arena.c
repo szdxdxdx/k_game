@@ -38,7 +38,7 @@ int fn_room_init(void *params) {
 
     {
         struct yx_obj_bubble_maker_config config;
-        yx_obj_bubble_maker_create(&config);
+        //yx_obj_bubble_maker_create(&config);
     }
 
     /* endregion */
@@ -54,13 +54,12 @@ int fn_room_init(void *params) {
         yx_player_create(&config);
     }
 
-    if (0) {
-        struct yx_obj_player_config config;
-        config.x = 500;
-        config.y = 500;
-        config.spr_idle = yx_spr_liliko_idle;
-        config.spr_run  = yx_spr_liliko_run;
-        yx_player_create(&config);
+    /* endregion */
+
+    /* region [tmp] */
+
+    {
+        struct k_object *object = k_object_create(0);
     }
 
     /* endregion */
