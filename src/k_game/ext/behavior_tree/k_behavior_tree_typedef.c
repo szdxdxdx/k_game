@@ -8,6 +8,9 @@ int k__behavior_tree_init(struct k_component *component, void *params) {
 
     tree->component = component;
 
+    tree->root.type = K_BT_NODE_ROOT;
+    tree->root.tree = tree;
+
     return 0;
 }
 

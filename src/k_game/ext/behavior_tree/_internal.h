@@ -8,11 +8,13 @@
 /* region [node] */
 
 enum k_bt_node_type {
-    K_BT_NOTE_ACTION,
+    K_BT_NODE_ROOT,
+    K_BT_NODE_ACTION,
 };
 
 struct k_bt_node {
     enum k_bt_node_type type;
+    struct k_behavior_tree *tree;
 };
 
 struct k_bt_action_node {
@@ -26,7 +28,7 @@ struct k_behavior_tree {
 
     struct k_component *component;
 
-    struct k_bt_node *root;
+    struct k_bt_node root;
 };
 
 #endif
