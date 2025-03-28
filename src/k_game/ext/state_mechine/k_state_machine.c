@@ -1,5 +1,7 @@
 #include "./_internal.h"
 
+/* region [change_state] */
+
 void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state *state) {
 
     if (NULL != machine->fn_exit) {
@@ -20,7 +22,11 @@ void k_state_machine_change_state(struct k_state_machine *machine, struct k_stat
     machine->fn_exit = state->fn_exit;
 }
 
-static void yx_state_machine_step(struct k_component *component) {
+/* endregion */
+
+/* region [k__state_machine_step] */
+
+static void k__state_machine_step(struct k_component *component) {
     struct k_state_machine *machine = k_component_get_data(component);
 
     if (machine->fn_step != NULL) {
@@ -28,10 +34,14 @@ static void yx_state_machine_step(struct k_component *component) {
     }
 }
 
-int state_machine_init(struct k_component *component, void *params) {
+/* endregion */
+
+/* region [machine_init] */
+
+static int k__state_machine_init(struct k_component *component, void *params) {
     (void *)params;
 
-    struct k_component_callback *callback = k_component_add_step_callback(component, yx_state_machine_step);
+    struct k_component_callback *callback = k_component_add_step_callback(component, k__state_machine_step);
     if (NULL == callback)
         return -1;
 
@@ -43,7 +53,7 @@ int state_machine_init(struct k_component *component, void *params) {
     return 0;
 }
 
-void state_machine_fini(struct k_component *component) {
+static void k__state_machine_fini(struct k_component *component) {
     struct k_state_machine *machine = k_component_get_data(component);
 
     if (NULL != machine->fn_exit) {
@@ -51,14 +61,18 @@ void state_machine_fini(struct k_component *component) {
     }
 }
 
+/* endregion */
+
+/* region [component_define] */
+
 static struct k_component_type *yx_component_type_state_machine;
 
 int k__define_component_state_machine(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_state_machine);
-    config.fn_init   = state_machine_init;
-    config.fn_fini   = state_machine_fini;
+    config.fn_init   = k__state_machine_init;
+    config.fn_fini   = k__state_machine_fini;
 
     struct k_component_type *type = k_component_define(NULL, &config);
     if (NULL == type)
@@ -67,6 +81,10 @@ int k__define_component_state_machine(void) {
     yx_component_type_state_machine = type;
     return 0;
 }
+
+/* endregion */
+
+/* region [object_add_component] */
 
 struct k_state_machine *k_object_add_state_machine(struct k_object *object) {
 
@@ -82,3 +100,5 @@ void k_object_del_state_machine(struct k_state_machine *machine) {
     if (NULL != machine)
         k_object_del_component(machine->component);
 }
+
+/* endregion */

@@ -14,8 +14,6 @@ int k__collision_box_init(struct k_component *component, void *params) {
     struct k_collision_box *box = k_component_get_data(component);
     box->component = component;
 
-    box->cb_debug_draw = NULL;
-
     int group_id;
 
     switch (box_config->type) {

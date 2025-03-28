@@ -27,7 +27,7 @@ static void world_init(void) {
 
 /* region [position_update] */
 
-static void k__position_update(struct k_position *self) {
+static void position_update(struct k_position *self) {
 
 #define K_POSITION_UPDATE_OPTIMIZE 1
 
@@ -52,7 +52,7 @@ static void k__position_update(struct k_position *self) {
     for (k_list_for_each(list, iter)) {
         child = container_of(iter, struct k_position, child_list_node);
 
-        k__position_update(child);
+        position_update(child);
     }
 }
 
@@ -65,7 +65,7 @@ void k_position_set_local_position(struct k_position *position, float local_x, f
     position->local_x = local_x;
     position->local_y = local_y;
 
-    k__position_update(position);
+    position_update(position);
 }
 
 void k_position_set_world_position(struct k_position *position, float world_x, float world_y) {
@@ -73,7 +73,7 @@ void k_position_set_world_position(struct k_position *position, float world_x, f
     position->local_x = world_x - *(position->parent->world_x);
     position->local_y = world_y - *(position->parent->world_y);
 
-    k__position_update(position);
+    position_update(position);
 }
 
 /* endregion */

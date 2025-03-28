@@ -75,8 +75,9 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         renderer->cb_draw_sprite = NULL;
     }
     else {
-        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component,
-        k__sprite_renderer_draw_sprite, renderer->z_group, renderer->z_layer);
+
+        /* TODO ? */
+        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, k__sprite_renderer_draw_sprite, renderer->z_group, renderer->z_layer);
         if (NULL == callback)
             return -1;
 
@@ -104,8 +105,7 @@ int k_sprite_renderer_set_z_index(struct k_sprite_renderer *renderer, int z_grou
         return 0;
 
     if (NULL != renderer->sprite) {
-        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component,
-        k__sprite_renderer_draw_sprite, z_group, z_layer);
+        struct k_component_callback *callback = k_component_add_draw_callback(renderer->component, k__sprite_renderer_draw_sprite, z_group, z_layer);
         if (NULL == callback)
             return -1;
 

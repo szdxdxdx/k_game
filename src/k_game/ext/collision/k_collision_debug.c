@@ -54,7 +54,7 @@ static void draw_circle(float cx, float cy, float r) {
     }
 }
 
-static void draw_box(struct k_collision_box *box) {
+static void k__collision_draw_box(struct k_collision_box *box) {
 
     switch (box->type) {
         case K_COLLISION_POINT: {
@@ -89,7 +89,7 @@ static void draw_box(struct k_collision_box *box) {
     }
 }
 
-static void draw_group(void *data) {
+static void k__collision_draw_group(void *data) {
     struct k_collision_group *group = data;
 
     SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 102, 255);
@@ -100,7 +100,7 @@ static void draw_group(void *data) {
     for (k_list_for_each(list, iter)) {
         box = container_of(iter, struct k_collision_box, box_list_node);
 
-        draw_box(box);
+        k__collision_draw_box(box);
     }
 }
 
@@ -130,11 +130,7 @@ int k_collision_set_debug(int group_id, int debug) {
         if (NULL != group->cb_debug_draw)
             return 0;
 
-        group->cb_debug_draw = k_add_room_draw_callback(
-        group, draw_group,
-        K_COLLISION_DEBUG_Z_GROUP, K_COLLISION_DEBUG_Z_LAYER
-        );
-
+        group->cb_debug_draw = k_add_room_draw_callback(group, k__collision_draw_group, K_COLLISION_DEBUG_Z_GROUP, K_COLLISION_DEBUG_Z_LAYER);
         if (NULL == group->cb_debug_draw)
             return -1;
 
