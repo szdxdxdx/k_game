@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-/* region [scale] */
+/* region [scale_x] */
 
 void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, float scaled_w) {
 
@@ -163,14 +163,11 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer) {
 
 void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer) {
 
-    if (NULL != renderer->sprite) {
-        renderer->scaled_w = (float)k_sprite_get_width(renderer->sprite);
-        renderer->scaled_h = (float)k_sprite_get_height(renderer->sprite);
-    } else {
-        renderer->scaled_w = 0.0f;
-        renderer->scaled_h = 0.0f;
-    }
+    if (NULL == renderer->sprite)
+        return;
 
+    renderer->scaled_w = (float)k_sprite_get_width(renderer->sprite);
+    renderer->scaled_h = (float)k_sprite_get_height(renderer->sprite);
     renderer->angle = 0.0f;
     renderer->transform_flags = transform_none;
 }

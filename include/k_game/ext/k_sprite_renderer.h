@@ -211,6 +211,7 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
  *
  * 重置宽高缩放倍率为 1.0f，旋转角度为 0.0f，取消镜像翻转。
  *
+ * 若渲染器没有引用精灵，则函数不做任何事。
  * 更换渲染器引用的精灵后，渲染器也会重置所有的变换。
  */
 void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
