@@ -202,6 +202,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
         renderer_config.z_group = 0;
         renderer_config.z_layer = (int)config->y;
         player->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
+        k_sprite_renderer_flip_x(player->spr_rdr, 1);
     }
 
     {
