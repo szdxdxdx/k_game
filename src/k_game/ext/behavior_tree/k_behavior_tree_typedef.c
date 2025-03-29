@@ -8,10 +8,16 @@ int k__behavior_tree_init(struct k_component *component, void *params) {
 
     tree->component = component;
 
-    tree->root.type = K_BT_NODE_ROOT;
-    tree->root.tree = tree;
+    tree->root.base.type = K_BT_NODE_ROOT;
+    tree->root.base.tree = tree;
+    k_list_node_loop(&tree->root.base.child_list_node);
+    k_list_init(&tree->root.child_list);
 
     return 0;
+}
+
+void k__behavior_tree_fini(struct k_component *component) {
+    /* TODO : free nodes */
 }
 
 /* endregion */
@@ -20,11 +26,12 @@ int k__behavior_tree_init(struct k_component *component, void *params) {
 
 static struct k_component_type *k__component_type_behavior_tree = NULL;
 
-int k__define_component_sprite_renderer(void) {
+int k__define_component_behavior_tree(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_behavior_tree);
-    config.fn_init = k__behavior_tree_init;
+    config.fn_init   = k__behavior_tree_init;
+    config.fn_fini   = k__behavior_tree_fini;
 
     struct k_component_type *type = k_component_define(NULL, &config);
     if (NULL == type)
