@@ -2,7 +2,7 @@
 
 #include "../_internal.h"
 
-enum k_behavior_tree_state bt_action_log(struct k_object *object) {
+enum k_behavior_tree_status bt_action_log(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
 
     printf("rival: %f, %f\n", rival->x, rival->y);
@@ -40,9 +40,7 @@ struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
     }
 
     {
-        //struct k_behavior_tree *tree = k_object_add_behavior_tree(object);
-        //struct k_behavior_tree_node *root = k_behavior_tree_get_root(tree);
-        ////k_behavior_tree_add_action(root, bt_action_log);
+
     }
 
     return object;
