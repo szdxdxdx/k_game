@@ -20,34 +20,30 @@ static void world_init(void) {
     static float y = 0;
     world.world_x = &x;
     world.world_y = &y;
-
 }
 
 /* endregion */
 
 /* region [position_update] */
 
-static void position_update(struct k_position *self) {
+static void position_update(struct k_position *position) {
 
-#define K_POSITION_UPDATE_OPTIMIZE 1
+#if 0
+    float old_x = *(position->world_x);
+    float old_y = *(position->world_y);
 
-#if K_POSITION_UPDATE_OPTIMIZE == 1
-    float old_x = *(self->world_x);
-    float old_y = *(self->world_y);
+    *(position->world_x) = *(position->parent->world_x) + position->local_x;
+    *(position->world_y) = *(position->parent->world_y) + position->local_y;
 
-    *(self->world_x) = *(self->parent->world_x) + self->local_x;
-    *(self->world_y) = *(self->parent->world_y) + self->local_y;
-
-    if (old_x == *(self->world_x) && old_y == *(self->world_y)) {
+    if (old_x == *(position->world_x) && old_y == *(position->world_y))
         return;
-    }
 #else
-    *(self->world_x) = *(self->parent->world_x) + self->local_x;
-    *(self->world_y) = *(self->parent->world_y) + self->local_y;
+    *(position->world_x) = *(position->parent->world_x) + position->local_x;
+    *(position->world_y) = *(position->parent->world_y) + position->local_y;
 #endif
 
     struct k_position *child;
-    struct k_list *list = &self->child_list;
+    struct k_list *list = &position->child_list;
     struct k_list_node *iter;
     for (k_list_for_each(list, iter)) {
         child = container_of(iter, struct k_position, child_list_node);
@@ -81,43 +77,43 @@ void k_position_set_world_position(struct k_position *position, float world_x, f
 /* region [position_init] */
 
 int position_init(struct k_component *component, void *params) {
-    struct k_position *self = k_component_get_data(component);
+    struct k_position *position = k_component_get_data(component);
     const struct k_position_config *config = params;
 
     struct k_position *parent = config->parent;
     if (NULL == parent)
         parent = &world;
 
-    self->parent = parent;
-    k_list_add_tail(&parent->child_list, &self->child_list_node);
+    position->parent = parent;
+    k_list_add_tail(&parent->child_list, &position->child_list_node);
 
-    k_list_init(&self->child_list);
+    k_list_init(&position->child_list);
 
-    self->local_x = config->local_x;
-    self->local_y = config->local_y;
-    self->world_x = config->world_x;
-    self->world_y = config->world_y;
+    position->local_x = config->local_x;
+    position->local_y = config->local_y;
+    position->world_x = config->world_x;
+    position->world_y = config->world_y;
 
-    *(self->world_x) = *(self->parent->world_x) + self->local_x;
-    *(self->world_y) = *(self->parent->world_y) + self->local_y;
+    *(position->world_x) = *(position->parent->world_x) + position->local_x;
+    *(position->world_y) = *(position->parent->world_y) + position->local_y;
     return 0;
 }
 
 void position_fini(struct k_component *component) {
-    struct k_position *self = k_component_get_data(component);
+    struct k_position *position = k_component_get_data(component);
 
-    struct k_position *parent = self->parent;
+    struct k_position *parent = position->parent;
 
     struct k_position *child;
-    struct k_list *list = &self->child_list;
+    struct k_list *list = &position->child_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(list, iter, next)) {
         child = container_of(iter, struct k_position, child_list_node);
 
         k_list_add_tail(&parent->child_list, &child->child_list_node);
         child->parent = parent;
-        child->local_x += self->local_x;
-        child->local_y += self->local_y;
+        child->local_x += position->local_x;
+        child->local_y += position->local_y;
     }
 }
 
