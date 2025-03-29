@@ -8,8 +8,6 @@
 struct k_behavior_tree {
 
     struct k_object *object;
-
-
 };
 
 #endif

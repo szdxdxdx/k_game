@@ -19,7 +19,7 @@ struct k_behavior_tree_config {
 
 struct k_behavior_tree *k_behavior_tree_create(const struct k_behavior_tree_config *config);
 
-void k_behavior_tree_destroy(struct k_behavior_tree *node);
+void k_behavior_tree_destroy(struct k_behavior_tree *tree);
 
 /* endregion */
 
@@ -46,24 +46,6 @@ struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tre
 /* region [control] */
 
 struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree_node *node);
-
-struct k_behavior_tree_node *k_behavior_tree_add_fallback(struct k_behavior_tree_node *node);
-
-struct k_behavior_tree_node *k_behavior_tree_add_selector(struct k_behavior_tree_node *node);
-
-struct k_behavior_tree_node *k_behavior_tree_add_parallel(struct k_behavior_tree_node *node);
-
-struct k_behavior_tree_node *k_behavior_tree_add_random(struct k_behavior_tree_node *node);
-
-/* endregion */
-
-/* region [decorator] */
-
-struct k_behavior_tree_node *k_behavior_tree_add_repeat(struct k_behavior_tree_node *node);
-
-struct k_behavior_tree_node *k_behavior_tree_add_timeout(struct k_behavior_tree_node *node);
-
-struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree_node *node);
 
 /* endregion */
 
