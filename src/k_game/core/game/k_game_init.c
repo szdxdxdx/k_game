@@ -155,11 +155,11 @@ static int step_call_fn_init(void *context) {
     return 0;
 }
 
-static void step_call_fn_cleanup(void *context) {
+static void step_call_fn_fini(void *context) {
     const struct k_game_config *config = context;
 
-    if (NULL != config->fn_cleanup)
-        config->fn_cleanup();
+    if (NULL != config->fn_fini)
+        config->fn_fini();
 }
 
 static const struct k_seq_step steps[] = {
@@ -173,7 +173,7 @@ static const struct k_seq_step steps[] = {
     { step_define_components,          NULL                            },
     { step_init_room_registry,         step_cleanup_room_registry      },
     { step_init_room_stack,            step_cleanup_room_stack         },
-    { step_call_fn_init,               step_call_fn_cleanup            },
+    { step_call_fn_init,               step_call_fn_fini               },
 };
 
 /* endregion */

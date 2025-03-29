@@ -98,10 +98,10 @@ static int step_set_properties(void *context) {
     const struct k_room_config *config = ctx->config;
     struct k_room *room = ctx->room;
 
-    room->fn_init    = config->fn_init;
-    room->fn_cleanup = config->fn_cleanup;
-    room->fn_enter   = config->fn_enter;
-    room->fn_leave   = config->fn_leave;
+    room->fn_init  = config->fn_init;
+    room->fn_fini  = config->fn_fini;
+    room->fn_enter = config->fn_enter;
+    room->fn_leave = config->fn_leave;
 
     room->room_w = config->room_w;
     room->room_h = config->room_h;
@@ -221,19 +221,19 @@ static int step_call_fn_init(void *context) {
     return 0;
 }
 
-static void step_call_fn_cleanup(void *context) {
+static void step_call_fn_fini(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    if (NULL == room->fn_cleanup)
+    if (NULL == room->fn_fini)
         return;
 
     struct k_room *tmp = k__game.current_room;
     k__game.current_room = room;
 
-    room->fn_cleanup();
+    room->fn_fini();
 
-    /* [?] fn_cleanup() 可能销毁了 tmp 指向的房间 */
+    /* [?] fn_fini() 可能销毁了 tmp 指向的房间 */
     k__game.current_room = tmp;
 }
 
@@ -245,7 +245,7 @@ static const struct k_seq_step steps[] = {
     { NULL,                        step_del_component_managers   },
     { step_init_object_pool,       step_cleanup_object_pool      },
     { step_registry_add,           step_registry_del             },
-    { step_call_fn_init,           step_call_fn_cleanup          },
+    { step_call_fn_init,           step_call_fn_fini             },
 };
 
 /* endregion */

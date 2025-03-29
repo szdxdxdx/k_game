@@ -75,7 +75,7 @@ struct k_room_config {
      *
      * 此回调是可选的，设为 `NULL` 则不执行回调。
      */
-    void (*fn_cleanup)(void);
+    void (*fn_fini)(void);
 
     void (*fn_enter)(void);
 
@@ -90,7 +90,7 @@ struct k_room_config {
     .room_speed = 60,   \
     .data_size  = 0,    \
     .fn_init    = NULL, \
-    .fn_cleanup = NULL, \
+    .fn_fini    = NULL, \
     .fn_enter   = NULL, \
     .fn_leave   = NULL, \
 }
