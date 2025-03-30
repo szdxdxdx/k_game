@@ -3,9 +3,15 @@
 
 struct k_behavior_tree;
 
+/* region [tree_create] */
+
 struct k_behavior_tree *k_behavior_tree_create(void);
 
 void k_behavior_tree_destroy(struct k_behavior_tree *tree);
+
+/* endregion */
+
+/* region [tree_build] */
 
 struct k_behavior_tree_node;
 
@@ -28,6 +34,8 @@ struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tre
 /* region [control] */
 
 struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree_node *node);
+
+/* endregion */
 
 /* endregion */
 

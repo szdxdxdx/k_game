@@ -32,6 +32,9 @@ static void condition_destroy(struct k_behavior_tree_node *node) {
 
 struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tree_node *node, void *data, enum k_behavior_tree_status (*fn_tick)(void *data)) {
 
+    if (NULL == node || NULL == fn_tick)
+        return NULL;
+
     struct k_behavior_tree_condition_node *condition = malloc(sizeof(struct k_behavior_tree_condition_node));
     if (NULL == condition)
         return NULL;

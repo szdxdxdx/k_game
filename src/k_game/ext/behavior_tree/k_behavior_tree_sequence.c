@@ -62,6 +62,9 @@ static void sequence_destroy(struct k_behavior_tree_node *node) {
 
 struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree_node *node) {
 
+    if (NULL == node)
+        return NULL;
+
     struct k_behavior_tree_sequence_node *seq = malloc(sizeof(struct k_behavior_tree_sequence_node));
     if (NULL == node)
         return NULL;
