@@ -37,6 +37,8 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
 
 struct k_behavior_tree_node *k_behavior_tree_add_selector(struct k_behavior_tree_node *node);
 
+struct k_behavior_tree_node *k_behavior_tree_add_parallel(struct k_behavior_tree_node *node);
+
 /* endregion */
 
 /* region [decorator] */

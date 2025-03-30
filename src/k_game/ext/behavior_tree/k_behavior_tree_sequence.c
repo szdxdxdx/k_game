@@ -13,11 +13,6 @@ struct k_behavior_tree_sequence_node {
     size_t index;
 };
 
-static int sequence_add_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
-    struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
-    return k_array_push_back(&sequence->children, &child_node);
-}
-
 static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_sequence_node *sequence = (struct k_behavior_tree_sequence_node *)node;
 
@@ -48,6 +43,11 @@ static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *no
     }
 }
 
+static int sequence_add_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
+    struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
+    return k_array_push_back(&sequence->children, &child_node);
+}
+
 static void sequence_destroy(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
 
@@ -69,10 +69,11 @@ static struct k_behavior_tree_node *sequence_create(struct k_behavior_tree *tree
     if (NULL == sequence)
         return NULL;
 
-    sequence->super.tree       = tree;
-    sequence->super.fn_add     = sequence_add_child;
-    sequence->super.fn_tick    = sequence_tick;
-    sequence->super.fn_destroy = sequence_destroy;
+    sequence->super.tree         = tree;
+    sequence->super.fn_tick      = sequence_tick;
+    sequence->super.fn_interrupt = NULL;
+    sequence->super.fn_add_child = sequence_add_child;
+    sequence->super.fn_destroy   = sequence_destroy;
 
     struct k_array_config config;
     config.fn_malloc     = malloc;
@@ -98,7 +99,7 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
     if (NULL == new_node)
         return NULL;
 
-    if (0 != node->fn_add(node, new_node)) {
+    if (0 != node->fn_add_child(node, new_node)) {
         new_node->fn_destroy(new_node);
         return NULL;
     }

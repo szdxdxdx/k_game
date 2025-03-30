@@ -37,10 +37,11 @@ static struct k_behavior_tree_node *condition_create(struct k_behavior_tree *tre
     if (NULL == condition)
         return NULL;
 
-    condition->super.tree       = tree;
-    condition->super.fn_add     = condition_add_child;
-    condition->super.fn_tick    = condition_tick;
-    condition->super.fn_destroy = condition_destroy;
+    condition->super.tree         = tree;
+    condition->super.fn_tick      = condition_tick;
+    condition->super.fn_interrupt = NULL;
+    condition->super.fn_add_child = condition_add_child;
+    condition->super.fn_destroy   = condition_destroy;
 
     condition->fn_tick = fn_tick;
     condition->data    = data;
@@ -57,7 +58,7 @@ struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tre
     if (NULL == new_node)
         return NULL;
 
-    if (0 != node->fn_add(node, new_node)) {
+    if (0 != node->fn_add_child(node, new_node)) {
         new_node->fn_destroy(new_node);
         return NULL;
     }

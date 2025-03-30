@@ -44,10 +44,11 @@ static struct k_behavior_tree_node *inverter_create(struct k_behavior_tree *tree
     if (NULL == inverter)
         return NULL;
 
-    inverter->super.tree       = tree;
-    inverter->super.fn_add     = inverter_set_child;
-    inverter->super.fn_tick    = inverter_tick;
-    inverter->super.fn_destroy = inverter_destroy;
+    inverter->super.tree         = tree;
+    inverter->super.fn_tick      = inverter_tick;
+    inverter->super.fn_interrupt = NULL;
+    inverter->super.fn_add_child = inverter_set_child;
+    inverter->super.fn_destroy   = inverter_destroy;
 
     inverter->child = &K__BEHAVIOR_TREE_DEFAULT_FAILURE;
 
@@ -63,7 +64,7 @@ struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree
     if (NULL == new_node)
         return NULL;
 
-    if (0 != node->fn_add(node, new_node)) {
+    if (0 != node->fn_add_child(node, new_node)) {
         new_node->fn_destroy(new_node);
         return NULL;
     }

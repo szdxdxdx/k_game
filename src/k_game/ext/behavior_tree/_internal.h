@@ -7,9 +7,11 @@ struct k_behavior_tree_node {
 
     struct k_behavior_tree *tree;
 
-    int (*fn_add)(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node);
-
     enum k_behavior_tree_status (*fn_tick)(struct k_behavior_tree_node *node);
+
+    void (*fn_interrupt)(struct k_behavior_tree_node *node);
+
+    int (*fn_add_child)(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node);
 
     void (*fn_destroy)(struct k_behavior_tree_node *node);
 };

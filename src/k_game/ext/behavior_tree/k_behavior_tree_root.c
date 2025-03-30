@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "./_internal.h"
 
 struct k_behavior_tree_root_node {
@@ -15,6 +14,11 @@ struct k_behavior_tree {
     struct k_object *object;
 };
 
+static void k_behavior_tree_tick(struct k_object *object) {
+    struct k_behavior_tree *tree = k_object_get_data(object);
+    tree->root.child->fn_tick(tree->root.child);
+}
+
 static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
     struct k_behavior_tree_root_node *root = container_of(node, struct k_behavior_tree_root_node, super);
 
@@ -24,11 +28,6 @@ static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_t
     } else {
         return -1;
     }
-}
-
-static void k_behavior_tree_tick(struct k_object *object) {
-    struct k_behavior_tree *tree = k_object_get_data(object);
-    tree->root.child->fn_tick(tree->root.child);
 }
 
 struct k_behavior_tree *k_behavior_tree_create(void) {
@@ -45,10 +44,11 @@ struct k_behavior_tree *k_behavior_tree_create(void) {
     struct k_behavior_tree *tree = k_object_get_data(object);
     tree->object = object;
 
-    tree->root.super.tree       = tree;
-    tree->root.super.fn_add     = root_set_child;
-    tree->root.super.fn_tick    = NULL;
-    tree->root.super.fn_destroy = NULL;
+    tree->root.super.tree         = tree;
+    tree->root.super.fn_tick      = NULL;
+    tree->root.super.fn_interrupt = NULL;
+    tree->root.super.fn_add_child = root_set_child;
+    tree->root.super.fn_destroy   = NULL;
 
     tree->root.child = &K__BEHAVIOR_TREE_DEFAULT_SUCCESS;
 
