@@ -192,6 +192,10 @@ void k_sprite_renderer_set_loop_count(struct k_sprite_renderer *renderer, int lo
         renderer->loop_count = loop_count;
 }
 
+int k_sprite_renderer_get_loop_count(struct k_sprite_renderer *renderer) {
+    return renderer->loop_count;
+}
+
 void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(struct k_object *object)) {
     renderer->fn_loop_callback = fn_callback;
 }

@@ -4,7 +4,7 @@
 
 #include "./_internal.h"
 
-struct k_behavior_tree_sequence_node {
+struct k_behavior_tree_selector_node {
 
     struct k_behavior_tree_node super;
 
@@ -13,18 +13,18 @@ struct k_behavior_tree_sequence_node {
     size_t index;
 };
 
-static int sequence_add_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
-    struct k_behavior_tree_sequence_node *seq = container_of(node, struct k_behavior_tree_sequence_node, super);
+static int selector_add_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
+    struct k_behavior_tree_selector_node *seq = container_of(node, struct k_behavior_tree_selector_node, super);
     return k_array_push_back(&seq->children, &child_node);
 }
 
-static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_sequence_node *seq = (struct k_behavior_tree_sequence_node *)node;
+static enum k_behavior_tree_status selector_tick(struct k_behavior_tree_node *node) {
+    struct k_behavior_tree_selector_node *seq = (struct k_behavior_tree_selector_node *)node;
 
     struct k_array *array = &seq->children;
     if (seq->index == array->size) {
         if (0 == array->size)
-            return K_BT_SUCCESS;
+            return K_BT_FAILURE;
         else
             seq->index = 0;
     }
@@ -37,19 +37,19 @@ static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *no
             return K_BT_RUNNING;
 
         case K_BT_SUCCESS:
-            seq->index++;
-            return (seq->index == array->size)
-                ? K_BT_SUCCESS
-                : K_BT_RUNNING;
+            seq->index = array->size;
+            return K_BT_SUCCESS;
 
         case K_BT_FAILURE:
-            seq->index = array->size;
-            return K_BT_FAILURE;
+            seq->index++;
+            return (seq->index == array->size)
+                ? K_BT_FAILURE
+                : K_BT_RUNNING;
     }
 }
 
-static void sequence_destroy(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_sequence_node *seq = container_of(node, struct k_behavior_tree_sequence_node, super);
+static void selector_destroy(struct k_behavior_tree_node *node) {
+    struct k_behavior_tree_selector_node *seq = container_of(node, struct k_behavior_tree_selector_node, super);
 
     struct k_array *array = &seq->children;
     for (seq->index = 0; seq->index < array->size; seq->index++) {
@@ -61,19 +61,19 @@ static void sequence_destroy(struct k_behavior_tree_node *node) {
     free(seq);
 }
 
-struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree_node *node) {
+struct k_behavior_tree_node *k_behavior_tree_add_selector(struct k_behavior_tree_node *node) {
 
     if (NULL == node)
         return NULL;
 
-    struct k_behavior_tree_sequence_node *seq = malloc(sizeof(struct k_behavior_tree_sequence_node));
+    struct k_behavior_tree_selector_node *seq = malloc(sizeof(struct k_behavior_tree_selector_node));
     if (NULL == node)
         return NULL;
 
     seq->super.tree       = node->tree;
-    seq->super.fn_add     = sequence_add_child;
-    seq->super.fn_tick    = sequence_tick;
-    seq->super.fn_destroy = sequence_destroy;
+    seq->super.fn_add     = selector_add_child;
+    seq->super.fn_tick    = selector_tick;
+    seq->super.fn_destroy = selector_destroy;
 
     struct k_array_config config;
     config.fn_malloc     = malloc;
@@ -89,7 +89,7 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
 
     if (0 != node->fn_add(node, &seq->super)) {
         k_array_destruct(&seq->children);
-        sequence_destroy(&seq->super);
+        selector_destroy(&seq->super);
         return NULL;
     }
 

@@ -3,8 +3,6 @@
 
 #include "k_game.h"
 
-#include "./_public.h"
-
 struct k_behavior_tree_node {
 
     struct k_behavior_tree *tree;
