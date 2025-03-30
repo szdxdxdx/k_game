@@ -5,7 +5,7 @@
 #include "../../sprite/_public.h"
 #include "../../object/_public.h"
 
-#include "../../bt/_public.h"
+#include "../../tmp/bt.h"
 
 static void set_debug(void *data) {
 

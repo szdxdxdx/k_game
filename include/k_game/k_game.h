@@ -20,7 +20,7 @@
 #include "./ext/k_collision.h"
 #include "./ext/k_position.h"
 #include "./ext/k_state_machine.h"
-#include "./ext/k_behavior_tree.h"
+#include "./ext/k_behavior_tree_root.h"
 
 /* tmp */
 #include "./tmp/k_game_tmp.h"
