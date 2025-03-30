@@ -38,28 +38,35 @@ static void inverter_destroy(struct k_behavior_tree_node *node) {
     free(inverter);
 }
 
-
-
-struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree_node *node) {
-
-    if (NULL == node)
-        return NULL;
+static struct k_behavior_tree_node *inverter_create(struct k_behavior_tree *tree) {
 
     struct k_behavior_tree_inverter_node *inverter = malloc(sizeof(struct k_behavior_tree_inverter_node));
     if (NULL == inverter)
         return NULL;
 
-    inverter->super.tree       = node->tree;
+    inverter->super.tree       = tree;
     inverter->super.fn_add     = inverter_set_child;
     inverter->super.fn_tick    = inverter_tick;
     inverter->super.fn_destroy = inverter_destroy;
 
     inverter->child = &K__BEHAVIOR_TREE_DEFAULT_FAILURE;
 
-    if (0 != node->fn_add(node, &inverter->super)) {
-        free(inverter);
+    return &inverter->super;
+}
+
+struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree_node *node) {
+
+    if (NULL == node)
+        return NULL;
+
+    struct k_behavior_tree_node *new_node = inverter_create(node->tree);
+    if (NULL == new_node)
+        return NULL;
+
+    if (0 != node->fn_add(node, new_node)) {
+        new_node->fn_destroy(new_node);
         return NULL;
     }
 
-    return &inverter->super;
+    return new_node;
 }

@@ -28,16 +28,16 @@ static void condition_destroy(struct k_behavior_tree_node *node) {
     free(condition);
 }
 
-struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tree_node *node, void *data, enum k_behavior_tree_status (*fn_tick)(void *data)) {
+static struct k_behavior_tree_node *condition_create(struct k_behavior_tree *tree, void *data, enum k_behavior_tree_status (*fn_tick)(void *data)) {
 
-    if (NULL == node || NULL == fn_tick)
+    if (NULL == fn_tick)
         return NULL;
 
     struct k_behavior_tree_condition_node *condition = malloc(sizeof(struct k_behavior_tree_condition_node));
     if (NULL == condition)
         return NULL;
 
-    condition->super.tree       = node->tree;
+    condition->super.tree       = tree;
     condition->super.fn_add     = condition_add_child;
     condition->super.fn_tick    = condition_tick;
     condition->super.fn_destroy = condition_destroy;
@@ -45,10 +45,22 @@ struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tre
     condition->fn_tick = fn_tick;
     condition->data    = data;
 
-    if (0 != node->fn_add(node, &condition->super)) {
-        free(condition);
+    return &condition->super;
+}
+
+struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tree_node *node, void *data, enum k_behavior_tree_status (*fn_tick)(void *data)) {
+
+    if (NULL == node)
+        return NULL;
+
+    struct k_behavior_tree_node *new_node = condition_create(node->tree, data, fn_tick);
+    if (NULL == new_node)
+        return NULL;
+
+    if (0 != node->fn_add(node, new_node)) {
+        new_node->fn_destroy(new_node);
         return NULL;
     }
 
-    return &condition->super;
+    return new_node;
 }

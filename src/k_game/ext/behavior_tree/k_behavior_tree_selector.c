@@ -52,8 +52,10 @@ static void selector_destroy(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_selector_node *selector = container_of(node, struct k_behavior_tree_selector_node, super);
 
     struct k_array *array = &selector->children;
-    for (selector->index = 0; selector->index < array->size; selector->index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, selector->index, struct k_behavior_tree_node *);
+    size_t index = 0;
+    size_t size  = array->size;
+    for (; index < size; index++) {
+        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
         child->fn_destroy(child);
     }
 
@@ -61,16 +63,13 @@ static void selector_destroy(struct k_behavior_tree_node *node) {
     free(selector);
 }
 
-struct k_behavior_tree_node *k_behavior_tree_add_selector(struct k_behavior_tree_node *node) {
-
-    if (NULL == node)
-        return NULL;
+static struct k_behavior_tree_node *selector_create(struct k_behavior_tree *tree) {
 
     struct k_behavior_tree_selector_node *selector = malloc(sizeof(struct k_behavior_tree_selector_node));
-    if (NULL == node)
+    if (NULL == selector)
         return NULL;
 
-    selector->super.tree       = node->tree;
+    selector->super.tree       = tree;
     selector->super.fn_add     = selector_add_child;
     selector->super.fn_tick    = selector_tick;
     selector->super.fn_destroy = selector_destroy;
@@ -87,11 +86,22 @@ struct k_behavior_tree_node *k_behavior_tree_add_selector(struct k_behavior_tree
 
     selector->index = 0;
 
-    if (0 != node->fn_add(node, &selector->super)) {
-        k_array_destruct(&selector->children);
-        free(selector);
+    return &selector->super;
+}
+
+struct k_behavior_tree_node *k_behavior_tree_add_selector(struct k_behavior_tree_node *node) {
+
+    if (NULL == node)
+        return NULL;
+
+    struct k_behavior_tree_node *new_node = selector_create(node->tree);
+    if (NULL == new_node)
+        return NULL;
+
+    if (0 != node->fn_add(node, new_node)) {
+        new_node->fn_destroy(new_node);
         return NULL;
     }
 
-    return &selector->super;
+    return new_node;
 }

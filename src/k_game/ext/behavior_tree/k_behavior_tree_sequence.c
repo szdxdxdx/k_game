@@ -52,8 +52,10 @@ static void sequence_destroy(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
 
     struct k_array *array = &sequence->children;
-    for (sequence->index = 0; sequence->index < array->size; sequence->index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, sequence->index, struct k_behavior_tree_node *);
+    size_t index = 0;
+    size_t size  = array->size;
+    for (; index < size; index++) {
+        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
         child->fn_destroy(child);
     }
 
@@ -61,16 +63,13 @@ static void sequence_destroy(struct k_behavior_tree_node *node) {
     free(sequence);
 }
 
-struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree_node *node) {
-
-    if (NULL == node)
-        return NULL;
+static struct k_behavior_tree_node *sequence_create(struct k_behavior_tree *tree) {
 
     struct k_behavior_tree_sequence_node *sequence = malloc(sizeof(struct k_behavior_tree_sequence_node));
-    if (NULL == node)
+    if (NULL == sequence)
         return NULL;
 
-    sequence->super.tree       = node->tree;
+    sequence->super.tree       = tree;
     sequence->super.fn_add     = sequence_add_child;
     sequence->super.fn_tick    = sequence_tick;
     sequence->super.fn_destroy = sequence_destroy;
@@ -87,11 +86,22 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
 
     sequence->index = 0;
 
-    if (0 != node->fn_add(node, &sequence->super)) {
-        k_array_destruct(&sequence->children);
-        free(sequence);
+    return &sequence->super;
+}
+
+struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree_node *node) {
+
+    if (NULL == node)
+        return NULL;
+
+    struct k_behavior_tree_node *new_node = sequence_create(node->tree);
+    if (NULL == new_node)
+        return NULL;
+
+    if (0 != node->fn_add(node, new_node)) {
+        new_node->fn_destroy(new_node);
         return NULL;
     }
 
-    return &sequence->super;
+    return new_node;
 }
