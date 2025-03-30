@@ -12,7 +12,7 @@ struct k_behavior_tree_inverter_node {
 static int inverter_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
     struct k_behavior_tree_inverter_node *inv = (struct k_behavior_tree_inverter_node *)node;
 
-    if (NULL == inv->child) {
+    if (&K__BEHAVIOR_TREE_DEFAULT_FAILURE == inv->child) {
         inv->child = child;
         return 0;
     } else {
@@ -52,8 +52,12 @@ struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree
     inv->super.fn_tick    = inverter_tick;
     inv->super.fn_destroy = inverter_destroy;
 
-    if (0 != node->fn_add(node, &inv->super))
+    inv->child = &K__BEHAVIOR_TREE_DEFAULT_FAILURE;
+
+    if (0 != node->fn_add(node, &inv->super)) {
+        free(inv);
         return NULL;
+    }
 
     return &inv->super;
 }

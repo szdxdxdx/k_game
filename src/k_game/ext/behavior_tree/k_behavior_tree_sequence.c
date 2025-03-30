@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#include "k_array.h"
+
 #include "./_internal.h"
 
 struct k_behavior_tree_sequence_node {
@@ -86,8 +88,11 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
 
     seq->index = 0;
 
-    if (0 != node->fn_add(node, &seq->super))
+    if (0 != node->fn_add(node, &seq->super)) {
+        k_array_destruct(&seq->children);
         sequence_destroy(&seq->super);
+        return NULL;
+    }
 
     return &seq->super;
 }

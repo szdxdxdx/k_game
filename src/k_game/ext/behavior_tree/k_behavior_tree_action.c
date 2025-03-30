@@ -44,8 +44,10 @@ struct k_behavior_tree_node *k_behavior_tree_add_action(struct k_behavior_tree_n
     action->fn_tick = fn_tick;
     action->data    = data;
 
-    if (0 != node->fn_add(node, &action->super))
+    if (0 != node->fn_add(node, &action->super)) {
+        action_destroy(&action->super);
         return NULL;
+    }
 
     return &action->super;
 }

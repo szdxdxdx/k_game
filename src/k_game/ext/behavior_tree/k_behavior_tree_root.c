@@ -14,21 +14,10 @@ struct k_behavior_tree {
     struct k_object *object;
 };
 
-static enum k_behavior_tree_status do_nothing_tick(struct k_behavior_tree_node *node) {
-    (void)node;
-    return K_BT_SUCCESS;
-}
-
-static struct k_behavior_tree_node NULL_CHILD = {
-    .fn_add     = NULL,
-    .fn_tick    = do_nothing_tick,
-    .fn_destroy = NULL,
-};
-
 static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
     struct k_behavior_tree_root_node *root = container_of(node, struct k_behavior_tree_root_node, super);
 
-    if (&NULL_CHILD == root->child) {
+    if (&K__BEHAVIOR_TREE_DEFAULT_SUCCESS == root->child) {
         root->child = child_node;
         return 0;
     } else {
@@ -61,7 +50,7 @@ struct k_behavior_tree *k_behavior_tree_create(void) {
     tree->root.super.fn_tick    = NULL;
     tree->root.super.fn_destroy = NULL;
 
-    tree->root.child = &NULL_CHILD;
+    tree->root.child = &K__BEHAVIOR_TREE_DEFAULT_SUCCESS;
 
     return tree;
 }
@@ -71,10 +60,7 @@ void k_behavior_tree_destroy(struct k_behavior_tree *tree) {
     if (NULL == tree)
         return;
 
-    struct k_behavior_tree_node *child = tree->root.child;
-    if (&NULL_CHILD != child) {
-        child->fn_destroy(child);
-    }
+    tree->root.child->fn_destroy(tree->root.child);
 
     k_object_destroy(tree->object);
 }

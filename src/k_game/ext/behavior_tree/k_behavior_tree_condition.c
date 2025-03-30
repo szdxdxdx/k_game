@@ -38,15 +38,17 @@ struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tre
         return NULL;
 
     condition->super.tree       = node->tree;
-    condition->super.fn_tick    = condition_tick;
     condition->super.fn_add     = condition_add_child;
+    condition->super.fn_tick    = condition_tick;
     condition->super.fn_destroy = condition_destroy;
 
     condition->fn_tick = fn_tick;
     condition->data    = data;
 
-    if (0 != node->fn_add(node, &condition->super))
+    if (0 != node->fn_add(node, &condition->super)) {
+        free(condition);
         return NULL;
+    }
 
     return &condition->super;
 }
