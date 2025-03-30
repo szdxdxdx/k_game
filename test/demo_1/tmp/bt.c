@@ -4,6 +4,7 @@
 
 static enum k_behavior_tree_status action_count(void *data) {
     int *count = data;
+    printf("[%20s]  ", __func__);
 
     *count += 1;
     printf("count++\n");
@@ -12,6 +13,7 @@ static enum k_behavior_tree_status action_count(void *data) {
 
 static enum k_behavior_tree_status condition_count_lt_1(void *data) {
     int *count = data;
+    printf("[%20s]  ", __func__);
 
     if (*count < 1) {
         printf("count < 1 is true\n");
@@ -25,6 +27,7 @@ static enum k_behavior_tree_status condition_count_lt_1(void *data) {
 
 static enum k_behavior_tree_status condition_count_gt_3(void *data) {
     int *count = data;
+    printf("[%20s]  ", __func__);
 
     if (*count > 3) {
         printf("count > 3 is true\n");
@@ -38,6 +41,7 @@ static enum k_behavior_tree_status condition_count_gt_3(void *data) {
 
 static enum k_behavior_tree_status action_log_count(void *data) {
     int *count = data;
+    printf("[%20s]  ", __func__);
 
     if (*count >= 8)
         *count = 0;
@@ -47,6 +51,7 @@ static enum k_behavior_tree_status action_log_count(void *data) {
 }
 
 static enum k_behavior_tree_status action_log(void *data) {
+    printf("[%20s]  ", __func__);
 
     printf("%s\n", (const char *)data);
 
@@ -64,16 +69,19 @@ void yx_behavior_tree_demo(void) {
     {
         k_bt_parallel(b)
         {
-            k_bt_sequence(b)
+            k_bt_action(b, &count, action_count);
+            k_bt_action(b, &count, action_log_count);
+            k_bt_force_success(b)
             {
-                k_bt_action(b, &count, action_count);
-                k_bt_action(b, &count, action_log_count);
-                k_bt_selector(b)
+                k_bt_sequence(b)
                 {
-                    k_bt_condition(b, &count, condition_count_gt_3);
-                    k_bt_condition(b, &count, condition_count_lt_1);
+                    k_bt_selector(b)
+                    {
+                        k_bt_condition(b, &count, condition_count_gt_3);
+                        k_bt_condition(b, &count, condition_count_lt_1);
+                    }
+                    k_bt_action(b, "hello", action_log);
                 }
-                k_bt_action(b, "       hello", action_log);
             }
 
             k_bt_action(b, "----------", action_log);

@@ -35,6 +35,10 @@ static enum k_behavior_tree_status inverter_tick(struct k_behavior_tree_node *no
 
 static void inverter_destroy(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_inverter_node *inverter = (struct k_behavior_tree_inverter_node *)node;
+
+    struct k_behavior_tree_node *child = inverter->child;
+    child->fn_destroy(child);
+
     free(inverter);
 }
 

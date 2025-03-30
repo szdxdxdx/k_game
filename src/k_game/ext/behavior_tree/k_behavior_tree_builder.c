@@ -221,4 +221,18 @@ void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder) 
     push(builder, new_node);
 }
 
+void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *builder) {
+
+    if (builder->failed)
+        return;
+
+    struct k_behavior_tree_node *new_node = k_behavior_tree_add_force_success(top(builder));
+    if (NULL == new_node) {
+        builder->failed = 1;
+        return;
+    }
+
+    push(builder, new_node);
+}
+
 /* endregion */
