@@ -12,12 +12,7 @@ struct k_behavior_tree;
 
 /* region [behavior_tree_create] */
 
-struct k_behavior_tree_config {
-
-    size_t data_size;
-};
-
-struct k_behavior_tree *k_behavior_tree_create(const struct k_behavior_tree_config *config);
+struct k_behavior_tree *k_behavior_tree_create(void);
 
 void k_behavior_tree_destroy(struct k_behavior_tree *tree);
 

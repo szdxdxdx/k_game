@@ -2,10 +2,9 @@
 
 #include "../_internal.h"
 
-enum k_behavior_tree_status bt_action_log(struct k_object *object) {
-    struct yx_obj_rival *rival = k_object_get_data(object);
+enum k_behavior_tree_status bt_action_log(void) {
 
-    printf("rival: %f, %f\n", rival->x, rival->y);
+    printf("hello");
 
     return K_BT_SUCCESS;
 }
@@ -40,7 +39,49 @@ struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
     }
 
     {
+        /*
+        struct k_behavior_tree *tree = k_behavior_tree_create();
 
+        struct k_behavior_tree_node *root = k_behavior_tree_get_root(tree);
+
+        struct k_behavior_tree_node *seq, *seq_1;
+
+        seq = k_behavior_tree_add_sequence(root);
+        k_behavior_tree_add_condition(seq);
+        k_behavior_tree_add_action(seq);
+        k_behavior_tree_add_action(seq);
+        k_behavior_tree_add_condition(seq);
+        k_behavior_tree_add_action(seq);
+
+        seq_1 = k_behavior_tree_add_sequence(root);
+        k_behavior_tree_add_action(seq_1);
+        k_behavior_tree_add_action(seq_1);
+        k_behavior_tree_add_action(seq_1);
+
+        b = k_bt_builder(tree);
+
+        k_bt_sequence(b)
+        || k_bt_action(b)
+        || k_bt_action(b)
+        || (
+            k_bt_sequence(b)
+            || k_bt_condition(b)
+            || k_bt_action(b)
+            || (
+                k_bt_sequence(b)
+                || k_bt_condition(b)
+                || k_bt_action(b)
+                || k_bt_action(b)
+                || k_bt_end(b)
+            )
+            || k_bt_action(b)
+            || k_bt_end(b)
+        )
+        || k_bt_action(b)
+        || k_bt_end(b);
+
+        k_bt_build(b);
+        */
     }
 
     return object;

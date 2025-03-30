@@ -5,6 +5,8 @@
 #include "../../sprite/_public.h"
 #include "../../object/_public.h"
 
+#include "../../bt/_public.h"
+
 static void set_debug(void *data) {
 
     if (k_key_pressed('B')) {
@@ -46,6 +48,10 @@ int fn_room_init(void *params) {
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
         yx_rival_create(&config);
+    }
+
+    {
+        yx_behavior_tree_demo();
     }
 
     return 0;
