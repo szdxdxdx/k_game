@@ -57,8 +57,9 @@ static int count = 0;
 
 void yx_behavior_tree_demo(void) {
 
-    struct k_behavior_tree *tree;
     struct k_behavior_tree_builder *b;
+    struct k_behavior_tree *tree;
+
     k_bt_builder(tree, b)
     {
         k_bt_sequence(b)
@@ -70,8 +71,9 @@ void yx_behavior_tree_demo(void) {
                 k_bt_condition(b, &count, condition_count_gt_3);
                 k_bt_condition(b, &count, condition_count_lt_1);
             }
-
             k_bt_action(b, "       hello", action_log);
         }
     }
+
+    (void)tree;
 }

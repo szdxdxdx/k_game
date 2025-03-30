@@ -10,10 +10,10 @@ struct k_behavior_tree_inverter_node {
 };
 
 static int inverter_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
-    struct k_behavior_tree_inverter_node *inv = (struct k_behavior_tree_inverter_node *)node;
+    struct k_behavior_tree_inverter_node *inverter = (struct k_behavior_tree_inverter_node *)node;
 
-    if (&K__BEHAVIOR_TREE_DEFAULT_FAILURE == inv->child) {
-        inv->child = child;
+    if (&K__BEHAVIOR_TREE_DEFAULT_FAILURE == inverter->child) {
+        inverter->child = child;
         return 0;
     } else {
         return -1;
@@ -21,9 +21,9 @@ static int inverter_set_child(struct k_behavior_tree_node *node, struct k_behavi
 }
 
 static enum k_behavior_tree_status inverter_tick(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_inverter_node *inv = (struct k_behavior_tree_inverter_node *)node;
+    struct k_behavior_tree_inverter_node *inverter = (struct k_behavior_tree_inverter_node *)node;
 
-    struct k_behavior_tree_node *child = inv->child;
+    struct k_behavior_tree_node *child = inverter->child;
 
     enum k_behavior_tree_status result = child->fn_tick(child);
     switch (result) {
@@ -34,30 +34,32 @@ static enum k_behavior_tree_status inverter_tick(struct k_behavior_tree_node *no
 }
 
 static void inverter_destroy(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_inverter_node *inv = (struct k_behavior_tree_inverter_node *)node;
-    free(inv);
+    struct k_behavior_tree_inverter_node *inverter = (struct k_behavior_tree_inverter_node *)node;
+    free(inverter);
 }
+
+
 
 struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree_node *node) {
 
     if (NULL == node)
         return NULL;
 
-    struct k_behavior_tree_inverter_node *inv = malloc(sizeof(struct k_behavior_tree_inverter_node));
-    if (NULL == inv)
+    struct k_behavior_tree_inverter_node *inverter = malloc(sizeof(struct k_behavior_tree_inverter_node));
+    if (NULL == inverter)
         return NULL;
 
-    inv->super.tree       = node->tree;
-    inv->super.fn_add     = inverter_set_child;
-    inv->super.fn_tick    = inverter_tick;
-    inv->super.fn_destroy = inverter_destroy;
+    inverter->super.tree       = node->tree;
+    inverter->super.fn_add     = inverter_set_child;
+    inverter->super.fn_tick    = inverter_tick;
+    inverter->super.fn_destroy = inverter_destroy;
 
-    inv->child = &K__BEHAVIOR_TREE_DEFAULT_FAILURE;
+    inverter->child = &K__BEHAVIOR_TREE_DEFAULT_FAILURE;
 
-    if (0 != node->fn_add(node, &inv->super)) {
-        free(inv);
+    if (0 != node->fn_add(node, &inverter->super)) {
+        free(inverter);
         return NULL;
     }
 
-    return &inv->super;
+    return &inverter->super;
 }

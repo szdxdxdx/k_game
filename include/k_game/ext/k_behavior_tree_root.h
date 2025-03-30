@@ -66,7 +66,7 @@ int  k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder);
 /* endregion */
 
 #define k_bt_builder(tree, builder) \
-    for (builder = k__behavior_tree_builder(&tree); k__behavior_tree_builder_pop(builder); )
+    for (builder = k__behavior_tree_builder(&tree); NULL != builder && k__behavior_tree_builder_pop(builder); )
 
 #define k_bt_action(builder, data, fn_tick) \
     k__behavior_tree_builder_action(builder, data, fn_tick)

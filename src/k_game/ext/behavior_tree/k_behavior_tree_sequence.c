@@ -14,22 +14,22 @@ struct k_behavior_tree_sequence_node {
 };
 
 static int sequence_add_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
-    struct k_behavior_tree_sequence_node *seq = container_of(node, struct k_behavior_tree_sequence_node, super);
-    return k_array_push_back(&seq->children, &child_node);
+    struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
+    return k_array_push_back(&sequence->children, &child_node);
 }
 
 static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_sequence_node *seq = (struct k_behavior_tree_sequence_node *)node;
+    struct k_behavior_tree_sequence_node *sequence = (struct k_behavior_tree_sequence_node *)node;
 
-    struct k_array *array = &seq->children;
-    if (seq->index == array->size) {
+    struct k_array *array = &sequence->children;
+    if (sequence->index == array->size) {
         if (0 == array->size)
             return K_BT_SUCCESS;
         else
-            seq->index = 0;
+            sequence->index = 0;
     }
 
-    struct k_behavior_tree_node *child = k_array_get_elem(array, seq->index, struct k_behavior_tree_node *);
+    struct k_behavior_tree_node *child = k_array_get_elem(array, sequence->index, struct k_behavior_tree_node *);
 
     enum k_behavior_tree_status result = child->fn_tick(child);
     switch (result) {
@@ -37,28 +37,28 @@ static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *no
             return K_BT_RUNNING;
 
         case K_BT_SUCCESS:
-            seq->index++;
-            return (seq->index == array->size)
+            sequence->index++;
+            return (sequence->index == array->size)
                 ? K_BT_SUCCESS
                 : K_BT_RUNNING;
 
         case K_BT_FAILURE:
-            seq->index = array->size;
+            sequence->index = array->size;
             return K_BT_FAILURE;
     }
 }
 
 static void sequence_destroy(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_sequence_node *seq = container_of(node, struct k_behavior_tree_sequence_node, super);
+    struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
 
-    struct k_array *array = &seq->children;
-    for (seq->index = 0; seq->index < array->size; seq->index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, seq->index, struct k_behavior_tree_node *);
+    struct k_array *array = &sequence->children;
+    for (sequence->index = 0; sequence->index < array->size; sequence->index++) {
+        struct k_behavior_tree_node *child = k_array_get_elem(array, sequence->index, struct k_behavior_tree_node *);
         child->fn_destroy(child);
     }
 
-    k_array_destruct(&seq->children);
-    free(seq);
+    k_array_destruct(&sequence->children);
+    free(sequence);
 }
 
 struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree_node *node) {
@@ -66,32 +66,32 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
     if (NULL == node)
         return NULL;
 
-    struct k_behavior_tree_sequence_node *seq = malloc(sizeof(struct k_behavior_tree_sequence_node));
+    struct k_behavior_tree_sequence_node *sequence = malloc(sizeof(struct k_behavior_tree_sequence_node));
     if (NULL == node)
         return NULL;
 
-    seq->super.tree       = node->tree;
-    seq->super.fn_add     = sequence_add_child;
-    seq->super.fn_tick    = sequence_tick;
-    seq->super.fn_destroy = sequence_destroy;
+    sequence->super.tree       = node->tree;
+    sequence->super.fn_add     = sequence_add_child;
+    sequence->super.fn_tick    = sequence_tick;
+    sequence->super.fn_destroy = sequence_destroy;
 
     struct k_array_config config;
     config.fn_malloc     = malloc;
     config.fn_free       = free;
     config.elem_size     = sizeof(struct k_behavior_tree_node *);
     config.init_capacity = 4;
-    if (NULL == k_array_construct(&seq->children, &config)) {
-        free(node);
+    if (NULL == k_array_construct(&sequence->children, &config)) {
+        free(sequence);
         return NULL;
     }
 
-    seq->index = 0;
+    sequence->index = 0;
 
-    if (0 != node->fn_add(node, &seq->super)) {
-        k_array_destruct(&seq->children);
-        sequence_destroy(&seq->super);
+    if (0 != node->fn_add(node, &sequence->super)) {
+        k_array_destruct(&sequence->children);
+        free(sequence);
         return NULL;
     }
 
-    return &seq->super;
+    return &sequence->super;
 }
