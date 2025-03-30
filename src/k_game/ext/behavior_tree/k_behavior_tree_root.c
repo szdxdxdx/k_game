@@ -56,10 +56,10 @@ struct k_behavior_tree *k_behavior_tree_create(void) {
     struct k_behavior_tree *tree = k_object_get_data(object);
     tree->object = object;
 
+    tree->root.super.tree       = tree;
     tree->root.super.fn_add     = root_set_child;
     tree->root.super.fn_tick    = NULL;
     tree->root.super.fn_destroy = NULL;
-    tree->root.super.tree       = tree;
 
     tree->root.child = &NULL_CHILD;
 

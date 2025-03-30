@@ -2,8 +2,6 @@
 
 #include "./_internal.h"
 
-/* region [condition] */
-
 struct k_behavior_tree_condition_node {
 
     struct k_behavior_tree_node super;
@@ -39,10 +37,10 @@ struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tre
     if (NULL == condition)
         return NULL;
 
+    condition->super.tree       = node->tree;
     condition->super.fn_tick    = condition_tick;
     condition->super.fn_add     = condition_add_child;
     condition->super.fn_destroy = condition_destroy;
-    condition->super.tree       = node->tree;
 
     condition->fn_tick = fn_tick;
     condition->data    = data;

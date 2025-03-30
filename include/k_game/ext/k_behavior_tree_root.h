@@ -37,6 +37,12 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
 
 /* endregion */
 
+/* region [decorator] */
+
+struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree_node *node);
+
+/* endregion */
+
 /* endregion */
 
 #endif
