@@ -25,16 +25,16 @@ static enum k_behavior_tree_status condition_count_lt_1(void *data) {
     }
 }
 
-static enum k_behavior_tree_status condition_count_gt_3(void *data) {
+static enum k_behavior_tree_status condition_count_lt_3(void *data) {
     int *count = data;
     printf("[%20s]  ", __func__);
 
-    if (*count > 3) {
-        printf("count > 3 is true\n");
+    if (*count < 3) {
+        printf("count < 3 is true\n");
         return K_BT_SUCCESS;
     }
     else {
-        printf("count > 3 is false\n");
+        printf("count < 3 is false\n");
         return K_BT_FAILURE;
     }
 }
@@ -77,8 +77,10 @@ void yx_behavior_tree_demo(void) {
                 {
                     k_bt_selector(b)
                     {
-                        k_bt_condition(b, &count, condition_count_gt_3);
                         k_bt_condition(b, &count, condition_count_lt_1);
+                        k_bt_inverter(b) {
+                            k_bt_condition(b, &count, condition_count_lt_3);
+                        }
                     }
                     k_bt_action(b, "hello", action_log);
                 }

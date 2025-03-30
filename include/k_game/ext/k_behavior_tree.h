@@ -1,5 +1,5 @@
-#ifndef K_BEHAVIOR_TREE_ROOT_H
-#define K_BEHAVIOR_TREE_ROOT_H
+#ifndef K_BEHAVIOR_TREE_H
+#define K_BEHAVIOR_TREE_H
 
 struct k_behavior_tree;
 
@@ -47,6 +47,8 @@ struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree
 
 struct k_behavior_tree_node *k_behavior_tree_add_force_success(struct k_behavior_tree_node *node);
 
+struct k_behavior_tree_node *k_behavior_tree_add_force_failure(struct k_behavior_tree_node *node);
+
 /* endregion */
 
 /* endregion */
@@ -66,6 +68,7 @@ void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *builder);
+void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *builder);
 
 /* endregion */
 
@@ -94,6 +97,9 @@ void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *buil
 
 #define k_bt_force_success(builder) \
     for (k__behavior_tree_builder_force_success(builder); k__behavior_tree_builder_pop(builder); )
+
+#define k_bt_force_failure(builder) \
+    for (k__behavior_tree_builder_force_failure(builder); k__behavior_tree_builder_pop(builder); )
 
 /* endregion */
 
