@@ -62,16 +62,21 @@ void yx_behavior_tree_demo(void) {
 
     k_bt_builder(tree, b)
     {
-        k_bt_sequence(b)
+        k_bt_parallel(b)
         {
-            k_bt_action(b, &count, action_count);
-            k_bt_action(b, &count, action_log_count);
-            k_bt_selector(b)
+            k_bt_sequence(b)
             {
-                k_bt_condition(b, &count, condition_count_gt_3);
-                k_bt_condition(b, &count, condition_count_lt_1);
+                k_bt_action(b, &count, action_count);
+                k_bt_action(b, &count, action_log_count);
+                k_bt_selector(b)
+                {
+                    k_bt_condition(b, &count, condition_count_gt_3);
+                    k_bt_condition(b, &count, condition_count_lt_1);
+                }
+                k_bt_action(b, "       hello", action_log);
             }
-            k_bt_action(b, "       hello", action_log);
+
+            k_bt_action(b, "----------", action_log);
         }
     }
 

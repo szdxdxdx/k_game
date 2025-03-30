@@ -17,7 +17,7 @@ struct k_behavior_tree_node;
 
 struct k_behavior_tree_node *k_behavior_tree_get_root(struct k_behavior_tree *tree);
 
-/* region [action] */
+/* region [execution] */
 
 enum k_behavior_tree_status {
     K_BT_FAILURE = 0,
@@ -56,16 +56,17 @@ struct k_behavior_tree_builder;
 /* region [ignore] */
 
 struct k_behavior_tree_builder *k__behavior_tree_builder(struct k_behavior_tree **get_tree);
-
+int  k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_action   (struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data));
 void k__behavior_tree_builder_condition(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data));
-
 void k__behavior_tree_builder_sequence(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder);
+void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
-int  k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder);
 
 /* endregion */
+
+/* region [builder] */
 
 #define k_bt_builder(tree, builder) \
     for (builder = k__behavior_tree_builder(&tree); NULL != builder && k__behavior_tree_builder_pop(builder); )
@@ -81,6 +82,9 @@ int  k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder);
 
 #define k_bt_selector(builder) \
     for (k__behavior_tree_builder_selector(builder); k__behavior_tree_builder_pop(builder); )
+
+#define k_bt_parallel(builder) \
+    for (k__behavior_tree_builder_parallel(builder); k__behavior_tree_builder_pop(builder); )
 
 #define k_bt_inverter(builder) \
     for (k__behavior_tree_builder_inverter(builder); k__behavior_tree_builder_pop(builder); )

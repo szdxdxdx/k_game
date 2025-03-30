@@ -65,7 +65,7 @@ static int pop(struct k_behavior_tree_builder *builder) {
 
 /* endregion */
 
-/* region [builder_create] */
+/* region [builder] */
 
 static struct k_behavior_tree_builder *k__behavior_tree_builder_create(struct k_behavior_tree **get_tree) {
 
@@ -120,8 +120,6 @@ static void k__behavior_tree_builder_destroy(struct k_behavior_tree_builder *bui
     free(builder);
 }
 
-/* endregion */
-
 struct k_behavior_tree_builder *k__behavior_tree_builder(struct k_behavior_tree **get_tree) {
     return k__behavior_tree_builder_create(get_tree);
 }
@@ -136,6 +134,10 @@ int k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder) {
 
     return result;
 }
+
+/* endregion */
+
+/* region [execution] */
 
 void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data)) {
 
@@ -155,14 +157,20 @@ void k__behavior_tree_builder_condition(struct k_behavior_tree_builder *builder,
         builder->failed = 1;
 }
 
+/* endregion */
+
+/* region [control] */
+
 void k__behavior_tree_builder_sequence(struct k_behavior_tree_builder *builder) {
 
     if (builder->failed)
         return;
 
     struct k_behavior_tree_node *new_node = k_behavior_tree_add_sequence(top(builder));
-    if (NULL == new_node)
+    if (NULL == new_node) {
         builder->failed = 1;
+        return;
+    }
 
     push(builder, new_node);
 }
@@ -173,11 +181,31 @@ void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder) 
         return;
 
     struct k_behavior_tree_node *new_node = k_behavior_tree_add_selector(top(builder));
-    if (NULL == new_node)
+    if (NULL == new_node) {
         builder->failed = 1;
+        return;
+    }
 
     push(builder, new_node);
 }
+
+void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder) {
+
+    if (builder->failed)
+        return;
+
+    struct k_behavior_tree_node *new_node = k_behavior_tree_add_parallel(top(builder));
+    if (NULL == new_node) {
+        builder->failed = 1;
+        return;
+    }
+
+    push(builder, new_node);
+}
+
+/* endregion */
+
+/* region [decorator] */
 
 void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder) {
 
@@ -185,8 +213,12 @@ void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder) 
         return;
 
     struct k_behavior_tree_node *new_node = k_behavior_tree_add_inverter(top(builder));
-    if (NULL == new_node)
+    if (NULL == new_node) {
         builder->failed = 1;
+        return;
+    }
 
     push(builder, new_node);
 }
+
+/* endregion */
