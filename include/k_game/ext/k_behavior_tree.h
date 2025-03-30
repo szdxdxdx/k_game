@@ -59,6 +59,8 @@ struct k_behavior_tree_builder;
 
 /* region [ignore] */
 
+/* 请忽略当前 region。若要使用 builder 模式构造行为树，请使用下方 region [builder] 中的宏 */
+
 struct k_behavior_tree_builder *k__behavior_tree_builder(struct k_behavior_tree **get_tree);
 int  k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data));
@@ -100,6 +102,8 @@ void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *buil
 
 #define k_bt_force_failure(builder) \
     for (k__behavior_tree_builder_force_failure(builder); k__behavior_tree_builder_pop(builder); )
+
+/* endregion */
 
 /* endregion */
 
