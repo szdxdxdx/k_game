@@ -37,8 +37,8 @@ static struct k_behavior_tree_node *action_create(struct k_behavior_tree *tree, 
         return NULL;
 
     action->super.tree         = tree;
-    action->super.fn_tick      = action_tick,
     action->super.fn_interrupt = NULL,
+    action->super.fn_tick      = action_tick,
     action->super.fn_add_child = action_add_child,
     action->super.fn_destroy   = action_destroy,
 

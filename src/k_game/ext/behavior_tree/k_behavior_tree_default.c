@@ -15,15 +15,15 @@ static void default_destroy(struct k_behavior_tree_node *node) {
 }
 
 struct k_behavior_tree_node K__BEHAVIOR_TREE_DEFAULT_SUCCESS = {
-    .fn_tick      = default_success,
     .fn_interrupt = NULL,
+    .fn_tick      = default_success,
     .fn_add_child = NULL,
     .fn_destroy   = default_destroy,
 };
 
 struct k_behavior_tree_node K__BEHAVIOR_TREE_DEFAULT_FAILURE = {
-    .fn_tick    = default_failure,
     .fn_interrupt = NULL,
+    .fn_tick      = default_failure,
     .fn_add_child = NULL,
-    .fn_destroy = default_destroy,
+    .fn_destroy   = default_destroy,
 };

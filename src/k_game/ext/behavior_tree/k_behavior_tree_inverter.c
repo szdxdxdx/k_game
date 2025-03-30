@@ -45,8 +45,8 @@ static struct k_behavior_tree_node *inverter_create(struct k_behavior_tree *tree
         return NULL;
 
     inverter->super.tree         = tree;
-    inverter->super.fn_tick      = inverter_tick;
     inverter->super.fn_interrupt = NULL;
+    inverter->super.fn_tick      = inverter_tick;
     inverter->super.fn_add_child = inverter_set_child;
     inverter->super.fn_destroy   = inverter_destroy;
 

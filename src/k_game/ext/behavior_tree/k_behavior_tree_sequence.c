@@ -11,17 +11,40 @@ struct k_behavior_tree_sequence_node {
     struct k_array children;
 
     size_t index;
+
+    int running;
 };
+
+static void sequence_interrupt(struct k_behavior_tree_node *node) {
+    struct k_behavior_tree_sequence_node *sequence = (struct k_behavior_tree_sequence_node *)node;
+
+    if ( ! sequence->running)
+        return;
+
+    struct k_array *array = &sequence->children;
+    size_t index = sequence->index;
+    size_t size  = array->size;
+    for (; index < size; index++) {
+        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
+
+        if (NULL != child->fn_interrupt)
+            child->fn_interrupt(child);
+    }
+
+    sequence->running = 0;
+}
 
 static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_sequence_node *sequence = (struct k_behavior_tree_sequence_node *)node;
 
     struct k_array *array = &sequence->children;
-    if (sequence->index == array->size) {
+    if ( ! sequence->running) {
         if (0 == array->size)
             return K_BT_SUCCESS;
-        else
-            sequence->index = 0;
+        else {
+            sequence->index   = 0;
+            sequence->running = 1;
+        }
     }
 
     struct k_behavior_tree_node *child = k_array_get_elem(array, sequence->index, struct k_behavior_tree_node *);
@@ -33,27 +56,17 @@ static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *no
 
         case K_BT_SUCCESS:
             sequence->index++;
-            return (sequence->index == array->size)
-                ? K_BT_SUCCESS
-                : K_BT_RUNNING;
+            if (sequence->index != array->size) {
+                return K_BT_RUNNING;
+            }
+            else {
+                sequence->running = 0;
+                return K_BT_SUCCESS;
+            }
 
         case K_BT_FAILURE:
-            sequence->index = array->size;
+            sequence->running = 0;
             return K_BT_FAILURE;
-    }
-}
-
-static void sequence_interrupt(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_sequence_node *sequence = (struct k_behavior_tree_sequence_node *)node;
-
-    struct k_array *array = &sequence->children;
-    size_t index = 0;
-    size_t size  = array->size;
-    for (; index < size; index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
-
-        if (NULL != child->fn_interrupt)
-            child->fn_interrupt(child);
     }
 }
 
@@ -84,8 +97,8 @@ static struct k_behavior_tree_node *sequence_create(struct k_behavior_tree *tree
         return NULL;
 
     sequence->super.tree         = tree;
-    sequence->super.fn_tick      = sequence_tick;
     sequence->super.fn_interrupt = sequence_interrupt;
+    sequence->super.fn_tick      = sequence_tick;
     sequence->super.fn_add_child = sequence_add_child;
     sequence->super.fn_destroy   = sequence_destroy;
 
@@ -99,7 +112,8 @@ static struct k_behavior_tree_node *sequence_create(struct k_behavior_tree *tree
         return NULL;
     }
 
-    sequence->index = 0;
+    sequence->index   = 0;
+    sequence->running = 0;
 
     return &sequence->super;
 }

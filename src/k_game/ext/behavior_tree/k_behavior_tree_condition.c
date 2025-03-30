@@ -38,8 +38,8 @@ static struct k_behavior_tree_node *condition_create(struct k_behavior_tree *tre
         return NULL;
 
     condition->super.tree         = tree;
-    condition->super.fn_tick      = condition_tick;
     condition->super.fn_interrupt = NULL;
+    condition->super.fn_tick      = condition_tick;
     condition->super.fn_add_child = condition_add_child;
     condition->super.fn_destroy   = condition_destroy;
 

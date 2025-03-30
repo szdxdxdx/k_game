@@ -45,8 +45,8 @@ struct k_behavior_tree *k_behavior_tree_create(void) {
     tree->object = object;
 
     tree->root.super.tree         = tree;
-    tree->root.super.fn_tick      = NULL;
     tree->root.super.fn_interrupt = NULL;
+    tree->root.super.fn_tick      = NULL;
     tree->root.super.fn_add_child = root_set_child;
     tree->root.super.fn_destroy   = NULL;
 
