@@ -53,34 +53,35 @@ struct k_behavior_tree_builder;
 
 /* region [ignore] */
 
-struct k_behavior_tree_builder *k__behavior_tree_builder_begin(struct k_behavior_tree *tree);
-int k__behavior_tree_builder_is_valid(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_end(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_sequence_begin(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_sequence_end  (struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_selector_begin(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_selector_end  (struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_action        (struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_condition     (struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_inverter_begin(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_inverter_end  (struct k_behavior_tree_builder *builder);
+struct k_behavior_tree_builder *k__behavior_tree_builder(struct k_behavior_tree **get_tree);
+
+void k__behavior_tree_builder_action   (struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data));
+void k__behavior_tree_builder_condition(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data));
+
+void k__behavior_tree_builder_sequence(struct k_behavior_tree_builder *builder);
+void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder);
+void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
+int  k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder);
 
 /* endregion */
 
 #define k_bt_builder(tree, builder) \
-    for (builder = k__behavior_tree_builder_begin(tree); k__behavior_tree_builder_is_valid(builder); k__behavior_tree_builder_end(builder))
-
-#define k_bt_sequence(builder) \
-    for (k__behavior_tree_builder_sequence_begin(builder); k__behavior_tree_builder_is_valid(builder); k__behavior_tree_builder_sequence_end(builder))
-
-#define k_bt_selector(builder) \
-    for (k__behavior_tree_builder_selector_begin(builder); k__behavior_tree_builder_is_valid(builder); k__behavior_tree_builder_selector_end(builder))
+    for (builder = k__behavior_tree_builder(&tree); k__behavior_tree_builder_pop(builder); )
 
 #define k_bt_action(builder, data, fn_tick) \
-    k__behavior_tree_builder_action(builder)
+    k__behavior_tree_builder_action(builder, data, fn_tick)
 
 #define k_bt_condition(builder, data, fn_tick) \
-    k__behavior_tree_builder_condition(builder)
+    k__behavior_tree_builder_condition(builder, data, fn_tick)
+
+#define k_bt_sequence(builder) \
+    for (k__behavior_tree_builder_sequence(builder); k__behavior_tree_builder_pop(builder); )
+
+#define k_bt_selector(builder) \
+    for (k__behavior_tree_builder_selector(builder); k__behavior_tree_builder_pop(builder); )
+
+#define k_bt_inverter(builder) \
+    for (k__behavior_tree_builder_inverter(builder); k__behavior_tree_builder_pop(builder); )
 
 /* endregion */
 

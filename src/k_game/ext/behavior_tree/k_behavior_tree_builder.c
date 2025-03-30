@@ -1,1 +1,144 @@
+#include <stdlib.h>
 
+#include "k_array.h"
+
+#include "./_internal.h"
+
+struct k_behavior_tree_builder {
+
+    struct k_behavior_tree *tree;
+
+    struct k_behavior_tree **return_tree;
+
+    struct k_array stack;
+
+    int failed;
+};
+
+/* region [stack] */
+
+struct k_bt_builder_stack_node {
+
+    struct k_behavior_tree_node *node;
+
+    int pop_count;
+};
+
+static int is_empty(struct k_behavior_tree_builder *builder) {
+    return builder->stack.size == 0;
+}
+
+static int push(struct k_behavior_tree_builder *builder, struct k_behavior_tree_node *node) {
+
+    struct k_array *arr = &builder->stack;
+    struct k_bt_builder_stack_node *stack_node = k_array_shift_right(arr, arr->size, 1);
+    if (NULL == stack_node)
+        return -1;
+
+    stack_node->node = node;
+    stack_node->pop_count = 1;
+    return 0;
+}
+
+static struct k_behavior_tree_node *top(struct k_behavior_tree_builder *builder) {
+    struct k_bt_builder_stack_node *node = k_array_get_elem_addr(&builder->stack, builder->stack.size - 1);
+    return node->node;
+}
+
+static int pop(struct k_behavior_tree_builder *builder) {
+
+    struct k_array *arr = &builder->stack;
+    struct k_bt_builder_stack_node *top = k_array_get_elem_addr(arr, arr->size - 1);
+    if (0 == top->pop_count) {
+        k_array_pop_back(&builder->stack);
+        return 0;
+    } else {
+        top->pop_count -= 1;
+        return 1;
+    }
+}
+
+/* endregion */
+
+/* region [builder_create] */
+
+static struct k_behavior_tree_builder *k__behavior_tree_builder_create(struct k_behavior_tree **get_tree) {
+
+    struct k_behavior_tree *tree = k_behavior_tree_create();
+    if (NULL == tree)
+        goto err;
+
+    struct k_behavior_tree_builder *builder = malloc(sizeof(struct k_behavior_tree_builder));
+    if (NULL == builder) {
+        k_behavior_tree_destroy(tree);
+        goto err;
+    }
+
+    builder->tree = tree;
+    builder->return_tree = get_tree;
+
+    struct k_array_config config;
+    config.fn_malloc     = malloc;
+    config.fn_free       = free;
+    config.elem_size     = sizeof(struct k_bt_builder_stack_node);
+    config.init_capacity = 16;
+    if (NULL == k_array_construct(&builder->stack, &config)) {
+        k_behavior_tree_destroy(tree);
+        free(builder);
+        goto err;
+    }
+
+    struct k_behavior_tree_node *root = k_behavior_tree_get_root(tree);
+
+    push(builder, root);
+    return builder;
+
+err:
+    *get_tree = NULL;
+    return NULL;
+}
+
+static void k__behavior_tree_builder_destroy(struct k_behavior_tree_builder *builder) {
+    k_array_destruct(&builder->stack);
+    free(builder);
+}
+
+/* endregion */
+
+struct k_behavior_tree_builder *k__behavior_tree_builder(struct k_behavior_tree **get_tree) {
+    return k__behavior_tree_builder_create(get_tree);
+}
+
+int k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder) {
+
+    if (NULL == builder)
+        return 0;
+
+    int result = pop(builder);
+
+    if (0 == result && is_empty(builder)) {
+        k__behavior_tree_builder_destroy(builder);
+    }
+
+    return result;
+}
+
+void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data)) {
+    k_behavior_tree_add_action(top(builder), data, fn_tick);
+}
+
+void k__behavior_tree_builder_condition(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data)) {
+    k_behavior_tree_add_condition(top(builder), data, fn_tick);
+}
+
+void k__behavior_tree_builder_sequence(struct k_behavior_tree_builder *builder) {
+    push(builder, k_behavior_tree_add_sequence(top(builder)));
+}
+
+void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder) {
+    push(builder, k_behavior_tree_add_sequence(top(builder)));
+}
+
+void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder) {
+    push(builder, k_behavior_tree_add_inverter(top(builder)));
+}

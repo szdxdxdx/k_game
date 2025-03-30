@@ -57,24 +57,7 @@ static int count = 0;
 
 void yx_behavior_tree_demo(void) {
 
-    struct k_behavior_tree *tree = k_behavior_tree_create();
-
-    /*
-    struct k_behavior_tree_node *root = k_behavior_tree_get_root(tree);
-
-    struct k_behavior_tree_node *seq_1 = k_behavior_tree_add_sequence(root);
-    {
-        k_behavior_tree_add_action(seq_1, &count, action_count);
-        k_behavior_tree_add_action(seq_1, &count, action_log_count);
-        struct k_behavior_tree_node *selector = k_behavior_tree_add_selector(seq_1);
-        {
-            k_behavior_tree_add_condition(selector, &count, condition_count_gt_3);
-            k_behavior_tree_add_condition(selector, &count, condition_count_lt_1);
-        }
-        k_behavior_tree_add_action(seq_1, "       hello", action_log);
-    }
-     */
-
+    struct k_behavior_tree *tree;
     struct k_behavior_tree_builder *b;
     k_bt_builder(tree, b)
     {
@@ -82,7 +65,6 @@ void yx_behavior_tree_demo(void) {
         {
             k_bt_action(b, &count, action_count);
             k_bt_action(b, &count, action_log_count);
-
             k_bt_selector(b)
             {
                 k_bt_condition(b, &count, condition_count_gt_3);
