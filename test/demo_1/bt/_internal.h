@@ -11,9 +11,9 @@ struct k_behavior_tree;
 /* region [node] */
 
 enum yx_behavior_tree_status {
-    YX_BT_FAILURE = -1,
-    YX_BT_SUCCESS =  0,
-    YX_BT_RUNNING =  1,
+    YX_BT_FAILURE = 0,
+    YX_BT_SUCCESS = 1,
+    YX_BT_RUNNING = 2,
 };
 
 struct yx_behavior_tree_node {
@@ -39,6 +39,21 @@ struct yx_behavior_tree_action_node {
 };
 
 struct yx_behavior_tree_node *yx_behavior_tree_add_action(struct yx_behavior_tree_node *node, void *data, enum yx_behavior_tree_status (*fn_tick)(void *data));
+
+/* endregion */
+
+/* region [condition] */
+
+struct yx_behavior_tree_condition_node {
+
+    struct yx_behavior_tree_node super;
+
+    enum yx_behavior_tree_status (*fn_tick)(void *data);
+
+    void *data;
+};
+
+struct yx_behavior_tree_node *yx_behavior_tree_add_condition(struct yx_behavior_tree_node *node, void *data, enum yx_behavior_tree_status (*fn_tick)(void *data));
 
 /* endregion */
 
