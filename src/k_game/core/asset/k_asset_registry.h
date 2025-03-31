@@ -2,20 +2,20 @@
 #define K_ASSET_REGISTRY_H
 
 #include "k_list.h"
-#include "k_str_map.h"
+#include "k_str_hash_map.h"
 
 struct k_asset_registry_node;
 
 struct k_asset_registry {
 
-    struct k_str_map name_map;
+    struct k_str_hash_map name_map;
 
     struct k_list asset_list;
 };
 
 struct k_asset_registry_node {
 
-    struct k_str_map_node name_map_node;
+    struct k_str_hash_map_node name_map_node;
 
     struct k_list_node iter_node;
 };

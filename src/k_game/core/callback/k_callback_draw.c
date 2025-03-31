@@ -6,11 +6,11 @@
 
 struct k_draw_callback_group {
 
-    struct k_list_node    group_list_node;
-    struct k_int_map_node group_map_node;
+    struct k_list_node group_list_node;
+    struct k_int_hash_map_node group_map_node;
 
-    struct k_list    layer_list;
-    struct k_int_map layer_map;
+    struct k_list layer_list;
+    struct k_int_hash_map layer_map;
 
     struct k_draw_callback_manager *manager;
 };
@@ -20,7 +20,7 @@ struct k_draw_callback_group {
 
 static struct k_draw_callback_group *find_or_create_group(struct k_draw_callback_manager *manager, int group_id) {
 
-    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_id);
+    struct k_int_hash_map_node *map_node = k_int_hash_map_get(&manager->group_map, group_id);
     if (NULL != map_node) {
         struct k_draw_callback_group *found_group = container_of(map_node, struct k_draw_callback_group, group_map_node);
         return found_group;
@@ -40,10 +40,10 @@ static struct k_draw_callback_group *find_or_create_group(struct k_draw_callback
         k_free(new_group);
         return NULL;
     } else {
-        k_int_map_init(&new_group->layer_map, buckets, layer_map_buckets_num);
+        k_int_hash_map_init(&new_group->layer_map, buckets, layer_map_buckets_num);
     }
 
-    k_int_map_add_directly(&manager->group_map, group_id, &new_group->group_map_node);
+    k_int_hash_map_add_directly(&manager->group_map, group_id, &new_group->group_map_node);
 
     struct k_draw_callback_group *group_in_list;
     struct k_list *group_list = &manager->group_list;
@@ -66,7 +66,7 @@ static struct k_draw_callback_group *find_or_create_group(struct k_draw_callback
 struct k_draw_callback_layer {
 
     struct k_list_node    layer_list_node;
-    struct k_int_map_node layer_map_node;
+    struct k_int_hash_map_node layer_map_node;
 
     struct k_list callback_list;
 
@@ -82,7 +82,7 @@ static inline struct k_draw_callback_layer *find_or_create_layer(struct k_draw_c
     if (NULL == group)
         return NULL;
 
-    struct k_int_map_node *map_node = k_int_map_get(&group->layer_map, z_index);
+    struct k_int_hash_map_node *map_node = k_int_hash_map_get(&group->layer_map, z_index);
     if (NULL != map_node) {
         struct k_draw_callback_layer *found_layer = container_of(map_node, struct k_draw_callback_layer, layer_map_node);
         return found_layer;
@@ -96,7 +96,7 @@ static inline struct k_draw_callback_layer *find_or_create_layer(struct k_draw_c
 
     k_list_init(&new_layer->callback_list);
 
-    k_int_map_add_directly(&group->layer_map, z_index, &new_layer->layer_map_node);
+    k_int_hash_map_add_directly(&group->layer_map, z_index, &new_layer->layer_map_node);
 
     struct k_draw_callback_layer *layer_in_list;
     struct k_list *list = &group->layer_list;
@@ -299,7 +299,7 @@ int k__draw_callback_manager_init(struct k_draw_callback_manager *manager) {
     if (NULL == buckets) {
         return -1;
     } else {
-        k_int_map_init(&manager->group_map, buckets, buckets_num);
+        k_int_hash_map_init(&manager->group_map, buckets, buckets_num);
     }
 
     k_list_init(&manager->group_list);

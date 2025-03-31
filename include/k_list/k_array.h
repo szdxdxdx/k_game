@@ -170,12 +170,16 @@ int k_array_insert(struct k_array *arr, size_t idx, const void *elem);
 /**
  * \brief 在数组尾部追加多个元素
  *
+ * 要追加的元素 `elems` 不能来自容器内部，详见 `k_array_insert_all()`。
+ *
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_array_push_back_all(struct k_array *arr, const void *elems, size_t elems_num);
 
 /**
  * \brief 在数组尾部追加一个元素
+ *
+ * 要追加的元素 `elem` 不能来自容器内部，详见 `k_array_insert_all()`。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */

@@ -6,7 +6,7 @@ int k__collision_manager_init_group_map(struct k_collision_manager *manager) {
     if (buckets == NULL)
         return -1;
 
-    k_int_map_init(&manager->group_map, buckets, buckets_num);
+    k_int_hash_map_init(&manager->group_map, buckets, buckets_num);
     return 0;
 }
 
@@ -18,12 +18,12 @@ void k__collision_manager_fini_group_map(struct k_collision_manager *manager) {
      */
 
     struct k_collision_group *group;
-    struct k_int_map *group_map = &manager->group_map;
+    struct k_int_hash_map *group_map = &manager->group_map;
     struct k_hash_list *bucket;
-    for (k_int_map_for_each_bucket(group_map, bucket)) {
+    for (k_int_hash_map_for_each_bucket(group_map, bucket)) {
         struct k_hash_list_node *iter, *next;
         for (k_hash_list_for_each_s(bucket, iter, next)) {
-            group = k_int_map_node_container_of(iter, struct k_collision_group, group_map_node);
+            group = k_int_hash_map_node_container_of(iter, struct k_collision_group, group_map_node);
 
             k__collision_manager_del_group(group);
         }
@@ -34,7 +34,7 @@ void k__collision_manager_fini_group_map(struct k_collision_manager *manager) {
 
 struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collision_manager *manager, int group_id) {
 
-    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_id);
+    struct k_int_hash_map_node *map_node = k_int_hash_map_get(&manager->group_map, group_id);
     if (NULL != map_node) {
         struct k_collision_group *found_group = container_of(map_node, struct k_collision_group, group_map_node);
         return found_group;
@@ -44,7 +44,7 @@ struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collis
         if (NULL == new_group)
             return NULL;
 
-        k_int_map_add_directly(&manager->group_map, group_id, &new_group->group_map_node);
+        k_int_hash_map_add_directly(&manager->group_map, group_id, &new_group->group_map_node);
         k_list_init(&new_group->box_list);
 
         new_group->debugger = NULL;
@@ -63,7 +63,7 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
 
         k_object_del_component(box->component);
     }
-    k_int_map_del(&group->group_map_node);
+    k_int_hash_map_del(&group->group_map_node);
 
     if (NULL != group->debugger)
         k_object_destroy(group->debugger);
@@ -88,7 +88,7 @@ struct k_collision_group *k__collision_find_group(int group_id) {
         return NULL;
 
     struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
-    struct k_int_map_node *map_node = k_int_map_get(&manager->group_map, group_id);
+    struct k_int_hash_map_node *map_node = k_int_hash_map_get(&manager->group_map, group_id);
     if (NULL == map_node)
         return NULL;
 

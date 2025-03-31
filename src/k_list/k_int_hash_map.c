@@ -1,13 +1,13 @@
 #include <assert.h>
 
-#include "k_int_map.h"
+#include "k_int_hash_map.h"
 
-static inline struct k_int_map_node *find(struct k_hash_list *list, int key) {
+static inline struct k_int_hash_map_node *find(struct k_hash_list *list, int key) {
 
-    struct k_int_map_node *map_node;
+    struct k_int_hash_map_node *map_node;
     struct k_hash_list_node *iter;
     for (k_hash_list_for_each(list, iter)) {
-        map_node = container_of(iter, struct k_int_map_node, list_node);
+        map_node = container_of(iter, struct k_int_hash_map_node, list_node);
 
         if (map_node->key == key)
             return map_node;
@@ -16,7 +16,7 @@ static inline struct k_int_map_node *find(struct k_hash_list *list, int key) {
     return NULL;
 }
 
-void k_int_map_init(struct k_int_map *map, struct k_hash_list *buckets, size_t buckets_num) {
+void k_int_hash_map_init(struct k_int_hash_map *map, struct k_hash_list *buckets, size_t buckets_num) {
     assert(NULL != map);
     assert(NULL != buckets);
     assert(1 <= buckets_num);
@@ -27,7 +27,7 @@ void k_int_map_init(struct k_int_map *map, struct k_hash_list *buckets, size_t b
     map->buckets_num = buckets_num;
 }
 
-int k_int_map_add_if_absent(struct k_int_map *map, int key, struct k_int_map_node *node) {
+int k_int_hash_map_add_if_absent(struct k_int_hash_map *map, int key, struct k_int_hash_map_node *node) {
     assert(NULL != map);
     assert(NULL != node);
 
@@ -43,7 +43,7 @@ int k_int_map_add_if_absent(struct k_int_map *map, int key, struct k_int_map_nod
     return 0;
 }
 
-void k_int_map_add_directly(struct k_int_map *map, int key, struct k_int_map_node *node) {
+void k_int_hash_map_add_directly(struct k_int_hash_map *map, int key, struct k_int_hash_map_node *node) {
     assert(NULL != map);
     assert(NULL != node);
 
@@ -54,7 +54,7 @@ void k_int_map_add_directly(struct k_int_map *map, int key, struct k_int_map_nod
     k_hash_list_add(list, &node->list_node);
 }
 
-struct k_int_map_node *k_int_map_get(struct k_int_map *map, int key) {
+struct k_int_hash_map_node *k_int_hash_map_get(struct k_int_hash_map *map, int key) {
     assert(NULL != map);
 
     size_t hash = (size_t)key;
@@ -63,12 +63,12 @@ struct k_int_map_node *k_int_map_get(struct k_int_map *map, int key) {
     return find(list, key);
 }
 
-void k_int_map_del(struct k_int_map_node *node) {
+void k_int_hash_map_del(struct k_int_hash_map_node *node) {
     assert(NULL != node);
     k_hash_list_del(&node->list_node);
 }
 
-struct k_hash_list *k_int_map_rehash(struct k_int_map *map, struct k_hash_list *new_buckets, size_t new_buckets_num) {
+struct k_hash_list *k_int_hash_map_rehash(struct k_int_hash_map *map, struct k_hash_list *new_buckets, size_t new_buckets_num) {
     assert(NULL != map);
     assert(NULL != new_buckets);
     assert(1 <= new_buckets_num);
@@ -81,10 +81,10 @@ struct k_hash_list *k_int_map_rehash(struct k_int_map *map, struct k_hash_list *
     struct k_hash_list *old_list = old_buckets;
     for (; old_list < old_buckets + old_buckets_num; old_list++) {
 
-        struct k_int_map_node *map_node;
+        struct k_int_hash_map_node *map_node;
         struct k_hash_list_node *iter, *next;
         for (k_hash_list_for_each_s(old_list, iter, next)) {
-            map_node = container_of(iter, struct k_int_map_node, list_node);
+            map_node = container_of(iter, struct k_int_hash_map_node, list_node);
 
             size_t hash = (size_t)(map_node->key);
 

@@ -9,7 +9,7 @@ int k__asset_registry_init(struct k_asset_registry *registry) {
     if (NULL == buckets)
         return -1;
 
-    k_str_map_init(&registry->name_map, buckets, buckets_num);
+    k_str_hash_map_init(&registry->name_map, buckets, buckets_num);
     k_list_init(&registry->asset_list);
     return 0;
 }
@@ -37,7 +37,7 @@ void k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_reg
 void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
 
     if ('\0' != registry_node->name_map_node.key[0]) {
-        k_str_map_del(&registry_node->name_map_node);
+        k_str_hash_map_del(&registry_node->name_map_node);
         k_hash_list_node_loop(&registry_node->name_map_node.list_node);
     }
 
@@ -47,20 +47,20 @@ void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
 
 int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node, const char *asset_name) {
 
-    struct k_str_map_node *map_node = &registry_node->name_map_node;
+    struct k_str_hash_map_node *map_node = &registry_node->name_map_node;
 
     if (NULL == asset_name || '\0' == asset_name[0]) {
 
         if ('\0' != map_node->key[0]) {
-            k_str_map_del(map_node);
+            k_str_hash_map_del(map_node);
             map_node->key = "";
         }
     }
     else {
         if ('\0' != map_node->key[0])
-            k_str_map_del(map_node);
+            k_str_hash_map_del(map_node);
 
-        if (0 != k_str_map_add_if_absent(&registry->name_map, asset_name, map_node)) {
+        if (0 != k_str_hash_map_add_if_absent(&registry->name_map, asset_name, map_node)) {
             return -1; /* TODO log("同名资源已存在") */
         }
     }
@@ -77,7 +77,7 @@ struct k_asset_registry_node *k__asset_registry_find(struct k_asset_registry *re
     if (NULL == asset_name || '\0' == asset_name[0])
         return NULL;
 
-    struct k_str_map_node *map_node = k_str_map_get(&registry->name_map, asset_name);
+    struct k_str_hash_map_node *map_node = k_str_hash_map_get(&registry->name_map, asset_name);
     if (NULL == map_node)
         return NULL;
 
