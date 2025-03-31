@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 /**
- * \brief 内存池
+ * \brief 分级内存池
  *
  * 内存池会动态向系统申请分配大内存块 chunk，分配给用户的内存是从 chunk 中切出的小块 block。
  *

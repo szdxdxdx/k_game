@@ -3,28 +3,26 @@
 
 #include <stddef.h>
 
-/** \brief 支持动态扩容的数组容器 */
+/** \brief 数组容器（支持动态扩容，能存储任意数据类型） */
 struct k_array {
 
-    /* 此结构体所有成员都应为【只读】，请勿直接修改 */
-
-    /** \brief 内存分配函数 */
+    /* [private] */
     void *(*fn_malloc)(size_t size);
 
-    /** \brief 内存释放函数 */
+    /* [private] */
     void (*fn_free)(void *p);
 
-    /** \brief 数组所存储的元素的大小 */
+    /** \brief [read-only] 数组所存储的元素的大小 */
     size_t elem_size;
 
-    /** \brief 数组容量，即在不重新分配存储的情况下最多能容纳的元素数量 */
+    /** \brief [read-only] 数组容量，即在不重新分配存储的情况下最多能容纳的元素数量 */
     size_t capacity;
 
-    /** \brief 容器持有的元素的数量 */
+    /** \brief [read-only] 容器持有的元素的数量 */
     size_t size;
 
     /**
-     * \brief 指向存储元素的连续空间的指针
+     * \brief [read-only] 指向存储元素的连续空间的指针
      *
      * 你可以对数组的 `storage` 指针做显式类型转换，配合下标运算符取得元素。
      * 若数组 `arr` 存储的元素类型为 `T`，可以这样操作取得索引为 `idx` 的元素：

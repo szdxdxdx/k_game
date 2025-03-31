@@ -5,28 +5,32 @@
 
 #include "k_str_hash_map.h"
 
-/** \brief 哈希表容器（键为字符串，值为任意结构体类型） */
+/** \brief 哈希表容器（键为字符串，值为任意数据类型） */
 struct k_str_map {
+
+    /** \brief [private] 内存分配函数 */
+    void *(*fn_malloc)(size_t size);
+
+    /** \brief [private] 内存释放函数 */
+    void (*fn_free)(void *p);
+
+    /** \brief [read-only] 容器持有的元素的数量 */
+    size_t size;
+
+    /** \brief [private] 使用侵入式的哈希表作为本容器的底层实现 */
+    struct k_str_hash_map hash_map;
+
+    /** \brief [private] 当元素数量达到此阈值时扩容哈希桶 */
+    size_t rehash_threshold;
+};
+
+/** \brief 用于构造哈希表的配置参数 */
+struct k_str_map_config {
 
     /** \brief 内存分配函数 */
     void *(*fn_malloc)(size_t size);
 
     /** \brief 内存释放函数 */
-    void (*fn_free)(void *p);
-
-    /** \brief 容器持有的元素的数量 */
-    size_t size;
-
-    /** \brief 使用侵入式的字符串哈希表作为本容器的底层实现 */
-    struct k_str_hash_map hash_map;
-
-    size_t rehash_threshold;
-};
-
-struct k_str_map_config {
-
-    void *(*fn_malloc)(size_t size);
-
     void (*fn_free)(void *p);
 };
 
