@@ -54,7 +54,7 @@ static struct k_behavior_tree_node *condition_create(struct k_behavior_tree *tre
 
 struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tree_node *node, void *data, enum k_behavior_tree_status (*fn_tick)(void *data)) {
 
-    if (NULL == node || NULL == fn_tick)
+    if (NULL == node)
         return NULL;
 
     struct k_behavior_tree_node *new_node = condition_create(node->tree, data, fn_tick);

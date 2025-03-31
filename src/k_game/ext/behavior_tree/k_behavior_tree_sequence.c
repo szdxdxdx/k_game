@@ -63,8 +63,7 @@ static void sequence_interrupt(struct k_behavior_tree_node *node) {
     for (; index < size; index++) {
         struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
 
-        if (NULL != child->fn_interrupt)
-            child->fn_interrupt(child);
+        child->fn_interrupt(child);
     }
 
     sequence->running = 0;

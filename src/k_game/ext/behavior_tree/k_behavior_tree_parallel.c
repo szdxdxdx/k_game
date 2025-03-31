@@ -29,8 +29,7 @@ static void parallel_interrupt_(struct k_behavior_tree_parallel_node *parallel) 
         if (status[index] == K_BT_RUNNING) {
             struct k_behavior_tree_node *child = children[index];
 
-            if (NULL != child->fn_interrupt)
-                child->fn_interrupt(child);
+            child->fn_interrupt(child);
         }
     }
 
