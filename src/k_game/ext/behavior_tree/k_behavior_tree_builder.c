@@ -279,13 +279,13 @@ void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *buil
     push(builder, child);
 }
 
-void k__behavior_tree_builder_repeater(struct k_behavior_tree_builder *builder, size_t n) {
+void k__behavior_tree_builder_repeat(struct k_behavior_tree_builder *builder, size_t n) {
 
     if (builder->failed)
         return;
 
     struct k_behavior_tree_node *parent = top(builder);
-    struct k_behavior_tree_node *child = k_behavior_tree_add_repeater(parent, n);
+    struct k_behavior_tree_node *child = k_behavior_tree_add_repeat(parent, n);
     if (NULL == child) {
         builder->failed = 1;
         return;

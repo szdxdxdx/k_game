@@ -52,15 +52,21 @@ struct k_behavior_tree_node *k_behavior_tree_add_force_failure(struct k_behavior
 /**
  * \brief 向行为树添加一个【重复器】结点
  *
- * 【重复器】repeater 结点将尝试在它的一次 tick 内，多次 tick 它的子结点。
+ * 【重复器】repeat 结点将尝试在它的一次 tick 内，多次 tick 它的子结点。
  *
- * - 若子结点每次都返回 SUCCESS，且完成了 `n` 次，则 repeater 重置计数器，并返回 SUCCESS。
- * - 若子结点任意一次返回 FAILURE，则 repeater 终止后续 tick，重置计数器，并返回 FAILURE。
- * - 若子结点返回 RUNNING，则 repeater 暂停计数，并返回 RUNNING。
+ * - 若子结点每次都返回 SUCCESS，且完成了 `n` 次，则 repeat 重置计数器，并返回 SUCCESS。
+ * - 若子结点任意一次返回 FAILURE，则 repeat 终止后续 tick，重置计数器，并返回 FAILURE。
+ * - 若子结点返回 RUNNING，则 repeat 暂停计数，并返回 RUNNING。
  *
- * repeater 最多只能有一个子结点。若 repeater 没有子结点，则每次 tick 都返回 SUCCESS。
+ * repeat 最多只能有一个子结点。若 repeat 没有子结点，则每次 tick 都返回 SUCCESS。
  */
-struct k_behavior_tree_node *k_behavior_tree_add_repeater(struct k_behavior_tree_node *node, size_t n);
+struct k_behavior_tree_node *k_behavior_tree_add_repeat(struct k_behavior_tree_node *node, size_t n);
+
+struct k_behavior_tree_node *k_behavior_tree_add_retry(struct k_behavior_tree_node *node, size_t n);
+
+struct k_behavior_tree_node *k_behavior_tree_add_timeout(struct k_behavior_tree_node *node, int timeout_ms);
+
+struct k_behavior_tree_node *k_behavior_tree_add_delay(struct k_behavior_tree_node *node, int delay_ms);
 
 /* endregion */
 
@@ -85,7 +91,7 @@ void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_repeater(struct k_behavior_tree_builder *builder, size_t n);
+void k__behavior_tree_builder_repeat(struct k_behavior_tree_builder *builder, size_t n);
 
 /* endregion */
 
@@ -118,8 +124,8 @@ void k__behavior_tree_builder_repeater(struct k_behavior_tree_builder *builder, 
 #define k_bt_force_failure(builder) \
     for (k__behavior_tree_builder_force_failure(builder); k__behavior_tree_builder_pop(builder); )
 
-#define k_bt_repeater(builder, n) \
-    for (k__behavior_tree_builder_repeater(builder, n); k__behavior_tree_builder_pop(builder); )
+#define k_bt_repeat(builder, n) \
+    for (k__behavior_tree_builder_repeat(builder, n); k__behavior_tree_builder_pop(builder); )
 
 /* endregion */
 
