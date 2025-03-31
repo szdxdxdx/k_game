@@ -60,19 +60,35 @@ static enum k_behavior_tree_status log_string(void *data) {
 
 static int count = 0;
 
-static void demo_1(void) {
+static struct k_behavior_tree *demo_1(void) {
 
+    /* 创建一颗空树 */
     struct k_behavior_tree *tree = k_behavior_tree_create();
+    if (NULL == tree)
+        return NULL;
 
+    /* 获取根结点。行为树的构建操作必须从根结点开始 */
     struct k_behavior_tree_node *root = k_behavior_tree_get_root(tree);
     {
+        /* 使用 `k_behavior_tree_add_XXX(node)` 函数给 `node` 添加 `XXX` 类型的结点
+         * 若添加成功，函数返回新结点的指针，否则返回 `NULL`。
+         *
+         * 添加结点可能失败，你应检查每次添加操作的返回值。若中途某步失败了，你将得到一颗残缺的行为树。
+         * 若每一步都检查返回值，示例代码会显得很冗长。此处仅作演示，我不检查返回值。
+         *
+         * 这里给根结点添加一个子结点，类型为并行结点。根结点最多只能有一个子结点。
+         */
         struct k_behavior_tree_node *parallel = k_behavior_tree_add_parallel(root);
-        {
+        if (NULL == parallel) {
+            goto err;
+        }
+        else {
             k_behavior_tree_add_action(parallel, &count, inc_count);
             k_behavior_tree_add_action(parallel, &count, log_count);
 
             struct k_behavior_tree_node *force_success = k_behavior_tree_add_force_success(parallel);
             {
+                /* 用缩进体现出结点间的父子关系 */
                 struct k_behavior_tree_node *sequence = k_behavior_tree_add_sequence(force_success);
                 {
                     struct k_behavior_tree_node *selector = k_behavior_tree_add_selector(sequence);
@@ -90,6 +106,12 @@ static void demo_1(void) {
             k_behavior_tree_add_action(parallel, "world", log_string);
         }
     }
+
+    return tree;
+
+err:
+    k_behavior_tree_destroy(tree);
+    return NULL;
 }
 
 static void demo_2(void) {
@@ -112,13 +134,11 @@ static void demo_2(void) {
                         k_bt_condition(b, &count, is_count_lt_1);
                         k_bt_inverter(b) {
                             k_bt_condition(b, &count, is_count_lt_3);
-                            k_bt_condition(b, &count, is_count_lt_3);
                         }
                     }
                     k_bt_action(b, "hello", log_string);
                 }
             }
-
             k_bt_action(b, "world", log_string);
         }
     }

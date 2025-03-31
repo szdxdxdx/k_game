@@ -140,6 +140,7 @@ struct k_behavior_tree_builder *k__behavior_tree_builder_begin(struct k_behavior
 int k__behavior_tree_builder_end(struct k_behavior_tree_builder *builder) {
 
     if ( ! builder->started) {
+        builder->started = 1;
         return 1;
     }
     else {

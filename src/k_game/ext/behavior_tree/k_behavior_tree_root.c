@@ -70,9 +70,5 @@ void k_behavior_tree_destroy(struct k_behavior_tree *tree) {
 }
 
 struct k_behavior_tree_node *k_behavior_tree_get_root(struct k_behavior_tree *tree) {
-
-    if (NULL == tree)
-        return NULL;
-    else
-        return &tree->root.super;
+    return &tree->root.super;
 }
