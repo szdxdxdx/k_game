@@ -85,6 +85,7 @@ void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *builder);
+void k__behavior_tree_builder_repeater(struct k_behavior_tree_builder *builder, size_t n);
 
 /* endregion */
 
@@ -116,6 +117,9 @@ void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *buil
 
 #define k_bt_force_failure(builder) \
     for (k__behavior_tree_builder_force_failure(builder); k__behavior_tree_builder_pop(builder); )
+
+#define k_bt_repeater(builder, n) \
+    for (k__behavior_tree_builder_repeater(builder, n); k__behavior_tree_builder_pop(builder); )
 
 /* endregion */
 

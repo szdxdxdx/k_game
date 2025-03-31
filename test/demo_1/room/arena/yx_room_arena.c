@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <stdio.h>
 
 #include "../_internal.h"
 
@@ -18,14 +19,20 @@ static void set_debug(void *data) {
     }
 }
 
+void room_callback(void *data) {
+    printf("~\n");
+}
+
 int fn_room_init(void *params) {
     (void)params;
 
+    k_add_room_step_callback(NULL, room_callback);
+
     k_add_room_collision_manager();
 
-    k_add_room_step_callback(NULL, set_debug);
-    k_add_room_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
-    k_add_room_draw_callback(NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
+    //k_add_room_step_callback(NULL, set_debug);
+    //k_add_room_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
+    //k_add_room_draw_callback(NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
 
     {
         struct yx_obj_bubble_maker_config config;
@@ -38,7 +45,7 @@ int fn_room_init(void *params) {
         config.y = 300;
         config.spr_idle = yx_spr_ynx_idle;
         config.spr_run  = yx_spr_ynx_run;
-        yx_player_create(&config);
+        //yx_player_create(&config);
     }
 
     {
@@ -47,7 +54,7 @@ int fn_room_init(void *params) {
         config.y = 300;
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
-        yx_rival_create(&config);
+        //yx_rival_create(&config);
     }
 
     {

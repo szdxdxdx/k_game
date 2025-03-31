@@ -124,7 +124,9 @@ static void demo_2(void) {
         k_bt_parallel(b)
         {
             k_bt_action(b, &count, inc_count);
-            k_bt_action(b, &count, log_count);
+            k_bt_repeater(b, 3) {
+                k_bt_action(b, &count, log_count);
+            }
             k_bt_force_success(b)
             {
                 k_bt_sequence(b)
