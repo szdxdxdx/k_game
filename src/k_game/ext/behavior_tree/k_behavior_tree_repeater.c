@@ -33,7 +33,7 @@ static enum k_behavior_tree_status repeater_tick(struct k_behavior_tree_node *no
 
     struct k_behavior_tree_node *child = repeater->child;
 
-    while (repeater->count <= repeater->n) {
+    while (repeater->count < repeater->n) {
 
         enum k_behavior_tree_status result = child->fn_tick(child);
         switch (result) {
