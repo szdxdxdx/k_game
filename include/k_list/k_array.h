@@ -6,6 +6,8 @@
 /** \brief 支持动态扩容的数组容器 */
 struct k_array {
 
+    /* 此结构体所有成员都应为【只读】，请勿直接修改 */
+
     /** \brief 内存分配函数 */
     void *(*fn_malloc)(size_t size);
 
