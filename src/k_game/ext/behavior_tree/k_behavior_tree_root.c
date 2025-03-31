@@ -32,6 +32,12 @@ static void tree_tick(struct k_object *object) {
     root_child->fn_tick(root_child);
 }
 
+static void tree_destroy(struct k_object *object) {
+    struct k_behavior_tree *tree = k_object_get_data(object);
+
+    tree->root.child->fn_destroy(tree->root.child);
+}
+
 struct k_behavior_tree *k_behavior_tree_create(void) {
 
     struct k_object *object = k_object_create(sizeof(struct k_behavior_tree));
@@ -54,17 +60,15 @@ struct k_behavior_tree *k_behavior_tree_create(void) {
 
     tree->root.child = &K__BEHAVIOR_TREE_DEFAULT_SUCCESS;
 
+    k_object_set_destroy_callback(object, tree_destroy);
+
     return tree;
 }
 
 void k_behavior_tree_destroy(struct k_behavior_tree *tree) {
 
-    if (NULL == tree)
-        return;
-
-    tree->root.child->fn_destroy(tree->root.child);
-
-    k_object_destroy(tree->object);
+    if (NULL != tree)
+        k_object_destroy(tree->object);
 }
 
 struct k_behavior_tree_node *k_behavior_tree_get_root(struct k_behavior_tree *tree) {
