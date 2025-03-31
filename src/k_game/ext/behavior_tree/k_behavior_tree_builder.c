@@ -12,7 +12,11 @@ struct k_behavior_tree_builder {
 
     struct k_array stack;
 
+    /* 标记构建过程中是否出现错误。若某步出现错误，往后的步骤都快速返回 */
     int failed;
+
+    /* 标记构建是否已开始。用于控制进入或退出 `k_bt_builder()` 宏的 for 循环  */
+    int started;
 };
 
 /* region [stack] */
@@ -28,18 +32,20 @@ static int is_empty(struct k_behavior_tree_builder *builder) {
     return builder->stack.size == 0;
 }
 
-static int push(struct k_behavior_tree_builder *builder, struct k_behavior_tree_node *node) {
+static void push(struct k_behavior_tree_builder *builder, struct k_behavior_tree_node *node) {
+
+    if (builder->failed)
+        return;
 
     struct k_array *arr = &builder->stack;
     struct k_bt_builder_stack_node *stack_node = k_array_shift_right(arr, arr->size, 1);
     if (NULL == stack_node) {
         builder->failed = 1;
-        return -1;
+        return;
     }
 
     stack_node->node = node;
     stack_node->pop_count = 1;
-    return 0;
 }
 
 static struct k_behavior_tree_node *top(struct k_behavior_tree_builder *builder) {
@@ -65,7 +71,7 @@ static int pop(struct k_behavior_tree_builder *builder) {
 
 /* endregion */
 
-/* region [builder] */
+/* region [builder_create] */
 
 static struct k_behavior_tree_builder *k__behavior_tree_builder_create(struct k_behavior_tree **get_tree) {
 
@@ -79,9 +85,10 @@ static struct k_behavior_tree_builder *k__behavior_tree_builder_create(struct k_
         goto err;
     }
 
-    builder->tree   = tree;
-    builder->result = get_tree;
-    builder->failed = 0;
+    builder->tree    = tree;
+    builder->result  = get_tree;
+    builder->failed  = 0;
+    builder->started = 0;
 
     struct k_array_config config;
     config.fn_malloc     = malloc;
@@ -120,19 +127,29 @@ static void k__behavior_tree_builder_destroy(struct k_behavior_tree_builder *bui
     free(builder);
 }
 
-struct k_behavior_tree_builder *k__behavior_tree_builder(struct k_behavior_tree **get_tree) {
+/* endregion */
+
+/* region [macro] */
+
+/* region [builder] */
+
+struct k_behavior_tree_builder *k__behavior_tree_builder_begin(struct k_behavior_tree **get_tree) {
     return k__behavior_tree_builder_create(get_tree);
 }
 
-int k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder) {
+int k__behavior_tree_builder_end(struct k_behavior_tree_builder *builder) {
 
-    int result = pop(builder);
-
-    if (0 == result && is_empty(builder)) {
-        k__behavior_tree_builder_destroy(builder);
+    if ( ! builder->started) {
+        return 1;
     }
+    else {
+        k__behavior_tree_builder_destroy(builder);
+        return 0;
+    }
+}
 
-    return result;
+int k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder) {
+    return pop(builder);
 }
 
 /* endregion */
@@ -248,5 +265,7 @@ void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *buil
 
     push(builder, new_node);
 }
+
+/* endregion */
 
 /* endregion */

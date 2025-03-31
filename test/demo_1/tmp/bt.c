@@ -60,12 +60,44 @@ static enum k_behavior_tree_status log_string(void *data) {
 
 static int count = 0;
 
-void yx_behavior_tree_demo(void) {
+static void demo_1(void) {
+
+    struct k_behavior_tree *tree = k_behavior_tree_create();
+
+    struct k_behavior_tree_node *root = k_behavior_tree_get_root(tree);
+    {
+        struct k_behavior_tree_node *parallel = k_behavior_tree_add_parallel(root);
+        {
+            k_behavior_tree_add_action(parallel, &count, inc_count);
+            k_behavior_tree_add_action(parallel, &count, log_count);
+
+            struct k_behavior_tree_node *force_success = k_behavior_tree_add_force_success(parallel);
+            {
+                struct k_behavior_tree_node *sequence = k_behavior_tree_add_sequence(force_success);
+                {
+                    struct k_behavior_tree_node *selector = k_behavior_tree_add_selector(sequence);
+                    {
+                        k_behavior_tree_add_condition(selector, &count, is_count_lt_1);
+                        struct k_behavior_tree_node *inverter = k_behavior_tree_add_inverter(selector);
+                        {
+                            k_behavior_tree_add_condition(inverter, &count, is_count_lt_3);
+                        }
+                    }
+                    k_behavior_tree_add_action(sequence, "hello", log_string);
+                }
+            }
+
+            k_behavior_tree_add_action(parallel, "world", log_string);
+        }
+    }
+}
+
+static void demo_2(void) {
 
     struct k_behavior_tree_builder *b;
-    struct k_behavior_tree *tree;
+    struct k_behavior_tree *tree = NULL;
 
-    k_bt_builder(tree, b)
+    k_bt_builder(&tree, b)
     {
         k_bt_parallel(b)
         {
@@ -80,6 +112,7 @@ void yx_behavior_tree_demo(void) {
                         k_bt_condition(b, &count, is_count_lt_1);
                         k_bt_inverter(b) {
                             k_bt_condition(b, &count, is_count_lt_3);
+                            k_bt_condition(b, &count, is_count_lt_3);
                         }
                     }
                     k_bt_action(b, "hello", log_string);
@@ -91,4 +124,9 @@ void yx_behavior_tree_demo(void) {
     }
 
     (void)tree;
+}
+
+void yx_behavior_tree_demo(void) {
+
+    demo_2();
 }
