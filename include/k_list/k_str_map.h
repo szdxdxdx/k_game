@@ -18,7 +18,9 @@ struct k_str_map {
     size_t size;
 
     /** \brief 使用侵入式的字符串哈希表作为本容器的底层实现 */
-    struct k_str_hash_map map;
+    struct k_str_hash_map hash_map;
+
+    size_t rehash_threshold;
 };
 
 struct k_str_map_config {
