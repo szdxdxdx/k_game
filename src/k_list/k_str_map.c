@@ -128,14 +128,15 @@ void k_str_map_del(struct k_str_map *map, const char *key) {
     assert(NULL != key && '\0' != key[0]);
 
     struct k_str_hash_map_node *hash_map_node = k_str_hash_map_get(&map->hash_map, key);
-    if (NULL != hash_map_node) {
-        struct k_str_map_node *map_node = container_of(hash_map_node, struct k_str_map_node, hash_map_node);
+    if (NULL == hash_map_node)
+        return;
 
-        k_str_hash_map_del(&map_node->hash_map_node);
-        map->fn_free(map_node);
+    struct k_str_map_node *map_node = container_of(hash_map_node, struct k_str_map_node, hash_map_node);
 
-        map->size -= 1;
-    }
+    k_str_hash_map_del(&map_node->hash_map_node);
+    map->fn_free(map_node);
+
+    map->size -= 1;
 }
 
 void *k_str_map_get(struct k_str_map *map, const char *key) {

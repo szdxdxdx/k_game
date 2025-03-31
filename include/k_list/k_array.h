@@ -3,7 +3,24 @@
 
 #include <stddef.h>
 
-/** \brief 数组容器（支持动态扩容，能存储任意数据类型） */
+/**
+ * \brief 数组容器
+ *
+ * 数组支持动态扩容，能存储任意数据类型。
+ *
+ * 你可以对数组的 `storage` 指针做显式类型转换，配合下标运算符取得元素。
+ * 若数组 `arr` 存储的元素类型为 `T`，可以这样操作取得索引为 `idx` 的元素：
+ * ```C
+ * T *elem_addr  = &((T *)arr->storage)[idx];
+ * T  elem_value =  ((T *)arr->storage)[idx];
+ * ```
+ *
+ * 或使用 `k_array_get_elem()` 和 `k_array_get_elem_addr()`。
+ * ```C
+ * T *elem_addr  = k_array_get_elem_addr(arr, idx);
+ * T  elem_value = k_array_get_elem(arr, idx, T);
+ * ```
+ */
 struct k_array {
 
     /* [private] */
@@ -21,22 +38,7 @@ struct k_array {
     /** \brief [read-only] 容器持有的元素的数量 */
     size_t size;
 
-    /**
-     * \brief [read-only] 指向存储元素的连续空间的指针
-     *
-     * 你可以对数组的 `storage` 指针做显式类型转换，配合下标运算符取得元素。
-     * 若数组 `arr` 存储的元素类型为 `T`，可以这样操作取得索引为 `idx` 的元素：
-     * ```C
-     * T *elem_addr  = &((T *)arr->storage)[idx];
-     * T  elem_value =  ((T *)arr->storage)[idx];
-     * ```
-     *
-     * 或使用 `k_array_get_elem()` 和 `k_array_get_elem_addr()`。
-     * ```C
-     * T *elem_addr  = k_array_get_elem_addr(arr, idx);
-     * T  elem_value = k_array_get_elem(arr, idx, T);
-     * ```
-     */
+    /** \brief [read-only] 指向存储元素的连续空间的指针 */
     void *storage;
 };
 
@@ -66,7 +68,7 @@ struct k_array *k_array_create(const struct k_array_config *config);
 /**
  * \brief 销毁数组
  *
- * 若 `arr` 为 `NULL`，则函数不执行任何操作。
+ * 若 `arr` 为 `NULL`，函数立即返回。
  */
 void k_array_destroy(struct k_array *arr);
 
@@ -84,7 +86,7 @@ struct k_array *k_array_construct(struct k_array *arr, const struct k_array_conf
  *
  * 原地析构 `arr` 所指向的内存段上的动态数组。
  *
- * 若 `arr` 为 `NULL`，则函数不执行任何操作。
+ * 若 `arr` 为 `NULL`，函数立即返回。
  */
 void k_array_destruct(struct k_array *arr);
 
@@ -110,7 +112,7 @@ void k_array_destruct(struct k_array *arr);
  * 若需多次向数组中增加元素，可使用此函数提前分配好容量，以减少扩容次数。
  *
  * 指定预期容量 `n`，函数将调整数组容量到大于或等于 `n`。
- * 若 `n` 小于当前容量，则函数不执行任何操作。
+ * 若 `n` 小于当前容量，函数立即返回。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
@@ -186,7 +188,7 @@ int k_array_push_back_all(struct k_array *arr, const void *elems, size_t elems_n
 int k_array_push_back(struct k_array *arr, const void *elem);
 
 /**
- * \brief 将指定索引后的元素左移，覆盖删除前面的元素
+ * \brief 将数组指定索引后的元素左移，覆盖删除前面的元素
  *
  * 将数组中索引 `idx` 及其往后的所有元素往数组头部方向移动 `n` 个位置，
  * 覆盖删除 `idx` 往左的 `n` 个元素。

@@ -194,7 +194,7 @@ struct k_room_callback *k_add_room_draw_callback(void *data, void (*fn_callback)
 /**
  * \brief 删除房间的事件回调
  *
- * 若 `callback` 为 `NULL`，则函数不做任何事情。
+ * 若 `callback` 为 `NULL`，函数立即返回。
  */
 void k_room_del_callback(struct k_room_callback *callback);
 

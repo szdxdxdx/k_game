@@ -174,7 +174,7 @@ struct k_collision_box *k_object_add_collision_circle(struct k_object *object, c
 /**
  * \brief 移除对象上挂载的碰撞盒组件
  *
- * 若 `box` 为 `NULL`，则函数不做任何事。
+ * 若 `box` 为 `NULL`，函数立即返回。
  */
 void k_object_del_collision_box(struct k_collision_box *box);
 
