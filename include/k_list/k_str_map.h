@@ -58,10 +58,10 @@ void k_str_map_destruct(struct k_str_map *map);
  * 若键已存在，则释放旧值的内存，然后分配新空间存储新值。
  * 若键不存在，则直接分配新空间存储新值。
  *
- * `value_size` 指定要插入或更新的值的大小，单位：字节。
- *
  * 哈希表仅保存 `key` 字符串的指针，而不会复制字符串。
  * 请确保 `key` 的内容不被修改，且生命周期要大于哈希表。
+ *
+ * `value_size` 指定要插入或更新的值的大小，单位：字节。
  *
  * 若成功，函数返回指向用于存储新值的内存段的指针，
  * 你需要显式类型转换该指针，然后写入新值。
@@ -80,7 +80,7 @@ void k_str_map_del(struct k_str_map *map, const char *key);
 /**
  * \brief 获取哈希表中指定键对应的值
  *
- * 函数返回 `key` 对应的 value 值的指针，若 `key` 不存在则返回 `NULL`。
+ * 函数返回 `key` 对应的值的指针，若 `key` 不存在则返回 `NULL`。
  */
 void *k_str_map_get(struct k_str_map *map, const char *key);
 
