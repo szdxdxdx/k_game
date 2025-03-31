@@ -30,9 +30,11 @@ void k_object_destroy(struct k_object *object);
 
 /* endregion */
 
-/* region [object_get] */
+/* region [object_get/set] */
 
 void *k_object_get_data(struct k_object *object);
+
+void k_object_set_destroy_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
 
 /* endregion */
 

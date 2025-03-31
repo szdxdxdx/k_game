@@ -41,6 +41,8 @@ struct k_object {
     struct k_list component_list;
 
     void *data;
+
+    void (*fn_destroy)(struct k_object *object);
 };
 
 /* endregion */
