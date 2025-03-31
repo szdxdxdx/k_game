@@ -29,7 +29,7 @@ int fn_room_init(void *params) {
 
     {
         struct yx_obj_bubble_maker_config config;
-        //yx_obj_bubble_maker_create(&config);
+        yx_obj_bubble_maker_create(&config);
     }
 
     {

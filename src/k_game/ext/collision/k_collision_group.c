@@ -47,7 +47,7 @@ struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collis
         k_int_map_add_directly(&manager->group_map, group_id, &new_group->group_map_node);
         k_list_init(&new_group->box_list);
 
-        new_group->cb_debug_draw = NULL;
+        new_group->debugger = NULL;
 
         return new_group;
     }
@@ -65,8 +65,8 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
     }
     k_int_map_del(&group->group_map_node);
 
-    if (NULL != group->cb_debug_draw)
-        k_room_del_callback(group->cb_debug_draw);
+    if (NULL != group->debugger)
+        k_object_destroy(group->debugger);
 
     k_free(group);
 }

@@ -99,7 +99,14 @@ struct k_collision_group {
 
     struct k_list box_list;
 
-    struct k_room_callback *cb_debug_draw;
+    struct k_object *debugger;
+};
+
+struct k_collision_debugger {
+
+    struct k_collision_group *group;
+
+    struct k_object_callback *cb_debug_draw;
 };
 
 int k__collision_manager_init_group_map(struct k_collision_manager *manager);
@@ -127,7 +134,7 @@ int k__collision_manager_init(struct k_component_manager *component_manager, voi
 
 void k__collision_manager_fini(struct k_component_manager *component_manager);
 
-int k__collision_manager_add_box(struct k_collision_manager *manager, struct k_collision_box *box, int group_id);
+struct k_collision_manager *k__collision_get_manager(void);
 
 /* endregion */
 

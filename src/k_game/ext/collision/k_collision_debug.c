@@ -89,8 +89,9 @@ static void k__collision_draw_box(struct k_collision_box *box) {
     }
 }
 
-static void k__collision_draw_group(void *data) {
-    struct k_collision_group *group = data;
+static void k__collision_draw_group(struct k_object *object) {
+    struct k_collision_debugger *debugger = k_object_get_data(object);
+    struct k_collision_group *group = debugger->group;
 
     SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 102, 255);
 
@@ -106,6 +107,30 @@ static void k__collision_draw_group(void *data) {
 
 /* endregion */
 
+/* region [debugger] */
+
+static void k__collision_debugger_destroy(struct k_object *object) {
+    struct k_collision_debugger *debugger = k_object_get_data(object);
+    debugger->group->debugger = NULL;
+}
+
+struct k_object *k__collision_debugger_create(struct k_collision_group *group) {
+
+    struct k_object *object = k_object_create(sizeof(struct k_collision_debugger));
+    if (NULL == object)
+        return NULL;
+
+    struct k_collision_debugger *debugger = k_object_get_data(object);
+    debugger->group = group;
+    debugger->cb_debug_draw = NULL;
+
+    k_object_set_destroy_callback(object, k__collision_debugger_destroy);
+
+    return object;
+}
+
+/* endregion */
+
 /* region [set_debug] */
 
 int k_collision_set_debug(int group_id, int debug) {
@@ -115,11 +140,15 @@ int k_collision_set_debug(int group_id, int debug) {
         if (NULL == group)
             return 0;
 
-        if (NULL == group->cb_debug_draw)
+        if (NULL == group->debugger)
             return 0;
 
-        k_room_del_callback(group->cb_debug_draw);
-        group->cb_debug_draw = NULL;
+        struct k_collision_debugger *debugger = k_object_get_data(group->debugger);
+        if (NULL == debugger->cb_debug_draw)
+            return 0;
+
+        k_object_del_callback(debugger->cb_debug_draw);
+        debugger->cb_debug_draw = NULL;
         return 0;
     }
     else {
@@ -127,18 +156,24 @@ int k_collision_set_debug(int group_id, int debug) {
         if (NULL == group)
             return -1;
 
-        if (NULL != group->cb_debug_draw)
+        if (group->debugger == NULL) {
+            group->debugger = k__collision_debugger_create(group);
+            if (NULL == group->debugger)
+                return -1;
+        }
+
+        struct k_collision_debugger *debugger = k_object_get_data(group->debugger);
+        if (NULL != debugger->cb_debug_draw)
             return 0;
 
-        /* FIXME: 不应该把回调绑定在房间上，否则会受到 `k_room_del_all_callbacks()` 的影响 */
-        group->cb_debug_draw = k_add_room_draw_callback(
-            group,
+        debugger->cb_debug_draw = k_object_add_draw_callback(
+            group->debugger,
             k__collision_draw_group,
             K_COLLISION_DEBUG_Z_GROUP,
             K_COLLISION_DEBUG_Z_LAYER
         );
 
-        if (NULL == group->cb_debug_draw)
+        if (NULL == debugger->cb_debug_draw)
             return -1;
 
         return 0;
