@@ -16,7 +16,7 @@ struct k_behavior_tree_parallel_node {
 };
 
 static void parallel_interrupt(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_parallel_node *parallel = (struct k_behavior_tree_parallel_node *)node;
+    struct k_behavior_tree_parallel_node *parallel = container_of(node, struct k_behavior_tree_parallel_node, super);
 
     if ( ! parallel->running)
         return;
@@ -50,7 +50,7 @@ static void reset_status(struct k_behavior_tree_parallel_node *parallel) {
 }
 
 static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_parallel_node *parallel = (struct k_behavior_tree_parallel_node *)node;
+    struct k_behavior_tree_parallel_node *parallel = container_of(node, struct k_behavior_tree_parallel_node, super);
 
     if ( ! parallel->running) {
         reset_status(parallel);

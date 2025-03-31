@@ -16,7 +16,7 @@ struct k_behavior_tree_sequence_node {
 };
 
 static void sequence_interrupt(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_sequence_node *sequence = (struct k_behavior_tree_sequence_node *)node;
+    struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
 
     if ( ! sequence->running)
         return;
@@ -35,7 +35,7 @@ static void sequence_interrupt(struct k_behavior_tree_node *node) {
 }
 
 static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_sequence_node *sequence = (struct k_behavior_tree_sequence_node *)node;
+    struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
 
     struct k_array *array = &sequence->children;
     if ( ! sequence->running) {

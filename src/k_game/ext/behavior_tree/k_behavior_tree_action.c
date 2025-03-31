@@ -12,7 +12,7 @@ struct k_behavior_tree_action_node {
 };
 
 static enum k_behavior_tree_status action_tick(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_action_node *action = (struct k_behavior_tree_action_node *)node;
+    struct k_behavior_tree_action_node *action = container_of(node, struct k_behavior_tree_action_node, super);
     return action->fn_tick(action->data);
 }
 
@@ -23,7 +23,7 @@ static int action_add_child(struct k_behavior_tree_node *node, struct k_behavior
 }
 
 static void action_destroy(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_action_node *action = (struct k_behavior_tree_action_node *)node;
+    struct k_behavior_tree_action_node *action = container_of(node, struct k_behavior_tree_action_node, super);
     free(action);
 }
 

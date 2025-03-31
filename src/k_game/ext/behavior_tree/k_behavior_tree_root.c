@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "./_internal.h"
 
 struct k_behavior_tree_root_node {
@@ -19,8 +17,6 @@ struct k_behavior_tree {
 static void k_behavior_tree_tick(struct k_object *object) {
     struct k_behavior_tree *tree = k_object_get_data(object);
     tree->root.child->fn_tick(tree->root.child);
-
-    printf("~\n");
 }
 
 static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {

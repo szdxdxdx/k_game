@@ -10,7 +10,7 @@ struct k_behavior_tree_inverter_node {
 };
 
 static int inverter_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
-    struct k_behavior_tree_inverter_node *inverter = (struct k_behavior_tree_inverter_node *)node;
+    struct k_behavior_tree_inverter_node *inverter = container_of(node, struct k_behavior_tree_inverter_node, super);
 
     if (&K__BEHAVIOR_TREE_DEFAULT_FAILURE == inverter->child) {
         inverter->child = child;
@@ -21,7 +21,7 @@ static int inverter_set_child(struct k_behavior_tree_node *node, struct k_behavi
 }
 
 static enum k_behavior_tree_status inverter_tick(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_inverter_node *inverter = (struct k_behavior_tree_inverter_node *)node;
+    struct k_behavior_tree_inverter_node *inverter = container_of(node, struct k_behavior_tree_inverter_node, super);
 
     struct k_behavior_tree_node *child = inverter->child;
 
@@ -34,7 +34,7 @@ static enum k_behavior_tree_status inverter_tick(struct k_behavior_tree_node *no
 }
 
 static void inverter_destroy(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_inverter_node *inverter = (struct k_behavior_tree_inverter_node *)node;
+    struct k_behavior_tree_inverter_node *inverter = container_of(node, struct k_behavior_tree_inverter_node, super);
 
     struct k_behavior_tree_node *child = inverter->child;
     child->fn_destroy(child);

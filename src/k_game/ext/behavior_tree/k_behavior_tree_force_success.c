@@ -10,7 +10,7 @@ struct k_behavior_tree_force_success_node {
 };
 
 static int force_success_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
-    struct k_behavior_tree_force_success_node *force_success = (struct k_behavior_tree_force_success_node *)node;
+    struct k_behavior_tree_force_success_node *force_success = container_of(node, struct k_behavior_tree_force_success_node, super);
 
     if (&K__BEHAVIOR_TREE_DEFAULT_SUCCESS == force_success->child) {
         force_success->child = child;
@@ -21,7 +21,7 @@ static int force_success_set_child(struct k_behavior_tree_node *node, struct k_b
 }
 
 static enum k_behavior_tree_status force_success_tick(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_force_success_node *force_success = (struct k_behavior_tree_force_success_node *)node;
+    struct k_behavior_tree_force_success_node *force_success = container_of(node, struct k_behavior_tree_force_success_node, super);
 
     struct k_behavior_tree_node *child = force_success->child;
 
@@ -35,7 +35,7 @@ static enum k_behavior_tree_status force_success_tick(struct k_behavior_tree_nod
 }
 
 static void force_success_destroy(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_force_success_node *force_success = (struct k_behavior_tree_force_success_node *)node;
+    struct k_behavior_tree_force_success_node *force_success = container_of(node, struct k_behavior_tree_force_success_node, super);
 
     struct k_behavior_tree_node *child = force_success->child;
     child->fn_destroy(child);

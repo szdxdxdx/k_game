@@ -12,8 +12,7 @@ struct k_behavior_tree_condition_node {
 };
 
 static enum k_behavior_tree_status condition_tick(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_condition_node *condition = (struct k_behavior_tree_condition_node *)node;
-
+    struct k_behavior_tree_condition_node *condition = container_of(node, struct k_behavior_tree_condition_node, super);
     return condition->fn_tick(condition->data);
 }
 
@@ -24,7 +23,7 @@ static int condition_add_child(struct k_behavior_tree_node *node, struct k_behav
 }
 
 static void condition_destroy(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_condition_node *condition = (struct k_behavior_tree_condition_node *)node;
+    struct k_behavior_tree_condition_node *condition = container_of(node, struct k_behavior_tree_condition_node, super);
     free(condition);
 }
 
