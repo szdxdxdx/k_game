@@ -9,17 +9,6 @@ struct k_behavior_tree_force_success_node {
     struct k_behavior_tree_node *child;
 };
 
-static int force_success_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
-    struct k_behavior_tree_force_success_node *force_success = container_of(node, struct k_behavior_tree_force_success_node, super);
-
-    if (&K__BEHAVIOR_TREE_DEFAULT_SUCCESS == force_success->child) {
-        force_success->child = child;
-        return 0;
-    } else {
-        return -1;
-    }
-}
-
 static enum k_behavior_tree_status force_success_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_force_success_node *force_success = container_of(node, struct k_behavior_tree_force_success_node, super);
 
@@ -31,6 +20,24 @@ static enum k_behavior_tree_status force_success_tick(struct k_behavior_tree_nod
         return K_BT_RUNNING;
     } else {
         return K_BT_SUCCESS;
+    }
+}
+
+static void force_success_interrupt(struct k_behavior_tree_node *node) {
+    struct k_behavior_tree_force_success_node *force_success = container_of(node, struct k_behavior_tree_force_success_node, super);
+
+    struct k_behavior_tree_node *child = force_success->child;
+    child->fn_interrupt(child);
+}
+
+static int force_success_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
+    struct k_behavior_tree_force_success_node *force_success = container_of(node, struct k_behavior_tree_force_success_node, super);
+
+    if (&K__BEHAVIOR_TREE_DEFAULT_SUCCESS == force_success->child) {
+        force_success->child = child;
+        return 0;
+    } else {
+        return -1;
     }
 }
 
@@ -50,8 +57,8 @@ static struct k_behavior_tree_node *force_success_create(struct k_behavior_tree 
         return NULL;
 
     force_success->super.tree         = tree;
-    force_success->super.fn_interrupt = NULL;
     force_success->super.fn_tick      = force_success_tick;
+    force_success->super.fn_interrupt = force_success_interrupt;
     force_success->super.fn_add_child = force_success_set_child;
     force_success->super.fn_destroy   = force_success_destroy;
 

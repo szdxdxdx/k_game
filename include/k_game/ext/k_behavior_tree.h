@@ -49,6 +49,19 @@ struct k_behavior_tree_node *k_behavior_tree_add_force_success(struct k_behavior
 
 struct k_behavior_tree_node *k_behavior_tree_add_force_failure(struct k_behavior_tree_node *node);
 
+/**
+ * \brief 向行为树添加一个【重复器】结点
+ *
+ * 【重复器】repeater 结点将尝试在它的一次 tick 内，多次 tick 它的子结点。
+ *
+ * - 若子结点每次都返回 SUCCESS，且完成了 `n` 次，则 repeater 重置计数器，并返回 SUCCESS。
+ * - 若子结点任意一次返回 FAILURE，则 repeater 终止后续 tick，重置计数器，并返回 FAILURE。
+ * - 若子结点返回 RUNNING，则 repeater 暂停计数，并返回 RUNNING。
+ *
+ * repeater 最多只能有一个子结点。若 repeater 没有子结点，则每次 tick 都返回 SUCCESS。
+ */
+struct k_behavior_tree_node *k_behavior_tree_add_repeater(struct k_behavior_tree_node *node, size_t n);
+
 /* endregion */
 
 /* endregion */

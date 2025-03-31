@@ -9,17 +9,6 @@ struct k_behavior_tree_force_failure_node {
     struct k_behavior_tree_node *child;
 };
 
-static int force_failure_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
-    struct k_behavior_tree_force_failure_node *force_failure = container_of(node, struct k_behavior_tree_force_failure_node, super);
-
-    if (&K__BEHAVIOR_TREE_DEFAULT_FAILURE == force_failure->child) {
-        force_failure->child = child;
-        return 0;
-    } else {
-        return -1;
-    }
-}
-
 static enum k_behavior_tree_status force_failure_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_force_failure_node *force_failure = container_of(node, struct k_behavior_tree_force_failure_node, super);
 
@@ -34,6 +23,13 @@ static enum k_behavior_tree_status force_failure_tick(struct k_behavior_tree_nod
     }
 }
 
+static void force_failure_interrupt(struct k_behavior_tree_node *node) {
+    struct k_behavior_tree_force_failure_node *force_failure = container_of(node, struct k_behavior_tree_force_failure_node, super);
+
+    struct k_behavior_tree_node *child = force_failure->child;
+    child->fn_interrupt(child);
+}
+
 static void force_failure_destroy(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_force_failure_node *force_failure = container_of(node, struct k_behavior_tree_force_failure_node, super);
 
@@ -43,6 +39,17 @@ static void force_failure_destroy(struct k_behavior_tree_node *node) {
     free(force_failure);
 }
 
+static int force_failure_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
+    struct k_behavior_tree_force_failure_node *force_failure = container_of(node, struct k_behavior_tree_force_failure_node, super);
+
+    if (&K__BEHAVIOR_TREE_DEFAULT_FAILURE == force_failure->child) {
+        force_failure->child = child;
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
 static struct k_behavior_tree_node *force_failure_create(struct k_behavior_tree *tree) {
 
     struct k_behavior_tree_force_failure_node *force_failure = malloc(sizeof(struct k_behavior_tree_force_failure_node));
@@ -50,8 +57,8 @@ static struct k_behavior_tree_node *force_failure_create(struct k_behavior_tree 
         return NULL;
 
     force_failure->super.tree         = tree;
-    force_failure->super.fn_interrupt = NULL;
     force_failure->super.fn_tick      = force_failure_tick;
+    force_failure->super.fn_interrupt = force_failure_interrupt;
     force_failure->super.fn_add_child = force_failure_set_child;
     force_failure->super.fn_destroy   = force_failure_destroy;
 

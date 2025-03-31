@@ -15,25 +15,6 @@ struct k_behavior_tree_selector_node {
     int running;
 };
 
-static void selector_interrupt(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_selector_node *selector = container_of(node, struct k_behavior_tree_selector_node, super);
-
-    if ( ! selector->running)
-        return;
-
-    struct k_array *array = &selector->children;
-    size_t index = selector->index;
-    size_t size  = array->size;
-    for (; index < size; index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
-
-        if (NULL != child->fn_interrupt)
-            child->fn_interrupt(child);
-    }
-
-    selector->running = 0;
-}
-
 static enum k_behavior_tree_status selector_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_selector_node *selector = (struct k_behavior_tree_selector_node *)node;
 
@@ -71,6 +52,25 @@ static enum k_behavior_tree_status selector_tick(struct k_behavior_tree_node *no
     }
 }
 
+static void selector_interrupt(struct k_behavior_tree_node *node) {
+    struct k_behavior_tree_selector_node *selector = container_of(node, struct k_behavior_tree_selector_node, super);
+
+    if ( ! selector->running)
+        return;
+
+    struct k_array *array = &selector->children;
+    size_t index = selector->index;
+    size_t size  = array->size;
+    for (; index < size; index++) {
+        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
+
+        if (NULL != child->fn_interrupt)
+            child->fn_interrupt(child);
+    }
+
+    selector->running = 0;
+}
+
 static int selector_add_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
     struct k_behavior_tree_selector_node *selector = container_of(node, struct k_behavior_tree_selector_node, super);
     return k_array_push_back(&selector->children, &child_node);
@@ -98,8 +98,8 @@ static struct k_behavior_tree_node *selector_create(struct k_behavior_tree *tree
         return NULL;
 
     selector->super.tree         = tree;
-    selector->super.fn_interrupt = selector_interrupt;
     selector->super.fn_tick      = selector_tick;
+    selector->super.fn_interrupt = selector_interrupt;
     selector->super.fn_add_child = selector_add_child;
     selector->super.fn_destroy   = selector_destroy;
 

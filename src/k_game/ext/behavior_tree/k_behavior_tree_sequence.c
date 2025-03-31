@@ -15,25 +15,6 @@ struct k_behavior_tree_sequence_node {
     int running;
 };
 
-static void sequence_interrupt(struct k_behavior_tree_node *node) {
-    struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
-
-    if ( ! sequence->running)
-        return;
-
-    struct k_array *array = &sequence->children;
-    size_t index = sequence->index;
-    size_t size  = array->size;
-    for (; index < size; index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
-
-        if (NULL != child->fn_interrupt)
-            child->fn_interrupt(child);
-    }
-
-    sequence->running = 0;
-}
-
 static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
 
@@ -70,6 +51,25 @@ static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *no
     }
 }
 
+static void sequence_interrupt(struct k_behavior_tree_node *node) {
+    struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
+
+    if ( ! sequence->running)
+        return;
+
+    struct k_array *array = &sequence->children;
+    size_t index = sequence->index;
+    size_t size  = array->size;
+    for (; index < size; index++) {
+        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
+
+        if (NULL != child->fn_interrupt)
+            child->fn_interrupt(child);
+    }
+
+    sequence->running = 0;
+}
+
 static int sequence_add_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
     struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
     return k_array_push_back(&sequence->children, &child_node);
@@ -97,8 +97,8 @@ static struct k_behavior_tree_node *sequence_create(struct k_behavior_tree *tree
         return NULL;
 
     sequence->super.tree         = tree;
-    sequence->super.fn_interrupt = sequence_interrupt;
     sequence->super.fn_tick      = sequence_tick;
+    sequence->super.fn_interrupt = sequence_interrupt;
     sequence->super.fn_add_child = sequence_add_child;
     sequence->super.fn_destroy   = sequence_destroy;
 

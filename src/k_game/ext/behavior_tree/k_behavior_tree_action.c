@@ -16,6 +16,10 @@ static enum k_behavior_tree_status action_tick(struct k_behavior_tree_node *node
     return action->fn_tick(action->data);
 }
 
+static void action_interrupt(struct k_behavior_tree_node *node) {
+    (void)node;
+}
+
 static int action_add_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
     (void)node;
     (void)child;
@@ -37,8 +41,8 @@ static struct k_behavior_tree_node *action_create(struct k_behavior_tree *tree, 
         return NULL;
 
     action->super.tree         = tree;
-    action->super.fn_interrupt = NULL,
     action->super.fn_tick      = action_tick,
+    action->super.fn_interrupt = action_interrupt,
     action->super.fn_add_child = action_add_child,
     action->super.fn_destroy   = action_destroy,
 

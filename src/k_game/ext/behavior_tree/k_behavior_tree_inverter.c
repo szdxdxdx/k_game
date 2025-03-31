@@ -9,17 +9,6 @@ struct k_behavior_tree_inverter_node {
     struct k_behavior_tree_node *child;
 };
 
-static int inverter_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
-    struct k_behavior_tree_inverter_node *inverter = container_of(node, struct k_behavior_tree_inverter_node, super);
-
-    if (&K__BEHAVIOR_TREE_DEFAULT_FAILURE == inverter->child) {
-        inverter->child = child;
-        return 0;
-    } else {
-        return -1;
-    }
-}
-
 static enum k_behavior_tree_status inverter_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_inverter_node *inverter = container_of(node, struct k_behavior_tree_inverter_node, super);
 
@@ -30,6 +19,24 @@ static enum k_behavior_tree_status inverter_tick(struct k_behavior_tree_node *no
         case K_BT_RUNNING: return K_BT_RUNNING;
         case K_BT_SUCCESS: return K_BT_FAILURE;
         case K_BT_FAILURE: return K_BT_SUCCESS;
+    }
+}
+
+static void inverter_interrupt(struct k_behavior_tree_node *node) {
+    struct k_behavior_tree_inverter_node *inverter = container_of(node, struct k_behavior_tree_inverter_node, super);
+
+    struct k_behavior_tree_node *child = inverter->child;
+    child->fn_interrupt(child);
+}
+
+static int inverter_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
+    struct k_behavior_tree_inverter_node *inverter = container_of(node, struct k_behavior_tree_inverter_node, super);
+
+    if (&K__BEHAVIOR_TREE_DEFAULT_FAILURE == inverter->child) {
+        inverter->child = child;
+        return 0;
+    } else {
+        return -1;
     }
 }
 
@@ -49,8 +56,8 @@ static struct k_behavior_tree_node *inverter_create(struct k_behavior_tree *tree
         return NULL;
 
     inverter->super.tree         = tree;
-    inverter->super.fn_interrupt = NULL;
     inverter->super.fn_tick      = inverter_tick;
+    inverter->super.fn_interrupt = inverter_interrupt;
     inverter->super.fn_add_child = inverter_set_child;
     inverter->super.fn_destroy   = inverter_destroy;
 

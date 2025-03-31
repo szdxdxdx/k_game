@@ -1,13 +1,17 @@
 #include "./_internal.h"
 
-static enum k_behavior_tree_status default_success(struct k_behavior_tree_node *node) {
+static enum k_behavior_tree_status success_tick(struct k_behavior_tree_node *node) {
     (void)node;
     return K_BT_SUCCESS;
 }
 
-static enum k_behavior_tree_status default_failure(struct k_behavior_tree_node *node) {
+static enum k_behavior_tree_status failure_tick(struct k_behavior_tree_node *node) {
     (void)node;
     return K_BT_FAILURE;
+}
+
+static void default_interrupt(struct k_behavior_tree_node *node) {
+    (void)node;
 }
 
 static void default_destroy(struct k_behavior_tree_node *node) {
@@ -15,15 +19,15 @@ static void default_destroy(struct k_behavior_tree_node *node) {
 }
 
 struct k_behavior_tree_node K__BEHAVIOR_TREE_DEFAULT_SUCCESS = {
-    .fn_interrupt = NULL,
-    .fn_tick      = default_success,
+    .fn_tick      = success_tick,
+    .fn_interrupt = default_interrupt,
     .fn_add_child = NULL,
     .fn_destroy   = default_destroy,
 };
 
 struct k_behavior_tree_node K__BEHAVIOR_TREE_DEFAULT_FAILURE = {
-    .fn_interrupt = NULL,
-    .fn_tick      = default_failure,
+    .fn_tick      = failure_tick,
+    .fn_interrupt = default_interrupt,
     .fn_add_child = NULL,
     .fn_destroy   = default_destroy,
 };
