@@ -17,9 +17,6 @@ struct k_behavior_tree_repeater_node {
 
 static void repeater_interrupt_(struct k_behavior_tree_repeater_node *repeater) {
 
-    if ( ! repeater->running)
-        return;
-
     struct k_behavior_tree_node *child = repeater->child;
     child->fn_interrupt(child);
 
@@ -30,7 +27,7 @@ static enum k_behavior_tree_status repeater_tick(struct k_behavior_tree_node *no
     struct k_behavior_tree_repeater_node *repeater = container_of(node, struct k_behavior_tree_repeater_node, super);
 
     if ( ! repeater->running) {
-        repeater->count   = 0;
+        repeater->count = 0;
         repeater->running = 1;
     }
 
@@ -58,10 +55,9 @@ static enum k_behavior_tree_status repeater_tick(struct k_behavior_tree_node *no
 static void repeater_interrupt(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_repeater_node *repeater = container_of(node, struct k_behavior_tree_repeater_node, super);
 
-    /* TODO */
-
-    struct k_behavior_tree_node *child = repeater->child;
-    child->fn_interrupt(child);
+    if (repeater->running) {
+        repeater_interrupt_(repeater);
+    }
 }
 
 static int repeater_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
@@ -101,8 +97,9 @@ static struct k_behavior_tree_node *repeater_create(struct k_behavior_tree *tree
 
     repeater->child = &K__BEHAVIOR_TREE_DEFAULT_SUCCESS;
 
-    repeater->count   = 0;
-    repeater->n       = n;
+    repeater->count = 0;
+    repeater->n     = n;
+
     repeater->running = 0;
 
     return &repeater->super;
