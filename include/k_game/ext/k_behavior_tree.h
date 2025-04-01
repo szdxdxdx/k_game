@@ -87,20 +87,95 @@ struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tre
 
 /* region [control] */
 
+/**
+ * \brief 向行为树添加一个 [sequence] 结点
+ *
+ * 若添加成功，函数返回 [sequence] 结点的指针，否则返回 `NULL`。
+ *
+ * 你可以向 [sequence] 添加任意数量的子结点。
+ * [sequence] 将在它的一次 tick 内 tick 一个子结点，在多轮 tick 内按顺序依次 tick 子结点。
+ *
+ * - 若当前子结点返回 `K_BT_SUCCESS`，则 [sequence] 返回 `K_BT_RUNNING`，之后 tick 下一个子结点。
+ * - 若所有子结点返回 `K_BT_SUCCESS`，则 [sequence] 返回 `K_BT_SUCCESS`。
+ * - 若当前子结点返回 `K_BT_FAILURE`，则 [sequence] 终止后续 tick，并返回 `K_BT_FAILURE`。
+ * - 若当前子结点返回 `K_BT_RUNNING`，则 [sequence] 返回 `K_BT_RUNNING`，之后继续 tick 该子结点。
+ *
+ * 若 [sequence] 没有子结点，则返回 `K_BT_SUCCESS`。
+ */
 struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree_node *node);
 
+/**
+ * \brief 向行为树添加一个 [selector] 结点
+ *
+ * 若添加成功，函数返回 [selector] 结点的指针，否则返回 `NULL`。
+ *
+ * 你可以向 [selector] 添加任意数量的子结点。
+ * [selector] 将在它的一次 tick 内 tick 一个子结点，在多轮 tick 内按添加顺序依次 tick 子结点。
+ *
+ * - 若当前子结点返回 `K_BT_SUCCESS`，则 [selector] 终止后续 tick，并返回 `K_BT_SUCCESS`。
+ * - 若当前子结点返回 `K_BT_FAILURE`，则 [selector] 返回 `K_BT_RUNNING`，之后 tick 下一个子结点。
+ * - 若所有子结点返回 `K_BT_FAILURE`，则 [selector] 返回 `K_BT_FAILURE`。
+ * - 若当前子结点返回 `K_BT_RUNNING`，则 [selector] 返回 `K_BT_RUNNING`，之后继续 tick 该子结点。
+ *
+ * 若 [sequence] 没有子结点，则返回 `K_BT_FAILURE`。
+ */
 struct k_behavior_tree_node *k_behavior_tree_add_selector(struct k_behavior_tree_node *node);
 
+/**
+ * \brief 向行为树添加一个 [parallel] 结点
+ *
+ * 若添加成功，函数返回 [parallel] 结点的指针，否则返回 `NULL`。
+ *
+ * 你可以向 [parallel] 添加任意数量的子结点。[parallel] 将尝试在它的一次 tick 内 tick 所有子结点。
+ * 理论上 [parallel] 执行 tick 的顺序与子结点的添加顺序无关，但实际的代码实现上，tick 的顺序就是添加顺序。
+ *
+ * - 只要有某个子结点返回了 `K_BT_FAILURE`，则 [parallel] 中断处于 RUNNING 状态的子结点，并返回 `K_BT_FAILURE`。
+ * - 若所有子结点都返回 `K_BT_SUCCESS`，则 [parallel] 返回 `K_BT_SUCCESS`。
+ * - 其余情况，[parallel] 返回 `K_BT_RUNNING`，之后继续 tick 这些处于 RUNNING 状态的子结点。
+ *
+ * 若 [parallel] 没有子结点，则返回 `K_BT_SUCCESS`。
+ */
 struct k_behavior_tree_node *k_behavior_tree_add_parallel(struct k_behavior_tree_node *node);
 
 /* endregion */
 
 /* region [decorator] */
 
+/**
+ * \brief 向行为树添加一个 [inverter] 结点
+ *
+ * 若添加成功，函数返回 [inverter] 结点的指针，否则返回 `NULL`。
+ *
+ * [inverter] 结点将翻转子结点的返回状态。
+ *
+ * - 若子结点返回 `K_BT_SUCCESS`，则 [inverter] 返回 `K_BT_FAILURE`。
+ * - 若子结点返回 `K_BT_FAILURE`，则 [inverter] 返回 `K_BT_SUCCESS`。
+ * - 若子结点返回 `K_BT_RUNNING`，则 [inverter] 返回 `K_BT_RUNNING`。
+ *
+ * [inverter] 最多只能有一个子结点。若 [inverter] 没有子结点，则返回 `K_BT_SUCCESS`。
+ */
 struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree_node *node);
 
+/**
+ * \brief 向行为树添加一个 [force_success] 结点
+ *
+ * 若添加成功，函数返回 [force_success] 结点的指针，否则返回 `NULL`。
+ *
+ * 若子结点返回 `K_BT_RUNNING`，则 [force_success] 返回 `K_BT_RUNNING`，否则返回 `K_BT_SUCCESS`。
+ *
+ * [force_success] 最多只能有一个子结点。若 [force_success] 没有子结点，则返回 `K_BT_SUCCESS`。
+ */
 struct k_behavior_tree_node *k_behavior_tree_add_force_success(struct k_behavior_tree_node *node);
 
+/**
+ * \brief 向行为树添加一个 [force_failure] 结点
+ *
+ * 若添加成功，函数返回 [force_failure] 结点的指针，否则返回 `NULL`。
+ *
+ * 若子结点返回 `K_BT_RUNNING`，则 [force_failure] 返回 `K_BT_RUNNING`，否则返回 `K_BT_FAILURE`。
+ *
+ * [force_failure] 最多只能有一个子结点。若 [force_failure] 没有子结点，则返回 `K_BT_FAILURE`。
+ */
 struct k_behavior_tree_node *k_behavior_tree_add_force_failure(struct k_behavior_tree_node *node);
 
 /**
@@ -108,20 +183,35 @@ struct k_behavior_tree_node *k_behavior_tree_add_force_failure(struct k_behavior
  *
  * 若添加成功，函数返回 [repeat] 结点的指针，否则返回 `NULL`。
  *
- * [repeat] 将尝试在它的一次 tick 内，多次 tick 它的子结点。
+ * [repeat] 将在它的一次 tick 内，尝试多次 tick 它的子结点。
  *
  * - 若子结点每次都返回 `K_BT_SUCCESS`，且完成了 `n` 次，则 [repeat] 重置计数器，并返回 `K_BT_SUCCESS`。
  * - 若子结点任意一次返回 `K_BT_FAILURE`，则 [repeat] 终止后续 tick，重置计数器，并返回 `K_BT_FAILURE`。
  * - 若子结点返回 `K_BT_RUNNING`，则 [repeat] 暂停计数，并返回 `K_BT_RUNNING`。
  *
- * [repeat] 最多只能有一个子结点。若 [repeat] 没有子结点，则每次 tick 都返回 `K_BT_SUCCESS`。
+ * [repeat] 最多只能有一个子结点。若 [repeat] 没有子结点，则返回 `K_BT_SUCCESS`。
  */
 struct k_behavior_tree_node *k_behavior_tree_add_repeat(struct k_behavior_tree_node *node, size_t n);
 
+/* TODO */
 struct k_behavior_tree_node *k_behavior_tree_add_retry(struct k_behavior_tree_node *node, size_t n);
 
+/* TODO */
 struct k_behavior_tree_node *k_behavior_tree_add_timeout(struct k_behavior_tree_node *node, int timeout_ms);
 
+/**
+ * \brief 向行为树添加一个 [delay] 结点
+ *
+ * 若添加成功，函数返回 [delay] 结点的指针，否则返回 `NULL`。
+ *
+ * [delay] 结点将延迟 tick 它的子结点。
+ *
+ * 若 [delay] 已启动计时器，但未达到设定的延迟时间，则不 tick 子节点，并返回 `K_BT_RUNNING`。
+ * 若 [delay] 已达到设定的延迟时间，则 tick 子节点，并返回子结点的返回状态。
+ * 当子结点返回 `K_BT_SUCCESS` 或 `K_BT_FAILURE` 时，[delay] 重置。
+ *
+ * [delay] 最多只能有一个子结点。若 [delay] 没有子结点，则延迟返回 `K_BT_SUCCESS`。
+ */
 struct k_behavior_tree_node *k_behavior_tree_add_delay(struct k_behavior_tree_node *node, int delay_ms);
 
 /* endregion */
