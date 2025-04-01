@@ -81,24 +81,27 @@ static struct k_behavior_tree *demo_1(void) {
         struct k_behavior_tree_node *parallel = k_behavior_tree_add_parallel(root);
         {
             k_behavior_tree_add_action(parallel, &count, inc_count);
-            struct k_behavior_tree_node *repeat = k_behavior_tree_add_repeat(parallel, 3);
+            struct k_behavior_tree_node *delay = k_behavior_tree_add_delay(parallel, 2000);
             {
-                k_behavior_tree_add_action(repeat, &count, log_count);
-            }
-            struct k_behavior_tree_node *force_success = k_behavior_tree_add_force_success(parallel);
-            {
-                /* 用缩进体现出结点间的父子关系 */
-                struct k_behavior_tree_node *sequence = k_behavior_tree_add_sequence(force_success);
+                struct k_behavior_tree_node *repeat = k_behavior_tree_add_repeat(delay, 3);
                 {
-                    struct k_behavior_tree_node *selector = k_behavior_tree_add_selector(sequence);
+                    k_behavior_tree_add_action(repeat, &count, log_count);
+                }
+                struct k_behavior_tree_node *force_success = k_behavior_tree_add_force_success(delay);
+                {
+                    /* 用缩进体现出结点间的父子关系 */
+                    struct k_behavior_tree_node *sequence = k_behavior_tree_add_sequence(force_success);
                     {
-                        k_behavior_tree_add_condition(selector, &count, is_count_lt_1);
-                        struct k_behavior_tree_node *inverter = k_behavior_tree_add_inverter(selector);
+                        struct k_behavior_tree_node *selector = k_behavior_tree_add_selector(sequence);
                         {
-                            k_behavior_tree_add_condition(inverter, &count, is_count_lt_3);
+                            k_behavior_tree_add_condition(selector, &count, is_count_lt_1);
+                            struct k_behavior_tree_node *inverter = k_behavior_tree_add_inverter(selector);
+                            {
+                                k_behavior_tree_add_condition(inverter, &count, is_count_lt_3);
+                            }
                         }
+                        k_behavior_tree_add_action(sequence, "hello", log_string);
                     }
-                    k_behavior_tree_add_action(sequence, "hello", log_string);
                 }
             }
             k_behavior_tree_add_action(parallel, "world", log_string);
@@ -115,8 +118,31 @@ static void demo_2(void) {
 
     k_bt_builder(&tree, b)
     {
-        k_bt_delay(b, 2000) {
-            k_bt_action(b, "world", log_string);
+        k_bt_parallel(b)
+        {
+            k_bt_action(b, &count, inc_count);
+            k_bt_delay(b, 2000) {
+                k_bt_repeat(b, 3)
+                {
+                    k_bt_action(b, &count, log_count);
+                }
+                k_bt_force_success(b)
+                {
+                    k_bt_sequence(b)
+                    {
+                        k_bt_selector(b)
+                        {
+                            k_bt_condition(b, &count, is_count_lt_1);
+                            k_bt_inverter(b)
+                            {
+                                k_bt_condition(b, &count, is_count_lt_3);
+                            }
+                        }
+                        k_bt_action(b, "hello", log_string);
+                    }
+                }
+            }
+            k_bt_action(b, "hello", log_string);
         }
     }
 
@@ -125,5 +151,5 @@ static void demo_2(void) {
 
 void yx_behavior_tree_demo(void) {
 
-    demo_2();
+    demo_1();
 }

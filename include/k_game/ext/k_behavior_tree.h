@@ -14,7 +14,7 @@ struct k_behavior_tree;
  * 构建操作必须从根结点开始，通过 `k_behavior_tree_get_root()` 获取根结点，
  * 然后使用 `k_behavior_tree_add_XXX()` 系列的函数添加 `XXX` 类型的结点。
  *
- * 行为树的另一种构建方式（builder 模式）详见 region [builder] 板块。
+ * 行为树的另一种构建方式（builder 模式）详见 `k_behavior_tree_builder`。
  */
 struct k_behavior_tree *k_behavior_tree_create(void);
 
@@ -220,6 +220,47 @@ struct k_behavior_tree_node *k_behavior_tree_add_delay(struct k_behavior_tree_no
 
 /* region [tree_builder] */
 
+/**
+ * \brief 行为树构建器
+ *
+ * 构建器用于简化行为树的构建过程，通过代码块和缩进表达结点间的层次关系，代码布局直接反映树的结构。
+ * 通过 `k_bt_builder()` 宏初始化构建器，在代码块内使用各种 `k_bt_XXX()` 系列的宏添加节点。
+ *
+ * 示例：
+ * ```C
+ * struct k_behavior_tree *tree = NULL;
+ *
+ * struct k_behavior_tree_builder *b;       // 定义构建器的指针，用于存储上下文
+ * k_bt_builder(&tree, b)                   // 创建构建器，`tree` 用于接收结果。开始构建
+ * {                                        // 当前上下文为 [root]
+ *     k_bt_parallel(b)                     // 向 [root] 添加一个 [parallel]
+ *     {                                    // 当前上下文为 [parallel]
+ *         k_bt_action(b, ...);             // 向 [parallel] 添加一个 [action]
+ *         k_bt_sequence(b)                 // 向 [parallel] 添加一个 [sequence]
+ *         {                                // 当前上下文为 [sequence]
+ *             k_bt_condition(b, ...);      // 向 [sequence] 添加一个 [condition]
+ *             k_bt_repeat(b, ...)          // 向 [sequence] 添加一个 [repeat]
+ *             {                            // 当前上下文为 [repeat]
+ *                 k_bt_delay(b, ...)       // 向 [repeat] 添加一个 [delay]
+ *                 {                        // 当前上下文为 [delay]
+ *                     k_bt_action(b, ...); // 向 [delay] 添加一个 [action]
+ *                 }                        // 返回到上一级 [repeat]
+ *                 k_bt_action(b, ...);     // 向 [repeat] 添加一个 [action]
+ *             }                            // 返回到上一级 [sequence]
+ *         }                                // 返回到上一级 [parallel]
+ *         k_bt_action(b, ...);             // 向 [parallel] 添加一个 [action]
+ *     }                                    // 返回到上一级 [root]
+ * }                                        // 结束构建，构建器自动销毁
+ *
+ * if (NULL != tree) {   // 所有结点都添加成功才算成功，此时 `tree` 不为 `NULL`
+ *     // success        // 若中途某个步骤添加结点失败，则算构建失败
+ * } else {              // 若构建失败，构建器会销毁行为树，并往 `tree` 中写入 `NULL`
+ *     // failure        //
+ * }
+ * ```
+ *
+ * 注意：不要在构建器的代码块内使用 return、break、goto 等语句，否则构建器将无法正确维护内部状态。
+ */
 struct k_behavior_tree_builder;
 
 /* region */
