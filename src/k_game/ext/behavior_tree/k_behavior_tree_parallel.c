@@ -15,24 +15,6 @@ struct k_behavior_tree_parallel_node {
     int running;
 };
 
-static void parallel_interrupt_(struct k_behavior_tree_parallel_node *parallel) {
-
-    struct k_behavior_tree_node **children = k_array_get_elem_addr(&parallel->children, 0);
-    enum k_behavior_tree_status *status    = k_array_get_elem_addr(&parallel->status, 0);
-    size_t size  = parallel->children.size;
-    size_t index = 0;
-    for (; index < size; index++) {
-
-        if (status[index] == K_BT_RUNNING) {
-            struct k_behavior_tree_node *child = children[index];
-
-            child->fn_interrupt(child);
-        }
-    }
-
-    parallel->running = 0;
-}
-
 static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_parallel_node *parallel = container_of(node, struct k_behavior_tree_parallel_node, super);
 
@@ -69,7 +51,13 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
                 status[index] = K_BT_SUCCESS;
                 break;
             case K_BT_FAILURE:
-                parallel_interrupt_(parallel);
+                for (index = 0; index < size; index++) {
+                    if (status[index] == K_BT_RUNNING) {
+                        child = children[index];
+                        child->fn_interrupt(child);
+                    }
+                }
+                parallel->running = 0;
                 return K_BT_FAILURE;
         }
     }
@@ -86,9 +74,23 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
 static void parallel_interrupt(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_parallel_node *parallel = container_of(node, struct k_behavior_tree_parallel_node, super);
 
-    if (parallel->running) {
-        parallel_interrupt_(parallel);
+    if ( ! parallel->running)
+        return;
+
+    struct k_behavior_tree_node **children = k_array_get_elem_addr(&parallel->children, 0);
+    enum k_behavior_tree_status *status    = k_array_get_elem_addr(&parallel->status, 0);
+    size_t size  = parallel->children.size;
+    size_t index = 0;
+    for (; index < size; index++) {
+
+        if (status[index] == K_BT_RUNNING) {
+            struct k_behavior_tree_node *child = children[index];
+
+            child->fn_interrupt(child);
+        }
     }
+
+    parallel->running = 0;
 }
 
 static int parallel_add_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {

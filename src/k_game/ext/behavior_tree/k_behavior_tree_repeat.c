@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <assert.h>
 
 #include "./_internal.h"
 
@@ -36,15 +37,18 @@ static enum k_behavior_tree_status repeat_tick(struct k_behavior_tree_node *node
     while (repeat->count < repeat->n) {
 
         enum k_behavior_tree_status result = child->fn_tick(child);
+
         switch (result) {
             case K_BT_SUCCESS:
                 repeat->count++;
-                break;
+                continue;
             case K_BT_FAILURE:
-                repeat_interrupt_(repeat);
+                repeat->running = 0;
                 return K_BT_FAILURE;
             case K_BT_RUNNING:
                 return K_BT_RUNNING;
+            default:
+                assert(0);
         }
     }
 
@@ -55,9 +59,13 @@ static enum k_behavior_tree_status repeat_tick(struct k_behavior_tree_node *node
 static void repeat_interrupt(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_repeat_node *repeat = container_of(node, struct k_behavior_tree_repeat_node, super);
 
-    if (repeat->running) {
-        repeat_interrupt_(repeat);
-    }
+    if ( ! repeat->running)
+        return;
+
+    struct k_behavior_tree_node *child = repeat->child;
+    child->fn_interrupt(child);
+
+    repeat->running = 0;
 }
 
 static int repeat_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child) {
