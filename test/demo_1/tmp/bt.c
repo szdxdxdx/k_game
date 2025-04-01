@@ -115,26 +115,7 @@ static void demo_2(void) {
 
     k_bt_builder(&tree, b)
     {
-        k_bt_parallel(b)
-        {
-            k_bt_action(b, &count, inc_count);
-            k_bt_repeat(b, 3) {
-                k_bt_action(b, &count, log_count);
-            }
-            k_bt_force_success(b)
-            {
-                k_bt_sequence(b)
-                {
-                    k_bt_selector(b)
-                    {
-                        k_bt_condition(b, &count, is_count_lt_1);
-                        k_bt_inverter(b) {
-                            k_bt_condition(b, &count, is_count_lt_3);
-                        }
-                    }
-                    k_bt_action(b, "hello", log_string);
-                }
-            }
+        k_bt_delay(b, 2000) {
             k_bt_action(b, "world", log_string);
         }
     }

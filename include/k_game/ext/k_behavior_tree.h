@@ -50,9 +50,9 @@ struct k_behavior_tree_node *k_behavior_tree_add_force_success(struct k_behavior
 struct k_behavior_tree_node *k_behavior_tree_add_force_failure(struct k_behavior_tree_node *node);
 
 /**
- * \brief 向行为树添加一个【重复器】结点
+ * \brief 向行为树添加一个 repeat 结点
  *
- * 【重复器】repeat 结点将尝试在它的一次 tick 内，多次 tick 它的子结点。
+ * repeat 结点将尝试在它的一次 tick 内，多次 tick 它的子结点。
  *
  * - 若子结点每次都返回 SUCCESS，且完成了 `n` 次，则 repeat 重置计数器，并返回 SUCCESS。
  * - 若子结点任意一次返回 FAILURE，则 repeat 终止后续 tick，重置计数器，并返回 FAILURE。
@@ -92,6 +92,9 @@ void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_repeat(struct k_behavior_tree_builder *builder, size_t n);
+void k__behavior_tree_builder_retry(struct k_behavior_tree_builder *builder, size_t n);
+void k__behavior_tree_builder_timeout(struct k_behavior_tree_builder *builder, int timeout_ms);
+void k__behavior_tree_builder_delay(struct k_behavior_tree_builder *builder, int delay_ms);
 
 /* endregion */
 
@@ -126,6 +129,15 @@ void k__behavior_tree_builder_repeat(struct k_behavior_tree_builder *builder, si
 
 #define k_bt_repeat(builder, n) \
     for (k__behavior_tree_builder_repeat(builder, n); k__behavior_tree_builder_pop(builder); )
+
+#define k_bt_retry(builder, n) \
+    for (k__behavior_tree_builder_retry(builder, n); k__behavior_tree_builder_pop(builder); )
+
+#define k_bt_timeout(builder, timeout_ms) \
+    for (k__behavior_tree_builder_timeout(builder, timeout_ms); k__behavior_tree_builder_pop(builder); )
+
+#define k_bt_delay(builder, delay_ms) \
+    for (k__behavior_tree_builder_delay(builder, delay_ms); k__behavior_tree_builder_pop(builder); )
 
 /* endregion */
 

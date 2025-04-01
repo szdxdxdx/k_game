@@ -290,6 +290,21 @@ void k__behavior_tree_builder_repeat(struct k_behavior_tree_builder *builder, si
     push(builder, child);
 }
 
+void k__behavior_tree_builder_delay(struct k_behavior_tree_builder *builder, int delay_ms) {
+
+    if (builder->failed)
+        return;
+
+    struct k_behavior_tree_node *parent = top(builder);
+    struct k_behavior_tree_node *child = k_behavior_tree_add_delay(parent, delay_ms);
+    if (NULL == child) {
+        builder->failed = 1;
+        return;
+    }
+
+    push(builder, child);
+}
+
 /* endregion */
 
 /* endregion */

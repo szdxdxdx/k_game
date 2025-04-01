@@ -29,6 +29,7 @@ static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_t
 
 static void tree_tick(struct k_object *object) {
     struct k_behavior_tree *tree = k_object_get_data(object);
+
     struct k_behavior_tree_node *child = tree->root.child;
 
     enum k_behavior_tree_status result = child->fn_tick(child);
