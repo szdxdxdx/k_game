@@ -153,13 +153,13 @@ int k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder) {
 
 /* region [execution] */
 
-void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data)) {
+void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data), void (*fn_interrupt)(void *data)) {
 
     if (builder->failed)
         return;
 
     struct k_behavior_tree_node *parent = top(builder);
-    struct k_behavior_tree_node *child = k_behavior_tree_add_action(parent, data, fn_tick);
+    struct k_behavior_tree_node *child = k_behavior_tree_add_action(parent, data, fn_tick, fn_interrupt);
     if (NULL == child) {
         builder->failed = 1;
     }

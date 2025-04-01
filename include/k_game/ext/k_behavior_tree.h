@@ -9,10 +9,36 @@ struct k_object;
  * 行为树是一种用于控制游戏 AI 决策的树状数据结构，
  * 它将复杂的 AI 逻辑分解为模块化的结点，通过树形结构组织决策流程。
  *
- * k_behavior_tree 的本质其实是一个 k_object。
- * 它没有外观，仅用于控制游戏的运作。
+ * 行为树执行一次更新操作，为一个先自上而下，再自下而上的过程。行为树产生一个 tick 信号，
+ * 先从根结点开始沿着树的结构层层传递，驱动各个结点按照既定逻辑执行自己的任务。
+ *
+ * 本文档中，tick 一词即可作为名词，表示传播的信号，也可作为动词，表示传播该信号。
+ *
+ * 不同类型的结点收到 tick 时会做出不同反应：叶子结点会执行具体的动作或检查条件并返回结果，
+ * 装饰结点会修改子结点的行为或结果，控制结点会按指定规则继续 tick 它的子结点。
+ *
+ * 每个结点完成任务后，都会向上返回一个状态码，可能是 SUCCESS、FAILURE 或者 RUNNING。
+ * 父结点根据子结点返回的状态码决定后续操作。比如，[sequence] 结点会按顺序 tick 子结点，
+ * 所有子结点返回 SUCCESS 后才返回 SUCCESS，若某个子结点返回 FAILURE 则返回 FAILURE。
+ * 而 [selector] 结点则是只要有一个子结点返回 SUCCESS 就立即返回 SUCCESS。
+ *
+ * 若某个动作需要较长时间完成（比如角色移动，或是等待冷却时间），对应的结点会返回 RUNNING，
+ * 表示自己还没结束，下一次 tick 时会继续执行，而不是重新开始。
+ *
+ * 行为树的把游戏 AI 的决策逻辑拆解成一个个小模块，每个模块都有自己明确的任务。
+ * 行为树把 if-else 的判断和执行拆分开来，变成可以单独设计、任意组装的小模块，
+ * 内置的 RUNNING 状态码机制使得需要 while 循环执行的耗时任务能被分步分帧执行。
+ *
+ * k_behavior_tree 的本质其实是一个 k_object。它没有外观，仅用于控制游戏的运作。
  */
 struct k_behavior_tree;
+
+/** \brief 行为树结点的执行结果状态码 */
+enum k_behavior_tree_status {
+    K_BT_FAILURE = 0,
+    K_BT_SUCCESS = 1,
+    K_BT_RUNNING = 2,
+};
 
 /* region [tree_create] */
 
@@ -52,13 +78,6 @@ struct k_behavior_tree_node *k_behavior_tree_get_root(struct k_behavior_tree *tr
 
 /* region [execution] */
 
-/** \brief 用于表示行为树结点的执行状态的枚举 */
-enum k_behavior_tree_status {
-    K_BT_FAILURE = 0,
-    K_BT_SUCCESS = 1,
-    K_BT_RUNNING = 2,
-};
-
 /**
  * \brief 向行为树添加一个 [action] 结点
  *
@@ -75,7 +94,7 @@ enum k_behavior_tree_status {
  *
  * 无法给 [action] 添加子结点。
  */
-struct k_behavior_tree_node *k_behavior_tree_add_action(struct k_behavior_tree_node *node, void *data, enum k_behavior_tree_status (*fn_tick)(void *data));
+struct k_behavior_tree_node *k_behavior_tree_add_action(struct k_behavior_tree_node *node, void *data, enum k_behavior_tree_status (*fn_tick)(void *data), void (*fn_interrupt)(void *data));
 
 /**
  * \brief 向行为树添加一个 [condition] 结点
@@ -139,7 +158,6 @@ struct k_behavior_tree_node *k_behavior_tree_add_selector(struct k_behavior_tree
  * 若添加成功，函数返回 [parallel] 结点的指针，否则返回 `NULL`。
  *
  * 你可以向 [parallel] 添加任意数量的子结点。[parallel] 将尝试在它的一次 tick 内 tick 所有子结点。
- * 理论上 [parallel] 执行 tick 的顺序与子结点的添加顺序无关，但实际的代码实现上，tick 的顺序就是添加顺序。
  *
  * - 只要有某个子结点返回了 `K_BT_FAILURE`，则 [parallel] 中断处于 RUNNING 状态的子结点，并返回 `K_BT_FAILURE`。
  * - 若所有子结点都返回 `K_BT_SUCCESS`，则 [parallel] 返回 `K_BT_SUCCESS`。
@@ -218,8 +236,8 @@ struct k_behavior_tree_node *k_behavior_tree_add_timeout(struct k_behavior_tree_
  *
  * [delay] 结点将延迟 tick 它的子结点。
  *
- * 若 [delay] 已启动计时器，但未达到设定的延迟时间，则不 tick 子节点，并返回 `K_BT_RUNNING`。
- * 若 [delay] 已达到设定的延迟时间，则 tick 子节点，并返回子结点的返回状态。
+ * 若 [delay] 已启动计时器，但未达到设定的延迟时间，则不 tick 子结点，并返回 `K_BT_RUNNING`。
+ * 若 [delay] 已达到设定的延迟时间，则 tick 子结点，并返回子结点的返回状态。
  * 当子结点返回 `K_BT_SUCCESS` 或 `K_BT_FAILURE` 时，[delay] 重置。
  *
  * [delay] 最多只能有一个子结点。若 [delay] 没有子结点，则延迟返回 `K_BT_SUCCESS`。
@@ -236,14 +254,14 @@ struct k_behavior_tree_node *k_behavior_tree_add_delay(struct k_behavior_tree_no
  * \brief 行为树构建器
  *
  * 构建器用于简化行为树的构建过程，通过代码块和缩进表达结点间的层次关系，代码布局直接反映树的结构。
- * 通过 `k_bt_builder()` 宏初始化构建器，在代码块内使用各种 `k_bt_XXX()` 系列的宏添加节点。
+ * 通过 `k_bt_builder()` 宏初始化构建器，在代码块内使用各种 `k_bt_XXX()` 系列的宏添加结点。
  *
  * 示例：
  * ```C
  * struct k_behavior_tree *tree = NULL;
  *
  * struct k_behavior_tree_builder *b;       // 定义构建器的指针，用于存储上下文
- * k_bt_builder(&tree, b)                   // 创建构建器，`tree` 用于接收结果。开始构建
+ * k_bt_builder(&tree, b)                   // 开始构建。`tree` 用于接收结果
  * {                                        // 当前上下文为 [root]
  *     k_bt_parallel(b)                     // 向 [root] 添加一个 [parallel]
  *     {                                    // 当前上下文为 [parallel]
@@ -280,7 +298,7 @@ struct k_behavior_tree_builder;
 struct k_behavior_tree_builder *k__behavior_tree_builder_begin(struct k_behavior_tree **get_tree);
 int  k__behavior_tree_builder_end(struct k_behavior_tree_builder *builder);
 int  k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data));
+void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data), void (*fn_interrupt)(void *data));
 void k__behavior_tree_builder_condition(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_check)(void *data));
 void k__behavior_tree_builder_sequence(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder);
@@ -300,8 +318,8 @@ void k__behavior_tree_builder_delay(struct k_behavior_tree_builder *builder, int
 #define k_bt_builder(tree, builder) \
     for (builder = k__behavior_tree_builder_begin(tree); NULL != builder && k__behavior_tree_builder_end(builder); )
 
-#define k_bt_action(builder, data, fn_tick) \
-    k__behavior_tree_builder_action(builder, data, fn_tick)
+#define k_bt_action(builder, data, fn_tick, fn_interrupt) \
+    k__behavior_tree_builder_action(builder, data, fn_tick, fn_interrupt)
 
 #define k_bt_condition(builder, data, fn_check) \
     k__behavior_tree_builder_condition(builder, data, fn_check)
