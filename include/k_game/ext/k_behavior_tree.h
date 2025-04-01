@@ -1,6 +1,17 @@
 #ifndef K_BEHAVIOR_TREE_H
 #define K_BEHAVIOR_TREE_H
 
+struct k_object;
+
+/**
+ * \brief 行为树
+ *
+ * 行为树是一种用于控制游戏 AI 决策的树状数据结构，
+ * 它将复杂的 AI 逻辑分解为模块化的结点，通过树形结构组织决策流程。
+ *
+ * k_behavior_tree 的本质其实是一个 k_object。
+ * 它没有外观，仅用于控制游戏的运作。
+ */
 struct k_behavior_tree;
 
 /* region [tree_create] */
@@ -41,6 +52,7 @@ struct k_behavior_tree_node *k_behavior_tree_get_root(struct k_behavior_tree *tr
 
 /* region [execution] */
 
+/** \brief 用于表示行为树结点的执行状态的枚举 */
 enum k_behavior_tree_status {
     K_BT_FAILURE = 0,
     K_BT_SUCCESS = 1,
@@ -252,10 +264,8 @@ struct k_behavior_tree_node *k_behavior_tree_add_delay(struct k_behavior_tree_no
  *     }                                    // 返回到上一级 [root]
  * }                                        // 结束构建，构建器自动销毁
  *
- * if (NULL != tree) {   // 所有结点都添加成功才算成功，此时 `tree` 不为 `NULL`
- *     // success        // 若中途某个步骤添加结点失败，则算构建失败
- * } else {              // 若构建失败，构建器会销毁行为树，并往 `tree` 中写入 `NULL`
- *     // failure        //
+ * if (NULL != tree) {   // 若失败，构建器会销毁行为树，并往 `tree` 中写入 `NULL`
+ *     goto err;         // 若中途某步添加结点失败，则算失败，所有结点都添加成功才算成功
  * }
  * ```
  *

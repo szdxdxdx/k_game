@@ -2,6 +2,7 @@
 #define K_STATE_MACHINE_H
 
 struct k_object;
+struct k_component;
 
 /**
  * \brief 状态机
@@ -11,23 +12,23 @@ struct k_object;
  * 每个结点都有明确的进入、执行和退出逻辑，确保状态转换是明确可控的。
  *
  * 在游戏中，对象往往有许多的行为状态，例如站立、移动、攻击、死亡等。
- * 若状态数量过多，`if-else` 或 `switch-case` 将难以应对复杂的状态切换。
- * 状态机的核心优势在于它强制开发者以模块化的方式组织代码，
+ * 若状态数量过多，if-else、switch-case 将难以应对复杂的状态切换。
+ * 而状态机的核心优势，就在于它强制开发者以模块化的方式组织代码，
  * 避免了复杂的条件判断和全局变量的滥用，让代码逻辑更清晰。
  *
- * k_game 提供的状态机本质是对象组件。
+ * k_state_machine 的本质其实是一个 k_component。
  */
 struct k_state_machine;
 
 /**
- * \brief 为对象挂载一个状态机组件
+ * \brief 为对象挂载一个状态机
  *
  * 若成功，函数返回状态机的指针，否则返回 `NULL`。
  */
 struct k_state_machine *k_object_add_state_machine(struct k_object *object);
 
 /**
- * \brief 移除对象上挂载的状态机组件
+ * \brief 移除对象上挂载的状态机
  *
  * 若 `machine` 为 `NULL`，则函数立即返回。
  */

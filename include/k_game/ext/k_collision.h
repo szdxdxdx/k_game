@@ -3,18 +3,18 @@
 
 struct k_room;
 struct k_object;
+struct k_component;
+struct k_component_manager;
 
 /**
  * \brief 碰撞盒
  *
- * 碰撞盒使对象能感知彼此的存在，从而实现交互。
- *
- * 例如：若要实现子弹击中敌人的效果，
+ * 碰撞盒使对象能感知彼此的存在，从而实现交互。例如：若要实现子弹击中敌人的效果，
  * 可以给敌人挂载上碰撞盒，在子弹移动过程中，检测自身是否击中敌人；
  * 或给子弹挂载上碰撞盒，在敌人移动过程中，检测自身是否被子弹击中。
  *
- * k_game 提供的碰撞盒本质是配备了管理器的对象组件，
- * 必须先给房间添加碰撞盒组件管理器，才能给房间内的对象挂载碰撞盒。
+ * k_collision_box 的本质其实是 k_component，且配备了 k_component_manager。
+ * 必须先给房间添加碰撞盒管理器，才能给房间内的对象挂载碰撞盒。
  * 碰撞检测只在当前房间内进行，不同房间的碰撞盒彼此没有关联。
  */
 struct k_collision_box;
@@ -22,7 +22,7 @@ struct k_collision_box;
 /* region [room_add_collision_box_manager] */
 
 /**
- * \brief 给房间添加碰撞盒组件管理器
+ * \brief 给房间添加碰撞盒管理器
  *
  * 必须先给房间添加碰撞盒管理器，才能给房间内的对象挂载碰撞盒。
  *
@@ -30,7 +30,7 @@ struct k_collision_box;
  */
 int k_room_add_collision_manager(struct k_room *room);
 
-/** \brief 给当前房间添加碰撞盒组件管理器 */
+/** \brief 给当前房间添加碰撞盒管理器 */
 int k_add_room_collision_manager(void);
 
 /* endregion */
@@ -66,7 +66,7 @@ struct k_collision_point_config {
 };
 
 /**
- * \brief 给对象挂载一个点形碰撞盒组件
+ * \brief 给对象挂载一个点形碰撞盒
  *
  * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
@@ -98,7 +98,7 @@ struct k_collision_line_config {
 };
 
 /**
- * \brief 给对象挂载一个线段碰撞盒组件
+ * \brief 给对象挂载一个线段碰撞盒
  *
  * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
@@ -131,7 +131,7 @@ struct k_collision_rectangle_config {
 };
 
 /**
- * \brief 给对象挂载一个矩形碰撞盒组件
+ * \brief 给对象挂载一个矩形碰撞盒
  *
  * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
@@ -163,7 +163,7 @@ struct k_collision_circle_config {
 };
 
 /**
- * \brief 给对象挂载一个圆形碰撞盒组件
+ * \brief 给对象挂载一个圆形碰撞盒
  *
  * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
@@ -172,7 +172,7 @@ struct k_collision_box *k_object_add_collision_circle(struct k_object *object, c
 /* endregion */
 
 /**
- * \brief 移除对象上挂载的碰撞盒组件
+ * \brief 移除对象上挂载的碰撞盒
  *
  * 若 `box` 为 `NULL`，则函数立即返回。
  */

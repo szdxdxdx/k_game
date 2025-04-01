@@ -3,13 +3,14 @@
 
 struct k_sprite;
 struct k_object;
+struct k_component;
 
 /**
  * \brief 精灵渲染器
  *
- * k_game 提供的精灵渲染器本质是对象组件。
+ * 一般来说，游戏对象至少关联有一个精灵作为其外观表现。
  *
- * 一般来说，对象至少关联有一个精灵作为其外观表现。
+ * k_sprite_renderer 的本质其实是一个 k_component。
  * 给对象挂载上精灵渲染器，并指定引用的精灵图，
  * 渲染器能重复循环绘制精灵帧，形成动画效果。
  */
@@ -47,14 +48,14 @@ struct k_sprite_renderer_config {
 };
 
 /**
- * \brief 给对象挂载一个精灵渲染器组件
+ * \brief 给对象挂载一个精灵渲染器
  *
  * 若成功，函数返回渲染器的指针，否则返回 `NULL`。
  */
 struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, const struct k_sprite_renderer_config *config);
 
 /**
- * \brief 移除对象上挂载的精灵渲染器组件
+ * \brief 移除对象上挂载的精灵渲染器
  *
  * 若 `renderer` 为 `NULL`，则函数立即返回。
  */
