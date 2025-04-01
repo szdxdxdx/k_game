@@ -28,10 +28,6 @@ struct k_bt_builder_stack_node {
     int pop_count;
 };
 
-static int is_empty(struct k_behavior_tree_builder *builder) {
-    return builder->stack.size == 0;
-}
-
 static void push(struct k_behavior_tree_builder *builder, struct k_behavior_tree_node *node) {
 
     if (builder->failed)

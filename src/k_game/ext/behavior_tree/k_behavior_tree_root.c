@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "./_internal.h"
 
 struct k_behavior_tree_root_node {
@@ -27,9 +29,14 @@ static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_t
 
 static void tree_tick(struct k_object *object) {
     struct k_behavior_tree *tree = k_object_get_data(object);
+    struct k_behavior_tree_node *child = tree->root.child;
 
-    struct k_behavior_tree_node *root_child = tree->root.child;
-    root_child->fn_tick(root_child);
+    enum k_behavior_tree_status result = child->fn_tick(child);
+
+    assert(result == K_BT_SUCCESS
+        || result == K_BT_FAILURE
+        || result == K_BT_RUNNING
+    );
 }
 
 static void tree_destroy(struct k_object *object) {

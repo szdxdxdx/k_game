@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 
 #include "./_internal.h"
@@ -13,7 +14,12 @@ struct k_behavior_tree_condition_node {
 
 static enum k_behavior_tree_status condition_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_condition_node *condition = container_of(node, struct k_behavior_tree_condition_node, super);
-    return condition->fn_tick(condition->data);
+
+    enum k_behavior_tree_status result = condition->fn_tick(condition->data);
+
+    assert(result == K_BT_SUCCESS || result == K_BT_FAILURE);
+
+    return result;
 }
 
 static void condition_interrupt(struct k_behavior_tree_node *node) {

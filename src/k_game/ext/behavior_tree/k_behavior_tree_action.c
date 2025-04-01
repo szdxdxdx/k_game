@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 
 #include "./_internal.h"
@@ -13,7 +14,15 @@ struct k_behavior_tree_action_node {
 
 static enum k_behavior_tree_status action_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_action_node *action = container_of(node, struct k_behavior_tree_action_node, super);
-    return action->fn_tick(action->data);
+
+    enum k_behavior_tree_status result = action->fn_tick(action->data);
+
+    assert(result == K_BT_SUCCESS
+        || result == K_BT_FAILURE
+        || result == K_BT_RUNNING
+    );
+
+    return result;
 }
 
 static void action_interrupt(struct k_behavior_tree_node *node) {

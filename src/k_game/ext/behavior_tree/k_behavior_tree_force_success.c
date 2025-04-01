@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 
 #include "./_internal.h"
@@ -15,6 +16,11 @@ static enum k_behavior_tree_status force_success_tick(struct k_behavior_tree_nod
     struct k_behavior_tree_node *child = force_success->child;
 
     enum k_behavior_tree_status result = child->fn_tick(child);
+
+    assert(result == K_BT_SUCCESS
+        || result == K_BT_FAILURE
+        || result == K_BT_RUNNING
+    );
 
     if (K_BT_RUNNING == result) {
         return K_BT_RUNNING;

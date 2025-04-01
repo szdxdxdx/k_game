@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 
 #include "./_internal.h"
@@ -15,6 +16,12 @@ static enum k_behavior_tree_status inverter_tick(struct k_behavior_tree_node *no
     struct k_behavior_tree_node *child = inverter->child;
 
     enum k_behavior_tree_status result = child->fn_tick(child);
+
+    assert(result == K_BT_SUCCESS
+        || result == K_BT_FAILURE
+        || result == K_BT_RUNNING
+    );
+
     switch (result) {
         case K_BT_RUNNING: return K_BT_RUNNING;
         case K_BT_SUCCESS: return K_BT_FAILURE;

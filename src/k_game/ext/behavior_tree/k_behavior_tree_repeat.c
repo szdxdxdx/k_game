@@ -34,21 +34,23 @@ static enum k_behavior_tree_status repeat_tick(struct k_behavior_tree_node *node
 
     struct k_behavior_tree_node *child = repeat->child;
 
-    while (repeat->count < repeat->n) {
+    for (; repeat->count < repeat->n; repeat->count++) {
 
         enum k_behavior_tree_status result = child->fn_tick(child);
 
+        assert(result == K_BT_SUCCESS
+            || result == K_BT_FAILURE
+            || result == K_BT_RUNNING
+        );
+
         switch (result) {
             case K_BT_SUCCESS:
-                repeat->count++;
                 continue;
             case K_BT_FAILURE:
                 repeat->running = 0;
                 return K_BT_FAILURE;
             case K_BT_RUNNING:
                 return K_BT_RUNNING;
-            default:
-                assert(0);
         }
     }
 

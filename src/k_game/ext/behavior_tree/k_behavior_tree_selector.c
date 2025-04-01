@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 
 #include "k_array.h"
@@ -32,14 +33,18 @@ static enum k_behavior_tree_status selector_tick(struct k_behavior_tree_node *no
     struct k_behavior_tree_node *child = k_array_get_elem(array, selector->index, struct k_behavior_tree_node *);
 
     enum k_behavior_tree_status result = child->fn_tick(child);
+
+    assert(result == K_BT_SUCCESS
+        || result == K_BT_FAILURE
+        || result == K_BT_RUNNING
+    );
+
     switch (result) {
         case K_BT_RUNNING:
             return K_BT_RUNNING;
-
         case K_BT_SUCCESS:
             selector->running = 0;
             return K_BT_SUCCESS;
-
         case K_BT_FAILURE:
             selector->index++;
             if (selector->index != array->size) {

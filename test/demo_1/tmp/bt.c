@@ -79,13 +79,12 @@ static struct k_behavior_tree *demo_1(void) {
          * 这里给根结点添加一个子结点，类型为并行结点。根结点最多只能有一个子结点。
          */
         struct k_behavior_tree_node *parallel = k_behavior_tree_add_parallel(root);
-        if (NULL == parallel) {
-            goto err;
-        }
-        else {
+        {
             k_behavior_tree_add_action(parallel, &count, inc_count);
-            k_behavior_tree_add_action(parallel, &count, log_count);
-
+            struct k_behavior_tree_node *repeat = k_behavior_tree_add_repeat(parallel, 3);
+            {
+                k_behavior_tree_add_action(repeat, &count, log_count);
+            }
             struct k_behavior_tree_node *force_success = k_behavior_tree_add_force_success(parallel);
             {
                 /* 用缩进体现出结点间的父子关系 */
@@ -102,16 +101,11 @@ static struct k_behavior_tree *demo_1(void) {
                     k_behavior_tree_add_action(sequence, "hello", log_string);
                 }
             }
-
             k_behavior_tree_add_action(parallel, "world", log_string);
         }
     }
 
     return tree;
-
-err:
-    k_behavior_tree_destroy(tree);
-    return NULL;
 }
 
 static void demo_2(void) {
@@ -124,7 +118,7 @@ static void demo_2(void) {
         k_bt_parallel(b)
         {
             k_bt_action(b, &count, inc_count);
-            k_bt_repeater(b, 3) {
+            k_bt_repeat(b, 3) {
                 k_bt_action(b, &count, log_count);
             }
             k_bt_force_success(b)

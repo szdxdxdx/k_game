@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <assert.h>
 
 #include "k_array.h"
 
@@ -42,14 +43,21 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
             continue;
 
         struct k_behavior_tree_node *child = children[index];
+
         enum k_behavior_tree_status result = child->fn_tick(child);
+
+        assert(result == K_BT_SUCCESS
+            || result == K_BT_FAILURE
+            || result == K_BT_RUNNING
+        );
+
         switch (result) {
             case K_BT_RUNNING:
                 has_running = 1;
-                break;
+                continue;
             case K_BT_SUCCESS:
                 status[index] = K_BT_SUCCESS;
-                break;
+                continue;
             case K_BT_FAILURE:
                 for (index = 0; index < size; index++) {
                     if (status[index] == K_BT_RUNNING) {
