@@ -102,7 +102,7 @@ struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config);
  * 内存池不追踪已分配出的内存块，请确保在销毁前归还所有已分配的内存块！
  * 若未全数归还内存块就销毁内存池，仍可能发生内存泄漏。
  *
- * 若 `pool` 为 `NULL`，函数立即返回。
+ * 若 `pool` 为 `NULL`，则函数立即返回。
  */
 void k_mem_pool_destroy(struct k_mem_pool *pool);
 
@@ -123,7 +123,7 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
  * 内存池不追踪已分配出的内存块，请确保在析构前归还所有已分配的内存块！
  * 若未全数归还内存块就析构内存池，仍可能发生内存泄漏。
  *
- * 若 `pool` 为 `NULL`，函数立即返回。
+ * 若 `pool` 为 `NULL`，则函数立即返回。
  */
 void k_mem_pool_destruct(struct k_mem_pool *pool);
 
@@ -149,7 +149,7 @@ void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size);
  *
  * 向内存池归还指针 `p` 所指向的内存块。
  *
- * 若 `p` 为 `NULL`，函数立即返回。
+ * 若 `p` 为 `NULL`，则函数立即返回。
  *
  * 内存池不识别该内存块是否由自己分配，也不标记内存块是已分配或已归还。
  * 请确保归还的内存块属于该内存池！以及请勿重复归还内存块！

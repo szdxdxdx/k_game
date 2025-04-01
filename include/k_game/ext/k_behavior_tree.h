@@ -5,8 +5,18 @@ struct k_behavior_tree;
 
 /* region [tree_create] */
 
+/**
+ * \brief 创建行为树
+ *
+ * 若成功，函数返回行为树的指针，否则返回 `NULL`。
+ */
 struct k_behavior_tree *k_behavior_tree_create(void);
 
+/**
+ * \brief 销毁行为树
+ *
+ * 若 `tree` 为 `NULL`，则函数立即返回。
+ */
 void k_behavior_tree_destroy(struct k_behavior_tree *tree);
 
 /* endregion */

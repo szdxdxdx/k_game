@@ -94,7 +94,7 @@ struct k_sprite *k_sprite_create(const struct k_sprite_config *config);
 /**
  * \brief 销毁精灵
  *
- * 若 `sprite` 为 `NULL`，函数立即返回。
+ * 若 `sprite` 为 `NULL`，则函数立即返回。
  */
 void k_sprite_destroy(struct k_sprite *sprite);
 

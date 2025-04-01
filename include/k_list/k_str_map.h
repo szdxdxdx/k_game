@@ -44,7 +44,7 @@ struct k_str_map *k_str_map_create(const struct k_str_map_config *config);
 /**
  * \brief 销毁哈希表
  *
- * 若 `map` 为 `NULL`，函数立即返回。
+ * 若 `map` 为 `NULL`，则函数立即返回。
  */
 void k_str_map_destroy(struct k_str_map *map);
 
@@ -73,7 +73,7 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t value_size);
 /**
  * \brief 删除哈希表中的一个键值对
  *
- * 若 `key` 不存在，函数立即返回。
+ * 若 `key` 不存在，则函数立即返回。
  */
 void k_str_map_del(struct k_str_map *map, const char *key);
 

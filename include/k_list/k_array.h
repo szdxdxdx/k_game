@@ -68,7 +68,7 @@ struct k_array *k_array_create(const struct k_array_config *config);
 /**
  * \brief 销毁数组
  *
- * 若 `arr` 为 `NULL`，函数立即返回。
+ * 若 `arr` 为 `NULL`，则函数立即返回。
  */
 void k_array_destroy(struct k_array *arr);
 
@@ -86,7 +86,7 @@ struct k_array *k_array_construct(struct k_array *arr, const struct k_array_conf
  *
  * 原地析构 `arr` 所指向的内存段上的动态数组。
  *
- * 若 `arr` 为 `NULL`，函数立即返回。
+ * 若 `arr` 为 `NULL`，则函数立即返回。
  */
 void k_array_destruct(struct k_array *arr);
 
@@ -112,7 +112,7 @@ void k_array_destruct(struct k_array *arr);
  * 若需多次向数组中增加元素，可使用此函数提前分配好容量，以减少扩容次数。
  *
  * 指定预期容量 `n`，函数将调整数组容量到大于或等于 `n`。
- * 若 `n` 小于当前容量，函数立即返回。
+ * 若 `n` 小于当前容量，则函数立即返回。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */

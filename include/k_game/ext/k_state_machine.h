@@ -29,7 +29,7 @@ struct k_state_machine *k_object_add_state_machine(struct k_object *object);
 /**
  * \brief 移除对象上挂载的状态机组件
  *
- * 若 `machine` 为 `NULL`，函数立即返回。
+ * 若 `machine` 为 `NULL`，则函数立即返回。
  */
 void k_object_del_state_machine(struct k_state_machine *machine);
 

@@ -56,7 +56,7 @@ struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, 
 /**
  * \brief 移除对象上挂载的精灵渲染器组件
  *
- * 若 `renderer` 为 `NULL`，函数立即返回。
+ * 若 `renderer` 为 `NULL`，则函数立即返回。
  */
 void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
 
@@ -73,7 +73,7 @@ void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
  * - 若 `scaled_w` 为正值，则精灵图宽度将被拉伸或压缩至该值。
  * - 若 `scaled_w` 为 0.0f 或负值，则将其设置为 0.0f，此时精灵图被压缩至不可见。
  *
- * 若渲染器没有引用精灵，函数立即返回。
+ * 若渲染器没有引用精灵，则函数立即返回。
  * 更换渲染器引用的精灵后，渲染器会重置缩放比率为原图尺寸。
  */
 void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, float scaled_w);
@@ -87,7 +87,7 @@ void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, float scaled_w)
  * - 若 `scale_x` 为 0.5f，则压缩精灵图宽度到原图的一半。
  * - 若 `scale_x` 为 0.0f 或负值，则将其设置为 0.0f，此时精灵图被压缩至不可见。
  *
- * 若渲染器没有引用精灵，函数立即返回。
+ * 若渲染器没有引用精灵，则函数立即返回。
  * 更换渲染器引用的精灵后，渲染器会重置缩放比率为原图尺寸。
  */
 void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x);
@@ -110,7 +110,7 @@ float k_sprite_renderer_get_w(struct k_sprite_renderer *renderer);
  * - 若 `scaled_h` 为正值，则精灵图高度将被拉伸或压缩至该值。
  * - 若 `scaled_h` 为 0.0f 或负值，则将其设置为 0.0f，此时精灵图被压缩至不可见。
  *
- * 若渲染器没有引用精灵，函数立即返回。
+ * 若渲染器没有引用精灵，则函数立即返回。
  * 更换渲染器引用的精灵后，渲染器会重置缩放比率为原图尺寸。
  */
 void k_sprite_renderer_set_h(struct k_sprite_renderer *renderer, float scaled_h);
@@ -124,7 +124,7 @@ void k_sprite_renderer_set_h(struct k_sprite_renderer *renderer, float scaled_h)
  * - 若 `scale_y` 为 0.5f，则压缩精灵图高度到原图的一半。
  * - 若 `scale_y` 为 0.0f 或负值，则将其设置为 0.0f，此时精灵图被压缩至不可见。
  *
- * 若渲染器没有引用精灵，函数立即返回。
+ * 若渲染器没有引用精灵，则函数立即返回。
  * 更换渲染器引用的精灵后，渲染器会重置缩放比率为原图尺寸。
  */
 void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y);
@@ -211,7 +211,7 @@ int k_sprite_renderer_is_flipped_y(struct k_sprite_renderer *renderer);
  *
  * 重置宽高缩放倍率为 1.0f，旋转角度为 0.0f，取消镜像翻转。
  *
- * 若渲染器没有引用精灵，函数立即返回。
+ * 若渲染器没有引用精灵，则函数立即返回。
  * 更换渲染器引用的精灵后，渲染器也会重置所有的变换。
  */
 void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer);
@@ -269,7 +269,7 @@ void k_sprite_renderer_set_speed(struct k_sprite_renderer *renderer, float speed
  * 设置渲染器的动画播放时长，本质是修改其播放速度。
  * 渲染器将计算出合适的播放倍速并自动应用，使其播放一轮动画所用时间为指定的 `duration` 秒。
  *
- * 若渲染器没有引用精灵，或是 `duration` 为 0.0f 或负值，函数立即返回。
+ * 若渲染器没有引用精灵，或是 `duration` 为 0.0f 或负值，则函数立即返回。
  */
 void k_sprite_renderer_set_duration(struct k_sprite_renderer *renderer, float duration);
 
