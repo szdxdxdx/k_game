@@ -60,55 +60,8 @@ static enum k_behavior_tree_status log_string(void *data) {
 
 static int count = 0;
 
-static struct k_behavior_tree *demo_1(void) {
-
-    /* 创建一颗空树 */
-    struct k_behavior_tree *tree = k_behavior_tree_create();
-    if (NULL == tree)
-        return NULL;
-
-    /* 获取根结点。行为树的构建操作必须从根结点开始 */
-    struct k_behavior_tree_node *root = k_behavior_tree_get_root(tree);
-    {
-        /* 使用 `k_behavior_tree_add_XXX(node)` 函数给 `node` 添加 `XXX` 类型的结点
-         * 若添加成功，函数返回新结点的指针，否则返回 `NULL`。
-         *
-         * 添加结点可能失败，你应检查每次添加操作的返回值。若中途某步失败了，你将得到一颗残缺的行为树。
-         * 若每一步都检查返回值，示例代码会显得很冗长。此处仅作演示，我不检查返回值。
-         *
-         * 这里给根结点添加一个子结点，类型为并行结点。根结点最多只能有一个子结点。
-         */
-        struct k_behavior_tree_node *parallel = k_behavior_tree_add_parallel(root);
-        {
-            k_behavior_tree_add_action(parallel, &count, inc_count, NULL);
-            struct k_behavior_tree_node *delay = k_behavior_tree_add_delay(parallel, 2000);
-            {
-                struct k_behavior_tree_node *repeat = k_behavior_tree_add_repeat(delay, 3);
-                {
-                    k_behavior_tree_add_action(repeat, &count, log_count, NULL);
-                }
-                struct k_behavior_tree_node *force_success = k_behavior_tree_add_force_success(delay);
-                {
-                    /* 用缩进体现出结点间的父子关系 */
-                    struct k_behavior_tree_node *sequence = k_behavior_tree_add_sequence(force_success);
-                    {
-                        struct k_behavior_tree_node *selector = k_behavior_tree_add_selector(sequence);
-                        {
-                            k_behavior_tree_add_condition(selector, &count, is_count_lt_1);
-                            struct k_behavior_tree_node *inverter = k_behavior_tree_add_inverter(selector);
-                            {
-                                k_behavior_tree_add_condition(inverter, &count, is_count_lt_3);
-                            }
-                        }
-                        k_behavior_tree_add_action(sequence, "hello", log_string, NULL);
-                    }
-                }
-            }
-            k_behavior_tree_add_action(parallel, "world", log_string, NULL);
-        }
-    }
-
-    return tree;
+static void interrupt(void *data) {
+    printf("[%20s]  ", __func__);
 }
 
 static void demo_2(void) {
@@ -120,29 +73,18 @@ static void demo_2(void) {
     {
         k_bt_parallel(b)
         {
-            k_bt_action(b, &count, inc_count, NULL);
-            k_bt_delay(b, 2000) {
-                k_bt_repeat(b, 3)
+            k_bt_action(b, "hello", log_string, NULL);
+            k_bt_delay(b, 1000)
+            {
+                k_bt_action(b, "world", log_string, interrupt);
+            }
+            k_bt_delay(b, 500)
+            {
+                k_bt_force_failure(b)
                 {
-                    k_bt_action(b, &count, log_count, NULL);
-                }
-                k_bt_force_success(b)
-                {
-                    k_bt_sequence(b)
-                    {
-                        k_bt_selector(b)
-                        {
-                            k_bt_condition(b, &count, is_count_lt_1);
-                            k_bt_inverter(b)
-                            {
-                                k_bt_condition(b, &count, is_count_lt_3);
-                            }
-                        }
-                        k_bt_action(b, "hello", log_string, NULL);
-                    }
+                    k_bt_action(b, "!", log_string, NULL);
                 }
             }
-            k_bt_action(b, "hello", log_string, NULL);
         }
     }
 
@@ -151,5 +93,5 @@ static void demo_2(void) {
 
 void yx_behavior_tree_demo(void) {
 
-    demo_1();
+    demo_2();
 }

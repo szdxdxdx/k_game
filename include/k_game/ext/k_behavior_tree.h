@@ -33,6 +33,22 @@ struct k_object;
  */
 struct k_behavior_tree;
 
+/* TODO 2025-04-01
+ *
+ * k_behavior_tree 不是一个功能完善的行为树模块，它仅实现了最基本的功能，
+ * 自我评价，最基本的功能实现得也不是很好。不过我也琢磨好久了，能写成现在这个样子也很不容易了。
+ * 毕设结题在即，有不少模块还没实现，行为树模块就先做成这样子，等过了毕设再完善吧。
+ *
+ * 尚未实现的功能：
+ * - 【黑板】，共享数据存储，类似于一个全局的键值对数据库。
+ * - 【优先中断】，允许高优先级行为立即中断低优先级行为的执行，确保 AI 能及时处理紧急事件。
+ * - 【动态更新】，允许动态组装各个结点，实现子树复用等。
+ * - 【调试】，允许可视化的查看行为树执行的过程，用于调试。
+ *
+ * 我觉得【黑板】不是必须的，用全局变量也行，若真要键值存储，可以用 k_str_map。
+ * 【优先中断】和【动态更新】暂时什么实现思路。至于【调试】嘛，那可真是太难弄了。
+ */
+
 /** \brief 行为树结点的执行结果状态码 */
 enum k_behavior_tree_status {
     K_BT_FAILURE = 0,
@@ -152,6 +168,12 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
  */
 struct k_behavior_tree_node *k_behavior_tree_add_selector(struct k_behavior_tree_node *node);
 
+/* TODO
+ *
+ * [random_selector] tick 子结点的顺序是随机的，其余行为都与 [selector] 相同。
+ */
+struct k_behavior_tree_node *k_behavior_tree_add_random_selector(struct k_behavior_tree_node *node);
+
 /**
  * \brief 向行为树添加一个 [parallel] 结点
  *
@@ -213,7 +235,7 @@ struct k_behavior_tree_node *k_behavior_tree_add_force_failure(struct k_behavior
  *
  * 若添加成功，函数返回 [repeat] 结点的指针，否则返回 `NULL`。
  *
- * [repeat] 将在它的一次 tick 内，尝试多次 tick 它的子结点。
+ * [repeat] 将在它的一次 tick 内重复 tick 它的子结点，直到子结点返回 `K_BT_FAILURE`，或重复次数到达 `n` 次。
  *
  * - 若子结点每次都返回 `K_BT_SUCCESS`，且完成了 `n` 次，则 [repeat] 重置计数器，并返回 `K_BT_SUCCESS`。
  * - 若子结点任意一次返回 `K_BT_FAILURE`，则 [repeat] 终止后续 tick，重置计数器，并返回 `K_BT_FAILURE`。
@@ -223,10 +245,16 @@ struct k_behavior_tree_node *k_behavior_tree_add_force_failure(struct k_behavior
  */
 struct k_behavior_tree_node *k_behavior_tree_add_repeat(struct k_behavior_tree_node *node, size_t n);
 
-/* TODO */
+/* TODO
+ *
+ * [retry] 将在它的一次 tick 内重复 tick 它的子结点，直到子结点返回 `K_BT_SUCCESS`，或重复次数到达 `n` 次。
+ */
 struct k_behavior_tree_node *k_behavior_tree_add_retry(struct k_behavior_tree_node *node, size_t n);
 
-/* TODO */
+/* TODO
+ *
+ * 若子结点未能在 timeout_ms 时间内返回 `K_BT_SUCCESS`，则 [timeout] 中断子结点，并返回 `K_BT_FAILURE`。
+ */
 struct k_behavior_tree_node *k_behavior_tree_add_timeout(struct k_behavior_tree_node *node, int timeout_ms);
 
 /**
