@@ -16,14 +16,6 @@ struct k_behavior_tree_repeat_node {
     int running;
 };
 
-static void repeat_interrupt_(struct k_behavior_tree_repeat_node *repeat) {
-
-    struct k_behavior_tree_node *child = repeat->child;
-    child->fn_interrupt(child);
-
-    repeat->running = 0;
-}
-
 static enum k_behavior_tree_status repeat_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_repeat_node *repeat = container_of(node, struct k_behavior_tree_repeat_node, super);
 
