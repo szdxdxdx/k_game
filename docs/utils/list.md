@@ -1,5 +1,20 @@
+# 侵入式链表容器
 
-## 结点自环
+## 介绍
+
+## 定义节点
+
+## 初始化链表
+
+## 添加节点
+
+## 删除节点
+
+## 遍历链表
+
+## 节点自环
+
+删除节点
 
 ```C
 /* 以下为完整的示例代码 */
@@ -50,17 +65,17 @@ int main(void) {
     /* list = [ 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 ] */
     print_list(&list);
 
-    /* 遍历链表并删除部分结点 */
+    /* 遍历链表并删除部分节点 */
     struct my_data *data;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(&list, iter, next)) {
         data = container_of(iter, struct my_data, node);
 
         if (data->data % 3 != 0) {
-            /* 【删除】结点 */
+            /* 【删除】节点 */
             k_list_del(iter);
 
-            /* 对已删除的结点设置【自环】 */
+            /* 对已删除的节点设置【自环】 */
             k_list_node_loop(iter);
         }
     }
@@ -69,15 +84,15 @@ int main(void) {
     print_list(&list);
 
 
-    /* 注意：nums[5] 结点已从容器中删除，对该结点【再次执行删除】操作 */
+    /* 注意：nums[5] 节点已从容器中删除，对该节点【再次执行删除】操作 */
     k_list_del(&nums[5].node);
 
     /* list = [ 9, 6, 3, 0 ] */
     print_list(&list);
 
-    /* 对自环的结点多次执行删除操作不会影响容器。
+    /* 对自环的节点多次执行删除操作不会影响容器。
      *
-     * 若删去了上述对结点自环的代码，会发现第二次删除影响了容器。
+     * 若删去了上述对节点自环的代码，会发现第二次删除影响了容器。
      * list 内容将变为 [ 9, 6, 4, 3, 0 ]
      */
 
@@ -86,3 +101,4 @@ int main(void) {
 
 #endif
 ```
+

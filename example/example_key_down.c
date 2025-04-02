@@ -30,7 +30,7 @@ static int init_game(void) {
 
 #if 1
 
-int main(int argc, char **argv) {
+int main(void) {
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.fn_init = init_game;

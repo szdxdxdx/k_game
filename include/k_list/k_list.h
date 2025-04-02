@@ -19,7 +19,7 @@ struct k_list {
      * \brief 链表头节点
      *
      * 头节点不存储数据。链表的第一个有效节点是 `head.next`，
-     * 最后一个有效结点是 `head.prev`。
+     * 最后一个有效节点是 `head.prev`。
      */
     struct k_list_node head;
 };
