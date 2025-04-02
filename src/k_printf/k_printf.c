@@ -10,17 +10,20 @@
 /* region [str_buf] */
 
 struct k_printf_str_buf {
-    struct k_printf_buf impl;
+
+    struct k_printf_buf printf_buf;
+
     char *buffer;
     int str_len;
     int max_len;
 };
 
-static void str_buf_puts(struct k_printf_buf *buf, const char *str, size_t len) {
-    if (-1 == buf->n)
+static void str_buf_puts(struct k_printf_buf *printf_buf, const char *str, size_t len) {
+
+    if (-1 == printf_buf->n)
         return;
 
-    struct k_printf_str_buf *str_buf = (struct k_printf_str_buf *)buf;
+    struct k_printf_str_buf *str_buf = (struct k_printf_str_buf *)printf_buf;
 
     int remain_capacity = str_buf->max_len - str_buf->str_len;
 
@@ -29,7 +32,7 @@ static void str_buf_puts(struct k_printf_buf *buf, const char *str, size_t len) 
         str_buf->str_len += (int)len;
         str_buf->buffer[str_buf->str_len] = '\0';
 
-        buf->n += (int)len;
+        printf_buf->n += (int)len;
         return;
     }
 
@@ -41,42 +44,43 @@ static void str_buf_puts(struct k_printf_buf *buf, const char *str, size_t len) 
     str_buf->buffer[str_buf->str_len] = '\0';
 
     if (len <= INT_MAX) {
-        buf->n += (int)len;
-        if (buf->n < 0)
-            buf->n = -1;
+        printf_buf->n += (int)len;
+        if (printf_buf->n < 0)
+            printf_buf->n = -1;
     } else {
-        buf->n = -1;
+        printf_buf->n = -1;
     }
 }
 
-static void str_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list args) {
-    if (-1 == buf->n)
+static void str_buf_vprintf(struct k_printf_buf *printf_buf, const char *fmt, va_list args) {
+
+    if (-1 == printf_buf->n)
         return;
 
-    struct k_printf_str_buf *str_buf = (struct k_printf_str_buf *)buf;
+    struct k_printf_str_buf *str_buf = (struct k_printf_str_buf *)printf_buf;
 
     int remain_len = str_buf->max_len - str_buf->str_len;
     int r = vsnprintf(&str_buf->buffer[str_buf->str_len], remain_len + 1, fmt, args);
     if (r < 0) {
-        buf->n = -1;
+        printf_buf->n = -1;
         return;
     }
 
     if (r <= remain_len) {
         str_buf->str_len += r;
-        buf->n += r;
+        printf_buf->n += r;
     } else {
         str_buf->str_len = str_buf->max_len;
-        buf->n += r;
-        if (buf->n < 0)
-            buf->n = -1;
+        printf_buf->n += r;
+        if (printf_buf->n < 0)
+            printf_buf->n = -1;
     }
 }
 
-static void str_buf_printf(struct k_printf_buf *buf, const char *fmt, ...) {
+static void str_buf_printf(struct k_printf_buf *printf_buf, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    str_buf_vprintf(buf, fmt, args);
+    str_buf_vprintf(printf_buf, fmt, args);
     va_end(args);
 }
 
@@ -84,10 +88,10 @@ static void str_buf_init(struct k_printf_str_buf *str_buf, char *buf, size_t cap
 
     static char buf_[1] = { '\0' };
 
-    str_buf->impl.fn_puts    = str_buf_puts,
-    str_buf->impl.fn_printf  = str_buf_printf,
-    str_buf->impl.fn_vprintf = str_buf_vprintf,
-    str_buf->impl.n          = 0;
+    str_buf->printf_buf.fn_puts    = str_buf_puts,
+    str_buf->printf_buf.fn_printf  = str_buf_printf,
+    str_buf->printf_buf.fn_vprintf = str_buf_vprintf,
+    str_buf->printf_buf.n          = 0;
 
     if (1 < capacity && capacity <= INT_MAX) {
         str_buf->buffer  = buf;
@@ -107,58 +111,62 @@ static void str_buf_init(struct k_printf_str_buf *str_buf, char *buf, size_t cap
 /* region [file_buf] */
 
 struct k_printf_file_buf {
-    struct k_printf_buf impl;
+
+    struct k_printf_buf printf_buf;
+
     FILE *file;
 };
 
-static void file_buf_puts(struct k_printf_buf *buf, const char *str, size_t len) {
-    if (-1 == buf->n)
+static void file_buf_puts(struct k_printf_buf *printf_buf, const char *str, size_t len) {
+
+    if (-1 == printf_buf->n)
         return;
 
-    struct k_printf_file_buf *file_buf = (struct k_printf_file_buf *)buf;
+    struct k_printf_file_buf *file_buf = (struct k_printf_file_buf *)printf_buf;
 
     size_t r = fwrite(str, sizeof(char), len, file_buf->file);
     if (INT_MAX < r) {
-        buf->n = -1;
+        printf_buf->n = -1;
         return;
     }
 
-    buf->n += (int)r;
-    if (buf->n < 0)
-        buf->n = -1;
+    printf_buf->n += (int)r;
+    if (printf_buf->n < 0)
+        printf_buf->n = -1;
 }
 
-static void file_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list args) {
-    if (-1 == buf->n)
+static void file_buf_vprintf(struct k_printf_buf *printf_buf, const char *fmt, va_list args) {
+
+    if (-1 == printf_buf->n)
         return;
 
-    struct k_printf_file_buf *file_buf = (struct k_printf_file_buf *)buf;
+    struct k_printf_file_buf *file_buf = (struct k_printf_file_buf *)printf_buf;
 
     int r = vfprintf(file_buf->file, fmt, args);
     if (r < 0) {
-        buf->n = -1;
+        printf_buf->n = -1;
         return;
     }
 
-    buf->n += r;
-    if (buf->n < 0)
-        buf->n = -1;
+    printf_buf->n += r;
+    if (printf_buf->n < 0)
+        printf_buf->n = -1;
 }
 
-static void file_buf_printf(struct k_printf_buf *buf, const char *fmt, ...) {
+static void file_buf_printf(struct k_printf_buf *printf_buf, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    file_buf_vprintf(buf, fmt, args);
+    file_buf_vprintf(printf_buf, fmt, args);
     va_end(args);
 }
 
-static void file_buf_init(struct k_printf_file_buf *buf, FILE *file) {
+static void file_buf_init(struct k_printf_file_buf *printf_buf, FILE *file) {
 
-    buf->impl.fn_puts    = file_buf_puts,
-    buf->impl.fn_printf  = file_buf_printf,
-    buf->impl.fn_vprintf = file_buf_vprintf,
-    buf->impl.n          = 0;
-    buf->file            = file;
+    printf_buf->printf_buf.fn_puts    = file_buf_puts,
+    printf_buf->printf_buf.fn_printf  = file_buf_printf,
+    printf_buf->printf_buf.fn_vprintf = file_buf_vprintf,
+    printf_buf->printf_buf.n          = 0;
+    printf_buf->file                  = file;
 }
 
 /* endregion */

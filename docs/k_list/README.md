@@ -42,7 +42,7 @@ static void print_list(struct k_list *list) {
 
 #if 1
 
-int main(void) {
+int main(int argc, char **argv) {
 
     struct my_data nums[10] = {
         { .data = 0 }, { .data = 1 },
