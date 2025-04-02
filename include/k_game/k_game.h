@@ -2,28 +2,28 @@
 #define K_GAME_H
 
 /* core */
-#include "./core/k_rect.h"
-#include "./core/k_alloc.h"
-#include "./core/k_time.h"
-#include "./core/k_keyboard.h"
-#include "./core/k_mouse.h"
-#include "./core/k_image.h"
-#include "./core/k_sound.h"
-#include "./core/k_sprite.h"
-#include "./core/k_room.h"
-#include "./core/k_object.h"
-#include "./core/k_component.h"
+#include "./k_game/core/k_rect.h"
+#include "./k_game/core/k_alloc.h"
+#include "./k_game/core/k_time.h"
+#include "./k_game/core/k_keyboard.h"
+#include "./k_game/core/k_mouse.h"
+#include "./k_game/core/k_image.h"
+#include "./k_game/core/k_sound.h"
+#include "./k_game/core/k_sprite.h"
+#include "./k_game/core/k_room.h"
+#include "./k_game/core/k_object.h"
+#include "./k_game/core/k_component.h"
 
 /* ext */
-#include "./ext/k_wasd.h"
-#include "./ext/k_sprite_renderer.h"
-#include "./ext/k_collision.h"
-#include "./ext/k_position.h"
-#include "./ext/k_state_machine.h"
-#include "./ext/k_behavior_tree.h"
+#include "./k_game/ext/k_wasd.h"
+#include "./k_game/ext/k_sprite_renderer.h"
+#include "./k_game/ext/k_collision.h"
+#include "./k_game/ext/k_position.h"
+#include "./k_game/ext/k_state_machine.h"
+#include "./k_game/ext/k_behavior_tree.h"
 
 /* tmp */
-#include "./tmp/k_game_tmp.h"
+#include "./k_game/tmp/k_game_tmp.h"
 
 struct k_game_config {
 
