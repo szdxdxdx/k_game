@@ -39,9 +39,9 @@ k_printf(config, "%s %arr", "arr[] =", arr, 5);
 
 #include "k_printf.h"
 
-/* 本示例教你如何自定义 `k_printf` 的格式说明符 `%arr`，用于打印整型的数组
+/* 本示例教你如何自定义 k_printf 的格式说明符 `%arr`，用于打印整型的数组
  *
- * 在 C 中，传递数组往往要伴随传递数组长度，所以 `k_printf` 遇到 `%arr` 时应读入两个实参，
+ * 在 C 中，传递数组往往要伴随传递数组长度，所以 k_printf 遇到 `%arr` 时应读入两个实参，
  * 分别整型数组的指针和数组长度。这里假定数组长度不超过 int 上限。
  *
  * `%arr` 支持 `*` 修饰，表示输出数组元素的最小宽度
@@ -106,9 +106,9 @@ static void printf_callback_spec_arr(struct k_printf_buf *buf, const struct k_pr
     buf->fn_printf(buf, " %*d ]", min_width, arr[i]);
 }
 
-/* 本示例教你如何重载 `k_printf` 的格式说明符 `%c`
+/* 本示例教你如何重载 k_printf 的格式说明符 `%c`
  *
- * `k_printf` 默认的 `%c` 同 C `printf` 一样，用于打印一个字符。
+ * k_printf 默认的 `%c` 同 C printf 一样，用于打印一个字符。
  *
  * 本示例要重载 `%c`，仍用于打印一个字符。
  *
@@ -210,10 +210,10 @@ int main(int argc, char **argv) {
                   11, 12, 13, 14, 15,
                   16, 17, 18, 19, 20 };
 
-    /* 使用 `k_printf` */
+    /* 使用 `k_printf()` */
     {
         puts("1.");
-        /* 本次输出使用默认配置，只支持 C `printf` 格式说明符
+        /* 本次输出使用默认配置，只支持 C printf 格式说明符
          *  %a` 以十六进制指数记法打印浮点数
          * `%4c` 打印一个字符，但是占 4 个字符宽度 */
         k_printf(NULL, "%arr, %d, %4c\n\n", 0xcp-1076, 5, 'b');
@@ -222,19 +222,19 @@ int main(int argc, char **argv) {
 
         puts("2.");
         /* 本次输出使用指定配置，重载 `%c` 用于重复打印字符
-         * 依然支持 C `printf` 的格式说明符 */
+         * 依然支持 C printf 的格式说明符 */
         k_printf(&config, "%s, %c,%n %4c, %*c\n", "hello", 'a', &n, 'b', 3, 'c');
         k_printf(&config, "%s, %d, %5.2f, %5lld\n\n", "hello", n, 3.14, (long long)123);
     }
 
-    /* 使用 `k_fprintf` */
+    /* 使用 `k_fprintf()` */
     {
         puts("3.");
         /* 使用自定义格式说明符 `%arr`，打印数组的前 8 个元素 */
         k_fprintf(&config, stdout, "%arr\n\n", arr, 8);
     }
 
-    /* 使用 `k_asprintf` */
+    /* 使用 `k_asprintf()` */
     {
         char *get_s;
 
@@ -249,7 +249,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    /* 使用 `k_sprintf` */
+    /* 使用 `k_sprintf()` */
     {
         char buf[96];
 
@@ -259,7 +259,7 @@ int main(int argc, char **argv) {
         puts(buf);
     }
 
-    /* 使用 `k_snprintf` */
+    /* 使用 `k_snprintf()` */
     {
         char buf[96];
 

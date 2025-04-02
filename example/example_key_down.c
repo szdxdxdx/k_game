@@ -22,7 +22,7 @@ static int init_game(void) {
     config.room_speed = 20;
     struct k_room *room = k_room_create(&config, NULL);
 
-    k_room_add_step_callback(room, fn_step, NULL);
+    k_room_add_step_callback(room, NULL, fn_step);
 
     k_goto_room(room);
     return 0;
