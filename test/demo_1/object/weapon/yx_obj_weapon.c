@@ -94,6 +94,10 @@ static void draw_weapon(struct k_object *object) {
     float weapon_x = weapon->x;
 
     if (mouse_x != weapon_x) {
+        float angle = atanf(((float)k_mouse_y() - weapon->y) / (mouse_x - weapon_x));
+        angle *= 180.0f / 3.1415926f;
+
+        k_sprite_renderer_rotate(weapon->spr_rdr, angle);
 
         if (weapon_x < mouse_x) {
             k_sprite_renderer_flip_x(weapon->spr_rdr, 1);
@@ -101,11 +105,6 @@ static void draw_weapon(struct k_object *object) {
         else {
             k_sprite_renderer_flip_x(weapon->spr_rdr, 0);
         }
-
-        float angle = atanf(((float)k_mouse_y() - weapon->y) / (mouse_x - weapon_x));
-        angle *= 180.0f / 3.1415926f;
-
-        k_sprite_renderer_rotate(weapon->spr_rdr, angle);
     }
 }
 
@@ -150,8 +149,8 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
         renderer_config.x       = &weapon->x;
         renderer_config.y       = &weapon->y;
         renderer_config.sprite  = yx_spr_iris_gun;
-        renderer_config.z_group = 0;
-        renderer_config.z_layer = (int)weapon->y;
+        renderer_config.z_group = YX_COLLISION_GROUP_BULLET;
+        renderer_config.z_layer = 0;
         weapon->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
     }
 

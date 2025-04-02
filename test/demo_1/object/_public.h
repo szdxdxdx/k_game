@@ -11,6 +11,7 @@
 
 enum yx_collision_group_id {
     YX_COLLISION_GROUP_BUBBLE,
+    YX_COLLISION_GROUP_BULLET,
 };
 
 #endif

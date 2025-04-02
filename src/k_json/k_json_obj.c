@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "_internal.h"
+#include "./_internal.h"
 
 static inline size_t calc_str_hash(const char *str, size_t len) {
 
@@ -42,7 +42,7 @@ void k__destroy_json_obj(struct k__json_obj *json_obj) {
 
         struct k_hash_list_node *node, *next;
         for (k_hash_list_for_each_s(&(json_obj->lists[i]), node, next)) {
-            struct k__json_obj_pair *pair = container_of(node, struct kv_pair, link);
+            struct k__json_obj_pair *pair = container_of(node, struct k__json_obj_pair, link);
 
             k__destroy_json(pair->val);
             k__json_mem_free(pair->key);
@@ -61,7 +61,7 @@ int k__json_obj_add(struct k__json_obj *json_obj, const char *key, size_t key_le
     struct k_hash_list *list = &json_obj->lists[key_hash % json_obj->lists_num];
     struct k_hash_list_node *node;
     for (k_hash_list_for_each(list, node)) {
-        struct k__json_obj_pair *pair = container_of(node, struct kv_pair, link);
+        struct k__json_obj_pair *pair = container_of(node, struct k__json_obj_pair, link);
 
         if (pair->key_hash == key_hash && 0 == strcmp(pair->key, key)) {
             k__destroy_json(pair->val);
@@ -98,7 +98,7 @@ struct k__json_obj_pair *k__json_obj_get(struct k__json_obj *json_obj, const cha
     struct k_hash_list_node *node;
     for (k_hash_list_for_each(list, node)) {
 
-        struct k__json_obj_pair *pair = container_of(node, struct kv_pair, link);
+        struct k__json_obj_pair *pair = container_of(node, struct k__json_obj_pair, link);
         if (pair->key_hash == key_hash && 0 == strcmp(pair->key, key))
             return pair;
     }

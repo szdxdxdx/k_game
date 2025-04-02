@@ -61,7 +61,7 @@ static void print_json(struct k_printf_buf *buf, struct k_json *json) {
             for (; i < json_obj->lists_num; i++) {
                 struct k_hash_list_node *node;
                 for (k_hash_list_for_each(&(json_obj->lists[i]), node)) {
-                    struct k__json_obj_pair *pair = container_of(node, struct kv_pair, link);
+                    struct k__json_obj_pair *pair = container_of(node, struct k__json_obj_pair, link);
 
                     if (is_first_pair)
                         is_first_pair = 0;
