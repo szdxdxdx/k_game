@@ -93,7 +93,7 @@ struct k_json *k_json_obj_get(struct k_json *json, const char *key) {
     if (NULL == key)
         return NULL;
 
-    struct kv_pair *pair = k__json_obj_get((struct k__json_obj *)json, key, strlen(key));
+    struct k__json_obj_pair *pair = k__json_obj_get((struct k__json_obj *)json, key, strlen(key));
     if (NULL == pair)
         return NULL;
     else

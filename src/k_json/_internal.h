@@ -91,7 +91,7 @@ struct k__json_obj {
     size_t lists_num;
 };
 
-struct kv_pair {
+struct k__json_obj_pair {
     struct k_hash_list_node link;
     char *key;
     size_t key_hash;
@@ -101,7 +101,7 @@ struct kv_pair {
 struct k__json_obj  *k__create_json_obj (void);
 void k__destroy_json_obj (struct k__json_obj  *json_obj);
 int k__json_obj_add (struct k__json_obj *json_obj, const char *key, size_t key_len, struct k_json *val);
-struct kv_pair *k__json_obj_get(struct k__json_obj *json_obj, const char *key, size_t key_len);
+struct k__json_obj_pair *k__json_obj_get(struct k__json_obj *json_obj, const char *key, size_t key_len);
 void k__json_obj_del(struct k__json_obj *json_obj, const char *key);
 
 /* endregion */
