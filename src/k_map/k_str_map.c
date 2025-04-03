@@ -35,7 +35,9 @@ struct k_str_map *k_str_map_create(const struct k_str_map_config *config) {
 }
 
 void k_str_map_destroy(struct k_str_map *map) {
-    assert(NULL != map);
+
+    if (NULL == map)
+        return;
 
     struct k_str_map_node *map_node;
     struct k_str_hash_map *hash_map = &map->hash_map;
@@ -123,6 +125,30 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t value_size) {
     return ptr_offset(map_node, sizeof(struct k_str_map_node));
 }
 
+void *k_str_map_add(struct k_str_map *map, const char *key, size_t value_size) {
+    assert(NULL != map);
+    assert(NULL != key && '\0' != key[0]);
+    assert(0 < value_size && value_size < SIZE_MAX - sizeof(struct k_str_map_node));
+
+    struct k_str_map_node *map_node = map->fn_malloc(sizeof(struct k_str_map_node) + value_size);
+    if (NULL == map_node)
+        return NULL;
+
+    struct k_str_hash_map *hash_map = &map->hash_map;
+    struct k_str_hash_map_node *hash_map_node = k_str_hash_map_get(hash_map, key);
+    if (NULL != hash_map_node)
+        return NULL;
+
+    k_str_hash_map_add_directly(hash_map, key, &map_node->hash_map_node);
+    map->size += 1;
+
+    if (map->rehash_threshold < map->size) {
+        rehash(map);
+    }
+
+    return ptr_offset(map_node, sizeof(struct k_str_map_node));
+}
+
 void k_str_map_del(struct k_str_map *map, const char *key) {
     assert(NULL != map);
     assert(NULL != key && '\0' != key[0]);
@@ -151,4 +177,22 @@ void *k_str_map_get(struct k_str_map *map, const char *key) {
         struct k_str_map_node *map_node = container_of(hash_map_node, struct k_str_map_node, hash_map_node);
         return ptr_offset(map_node, sizeof(struct k_str_map_node));
     }
+}
+
+void k_str_map_clear(struct k_str_map *map) {
+    assert(NULL != map);
+
+    struct k_str_map_node *map_node;
+    struct k_str_hash_map *hash_map = &map->hash_map;
+    struct k_hash_list *buckets;
+    for (k_str_hash_map_for_each_bucket(hash_map, buckets)) {
+        struct k_hash_list_node *iter, *next;
+        for (k_hash_list_for_each_s(buckets, iter, next)) {
+            map_node = k_str_hash_map_node_container_of(iter, struct k_str_map_node, hash_map_node);
+
+            map->fn_free(map_node);
+        }
+    }
+
+    map->size = 0;
 }
