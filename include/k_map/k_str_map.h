@@ -100,7 +100,7 @@ void *k_str_map_get(struct k_str_map *map, const char *key);
 /**
  * \brief 清空哈希表
  *
- * 删除哈希表中所有的键值对，并保留哈希桶数组的当前容量，不缩容。
+ * 删除哈希表中所有的键值对，并保留哈希桶数组的当前容量。
  */
 void k_str_map_clear(struct k_str_map *map);
 

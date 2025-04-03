@@ -394,4 +394,11 @@ void k__behavior_tree_builder_delay(struct k_behavior_tree_builder *builder, int
 
 /* endregion */
 
+/* region [tree_get/set] */
+
+/* TODO */
+void k_behavior_tree_set_destroy_callback(struct k_behavior_tree *tree, void (*fn_callback)(struct k_behavior_tree *tree));
+
+/* endregion */
+
 #endif

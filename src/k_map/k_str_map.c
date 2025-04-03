@@ -18,7 +18,7 @@ struct k_str_map *k_str_map_create(const struct k_str_map_config *config) {
     if (NULL == map)
         return NULL;
 
-    size_t buckets_num = 29;
+    size_t buckets_num = 17;
     struct k_hash_list *buckets = config->fn_malloc(sizeof(struct k_hash_list) * buckets_num);
     if (NULL == buckets) {
         config->fn_free(map);
@@ -53,6 +53,48 @@ void k_str_map_destroy(struct k_str_map *map) {
 
     map->fn_free(hash_map->buckets);
     map->fn_free(map);
+}
+
+struct k_str_map *k_str_map_construct(struct k_str_map *map, const struct k_str_map_config *config) {
+    assert(NULL != map);
+    assert(NULL != config);
+    assert(NULL != config->fn_malloc);
+    assert(NULL != config->fn_free);
+
+    size_t buckets_num = 17;
+    struct k_hash_list *buckets = config->fn_malloc(sizeof(struct k_hash_list) * buckets_num);
+    if (NULL == buckets) {
+        config->fn_free(map);
+        return NULL;
+    }
+
+    map->fn_malloc = config->fn_malloc;
+    map->fn_free   = config->fn_free;
+    map->size      = 0;
+    map->rehash_threshold = 29;
+    k_str_hash_map_init(&map->hash_map, buckets, buckets_num);
+
+    return map;
+}
+
+void k_str_map_destruct(struct k_str_map *map) {
+
+    if (NULL == map)
+        return;
+
+    struct k_str_map_node *map_node;
+    struct k_str_hash_map *hash_map = &map->hash_map;
+    struct k_hash_list *buckets;
+    for (k_str_hash_map_for_each_bucket(hash_map, buckets)) {
+        struct k_hash_list_node *iter, *next;
+        for (k_hash_list_for_each_s(buckets, iter, next)) {
+            map_node = k_str_hash_map_node_container_of(iter, struct k_str_map_node, hash_map_node);
+
+            map->fn_free(map_node);
+        }
+    }
+
+    map->fn_free(hash_map->buckets);
 }
 
 static void rehash(struct k_str_map *map) {
