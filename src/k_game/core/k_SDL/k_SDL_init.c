@@ -100,8 +100,8 @@ static void step_quit_SDL_ttf(void *unused) {
     TTF_Quit();
 }
 
-static int step_create_window(void *context) {
-    const struct k_game_config *config = context;
+static int step_create_window(void *config_) {
+    const struct k_game_config *config = config_;
 
     const char *title = config->window_title;
     int x = SDL_WINDOWPOS_CENTERED;
@@ -153,6 +153,37 @@ static void step_destroy_renderer(void *unused) {
     SDL_DestroyRenderer(k__window.renderer);
 }
 
+static int step_create_canvas(void *config_) {
+    struct k_game_config *config = config_;
+
+    int canvas_w;
+    int canvas_h;
+    if (0 == config->canvas_w) {
+        canvas_w = config->window_w * 2;
+        canvas_h = config->window_h * 2;
+    } else {
+        canvas_w = config->canvas_w;
+        canvas_h = config->canvas_h;
+    }
+
+    Uint32 format = SDL_PIXELFORMAT_RGBA8888;
+    int    access = SDL_TEXTUREACCESS_TARGET;
+    SDL_Texture* canvas = SDL_CreateTexture(k__window.renderer, format, access, canvas_w, canvas_h);
+    if (NULL == canvas) {
+        k_log_error("Failed to create game canvas: %s", SDL_GetError());
+        return -1;
+    }
+
+    k__window.canvas = canvas;
+    return 0;
+}
+
+static void step_destroy_canvas(void *unused) {
+    (void)unused;
+
+    SDL_DestroyTexture(k__window.canvas);
+}
+
 static struct k_seq_step steps[] = {
     { step_set_log_level,   NULL                  },
     { step_init_SDL,        step_quit_SDL         },
@@ -161,6 +192,7 @@ static struct k_seq_step steps[] = {
     { step_init_SDL_ttf,    step_quit_SDL_ttf     },
     { step_create_window,   step_destroy_window   },
     { step_create_renderer, step_destroy_renderer },
+    { step_create_canvas,   step_destroy_canvas   },
 };
 
 /* endregion */

@@ -37,6 +37,10 @@ int main(int argc, char **argv) {
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_title = "demo 1";
+    config.window_w = 640;
+    config.window_h = 480;
+    config.canvas_w = config.window_w;
+    config.canvas_h = config.window_h;
     config.fn_init = fn_init_game;
 
     return k_run_game(&config);

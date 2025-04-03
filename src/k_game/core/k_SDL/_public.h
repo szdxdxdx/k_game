@@ -21,6 +21,8 @@ struct k_game_window {
     SDL_Window *window;
 
     SDL_Renderer *renderer;
+
+    SDL_Texture *canvas;
 };
 
 extern struct k_game_window k__window;
