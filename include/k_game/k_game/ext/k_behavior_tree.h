@@ -19,7 +19,7 @@ struct k_object;
  *
  * 每个节点完成任务后，都会向上返回一个状态码，可能是 SUCCESS、FAILURE 或者 RUNNING。
  * 父节点根据子节点返回的状态码决定后续操作。比如，[sequence] 节点会按顺序 tick 子节点，
- * 所有子节点返回 SUCCESS 后才返回 SUCCESS，若某个子节点返回 FAILURE 则返回 FAILURE。
+ * 所有子节点都返回 SUCCESS 后才返回 SUCCESS，若某个子节点返回 FAILURE 则返回 FAILURE。
  * 而 [selector] 节点则是只要有一个子节点返回 SUCCESS 就立即返回 SUCCESS。
  *
  * 若某个动作需要较长时间完成（比如角色移动，或是等待冷却时间），对应的节点会返回 RUNNING，
@@ -137,7 +137,7 @@ struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tre
  *
  * [sequence] 的规则为：
  * - 若当前子节点返回 `K_BT_SUCCESS`，则 [sequence] 立即 tick 下一个子节点。
- *   若所有子节点返回 `K_BT_SUCCESS`，则 [sequence] 返回 `K_BT_SUCCESS`。
+ *   若所有子节点都返回 `K_BT_SUCCESS`，则 [sequence] 返回 `K_BT_SUCCESS`。
  * - 若当前子节点返回 `K_BT_FAILURE`，则 [sequence] 终止后续 tick，并返回 `K_BT_FAILURE`。
  * - 若当前子节点返回 `K_BT_RUNNING`，则 [sequence] 返回 `K_BT_RUNNING`，之后继续 tick 该子节点。
  * - 若 [sequence] 没有子节点，则返回 `K_BT_SUCCESS`。
@@ -154,7 +154,7 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
  * [selector] 的规则为：
  * - 若当前子节点返回 `K_BT_SUCCESS`，则 [selector] 终止后续 tick，并返回 `K_BT_SUCCESS`。
  * - 若当前子节点返回 `K_BT_FAILURE`，则 [selector] 立即 tick 下一个子节点。
- *   若所有子节点返回 `K_BT_FAILURE`，则 [selector] 返回 `K_BT_FAILURE`。
+ *   若所有子节点都返回 `K_BT_FAILURE`，则 [selector] 返回 `K_BT_FAILURE`。
  * - 若当前子节点返回 `K_BT_RUNNING`，则 [selector] 返回 `K_BT_RUNNING`，之后继续 tick 该子节点。
  * - 若 [sequence] 没有子节点，则返回 `K_BT_FAILURE`。
  */
