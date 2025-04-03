@@ -16,7 +16,7 @@ void k__quit_SDL(void);
 
 /* region [game_window] */
 
-struct k_game_window {
+struct k_game_window { /* TODO rename k_SDL_context */
 
     SDL_Window *window;
 
