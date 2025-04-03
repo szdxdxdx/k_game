@@ -13,7 +13,7 @@
 static int step_set_log_level(void *unused) {
     (void)unused;
 
-    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_ERROR);
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
     return 0;
 }
 

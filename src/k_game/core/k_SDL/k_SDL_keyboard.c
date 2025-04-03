@@ -1,13 +1,7 @@
 #include "./_internal.h"
 
-/* 将 SDL 的键码转为 k_game 的键码 */
 static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
 
-    /* 请相信编译器的优化能力
-     *
-     * SDL 定义的键码虽不是完全连续，但也是大段连续的。
-     * 下述的 switch-case 不会退化为冗长的 if-else。
-     */
     switch (SDL_key) {
 
         case SDLK_BACKSPACE    : return K_KEY_BACKSPACE     ;
@@ -153,19 +147,19 @@ static uint8_t key_state[K_KEY_ENUM_END + 1];
 static void refresh_key_state(enum k_keyboard_key key) {
 
     /* 每个按键用 3 个 bit 记录状态：
-     * - 0b001 表示该按键在这一帧被按下
-     * - 0b010 表示该按键在这一帧抬起
      * - 0b100 表示该按键在上一帧被按下或按住
+     * - 0b010 表示该按键在这一帧被按下
+     * - 0b001 表示该按键在这一帧抬起
      */
     switch (key_state[key] & 0b11) {
-        case 0b000: key_state[key] &= 0b100; break;
-        case 0b001: key_state[key]  = 0b000; break;
-        case 0b010: key_state[key]  = 0b100; break;
-        case 0b011: key_state[key]  = 0b000; break;
+        case 0b00: key_state[key] &= 0b100; break;
+        case 0b01: key_state[key]  = 0b000; break;
+        case 0b10: key_state[key]  = 0b100; break;
+        case 0b11: key_state[key]  = 0b000; break;
     }
 }
 
-void k__refresh_keyboard_key_state(void) {
+void k__refresh_keys_state(void) {
 
     size_t key = 0;
     for (; key < K_KEY_ENUM_END; key++)
