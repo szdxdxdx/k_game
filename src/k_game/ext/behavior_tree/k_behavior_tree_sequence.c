@@ -19,9 +19,9 @@ struct k_behavior_tree_sequence_node {
 static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
 
-    struct k_array *array = &sequence->children;
+    struct k_array *arr = &sequence->children;
     if ( ! sequence->running) {
-        if (0 == array->size)
+        if (0 == arr->size)
             return K_BT_SUCCESS;
         else {
             sequence->index   = 0;
@@ -29,31 +29,33 @@ static enum k_behavior_tree_status sequence_tick(struct k_behavior_tree_node *no
         }
     }
 
-    struct k_behavior_tree_node *child = k_array_get_elem(array, sequence->index, struct k_behavior_tree_node *);
+    struct k_behavior_tree_node *child;
+    size_t size = arr->size;
+    for (; sequence->index < size; sequence->index++) {
+        child = k_array_get_elem(arr, sequence->index, struct k_behavior_tree_node *);
 
-    enum k_behavior_tree_status result = child->fn_tick(child);
+        enum k_behavior_tree_status result = child->fn_tick(child);
 
-    assert(result == K_BT_SUCCESS
-        || result == K_BT_FAILURE
-        || result == K_BT_RUNNING
-    );
+        assert(result == K_BT_SUCCESS
+            || result == K_BT_FAILURE
+            || result == K_BT_RUNNING
+        );
 
-    switch (result) {
-        case K_BT_RUNNING:
-            return K_BT_RUNNING;
-        case K_BT_SUCCESS:
-            sequence->index++;
-            if (sequence->index != array->size) {
+        switch (result) {
+            case K_BT_RUNNING:
                 return K_BT_RUNNING;
-            }
-            else {
+
+            case K_BT_SUCCESS:
+                continue;
+
+            case K_BT_FAILURE:
                 sequence->running = 0;
-                return K_BT_SUCCESS;
-            }
-        case K_BT_FAILURE:
-            sequence->running = 0;
-            return K_BT_FAILURE;
+                return K_BT_FAILURE;
+        }
     }
+
+    sequence->running = 0;
+    return K_BT_SUCCESS;
 }
 
 static void sequence_interrupt(struct k_behavior_tree_node *node) {
@@ -62,11 +64,11 @@ static void sequence_interrupt(struct k_behavior_tree_node *node) {
     if ( ! sequence->running)
         return;
 
-    struct k_array *array = &sequence->children;
+    struct k_array *arr = &sequence->children;
     size_t index = sequence->index;
-    size_t size  = array->size;
+    size_t size  = arr->size;
     for (; index < size; index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
+        struct k_behavior_tree_node *child = k_array_get_elem(arr, index, struct k_behavior_tree_node *);
 
         child->fn_interrupt(child);
     }
@@ -82,11 +84,11 @@ static int sequence_add_child(struct k_behavior_tree_node *node, struct k_behavi
 static void sequence_destroy(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_sequence_node *sequence = container_of(node, struct k_behavior_tree_sequence_node, super);
 
-    struct k_array *array = &sequence->children;
+    struct k_array *arr = &sequence->children;
     size_t index = 0;
-    size_t size  = array->size;
+    size_t size  = arr->size;
     for (; index < size; index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
+        struct k_behavior_tree_node *child = k_array_get_elem(arr, index, struct k_behavior_tree_node *);
         child->fn_destroy(child);
     }
 

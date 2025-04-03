@@ -47,7 +47,7 @@ void yx_test_bt(void) {
     {
         k_bt_sequence(b)
         {
-            k_bt_parallel(b, 1, INT_MAX)
+            k_bt_selector(b)
             {
                 k_bt_action(b, "a", log_s_f, interrupt);
                 k_bt_action(b, "b", log_s_s, interrupt);

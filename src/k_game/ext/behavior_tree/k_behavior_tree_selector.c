@@ -19,9 +19,9 @@ struct k_behavior_tree_selector_node {
 static enum k_behavior_tree_status selector_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_selector_node *selector = (struct k_behavior_tree_selector_node *)node;
 
-    struct k_array *array = &selector->children;
+    struct k_array *arr = &selector->children;
     if ( ! selector->running) {
-        if (0 == array->size) {
+        if (0 == arr->size) {
             return K_BT_FAILURE;
         }
         else {
@@ -30,31 +30,33 @@ static enum k_behavior_tree_status selector_tick(struct k_behavior_tree_node *no
         }
     }
 
-    struct k_behavior_tree_node *child = k_array_get_elem(array, selector->index, struct k_behavior_tree_node *);
+    struct k_behavior_tree_node *child;
+    size_t size = arr->size;
+    for (; selector->index < size; selector->index++) {
+        child = k_array_get_elem(arr, selector->index, struct k_behavior_tree_node *);
 
-    enum k_behavior_tree_status result = child->fn_tick(child);
+        enum k_behavior_tree_status result = child->fn_tick(child);
 
-    assert(result == K_BT_SUCCESS
-        || result == K_BT_FAILURE
-        || result == K_BT_RUNNING
-    );
+        assert(result == K_BT_SUCCESS
+            || result == K_BT_FAILURE
+            || result == K_BT_RUNNING
+        );
 
-    switch (result) {
-        case K_BT_RUNNING:
-            return K_BT_RUNNING;
-        case K_BT_SUCCESS:
-            selector->running = 0;
-            return K_BT_SUCCESS;
-        case K_BT_FAILURE:
-            selector->index++;
-            if (selector->index != array->size) {
+        switch (result) {
+            case K_BT_RUNNING:
                 return K_BT_RUNNING;
-            }
-            else {
+
+            case K_BT_SUCCESS:
                 selector->running = 0;
-                return K_BT_FAILURE;
-            }
+                return K_BT_SUCCESS;
+
+            case K_BT_FAILURE:
+                continue;
+        }
     }
+
+    selector->running = 0;
+    return K_BT_FAILURE;
 }
 
 static void selector_interrupt(struct k_behavior_tree_node *node) {
@@ -63,11 +65,11 @@ static void selector_interrupt(struct k_behavior_tree_node *node) {
     if ( ! selector->running)
         return;
 
-    struct k_array *array = &selector->children;
+    struct k_array *arr = &selector->children;
     size_t index = selector->index;
-    size_t size  = array->size;
+    size_t size  = arr->size;
     for (; index < size; index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
+        struct k_behavior_tree_node *child = k_array_get_elem(arr, index, struct k_behavior_tree_node *);
 
         child->fn_interrupt(child);
     }
@@ -83,11 +85,11 @@ static int selector_add_child(struct k_behavior_tree_node *node, struct k_behavi
 static void selector_destroy(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_selector_node *selector = container_of(node, struct k_behavior_tree_selector_node, super);
 
-    struct k_array *array = &selector->children;
+    struct k_array *arr = &selector->children;
     size_t index = 0;
-    size_t size  = array->size;
+    size_t size  = arr->size;
     for (; index < size; index++) {
-        struct k_behavior_tree_node *child = k_array_get_elem(array, index, struct k_behavior_tree_node *);
+        struct k_behavior_tree_node *child = k_array_get_elem(arr, index, struct k_behavior_tree_node *);
         child->fn_destroy(child);
     }
 
