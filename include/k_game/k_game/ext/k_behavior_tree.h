@@ -93,11 +93,10 @@ struct k_behavior_tree_node *k_behavior_tree_get_root(struct k_behavior_tree *tr
 /**
  * \brief 向行为树添加一个 [action] 节点
  *
- * 若添加成功，函数返回 [action] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [action] 子节点。若添加成功，函数返回 [action] 节点的指针，否则返回 `NULL`。
  *
  * [action] 在它的每一次 tick 中都会执行一次 `fn_tick()` 回调，
- * 你需要在 `fn_tick()` 中执行实际的行为动作，并返回该动作的执行结果。
- *
+ * 你需要在 `fn_tick()` 中执行实际的行为动作，并返回该动作的执行结果：
  * - 若动作完成，且执行成功，`fn_tick()` 应返回 `K_BT_SUCCESS`。
  * - 若动作完成，且执行失败，`fn_tick()` 应返回 `K_BT_FAILURE`。
  * - 若动作还需要更多次 tick 才能得到结果，应返回 `K_BT_RUNNING`。
@@ -111,11 +110,10 @@ struct k_behavior_tree_node *k_behavior_tree_add_action(struct k_behavior_tree_n
 /**
  * \brief 向行为树添加一个 [condition] 节点
  *
- * 若添加成功，函数返回 [condition] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [condition] 子节点。若添加成功，函数返回 [condition] 节点的指针，否则返回 `NULL`。
  *
  * [condition] 在它的每一次 tick 中都会执行一次 fn_check() 回调，
- * 你需要在 `fn_check()` 中执行条件检查，并返回该条件的判定结果。
- *
+ * 你需要在 `fn_check()` 中执行条件检查，并返回该条件的判定结果：
  * - 若条件满足，`fn_check()` 应返回 `K_BT_SUCCESS`。
  * - 若条件不满足，`fn_check()` 应返回 `K_BT_FAILURE`。
  * - `fn_check()` 不应返回 K_BT_RUNNING，因为 [condition] 必须立即给出判定结果。
@@ -133,11 +131,12 @@ struct k_behavior_tree_node *k_behavior_tree_add_condition(struct k_behavior_tre
 /**
  * \brief 向行为树添加一个 [sequence] 节点
  *
- * 若添加成功，函数返回 [sequence] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [sequence] 子节点。若添加成功，函数返回 [sequence] 节点的指针，否则返回 `NULL`。
  *
  * 你可以向 [sequence] 添加任意数量的子节点。
  * [sequence] 将在它的一次 tick 内 tick 一个子节点，在多轮 tick 内按顺序依次 tick 子节点。
  *
+ * [sequence] 的规则为：
  * - 若当前子节点返回 `K_BT_SUCCESS`，则 [sequence] 返回 `K_BT_RUNNING`，之后 tick 下一个子节点。
  * - 若所有子节点返回 `K_BT_SUCCESS`，则 [sequence] 返回 `K_BT_SUCCESS`。
  * - 若当前子节点返回 `K_BT_FAILURE`，则 [sequence] 终止后续 tick，并返回 `K_BT_FAILURE`。
@@ -150,11 +149,12 @@ struct k_behavior_tree_node *k_behavior_tree_add_sequence(struct k_behavior_tree
 /**
  * \brief 向行为树添加一个 [selector] 节点
  *
- * 若添加成功，函数返回 [selector] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [selector] 子节点。若添加成功，函数返回 [selector] 节点的指针，否则返回 `NULL`。
  *
  * 你可以向 [selector] 添加任意数量的子节点。
  * [selector] 将在它的一次 tick 内 tick 一个子节点，在多轮 tick 内按添加顺序依次 tick 子节点。
  *
+ * [selector] 的规则为：
  * - 若当前子节点返回 `K_BT_SUCCESS`，则 [selector] 终止后续 tick，并返回 `K_BT_SUCCESS`。
  * - 若当前子节点返回 `K_BT_FAILURE`，则 [selector] 返回 `K_BT_RUNNING`，之后 tick 下一个子节点。
  * - 若所有子节点返回 `K_BT_FAILURE`，则 [selector] 返回 `K_BT_FAILURE`。
@@ -173,22 +173,29 @@ struct k_behavior_tree_node *k_behavior_tree_add_random_selector(struct k_behavi
 /**
  * \brief 向行为树添加一个 [parallel] 节点
  *
- * 若添加成功，函数返回 [parallel] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [parallel] 子节点。若添加成功，函数返回 [parallel] 节点的指针，否则返回 `NULL`。
  *
  * 你可以向 [parallel] 添加任意数量的子节点。[parallel] 将尝试在它的一次 tick 内 tick 它的多个子节点。
  *
- * - 若某个子节点返回 `K_BT_RUNNING`，则 [parallel] 在当前的 tick 内继续 tick 其他子节点。
- * - 若部分子节点返回 `K_BT_RUNNING`，且没有子节点返回 `K_BT_FAILURE`，则 [parallel] 返回 `K_BT_RUNNING`。
- * - 若某个子节点返回 `K_BT_FAILURE`，则 [parallel] 中断所有 RUNNING 的子节点，并返回 `K_BT_FAILURE`。
- * - 若所有子节点都返回 `K_BT_SUCCESS`，则 [parallel] 返回 `K_BT_SUCCESS`。
+ * `success_policy` 和 `failure_policy` 分别表示 [parallel] 返回 `K_BT_SUCCESS` 和 `K_BT_FAILURE` 的策略。
+ * 要求 `success_policy` 和 `failure_policy` 的值必须为正数。
+ *
+ * [parallel] 的规则为：
+ * - 若一部分子节点处于 RUNNING 或未开始执行动作，而另一部分子节点的动作已执行完毕：
+ *    - 若返回 `K_BT_SUCCESS` 的子节点个数达到 `success_policy`，则 [parallel] 中断所有 RUNNING 的子节点，并返回 `K_BT_SUCCESS`。
+ *    - 若返回 `K_BT_FAILURE` 的子节点个数达到 `failure_policy`，则 [parallel] 中断所有 RUNNING 的子节点，并返回 `K_BT_FAILURE`。
+ *    - 否则 [parallel] 返回 `K_BT_RUNNING`，下一次 tick 时，[parallel] 继续 tick 处于 RUNNING 的子节点。
+ * - 若所有子结点的动作都执行完毕：若所有子结点都返回 `K_BT_SUCCESS`，则 [parallel] 返回 `K_BT_SUCCESS`，否则返回 `K_BT_FAILURE`。
+ *
+ * 依照上述的规则，`success_policy` 和 `failure_policy`的几种可能的取值为：
+ * - 若 `success_policy` 为 `INT_MAX`，则表示：全部子结点都返回 `K_BT_SUCCESS`，[parallel] 才返回 `K_BT_SUCCESS`。
+ * - 若 `success_policy` 为 `1`，则表示：任意子结点都返回 `K_BT_SUCCESS`，[parallel] 就返回 `K_BT_SUCCESS`。
+ * - 若 `failure_policy` 为 `INT_MAX`，则表示：等待所有子结点的动作都执行完毕，若有的子结点返回 `K_BT_FAILURE`，则 [parallel] 返回 `K_BT_FAILURE`。
+ * - 若 `failure_policy` 为 `1`，则表示：任意子结点都返回 `K_BT_FAILURE`，[parallel] 就返回 `K_BT_FAILURE`。
  *
  * 若 [parallel] 没有子节点，则返回 `K_BT_SUCCESS`。
- *
- * TODO success_policy 和 failure_policy
- * - 若 `成功的子节点个数 >= min(success_policy, 子节点总数)`，则 [parallel] 返回 `K_BT_SUCCESS`。
- * - 若有子结点处于 RUNNING，且 `失败的子节点个数 < failure_policy`，则 [parallel] 返回 `K_BT_RUNNING`，否则返回 `K_BT_FAILURE`。
  */
-struct k_behavior_tree_node *k_behavior_tree_add_parallel(struct k_behavior_tree_node *node);
+struct k_behavior_tree_node *k_behavior_tree_add_parallel(struct k_behavior_tree_node *node, int success_policy, int failure_policy);
 
 /* endregion */
 
@@ -197,10 +204,11 @@ struct k_behavior_tree_node *k_behavior_tree_add_parallel(struct k_behavior_tree
 /**
  * \brief 向行为树添加一个 [inverter] 节点
  *
- * 若添加成功，函数返回 [inverter] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [inverter] 子节点。若添加成功，函数返回 [inverter] 节点的指针，否则返回 `NULL`。
  *
  * [inverter] 节点将翻转子节点的返回状态。
  *
+ * [inverter] 的规则为：
  * - 若子节点返回 `K_BT_SUCCESS`，则 [inverter] 返回 `K_BT_FAILURE`。
  * - 若子节点返回 `K_BT_FAILURE`，则 [inverter] 返回 `K_BT_SUCCESS`。
  * - 若子节点返回 `K_BT_RUNNING`，则 [inverter] 返回 `K_BT_RUNNING`。
@@ -212,8 +220,9 @@ struct k_behavior_tree_node *k_behavior_tree_add_inverter(struct k_behavior_tree
 /**
  * \brief 向行为树添加一个 [force_success] 节点
  *
- * 若添加成功，函数返回 [force_success] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [force_success] 子节点。若添加成功，函数返回 [force_success] 节点的指针，否则返回 `NULL`。
  *
+ * [force_success] 的规则为：
  * 若子节点返回 `K_BT_RUNNING`，则 [force_success] 返回 `K_BT_RUNNING`，否则返回 `K_BT_SUCCESS`。
  *
  * [force_success] 最多只能有一个子节点。若 [force_success] 没有子节点，则返回 `K_BT_SUCCESS`。
@@ -223,8 +232,9 @@ struct k_behavior_tree_node *k_behavior_tree_add_force_success(struct k_behavior
 /**
  * \brief 向行为树添加一个 [force_failure] 节点
  *
- * 若添加成功，函数返回 [force_failure] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [force_failure] 子节点。若添加成功，函数返回 [force_failure] 节点的指针，否则返回 `NULL`。
  *
+ * [force_failure] 的规则为：
  * 若子节点返回 `K_BT_RUNNING`，则 [force_failure] 返回 `K_BT_RUNNING`，否则返回 `K_BT_FAILURE`。
  *
  * [force_failure] 最多只能有一个子节点。若 [force_failure] 没有子节点，则返回 `K_BT_FAILURE`。
@@ -234,10 +244,11 @@ struct k_behavior_tree_node *k_behavior_tree_add_force_failure(struct k_behavior
 /**
  * \brief 向行为树添加一个 [repeat] 节点
  *
- * 若添加成功，函数返回 [repeat] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [repeat] 子节点。若添加成功，函数返回 [repeat] 节点的指针，否则返回 `NULL`。
  *
  * [repeat] 将在它的一次 tick 内重复 tick 它的子节点，直到子节点返回 `K_BT_FAILURE`，或重复次数到达 `n` 次。
  *
+ * [repeat] 的规则为：
  * - 若子节点每次都返回 `K_BT_SUCCESS`，且完成了 `n` 次，则 [repeat] 重置计数器，并返回 `K_BT_SUCCESS`。
  * - 若子节点任意一次返回 `K_BT_FAILURE`，则 [repeat] 终止后续 tick，重置计数器，并返回 `K_BT_FAILURE`。
  * - 若子节点返回 `K_BT_RUNNING`，则 [repeat] 暂停计数，并返回 `K_BT_RUNNING`。
@@ -261,13 +272,14 @@ struct k_behavior_tree_node *k_behavior_tree_add_timeout(struct k_behavior_tree_
 /**
  * \brief 向行为树添加一个 [delay] 节点
  *
- * 若添加成功，函数返回 [delay] 节点的指针，否则返回 `NULL`。
+ * 向 `node` 添加一个 [delay] 子节点。若添加成功，函数返回 [delay] 节点的指针，否则返回 `NULL`。
  *
  * [delay] 节点将延迟 tick 它的子节点。
  *
- * 若 [delay] 已启动计时器，但未达到设定的延迟时间，则不 tick 子节点，并返回 `K_BT_RUNNING`。
- * 若 [delay] 已达到设定的延迟时间，则 tick 子节点，并返回子节点的返回状态。
- * 当子节点返回 `K_BT_SUCCESS` 或 `K_BT_FAILURE` 时，[delay] 重置。
+ * [delay] 的规则为：
+ * - 若 [delay] 已启动计时器，但未达到设定的延迟时间，则不 tick 子节点，并返回 `K_BT_RUNNING`。
+ * - 若 [delay] 已达到设定的延迟时间，则 tick 子节点，并返回子节点的返回状态。
+ * - 当子节点返回 `K_BT_SUCCESS` 或 `K_BT_FAILURE` 时，[delay] 重置。
  *
  * [delay] 最多只能有一个子节点。若 [delay] 没有子节点，则延迟返回 `K_BT_SUCCESS`。
  */
@@ -331,7 +343,7 @@ void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, vo
 void k__behavior_tree_builder_condition(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_check)(void *data));
 void k__behavior_tree_builder_sequence(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder);
+void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder, int success_policy, int failure_policy);
 void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *builder);
@@ -359,8 +371,8 @@ void k__behavior_tree_builder_delay(struct k_behavior_tree_builder *builder, int
 #define k_bt_selector(builder) \
     for (k__behavior_tree_builder_selector(builder); k__behavior_tree_builder_pop(builder); )
 
-#define k_bt_parallel(builder) \
-    for (k__behavior_tree_builder_parallel(builder); k__behavior_tree_builder_pop(builder); )
+#define k_bt_parallel(builder, success_policy, failure_policy) \
+    for (k__behavior_tree_builder_parallel(builder, success_policy, failure_policy); k__behavior_tree_builder_pop(builder); )
 
 #define k_bt_inverter(builder) \
     for (k__behavior_tree_builder_inverter(builder); k__behavior_tree_builder_pop(builder); )

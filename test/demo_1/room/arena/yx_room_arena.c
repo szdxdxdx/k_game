@@ -49,6 +49,8 @@ int fn_room_init(void *params) {
         yx_rival_create(&config);
     }
 
+    yx_test_bt();
+
     return 0;
 }
 

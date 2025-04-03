@@ -211,13 +211,13 @@ void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder) 
     push(builder, child);
 }
 
-void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder) {
+void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder, int success_policy, int failure_policy) {
 
     if (builder->failed)
         return;
 
     struct k_behavior_tree_node *parent = top(builder);
-    struct k_behavior_tree_node *child = k_behavior_tree_add_parallel(parent);
+    struct k_behavior_tree_node *child = k_behavior_tree_add_parallel(parent, success_policy, failure_policy);
     if (NULL == child) {
         builder->failed = 1;
         return;
