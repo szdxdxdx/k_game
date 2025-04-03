@@ -20,26 +20,6 @@
 
 /* region [steps] */
 
-static int step_check_config(void *context) {
-    const struct k_game_config *config = context;
-
-    const char *err_msg;
-
-#define check_config_assert(cond) \
-    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
-
-    check_config_assert(NULL != config);
-    check_config_assert(0 < config->window_h);
-    check_config_assert(0 < config->window_w);
-    check_config_assert(NULL != config->fn_init);
-
-    return 0;
-
-err:
-    k_log_error("Invalid game config: %s", err_msg);
-    return -1;
-}
-
 static int step_init_SDL(void *context) {
     const struct k_game_config *config = context;
     return k__init_SDL(config);
@@ -163,7 +143,6 @@ static void step_call_fn_fini(void *context) {
 }
 
 static const struct k_seq_step steps[] = {
-    { step_check_config,               NULL                            },
     { step_init_SDL,                   step_quit_SDL                   },
     { step_init_image_registry,        step_cleanup_image_registry     },
     { step_init_sound_registry,        step_cleanup_sound_registry     },
@@ -178,14 +157,54 @@ static const struct k_seq_step steps[] = {
 
 /* endregion */
 
-int k__init_game(const struct k_game_config *config) {
+static int step_check_config(const struct k_game_config *config) {
 
-    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), (void *)config)) {
-        k_log_error("Failed to initialize game");
-        return -1;
+    const char *err_msg = "";
+
+    if (NULL == config) {
+        err_msg = "config is NULL";
+        goto err;
+    }
+
+    int window_w = config->window_w;
+    int window_h = config->window_h;
+    if (window_w <= 0 || window_h <= 0) {
+        err_msg = "invalid window size";
+        goto err;
+    }
+
+    int canvas_w = config->canvas_w;
+    int canvas_h = config->canvas_h;
+    if ((canvas_w < window_w || canvas_h < window_h) && (0 != canvas_w || 0 != canvas_h)) {
+        err_msg = "invalid canvas size";
+        goto err;
+    }
+
+    if (NULL != config->fn_fini) {
+        err_msg = "fn_fini is NULL";
+        goto err;
     }
 
     return 0;
+
+err:
+    k_log_error("Invalid game config: %s", err_msg);
+    return -1;
+}
+
+int k__init_game(const struct k_game_config *config) {
+
+    if (0 != step_check_config(config))
+        goto err;
+
+    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), (void *)config))
+        goto err;
+
+    return 0;
+
+err:
+    k_log_error("Failed to initialize game");
+    return -1;
 }
 
 void k__deinit_game(const struct k_game_config *config) {

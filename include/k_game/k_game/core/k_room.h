@@ -203,4 +203,12 @@ void k_room_del_all_callbacks(struct k_room *room);
 
 /* endregion */
 
+/* region [room_view] */
+
+void k_room_set_view_position(struct k_room *room, float x, float y);
+
+void k_set_room_view_position(float x, float y);
+
+/* endregion */
+
 #endif
