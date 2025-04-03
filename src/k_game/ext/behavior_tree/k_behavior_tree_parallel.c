@@ -13,6 +13,10 @@ struct k_behavior_tree_parallel_node {
 
     struct k_array status;
 
+    int success_policy;
+
+    int failure_policy;
+
     int running;
 };
 
@@ -25,6 +29,9 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
     if ( ! parallel->running) {
 
         size_t size = parallel->status.size;
+        if (0 == size)
+            return K_BT_SUCCESS;
+
         size_t index = 0;
         for (; index < size; index++) {
             status[index] = K_BT_RUNNING;
@@ -33,14 +40,25 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
         parallel->running = 1;
     }
 
-    int has_running = 0;
+    int count_running = 0;
+    int count_success = 0;
+    int count_failure = 0;
 
     size_t size  = parallel->children.size;
     size_t index = 0;
     for (; index < size; index++) {
 
-        if (status[index] == K_BT_SUCCESS)
-            continue;
+        switch (status[index]) {
+            case K_BT_SUCCESS:
+                count_success += 1;
+                continue;
+            case K_BT_FAILURE:
+                count_failure += 1;
+                continue;
+            case K_BT_RUNNING:
+                count_running += 1;
+                break;
+        }
 
         struct k_behavior_tree_node *child = children[index];
 
@@ -52,13 +70,36 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
         );
 
         switch (result) {
-            case K_BT_RUNNING:
-                has_running = 1;
+
+            case K_BT_RUNNING: {
+                count_running += 1;
                 continue;
-            case K_BT_SUCCESS:
+            }
+
+            case K_BT_SUCCESS: {
+                count_success += 1;
                 status[index] = K_BT_SUCCESS;
-                continue;
-            case K_BT_FAILURE:
+
+                if (count_success < parallel->success_policy)
+                    continue;
+
+                for (index = 0; index < size; index++) {
+                    if (status[index] == K_BT_RUNNING) {
+                        child = children[index];
+                        child->fn_interrupt(child);
+                    }
+                }
+                parallel->running = 0;
+                return K_BT_SUCCESS;
+            }
+
+            case K_BT_FAILURE: {
+                count_failure += 1;
+                status[index] = K_BT_FAILURE;
+
+                if (count_failure < parallel->failure_policy)
+                    continue;
+
                 for (index = 0; index < size; index++) {
                     if (status[index] == K_BT_RUNNING) {
                         child = children[index];
@@ -67,15 +108,21 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
                 }
                 parallel->running = 0;
                 return K_BT_FAILURE;
+            }
         }
     }
 
-    if (has_running) {
+    if (0 < count_running) {
         return K_BT_RUNNING;
     }
     else {
         parallel->running = 0;
-        return K_BT_SUCCESS;
+
+        if (count_success == size) {
+            return K_BT_SUCCESS;
+        } else {
+            return K_BT_FAILURE;
+        }
     }
 }
 
@@ -132,7 +179,7 @@ static void parallel_destroy(struct k_behavior_tree_node *node) {
     free(parallel);
 }
 
-static struct k_behavior_tree_node *parallel_create(struct k_behavior_tree *tree) {
+static struct k_behavior_tree_node *parallel_create(struct k_behavior_tree *tree, int success_policy, int failure_policy) {
 
     struct k_behavior_tree_parallel_node *parallel = malloc(sizeof(struct k_behavior_tree_parallel_node));
     if (NULL == parallel)
@@ -161,6 +208,9 @@ static struct k_behavior_tree_node *parallel_create(struct k_behavior_tree *tree
         return NULL;
     }
 
+    parallel->success_policy = success_policy;
+    parallel->failure_policy = failure_policy;
+
     parallel->running = 0;
 
     return &parallel->super;
@@ -171,7 +221,7 @@ struct k_behavior_tree_node *k_behavior_tree_add_parallel(struct k_behavior_tree
     if (NULL == node)
         return NULL;
 
-    struct k_behavior_tree_node *new_node = parallel_create(node->tree);
+    struct k_behavior_tree_node *new_node = parallel_create(node->tree, INT_MAX, 1);
     if (NULL == new_node)
         return NULL;
 

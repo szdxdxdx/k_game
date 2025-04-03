@@ -30,10 +30,8 @@ struct k_object;
  * 内置的 RUNNING 状态码机制使得需要 while 循环执行的耗时任务能被分步分帧执行。
  *
  * k_behavior_tree 的本质其实是一个 k_object。它没有外观，仅用于控制游戏的运作。
- */
-struct k_behavior_tree;
-
-/* TODO 2025-04-01
+ *
+ * TODO k_behavior_tree
  *
  * k_behavior_tree 不是一个功能完善的行为树模块，它仅实现了最基本的功能，
  * 自我评价，最基本的功能实现得也不是很好。不过我也琢磨好久了，能写成现在这个样子也很不容易了。
@@ -44,10 +42,8 @@ struct k_behavior_tree;
  * - 【优先中断】，允许高优先级行为立即中断低优先级行为的执行，确保 AI 能及时处理紧急事件。
  * - 【动态更新】，允许动态组装各个节点，实现子树复用等。
  * - 【调试】，允许可视化的查看行为树执行的过程，用于调试。
- *
- * 我觉得【黑板】不是必须的，用全局变量也行，若真要键值存储，可以用 k_str_map。
- * 【优先中断】和【动态更新】暂时什么实现思路。至于【调试】嘛，那可真是太难弄了。
  */
+struct k_behavior_tree;
 
 /** \brief 行为树节点的执行结果状态码 */
 enum k_behavior_tree_status {
@@ -179,13 +175,18 @@ struct k_behavior_tree_node *k_behavior_tree_add_random_selector(struct k_behavi
  *
  * 若添加成功，函数返回 [parallel] 节点的指针，否则返回 `NULL`。
  *
- * 你可以向 [parallel] 添加任意数量的子节点。[parallel] 将尝试在它的一次 tick 内 tick 所有子节点。
+ * 你可以向 [parallel] 添加任意数量的子节点。[parallel] 将尝试在它的一次 tick 内 tick 它的多个子节点。
  *
- * - 只要有某个子节点返回了 `K_BT_FAILURE`，则 [parallel] 中断处于 RUNNING 状态的子节点，并返回 `K_BT_FAILURE`。
+ * - 若某个子节点返回 `K_BT_RUNNING`，则 [parallel] 在当前的 tick 内继续 tick 其他子节点。
+ * - 若部分子节点返回 `K_BT_RUNNING`，且没有子节点返回 `K_BT_FAILURE`，则 [parallel] 返回 `K_BT_RUNNING`。
+ * - 若某个子节点返回 `K_BT_FAILURE`，则 [parallel] 中断所有 RUNNING 的子节点，并返回 `K_BT_FAILURE`。
  * - 若所有子节点都返回 `K_BT_SUCCESS`，则 [parallel] 返回 `K_BT_SUCCESS`。
- * - 其余情况，[parallel] 返回 `K_BT_RUNNING`，之后继续 tick 这些处于 RUNNING 状态的子节点。
  *
  * 若 [parallel] 没有子节点，则返回 `K_BT_SUCCESS`。
+ *
+ * TODO success_policy 和 failure_policy
+ * - 若 `成功的子节点个数 >= min(success_policy, 子节点总数)`，则 [parallel] 返回 `K_BT_SUCCESS`。
+ * - 若有子结点处于 RUNNING，且 `失败的子节点个数 < failure_policy`，则 [parallel] 返回 `K_BT_RUNNING`，否则返回 `K_BT_FAILURE`。
  */
 struct k_behavior_tree_node *k_behavior_tree_add_parallel(struct k_behavior_tree_node *node);
 
