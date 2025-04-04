@@ -14,9 +14,9 @@ void k__quit_SDL(void);
 
 /* endregion */
 
-/* region [game_window] */
+/* region [SDL_context] */
 
-struct k_game_window { /* TODO rename k_SDL_context */
+struct k_SDL_context {
 
     SDL_Window *window;
 
@@ -25,7 +25,7 @@ struct k_game_window { /* TODO rename k_SDL_context */
     SDL_Texture *canvas;
 };
 
-extern struct k_game_window k__window;
+extern struct k_SDL_context k__SDL;
 
 /* endregion */
 

@@ -18,7 +18,7 @@ void k__room_run(struct k_room *room) {
 
         k__handle_SDL_event_with_frame_delay(room->step_interval_ms);
 
-        SDL_SetRenderTarget(k__window.renderer, k__window.canvas);
+        SDL_SetRenderTarget(k__SDL.renderer, k__SDL.canvas);
 
         k__step_callback_manager_flush(&room->step_begin_callback_manager);
         k__step_callback_manager_exec(&room->step_begin_callback_manager);
@@ -35,10 +35,10 @@ void k__room_run(struct k_room *room) {
         k__draw_callback_manager_flush(&room->draw_callback_manager);
         k__draw_callback_manager_exec(&room->draw_callback_manager);
 
-        SDL_SetRenderTarget(k__window.renderer, NULL);
+        SDL_SetRenderTarget(k__SDL.renderer, NULL);
 
-        SDL_RenderCopyF(k__window.renderer, k__window.canvas, NULL, NULL);
-        SDL_RenderPresent(k__window.renderer);
+        SDL_RenderCopyF(k__SDL.renderer, k__SDL.canvas, NULL, NULL);
+        SDL_RenderPresent(k__SDL.renderer);
     }
 
     if (NULL != room->fn_leave)

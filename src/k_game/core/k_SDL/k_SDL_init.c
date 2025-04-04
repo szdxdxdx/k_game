@@ -116,14 +116,14 @@ static int step_create_window(void *config_) {
         return -1;
     }
 
-    k__window.window = window;
+    k__SDL.window = window;
     return 0;
 }
 
 static void step_destroy_window(void *unused) {
     (void)unused;
 
-    SDL_DestroyWindow(k__window.window);
+    SDL_DestroyWindow(k__SDL.window);
 }
 
 static int step_create_renderer(void *unused) {
@@ -131,7 +131,7 @@ static int step_create_renderer(void *unused) {
 
     Uint32 flags = SDL_RENDERER_ACCELERATED;
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(k__window.window, -1, flags);
+    SDL_Renderer *renderer = SDL_CreateRenderer(k__SDL.window, -1, flags);
     if (NULL == renderer) {
         k_log_error("Failed to create game window renderer: %s", SDL_GetError());
         return -1;
@@ -143,14 +143,14 @@ static int step_create_renderer(void *unused) {
         return -1;
     }
 
-    k__window.renderer = renderer;
+    k__SDL.renderer = renderer;
     return 0;
 }
 
 static void step_destroy_renderer(void *unused) {
     (void)unused;
 
-    SDL_DestroyRenderer(k__window.renderer);
+    SDL_DestroyRenderer(k__SDL.renderer);
 }
 
 static int step_create_canvas(void *config_) {
@@ -168,20 +168,20 @@ static int step_create_canvas(void *config_) {
 
     Uint32 format = SDL_PIXELFORMAT_RGBA8888;
     int    access = SDL_TEXTUREACCESS_TARGET;
-    SDL_Texture* canvas = SDL_CreateTexture(k__window.renderer, format, access, canvas_w, canvas_h);
+    SDL_Texture* canvas = SDL_CreateTexture(k__SDL.renderer, format, access, canvas_w, canvas_h);
     if (NULL == canvas) {
         k_log_error("Failed to create game canvas: %s", SDL_GetError());
         return -1;
     }
 
-    k__window.canvas = canvas;
+    k__SDL.canvas = canvas;
     return 0;
 }
 
 static void step_destroy_canvas(void *unused) {
     (void)unused;
 
-    SDL_DestroyTexture(k__window.canvas);
+    SDL_DestroyTexture(k__SDL.canvas);
 }
 
 static struct k_seq_step steps[] = {

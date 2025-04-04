@@ -74,7 +74,7 @@ struct k_image *k_image_load(const char *filepath) {
     if (NULL == filepath || '\0' == filepath[0])
         goto err;
 
-    SDL_Texture *texture = IMG_LoadTexture(k__window.renderer, filepath);
+    SDL_Texture *texture = IMG_LoadTexture(k__SDL.renderer, filepath);
     if (NULL == texture)
         goto err;
 

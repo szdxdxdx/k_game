@@ -37,7 +37,7 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const
     dst.h = dst_rect->h;
 
     if (NULL == options) {
-        if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
+        if (0 != SDL_RenderCopyF(k__SDL.renderer, image->texture, &src, &dst)) {
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
             return -1;
         }
@@ -53,7 +53,7 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const
         if (options->flip_y)
             flip |= SDL_FLIP_VERTICAL;
 
-        if (0 != SDL_RenderCopyExF(k__window.renderer, image->texture, &src, &dst, options->angle, &center, flip)) {
+        if (0 != SDL_RenderCopyExF(k__SDL.renderer, image->texture, &src, &dst, options->angle, &center, flip)) {
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
             return -1;
         }
