@@ -22,9 +22,9 @@ int fn_room_init(void *params) {
 
     k_add_room_collision_manager();
 
-    k_add_room_step_callback(NULL, set_debug);
-    k_add_room_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
-    k_add_room_draw_callback(NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
+    k_room_add_step_callback(K_CURRENT_ROOM, NULL, set_debug);
+    k_room_add_draw_callback(K_CURRENT_ROOM, NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
+    k_room_add_draw_callback(K_CURRENT_ROOM, NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
 
     {
         struct yx_obj_bubble_maker_config config;

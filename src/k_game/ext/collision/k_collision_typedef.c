@@ -33,7 +33,7 @@ int k_room_add_collision_manager(struct k_room *room) {
 }
 
 int k_add_room_collision_manager(void) {
-    return k_add_room_component_manager(k__component_type_collision, NULL);
+    return k_room_add_component_manager(K_CURRENT_ROOM, k__component_type_collision, NULL);
 }
 
 /* endregion */
@@ -41,7 +41,7 @@ int k_add_room_collision_manager(void) {
 /* region [get_room_component_manager] */
 
 struct k_collision_manager *k__collision_get_manager(void) {
-    struct k_component_manager *component_manager = k_get_room_component_manager(k__component_type_collision);
+    struct k_component_manager *component_manager = k_room_get_component_manager(K_CURRENT_ROOM, k__component_type_collision);
     if (NULL == component_manager)
         return NULL;
 

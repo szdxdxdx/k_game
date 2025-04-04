@@ -2,15 +2,18 @@
 
 #include "../_internal.h"
 
-static int my_rand(int min, int max) {
-    return min + rand() % (max - min + 1);
+static float my_rand(float min, float max) {
+    int min_ = (int)min;
+    int max_ = (int)max;
+    int r = min_ + rand() % (max_ - min_ + 1);
+    return (float)r;
 }
 
 static void yx_bubble_maker_create_bubble(struct k_object *object, int timeout_diff) {
 
-    int padding = 32;
-    float rand_x = (float)my_rand(padding, k_get_room_width() - padding);
-    float rand_y = (float)my_rand(padding, k_get_room_height() - padding);
+    float padding = 32;
+    float rand_x = my_rand(padding, k_room_get_width(K_CURRENT_ROOM) - padding);
+    float rand_y = my_rand(padding, k_room_get_height(K_CURRENT_ROOM) - padding);
 
     yx_bubble_create(rand_x, rand_y);
 

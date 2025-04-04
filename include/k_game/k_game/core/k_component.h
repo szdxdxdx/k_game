@@ -131,18 +131,12 @@ void k_component_del_all_callbacks(struct k_component *component);
  */
 int k_room_add_component_manager(struct k_room *room, struct k_component_type *component_type, void *params);
 
-/** \brief 给当前房间添加组件管理器 */
-int k_add_room_component_manager(struct k_component_type *component_type, void *params);
-
 /**
  * \brief 获取房间的组件管理器
  *
  * 函数返回房间所挂载的组件管理器，若没有挂载，则返回 `NULL`。
  */
 struct k_component_manager *k_room_get_component_manager(struct k_room *room, struct k_component_type *component_type);
-
-/** \brief 获取当前房间的组件管理器 */
-struct k_component_manager *k_get_room_component_manager(struct k_component_type *component_type);
 
 /* endregion */
 
