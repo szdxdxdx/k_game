@@ -144,7 +144,7 @@ struct k_room *k_get_current_room(void);
 
 /* region [room_get] */
 
-#define K_CURRENT_ROOM ((void *)0x7)
+extern struct k_room *K_CURRENT_ROOM;
 
 /**
  * \brief 获取房间的关联数据

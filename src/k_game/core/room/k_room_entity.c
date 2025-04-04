@@ -2,6 +2,8 @@
 
 #include "../game/_public.h"
 
+struct k_room *K_CURRENT_ROOM = (void *)0x7;
+
 void *k_room_get_data(struct k_room *room) {
 
     if (K_CURRENT_ROOM == room) {
