@@ -1,8 +1,6 @@
-#include <math.h>
-
 #include "k_game.h"
-#include "../core/room/_public.h"
-#include "../core/k_SDL/_public.h"
+#include "../core/room/_shared.h"
+#include "../core/k_SDL/_shared.h"
 
 void k_clean_room_canvas(void *unused) {
     (void)unused;

@@ -4,27 +4,27 @@
 
 /* region [sound_registry] */
 
-static struct k_asset_registry BGM_registry;
+static struct k_asset_registry bgm_registry;
 
-int k__init_sound_BGM_registry(void) {
-    return k__asset_registry_init(&BGM_registry);
+int k__init_sound_bgm_registry(void) {
+    return k__asset_registry_init(&bgm_registry);
 }
 
 static void release_asset(struct k_asset_registry_node *registry_node) {
-    struct k_sound_BGM *sound = container_of(registry_node, struct k_sound_BGM, registry_node);
-    k_sound_BGM_release(sound);
+    struct k_sound_bgm *sound = container_of(registry_node, struct k_sound_bgm, registry_node);
+    k_sound_bgm_release(sound);
 }
 
-void k__cleanup_sound_BGM_registry(void) {
-    k__asset_registry_cleanup(&BGM_registry, release_asset);
+void k__cleanup_sound_bgm_registry(void) {
+    k__asset_registry_cleanup(&bgm_registry, release_asset);
 }
 
-struct k_sound_BGM *k_find_sound_BGM(const char *BGM_name) {
-    struct k_asset_registry_node *registry_node = k__asset_registry_find(&BGM_registry, BGM_name);
+struct k_sound_bgm *k_find_sound_bgm(const char *bgm_name) {
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&bgm_registry, bgm_name);
     if (NULL == registry_node)
         return NULL;
 
-    struct k_sound_BGM *sound = container_of(registry_node, struct k_sound_BGM, registry_node);
+    struct k_sound_bgm *sound = container_of(registry_node, struct k_sound_bgm, registry_node);
     return sound;
 }
 
@@ -32,12 +32,12 @@ struct k_sound_BGM *k_find_sound_BGM(const char *BGM_name) {
 
 /* region [sound_load] */
 
-struct k_sound_BGM *k_sound_BGM_load(const char *filepath) {
+struct k_sound_bgm *k_sound_bgm_load(const char *filepath) {
 
     if (NULL == filepath || '\0' == filepath[0])
         return NULL;
 
-    struct k_sound_BGM *sound = k_malloc(sizeof(struct k_sound_BGM));
+    struct k_sound_bgm *sound = k_malloc(sizeof(struct k_sound_bgm));
     if (NULL == sound)
         return NULL;
 
@@ -49,11 +49,11 @@ struct k_sound_BGM *k_sound_BGM_load(const char *filepath) {
     }
 
     sound->music = music;
-    k__asset_registry_add(&BGM_registry, &sound->registry_node);
+    k__asset_registry_add(&bgm_registry, &sound->registry_node);
     return sound;
 }
 
-void k_sound_BGM_release(struct k_sound_BGM *sound) {
+void k_sound_bgm_release(struct k_sound_bgm *sound) {
 
     if (NULL == sound)
         return;
@@ -67,7 +67,7 @@ void k_sound_BGM_release(struct k_sound_BGM *sound) {
 
 /* region [sound_play] */
 
-int k_sound_BGM_loop(struct k_sound_BGM *sound, int loops) {
+int k_sound_bgm_loop(struct k_sound_bgm *sound, int loops) {
 
     if (NULL == sound)
         return -1;

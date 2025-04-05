@@ -3,7 +3,7 @@
 
 #include "k_game.h"
 
-#include "./_public.h"
+#include "./_shared.h"
 
 int k__init_game(const struct k_game_config *config);
 

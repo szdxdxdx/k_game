@@ -12,8 +12,8 @@ static void load_sprite(void) {
 }
 
 static void load_sound(void) {
-    struct k_sound_BGM *bgm = k_sound_BGM_load("./demo_1/sound/bgm.wav");
-    k_sound_BGM_loop(bgm, INT_MAX);
+    struct k_sound_bgm *bgm = k_sound_bgm_load("./demo_1/sound/bgm.wav");
+    k_sound_bgm_loop(bgm, INT_MAX);
 }
 
 static void create_room(void) {

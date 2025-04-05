@@ -3,7 +3,7 @@
 
 #include "k_game.h"
 
-#include "./_public.h"
+#include "./_shared.h"
 
 struct k_state_machine {
 

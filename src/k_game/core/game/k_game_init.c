@@ -5,18 +5,18 @@
 
 #include "k_game.h"
 
-#include "../k_SDL/_public.h"
-#include "../image/_public.h"
-#include "../sound/_public.h"
-#include "../sprite/k_sprite_registry.h"
-#include "../room/_public.h"
-#include "../component/_public.h"
+#include "../k_SDL/_shared.h"
+#include "../image/_shared.h"
+#include "../sound/_shared.h"
+#include "../sprite/_shared.h"
+#include "../room/_shared.h"
+#include "../component/_shared.h"
 
-#include "../../ext/wasd/_public.h"
-#include "../../ext/sprite_renderer/_public.h"
-#include "../../ext/collision/_public.h"
-#include "../../ext/position/_public.h"
-#include "../../ext/state_mechine/_public.h"
+#include "../../ext/wasd/_shared.h"
+#include "../../ext/sprite_renderer/_shared.h"
+#include "../../ext/collision/_shared.h"
+#include "../../ext/position/_shared.h"
+#include "../../ext/state_mechine/_shared.h"
 
 /* region [steps] */
 
@@ -43,11 +43,11 @@ static void step_cleanup_image_registry(void *unused) {
 static int step_init_sound_registry(void *unused) {
     (void)unused;
 
-    if (0 != k__init_sound_BGM_registry())
+    if (0 != k__init_sound_bgm_registry())
         return -1;
 
-    if (0 != k__init_sound_SFX_registry()) {
-        k__cleanup_sound_BGM_registry();
+    if (0 != k__init_sound_sfx_registry()) {
+        k__cleanup_sound_bgm_registry();
         return -1;
     }
 
@@ -56,8 +56,8 @@ static int step_init_sound_registry(void *unused) {
 
 static void step_cleanup_sound_registry(void *unused) {
     (void)unused;
-    k__cleanup_sound_BGM_registry();
-    k__cleanup_sound_SFX_registry();
+    k__cleanup_sound_bgm_registry();
+    k__cleanup_sound_sfx_registry();
 }
 
 static int step_init_sprite_registry(void *unused) {

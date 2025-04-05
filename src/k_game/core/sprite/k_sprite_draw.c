@@ -1,4 +1,4 @@
-#include "../image/_public.h"
+#include "../image/_shared.h"
 
 #include "./_internal.h"
 

@@ -1,5 +1,5 @@
-#ifndef K_CALLBACK_PUBLIC_H
-#define K_CALLBACK_PUBLIC_H
+#ifndef K_CALLBACK_SHARED_H
+#define K_CALLBACK_SHARED_H
 
 #include "./k_callback_alarm.h"
 #include "./k_callback_step.h"

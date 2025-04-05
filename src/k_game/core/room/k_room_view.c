@@ -1,8 +1,8 @@
 #include <math.h>
 #include "./_internal.h"
 
-#include "../k_SDL/_public.h"
-#include "../game/_public.h"
+#include "../k_SDL/_shared.h"
+#include "../game/_shared.h"
 
 void k_room_set_view_w(struct k_room *room, float w) {
 

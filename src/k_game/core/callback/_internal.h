@@ -3,13 +3,13 @@
 
 #include "k_game.h"
 
-#include "./_public.h"
+#include "./_shared.h"
 
 #include "./k_callback_base.h"
 
-#include "../room/_public.h"
-#include "../object/_public.h"
-#include "../component/_public.h"
+#include "../room/_shared.h"
+#include "../object/_shared.h"
+#include "../component/_shared.h"
 
 struct k_room;
 struct k_room_callback;

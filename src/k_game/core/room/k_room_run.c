@@ -1,15 +1,16 @@
 #include "./_internal.h"
 
-#include "../k_SDL/_public.h"
-#include "../game/_public.h"
+#include "../k_SDL/_shared.h"
+#include "../game/_shared.h"
 
 void k__room_run(struct k_room *room) {
     K_CURRENT_ROOM = room;
 
     room->game_loop = 1;
 
-    if (NULL != room->fn_enter)
+    if (NULL != room->fn_enter) {
         room->fn_enter();
+    }
 
     SDL_Rect canvas_view;
     canvas_view.x = 0;
@@ -48,8 +49,9 @@ void k__room_run(struct k_room *room) {
         SDL_RenderPresent(k__SDL.renderer);
     }
 
-    if (NULL != room->fn_leave)
+    if (NULL != room->fn_leave) {
         room->fn_leave();
+    }
 
     K_CURRENT_ROOM = NULL;
 }

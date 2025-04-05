@@ -4,9 +4,9 @@
 
 #include "./_internal.h"
 
-#include "../game/_public.h"
-#include "../component/_public.h"
-#include "../k_SDL/_public.h"
+#include "../game/_shared.h"
+#include "../component/_shared.h"
+#include "../k_SDL/_shared.h"
 
 /* region [room_registry] */
 

@@ -1,5 +1,5 @@
-#ifndef K_ROOM_PUBLIC_H
-#define K_ROOM_PUBLIC_H
+#ifndef K_ROOM_SHARED_H
+#define K_ROOM_SHARED_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -7,8 +7,8 @@
 #include "k_list.h"
 
 #include "../asset/k_asset_registry.h"
-#include "../callback/_public.h"
-#include "../object/_public.h"
+#include "../callback/_shared.h"
+#include "../object/_shared.h"
 
 /* region [room_registry] */
 

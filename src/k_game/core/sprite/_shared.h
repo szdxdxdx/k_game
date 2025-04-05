@@ -1,5 +1,5 @@
-#ifndef K_SPRITE_REGISTRY_H
-#define K_SPRITE_REGISTRY_H
+#ifndef K_SPRITE_SHARED_H
+#define K_SPRITE_SHARED_H
 
 int k__init_sprite_registry(void);
 

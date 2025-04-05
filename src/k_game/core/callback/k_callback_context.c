@@ -1,4 +1,4 @@
-#include "../game/_public.h"
+#include "../game/_shared.h"
 
 #include "./_internal.h"
 

@@ -1,5 +1,5 @@
-#ifndef K_IMAGE_PUBLIC_H
-#define K_IMAGE_PUBLIC_H
+#ifndef K_IMAGE_SHARED_H
+#define K_IMAGE_SHARED_H
 
 #include "SDL_render.h"
 

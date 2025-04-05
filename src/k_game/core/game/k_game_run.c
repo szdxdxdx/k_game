@@ -4,7 +4,7 @@
 
 #include "./_internal.h"
 
-#include "../room/_public.h"
+#include "../room/_shared.h"
 
 static void run_game() {
 

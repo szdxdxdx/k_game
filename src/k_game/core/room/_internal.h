@@ -3,7 +3,7 @@
 
 #include "k_game.h"
 
-#include "./_public.h"
+#include "./_shared.h"
 
 void k_room_destroy(struct k_room *room);
 

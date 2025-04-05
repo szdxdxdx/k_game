@@ -1,51 +1,51 @@
 #ifndef K_SOUND_H
 #define K_SOUND_H
 
-struct k_sound_BGM;
+struct k_sound_bgm;
 
-struct k_sound_SFX;
+struct k_sound_sfx;
 
-/* region [BGM_load] */
+/* region [bgm_load] */
 
-struct k_sound_BGM *k_sound_BGM_load(const char *filepath);
+struct k_sound_bgm *k_sound_bgm_load(const char *filepath);
 
-void k_sound_BGM_release(struct k_sound_BGM *sound);
+void k_sound_bgm_release(struct k_sound_bgm *sound);
 
-int k_sound_BGM_set_name(struct k_sound_BGM *sound, const char *BGM_name);
+int k_sound_bgm_set_name(struct k_sound_bgm *sound, const char *bgm_name);
 
-struct k_sound_BGM *k_find_sound_BGM(const char *BGM_name);
-
-/* endregion */
-
-/* region [BGM_play] */
-
-int k_sound_BGM_loop(struct k_sound_BGM *sound, int loops);
-
-// int k_sound_BGM_is_playing(void);
-
-// TODO void k_sound_BGM_stop(void);
-
-// TODO int k_sound_set_BGM_volume(float volume);
+struct k_sound_bgm *k_find_sound_bgm(const char *bgm_name);
 
 /* endregion */
 
-/* region [SFX_load] */
+/* region [bgm_play] */
 
-struct k_sound_SFX *k_sound_SFX_load(const char *filepath);
+int k_sound_bgm_loop(struct k_sound_bgm *sound, int loops);
 
-void k_sound_SFX_release(struct k_sound_SFX *sound);
+// int k_sound_bgm_is_playing(void);
 
-int k_sound_SFX_set_name(struct k_sound_SFX *sound, const char *SFX_name);
+// TODO void k_sound_bgm_stop(void);
 
-struct k_sound_SFX *k_find_sound_SFX(const char *SFX_name);
+// TODO int k_sound_set_bgm_volume(float volume);
 
 /* endregion */
 
-/* region [SFX_play] */
+/* region [sfx_load] */
 
-void k_sound_SFX_play(struct k_sound_SFX *sound);
+struct k_sound_sfx *k_sound_sfx_load(const char *filepath);
 
-void k_sound_SFX_loop(struct k_sound_SFX *sound, int loops);
+void k_sound_sfx_release(struct k_sound_sfx *sound);
+
+int k_sound_sfx_set_name(struct k_sound_sfx *sound, const char *sfx_name);
+
+struct k_sound_sfx *k_find_sound_sfx(const char *sfx_name);
+
+/* endregion */
+
+/* region [sfx_play] */
+
+void k_sound_sfx_play(struct k_sound_sfx *sound);
+
+void k_sound_sfx_loop(struct k_sound_sfx *sound, int loops);
 
 /* endregion */
 

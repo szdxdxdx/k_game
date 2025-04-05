@@ -4,7 +4,7 @@
 #include "k_list.h"
 
 #include "k_game.h"
-#include "./_public.h"
+#include "./_shared.h"
 
 struct k_position {
 

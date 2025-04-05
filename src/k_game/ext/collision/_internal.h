@@ -6,7 +6,7 @@
 
 #include "k_game.h"
 
-#include "./_public.h"
+#include "./_shared.h"
 
 enum k_collision_box_type;
 struct k_collision_box_config;

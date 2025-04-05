@@ -2,7 +2,7 @@
 
 #include "./_internal.h"
 
-#include "../room/_public.h"
+#include "../room/_shared.h"
 
 struct k_game_context k__game = {
     .quit_game = 0,

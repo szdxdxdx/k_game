@@ -1,5 +1,5 @@
-#ifndef K_OBJECT_PUBLIC_H
-#define K_OBJECT_PUBLIC_H
+#ifndef K_OBJECT_SHARED_H
+#define K_OBJECT_SHARED_H
 
 #include "k_list.h"
 

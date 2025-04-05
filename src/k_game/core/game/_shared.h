@@ -1,5 +1,5 @@
-#ifndef K_GAME_PUBLIC_H
-#define K_GAME_PUBLIC_H
+#ifndef K_GAME_SHARED_H
+#define K_GAME_SHARED_H
 
 #include <stdint.h>
 

@@ -3,9 +3,9 @@
 
 #include "k_game.h"
 
-#include "../k_SDL/_public.h"
+#include "../k_SDL/_shared.h"
 
-#include "./_public.h"
+#include "./_shared.h"
 
 struct k_image *k__image_create(SDL_Texture *texture);
 

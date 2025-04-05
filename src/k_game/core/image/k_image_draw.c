@@ -1,6 +1,6 @@
 #include "k_log.h"
 
-#include "../room/_public.h"
+#include "../room/_shared.h"
 
 #include "./_internal.h"
 

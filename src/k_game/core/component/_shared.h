@@ -1,5 +1,5 @@
-#ifndef K_COMPONENT_PUBLIC_H
-#define K_COMPONENT_PUBLIC_H
+#ifndef K_COMPONENT_SHARED_H
+#define K_COMPONENT_SHARED_H
 
 #include <stddef.h>
 

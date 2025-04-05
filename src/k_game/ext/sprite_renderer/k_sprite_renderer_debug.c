@@ -1,6 +1,6 @@
 #include <math.h>
 
-#include "../../core/k_SDL/_public.h"
+#include "../../core/k_SDL/_shared.h"
 
 #include "./_internal.h"
 

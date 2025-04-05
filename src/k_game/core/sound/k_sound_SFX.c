@@ -2,27 +2,27 @@
 
 /* region [sound_registry] */
 
-static struct k_asset_registry SFX_registry;
+static struct k_asset_registry sfx_registry;
 
-int k__init_sound_SFX_registry(void) {
-    return k__asset_registry_init(&SFX_registry);
+int k__init_sound_sfx_registry(void) {
+    return k__asset_registry_init(&sfx_registry);
 }
 
 static void release_asset(struct k_asset_registry_node *registry_node) {
-    struct k_sound_SFX *sound = container_of(registry_node, struct k_sound_SFX, registry_node);
-    k_sound_SFX_release(sound);
+    struct k_sound_sfx *sound = container_of(registry_node, struct k_sound_sfx, registry_node);
+    k_sound_sfx_release(sound);
 }
 
-void k__cleanup_sound_SFX_registry(void) {
-    k__asset_registry_cleanup(&SFX_registry, release_asset);
+void k__cleanup_sound_sfx_registry(void) {
+    k__asset_registry_cleanup(&sfx_registry, release_asset);
 }
 
-struct k_sound_SFX *k_find_sound_SFX(const char *SFX_name) {
-    struct k_asset_registry_node *registry_node = k__asset_registry_find(&SFX_registry, SFX_name);
+struct k_sound_sfx *k_find_sound_sfx(const char *sfx_name) {
+    struct k_asset_registry_node *registry_node = k__asset_registry_find(&sfx_registry, sfx_name);
     if (NULL == registry_node)
         return NULL;
 
-    struct k_sound_SFX *sound = container_of(registry_node, struct k_sound_SFX, registry_node);
+    struct k_sound_sfx *sound = container_of(registry_node, struct k_sound_sfx, registry_node);
     return sound;
 }
 
@@ -30,12 +30,12 @@ struct k_sound_SFX *k_find_sound_SFX(const char *SFX_name) {
 
 /* region [sound_load] */
 
-struct k_sound_SFX *k_sound_SFX_load(const char *filepath) {
+struct k_sound_sfx *k_sound_sfx_load(const char *filepath) {
 
     if (NULL == filepath || '\0' == filepath[0])
         return NULL;
 
-    struct k_sound_SFX *sound = k_malloc(sizeof(struct k_sound_SFX));
+    struct k_sound_sfx *sound = k_malloc(sizeof(struct k_sound_sfx));
     if (NULL == sound)
         return NULL;
 
@@ -46,11 +46,11 @@ struct k_sound_SFX *k_sound_SFX_load(const char *filepath) {
     }
 
     sound->chunk = chunk;
-    k__asset_registry_add(&SFX_registry, &sound->registry_node);
+    k__asset_registry_add(&sfx_registry, &sound->registry_node);
     return sound;
 }
 
-void k_sound_SFX_release(struct k_sound_SFX *sound) {
+void k_sound_sfx_release(struct k_sound_sfx *sound) {
 
     if (NULL == sound)
         return;
@@ -64,7 +64,7 @@ void k_sound_SFX_release(struct k_sound_SFX *sound) {
 
 /* region [sound_play] */
 
-void k_sound_SFX_play(struct k_sound_SFX *sound) {
+void k_sound_sfx_play(struct k_sound_sfx *sound) {
 
     if (NULL == sound)
         return;
@@ -77,7 +77,7 @@ void k_sound_SFX_play(struct k_sound_SFX *sound) {
     }
 }
 
-void k_sound_SFX_loop(struct k_sound_SFX *sound, int loops) {
+void k_sound_sfx_loop(struct k_sound_sfx *sound, int loops) {
 
     if (NULL == sound)
         return;

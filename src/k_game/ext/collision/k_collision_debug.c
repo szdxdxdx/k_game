@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-#include "../../core/k_SDL/_public.h"
+#include "../../core/k_SDL/_shared.h"
 
 /* region [debug_draw] */
 

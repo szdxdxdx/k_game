@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-#include "../game/_public.h"
+#include "../game/_shared.h"
 
 struct k_room *K_CURRENT_ROOM = (void *)0x7;
 
