@@ -169,8 +169,8 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     {
         struct k_position_config position_config;
         position_config.parent = NULL;
-        position_config.world_x     = &player->x;
-        position_config.world_y     = &player->y;
+        position_config.world_x = &player->x;
+        position_config.world_y = &player->y;
         position_config.local_x = config->x;
         position_config.local_y = config->y;
         player->position = k_object_add_position(object, &position_config);
@@ -216,8 +216,6 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
         player->state_machine = k_object_add_state_machine(object);
         k_state_machine_change_state(player->state_machine, STATE_IDLE);
     }
-
-    k_set_view_position(player->x, player->y);
 
     return object;
 }

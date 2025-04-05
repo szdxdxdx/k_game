@@ -57,12 +57,9 @@ static int init_room(void *params) {
 }
 
 static void enter_room(void) {
-
     struct yx_room_arena *room_arena = k_room_get_data(K_CURRENT_ROOM);
-    struct k_object *obj_player = room_arena->player;
 
-    struct yx_obj_player *player = k_object_get_data(obj_player);
-
+    struct yx_obj_player *player = k_object_get_data(room_arena->player);
     k_set_view_position(player->x, player->y);
 }
 
