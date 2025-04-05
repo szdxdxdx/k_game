@@ -1,3 +1,5 @@
+#include "../room/_public.h"
+
 #include "./_internal.h"
 
 static int mouse_x = 0;
@@ -42,8 +44,17 @@ void k__handle_SDL_event_mouse_button_up(SDL_MouseButtonEvent *event) {
 }
 
 void k__handle_SDL_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
-    mouse_x = event->x;
-    mouse_y = event->y;
+
+
+    float x_at_window = (float)event->x;
+    float x_at_view = (x_at_window / (float)k__SDL.window_w) * K_CURRENT_ROOM->view_w;
+    float x_at_room = x_at_view + K_CURRENT_ROOM->view_x;
+    mouse_x = (int)x_at_room;
+
+    float y_at_window = (float)event->y;
+    float y_at_view = (y_at_window / (float)k__SDL.window_h) * K_CURRENT_ROOM->view_h;
+    float y_at_room = y_at_view + K_CURRENT_ROOM->view_y;
+    mouse_y = (int)y_at_room;
 }
 
 int k_mouse_x(void) {
