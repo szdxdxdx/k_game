@@ -121,7 +121,9 @@ static int step_create_window(void *config_) {
         return -1;
     }
 
-    k__SDL.window = window;
+    k__SDL.window   = window;
+    k__SDL.window_w = w;
+    k__SDL.window_h = h;
     return 0;
 }
 
@@ -183,7 +185,9 @@ static int step_create_canvas(void *config_) {
         return -1;
     }
 
-    k__SDL.canvas = canvas;
+    k__SDL.canvas   = canvas;
+    k__SDL.canvas_w = canvas_w;
+    k__SDL.canvas_h = canvas_h;
     return 0;
 }
 

@@ -19,10 +19,14 @@ void k__quit_SDL(void);
 struct k_SDL_context {
 
     SDL_Window *window;
+    int window_w;
+    int window_h;
 
     SDL_Renderer *renderer;
 
     SDL_Texture *canvas;
+    int canvas_w;
+    int canvas_h;
 };
 
 extern struct k_SDL_context k__SDL;

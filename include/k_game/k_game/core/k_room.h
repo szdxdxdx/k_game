@@ -188,17 +188,17 @@ void k_room_del_all_callbacks(struct k_room *room);
 
 /* region [room_view] */
 
-void k_room_set_view_w(struct k_room *room, int w);
+void k_room_set_view_w(struct k_room *room, float w);
 
-void k_room_set_view_h(struct k_room *room, int h);
+void k_room_set_view_h(struct k_room *room, float h);
 
-void k_room_set_view_x(struct k_room *room, int x);
+void k_room_set_view_x(struct k_room *room, float x);
 
-void k_room_set_view_y(struct k_room *room, int y);
+void k_room_set_view_y(struct k_room *room, float y);
 
-void k_room_set_view_cx(struct k_room *room, int cx);
+void k_room_set_view_cx(struct k_room *room, float cx);
 
-void k_room_set_view_cy(struct k_room *room, int cy);
+void k_room_set_view_cy(struct k_room *room, float cy);
 
 /* endregion */
 

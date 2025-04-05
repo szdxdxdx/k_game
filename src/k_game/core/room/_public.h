@@ -44,10 +44,10 @@ struct k_room {
     float room_w;
     float room_h;
 
-    int view_x;
-    int view_y;
-    int view_w;
-    int view_h;
+    float view_x;
+    float view_y;
+    float view_w;
+    float view_h;
 
     uint64_t step_interval_ms;
 

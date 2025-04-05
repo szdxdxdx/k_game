@@ -6,6 +6,7 @@
 
 #include "../game/_public.h"
 #include "../component/_public.h"
+#include "../k_SDL/_public.h"
 
 /* region [room_registry] */
 
@@ -93,13 +94,16 @@ static int step_set_properties(void *context) {
     room->fn_enter = config->fn_enter;
     room->fn_leave = config->fn_leave;
 
+    if (config->room_w <= 0 || config->room_h <= 0) {
+        k_log_error("Invalid room width or height");
+        return -1;
+    }
     room->room_w = config->room_w;
     room->room_h = config->room_h;
 
     room->view_x = 0;
     room->view_y = 0;
-    room->view_w = 450;
-    room->view_h = 450;
+    k_room_set_view_w(room, config->room_w);
 
     room->game_loop = 0;
 
@@ -107,7 +111,6 @@ static int step_set_properties(void *context) {
         k_log_error("Invalid room speed %d", config->room_speed);
         return -1;
     }
-
     room->step_interval_ms = (uint64_t)(1000 / config->room_speed);
 
     return 0;
