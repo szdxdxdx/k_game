@@ -49,22 +49,30 @@ struct step_context {
     struct k_room *room;
 };
 
+#define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
+
 static int step_malloc(void *context) {
     struct step_context *ctx = context;
     const struct k_room_config *config = ctx->config;
 
-#define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
+    if (SIZE_MAX - sizeof(struct k_room) <= config->data_size) {
+        k_log_error("Invalid room data size %zu", config->data_size);
+        return -1;
+    }
 
-    ctx->room = k_malloc(sizeof(struct k_room) + config->data_size);
-    if (NULL == ctx->room)
+    size_t alloc_size = sizeof(struct k_room) + config->data_size;
+
+    struct k_room *room = k_malloc(alloc_size);
+    if (NULL == room)
         return -1;
 
     if (0 != config->data_size) {
-        ctx->room->data = ptr_offset(ctx->room, sizeof(struct k_room));
+        room->data = ptr_offset(ctx->room, sizeof(struct k_room));
     } else {
-        ctx->room->data = NULL;
+        room->data = NULL;
     }
 
+    ctx->room = room;
     return 0;
 }
 
@@ -94,6 +102,11 @@ static int step_set_properties(void *context) {
     room->view_h = 450;
 
     room->game_loop = 0;
+
+    if (config->room_speed <= 0) {
+        k_log_error("Invalid room speed %d", config->room_speed);
+        return -1;
+    }
 
     room->step_interval_ms = (uint64_t)(1000 / config->room_speed);
 
@@ -237,28 +250,12 @@ static const struct k_seq_step steps[] = {
 
 /* endregion */
 
-static int check_config(const struct k_room_config *config) {
-
-    const char *err_msg;
-
-#define check_config_assert(cond) \
-    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
-
-    check_config_assert(NULL != config);
-    check_config_assert(0 < config->room_speed);
-    check_config_assert(config->data_size < SIZE_MAX - sizeof(struct k_room));
-
-    return 0;
-
-err:
-    k_log_error("Invalid room config: %s", err_msg);
-    return -1;
-}
-
 struct k_room *k_room_create(const struct k_room_config *config, void *params) {
 
-    if (0 != check_config(config))
+    if (NULL == config) {
+        k_log_error("Room config is NULL");
         goto err;
+    }
 
     struct step_context ctx;
     ctx.config = config;
