@@ -1,6 +1,7 @@
 #include "k_log.h"
 
 #include "../room/_shared.h"
+#include "../view/_shared.h"
 
 #include "./_internal.h"
 
@@ -33,8 +34,8 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const
     }
 
     SDL_FRect dst;
-    dst.x = dst_rect->x - K_CURRENT_ROOM->view_x;
-    dst.y = dst_rect->y - K_CURRENT_ROOM->view_y;
+    dst.x = dst_rect->x - k__view.view_x;
+    dst.y = dst_rect->y - k__view.view_y;
     dst.w = dst_rect->w;
     dst.h = dst_rect->h;
 

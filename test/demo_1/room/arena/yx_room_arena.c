@@ -51,7 +51,7 @@ int fn_room_init(void *params) {
 
     yx_test_bt();
 
-    k_room_set_view_w(K_CURRENT_ROOM, 640);
+    k_set_view_w(640);
 
     return 0;
 }

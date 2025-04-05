@@ -1,8 +1,6 @@
 #include "./_internal.h"
 
-#include "../game/_shared.h"
-
-struct k_room *K_CURRENT_ROOM = (void *)0x7;
+struct k_room *K_CURRENT_ROOM = NULL;
 
 void *k_room_get_data(struct k_room *room) {
     return room->data;

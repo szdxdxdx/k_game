@@ -44,11 +44,6 @@ struct k_room {
     float room_w;
     float room_h;
 
-    float view_x;
-    float view_y;
-    float view_w;
-    float view_h;
-
     uint64_t step_interval_ms;
 
     unsigned int game_loop;

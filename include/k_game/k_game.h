@@ -10,6 +10,7 @@
 #include "./k_game/core/k_sound.h"
 #include "./k_game/core/k_sprite.h"
 #include "./k_game/core/k_room.h"
+#include "./k_game/core/k_view.h"
 #include "./k_game/core/k_object.h"
 #include "./k_game/core/k_component.h"
 

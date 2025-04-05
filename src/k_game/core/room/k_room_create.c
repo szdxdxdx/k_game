@@ -6,7 +6,6 @@
 
 #include "../game/_shared.h"
 #include "../component/_shared.h"
-#include "../k_SDL/_shared.h"
 
 /* region [room_registry] */
 
@@ -100,10 +99,6 @@ static int step_set_properties(void *context) {
     }
     room->room_w = config->room_w;
     room->room_h = config->room_h;
-
-    room->view_x = 0;
-    room->view_y = 0;
-    k_room_set_view_w(room, config->room_w);
 
     room->game_loop = 0;
 
