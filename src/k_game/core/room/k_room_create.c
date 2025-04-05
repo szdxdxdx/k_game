@@ -67,7 +67,7 @@ static int step_malloc(void *context) {
         return -1;
 
     if (0 != config->data_size) {
-        room->data = ptr_offset(ctx->room, sizeof(struct k_room));
+        room->data = ptr_offset(room, sizeof(struct k_room));
     } else {
         room->data = NULL;
     }

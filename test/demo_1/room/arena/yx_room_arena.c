@@ -17,8 +17,10 @@ static void set_debug(void *data) {
     }
 }
 
-int fn_room_init(void *params) {
+static int init_room(void *params) {
     (void)params;
+
+    struct yx_room_arena *room_arena = k_room_get_data(K_CURRENT_ROOM);
 
     k_add_room_collision_manager();
 
@@ -37,7 +39,7 @@ int fn_room_init(void *params) {
         config.y = 300;
         config.spr_idle = yx_spr_ynx_idle;
         config.spr_run  = yx_spr_ynx_run;
-        yx_player_create(&config);
+        room_arena->player = yx_player_create(&config);
     }
 
     {
@@ -49,19 +51,29 @@ int fn_room_init(void *params) {
         yx_rival_create(&config);
     }
 
-    yx_test_bt();
-
-    k_set_view_w(640);
+    // yx_test_bt();
 
     return 0;
+}
+
+static void enter_room(void) {
+
+    struct yx_room_arena *room_arena = k_room_get_data(K_CURRENT_ROOM);
+    struct k_object *obj_player = room_arena->player;
+
+    struct yx_obj_player *player = k_object_get_data(obj_player);
+
+    k_set_view_position(player->x, player->y);
 }
 
 struct k_room *yx_room_arena_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_w = 1920;
-    config.room_h = 1080;
-    config.fn_init = fn_room_init;
+    config.room_w    = 1920;
+    config.room_h    = 1080;
+    config.data_size = sizeof(struct yx_room_arena);
+    config.fn_init   = init_room;
+    config.fn_enter  = enter_room;
 
     return k_room_create(&config, NULL);
 }
