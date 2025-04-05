@@ -8,8 +8,6 @@
 
 #include "./_internal.h"
 
-#include "../game/k_game_config.h"
-
 /* region [steps] */
 
 static int step_before_init(void *unused) {
@@ -171,7 +169,7 @@ static int step_create_canvas(void *config_) {
         canvas_h = config->window_h;
     }
     else {
-        if (canvas_w < K_GAME_CANVAS_MIN_W || canvas_h < K_GAME_CANVAS_MIN_H) {
+        if (canvas_w <= 0 || canvas_h <= 0) {
             k_log_error("Failed to create game canvas: invalid canvas size");
             return -1;
         }

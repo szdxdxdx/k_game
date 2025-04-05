@@ -18,8 +18,6 @@
 #include "../../ext/position/_public.h"
 #include "../../ext/state_mechine/_public.h"
 
-#include "k_game_config.h"
-
 /* region [steps] */
 
 static int step_init_SDL(void *context) {
