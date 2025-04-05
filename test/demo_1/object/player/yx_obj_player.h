@@ -15,11 +15,6 @@ struct yx_obj_player_config {
 
 struct k_object *yx_player_create(const struct yx_obj_player_config *config);
 
-enum yx_obj_player_state {
-    YX_OBJ_PLAYER_STATE_IDLE,
-    YX_OBJ_PLAYER_STATE_RUN,
-};
-
 struct yx_obj_player {
 
     struct k_position *position;

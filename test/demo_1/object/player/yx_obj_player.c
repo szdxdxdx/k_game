@@ -18,7 +18,7 @@ static struct k_state_machine_state STATE_RUNNING = {
     NULL,
 };
 
-/* region [STATE_IDLE] */
+/* region [state_idle] */
 
 static void state_enter_idle(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
@@ -40,7 +40,7 @@ static void state_step_idle(struct k_object *object) {
 
 /* endregion */
 
-/* region [STATE_RUNNING] */
+/* region [state_running] */
 
 static void state_enter_running(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);

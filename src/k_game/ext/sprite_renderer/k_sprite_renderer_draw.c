@@ -1,8 +1,6 @@
 #include <assert.h>
 #include "./_internal.h"
 
-#include "../../core/sprite/_public.h"
-
 /* region [draw_sprite] */
 
 static void k__sprite_renderer_draw_sprite(struct k_component *component) {

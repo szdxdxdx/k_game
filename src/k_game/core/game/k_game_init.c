@@ -8,7 +8,7 @@
 #include "../k_SDL/_public.h"
 #include "../image/_public.h"
 #include "../sound/_public.h"
-#include "../sprite/_public.h"
+#include "../sprite/k_sprite_registry.h"
 #include "../room/_public.h"
 #include "../component/_public.h"
 
