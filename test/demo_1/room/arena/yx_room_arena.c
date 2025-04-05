@@ -51,12 +51,16 @@ int fn_room_init(void *params) {
 
     yx_test_bt();
 
+    k_room_set_view_w(K_CURRENT_ROOM, 640);
+
     return 0;
 }
 
 struct k_room *yx_room_arena_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
+    config.room_w = 1920;
+    config.room_h = 1080;
     config.fn_init = fn_room_init;
 
     return k_room_create(&config, NULL);

@@ -71,6 +71,8 @@ static void state_step_running(struct k_object *object) {
     }
 
     k_position_set_local_position(player->position, player->next_x, player->next_y);
+    k_room_set_view_cx(K_CURRENT_ROOM, player->x);
+    k_room_set_view_cy(K_CURRENT_ROOM, player->y);
 }
 
 /* endregion */

@@ -11,6 +11,10 @@ void k__room_run(struct k_room *room) {
     if (NULL != room->fn_enter)
         room->fn_enter();
 
+    SDL_Rect canvas_view;
+    canvas_view.x = 0;
+    canvas_view.y = 0;
+
     k__game.step_timestamp = k_get_timestamp();
     k__game.step_delta_ms  = 0;
     k__game.step_delta     = 0.0f;
@@ -37,13 +41,10 @@ void k__room_run(struct k_room *room) {
 
         SDL_SetRenderTarget(k__SDL.renderer, NULL);
 
-        SDL_Rect view = {
-            .x = room->view_x,
-            .y = room->view_y,
-            .w = room->view_w,
-            .h = room->view_h,
-        };
-        SDL_RenderCopyF(k__SDL.renderer, k__SDL.canvas, &view, NULL);
+        canvas_view.w = (int)room->view_w;
+        canvas_view.h = (int)room->view_h;
+        SDL_RenderCopyF(k__SDL.renderer, k__SDL.canvas, &canvas_view, NULL);
+
         SDL_RenderPresent(k__SDL.renderer);
     }
 
