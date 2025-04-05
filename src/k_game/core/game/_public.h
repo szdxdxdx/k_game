@@ -18,8 +18,6 @@ struct k_game_context {
 
     /* 记录两帧时间差，单位：秒 */
     float step_delta;
-
-    struct k_room *current_room;
 };
 
 extern struct k_game_context k__game;

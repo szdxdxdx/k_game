@@ -208,13 +208,13 @@ static int step_call_fn_init(void *context) {
 
     void *params = ctx->params;
 
-    struct k_room *tmp = k__game.current_room;
-    k__game.current_room = room;
+    struct k_room *tmp = K_CURRENT_ROOM;
+    K_CURRENT_ROOM = room;
 
     int result = room->fn_init(params);
 
     /* [?] fn_init() 可能销毁了 tmp 指向的房间 */
-    k__game.current_room = tmp;
+    K_CURRENT_ROOM = tmp;
 
     if (0 != result) {
         k_log_error("Room fn_init() callback returned %d", result);
@@ -231,13 +231,13 @@ static void step_call_fn_fini(void *context) {
     if (NULL == room->fn_fini)
         return;
 
-    struct k_room *tmp = k__game.current_room;
-    k__game.current_room = room;
+    struct k_room *tmp = K_CURRENT_ROOM;
+    K_CURRENT_ROOM = room;
 
     room->fn_fini();
 
     /* [?] fn_fini() 可能销毁了 tmp 指向的房间 */
-    k__game.current_room = tmp;
+    K_CURRENT_ROOM = tmp;
 }
 
 static const struct k_seq_step steps[] = {

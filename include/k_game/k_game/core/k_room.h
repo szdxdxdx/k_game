@@ -138,8 +138,6 @@ struct k_room *k_find_room(const char *room_name);
 
 int k_goto_room(struct k_room *room);
 
-struct k_room *k_get_current_room(void);
-
 /* endregion */
 
 /* region [room_get] */

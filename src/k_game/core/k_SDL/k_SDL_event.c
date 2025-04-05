@@ -12,7 +12,7 @@ void k__poll_SDL_events(void) {
 
             case SDL_QUIT:
                 k__game.quit_game = 1;
-                k__game.current_room->game_loop = 0;
+                K_CURRENT_ROOM->game_loop = 0;
                 break;
 
             case SDL_MOUSEMOTION:

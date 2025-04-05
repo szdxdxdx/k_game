@@ -7,9 +7,7 @@
 
 struct k_object *k_object_create(size_t object_data_size) {
 
-    struct k_room *room = k__game.current_room;
-    if (NULL == room)
-        goto err;
+    struct k_room *room = K_CURRENT_ROOM;
 
     struct k_object *object = k__object_pool_acquire(&room->object_pool);
     if (NULL == object)
