@@ -37,7 +37,13 @@ void k__room_run(struct k_room *room) {
 
         SDL_SetRenderTarget(k__SDL.renderer, NULL);
 
-        SDL_RenderCopyF(k__SDL.renderer, k__SDL.canvas, NULL, NULL);
+        SDL_Rect view = {
+            .x = room->view_x,
+            .y = room->view_y,
+            .w = room->view_w,
+            .h = room->view_h,
+        };
+        SDL_RenderCopyF(k__SDL.renderer, k__SDL.canvas, &view, NULL);
         SDL_RenderPresent(k__SDL.renderer);
     }
 

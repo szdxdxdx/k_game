@@ -18,6 +18,8 @@
 #include "../../ext/position/_public.h"
 #include "../../ext/state_mechine/_public.h"
 
+#include "k_game_config.h"
+
 /* region [steps] */
 
 static int step_init_SDL(void *context) {
@@ -126,6 +128,11 @@ static void step_cleanup_room_stack(void *unused) {
 static int step_call_fn_init(void *context) {
     const struct k_game_config *config = context;
 
+    if (NULL == config->fn_init) {
+        k_log_error("Game fn_init() callback is NULL");
+        return -1;
+    }
+
     int result = config->fn_init();
     if (0 != result) {
         k_log_error("Game fn_init() callback returned %d", result);
@@ -157,48 +164,16 @@ static const struct k_seq_step steps[] = {
 
 /* endregion */
 
-static int step_check_config(const struct k_game_config *config) {
-
-    const char *err_msg = "";
-
-    if (NULL == config) {
-        err_msg = "config is NULL";
-        goto err;
-    }
-
-    int window_w = config->window_w;
-    int window_h = config->window_h;
-    if (window_w <= 0 || window_h <= 0) {
-        err_msg = "invalid window size";
-        goto err;
-    }
-
-    int canvas_w = config->canvas_w;
-    int canvas_h = config->canvas_h;
-    if ((canvas_w < window_w || canvas_h < window_h) && (0 != canvas_w || 0 != canvas_h)) {
-        err_msg = "invalid canvas size";
-        goto err;
-    }
-
-    if (NULL != config->fn_fini) {
-        err_msg = "fn_fini is NULL";
-        goto err;
-    }
-
-    return 0;
-
-err:
-    k_log_error("Invalid game config: %s", err_msg);
-    return -1;
-}
-
 int k__init_game(const struct k_game_config *config) {
 
-    if (0 != step_check_config(config))
+    if (NULL == config) {
+        k_log_error("Game config is NULL");
         goto err;
+    }
 
-    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), (void *)config))
+    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), (void *)config)) {
         goto err;
+    }
 
     return 0;
 

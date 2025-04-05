@@ -2,7 +2,6 @@
 #define K_GAME_H
 
 /* core */
-#include "./k_game/core/k_rect.h"
 #include "./k_game/core/k_alloc.h"
 #include "./k_game/core/k_time.h"
 #include "./k_game/core/k_keyboard.h"

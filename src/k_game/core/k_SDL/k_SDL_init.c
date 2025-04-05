@@ -8,6 +8,8 @@
 
 #include "./_internal.h"
 
+#include "../game/k_game_config.h"
+
 /* region [steps] */
 
 static int step_before_init(void *unused) {
@@ -103,6 +105,11 @@ static void step_quit_SDL_ttf(void *unused) {
 static int step_create_window(void *config_) {
     const struct k_game_config *config = config_;
 
+    if (config->window_w <= 0 || config->window_h <= 0) {
+        k_log_error("Failed to create game window: invalid window size");
+        return -1;
+    }
+
     const char *title = config->window_title;
     int x = SDL_WINDOWPOS_CENTERED;
     int y = SDL_WINDOWPOS_CENTERED;
@@ -156,14 +163,18 @@ static void step_destroy_renderer(void *unused) {
 static int step_create_canvas(void *config_) {
     struct k_game_config *config = config_;
 
-    int canvas_w;
-    int canvas_h;
-    if (0 == config->canvas_w) {
-        canvas_w = config->window_w * 2;
-        canvas_h = config->window_h * 2;
-    } else {
-        canvas_w = config->canvas_w;
-        canvas_h = config->canvas_h;
+    int canvas_w = config->canvas_w;
+    int canvas_h = config->canvas_h;
+
+    if (canvas_w == 0 && canvas_h == 0) {
+        canvas_w = config->window_w;
+        canvas_h = config->window_h;
+    }
+    else {
+        if (canvas_w < K_GAME_CANVAS_MIN_W || canvas_h < K_GAME_CANVAS_MIN_H) {
+            k_log_error("Failed to create game canvas: invalid canvas size");
+            return -1;
+        }
     }
 
     Uint32 format = SDL_PIXELFORMAT_RGBA8888;

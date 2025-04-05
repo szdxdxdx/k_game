@@ -41,24 +41,6 @@ struct k_room *k_find_room(const char *room_name) {
 
 /* region [room_create] */
 
-static int check_config(const struct k_room_config *config) {
-
-    const char *err_msg;
-
-#define check_config_assert(cond) \
-    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
-
-    check_config_assert(NULL != config);
-    check_config_assert(0 < config->room_speed);
-    check_config_assert(config->data_size < SIZE_MAX - sizeof(struct k_room));
-
-    return 0;
-
-err:
-    k_log_error("Invalid room config: %s", err_msg);
-    return -1;
-}
-
 /* region [steps] */
 
 struct step_context {
@@ -105,6 +87,11 @@ static int step_set_properties(void *context) {
 
     room->room_w = config->room_w;
     room->room_h = config->room_h;
+
+    room->view_x = 0;
+    room->view_y = 0;
+    room->view_w = 450;
+    room->view_h = 450;
 
     room->game_loop = 0;
 
@@ -249,6 +236,24 @@ static const struct k_seq_step steps[] = {
 };
 
 /* endregion */
+
+static int check_config(const struct k_room_config *config) {
+
+    const char *err_msg;
+
+#define check_config_assert(cond) \
+    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
+
+    check_config_assert(NULL != config);
+    check_config_assert(0 < config->room_speed);
+    check_config_assert(config->data_size < SIZE_MAX - sizeof(struct k_room));
+
+    return 0;
+
+err:
+    k_log_error("Invalid room config: %s", err_msg);
+    return -1;
+}
 
 struct k_room *k_room_create(const struct k_room_config *config, void *params) {
 

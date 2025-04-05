@@ -3,7 +3,19 @@
 
 #include <stdint.h>
 
-#include "./k_rect.h"
+struct k_int_rect {
+    int x;
+    int y;
+    int w;
+    int h;
+};
+
+struct k_float_rect {
+    float x;
+    float y;
+    float w;
+    float h;
+};
 
 /**
  * TODO docs
