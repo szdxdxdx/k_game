@@ -1,5 +1,4 @@
 #include <limits.h>
-#include <stdio.h>
 
 #include "../_internal.h"
 
@@ -60,7 +59,7 @@ static void enter_room(void) {
     struct yx_room_arena *room_arena = k_room_get_data();
 
     struct yx_obj_player *player = k_object_get_data(room_arena->player);
-    k_set_view_position(player->x, player->y);
+    k_view_set_position(player->x, player->y);
 }
 
 struct k_room *yx_room_arena_create(void) {

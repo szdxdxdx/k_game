@@ -3,7 +3,6 @@
 
 struct k_sprite;
 struct k_object;
-struct k_component;
 
 /**
  * \brief 精灵渲染器

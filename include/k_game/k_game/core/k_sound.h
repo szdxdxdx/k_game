@@ -13,7 +13,7 @@ void k_sound_bgm_release(struct k_sound_bgm *sound);
 
 int k_sound_bgm_set_name(struct k_sound_bgm *sound, const char *bgm_name);
 
-struct k_sound_bgm *k_find_sound_bgm(const char *bgm_name);
+struct k_sound_bgm *k_sound_bgm_find(const char *bgm_name);
 
 /* endregion */
 
@@ -37,7 +37,7 @@ void k_sound_sfx_release(struct k_sound_sfx *sound);
 
 int k_sound_sfx_set_name(struct k_sound_sfx *sound, const char *sfx_name);
 
-struct k_sound_sfx *k_find_sound_sfx(const char *sfx_name);
+struct k_sound_sfx *k_sound_sfx_find(const char *sfx_name);
 
 /* endregion */
 

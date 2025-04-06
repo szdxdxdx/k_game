@@ -1,10 +1,7 @@
 #ifndef K_COLLISION_H
 #define K_COLLISION_H
 
-struct k_room;
 struct k_object;
-struct k_component;
-struct k_component_manager;
 
 /**
  * \brief 碰撞盒

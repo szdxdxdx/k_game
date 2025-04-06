@@ -14,7 +14,7 @@ struct k_view_context k__view = {
     .view_h = 0,
 };
 
-void k_set_view_w(float w) {
+void k_view_set_w(float w) {
 
     if (w <= 0)
         return;
@@ -37,7 +37,7 @@ void k_set_view_w(float w) {
     k__view.view_h = new_h;
 }
 
-void k_set_view_h(float h) {
+void k_view_set_h(float h) {
 
     if (h <= 0)
         return;
@@ -60,7 +60,7 @@ void k_set_view_h(float h) {
     k__view.view_h = new_h;
 }
 
-void k_set_view_position(float cx, float cy) {
+void k_view_set_position(float cx, float cy) {
 
     struct k_room *room = K_CURRENT_ROOM;
 

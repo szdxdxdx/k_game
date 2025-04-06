@@ -13,12 +13,6 @@ struct k_object;
 struct k_component;
 
 /**
- * \brief 组件回调
- * TODO docs
- */
-struct k_component_callback;
-
-/**
  * \brief 组件管理器
  * TODO docs
  */
@@ -70,11 +64,11 @@ struct k_component_type *k_component_define(const struct k_component_manager_con
 
 /* endregion */
 
-/* region [find_component_type] */
+/* region [component_type_find] */
 
 int k_component_type_set_name(struct k_component_type *component_type, const char *type_name);
 
-struct k_component_type *k_find_component_type(const char *type_name);
+struct k_component_type *k_component_type_find(const char *type_name);
 
 /* endregion */
 
@@ -108,6 +102,12 @@ void *k_component_get_data(struct k_component *component);
 /* endregion */
 
 /* region [component_add_callback] */
+
+/**
+ * \brief 组件回调
+ * TODO docs
+ */
+struct k_component_callback;
 
 struct k_component_callback *k_component_add_step_begin_callback(struct k_component *component, void (*fn_callback)(struct k_component *component));
 

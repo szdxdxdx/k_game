@@ -10,13 +10,6 @@
  */
 struct k_room;
 
-/**
- * \brief 房间回调
- *
- * TODO docs
- */
-struct k_room_callback;
-
 /* region [room_create] */
 
 /** \brief 创建房间所需的配置参数 */
@@ -106,7 +99,7 @@ struct k_room *k_room_create(const struct k_room_config *config, void *params);
 
 /* endregion */
 
-/* region [find_room] */
+/* region [room_find] */
 
 /**
  * \brief 设置房间的名字
@@ -134,7 +127,7 @@ struct k_room *k_room_find(const char *room_name);
 
 /* endregion */
 
-/* region [goto_room] */
+/* region [room_goto] */
 
 int k_room_goto(struct k_room *room);
 
@@ -161,6 +154,13 @@ float k_room_get_height(void);
 /* endregion */
 
 /* region [room_add_callback] */
+
+/**
+ * \brief 房间回调
+ *
+ * TODO docs
+ */
+struct k_room_callback;
 
 struct k_room_callback *k_room_add_step_begin_callback(void *data, void (*fn_callback)(void *data));
 

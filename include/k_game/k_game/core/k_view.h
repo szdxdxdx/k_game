@@ -1,10 +1,10 @@
 #ifndef K_VIEW_H
 #define K_VIEW_H
 
-void k_set_view_w(float w);
+void k_view_set_w(float w);
 
-void k_set_view_h(float h);
+void k_view_set_h(float h);
 
-void k_set_view_position(float x, float y);
+void k_view_set_position(float cx, float cy);
 
 #endif

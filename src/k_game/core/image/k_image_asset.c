@@ -25,7 +25,7 @@ int k_image_set_name(struct k_image *image, const char *image_name) {
     return k__asset_set_name(&image_registry, &image->registry_node, image_name);
 }
 
-struct k_image *k_find_image(const char *image_name) {
+struct k_image *k_image_find(const char *image_name) {
     struct k_asset_registry_node *registry_node = k__asset_registry_find(&image_registry, image_name);
     if (NULL == registry_node)
         return NULL;

@@ -71,7 +71,7 @@ static void state_step_running(struct k_object *object) {
     }
 
     k_position_set_local_position(player->position, player->next_x, player->next_y);
-    k_set_view_position(player->x, player->y);
+    k_view_set_position(player->x, player->y);
 }
 
 /* endregion */
@@ -177,7 +177,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     }
 
     {
-        struct k_component_type *WASD = k_find_component_type("k/WASD");
+        struct k_component_type *WASD = k_component_type_find("k/WASD");
         struct k_WASD_config WASD_config;
         WASD_config.key_up    = 'W';
         WASD_config.key_left  = 'A';

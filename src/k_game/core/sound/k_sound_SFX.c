@@ -17,7 +17,7 @@ void k__cleanup_sound_sfx_registry(void) {
     k__asset_registry_cleanup(&sfx_registry, release_asset);
 }
 
-struct k_sound_sfx *k_find_sound_sfx(const char *sfx_name) {
+struct k_sound_sfx *k_sound_sfx_find(const char *sfx_name) {
     struct k_asset_registry_node *registry_node = k__asset_registry_find(&sfx_registry, sfx_name);
     if (NULL == registry_node)
         return NULL;

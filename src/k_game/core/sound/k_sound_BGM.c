@@ -19,7 +19,7 @@ void k__cleanup_sound_bgm_registry(void) {
     k__asset_registry_cleanup(&bgm_registry, release_asset);
 }
 
-struct k_sound_bgm *k_find_sound_bgm(const char *bgm_name) {
+struct k_sound_bgm *k_sound_bgm_find(const char *bgm_name) {
     struct k_asset_registry_node *registry_node = k__asset_registry_find(&bgm_registry, bgm_name);
     if (NULL == registry_node)
         return NULL;

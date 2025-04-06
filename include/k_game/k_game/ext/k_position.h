@@ -5,7 +5,8 @@
 
 struct k_object;
 
-/* TODO docs */
+/* TODO docs
+ */
 struct k_position;
 
 struct k_position_config {

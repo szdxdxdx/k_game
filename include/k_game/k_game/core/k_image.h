@@ -36,11 +36,11 @@ void k_image_release(struct k_image *image);
 
 /* endregion */
 
-/* region [find_image] */
+/* region [image_find] */
 
 int k_image_set_name(struct k_image *image, const char *image_name);
 
-struct k_image *k_find_image(const char *image_name);
+struct k_image *k_image_find(const char *image_name);
 
 /* endregion */
 

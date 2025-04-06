@@ -15,13 +15,6 @@ struct k_room;
  */
 struct k_object;
 
-/**
- * \brief 对象回调
- *
- * TODO docs
- */
-struct k_object_callback;
-
 /* region [object_create] */
 
 struct k_object *k_object_create(size_t object_data_size);
@@ -39,6 +32,13 @@ void k_object_set_destroy_callback(struct k_object *object, void (*fn_callback)(
 /* endregion */
 
 /* region [object_add_callback] */
+
+/**
+ * \brief 对象回调
+ *
+ * TODO docs
+ */
+struct k_object_callback;
 
 struct k_object_callback *k_object_add_step_begin_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
 
