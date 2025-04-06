@@ -159,19 +159,19 @@ static void refresh_key_state(enum k_keyboard_key key) {
     }
 }
 
-void k__refresh_keys_state(void) {
+void k__SDL_refresh_keyboard_state(void) {
 
     size_t key = 0;
     for (; key < K_KEY_ENUM_END; key++)
         refresh_key_state(key);
 }
 
-void k__handle_SDL_event_key_down(SDL_KeyboardEvent *event) {
+void k__SDL_handle_event_key_down(SDL_KeyboardEvent *event) {
     enum k_keyboard_key key = SDL_key_to_k_key(event->keysym.sym);
     key_state[key] |= 0b010;
 }
 
-void k__handle_SDL_event_key_up(SDL_KeyboardEvent *event) {
+void k__SDL_handle_event_key_up(SDL_KeyboardEvent *event) {
     enum k_keyboard_key key = SDL_key_to_k_key(event->keysym.sym);
     key_state[key] |= 0b001;
 }

@@ -22,13 +22,13 @@ static void refresh_button_state(enum k_mouse_button button) {
     }
 }
 
-void k__refresh_mouse_state(void) {
+void k__SDL_refresh_mouse_state(void) {
     refresh_button_state(K_BUTTON_LEFT);
     refresh_button_state(K_BUTTON_MIDDLE);
     refresh_button_state(K_BUTTON_RIGHT);
 }
 
-void k__handle_SDL_event_mouse_button_down(SDL_MouseButtonEvent *event) {
+void k__SDL_handle_event_mouse_button_down(SDL_MouseButtonEvent *event) {
     switch (event->button) {
         case SDL_BUTTON_LEFT:   button_state[K_BUTTON_LEFT]   |= 0b010; break;
         case SDL_BUTTON_MIDDLE: button_state[K_BUTTON_MIDDLE] |= 0b010; break;
@@ -36,7 +36,7 @@ void k__handle_SDL_event_mouse_button_down(SDL_MouseButtonEvent *event) {
     }
 }
 
-void k__handle_SDL_event_mouse_button_up(SDL_MouseButtonEvent *event) {
+void k__SDL_handle_event_mouse_button_up(SDL_MouseButtonEvent *event) {
     switch (event->button) {
         case SDL_BUTTON_LEFT:   button_state[K_BUTTON_LEFT]   |= 0b001; break;
         case SDL_BUTTON_MIDDLE: button_state[K_BUTTON_MIDDLE] |= 0b001; break;
@@ -44,7 +44,7 @@ void k__handle_SDL_event_mouse_button_up(SDL_MouseButtonEvent *event) {
     }
 }
 
-void k__handle_SDL_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
+void k__SDL_handle_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
 
 
     float x_at_window = (float)event->x;

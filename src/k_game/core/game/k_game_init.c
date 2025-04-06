@@ -22,12 +22,12 @@
 
 static int step_init_SDL(void *context) {
     const struct k_game_config *config = context;
-    return k__init_SDL(config);
+    return k__SDL_init(config);
 }
 
 static void step_quit_SDL(void *unused) {
     (void)unused;
-    k__quit_SDL();
+    k__SDL_quit();
 }
 
 static int step_init_image_registry(void *unused) {

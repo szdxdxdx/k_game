@@ -25,7 +25,7 @@ void k__room_run(struct k_room *room) {
     k__game.step_delta     = 0.0f;
     while (room->game_loop) {
 
-        k__handle_SDL_event_with_frame_delay(room->step_interval_ms);
+        k__SDL_handle_event_with_frame_delay(room->step_interval_ms);
 
         SDL_SetRenderTarget(k__SDL.renderer, k__SDL.canvas);
 
