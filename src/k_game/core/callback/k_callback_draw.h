@@ -5,6 +5,7 @@
 #include "k_int_hash_map.h"
 
 #include "./k_callback_base.h"
+#include "./k_callback_context.h"
 
 struct k_draw_callback_manager {
 

@@ -4,6 +4,7 @@
 #include "k_list.h"
 
 #include "./k_callback_base.h"
+#include "./k_callback_context.h"
 
 struct k_step_callback_manager {
 
