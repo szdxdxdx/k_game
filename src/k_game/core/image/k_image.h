@@ -1,13 +1,9 @@
-#ifndef K__IMAGE_SHARED_H
-#define K__IMAGE_SHARED_H
+#ifndef K__IMAGE_H
+#define K__IMAGE_H
 
 #include "SDL_render.h"
 
 #include "../asset/k_asset_registry.h"
-
-int k__image_registry_init(void);
-
-void k__image_registry_cleanup(void);
 
 struct k_image {
 

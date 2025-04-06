@@ -6,7 +6,7 @@
 #include "k_game.h"
 
 #include "../k_SDL/_shared.h"
-#include "../image/_shared.h"
+#include "../image/k_image_registry.h"
 #include "../sound/k_sound_registry.h"
 #include "../sprite/k_sprite_registry.h"
 #include "../room/k_room_registry.h"

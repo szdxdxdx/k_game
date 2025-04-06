@@ -1,8 +1,10 @@
 #include "k_log.h"
 
+#include "k_game/core/k_image.h"
+
 #include "../game/k_game_context.h"
 
-#include "./_internal.h"
+#include "./k_image.h"
 
 int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const struct k_float_rect *dst_rect, struct k_image_draw_options *options) {
 
