@@ -2,6 +2,8 @@
 
 #include "k_log.h"
 
+#include "./k_room_stack.h"
+
 /* region [room_stack] */
 
 #ifndef K_ROOM_STACK_MAX_SIZE

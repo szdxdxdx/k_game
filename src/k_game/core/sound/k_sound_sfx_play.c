@@ -1,3 +1,5 @@
+#include "k_game/core/k_sound.h"
+
 #include "./k_sound_sfx.h"
 
 void k_sound_sfx_play(struct k_sound_sfx *sound) {

@@ -2,6 +2,7 @@
 #include "k_game/core/k_time.h"
 
 #include "./k_room.h"
+#include "./k_room_run.h"
 
 #include "../k_SDL/_shared.h"
 #include "../game/k_game_context.h"

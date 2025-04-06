@@ -1,4 +1,6 @@
-#include "./k_callback_manager.h"
+#include "k_game/core/k_room.h"
+#include "k_game/core/k_object.h"
+#include "k_game/core/k_component.h"
 
 #include "../game/k_game_context.h"
 

@@ -6,8 +6,10 @@
 #include "k_list.h"
 
 #include "../asset/k_asset_registry.h"
-#include "../callback/k_callback_manager.h"
 #include "../object/k_object_pool.h"
+#include "../callback/k_callback_alarm.h"
+#include "../callback/k_callback_step.h"
+#include "../callback/k_callback_draw.h"
 
 struct k_room {
 

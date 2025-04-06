@@ -1,3 +1,5 @@
+#include "k_game/core/k_room.h"
+
 #include "./k_room.h"
 
 #include "../game/k_game_context.h"

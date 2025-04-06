@@ -1,6 +1,6 @@
 #include "SDL_timer.h"
 
-#include "./_internal.h"
+#include "./k_game_context.h"
 
 struct k_game_context k__game = {
     .quit_game = 0,

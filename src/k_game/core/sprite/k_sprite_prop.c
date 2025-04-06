@@ -1,3 +1,5 @@
+#include "k_game/core/k_sprite.h"
+
 #include "./k_sprite.h"
 
 int k_sprite_get_width(struct k_sprite *sprite) {

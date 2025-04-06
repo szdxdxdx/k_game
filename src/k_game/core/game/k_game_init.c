@@ -5,6 +5,8 @@
 
 #include "k_game.h"
 
+#include "./k_game_init.h"
+
 #include "../k_SDL/_shared.h"
 #include "../image/k_image_registry.h"
 #include "../sound/k_sound_registry.h"

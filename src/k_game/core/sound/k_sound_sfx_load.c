@@ -1,4 +1,5 @@
 #include "k_game/core/k_alloc.h"
+#include "k_game/core/k_sound.h"
 
 #include "./k_sound_sfx.h"
 #include "./k_sound_registry.h"

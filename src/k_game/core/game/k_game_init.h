@@ -1,9 +1,7 @@
-#ifndef K__GAME_INTERNAL_H
-#define K__GAME_INTERNAL_H
+#ifndef K__GAME_INIT_H
+#define K__GAME_INIT_H
 
-#include "k_game.h"
-
-#include "./k_game_context.h"
+struct k_game_config;
 
 int k__init_game(const struct k_game_config *config);
 

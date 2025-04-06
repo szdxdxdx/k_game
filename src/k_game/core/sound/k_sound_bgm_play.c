@@ -1,5 +1,7 @@
 #include "k_log.h"
 
+#include "k_game/core/k_sound.h"
+
 #include "./k_sound_bgm.h"
 
 int k_sound_bgm_loop(struct k_sound_bgm *sound, int loops) {

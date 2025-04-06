@@ -1,6 +1,8 @@
 #include <assert.h>
 
-#include "./k_callback_manager.h"
+#include "./k_callback_alarm.h"
+#include "./k_callback_step.h"
+#include "./k_callback_draw.h"
 
 void k__callback_del(struct k_callback_base *callback) {
 
