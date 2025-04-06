@@ -7,7 +7,7 @@ struct k_sound_sfx;
 
 /* region [bgm_load] */
 
-struct k_sound_bgm *k_sound_bgm_load(const char *filepath);
+struct k_sound_bgm *k_sound_bgm_load(const char *file_path);
 
 void k_sound_bgm_release(struct k_sound_bgm *sound);
 
@@ -31,7 +31,7 @@ int k_sound_bgm_loop(struct k_sound_bgm *sound, int loops);
 
 /* region [sfx_load] */
 
-struct k_sound_sfx *k_sound_sfx_load(const char *filepath);
+struct k_sound_sfx *k_sound_sfx_load(const char *file_path);
 
 void k_sound_sfx_release(struct k_sound_sfx *sound);
 
