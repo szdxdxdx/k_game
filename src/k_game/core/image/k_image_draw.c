@@ -2,7 +2,7 @@
 
 #include "../room/_shared.h"
 #include "../view/_shared.h"
-#include "../game/_shared.h"
+#include "../game/k_game_context.h"
 
 #include "./_internal.h"
 

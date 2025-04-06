@@ -1,15 +1,15 @@
 #include "./_internal.h"
 
-struct k_room *K_CURRENT_ROOM = NULL;
+#include "../game/k_game_context.h"
 
 void *k_room_get_data(void) {
-    return K_CURRENT_ROOM->data;
+    return k__game.current_room->data;
 }
 
 float k_room_get_width(void) {
-    return K_CURRENT_ROOM->room_w;
+    return k__game.current_room->room_w;
 }
 
 float k_room_get_height(void) {
-    return K_CURRENT_ROOM->room_h;
+    return k__game.current_room->room_h;
 }

@@ -1,6 +1,6 @@
 #include <math.h>
 
-#include "../../core/game/_shared.h"
+#include "../../core/game/k_game_context.h"
 
 #include "./_internal.h"
 

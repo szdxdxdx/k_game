@@ -3,7 +3,7 @@
 #include "SDL_image.h"
 
 #include "./_internal.h"
-#include "../game/_shared.h"
+#include "../game/k_game_context.h"
 
 /* region [image_registry] */
 

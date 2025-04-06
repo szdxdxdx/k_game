@@ -1,6 +1,6 @@
 #include "k_game.h"
 
-#include "../core/game/_shared.h"
+#include "../core/game/k_game_context.h"
 #include "../core/view/_shared.h"
 
 void k_clean_room_canvas(void *unused) {

@@ -1,7 +1,7 @@
 #include "k_log.h"
 
 #include "./_internal.h"
-#include "../game/_shared.h"
+#include "../game/k_game_context.h"
 
 struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h) {
 

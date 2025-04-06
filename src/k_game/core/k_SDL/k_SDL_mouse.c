@@ -1,7 +1,7 @@
 #include "./_internal.h"
 
 #include "../view/_shared.h"
-#include "../game/_shared.h"
+#include "../game/k_game_context.h"
 
 static int mouse_x = 0;
 static int mouse_y = 0;

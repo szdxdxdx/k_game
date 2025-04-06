@@ -3,6 +3,7 @@
 #include "./_internal.h"
 
 #include "../room/_shared.h"
+#include "../game/k_game_context.h"
 
 /* region [component_manager_map] */
 
@@ -229,7 +230,7 @@ int k_room_add_component_manager(struct k_component_type *component_type, void *
     if (NULL == component_type)
         return -1;
 
-    return k__component_manager_create(K_CURRENT_ROOM, component_type, params);
+    return k__component_manager_create(k__game.current_room, component_type, params);
 }
 
 struct k_component_manager *k_room_get_component_manager(struct k_component_type *component_type) {
@@ -237,7 +238,7 @@ struct k_component_manager *k_room_get_component_manager(struct k_component_type
     if (NULL == component_type)
         return NULL;
 
-    return k__component_manager_map_find(K_CURRENT_ROOM, component_type->manager_type);
+    return k__component_manager_map_find(k__game.current_room, component_type->manager_type);
 }
 
 void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {

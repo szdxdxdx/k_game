@@ -2,7 +2,7 @@
 
 #include "k_game.h"
 
-#include "../game/_shared.h"
+#include "../game/k_game_context.h"
 #include "../room/_shared.h"
 
 #include "./_shared.h"
@@ -19,7 +19,7 @@ void k_view_set_w(float w) {
     if (w <= 0)
         return;
 
-    struct k_room *room = K_CURRENT_ROOM;
+    struct k_room *room = k__game.current_room;
 
     float max_w = fminf(room->room_w, (float)k__game.canvas_w);
     float max_h = fminf(room->room_h, (float)k__game.canvas_h);
@@ -42,7 +42,7 @@ void k_view_set_h(float h) {
     if (h <= 0)
         return;
 
-    struct k_room *room = K_CURRENT_ROOM;
+    struct k_room *room = k__game.current_room;
 
     float max_w = fminf(room->room_w, (float)k__game.canvas_w);
     float max_h = fminf(room->room_h, (float)k__game.canvas_h);
@@ -62,7 +62,7 @@ void k_view_set_h(float h) {
 
 void k_view_set_position(float cx, float cy) {
 
-    struct k_room *room = K_CURRENT_ROOM;
+    struct k_room *room = k__game.current_room;
 
     float half_w = k__view.view_w / 2;
 

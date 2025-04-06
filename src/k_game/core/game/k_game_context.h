@@ -1,10 +1,10 @@
-#ifndef K_GAME_SHARED_H
-#define K_GAME_SHARED_H
-
-#include <stdint.h>
+#ifndef K_GAME_CONTEXT_H
+#define K_GAME_CONTEXT_H
 
 #include "SDL_render.h"
 #include "SDL_events.h"
+
+struct k_room;
 
 struct k_game_context {
 
@@ -46,6 +46,9 @@ struct k_game_context {
     float view_w;
     float view_x;
     float view_y;
+
+    /* 当前房间 */
+    struct k_room *current_room;
 };
 
 extern struct k_game_context k__game;

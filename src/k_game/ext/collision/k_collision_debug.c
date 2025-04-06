@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-#include "../../core/game/_shared.h"
+#include "../../core/game/k_game_context.h"
 
 /* region [debug_draw] */
 
