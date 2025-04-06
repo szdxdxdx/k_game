@@ -32,22 +32,22 @@ static void step_quit_SDL(void *unused) {
 
 static int step_init_image_registry(void *unused) {
     (void)unused;
-    return k__init_image_registry();
+    return k__image_registry_init();
 }
 
 static void step_cleanup_image_registry(void *unused) {
     (void)unused;
-    k__cleanup_image_registry();
+    k__image_registry_cleanup();
 }
 
 static int step_init_sound_registry(void *unused) {
     (void)unused;
 
-    if (0 != k__init_sound_bgm_registry())
+    if (0 != k__sound_bgm_registry_init())
         return -1;
 
-    if (0 != k__init_sound_sfx_registry()) {
-        k__cleanup_sound_bgm_registry();
+    if (0 != k__sound_sfx_registry_init()) {
+        k__sound_bgm_registry_cleanup();
         return -1;
     }
 
@@ -56,38 +56,38 @@ static int step_init_sound_registry(void *unused) {
 
 static void step_cleanup_sound_registry(void *unused) {
     (void)unused;
-    k__cleanup_sound_bgm_registry();
-    k__cleanup_sound_sfx_registry();
+    k__sound_bgm_registry_cleanup();
+    k__sound_sfx_registry_cleanup();
 }
 
 static int step_init_sprite_registry(void *unused) {
     (void)unused;
-    return k__init_sprite_registry();
+    return k__sprite_registry_init();
 }
 
 static void step_cleanup_sprite_registry(void *unused) {
     (void)unused;
-    k__cleanup_sprite_registry();
+    k__sprite_registry_cleanup();
 }
 
 static int step_init_component_registry(void *unused) {
     (void)unused;
-    return k__init_component_type_registry();
+    return k__component_type_registry_init();
 }
 
 static void step_cleanup_component_registry(void *unused) {
     (void)unused;
-    k__cleanup_component_type_registry();
+    k__component_type_registry_cleanup();
 }
 
 static int step_init_component_manager_map(void *unused) {
     (void)unused;
-    return k__init_component_manager_map();
+    return k__component_manager_map_init();
 }
 
 static void step_free_component_manager_map(void *unused) {
     (void)unused;
-    k__deinit_component_manager_map();
+    k__component_manager_map_deinit();
 }
 
 static int step_define_components(void *unused) {
@@ -103,12 +103,12 @@ static int step_define_components(void *unused) {
 
 static int step_init_room_registry(void *unused) {
     (void)unused;
-    return k__init_room_registry();
+    return k__room_registry_init();
 }
 
 static void step_cleanup_room_registry(void *unused) {
     (void)unused;
-    k__cleanup_room_registry();
+    k__room_registry_cleanup();
 }
 
 static int step_init_room_stack(void *unused) {

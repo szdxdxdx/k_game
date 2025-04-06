@@ -9,7 +9,7 @@
 
 static struct k_asset_registry sprite_registry;
 
-int k__init_sprite_registry(void) {
+int k__sprite_registry_init(void) {
     return k__asset_registry_init(&sprite_registry);
 }
 
@@ -18,7 +18,7 @@ static void release_asset(struct k_asset_registry_node *registry_node) {
     k_sprite_destroy(sprite);
 }
 
-void k__cleanup_sprite_registry(void) {
+void k__sprite_registry_cleanup(void) {
     k__asset_registry_cleanup(&sprite_registry, release_asset);
 }
 

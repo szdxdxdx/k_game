@@ -1,12 +1,12 @@
 #ifndef K_SOUND_SHARED_H
 #define K_SOUND_SHARED_H
 
-int k__init_sound_bgm_registry(void);
+int k__sound_bgm_registry_init(void);
 
-void k__cleanup_sound_bgm_registry(void);
+void k__sound_bgm_registry_cleanup(void);
 
-int k__init_sound_sfx_registry(void);
+int k__sound_sfx_registry_init(void);
 
-void k__cleanup_sound_sfx_registry(void);
+void k__sound_sfx_registry_cleanup(void);
 
 #endif

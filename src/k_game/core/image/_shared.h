@@ -5,9 +5,9 @@
 
 #include "../asset/k_asset_registry.h"
 
-int k__init_image_registry(void);
+int k__image_registry_init(void);
 
-void k__cleanup_image_registry(void);
+void k__image_registry_cleanup(void);
 
 struct k_image {
 

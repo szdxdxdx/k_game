@@ -28,7 +28,7 @@ static struct k_room_component_manager_map component_manager_map;
  */
 static struct k_array * const NULL_ARRAY = &(struct k_array){ .size=0 };
 
-int k__init_component_manager_map(void) {
+int k__component_manager_map_init(void) {
 
     struct k_array_config config;
     config.fn_malloc     = k_malloc;
@@ -47,7 +47,7 @@ int k__init_component_manager_map(void) {
     return 0;
 }
 
-void k__deinit_component_manager_map(void) {
+void k__component_manager_map_deinit(void) {
 
     struct k_array *room_array = &component_manager_map.map;
     size_t i = 0;

@@ -145,7 +145,7 @@ static void k__component_undef(struct k_component_type *component_type) {
 
 /* region [component_type_registry] */
 
-int k__init_component_type_registry(void) {
+int k__component_type_registry_init(void) {
     return k__asset_registry_init(&component_type_registry);
 }
 
@@ -154,7 +154,7 @@ static void release_asset(struct k_asset_registry_node *registry_node) {
     k__component_undef(component_type);
 }
 
-void k__cleanup_component_type_registry(void) {
+void k__component_type_registry_cleanup(void) {
     k__asset_registry_cleanup(&component_type_registry, release_asset);
 }
 

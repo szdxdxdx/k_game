@@ -12,9 +12,9 @@ struct k_component;
 
 /* region [component_type_registry] */
 
-int k__init_component_type_registry(void);
+int k__component_type_registry_init(void);
 
-void k__cleanup_component_type_registry(void);
+void k__component_type_registry_cleanup(void);
 
 /* endregion */
 
@@ -53,9 +53,9 @@ struct k_component_type {
 
 /* region [component_manager_map] */
 
-int k__init_component_manager_map(void);
+int k__component_manager_map_init(void);
 
-void k__deinit_component_manager_map(void);
+void k__component_manager_map_deinit(void);
 
 /* endregion */
 
