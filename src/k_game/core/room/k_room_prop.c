@@ -1,4 +1,4 @@
-#include "./k_room_entity.h"
+#include "./k_room.h"
 
 #include "../game/k_game_context.h"
 

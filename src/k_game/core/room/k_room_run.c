@@ -1,7 +1,7 @@
 #include "k_game/core/k_view.h"
 #include "k_game/core/k_time.h"
 
-#include "./k_room_entity.h"
+#include "./k_room.h"
 
 #include "../k_SDL/_shared.h"
 #include "../game/k_game_context.h"

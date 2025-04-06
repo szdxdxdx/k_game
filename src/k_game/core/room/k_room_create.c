@@ -4,7 +4,7 @@
 #include "k_game/core/k_room.h"
 #include "k_game/core/k_alloc.h"
 
-#include "./k_room_entity.h"
+#include "./k_room.h"
 #include "./k_room_registry.h"
 
 #include "../game/k_game_context.h"

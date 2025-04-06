@@ -1,6 +1,6 @@
 #include "./k_room_registry.h"
 #include "./k_room_create.h"
-#include "./k_room_entity.h"
+#include "./k_room.h"
 
 static struct k_asset_registry k__room_registry;
 

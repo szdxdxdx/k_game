@@ -4,7 +4,7 @@
 #include "./k_component_manager.h"
 #include "./k_component_type.h"
 
-#include "../room/k_room_entity.h"
+#include "../room/k_room.h"
 
 static struct k_room_component_manager_map component_manager_map;
 

@@ -1,6 +1,10 @@
+#include "./k_callback_manager.h"
+
 #include "../game/k_game_context.h"
 
-#include "./_internal.h"
+#include "../room/k_room.h"
+#include "../object/k_object.h"
+#include "../component/k_component.h"
 
 /* region [room_callback] */
 

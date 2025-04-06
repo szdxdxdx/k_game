@@ -3,7 +3,7 @@
 #include "k_game.h"
 
 #include "../game/k_game_context.h"
-#include "../room/k_room_entity.h"
+#include "../room/k_room.h"
 
 void k_view_set_w(float w) {
 

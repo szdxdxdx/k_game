@@ -1,6 +1,12 @@
 #include <assert.h>
 
-#include "./_internal.h"
+#include "k_game/core/k_alloc.h"
+
+#include "./k_callback_step.h"
+
+#include "../room/k_room.h"
+#include "../object/k_object.h"
+#include "../component/k_component.h"
 
 /* region [callback_def] */
 
