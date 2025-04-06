@@ -1,7 +1,6 @@
 #include "./_internal.h"
 
 #include "../k_SDL/_shared.h"
-#include "../view/_shared.h"
 #include "../game/k_game_context.h"
 
 void k__room_run(struct k_room *room) {
@@ -46,8 +45,8 @@ void k__room_run(struct k_room *room) {
 
         SDL_SetRenderTarget(k__game.renderer, NULL);
 
-        canvas_view.w = (int)k__view.view_w;
-        canvas_view.h = (int)k__view.view_h;
+        canvas_view.w = (int)k__game.view_w;
+        canvas_view.h = (int)k__game.view_h;
         SDL_RenderCopyF(k__game.renderer, k__game.canvas, &canvas_view, NULL);
 
         SDL_RenderPresent(k__game.renderer);

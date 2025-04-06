@@ -5,15 +5,6 @@
 #include "../game/k_game_context.h"
 #include "../room/_shared.h"
 
-#include "./_shared.h"
-
-struct k_view_context k__view = {
-    .view_x = 0,
-    .view_y = 0,
-    .view_w = 0,
-    .view_h = 0,
-};
-
 void k_view_set_w(float w) {
 
     if (w <= 0)
@@ -33,8 +24,8 @@ void k_view_set_w(float w) {
         new_w = max_h * aspect;
     }
 
-    k__view.view_w = new_w;
-    k__view.view_h = new_h;
+    k__game.view_w = new_w;
+    k__game.view_h = new_h;
 }
 
 void k_view_set_h(float h) {
@@ -56,35 +47,35 @@ void k_view_set_h(float h) {
         new_h = max_w / aspect;
     }
 
-    k__view.view_w = new_w;
-    k__view.view_h = new_h;
+    k__game.view_w = new_w;
+    k__game.view_h = new_h;
 }
 
 void k_view_set_position(float cx, float cy) {
 
     struct k_room *room = k__game.current_room;
 
-    float half_w = k__view.view_w / 2;
+    float half_w = k__game.view_w / 2;
 
     if (cx <= half_w) {
-        k__view.view_x = 0;
+        k__game.view_x = 0;
     }
     else if (room->room_w - half_w <= cx) {
-        k__view.view_x = room->room_w - k__view.view_w;
+        k__game.view_x = room->room_w - k__game.view_w;
     }
     else {
-        k__view.view_x = cx - half_w;
+        k__game.view_x = cx - half_w;
     }
 
-    float half_h = k__view.view_h / 2;
+    float half_h = k__game.view_h / 2;
 
     if (cy <= half_h) {
-        k__view.view_y = 0;
+        k__game.view_y = 0;
     }
     else if (room->room_h - half_h <= cy) {
-        k__view.view_y = room->room_h - k__view.view_h;
+        k__game.view_y = room->room_h - k__game.view_h;
     }
     else {
-        k__view.view_y = cy - half_h;
+        k__game.view_y = cy - half_h;
     }
 }

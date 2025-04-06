@@ -1,7 +1,6 @@
 #include "k_game.h"
 
 #include "../core/game/k_game_context.h"
-#include "../core/view/_shared.h"
 
 void k_clean_room_canvas(void *unused) {
     (void)unused;
@@ -19,12 +18,12 @@ void k_draw_grid(void *unused) {
     int canvas_w = k__game.canvas_w;
     int canvas_h = k__game.canvas_h;
 
-    int x = grid_size - 1 - (int)k__view.view_x;
+    int x = grid_size - 1 - (int)k__game.view_x;
     for (; x < canvas_w; x += grid_size) {
         SDL_RenderDrawLine(k__game.renderer, x, 0, x, canvas_h);
     }
 
-    int y = grid_size - 1 - (int)k__view.view_y;
+    int y = grid_size - 1 - (int)k__game.view_y;
     for (; y < canvas_h; y += grid_size) {
         SDL_RenderDrawLine(k__game.renderer, 0, y, canvas_w, y);
     }
