@@ -57,7 +57,7 @@ struct k_room *k__room_stack_get_top(void) {
     return room_stack_is_empty() ? NULL : room_stack_get_top();
 }
 
-int k_goto_room(struct k_room *room) {
+int k_room_goto(struct k_room *room) {
 
     if (NULL == room) {
         k_log_error("Failed to goto room. Room is NULL");

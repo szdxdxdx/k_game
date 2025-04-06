@@ -1,6 +1,6 @@
 #include <stdarg.h>
 
-#include "_internal.h"
+#include "./_internal.h"
 
 static void print_json(struct k_printf_buf *buf, struct k_json *json) {
 

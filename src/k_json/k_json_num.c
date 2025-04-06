@@ -1,8 +1,8 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <math.h>
-#include "k_json.h"
-#include "_internal.h"
+
+#include "./_internal.h"
 
 struct k__json_num *k__create_json_num_i(int num) {
 

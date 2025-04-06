@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "_internal.h"
+#include "./_internal.h"
 
 void *k__json_mem_alloc(size_t size) {
     return malloc(size);

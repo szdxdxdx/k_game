@@ -34,8 +34,8 @@ static void bullet_move(struct k_object *object) {
     bullet->x += bullet->velocity_x * delta;
     bullet->y += bullet->velocity_y * delta;
 
-    if (   bullet->x < 0 || bullet->x > k_room_get_width(K_CURRENT_ROOM)
-        || bullet->y < 0 || bullet->y > k_room_get_height(K_CURRENT_ROOM)
+    if (   bullet->x < 0 || bullet->x > k_room_get_width()
+        || bullet->y < 0 || bullet->y > k_room_get_height()
     ) {
         k_object_destroy(object);
     }
@@ -81,7 +81,7 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 
 static void shoot(struct k_object *object) {
 
-    if (k_button_down(K_BUTTON_LEFT) || k_button_pressed(K_BUTTON_RIGHT)) {
+    if (k_mouse_button_down(K_BUTTON_LEFT) || k_mouse_button_pressed(K_BUTTON_RIGHT)) {
         struct yx_obj_weapon *weapon = k_object_get_data(object);
         bullet_create(weapon);
     }

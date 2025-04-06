@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "_internal.h"
+#include "./_internal.h"
 
 void k__destroy_json(struct k_json *json) {
     switch (json->type) {

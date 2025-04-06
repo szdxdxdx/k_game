@@ -20,13 +20,13 @@ static void set_debug(void *data) {
 static int init_room(void *params) {
     (void)params;
 
-    struct yx_room_arena *room_arena = k_room_get_data(K_CURRENT_ROOM);
+    struct yx_room_arena *room_arena = k_room_get_data();
 
-    k_add_room_collision_manager();
+    k_room_add_collision_manager();
 
-    k_room_add_step_callback(K_CURRENT_ROOM, NULL, set_debug);
-    k_room_add_draw_callback(K_CURRENT_ROOM, NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
-    k_room_add_draw_callback(K_CURRENT_ROOM, NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
+    k_room_add_step_callback(NULL, set_debug);
+    k_room_add_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
+    k_room_add_draw_callback(NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
 
     {
         struct yx_obj_bubble_maker_config config;
@@ -57,7 +57,7 @@ static int init_room(void *params) {
 }
 
 static void enter_room(void) {
-    struct yx_room_arena *room_arena = k_room_get_data(K_CURRENT_ROOM);
+    struct yx_room_arena *room_arena = k_room_get_data();
 
     struct yx_obj_player *player = k_object_get_data(room_arena->player);
     k_set_view_position(player->x, player->y);

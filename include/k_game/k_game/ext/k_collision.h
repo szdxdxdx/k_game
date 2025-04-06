@@ -22,16 +22,13 @@ struct k_collision_box;
 /* region [room_add_collision_box_manager] */
 
 /**
- * \brief 给房间添加碰撞盒管理器
+ * \brief 给当前房间添加碰撞盒管理器
  *
  * 必须先给房间添加碰撞盒管理器，才能给房间内的对象挂载碰撞盒。
  *
  * 若成功，函数返回非 0，否则返回 0。
  */
-int k_room_add_collision_manager(struct k_room *room);
-
-/** \brief 给当前房间添加碰撞盒管理器 */
-int k_add_room_collision_manager(void);
+int k_room_add_collision_manager(void);
 
 /* endregion */
 

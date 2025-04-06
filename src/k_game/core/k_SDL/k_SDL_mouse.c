@@ -66,28 +66,28 @@ int k_mouse_y(void) {
     return mouse_y;
 }
 
-int k_button_pressed(enum k_mouse_button button) {
+int k_mouse_button_pressed(enum k_mouse_button button) {
     return 0b010 == (button_state[button] & 0b110);
 }
 
-int k_button_released(enum k_mouse_button button) {
+int k_mouse_button_released(enum k_mouse_button button) {
     return 0b001 == (button_state[button] & 0b001);
 }
 
-int k_button_held(enum k_mouse_button button) {
+int k_mouse_button_held(enum k_mouse_button button) {
     return 0b100 == (button_state[button] & 0b101);
 }
 
-int k_button_idle(enum k_mouse_button button) {
+int k_mouse_button_idle(enum k_mouse_button button) {
     return 0b000 == button_state[button];
 }
 
-int k_button_down(enum k_mouse_button button) {
+int k_mouse_button_down(enum k_mouse_button button) {
     return 0b010 == (button_state[button] & 0b110)
         || 0b100 == (button_state[button] & 0b101);
 }
 
-int k_button_up(enum k_mouse_button button) {
+int k_mouse_button_up(enum k_mouse_button button) {
     return 0b010 != (button_state[button] & 0b110)
         && 0b100 != (button_state[button] & 0b101);
 }

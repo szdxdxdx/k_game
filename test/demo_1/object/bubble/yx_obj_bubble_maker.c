@@ -12,8 +12,8 @@ static float my_rand(float min, float max) {
 static void yx_bubble_maker_create_bubble(struct k_object *object, int timeout_diff) {
 
     float padding = 32;
-    float rand_x = my_rand(padding, k_room_get_width(K_CURRENT_ROOM) - padding);
-    float rand_y = my_rand(padding, k_room_get_height(K_CURRENT_ROOM) - padding);
+    float rand_x = my_rand(padding, k_room_get_width() - padding);
+    float rand_y = my_rand(padding, k_room_get_height() - padding);
 
     yx_bubble_create(rand_x, rand_y);
 

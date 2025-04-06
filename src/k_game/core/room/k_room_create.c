@@ -28,7 +28,7 @@ int k_room_set_name(struct k_room *room, const char *room_name) {
     return k__asset_set_name(&room_registry, &room->registry_node, room_name);
 }
 
-struct k_room *k_find_room(const char *room_name) {
+struct k_room *k_room_find(const char *room_name) {
     struct k_asset_registry_node *registry_node = k__asset_registry_find(&room_registry, room_name);
     if (NULL == registry_node)
         return NULL;

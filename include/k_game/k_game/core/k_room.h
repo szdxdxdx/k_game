@@ -114,7 +114,7 @@ struct k_room *k_room_create(const struct k_room_config *config, void *params);
  * 房间名字是可选的，默认情况下房间没有名字。
  *
  * 你可以为房间设置唯一名字，k_game 将基于该名字为房间建立索引，
- * 之后可使用 `k_find_room()` 根据名字查找房间。
+ * 之后可使用 `k_room_find()` 根据名字查找房间。
  *
  * 若名字设为空字符串 "" 或 `NULL`，则清除名字，并删除索引。
  *
@@ -130,13 +130,13 @@ int k_room_set_name(struct k_room *room, const char *room_name);
  *
  * 若找到，函数返回房间指针，否则返回 `NULL`。
  */
-struct k_room *k_find_room(const char *room_name);
+struct k_room *k_room_find(const char *room_name);
 
 /* endregion */
 
 /* region [goto_room] */
 
-int k_goto_room(struct k_room *room);
+int k_room_goto(struct k_room *room);
 
 /* endregion */
 
@@ -145,32 +145,32 @@ int k_goto_room(struct k_room *room);
 extern struct k_room *K_CURRENT_ROOM;
 
 /**
- * \brief 获取房间的关联数据
+ * \brief 获取当前房间的关联数据
  *
  * 若当前房间的关联数据结构体大小为 0，则函数返回 `NULL`，
  * 否则返回关联数据内存段的指针。
  */
-void *k_room_get_data(struct k_room *room);
+void *k_room_get_data(void);
 
-/** \brief 获取房间的宽 */
-float k_room_get_width(struct k_room *room);
+/** \brief 获取当前房间的宽 */
+float k_room_get_width(void);
 
-/** \brief 获取房间的高 */
-float k_room_get_height(struct k_room *room);
+/** \brief 获取当前房间的高 */
+float k_room_get_height(void);
 
 /* endregion */
 
 /* region [room_add_callback] */
 
-struct k_room_callback *k_room_add_step_begin_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k_room_add_step_begin_callback(void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_alarm_callback(struct k_room *room, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
+struct k_room_callback *k_room_add_alarm_callback(void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
 
-struct k_room_callback *k_room_add_step_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k_room_add_step_callback(void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_step_end_callback(struct k_room *room, void *data, void (*fn_callback)(void *data));
+struct k_room_callback *k_room_add_step_end_callback(void *data, void (*fn_callback)(void *data));
 
-struct k_room_callback *k_room_add_draw_callback(struct k_room *room, void *data, void (*fn_callback)(void *data), int z_group, int z_layer);
+struct k_room_callback *k_room_add_draw_callback(void *data, void (*fn_callback)(void *data), int z_group, int z_layer);
 
 /**
  * \brief 删除房间的事件回调
@@ -181,22 +181,6 @@ void k_room_del_callback(struct k_room_callback *callback);
 
 /** \brief 删除房间所有的事件回调 */
 void k_room_del_all_callbacks(struct k_room *room);
-
-/* endregion */
-
-/* region [room_view] */
-
-void k_room_set_view_w(struct k_room *room, float w);
-
-void k_room_set_view_h(struct k_room *room, float h);
-
-void k_room_set_view_x(struct k_room *room, float x);
-
-void k_room_set_view_y(struct k_room *room, float y);
-
-void k_room_set_view_cx(struct k_room *room, float cx);
-
-void k_room_set_view_cy(struct k_room *room, float cy);
 
 /* endregion */
 

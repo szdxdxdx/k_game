@@ -1,4 +1,5 @@
-#include "_internal.h"
+
+#include "./_internal.h"
 
 struct k__json_str *k__create_json_str(const char *str, size_t len) {
     char *str_copy = NULL;

@@ -20,7 +20,7 @@ static void create_room(void) {
 
     struct k_room *room = yx_room_arena_create();
 
-    k_goto_room(room);
+    k_room_goto(room);
 }
 
 static int fn_init_game(void) {

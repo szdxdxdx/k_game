@@ -1,6 +1,6 @@
 #include "k_array.h"
 
-#include "_internal.h"
+#include "./_internal.h"
 
 struct k__json_arr *k__create_json_arr(void) {
 

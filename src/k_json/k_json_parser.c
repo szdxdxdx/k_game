@@ -1,6 +1,6 @@
 #include <stdarg.h>
 
-#include "_internal.h"
+#include "./_internal.h"
 
 enum token_type {
     TOKEN_NULL  , TOKEN_STR   ,
