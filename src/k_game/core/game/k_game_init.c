@@ -7,7 +7,7 @@
 
 #include "../k_SDL/_shared.h"
 #include "../image/_shared.h"
-#include "../sound/_shared.h"
+#include "../sound/k_sound_registry.h"
 #include "../sprite/k_sprite_registry.h"
 #include "../room/k_room_registry.h"
 #include "../room/k_room_stack.h"
