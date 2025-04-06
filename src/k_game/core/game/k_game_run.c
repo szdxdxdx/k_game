@@ -5,7 +5,7 @@
 #include "./_internal.h"
 
 #include "../room/k_room_stack.h"
-#include "../room/k_room_entity.h"
+#include "../room/k_room_run.h"
 
 static void run_game() {
 

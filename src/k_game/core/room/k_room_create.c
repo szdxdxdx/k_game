@@ -1,11 +1,11 @@
 #include "k_log.h"
-#include "k_list.h"
 #include "k_seq_step.h"
 
 #include "k_game/core/k_room.h"
 #include "k_game/core/k_alloc.h"
 
 #include "./k_room_entity.h"
+#include "./k_room_registry.h"
 
 #include "../game/k_game_context.h"
 #include "../component/k_component_manager_map.h"
@@ -147,7 +147,7 @@ static int step_registry_add(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__asset_registry_add(&k__game.room_registry, &room->registry_node);
+    k__room_registry_add(room);
 
     room->room_id = id_counter++;
     return 0;
@@ -157,7 +157,7 @@ static void step_registry_del(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__asset_registry_del(&room->registry_node);
+    k__room_registry_del(room);
 
     if (id_counter == room->room_id) {
         id_counter--; /* [?] 若 `fn_init()` 初始化失败则回收 id */
@@ -239,7 +239,7 @@ err:
     return NULL;
 }
 
-void k_room__destroy(struct k_room *room) {
+void k__room_destroy(struct k_room *room) {
 
     if (NULL == room)
         return;

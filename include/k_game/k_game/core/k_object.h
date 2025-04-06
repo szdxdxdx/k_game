@@ -17,7 +17,7 @@ struct k_object;
 
 /* region [object_create] */
 
-struct k_object *k_object_create(size_t object_data_size);
+struct k_object *k_object_create(size_t data_size);
 
 void k_object_destroy(struct k_object *object);
 

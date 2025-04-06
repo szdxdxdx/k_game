@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include "k_list.h"
+
 #include "../asset/k_asset_registry.h"
 #include "../callback/k_callback_manager.h"
 #include "../object/k_object_pool.h"
@@ -37,7 +39,5 @@ struct k_room {
 
     void *data;
 };
-
-void k__room_run(struct k_room *room);
 
 #endif
