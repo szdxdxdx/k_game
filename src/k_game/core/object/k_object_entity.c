@@ -1,7 +1,12 @@
-#include "./_internal.h"
+#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_object.h"
+#include "k_game/core/k_component.h"
+
+#include "./k_object_entity.h"
+#include "./k_object_pool.h"
 
 #include "../game/k_game_context.h"
-#include "../room/_shared.h"
+#include "../room/k_room_entity.h"
 
 /* region [object_create] */
 

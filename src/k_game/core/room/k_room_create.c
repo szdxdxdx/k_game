@@ -2,44 +2,13 @@
 #include "k_list.h"
 #include "k_seq_step.h"
 
-#include "./_internal.h"
+#include "k_game/core/k_room.h"
+#include "k_game/core/k_alloc.h"
+
+#include "./k_room_entity.h"
 
 #include "../game/k_game_context.h"
-#include "../component/_shared.h"
-
-/* region [room_registry] */
-
-static struct k_asset_registry room_registry;
-
-int k__room_registry_init(void) {
-    return k__asset_registry_init(&room_registry);
-}
-
-static void release_asset(struct k_asset_registry_node *node) {
-    struct k_room *room = container_of(node, struct k_room, registry_node);
-    k_room_destroy(room);
-}
-
-void k__room_registry_cleanup(void) {
-    k__asset_registry_cleanup(&room_registry, release_asset);
-}
-
-int k_room_set_name(struct k_room *room, const char *room_name) {
-    return k__asset_set_name(&room_registry, &room->registry_node, room_name);
-}
-
-struct k_room *k_room_find(const char *room_name) {
-    struct k_asset_registry_node *registry_node = k__asset_registry_find(&room_registry, room_name);
-    if (NULL == registry_node)
-        return NULL;
-
-    struct k_room *room = container_of(registry_node, struct k_room, registry_node);
-    return room;
-}
-
-/* endregion */
-
-/* region [room_create] */
+#include "../component/k_component_manager_map.h"
 
 /* region [steps] */
 
@@ -178,7 +147,7 @@ static int step_registry_add(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k__asset_registry_add(&room_registry, &room->registry_node);
+    k__asset_registry_add(&k__game.room_registry, &room->registry_node);
 
     room->room_id = id_counter++;
     return 0;
@@ -190,8 +159,9 @@ static void step_registry_del(void *context) {
 
     k__asset_registry_del(&room->registry_node);
 
-    if (id_counter == room->room_id)
+    if (id_counter == room->room_id) {
         id_counter--; /* [?] 若 `fn_init()` 初始化失败则回收 id */
+    }
 }
 
 static int step_call_fn_init(void *context) {
@@ -269,7 +239,7 @@ err:
     return NULL;
 }
 
-void k_room_destroy(struct k_room *room) {
+void k_room__destroy(struct k_room *room) {
 
     if (NULL == room)
         return;
@@ -281,5 +251,3 @@ void k_room_destroy(struct k_room *room) {
 
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
 }
-
-/* endregion */

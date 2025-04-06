@@ -1,6 +1,8 @@
-#include "./_internal.h"
+#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_object.h"
 
-#include "../room/_shared.h"
+#include "./k_object_pool.h"
+#include "./k_object_entity.h"
 
 int k__object_pool_init(struct k_object_pool *pool) {
 
@@ -26,11 +28,11 @@ struct k_object *k__object_pool_acquire(struct k_object_pool *pool) {
     if (NULL == object)
         return NULL;
 
-    k_list_add_tail(&pool->object_list, &object->pool_node.iter_node);
+    k_list_add_tail(&pool->object_list, &object->pool_node);
     return object;
 }
 
 void k__object_pool_release(struct k_object *object) {
-    k_list_del(&object->pool_node.iter_node);
+    k_list_del(&object->pool_node);
     k_free(object); /* TODO pool_free */
 }

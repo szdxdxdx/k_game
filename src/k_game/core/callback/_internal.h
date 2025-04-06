@@ -7,9 +7,9 @@
 
 #include "./k_callback_base.h"
 
-#include "../room/_shared.h"
-#include "../object/_shared.h"
-#include "../component/_shared.h"
+#include "../room/k_room_entity.h"
+#include "../object/k_object_entity.h"
+#include "../component/k_component_entity.h"
 
 struct k_room;
 struct k_room_callback;

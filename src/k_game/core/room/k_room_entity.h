@@ -1,24 +1,11 @@
-#ifndef K_ROOM_SHARED_H
-#define K_ROOM_SHARED_H
+#ifndef K_ROOM_ENTITY_H
+#define K_ROOM_ENTITY_H
 
 #include <stddef.h>
-#include <stdint.h>
-
-#include "k_list.h"
 
 #include "../asset/k_asset_registry.h"
-#include "../callback/_shared.h"
-#include "../object/_shared.h"
-
-/* region [room_registry] */
-
-int k__room_registry_init(void);
-
-void k__room_registry_cleanup(void);
-
-/* endregion */
-
-/* region [room] */
+#include "../callback/k_callback_manager.h"
+#include "../object/k_object_pool.h"
 
 struct k_room {
 
@@ -51,22 +38,6 @@ struct k_room {
     void *data;
 };
 
-/* endregion */
-
-/* region [room_goto] */
-
-void k__init_room_stack(void);
-
-void k__cleanup_room_stack(void);
-
-struct k_room *k__room_stack_get_top(void);
-
-/* endregion */
-
-/* region [room_run] */
-
 void k__room_run(struct k_room *room);
-
-/* endregion */
 
 #endif

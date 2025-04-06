@@ -3,9 +3,13 @@
 
 #include "SDL_render.h"
 
+#include "../asset/k_asset_registry.h"
+
 struct k_room;
 
 struct k_game_context {
+
+    struct k_asset_registry room_registry;
 
     /* void *image_registry;
      * void *sound_bgm_registry;

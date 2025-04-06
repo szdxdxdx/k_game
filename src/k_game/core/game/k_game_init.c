@@ -9,8 +9,9 @@
 #include "../image/_shared.h"
 #include "../sound/_shared.h"
 #include "../sprite/_shared.h"
-#include "../room/_shared.h"
-#include "../component/_shared.h"
+#include "../component/k_component_type_registry.h"
+#include "../component/k_component_manager_map.h"
+#include "../room/k_room_registry.h"
 
 #include "../../ext/wasd/_shared.h"
 #include "../../ext/sprite_renderer/_shared.h"
