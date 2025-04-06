@@ -2,7 +2,7 @@
 
 #include "k_game.h"
 
-#include "../k_SDL/_shared.h"
+#include "../game/_shared.h"
 #include "../room/_shared.h"
 
 #include "./_shared.h"
@@ -21,9 +21,9 @@ void k_view_set_w(float w) {
 
     struct k_room *room = K_CURRENT_ROOM;
 
-    float max_w = fminf(room->room_w, (float)k__SDL.canvas_w);
-    float max_h = fminf(room->room_h, (float)k__SDL.canvas_h);
-    float aspect = (float)k__SDL.window_w / (float)k__SDL.window_h;
+    float max_w = fminf(room->room_w, (float)k__game.canvas_w);
+    float max_h = fminf(room->room_h, (float)k__game.canvas_h);
+    float aspect = (float)k__game.window_w / (float)k__game.window_h;
 
     float new_w = fminf(w, max_w);
     float new_h = new_w / aspect;
@@ -44,9 +44,9 @@ void k_view_set_h(float h) {
 
     struct k_room *room = K_CURRENT_ROOM;
 
-    float max_w = fminf(room->room_w, (float)k__SDL.canvas_w);
-    float max_h = fminf(room->room_h, (float)k__SDL.canvas_h);
-    float aspect = (float)k__SDL.window_w / (float)k__SDL.window_h;
+    float max_w = fminf(room->room_w, (float)k__game.canvas_w);
+    float max_h = fminf(room->room_h, (float)k__game.canvas_h);
+    float aspect = (float)k__game.window_w / (float)k__game.window_h;
 
     float new_h = fminf(h, max_h);
     float new_w = new_h * aspect;

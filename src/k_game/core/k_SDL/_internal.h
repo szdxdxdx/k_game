@@ -1,6 +1,9 @@
 #ifndef K_SDL_INTERNAL_H
 #define K_SDL_INTERNAL_H
 
+#include "SDL_render.h"
+#include "SDL_events.h"
+
 #include "k_game.h"
 
 #include "./_shared.h"

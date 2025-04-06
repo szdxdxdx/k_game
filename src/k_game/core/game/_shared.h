@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-struct k_game_config;
-struct k_room;
+#include "SDL_render.h"
+#include "SDL_events.h"
 
 struct k_game_context {
 
@@ -18,6 +18,21 @@ struct k_game_context {
 
     /* 记录两帧时间差，单位：秒 */
     float step_delta;
+
+    SDL_Window *window;
+    int window_w;
+    int window_h;
+
+    SDL_Renderer *renderer;
+
+    SDL_Texture *canvas;
+    int canvas_w;
+    int canvas_h;
+
+    float view_h;
+    float view_w;
+    float view_x;
+    float view_y;
 };
 
 extern struct k_game_context k__game;

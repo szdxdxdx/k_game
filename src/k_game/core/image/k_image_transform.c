@@ -1,6 +1,7 @@
 #include "k_log.h"
 
 #include "./_internal.h"
+#include "../game/_shared.h"
 
 struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h) {
 
@@ -14,7 +15,7 @@ struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h)
         goto err;
     }
 
-    SDL_Renderer *renderer = k__SDL.renderer;
+    SDL_Renderer *renderer = k__game.renderer;
 
     scaled_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, scaled_w, scaled_h);
     if (NULL == scaled_texture) {

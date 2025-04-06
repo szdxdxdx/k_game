@@ -3,6 +3,7 @@
 #include "SDL_image.h"
 
 #include "./_internal.h"
+#include "../game/_shared.h"
 
 /* region [image_registry] */
 
@@ -74,7 +75,7 @@ struct k_image *k_image_load(const char *filepath) {
     if (NULL == filepath || '\0' == filepath[0])
         goto err;
 
-    SDL_Texture *texture = IMG_LoadTexture(k__SDL.renderer, filepath);
+    SDL_Texture *texture = IMG_LoadTexture(k__game.renderer, filepath);
     if (NULL == texture)
         goto err;
 
