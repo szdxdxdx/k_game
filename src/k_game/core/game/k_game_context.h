@@ -2,7 +2,6 @@
 #define K_GAME_CONTEXT_H
 
 #include "SDL_render.h"
-#include "SDL_events.h"
 
 struct k_room;
 
