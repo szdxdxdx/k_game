@@ -1,5 +1,5 @@
-#ifndef K_COMPONENT_MANAGER_MAP_H
-#define K_COMPONENT_MANAGER_MAP_H
+#ifndef K__COMPONENT_MANAGER_MAP_H
+#define K__COMPONENT_MANAGER_MAP_H
 
 #include "k_array.h"
 

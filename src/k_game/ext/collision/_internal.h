@@ -1,5 +1,5 @@
-#ifndef K_COLLISION_INTERNAL_H
-#define K_COLLISION_INTERNAL_H
+#ifndef K__COLLISION_INTERNAL_H
+#define K__COLLISION_INTERNAL_H
 
 #include "k_list.h"
 #include "k_int_hash_map.h"

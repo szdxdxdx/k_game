@@ -1,5 +1,5 @@
-#ifndef K_CALLBACK_INTERNAL_H
-#define K_CALLBACK_INTERNAL_H
+#ifndef K__CALLBACK_INTERNAL_H
+#define K__CALLBACK_INTERNAL_H
 
 #include "k_game.h"
 
@@ -9,7 +9,7 @@
 
 #include "../room/k_room_entity.h"
 #include "../object/k_object_entity.h"
-#include "../component/k_component_entity.h"
+#include "../component/k_component.h"
 
 struct k_room;
 struct k_room_callback;

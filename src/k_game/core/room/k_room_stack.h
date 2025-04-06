@@ -1,5 +1,5 @@
-#ifndef K_ROOM_STACK_H
-#define K_ROOM_STACK_H
+#ifndef K__ROOM_STACK_H
+#define K__ROOM_STACK_H
 
 struct k_room;
 

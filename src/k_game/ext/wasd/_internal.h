@@ -1,5 +1,5 @@
-#ifndef K_WASD_INTERNAL_H
-#define K_WASD_INTERNAL_H
+#ifndef K__WASD_INTERNAL_H
+#define K__WASD_INTERNAL_H
 
 #include "k_game.h"
 

@@ -1,5 +1,5 @@
-#ifndef K_JSON_INTERNAL_H
-#define K_JSON_INTERNAL_H
+#ifndef K__JSON_INTERNAL_H
+#define K__JSON_INTERNAL_H
 
 #include <string.h>
 #include <stdint.h>

@@ -1,5 +1,5 @@
-#ifndef K_STATE_MACHINE_INTERNAL_H
-#define K_STATE_MACHINE_INTERNAL_H
+#ifndef K__STATE_MACHINE_INTERNAL_H
+#define K__STATE_MACHINE_INTERNAL_H
 
 #include "k_game.h"
 

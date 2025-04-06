@@ -1,5 +1,5 @@
-#ifndef K_ROOM_ENTITY_H
-#define K_ROOM_ENTITY_H
+#ifndef K__ROOM_ENTITY_H
+#define K__ROOM_ENTITY_H
 
 #include <stddef.h>
 

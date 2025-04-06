@@ -1,5 +1,5 @@
-#ifndef K_GAME_CONTEXT_H
-#define K_GAME_CONTEXT_H
+#ifndef K__GAME_CONTEXT_H
+#define K__GAME_CONTEXT_H
 
 #include "SDL_render.h"
 

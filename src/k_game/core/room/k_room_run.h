@@ -1,5 +1,5 @@
-#ifndef K_ROOM_RUN_H
-#define K_ROOM_RUN_H
+#ifndef K__ROOM_RUN_H
+#define K__ROOM_RUN_H
 
 struct k_room;
 

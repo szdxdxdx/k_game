@@ -1,5 +1,5 @@
-#ifndef K_SPRITE_INTERNAL_H
-#define K_SPRITE_INTERNAL_H
+#ifndef K__SPRITE_INTERNAL_H
+#define K__SPRITE_INTERNAL_H
 
 #include "k_game.h"
 

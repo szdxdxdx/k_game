@@ -1,5 +1,5 @@
-#ifndef K_CALLBACK_ALARM_H
-#define K_CALLBACK_ALARM_H
+#ifndef K__CALLBACK_ALARM_H
+#define K__CALLBACK_ALARM_H
 
 #include "k_list.h"
 

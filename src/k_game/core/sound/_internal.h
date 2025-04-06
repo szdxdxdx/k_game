@@ -1,5 +1,5 @@
-#ifndef K_SOUND_INTERNAL_H
-#define K_SOUND_INTERNAL_H
+#ifndef K__SOUND_INTERNAL_H
+#define K__SOUND_INTERNAL_H
 
 #include "SDL_mixer.h"
 

@@ -1,5 +1,5 @@
-#ifndef K_COMPONENT_MANAGER_H
-#define K_COMPONENT_MANAGER_H
+#ifndef K__COMPONENT_MANAGER_H
+#define K__COMPONENT_MANAGER_H
 
 #include <stddef.h>
 

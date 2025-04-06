@@ -1,5 +1,5 @@
-#ifndef K_CALLBACK_CONTEXT_H
-#define K_CALLBACK_CONTEXT_H
+#ifndef K__CALLBACK_CONTEXT_H
+#define K__CALLBACK_CONTEXT_H
 
 #include "k_list.h"
 

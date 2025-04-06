@@ -1,5 +1,5 @@
-#ifndef K_CALLBACK_DRAW_H
-#define K_CALLBACK_DRAW_H
+#ifndef K__CALLBACK_DRAW_H
+#define K__CALLBACK_DRAW_H
 
 #include "k_list.h"
 #include "k_int_hash_map.h"

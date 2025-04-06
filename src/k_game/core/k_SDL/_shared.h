@@ -1,5 +1,5 @@
-#ifndef K_SDL_SHARED_H
-#define K_SDL_SHARED_H
+#ifndef K__SDL_SHARED_H
+#define K__SDL_SHARED_H
 
 /* region [SDL_init] */
 

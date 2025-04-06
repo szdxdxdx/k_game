@@ -1,5 +1,5 @@
-#ifndef K_OBJECT_POOL_H
-#define K_OBJECT_POOL_H
+#ifndef K__OBJECT_POOL_H
+#define K__OBJECT_POOL_H
 
 #include "k_list.h"
 

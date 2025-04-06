@@ -1,5 +1,5 @@
-#ifndef K_ROOM_CREATE_H
-#define K_ROOM_CREATE_H
+#ifndef K__ROOM_CREATE_H
+#define K__ROOM_CREATE_H
 
 struct k_room;
 

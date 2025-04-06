@@ -1,5 +1,5 @@
-#ifndef K_SOUND_SHARED_H
-#define K_SOUND_SHARED_H
+#ifndef K__SOUND_SHARED_H
+#define K__SOUND_SHARED_H
 
 int k__sound_bgm_registry_init(void);
 

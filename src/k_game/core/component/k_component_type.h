@@ -1,5 +1,5 @@
-#ifndef K_COMPONENT_TYPE_H
-#define K_COMPONENT_TYPE_H
+#ifndef K__COMPONENT_TYPE_H
+#define K__COMPONENT_TYPE_H
 
 #include "../asset/k_asset_registry.h"
 

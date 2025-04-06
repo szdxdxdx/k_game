@@ -1,5 +1,5 @@
-#ifndef K_BEHAVIOR_TREE_INTERNAL_H
-#define K_BEHAVIOR_TREE_INTERNAL_H
+#ifndef K__BEHAVIOR_TREE_INTERNAL_H
+#define K__BEHAVIOR_TREE_INTERNAL_H
 
 #include "k_game.h"
 

@@ -1,5 +1,5 @@
-#ifndef K_COMPONENT_ENTITY_H
-#define K_COMPONENT_ENTITY_H
+#ifndef K__COMPONENT_ENTITY_H
+#define K__COMPONENT_ENTITY_H
 
 #include <stddef.h>
 

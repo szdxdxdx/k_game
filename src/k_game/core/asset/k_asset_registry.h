@@ -1,5 +1,5 @@
-#ifndef K_ASSET_REGISTRY_H
-#define K_ASSET_REGISTRY_H
+#ifndef K__ASSET_REGISTRY_H
+#define K__ASSET_REGISTRY_H
 
 #include "k_list.h"
 #include "k_str_hash_map.h"
