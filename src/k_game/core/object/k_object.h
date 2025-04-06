@@ -1,5 +1,5 @@
-#ifndef K___OBJECT_H
-#define K___OBJECT_H
+#ifndef K__OBJECT_H
+#define K__OBJECT_H
 
 #include "k_list.h"
 

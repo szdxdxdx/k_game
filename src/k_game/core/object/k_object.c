@@ -2,7 +2,7 @@
 #include "k_game/core/k_object.h"
 #include "k_game/core/k_component.h"
 
-#include "./k_object_entity.h"
+#include "./k_object.h"
 #include "./k_object_pool.h"
 
 #include "../game/k_game_context.h"

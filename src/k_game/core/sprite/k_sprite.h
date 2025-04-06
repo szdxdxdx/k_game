@@ -1,7 +1,5 @@
-#ifndef K__SPRITE_INTERNAL_H
-#define K__SPRITE_INTERNAL_H
-
-#include "k_game.h"
+#ifndef K__SPRITE_H
+#define K__SPRITE_H
 
 #include "../asset/k_asset_registry.h"
 

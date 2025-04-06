@@ -1,12 +1,12 @@
 #include "k_game/core/k_alloc.h"
 #include "k_game/core/k_component.h"
 
-#include "./k_component_entity.h"
+#include "./k_component.h"
 #include "./k_component_manager.h"
 #include "./k_component_manager_map.h"
 #include "./k_component_type.h"
 
-#include "../object/k_object_entity.h"
+#include "../object/k_object.h"
 
 /* region [component_create] */
 

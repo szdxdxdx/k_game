@@ -8,7 +8,7 @@
 #include "./k_callback_base.h"
 
 #include "../room/k_room_entity.h"
-#include "../object/k_object_entity.h"
+#include "../object/k_object.h"
 #include "../component/k_component.h"
 
 struct k_room;

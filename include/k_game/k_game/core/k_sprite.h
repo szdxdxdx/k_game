@@ -183,8 +183,8 @@ struct k_sprite_draw_options {
      *
      * 翻转变换的原点为精灵的原点。
      */
-    uint8_t flip_x;
-    uint8_t flip_y;
+    int flip_x;
+    int flip_y;
 };
 
 /**

@@ -2,7 +2,7 @@
 #include "k_game/core/k_object.h"
 
 #include "./k_object_pool.h"
-#include "./k_object_entity.h"
+#include "./k_object.h"
 
 int k__object_pool_init(struct k_object_pool *pool) {
 
