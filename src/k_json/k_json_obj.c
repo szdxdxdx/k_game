@@ -24,7 +24,7 @@ struct k__json_obj *k__create_json_obj(void) {
 
     k_hash_list_init_all(lists, lists_num);
 
-    json_obj->json.type = K_JSON_OBJ;
+    json_obj->json.type = K__JSON_OBJ;
     json_obj->lists     = lists;
     json_obj->lists_num = lists_num;
     return json_obj;

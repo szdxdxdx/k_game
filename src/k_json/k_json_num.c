@@ -10,7 +10,7 @@ struct k__json_num *k__create_json_num_i(int num) {
     if (json_num == NULL)
         return NULL;
 
-    json_num->json.type = K_JSON_NUM;
+    json_num->json.type = K__JSON_NUM;
     json_num->num_i = num;
     json_num->num_s = NULL;
     json_num->num_f = (double)num;
@@ -27,7 +27,7 @@ struct k__json_num *k__create_json_num_f(double num) {
     if (json_num == NULL)
         return NULL;
 
-    json_num->json.type = K_JSON_NUM;
+    json_num->json.type = K__JSON_NUM;
     json_num->num_s = NULL;
     json_num->num_f = num;
     json_num->num_i = num <= (double)INT_MIN ? INT_MIN :
@@ -65,7 +65,7 @@ struct k__json_num *k__create_json_num_f_s(const char *num, size_t len) {
         num_copy = alloc_buf;
     }
 
-    json_num->json.type = K_JSON_NUM;
+    json_num->json.type = K__JSON_NUM;
     json_num->num_s = num_copy;
     json_num->num_f = num_f;
     json_num->num_i = num_i;
@@ -102,7 +102,7 @@ struct k__json_num *k__create_json_num_i_s(const char *num, size_t len) {
         num_copy = alloc_buf;
     }
 
-    json_num->json.type = K_JSON_NUM;
+    json_num->json.type = K__JSON_NUM;
     json_num->num_s = num_copy;
     json_num->num_i = num_i;
     json_num->num_f = (double)num_i;

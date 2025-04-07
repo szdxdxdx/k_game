@@ -5,26 +5,26 @@
 static void print_json(struct k_printf_buf *buf, struct k_json *json) {
 
     switch (json->type) {
-        case K_JSON_NULL:
+        case K__JSON_NULL:
             buf->fn_puts(buf, "null", 4);
             break;
 
-        case K_JSON_BOOL:
+        case K__JSON_BOOL:
             if (((struct k__json_bool *)json)->is_true)
                 buf->fn_puts(buf, "true", 4);
             else
                 buf->fn_puts(buf, "false", 5);
             break;
 
-        case K_JSON_STR:
+        case K__JSON_STR:
             buf->fn_printf(buf, "\"%s\"", ((struct k__json_str *)json)->str);
             break;
 
-        case K_JSON_NUM:
+        case K__JSON_NUM:
             buf->fn_printf(buf, "%s", k__json_num_get_s((struct k__json_num *)json));
             break;
 
-        case K_JSON_ARR: {
+        case K__JSON_ARR: {
             struct k__json_arr *json_arr = (struct k__json_arr *)json;
 
             if (json_arr->size == 0) {
@@ -50,7 +50,7 @@ static void print_json(struct k_printf_buf *buf, struct k_json *json) {
             break;
         }
 
-        case K_JSON_OBJ: {
+        case K__JSON_OBJ: {
             buf->fn_puts(buf, "{", 1);
 
             struct k__json_obj *json_obj = (struct k__json_obj *)json;

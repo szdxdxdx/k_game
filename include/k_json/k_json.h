@@ -5,22 +5,10 @@
 
 #include "k_printf.h"
 
-enum k_json_type {
-    K_JSON_NULL ,
-    K_JSON_BOOL ,
-    K_JSON_STR  ,
-    K_JSON_NUM  ,
-    K_JSON_ARR  ,
-    K_JSON_OBJ  ,
-};
-
-struct k_json {
-    enum k_json_type type;
-};
+struct k_json;
 
 /**
  * \brief 格式化解析字符串，构建 json 对象
- *
  *
  * 格式字符串 `fmt` 用于指定 json 字符串的格式，
  * 支持的格式说明符、对应实参的类型，以及转换结果如下：
@@ -36,7 +24,6 @@ struct k_json {
  * 不能作为 object 的 key，也不能用作对格式字符串 `fmt` 的再补充。
  *
  * ```C
- *
  * // 构建的 json 对象是一个 string，而不是包含了 3 个 number 的 array
  * k_json_parse("%s", "[ 1, 2, 3 ]");
  *

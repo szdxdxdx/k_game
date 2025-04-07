@@ -9,10 +9,10 @@ struct k_behavior_tree_parallel_item {
 
     struct k_behavior_tree_node *child;
 
-#define K_BT_PARALLEL_IDLE    0
-#define K_BT_PARALLEL_RUNNING 1
-#define K_BT_PARALLEL_SUCCESS 2
-#define K_BT_PARALLEL_FAILURE 3
+#define K__BT_PARALLEL_IDLE    0
+#define K__BT_PARALLEL_RUNNING 1
+#define K__BT_PARALLEL_SUCCESS 2
+#define K__BT_PARALLEL_FAILURE 3
     int state;
 };
 
@@ -37,7 +37,7 @@ static void parallel_interrupt_(struct k_behavior_tree_parallel_node *parallel) 
     size_t size  = arr->size;
     for (; index < size; index++) {
 
-        if (items[index].state == K_BT_PARALLEL_RUNNING) {
+        if (items[index].state == K__BT_PARALLEL_RUNNING) {
             struct k_behavior_tree_node *child = items[index].child;
 
             child->fn_interrupt(child);
@@ -61,7 +61,7 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
 
         size_t index = 0;
         for (; index < size; index++) {
-            items[index].state = K_BT_PARALLEL_IDLE;
+            items[index].state = K__BT_PARALLEL_IDLE;
         }
 
         parallel->running = 1;
@@ -75,11 +75,11 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
     size_t index = 0;
     for (; index < size; index++) {
 
-        if (items[index].state == K_BT_PARALLEL_SUCCESS) {
+        if (items[index].state == K__BT_PARALLEL_SUCCESS) {
             count_success += 1;
             continue;
         }
-        if (items[index].state == K_BT_PARALLEL_FAILURE) {
+        if (items[index].state == K__BT_PARALLEL_FAILURE) {
             count_failure += 1;
             continue;
         }
@@ -97,13 +97,13 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
 
             case K_BT_RUNNING: {
                 count_running += 1;
-                items[index].state = K_BT_PARALLEL_RUNNING;
+                items[index].state = K__BT_PARALLEL_RUNNING;
                 continue;
             }
 
             case K_BT_SUCCESS: {
                 count_success += 1;
-                items[index].state = K_BT_PARALLEL_SUCCESS;
+                items[index].state = K__BT_PARALLEL_SUCCESS;
 
                 if (count_success < parallel->success_policy)
                     continue;
@@ -114,7 +114,7 @@ static enum k_behavior_tree_status parallel_tick(struct k_behavior_tree_node *no
 
             case K_BT_FAILURE: {
                 count_failure += 1;
-                items[index].state = K_BT_PARALLEL_FAILURE;
+                items[index].state = K__BT_PARALLEL_FAILURE;
 
                 if (count_failure < parallel->failure_policy)
                     continue;
@@ -156,7 +156,7 @@ static int parallel_add_child(struct k_behavior_tree_node *node, struct k_behavi
         return -1;
 
     new_item->child = child_node;
-    new_item->state = K_BT_PARALLEL_IDLE;
+    new_item->state = K__BT_PARALLEL_IDLE;
     return 0;
 }
 

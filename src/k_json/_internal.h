@@ -14,6 +14,19 @@ void *k__json_mem_alloc(size_t size);
 void  k__json_mem_free(void *ptr);
 char *k__json_strdup(const char *str, size_t len);
 
+enum k_json_type {
+    K__JSON_NULL ,
+    K__JSON_BOOL ,
+    K__JSON_STR  ,
+    K__JSON_NUM  ,
+    K__JSON_ARR  ,
+    K__JSON_OBJ  ,
+};
+
+struct k_json {
+    enum k_json_type type;
+};
+
 /* region [null & bool] */
 
 struct k__json_null {

@@ -8,7 +8,7 @@ struct k__json_arr *k__create_json_arr(void) {
     if (json_arr == NULL)
         return NULL;
 
-    json_arr->json.type = K_JSON_ARR;
+    json_arr->json.type = K__JSON_ARR;
     json_arr->capacity  = 0;
     json_arr->size      = 0;
     json_arr->arr       = NULL;

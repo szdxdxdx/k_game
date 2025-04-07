@@ -10,7 +10,7 @@ struct k__json_str *k__create_json_str(const char *str, size_t len) {
     if (str_copy == NULL || json_str == NULL)
         goto err;
 
-    json_str->json.type = K_JSON_STR;
+    json_str->json.type = K__JSON_STR;
     json_str->str = str_copy;
     return json_str;
 
