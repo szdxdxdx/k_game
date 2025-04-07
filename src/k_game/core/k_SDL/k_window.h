@@ -23,6 +23,12 @@ struct k_window_context {
     float view_w;
     float view_x;
     float view_y;
+
+    /* 记录窗口的长宽比，改变窗口宽高时同步修改该值 */
+    float window_aspect_ratio;
+
+    /* 记录窗口与视野的缩放比，改变视野宽高或窗口宽高时同步修改该值 */
+    float window_view_ratio;
 };
 
 extern struct k_window_context k__window;

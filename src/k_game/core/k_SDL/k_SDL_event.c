@@ -47,8 +47,8 @@ static void k__SDL_poll_events(void) {
 
 void k__SDL_handle_event_with_frame_delay(uint64_t room_step_interval_ms) {
 
-    k__SDL_refresh_keyboard_state();
-    k__SDL_refresh_mouse_state();
+    k__keyboard_refresh_state();
+    k__mouse_refresh_state();
 
     uint64_t current_time;
     uint64_t elapsed_time;

@@ -125,6 +125,7 @@ static int step_create_window(void *config_) {
     k__window.window   = window;
     k__window.window_w = w;
     k__window.window_h = h;
+    k__window.window_aspect_ratio = (float)w / (float)h;
     return 0;
 }
 
@@ -198,6 +199,18 @@ static void step_destroy_canvas(void *unused) {
     SDL_DestroyTexture(k__window.canvas);
 }
 
+static int step_set_view(void *unused) {
+    (void)unused;
+
+    k__window.view_x = 0;
+    k__window.view_y = 0;
+    k__window.view_w = (float)k__window.window_w;
+    k__window.view_h = (float)k__window.window_h;
+    k__window.window_view_ratio = 1;
+
+    return 0;
+}
+
 static struct k_seq_step steps[] = {
     { step_before_init,     NULL                  },
     { step_init_SDL,        step_quit_SDL         },
@@ -207,6 +220,7 @@ static struct k_seq_step steps[] = {
     { step_create_window,   step_destroy_window   },
     { step_create_renderer, step_destroy_renderer },
     { step_create_canvas,   step_destroy_canvas   },
+    { step_set_view,        NULL                  },
 };
 
 /* endregion */
