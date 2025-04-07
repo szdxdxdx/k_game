@@ -1,13 +1,4 @@
-#include <stdio.h>
-
 #include "../_internal.h"
-
-enum k_behavior_tree_status bt_action_log(void) {
-
-    printf("hello");
-
-    return K_BT_SUCCESS;
-}
 
 struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
 
@@ -39,49 +30,19 @@ struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
     }
 
     {
-        /*
-        struct k_behavior_tree *tree = k_behavior_tree_create();
+        struct k_component_type *WASD = k_component_type_find("k/WASD");
+        struct k_WASD_config WASD_config;
+        WASD_config.key_up    = 'I';
+        WASD_config.key_left  = 'J';
+        WASD_config.key_down  = 'K';
+        WASD_config.key_right = 'L';
+        WASD_config.speed     = 192.0f;
+        WASD_config.x         = &rival->x;
+        WASD_config.y         = &rival->y;
+        k_object_add_component(object, WASD, &WASD_config);
 
-        struct k_behavior_tree_node *root = k_behavior_tree_get_root(tree);
-
-        struct k_behavior_tree_node *seq, *seq_1;
-
-        seq = k_behavior_tree_add_sequence(root);
-        k_behavior_tree_add_condition(seq);
-        k_behavior_tree_add_action(seq);
-        k_behavior_tree_add_action(seq);
-        k_behavior_tree_add_condition(seq);
-        k_behavior_tree_add_action(seq);
-
-        seq_1 = k_behavior_tree_add_sequence(root);
-        k_behavior_tree_add_action(seq_1);
-        k_behavior_tree_add_action(seq_1);
-        k_behavior_tree_add_action(seq_1);
-
-        b = k_bt_builder(tree);
-
-        k_bt_sequence(b)
-        || k_bt_action(b)
-        || k_bt_action(b)
-        || (
-            k_bt_sequence(b)
-            || k_bt_condition(b)
-            || k_bt_action(b)
-            || (
-                k_bt_sequence(b)
-                || k_bt_condition(b)
-                || k_bt_action(b)
-                || k_bt_action(b)
-                || k_bt_end(b)
-            )
-            || k_bt_action(b)
-            || k_bt_end(b)
-        )
-        || k_bt_action(b)
-        || k_bt_end(b);
-
-        k_bt_build(b);
-        */
+        rival->x = config->x;
+        rival->y = config->y;
     }
 
     return object;

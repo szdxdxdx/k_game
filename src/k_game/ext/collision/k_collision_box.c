@@ -1,5 +1,3 @@
-#include <assert.h>
-
 #include "./_internal.h"
 
 /* region [collision_box_init] */

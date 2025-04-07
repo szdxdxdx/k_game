@@ -124,9 +124,6 @@ static void player_step(struct k_object *object) {
     if (k_key_pressed('G')) {
         k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_run);
     }
-
-    if (k_key_pressed('K'))
-        k_object_destroy(object);
 }
 
 static void player_touch_bubble(struct k_object *object) {
