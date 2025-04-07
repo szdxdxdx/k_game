@@ -4,10 +4,10 @@
 
 static int mouse_x_at_window = 0;
 static int mouse_y_at_window = 0;
-static int mouse_x_at_view = 0;
-static int mouse_y_at_view = 0;
-static int mouse_x_at_room = 0;
-static int mouse_y_at_room = 0;
+static float mouse_x_at_view = 0;
+static float mouse_y_at_view = 0;
+static float mouse_x_at_room = 0;
+static float mouse_y_at_room = 0;
 
 static uint8_t button_state[3] = { 0 };
 
@@ -50,23 +50,26 @@ void k__SDL_handle_event_mouse_button_up(SDL_MouseButtonEvent *event) {
 
 void k__SDL_handle_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
 
-    float x_at_window = (float)event->x;
-    float x_at_view = (x_at_window / (float)k__window.window_w) * k__window.view_w;
-    float x_at_room = x_at_view + k__window.view_x;
-    mouse_x_at_room = (int)x_at_room;
+    mouse_x_at_window = event->x;
+    mouse_x_at_view   = (float)mouse_x_at_window * k__window.view_window_ratio;
+    mouse_x_at_room   = mouse_x_at_view + k__window.view_x;
 
-    float y_at_window = (float)event->y;
-    float y_at_view = (y_at_window / (float)k__window.window_h) * k__window.view_h;
-    float y_at_room = y_at_view + k__window.view_y;
-    mouse_y_at_room = (int)y_at_room;
+    mouse_y_at_window = event->y;
+    mouse_y_at_view   = (float)mouse_y_at_window * k__window.view_window_ratio;
+    mouse_y_at_room   = mouse_y_at_view + k__window.view_y;
+}
+
+void k__mouse_update_cursor_position_after_view_change(void) {
+    mouse_x_at_room = mouse_x_at_view + k__window.view_x;
+    mouse_y_at_room = mouse_y_at_view + k__window.view_y;
 }
 
 int k_mouse_x(void) {
-    return mouse_x_at_room;
+    return (int)mouse_x_at_room;
 }
 
 int k_mouse_y(void) {
-    return mouse_y_at_room;
+    return (int)mouse_y_at_room;
 }
 
 int k_mouse_button_pressed(enum k_mouse_button button) {

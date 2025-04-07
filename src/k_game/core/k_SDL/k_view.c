@@ -2,6 +2,7 @@
 
 #include "k_game/core/k_view.h"
 #include "./k_window.h"
+#include "./k_mouse.h"
 
 #include "../room/k_room.h"
 
@@ -25,6 +26,7 @@ void k_view_set_w(float w) {
 
     k__window.view_w = view_new_w;
     k__window.view_h = view_new_h;
+    k__window.view_window_ratio = k__window.view_w / (float)k__window.window_w;
 }
 
 void k_view_set_position(float cx, float cy) {
@@ -50,4 +52,6 @@ void k_view_set_position(float cx, float cy) {
     } else {
         k__window.view_y = cy - view_half_h;
     }
+
+    k__mouse_update_cursor_position_after_view_change();
 }

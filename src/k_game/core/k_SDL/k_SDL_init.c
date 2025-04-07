@@ -125,7 +125,7 @@ static int step_create_window(void *config_) {
     k__window.window   = window;
     k__window.window_w = w;
     k__window.window_h = h;
-    k__window.window_aspect_ratio = (float)w / (float)h;
+    k__window.window_aspect_ratio = (float)k__window.window_w / (float)k__window.window_h;
     return 0;
 }
 
@@ -206,7 +206,7 @@ static int step_set_view(void *unused) {
     k__window.view_y = 0;
     k__window.view_w = (float)k__window.window_w;
     k__window.view_h = (float)k__window.window_h;
-    k__window.window_view_ratio = 1;
+    k__window.view_window_ratio = 1.0f;
 
     return 0;
 }
