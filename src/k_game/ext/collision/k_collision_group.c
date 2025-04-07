@@ -65,8 +65,9 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
     }
     k_int_hash_map_del(&group->group_map_node);
 
-    if (NULL != group->debugger)
+    if (NULL != group->debugger) {
         k_object_destroy(group->debugger);
+    }
 
     k_mem_free(group);
 }
