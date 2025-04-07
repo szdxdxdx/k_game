@@ -143,7 +143,7 @@ void position_fini(struct k_component *component) {
 
 /* region [component_define] */
 
-static struct k_component_type *k__component_type_position = NULL;
+static struct k_component_type *k__position_component_type = NULL;
 
 int k__position_component_define(void) {
 
@@ -158,7 +158,7 @@ int k__position_component_define(void) {
 
     world_init();
 
-    k__component_type_position = type;
+    k__position_component_type = type;
     return 0;
 }
 
@@ -171,7 +171,7 @@ struct k_position *k_object_add_position(struct k_object *object, const struct k
     if (NULL == config->world_x) return NULL;
     if (NULL == config->world_y) return NULL;
 
-    struct k_component *component = k_object_add_component(object, k__component_type_position, (void*)config);
+    struct k_component *component = k_object_add_component(object, k__position_component_type, (void*)config);
     if (NULL == component)
         return NULL;
 

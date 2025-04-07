@@ -72,7 +72,7 @@ static void k__state_machine_fini(struct k_component *component) {
 
 /* region [component_define] */
 
-static struct k_component_type *yx_component_type_state_machine;
+static struct k_component_type *k__state_machine_component_type;
 
 int k__state_machine_component_define(void) {
 
@@ -85,7 +85,7 @@ int k__state_machine_component_define(void) {
     if (NULL == type)
         return -1;
 
-    yx_component_type_state_machine = type;
+    k__state_machine_component_type = type;
     return 0;
 }
 
@@ -95,7 +95,7 @@ int k__state_machine_component_define(void) {
 
 struct k_state_machine *k_object_add_state_machine(struct k_object *object) {
 
-    struct k_component *component = k_object_add_component(object, yx_component_type_state_machine, NULL);
+    struct k_component *component = k_object_add_component(object, k__state_machine_component_type, NULL);
     if (NULL == component)
         return NULL;
 

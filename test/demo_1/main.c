@@ -3,6 +3,11 @@
 
 #include "./sprite/_public.h"
 #include "./room/_public.h"
+#include "./component/yx_comp_camera.h"
+
+static void define_component_type(void) {
+    yx_camera_component_define();
+}
 
 static void load_sprite(void) {
     yx_load_spr_ynx();
@@ -24,6 +29,7 @@ static void create_room(void) {
 }
 
 static int fn_init_game(void) {
+    define_component_type();
     load_sprite();
     load_sound();
     create_room();

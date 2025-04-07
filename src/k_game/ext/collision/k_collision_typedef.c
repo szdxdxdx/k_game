@@ -2,7 +2,7 @@
 
 /* region [component_define] */
 
-struct k_component_type *k__component_type_collision = NULL;
+struct k_component_type *k__collision_component_type = NULL;
 
 int k__collision_box_component_define(void) {
 
@@ -20,7 +20,7 @@ int k__collision_box_component_define(void) {
     if (NULL == type)
         return -1;
 
-    k__component_type_collision = type;
+    k__collision_component_type = type;
     return 0;
 }
 
@@ -29,7 +29,7 @@ int k__collision_box_component_define(void) {
 /* region [room_add_component_manager] */
 
 int k_room_add_collision_manager(void) {
-    return k_room_add_component_manager(k__component_type_collision, NULL);
+    return k_room_add_component_manager(k__collision_component_type, NULL);
 }
 
 /* endregion */
@@ -38,7 +38,7 @@ int k_room_add_collision_manager(void) {
 
 struct k_collision_manager *k__collision_get_manager(void) {
 
-    struct k_component_manager *component_manager = k_room_get_component_manager(k__component_type_collision);
+    struct k_component_manager *component_manager = k_room_get_component_manager(k__collision_component_type);
     if (NULL == component_manager)
         return NULL;
 
@@ -56,7 +56,7 @@ static struct k_collision_box *k__object_add_collision_box(struct k_object *obje
     box_config.type   = box_type;
     box_config.config = config;
 
-    struct k_component *component = k_object_add_component(object, k__component_type_collision, &box_config);
+    struct k_component *component = k_object_add_component(object, k__collision_component_type, &box_config);
     if (NULL == component)
         return NULL;
 

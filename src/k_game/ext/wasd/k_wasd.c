@@ -53,7 +53,7 @@ static int WASD_init(struct k_component *component, void *params) {
     return 0;
 }
 
-static struct k_component_type *k__component_type_WASD = NULL;
+static struct k_component_type *k__WASD_component_type = NULL;
 
 int k__WASD_component_define(void) {
 
@@ -67,6 +67,6 @@ int k__WASD_component_define(void) {
 
     k_component_type_set_name(type, "k/WASD");
 
-    k__component_type_WASD = type;
+    k__WASD_component_type = type;
     return 0;
 }

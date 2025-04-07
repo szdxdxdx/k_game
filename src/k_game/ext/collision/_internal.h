@@ -20,7 +20,7 @@ struct k_collision_circle;
 struct k_collision_group;
 struct k_collision_manager;
 
-extern struct k_component_type *k__component_type_collision;
+extern struct k_component_type *k__collision_component_type;
 
 /* region [config] */
 
