@@ -1,4 +1,7 @@
 #include <assert.h>
+
+#include "k_game/core/k_time.h"
+
 #include "./_internal.h"
 
 /* region [draw_sprite] */

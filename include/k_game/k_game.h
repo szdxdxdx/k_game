@@ -1,8 +1,7 @@
 #ifndef K_GAME_H
 #define K_GAME_H
 
-/* core */
-#include "./k_game/core/k_alloc.h"
+#include "./k_game/core/k_mem_alloc.h"
 #include "./k_game/core/k_time.h"
 #include "./k_game/core/k_keyboard.h"
 #include "./k_game/core/k_mouse.h"
@@ -15,7 +14,6 @@
 #include "./k_game/core/k_component.h"
 #include "./k_game/core/k_game_run.h"
 
-/* ext */
 #include "./k_game/ext/k_wasd.h"
 #include "./k_game/ext/k_sprite_renderer.h"
 #include "./k_game/ext/k_collision.h"
@@ -23,7 +21,6 @@
 #include "./k_game/ext/k_state_machine.h"
 #include "./k_game/ext/k_behavior_tree.h"
 
-/* tmp */
 #include "./k_game/tmp/k_game_tmp.h"
 
 #endif

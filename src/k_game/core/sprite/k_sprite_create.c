@@ -1,7 +1,7 @@
 #include "k_log.h"
 #include "k_seq_step.h"
 
-#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_mem_alloc.h"
 #include "k_game/core/k_sprite.h"
 
 #include "./k_sprite.h"
@@ -42,7 +42,7 @@ struct k_sprite *k_sprite_create(const struct k_sprite_config *config) {
 
     /* sprite 结构体和精灵帧 frames 共处同一个大内存块 */
     size_t frames_size = config->frames_num * sizeof(struct k_sprite_frame);
-    struct k_sprite *sprite = k_malloc(sizeof(struct k_sprite) + frames_size);
+    struct k_sprite *sprite = k_mem_alloc(sizeof(struct k_sprite) + frames_size);
     if (NULL == sprite)
         goto err;
 
@@ -76,7 +76,7 @@ void k_sprite_destroy(struct k_sprite *sprite) {
         return;
 
     k__sprite_registry_del(sprite);
-    k_free(sprite);
+    k_mem_free(sprite);
 }
 
 /* region [sprite_get] */

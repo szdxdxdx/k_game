@@ -1,7 +1,7 @@
 #include "k_seq_step.h"
 #include "k_log.h"
 
-#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_mem_alloc.h"
 
 #include "k_game/core/k_component.h"
 #include "./k_component_type.h"
@@ -21,7 +21,7 @@ static int step_malloc(void *context) {
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
     if (NULL != ctx->manager_config) {
-        ctx->component_type = k_malloc(sizeof(struct k_component_type) + sizeof(struct k_component_manager_type));
+        ctx->component_type = k_mem_alloc(sizeof(struct k_component_type) + sizeof(struct k_component_manager_type));
         if (NULL == ctx->component_type) {
             return -1;
         } else {
@@ -29,7 +29,7 @@ static int step_malloc(void *context) {
             return 0;
         }
     } else {
-        ctx->component_type = k_malloc(sizeof(struct k_component_type));
+        ctx->component_type = k_mem_alloc(sizeof(struct k_component_type));
         if (NULL == ctx->component_type) {
             return -1;
         } else {
@@ -43,7 +43,7 @@ static void step_free(void *context) {
     struct step_context *ctx = context;
     struct k_component_type *component_type = ctx->component_type;
 
-    k_free(component_type);
+    k_mem_free(component_type);
 }
 
 static size_t id_counter = 0;

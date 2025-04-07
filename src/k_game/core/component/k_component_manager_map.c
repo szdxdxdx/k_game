@@ -1,6 +1,6 @@
 #include "k_array.h"
 
-#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_mem_alloc.h"
 
 #include "k_game/core/k_component.h"
 #include "./k_component_manager_map.h"
@@ -34,8 +34,8 @@ static struct k_array * const NULL_ARRAY = &(struct k_array){ .size=0 };
 int k__component_manager_map_init(void) {
 
     struct k_array_config config;
-    config.fn_malloc     = k_malloc;
-    config.fn_free       = k_free;
+    config.fn_malloc     = k_mem_alloc;
+    config.fn_free       = k_mem_free;
     config.elem_size     = sizeof(struct k_array *);
     config.init_capacity = 8;
     struct k_array *room_array = k_array_construct(&component_manager_map.map, &config);
@@ -112,8 +112,8 @@ manager_array_create:
             init_capacity = manager_type_id;
 
         struct k_array_config config;
-        config.fn_malloc     = k_malloc;
-        config.fn_free       = k_free;
+        config.fn_malloc     = k_mem_alloc;
+        config.fn_free       = k_mem_free;
         config.elem_size     = sizeof(struct k_component_manager *);
         config.init_capacity = init_capacity;
         *p_manager_array = k_array_create(&config);

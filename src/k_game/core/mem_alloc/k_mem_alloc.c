@@ -2,9 +2,9 @@
 
 #include "k_log.h"
 
-#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_mem_alloc.h"
 
-void *k_malloc(size_t size) {
+void *k_mem_alloc(size_t size) {
 
     void *p = malloc(size);
     if (NULL == p)
@@ -13,6 +13,6 @@ void *k_malloc(size_t size) {
     return p;
 }
 
-void k_free(void *p) {
+void k_mem_free(void *p) {
     free(p);
 }

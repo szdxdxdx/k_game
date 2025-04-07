@@ -1,4 +1,24 @@
-#include "./_internal.h"
+#include "./k_wasd_typedef.h"
+
+#include "k_game/core/k_keyboard.h"
+#include "k_game/core/k_component.h"
+#include "k_game/core/k_time.h"
+
+#include "k_game/ext/k_wasd.h"
+
+struct k_WASD {
+
+    float *x;
+    float *y;
+
+    enum k_keyboard_key key_up;
+    enum k_keyboard_key key_down;
+    enum k_keyboard_key key_left;
+    enum k_keyboard_key key_right;
+
+    float speed;
+};
+
 
 static void WASD_step(struct k_component *component) {
     struct k_WASD *WASD = k_component_get_data(component);
@@ -35,7 +55,7 @@ static int WASD_init(struct k_component *component, void *params) {
 
 static struct k_component_type *k__component_type_WASD = NULL;
 
-int k__define_component_WASD(void) {
+int k__WASD_component_define(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_WASD);

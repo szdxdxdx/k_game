@@ -1,4 +1,26 @@
-#include "_internal.h"
+#include "k_list.h"
+
+#include "k_game/core/k_component.h"
+
+#include "k_game/ext/k_position.h"
+#include "./k_position_typedef.h"
+
+struct k_position {
+
+    struct k_list_node child_list_node;
+
+    struct k_position *parent;
+
+    struct k_list child_list;
+
+    struct k_component *component;
+
+    float local_x;
+    float local_y;
+
+    float *world_x;
+    float *world_y;
+};
 
 /* region [world] */
 
@@ -123,7 +145,7 @@ void position_fini(struct k_component *component) {
 
 static struct k_component_type *k__component_type_position = NULL;
 
-int k__define_component_position(void) {
+int k__position_component_define(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_position);

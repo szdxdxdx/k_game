@@ -1,6 +1,6 @@
 #include "k_log.h"
 
-#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_mem_alloc.h"
 #include "k_game/core/k_sound.h"
 
 #include "./k_sound_bgm.h"
@@ -11,14 +11,14 @@ struct k_sound_bgm *k_sound_bgm_load(const char *file_path) {
     if (NULL == file_path || '\0' == file_path[0])
         return NULL;
 
-    struct k_sound_bgm *sound = k_malloc(sizeof(struct k_sound_bgm));
+    struct k_sound_bgm *sound = k_mem_alloc(sizeof(struct k_sound_bgm));
     if (NULL == sound)
         return NULL;
 
     Mix_Music *music = Mix_LoadMUS(file_path);
     if (NULL == music) {
         k_log_error("Mix_LoadMUS(): %s", Mix_GetError());
-        k_free(sound);
+        k_mem_free(sound);
         return NULL;
     }
 
@@ -34,5 +34,5 @@ void k_sound_bgm_release(struct k_sound_bgm *sound) {
 
     k__sound_bgm_registry_del(sound);
     Mix_FreeMusic(sound->music);
-    k_free(sound);
+    k_mem_free(sound);
 }

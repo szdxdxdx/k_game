@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_mem_alloc.h"
 
 #include "./k_callback_step.h"
 
@@ -59,7 +59,7 @@ struct k_component_step_callback {
 
 struct k_room_callback *k__step_callback_manager_add_room_callback(struct k_step_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data)) {
 
-    struct k_room_step_callback *callback = k_malloc(sizeof(struct k_room_step_callback));
+    struct k_room_step_callback *callback = k_mem_alloc(sizeof(struct k_room_step_callback));
     if (NULL == callback)
         return NULL;
 
@@ -82,7 +82,7 @@ struct k_room_callback *k__step_callback_manager_add_room_callback(struct k_step
 
 struct k_object_callback *k__step_callback_manager_add_object_callback(struct k_step_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object)) {
 
-    struct k_object_step_callback *callback = k_malloc(sizeof(struct k_object_step_callback));
+    struct k_object_step_callback *callback = k_mem_alloc(sizeof(struct k_object_step_callback));
     if (NULL == callback)
         return NULL;
 
@@ -105,7 +105,7 @@ struct k_object_callback *k__step_callback_manager_add_object_callback(struct k_
 
 struct k_component_callback *k__step_callback_manager_add_component_callback(struct k_step_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component)) {
 
-    struct k_component_step_callback *callback = k_malloc(sizeof(struct k_component_step_callback));
+    struct k_component_step_callback *callback = k_mem_alloc(sizeof(struct k_component_step_callback));
     if (NULL == callback)
         return NULL;
 
@@ -189,7 +189,7 @@ void k__step_callback_manager_deinit(struct k_step_callback_manager *manager) {
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(list, iter, next)) {
         step_callback = container_of(iter, struct k_step_callback, callback_list_node);
-        k_free(step_callback);
+        k_mem_free(step_callback);
     }
 }
 
@@ -212,7 +212,7 @@ void k__step_callback_manager_flush(struct k_step_callback_manager *manager) {
             case K_CALLBACK_DELETED:
                 k_list_del(&step_callback->callback_list_node);
                 k_list_del(&step_callback->pending_list_node);
-                k_free(step_callback);
+                k_mem_free(step_callback);
                 break;
             default:
                 assert(0);

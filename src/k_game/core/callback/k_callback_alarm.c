@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_mem_alloc.h"
 #include "k_game/core/k_time.h"
 
 #include "./k_callback_alarm.h"
@@ -62,7 +62,7 @@ struct k_component_alarm_callback {
 
 struct k_room_callback *k__alarm_callback_manager_add_room_callback(struct k_alarm_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
 
-    struct k_room_alarm_callback *callback = k_malloc(sizeof(struct k_room_alarm_callback));
+    struct k_room_alarm_callback *callback = k_mem_alloc(sizeof(struct k_room_alarm_callback));
     if (NULL == callback)
         return NULL;
 
@@ -89,7 +89,7 @@ struct k_room_callback *k__alarm_callback_manager_add_room_callback(struct k_ala
 
 struct k_object_callback *k__alarm_callback_manager_add_object_callback(struct k_alarm_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object, int timeout_diff), int delay_ms) {
 
-    struct k_object_alarm_callback *callback = k_malloc(sizeof(struct k_object_alarm_callback));
+    struct k_object_alarm_callback *callback = k_mem_alloc(sizeof(struct k_object_alarm_callback));
     if (NULL == callback)
         return NULL;
 
@@ -116,7 +116,7 @@ struct k_object_callback *k__alarm_callback_manager_add_object_callback(struct k
 
 struct k_component_callback *k__alarm_callback_manager_add_component_callback(struct k_alarm_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms) {
 
-    struct k_component_alarm_callback *callback = k_malloc(sizeof(struct k_component_alarm_callback));
+    struct k_component_alarm_callback *callback = k_mem_alloc(sizeof(struct k_component_alarm_callback));
     if (NULL == callback)
         return NULL;
 
@@ -206,7 +206,7 @@ void k__alarm_callback_manager_deinit(struct k_alarm_callback_manager *manager) 
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(list, iter, next)) {
         alarm_callback = container_of(iter, struct k_alarm_callback, callback_list_node);
-        k_free(alarm_callback);
+        k_mem_free(alarm_callback);
     }
 }
 
@@ -246,7 +246,7 @@ void k__alarm_callback_manager_flush(struct k_alarm_callback_manager *manager) {
             case K_CALLBACK_DELETED:
                 k_list_del(&alarm_callback->callback_list_node);
                 k_list_del(&alarm_callback->pending_list_node);
-                k_free(alarm_callback);
+                k_mem_free(alarm_callback);
                 break;
             default:
                 assert(0);

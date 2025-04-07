@@ -4,9 +4,11 @@
 #include "k_list.h"
 #include "k_int_hash_map.h"
 
-#include "k_game.h"
+#include "k_game/core/k_mem_alloc.h"
+#include "k_game/core/k_object.h"
+#include "k_game/core/k_component.h"
 
-#include "./_shared.h"
+#include "k_game/ext/k_collision.h"
 
 enum k_collision_box_type;
 struct k_collision_box_config;

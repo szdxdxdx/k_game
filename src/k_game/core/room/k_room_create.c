@@ -2,7 +2,7 @@
 #include "k_seq_step.h"
 
 #include "k_game/core/k_room.h"
-#include "k_game/core/k_alloc.h"
+#include "k_game/core/k_mem_alloc.h"
 
 #include "./k_room.h"
 #include "./k_room_registry.h"
@@ -30,7 +30,7 @@ static int step_malloc(void *context) {
 
     size_t alloc_size = sizeof(struct k_room) + config->data_size;
 
-    struct k_room *room = k_malloc(alloc_size);
+    struct k_room *room = k_mem_alloc(alloc_size);
     if (NULL == room)
         return -1;
 
@@ -48,7 +48,7 @@ static void step_free(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k_free(room);
+    k_mem_free(room);
 }
 
 static int step_set_properties(void *context) {

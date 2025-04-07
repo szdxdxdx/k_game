@@ -1,5 +1,7 @@
 #include <assert.h>
 
+#include "k_game/core/k_object.h"
+
 #include "./_internal.h"
 
 struct k_behavior_tree_root_node {

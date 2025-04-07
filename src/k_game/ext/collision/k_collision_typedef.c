@@ -4,7 +4,7 @@
 
 struct k_component_type *k__component_type_collision = NULL;
 
-int k__define_component_collision_box(void) {
+int k__collision_box_component_define(void) {
 
     struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
     entity_config.data_size = sizeof(struct k_collision_box);

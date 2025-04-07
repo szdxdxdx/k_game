@@ -2,7 +2,7 @@
 
 int k__collision_manager_init_group_map(struct k_collision_manager *manager) {
     size_t buckets_num = 32;
-    struct k_hash_list *buckets = k_malloc(sizeof(struct k_hash_list) * buckets_num);
+    struct k_hash_list *buckets = k_mem_alloc(sizeof(struct k_hash_list) * buckets_num);
     if (buckets == NULL)
         return -1;
 
@@ -29,7 +29,7 @@ void k__collision_manager_fini_group_map(struct k_collision_manager *manager) {
         }
     }
 
-    k_free(manager->group_map.buckets);
+    k_mem_free(manager->group_map.buckets);
 }
 
 struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collision_manager *manager, int group_id) {
@@ -40,7 +40,7 @@ struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collis
         return found_group;
     }
     else {
-        struct k_collision_group *new_group = k_malloc(sizeof(struct k_collision_group));
+        struct k_collision_group *new_group = k_mem_alloc(sizeof(struct k_collision_group));
         if (NULL == new_group)
             return NULL;
 
@@ -68,7 +68,7 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
     if (NULL != group->debugger)
         k_object_destroy(group->debugger);
 
-    k_free(group);
+    k_mem_free(group);
 }
 
 struct k_collision_group *k__collision_find_or_add_group(int group_id) {

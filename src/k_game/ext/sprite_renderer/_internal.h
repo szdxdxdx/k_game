@@ -3,9 +3,11 @@
 
 #include <stddef.h>
 
-#include "k_game.h"
+#include "k_game/core/k_sprite.h"
+#include "k_game/core/k_component.h"
 
-#include "./_shared.h"
+#include "k_game/ext/k_sprite_renderer.h"
+#include "./k_sprite_renderer_typedef.h"
 
 enum renderer_transform {
     transform_none     = 0,
@@ -37,10 +39,10 @@ struct k_sprite_renderer {
     float  timer;
     float  speed;
 
-    float   scaled_w;
-    float   scaled_h;
-    float   angle;
-    uint8_t transform_flags;
+    float scaled_w;
+    float scaled_h;
+    float angle;
+    int   transform_flags;
 };
 
 void k__sprite_renderer_reset(struct k_sprite_renderer *renderer);

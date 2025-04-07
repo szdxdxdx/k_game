@@ -15,11 +15,11 @@
 #include "../component/k_component_type_registry.h"
 #include "../component/k_component_manager_map.h"
 
-#include "../../ext/wasd/_shared.h"
-#include "../../ext/sprite_renderer/_shared.h"
-#include "../../ext/collision/_shared.h"
-#include "../../ext/position/_shared.h"
-#include "../../ext/state_mechine/_shared.h"
+#include "../../ext/wasd/k_wasd_typedef.h"
+#include "../../ext/sprite_renderer/k_sprite_renderer_typedef.h"
+#include "../../ext/collision/k_collision_typedef.h"
+#include "../../ext/position/k_position_typedef.h"
+#include "../../ext/state_mechine/k_state_machine_typedef.h"
 
 /* region [steps] */
 
@@ -96,11 +96,11 @@ static void step_free_component_manager_map(void *unused) {
 static int step_define_components(void *unused) {
     (void)unused;
 
-    return k__define_component_WASD()
-           || k__define_component_sprite_renderer()
-           || k__define_component_collision_box()
-           || k__define_component_position()
-           || k__define_component_state_machine()
+    return k__WASD_component_define()
+        || k__sprite_renderer_component_define()
+        || k__collision_box_component_define()
+        || k__position_component_define()
+        || k__state_machine_component_define()
      ? -1 : 0;
 }
 

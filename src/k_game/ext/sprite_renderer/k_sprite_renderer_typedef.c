@@ -50,7 +50,7 @@ static int k__sprite_renderer_init(struct k_component *component, void *params) 
 
 static struct k_component_type *k__component_type_sprite_renderer = NULL;
 
-int k__define_component_sprite_renderer(void) {
+int k__sprite_renderer_component_define(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_sprite_renderer);

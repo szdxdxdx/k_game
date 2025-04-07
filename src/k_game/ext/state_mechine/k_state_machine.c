@@ -1,4 +1,18 @@
-#include "./_internal.h"
+#include "k_game/core/k_component.h"
+
+#include "k_game/ext/k_state_machine.h"
+#include "./k_state_machine_typedef.h"
+
+struct k_state_machine {
+
+    struct k_component *component;
+
+    struct k_object *object;
+
+    void (*fn_step)(struct k_object *object);
+
+    void (*fn_exit)(struct k_object *object);
+};
 
 /* region [machine_state] */
 
@@ -60,7 +74,7 @@ static void k__state_machine_fini(struct k_component *component) {
 
 static struct k_component_type *yx_component_type_state_machine;
 
-int k__define_component_state_machine(void) {
+int k__state_machine_component_define(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_state_machine);

@@ -1,7 +1,7 @@
 #include <math.h>
 
-
 #include "./_internal.h"
+
 #include "../../core/k_SDL/k_window.h"
 
 static void k__sprite_renderer_debug_draw(struct k_component *component) {

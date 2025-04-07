@@ -1,7 +1,14 @@
 #ifndef K__BEHAVIOR_TREE_INTERNAL_H
 #define K__BEHAVIOR_TREE_INTERNAL_H
 
-#include "k_game.h"
+#include <stddef.h>
+
+#include "k_game/ext/k_behavior_tree.h"
+
+#ifndef container_of
+#define container_of(ptr, type, member) \
+    ((type *)((char *)(ptr) - offsetof(type, member)))
+#endif
 
 struct k_behavior_tree_node {
 
