@@ -27,6 +27,18 @@ void k_view_set_w(float w) {
     k__window.view_w = view_new_w;
     k__window.view_h = view_new_h;
     k__window.view_window_ratio = k__window.view_w / (float)k__window.window_w;
+
+    k__mouse.x_at_view = (float)k__mouse.x_at_window * k__window.view_window_ratio;
+    k__mouse.y_at_view = (float)k__mouse.y_at_window * k__window.view_window_ratio;
+    k__mouse.x_at_room = k__mouse.x_at_view + k__window.view_x;
+    k__mouse.y_at_room = k__mouse.y_at_view + k__window.view_y;
+}
+
+void k_view_set_h(float h) {
+
+    if (0 <= h) {
+        return k_view_set_w(h * k__window.window_aspect_ratio);
+    }
 }
 
 void k_view_set_position(float cx, float cy) {
@@ -53,5 +65,6 @@ void k_view_set_position(float cx, float cy) {
         k__window.view_y = cy - view_half_h;
     }
 
-    k__mouse_update_cursor_position_after_view_change();
+    k__mouse.x_at_room = k__mouse.x_at_view + k__window.view_x;
+    k__mouse.y_at_room = k__mouse.y_at_view + k__window.view_y;
 }
