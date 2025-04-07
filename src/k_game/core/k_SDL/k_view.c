@@ -17,7 +17,7 @@ void k_view_set_w(float w) {
     float view_new_w = fminf(w, view_max_w);
     float view_new_h = view_new_w / k__window.window_aspect_ratio;
 
-    if (view_new_h <= view_max_h) {
+    if (view_max_h < view_new_h) {
         view_new_w = view_max_h * k__window.window_aspect_ratio;
         view_new_h = view_max_h;
     }
@@ -34,6 +34,18 @@ void k_view_set_w(float w) {
 
 void k_view_set_h(float h) {
     return k_view_set_w(h * k__window.window_aspect_ratio);
+}
+
+void k_view_fit_rect(float w, float h) {
+
+    if (w <= 0 || h <= 0)
+        return;
+
+    k_view_set_w(w);
+
+    if (k__window.view_h < h) {
+        k_view_set_h(h);
+    }
 }
 
 void k_view_set_position(float cx, float cy) {

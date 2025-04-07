@@ -23,6 +23,8 @@ void k_view_set_w(float w);
  */
 void k_view_set_h(float h);
 
+void k_view_fit_rect(float w, float h);
+
 /**
  * \brief 设置视角矩形的中心点坐标
  *

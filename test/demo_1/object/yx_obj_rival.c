@@ -1,4 +1,5 @@
 #include "./yx_all_object.h"
+#include "../component/yx_comp_camera.h"
 
 struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
 
@@ -43,6 +44,10 @@ struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
 
         rival->x = config->x;
         rival->y = config->y;
+    }
+
+    {
+        yx_object_add_camera_follow(object, &rival->x, &rival->y);
     }
 
     return object;

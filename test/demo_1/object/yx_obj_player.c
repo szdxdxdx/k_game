@@ -1,4 +1,5 @@
 #include "./yx_all_object.h"
+#include "../component/yx_comp_camera.h"
 
 /* region [state] */
 
@@ -71,7 +72,6 @@ static void state_step_running(struct k_object *object) {
     }
 
     k_position_set_local_position(player->position, player->next_x, player->next_y);
-    k_view_set_position(player->x, player->y);
 }
 
 /* endregion */
@@ -212,6 +212,10 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     {
         player->state_machine = k_object_add_state_machine(object);
         k_state_machine_change_state(player->state_machine, STATE_IDLE);
+    }
+
+    {
+        yx_object_add_camera_follow(object, &player->x, &player->y);
     }
 
     return object;

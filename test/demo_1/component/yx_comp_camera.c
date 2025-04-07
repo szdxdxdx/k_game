@@ -1,11 +1,19 @@
+#include <math.h>
 
 #include "./yx_comp_camera.h"
 
 struct yx_camera;
+struct yx_camera_target;
+struct yx_camera_manager;
+
+struct yx_camera {
+
+    struct yx_camera_manager *manager;
+};
 
 struct yx_camera_target {
 
-    struct yx_camera *camera;
+    struct yx_camera_manager *manager;
 
     size_t target_idx;
 
@@ -16,14 +24,6 @@ struct yx_camera_target {
 struct yx_camera_manager {
 
     struct k_object *camera;
-};
-
-struct yx_camera {
-
-    struct yx_camera_manager *manager;
-
-    float camera_x;
-    float camera_y;
 
 #define YX__CAMERA_TARGET_MAX 16
     struct yx_camera_target *targets[YX__CAMERA_TARGET_MAX];
@@ -31,46 +31,77 @@ struct yx_camera {
     size_t targets_num;
 };
 
+void yx_camera_step_end(struct k_object *object) {
+    struct yx_camera *camera = k_object_get_data(object);
+    struct yx_camera_manager *manager = camera->manager;
+
+    if (0 == manager->targets_num)
+        return;
+
+    struct yx_camera_target *target = manager->targets[0];
+    float min_x = *target->x;
+    float max_x = *target->x;
+    float min_y = *target->y;
+    float max_y = *target->y;
+
+    size_t i = 1;
+    for (; i < manager->targets_num; i++) {
+        target = manager->targets[i];
+        if (*target->x < min_x) { min_x = *target->x; }
+        if (*target->x > max_x) { max_x = *target->x; }
+        if (*target->y < min_y) { min_y = *target->y; }
+        if (*target->y > max_y) { max_y = *target->y; }
+    }
+
+    float cx = (min_x + max_x) * 0.5f;
+    float cy = (min_y + max_y) * 0.5f;
+
+    float w = fmaxf(150.0f, max_x - min_x + 200.0f);
+    float h = fmaxf(100.0f, max_y - min_y + 200.0f);
+    k_view_fit_rect(w, h);
+
+    k_view_set_position(cx, cy);
+}
+
 int yx_camera_target_init(struct k_component *component, void *params) {
 
-    struct yx_camera *camera = k_component_get_manager_data(component);
-    if (NULL == camera)
-        return -1;
+    struct yx_camera_manager *manager = k_component_get_manager_data(component);
 
-    if (YX__CAMERA_TARGET_MAX <= camera->targets_num)
+    if (YX__CAMERA_TARGET_MAX <= manager->targets_num)
         return -1;
 
     struct yx_camera_target *target = k_component_get_data(component);
 
-    target->camera = camera;
-    target->target_idx = camera->targets_num;
+    target->manager = manager;
+    target->target_idx = manager->targets_num;
+
+    manager->targets[manager->targets_num] = target;
+    manager->targets_num += 1;
 
     float **xy = (float **)params;
     target->x = xy[0];
     target->y = xy[1];
-
-    camera->targets_num += 1;
 
     return 0;
 }
 
 void yx_camera_target_fini(struct k_component *component) {
     struct yx_camera_target *target = k_component_get_data(component);
+    struct yx_camera_manager *manager = k_component_get_manager_data(component);
 
-    struct yx_camera *camera = target->camera;
-
-    struct yx_camera_target *last_target = camera->targets[camera->targets_num - 1];
+    struct yx_camera_target *last_target = manager->targets[manager->targets_num - 1];
     if (target != last_target) {
         last_target->target_idx = target->target_idx;
-        camera->targets[target->target_idx] = last_target;
+        manager->targets[target->target_idx] = last_target;
     }
-    camera->targets_num -= 1;
+    manager->targets_num -= 1;
 }
 
 int yx_camera_manager_init(struct k_component_manager *component_manager, void *params) {
     (void *)params;
 
     struct yx_camera_manager *manager = k_component_manager_get_data(component_manager);
+    manager->targets_num = 0;
 
     {
         struct k_object *object = k_object_create(sizeof(struct yx_camera));
@@ -78,10 +109,10 @@ int yx_camera_manager_init(struct k_component_manager *component_manager, void *
             return -1;
 
         struct yx_camera *camera = k_object_get_data(object);
-        camera->manager     = manager;
-        camera->camera_x    = 0.0f;
-        camera->camera_y    = 0.0f;
-        camera->targets_num = 0;
+        camera->manager = manager;
+
+        if (NULL == k_object_add_step_end_callback(object, yx_camera_step_end))
+            return -1;
 
         manager->camera = object;
     }
