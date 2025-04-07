@@ -1,10 +1,9 @@
 #include "k_log.h"
 
 #include "k_game/core/k_image.h"
-
-#include "../game/k_game_context.h"
-
 #include "./k_image.h"
+
+#include "../k_SDL/k_window.h"
 
 int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const struct k_float_rect *dst_rect, struct k_image_draw_options *options) {
 
@@ -35,13 +34,13 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const
     }
 
     SDL_FRect dst;
-    dst.x = dst_rect->x - k__game.view_x;
-    dst.y = dst_rect->y - k__game.view_y;
+    dst.x = dst_rect->x - k__window.view_x;
+    dst.y = dst_rect->y - k__window.view_y;
     dst.w = dst_rect->w;
     dst.h = dst_rect->h;
 
     if (NULL == options) {
-        if (0 != SDL_RenderCopyF(k__game.renderer, image->texture, &src, &dst)) {
+        if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
             return -1;
         }
@@ -57,7 +56,7 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const
         if (options->flip_y)
             flip |= SDL_FLIP_VERTICAL;
 
-        if (0 != SDL_RenderCopyExF(k__game.renderer, image->texture, &src, &dst, options->angle, &center, flip)) {
+        if (0 != SDL_RenderCopyExF(k__window.renderer, image->texture, &src, &dst, options->angle, &center, flip)) {
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
             return -1;
         }

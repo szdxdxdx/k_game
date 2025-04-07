@@ -2,6 +2,7 @@
 
 #include "k_log.h"
 
+#include "k_game/core/k_game_run.h"
 #include "./k_game_init.h"
 
 #include "../room/k_room_stack.h"

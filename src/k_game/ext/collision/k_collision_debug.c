@@ -1,17 +1,17 @@
 #include "./_internal.h"
 
-#include "../../core/game/k_game_context.h"
+#include "../../core/k_SDL/k_window.h"
 
 /* region [debug_draw] */
 
 static void draw_point(float x, float y) {
     float r = 1.0f;
-    SDL_RenderDrawLineF(k__game.renderer, x - r, y, x + r, y);
-    SDL_RenderDrawLineF(k__game.renderer, x, y - r, x, y + r);
+    SDL_RenderDrawLineF(k__window.renderer, x - r, y, x + r, y);
+    SDL_RenderDrawLineF(k__window.renderer, x, y - r, x, y + r);
 }
 
 static void draw_line(float x1, float y1, float x2, float y2) {
-    SDL_RenderDrawLineF(k__game.renderer, x1, y1, x2, y2);
+    SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2);
 }
 
 static void draw_rect(float x1, float y1, float x2, float y2) {
@@ -22,7 +22,7 @@ static void draw_rect(float x1, float y1, float x2, float y2) {
         { x2, y1 },
         { x1, y1 },
     };
-    SDL_RenderDrawLinesF(k__game.renderer, points, 5);
+    SDL_RenderDrawLinesF(k__window.renderer, points, 5);
 }
 
 static void draw_circle(float cx, float cy, float r) {
@@ -36,14 +36,14 @@ static void draw_circle(float cx, float cy, float r) {
     int centerX = (int)cx;
     int centerY = (int)cy;
     while (x >= y) {
-        SDL_RenderDrawPoint(k__game.renderer, centerX + x, centerY + y);
-        SDL_RenderDrawPoint(k__game.renderer, centerX + y, centerY + x);
-        SDL_RenderDrawPoint(k__game.renderer, centerX - y, centerY + x);
-        SDL_RenderDrawPoint(k__game.renderer, centerX - x, centerY + y);
-        SDL_RenderDrawPoint(k__game.renderer, centerX - x, centerY - y);
-        SDL_RenderDrawPoint(k__game.renderer, centerX - y, centerY - x);
-        SDL_RenderDrawPoint(k__game.renderer, centerX + y, centerY - x);
-        SDL_RenderDrawPoint(k__game.renderer, centerX + x, centerY - y);
+        SDL_RenderDrawPoint(k__window.renderer, centerX + x, centerY + y);
+        SDL_RenderDrawPoint(k__window.renderer, centerX + y, centerY + x);
+        SDL_RenderDrawPoint(k__window.renderer, centerX - y, centerY + x);
+        SDL_RenderDrawPoint(k__window.renderer, centerX - x, centerY + y);
+        SDL_RenderDrawPoint(k__window.renderer, centerX - x, centerY - y);
+        SDL_RenderDrawPoint(k__window.renderer, centerX - y, centerY - x);
+        SDL_RenderDrawPoint(k__window.renderer, centerX + y, centerY - x);
+        SDL_RenderDrawPoint(k__window.renderer, centerX + x, centerY - y);
         if (err <= 0) {
             y += 1;
             err += 2 * y + 1;
@@ -93,7 +93,7 @@ static void k__collision_draw_group(struct k_object *object) {
     struct k_collision_debugger *debugger = k_object_get_data(object);
     struct k_collision_group *group = debugger->group;
 
-    SDL_SetRenderDrawColor(k__game.renderer, 255, 0, 102, 255);
+    SDL_SetRenderDrawColor(k__window.renderer, 255, 0, 102, 255);
 
     struct k_collision_box *box;
     struct k_list *list = &group->box_list;

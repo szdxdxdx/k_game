@@ -5,7 +5,6 @@
 #include "./k_object.h"
 #include "./k_object_pool.h"
 
-#include "../game/k_game_context.h"
 #include "../room/k_room.h"
 
 /* region [object_create] */

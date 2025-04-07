@@ -3,11 +3,10 @@
 #include "k_log.h"
 #include "k_seq_step.h"
 
-#include "k_game.h"
-
+#include "k_game/core/k_game_run.h"
 #include "./k_game_init.h"
 
-#include "../k_SDL/_shared.h"
+#include "../k_SDL/k_SDL_init.h"
 #include "../image/k_image_registry.h"
 #include "../sound/k_sound_registry.h"
 #include "../sprite/k_sprite_registry.h"

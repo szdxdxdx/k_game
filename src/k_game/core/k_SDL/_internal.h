@@ -6,8 +6,6 @@
 
 #include "k_game.h"
 
-#include "./_shared.h"
-
 /* region [keyboard] */
 
 void k__SDL_refresh_keyboard_state(void);

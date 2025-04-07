@@ -1,5 +1,8 @@
-#include "./_internal.h"
 #include "SDL_timer.h"
+#include "./_internal.h"
+
+#include "./k_time.h"
+#include "./k_SDL_event.h"
 
 #include "../game/k_game_context.h"
 #include "../room/k_room.h"
@@ -53,14 +56,14 @@ void k__SDL_handle_event_with_frame_delay(uint64_t room_step_interval_ms) {
         k__SDL_poll_events();
 
         current_time = SDL_GetTicks64();
-        elapsed_time = current_time - k__game.step_timestamp;
+        elapsed_time = current_time - k__time.step_timestamp;
 
         /* 不使用 `SDL_Delay()` 来控制帧率，是因为 delay 期间不执行代码，窗口无法响应操作。
          * 例如，若极端地将帧率设为 1 秒 1 帧时，用户能明显感觉到拖动窗口的响应卡顿。
          */
     } while (elapsed_time < room_step_interval_ms);
 
-    k__game.step_timestamp = current_time;
-    k__game.step_delta_ms  = (int)elapsed_time;
-    k__game.step_delta     = (float)elapsed_time / 1000.0f;
+    k__time.step_timestamp = current_time;
+    k__time.step_delta_ms  = (int)elapsed_time;
+    k__time.step_delta     = (float)elapsed_time / 1000.0f;
 }

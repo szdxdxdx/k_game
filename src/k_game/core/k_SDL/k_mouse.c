@@ -1,6 +1,6 @@
 #include "./_internal.h"
 
-#include "../game/k_game_context.h"
+#include "./k_window.h"
 
 static int mouse_x = 0;
 static int mouse_y = 0;
@@ -47,13 +47,13 @@ void k__SDL_handle_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
 
 
     float x_at_window = (float)event->x;
-    float x_at_view = (x_at_window / (float)k__game.window_w) * k__game.view_w;
-    float x_at_room = x_at_view + k__game.view_x;
+    float x_at_view = (x_at_window / (float)k__window.window_w) * k__window.view_w;
+    float x_at_room = x_at_view + k__window.view_x;
     mouse_x = (int)x_at_room;
 
     float y_at_window = (float)event->y;
-    float y_at_view = (y_at_window / (float)k__game.window_h) * k__game.view_h;
-    float y_at_room = y_at_view + k__game.view_y;
+    float y_at_view = (y_at_window / (float)k__window.window_h) * k__window.view_h;
+    float y_at_room = y_at_view + k__window.view_y;
     mouse_y = (int)y_at_room;
 }
 
