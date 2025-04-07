@@ -1,6 +1,8 @@
 #include "k_math.h"
 
-#include "../_internal.h"
+#include "./yx_all_object.h"
+
+#include "../sprite/yx_spr_iris.h"
 
 /* region [bullet] */
 

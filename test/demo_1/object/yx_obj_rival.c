@@ -1,4 +1,4 @@
-#include "../_internal.h"
+#include "./yx_all_object.h"
 
 struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
 
