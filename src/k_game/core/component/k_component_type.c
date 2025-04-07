@@ -2,12 +2,10 @@
 #include "k_log.h"
 
 #include "k_game/core/k_alloc.h"
-#include "k_game/core/k_component.h"
 
+#include "k_game/core/k_component.h"
 #include "./k_component_type.h"
 #include "./k_component_type_registry.h"
-
-/* region [component_define] */
 
 /* region [steps] */
 
@@ -77,7 +75,7 @@ static int step_registry_add(void *context) {
     struct step_context *ctx = context;
     struct k_component_type *component_type = ctx->component_type;
 
-    k__asset_registry_add(&k__component_type_registry, &component_type->registry_node);
+    k__component_type_registry_add(component_type);
     return 0;
 }
 
@@ -85,7 +83,7 @@ static void step_registry_del(void *context) {
     struct step_context *ctx = context;
     struct k_component_type *component_type = ctx->component_type;
 
-    k__asset_registry_del(&component_type->registry_node);
+    k__component_type_registry_del(component_type);
 }
 
 static struct k_seq_step steps[] = {
@@ -142,9 +140,3 @@ void k__component_undef(struct k_component_type *component_type) {
 
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
 }
-
-/* endregion */
-
-/* region [component_type_registry] */
-
-/* endregion */

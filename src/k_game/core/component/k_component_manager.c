@@ -1,11 +1,11 @@
 #include "k_game/core/k_alloc.h"
-#include "k_game/core/k_component.h"
 
+#include "k_game/core/k_component.h"
 #include "./k_component_type.h"
 #include "./k_component_manager.h"
 #include "./k_component_manager_map.h"
 
-#include "../game/k_game_context.h"
+#include "../room/k_room.h"
 
 /* region [component_manager_create] */
 
@@ -69,7 +69,7 @@ int k_room_add_component_manager(struct k_component_type *component_type, void *
     if (NULL == component_type)
         return -1;
 
-    return k__component_manager_create(k__game.current_room, component_type, params);
+    return k__component_manager_create(k__current_room, component_type, params);
 }
 
 struct k_component_manager *k_room_get_component_manager(struct k_component_type *component_type) {
@@ -77,7 +77,7 @@ struct k_component_manager *k_room_get_component_manager(struct k_component_type
     if (NULL == component_type)
         return NULL;
 
-    return k__component_manager_map_find(k__game.current_room, component_type->manager_type);
+    return k__component_manager_map_find(k__current_room, component_type->manager_type);
 }
 
 void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {

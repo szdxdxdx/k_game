@@ -1,6 +1,8 @@
-#include "./k_room_registry.h"
-#include "./k_room_create.h"
+
+#include "k_game/core/k_room.h"
 #include "./k_room.h"
+#include "./k_room_create.h"
+#include "./k_room_registry.h"
 
 static struct k_asset_registry k__room_registry;
 

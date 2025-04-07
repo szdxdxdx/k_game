@@ -2,7 +2,7 @@
 
 #include "k_log.h"
 
-#include "k_game.h"
+#include "k_game/core/k_alloc.h"
 
 void *k_malloc(size_t size) {
 

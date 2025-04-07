@@ -1,6 +1,6 @@
 #include "k_game/core/k_alloc.h"
-#include "k_game/core/k_component.h"
 
+#include "k_game/core/k_component.h"
 #include "./k_component.h"
 #include "./k_component_manager.h"
 #include "./k_component_manager_map.h"

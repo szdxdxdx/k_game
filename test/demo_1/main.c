@@ -43,5 +43,5 @@ int main(int argc, char **argv) {
     config.canvas_h = config.window_h;
     config.fn_init = fn_init_game;
 
-    return k_run_game(&config);
+    return k_game_run(&config);
 }

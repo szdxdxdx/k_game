@@ -1,23 +1,9 @@
 #ifndef K__COMPONENT_MANAGER_MAP_H
 #define K__COMPONENT_MANAGER_MAP_H
 
-#include "k_array.h"
-
 struct k_room;
 struct k_component_manager_type;
 struct k_component_manager;
-
-/* 全局单例容器，用于管理所有的组件管理器实例 */
-struct k_room_component_manager_map {
-
-    /* 使用动态二维数组建立从【房间、组件类型】到【组件管理器实例】的索引，
-     * 能以 O(1) 的时间复杂度，快速获取特定房间中挂载的特定类型的组件管理器实例。
-     *
-     * 用类似 C++ 的模板语法来表示 map 的类型应为：
-     * `k_array<k_array<k_component_manager *> *> map;`
-     */
-    struct k_array map;
-};
 
 int k__component_manager_map_init(void);
 

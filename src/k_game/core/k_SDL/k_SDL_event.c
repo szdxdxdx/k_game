@@ -1,8 +1,8 @@
 #include "./_internal.h"
+#include "SDL_timer.h"
 
 #include "../game/k_game_context.h"
 #include "../room/k_room.h"
-#include "SDL_timer.h"
 
 static void k__SDL_poll_events(void) {
 
@@ -12,7 +12,7 @@ static void k__SDL_poll_events(void) {
 
             case SDL_QUIT:
                 k__game.quit_game = 1;
-                k__game.current_room->game_loop = 0;
+                k__current_room->game_loop = 0;
                 break;
 
             case SDL_MOUSEMOTION:

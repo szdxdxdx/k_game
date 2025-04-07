@@ -51,6 +51,6 @@ struct k_game_config {
     .fn_fini      = NULL, \
 }
 
-int k_run_game(const struct k_game_config *config);
+int k_game_run(const struct k_game_config *config);
 
 #endif

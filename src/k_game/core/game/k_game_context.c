@@ -2,9 +2,7 @@
 
 #include "./k_game_context.h"
 
-struct k_game_context k__game = {
-    .quit_game = 0,
-};
+struct k_game_context k__game;
 
 float k_get_step_delta(void) {
     return k__game.step_delta;

@@ -7,8 +7,10 @@
 #include "../k_SDL/_shared.h"
 #include "../game/k_game_context.h"
 
+struct k_room *k__current_room = NULL;
+
 void k__room_run(struct k_room *room) {
-    k__game.current_room = room;
+    k__current_room = room;
 
     room->game_loop = 1;
 
@@ -60,5 +62,5 @@ void k__room_run(struct k_room *room) {
         room->fn_leave();
     }
 
-    k__game.current_room = NULL;
+    k__current_room = NULL;
 }

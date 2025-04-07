@@ -10,7 +10,7 @@ void k_view_set_w(float w) {
     if (w <= 0)
         return;
 
-    struct k_room *room = k__game.current_room;
+    struct k_room *room = k__current_room;
 
     float max_w = fminf(room->room_w, (float)k__game.canvas_w);
     float max_h = fminf(room->room_h, (float)k__game.canvas_h);
@@ -33,7 +33,7 @@ void k_view_set_h(float h) {
     if (h <= 0)
         return;
 
-    struct k_room *room = k__game.current_room;
+    struct k_room *room = k__current_room;
 
     float max_w = fminf(room->room_w, (float)k__game.canvas_w);
     float max_h = fminf(room->room_h, (float)k__game.canvas_h);
@@ -53,7 +53,7 @@ void k_view_set_h(float h) {
 
 void k_view_set_position(float cx, float cy) {
 
-    struct k_room *room = k__game.current_room;
+    struct k_room *room = k__current_room;
 
     float half_w = k__game.view_w / 2;
 

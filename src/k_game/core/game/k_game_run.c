@@ -18,7 +18,7 @@ static void run_game() {
     k__room_run(room);
 }
 
-int k_run_game(const struct k_game_config *config) {
+int k_game_run(const struct k_game_config *config) {
 
     if (0 != k__init_game(config))
         return -1;
