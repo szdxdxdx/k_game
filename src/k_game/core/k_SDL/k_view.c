@@ -38,9 +38,6 @@ void k_view_set_h(float h) {
 
 void k_view_fit_rect(float w, float h) {
 
-    if (w <= 0 || h <= 0)
-        return;
-
     k_view_set_w(w);
 
     if (k__window.view_h < h) {
