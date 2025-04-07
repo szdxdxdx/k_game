@@ -16,11 +16,6 @@ struct k_mouse_context k__mouse = {
 
 static void refresh_button_state(enum k_mouse_button button) {
 
-    /* 每个按键用 3 个 bit 记录状态：
-     * - 0b100 表示该按键在上一帧被按下或按住
-     * - 0b010 表示该按键在这一帧被按下
-     * - 0b001 表示该按键在这一帧抬起
-     */
     switch (k__mouse.button_state[button] & 0b11) {
         case 0b00: k__mouse.button_state[button] &= 0b100; break;
         case 0b01: k__mouse.button_state[button]  = 0b000; break;
