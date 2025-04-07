@@ -6,9 +6,9 @@
 
 #include "../room/k_room.h"
 
-void k_view_set_w(float w) {
+void k_view_fit_rect(float w, float h) {
 
-    if (w <= 0)
+    if (w <= 0 || h <= 0)
         return;
 
     float view_max_w = fminf(k__current_room->room_w, (float)k__window.canvas_w);
@@ -21,6 +21,15 @@ void k_view_set_w(float w) {
         view_new_w = view_max_h * k__window.window_aspect_ratio;
         view_new_h = view_max_h;
     }
+    else if (view_new_h < h) {
+        view_new_h = h;
+        view_new_w = view_new_h * k__window.window_aspect_ratio;
+
+        if (view_max_h < view_new_h) {
+            view_new_w = view_max_h * k__window.window_aspect_ratio;
+            view_new_h = view_max_h;
+        }
+    }
 
     k__window.view_w = view_new_w;
     k__window.view_h = view_new_h;
@@ -30,19 +39,6 @@ void k_view_set_w(float w) {
     k__mouse.y_at_view = (float)k__mouse.y_at_window * k__window.view_window_ratio;
     k__mouse.x_at_room = k__mouse.x_at_view + k__window.view_x;
     k__mouse.y_at_room = k__mouse.y_at_view + k__window.view_y;
-}
-
-void k_view_set_h(float h) {
-    return k_view_set_w(h * k__window.window_aspect_ratio);
-}
-
-void k_view_fit_rect(float w, float h) {
-
-    k_view_set_w(w);
-
-    if (k__window.view_h < h) {
-        k_view_set_h(h);
-    }
 }
 
 void k_view_set_position(float cx, float cy) {
