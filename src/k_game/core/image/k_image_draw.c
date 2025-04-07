@@ -24,7 +24,7 @@ int k_image_draw(struct k_image *image, const struct k_int_rect *src_rect, const
         src.h = image->image_h;
     }
     else {
-        if (src_rect->w <= 0|| src_rect->h <= 0)
+        if (src_rect->w <= 0 || src_rect->h <= 0)
             return -1;
 
         src.x = src_rect->x;
