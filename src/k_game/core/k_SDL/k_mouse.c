@@ -1,5 +1,6 @@
-#include "./_internal.h"
 
+#include "k_game/core/k_mouse.h"
+#include "./k_mouse.h"
 #include "./k_window.h"
 
 static int mouse_x = 0;

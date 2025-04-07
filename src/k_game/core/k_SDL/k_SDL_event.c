@@ -1,8 +1,9 @@
 #include "SDL_timer.h"
-#include "./_internal.h"
 
-#include "./k_time.h"
 #include "./k_SDL_event.h"
+#include "./k_time.h"
+#include "./k_mouse.h"
+#include "./k_keyboard.h"
 
 #include "../game/k_game_context.h"
 #include "../room/k_room.h"

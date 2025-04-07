@@ -1,4 +1,6 @@
-#include "./_internal.h"
+
+#include "k_game/core/k_keyboard.h"
+#include "./k_keyboard.h"
 
 static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
 
