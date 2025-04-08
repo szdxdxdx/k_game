@@ -15,8 +15,8 @@ struct k_window_context {
 
     /* 画布 */
     SDL_Texture *canvas;
-    int canvas_w;
-    int canvas_h;
+    float canvas_w;
+    float canvas_h;
 
     /* 视野 */
     float view_h;

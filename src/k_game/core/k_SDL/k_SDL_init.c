@@ -188,8 +188,8 @@ static int step_create_canvas(void *config_) {
     }
 
     k__window.canvas   = canvas;
-    k__window.canvas_w = canvas_w;
-    k__window.canvas_h = canvas_h;
+    k__window.canvas_w = (float)canvas_w;
+    k__window.canvas_h = (float)canvas_h;
     return 0;
 }
 

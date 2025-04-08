@@ -9,8 +9,8 @@
 #endif
 
 struct k_hash_list_node {
-    struct k_hash_list_node **pprev;
     struct k_hash_list_node *next;
+    struct k_hash_list_node **pprev;
 };
 
 struct k_hash_list {

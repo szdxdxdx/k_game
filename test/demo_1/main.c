@@ -45,8 +45,8 @@ int main(int argc, char **argv) {
     config.window_title = "demo 1";
     config.window_w = 640;
     config.window_h = 480;
-    config.canvas_w = 640 * 2;
-    config.canvas_h = 480 * 2;
+    config.canvas_w = config.window_h * 2;
+    config.canvas_h = config.window_w * 2;
     config.fn_init = fn_init_game;
 
     return k_game_run(&config);
