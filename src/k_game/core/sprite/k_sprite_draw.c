@@ -1,4 +1,4 @@
-#include "k_game/core/k_image.h"
+#include "k_game/core/k_canvas.h"
 #include "k_game/core/k_sprite.h"
 
 #include "./k_sprite.h"
@@ -13,7 +13,6 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
 
     struct k_sprite_frame *frame = &sprite->frames[frame_idx];
 
-    /* 不应用变换，使用简单绘制 */
     if (NULL == options) {
 
         struct k_int_rect src;
@@ -22,16 +21,21 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
         src.w = sprite->sprite_w;
         src.h = sprite->sprite_h;
 
-        struct k_float_rect dst;
-        dst.x = x - sprite->origin_x;
-        dst.y = y - sprite->origin_y;
-        dst.w = (float)sprite->sprite_w;
-        dst.h = (float)sprite->sprite_h;
+        float dst_x = x - sprite->origin_x;
+        float dst_y = y - sprite->origin_y;
 
-        return k_image_draw(frame->image, &src, &dst, NULL);
+        struct k_canvas_draw_image_options opts;
+        opts.scaled_w = (float)sprite->sprite_w;
+        opts.scaled_h = (float)sprite->sprite_h;
+        opts.angle    = 0.0f;
+        opts.pivot_x  = 0.0f;
+        opts.pivot_y  = 0.0f;
+        opts.flip_x   = 0;
+        opts.flip_y   = 0;
+
+        return k_canvas_draw_image(frame->image, &src, dst_x, dst_y, &opts);
     }
 
-    /* 应用变换，使用复杂绘制 */
     else {
         if (options->scaled_w <= 0 || options->scaled_h <= 0)
             return 0;
@@ -51,19 +55,18 @@ int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, s
         float origin_x = scala_x * (options->flip_x ? (sprite_w - sprite->origin_x) : sprite->origin_x);
         float origin_y = scala_y * (options->flip_y ? (sprite_h - sprite->origin_y) : sprite->origin_y);
 
-        struct k_float_rect dst;
-        dst.x = x - origin_x;
-        dst.y = y - origin_y;
-        dst.w = options->scaled_w;
-        dst.h = options->scaled_h;
+        float dst_x = x - origin_x;
+        float dst_y = y - origin_y;
 
-        struct k_image_draw_options opts;
+        struct k_canvas_draw_image_options opts;
+        opts.scaled_w = options->scaled_w;
+        opts.scaled_h = options->scaled_h;
         opts.angle    = options->angle;
         opts.pivot_x  = origin_x;
         opts.pivot_y  = origin_y;
         opts.flip_x   = options->flip_x;
         opts.flip_y   = options->flip_y;
 
-        return k_image_draw(frame->image, &src, &dst, &opts);
+        return k_canvas_draw_image(frame->image, &src, dst_x, dst_y, &opts);
     }
 }
