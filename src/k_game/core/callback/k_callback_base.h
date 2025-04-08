@@ -8,12 +8,14 @@
 struct k_room;
 struct k_object;
 struct k_component;
+struct k_component_manager;
 
 enum k_callback_context {
 
-    K_ROOM_CALLBACK,
-    K_OBJECT_CALLBACK,
-    K_COMPONENT_CALLBACK,
+    K__ROOM_CALLBACK,
+    K__OBJECT_CALLBACK,
+    K__COMPONENT_CALLBACK,
+    K__COMPONENT_MANAGER_CALLBACK,
 };
 
 enum k_callback_event {

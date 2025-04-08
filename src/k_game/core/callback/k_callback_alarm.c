@@ -48,7 +48,7 @@ struct k_callback *k__alarm_callback_manager_add_room_callback(struct k_alarm_ca
     /* [?] 应该使用当前时间，还是当前帧时间 */
     uint64_t timeout = k_get_step_timestamp() + delay_ms;
 
-    callback->base.context = K_ROOM_CALLBACK;
+    callback->base.context = K__ROOM_CALLBACK;
     callback->base.event   = K_ALARM_CALLBACK;
     callback->base.state   = K_CALLBACK_INACTIVE;
 
@@ -73,7 +73,7 @@ struct k_callback *k__alarm_callback_manager_add_object_callback(struct k_alarm_
     /* [?] 应该使用当前时间，还是当前帧时间 */
     uint64_t timeout = k_get_step_timestamp() + delay_ms;
 
-    callback->base.context = K_OBJECT_CALLBACK;
+    callback->base.context = K__OBJECT_CALLBACK;
     callback->base.event   = K_ALARM_CALLBACK;
     callback->base.state   = K_CALLBACK_INACTIVE;
 
@@ -98,7 +98,7 @@ struct k_callback *k__alarm_callback_manager_add_component_callback(struct k_ala
     /* [?] 应该使用当前时间，还是当前帧时间 */
     uint64_t timeout = k_get_step_timestamp() + delay_ms;
 
-    callback->base.context = K_COMPONENT_CALLBACK;
+    callback->base.context = K__COMPONENT_CALLBACK;
     callback->base.event   = K_ALARM_CALLBACK;
     callback->base.state   = K_CALLBACK_INACTIVE;
 
@@ -233,13 +233,13 @@ void k__alarm_callback_manager_exec(struct k_alarm_callback_manager *manager) {
         callback->base.state = K_CALLBACK_EXECUTED;
 
         switch (callback->base.context) {
-            case K_ROOM_CALLBACK:
+            case K__ROOM_CALLBACK:
                 callback->fn_room_callback(callback->data, timeout_diff);
                 break;
-            case K_OBJECT_CALLBACK:
+            case K__OBJECT_CALLBACK:
                 callback->fn_object_callback(callback->object, timeout_diff);
                 break;
-            case K_COMPONENT_CALLBACK:
+            case K__COMPONENT_CALLBACK:
                 callback->fn_component_callback(callback->component, timeout_diff);
                 break;
             default:

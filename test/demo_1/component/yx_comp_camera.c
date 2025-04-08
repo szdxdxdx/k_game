@@ -6,11 +6,6 @@ struct yx_camera;
 struct yx_camera_target;
 struct yx_camera_manager;
 
-struct yx_camera {
-
-    struct yx_camera_manager *manager;
-};
-
 struct yx_camera_target {
 
     struct yx_camera_manager *manager;
@@ -23,17 +18,14 @@ struct yx_camera_target {
 
 struct yx_camera_manager {
 
-    struct k_object *camera;
-
 #define YX__CAMERA_TARGET_MAX 16
     struct yx_camera_target *targets[YX__CAMERA_TARGET_MAX];
 
     size_t targets_num;
 };
 
-void yx_camera_step_end(struct k_object *object) {
-    struct yx_camera *camera = k_object_get_data(object);
-    struct yx_camera_manager *manager = camera->manager;
+void yx_camera_step_end(struct k_component_manager *component_manager) {
+    struct yx_camera_manager *manager = k_component_manager_get_data(component_manager);
 
     if (0 == manager->targets_num)
         return;
@@ -103,19 +95,8 @@ int yx_camera_manager_init(struct k_component_manager *component_manager, void *
     struct yx_camera_manager *manager = k_component_manager_get_data(component_manager);
     manager->targets_num = 0;
 
-    {
-        struct k_object *object = k_object_create(sizeof(struct yx_camera));
-        if (NULL == object)
-            return -1;
-
-        struct yx_camera *camera = k_object_get_data(object);
-        camera->manager = manager;
-
-        if (NULL == k_object_add_step_end_callback(object, yx_camera_step_end))
-            return -1;
-
-        manager->camera = object;
-    }
+    if (NULL == k_component_manager_add_step_end_callback(component_manager, yx_camera_step_end))
+        return -1;
 
     return 0;
 }

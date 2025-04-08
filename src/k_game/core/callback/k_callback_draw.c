@@ -157,7 +157,7 @@ struct k_callback *k__draw_callback_manager_add_room_callback(struct k_draw_call
     if (NULL == callback)
         return NULL;
 
-    callback->base.context = K_ROOM_CALLBACK;
+    callback->base.context = K__ROOM_CALLBACK;
     callback->base.event   = K_DRAW_CALLBACK;
     callback->base.state   = K_CALLBACK_INACTIVE;
 
@@ -182,7 +182,7 @@ struct k_callback *k__draw_callback_manager_add_object_callback(struct k_draw_ca
     if (NULL == callback)
         return NULL;
 
-    callback->base.context = K_OBJECT_CALLBACK;
+    callback->base.context = K__OBJECT_CALLBACK;
     callback->base.event   = K_DRAW_CALLBACK;
     callback->base.state   = K_CALLBACK_INACTIVE;
 
@@ -207,7 +207,7 @@ struct k_callback *k__draw_callback_manager_add_component_callback(struct k_draw
     if (NULL == callback)
         return NULL;
 
-    callback->base.context = K_COMPONENT_CALLBACK;
+    callback->base.context = K__COMPONENT_CALLBACK;
     callback->base.event   = K_DRAW_CALLBACK;
     callback->base.state   = K_CALLBACK_INACTIVE;
 
@@ -349,13 +349,13 @@ void k__draw_callback_manager_exec(struct k_draw_callback_manager *manager) {
                     continue;
 
                 switch (callback->base.context) {
-                    case K_ROOM_CALLBACK:
+                    case K__ROOM_CALLBACK:
                         callback->fn_room_callback(callback->data);
                         break;
-                    case K_OBJECT_CALLBACK:
+                    case K__OBJECT_CALLBACK:
                         callback->fn_object_callback(callback->object);
                         break;
-                    case K_COMPONENT_CALLBACK:
+                    case K__COMPONENT_CALLBACK:
                         callback->fn_component_callback(callback->component);
                         break;
                     default:

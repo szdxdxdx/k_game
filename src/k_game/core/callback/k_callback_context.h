@@ -4,11 +4,14 @@
 struct k_room;
 struct k_object;
 struct k_component;
+struct k_component_manager;
 
 void k__room_del_all_callbacks(struct k_room *room);
 
 void k__object_del_all_callbacks(struct k_object *object);
 
 void k__component_del_all_callbacks(struct k_component *component);
+
+void k__component_manager_del_all_callbacks(struct k_component_manager *manager);
 
 #endif

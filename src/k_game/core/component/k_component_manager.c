@@ -6,6 +6,7 @@
 #include "./k_component_manager_map.h"
 
 #include "../room/k_room.h"
+#include "../callback/k_callback_context.h"
 
 /* region [component_manager_create] */
 
@@ -33,6 +34,8 @@ static int k__component_manager_create(struct k_room *room, struct k_component_t
     if (0 != k__component_manager_map_add(room, manager))
         goto map_add_failed;
 
+    k_list_init(&manager->callback_list);
+
     if (NULL != manager_type->fn_init) {
         if (0 != manager_type->fn_init(manager, params))
             goto fn_init_failed;
@@ -50,10 +53,13 @@ map_add_failed:
 void k__component_manager_destroy(struct k_component_manager *manager) {
 
     struct k_component_manager_type *manager_type = manager->component_type->manager_type;
+
     if (NULL != manager_type->fn_fini) {
         /* TODO 禁止在 `fn_fini()` 中再次删除自身 */
         manager_type->fn_fini(manager);
     }
+
+    k__component_manager_del_all_callbacks(manager);
 
     k__component_manager_map_del(manager->room, manager_type);
 

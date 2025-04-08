@@ -7,6 +7,7 @@
 #include "../room/k_room.h"
 #include "../object/k_object.h"
 #include "../component/k_component.h"
+#include "../component/k_component_manager.h"
 
 /* region [callback_def] */
 
@@ -23,12 +24,14 @@ struct k_step_callback {
         void (*fn_room_callback)(void *data);
         void (*fn_object_callback)(struct k_object *object);
         void (*fn_component_callback)(struct k_component *component);
+        void (*fn_component_manager_callback)(struct k_component_manager *component_manager);
     };
 
     union {
         void *data;
         struct k_object *object;
         struct k_component *component;
+        struct k_component_manager *component_manager;
     };
 };
 
@@ -42,7 +45,7 @@ struct k_callback *k__step_callback_manager_add_room_callback(struct k_step_call
     if (NULL == callback)
         return NULL;
 
-    callback->base.context = K_ROOM_CALLBACK;
+    callback->base.context = K__ROOM_CALLBACK;
     callback->base.event   = K_STEP_CALLBACK;
     callback->base.state   = K_CALLBACK_INACTIVE;
 
@@ -63,7 +66,7 @@ struct k_callback *k__step_callback_manager_add_object_callback(struct k_step_ca
     if (NULL == callback)
         return NULL;
 
-    callback->base.context = K_OBJECT_CALLBACK;
+    callback->base.context = K__OBJECT_CALLBACK;
     callback->base.event   = K_STEP_CALLBACK;
     callback->base.state   = K_CALLBACK_INACTIVE;
 
@@ -85,7 +88,7 @@ struct k_callback *k__step_callback_manager_add_component_callback(struct k_step
     if (NULL == callback)
         return NULL;
 
-    callback->base.context = K_COMPONENT_CALLBACK;
+    callback->base.context = K__COMPONENT_CALLBACK;
     callback->base.event   = K_STEP_CALLBACK;
     callback->base.state   = K_CALLBACK_INACTIVE;
 
@@ -97,6 +100,28 @@ struct k_callback *k__step_callback_manager_add_component_callback(struct k_step
     callback->fn_component_callback = fn_callback;
     callback->component = component;
     k_list_add_tail(&component->callback_list, &callback->base.context_list_node);
+
+    return &callback->base;
+}
+
+struct k_callback *k__step_callback_manager_add_component_manager_callback(struct k_step_callback_manager *manager, struct k_component_manager *component_manager, void (*fn_callback)(struct k_component_manager *component_manager)) {
+
+    struct k_step_callback *callback = k_mem_alloc(sizeof(struct k_step_callback));
+    if (NULL == callback)
+        return NULL;
+
+    callback->base.context = K__COMPONENT_CALLBACK;
+    callback->base.event   = K_STEP_CALLBACK;
+    callback->base.state   = K_CALLBACK_INACTIVE;
+
+    callback->manager = manager;
+    k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
+    k_list_node_loop(&callback->callback_list_node);
+
+
+    callback->fn_component_manager_callback = fn_callback;
+    callback->component_manager = component_manager;
+    k_list_add_tail(&component_manager->callback_list, &callback->base.context_list_node);
 
     return &callback->base;
 }
@@ -190,14 +215,17 @@ void k__step_callback_manager_exec(struct k_step_callback_manager *manager) {
             continue;
 
         switch (callback->base.context) {
-            case K_ROOM_CALLBACK:
+            case K__ROOM_CALLBACK:
                 callback->fn_room_callback(callback->data);
                 break;
-            case K_OBJECT_CALLBACK:
+            case K__OBJECT_CALLBACK:
                 callback->fn_object_callback(callback->object);
                 break;
-            case K_COMPONENT_CALLBACK:
+            case K__COMPONENT_CALLBACK:
                 callback->fn_component_callback(callback->component);
+                break;
+            case K__COMPONENT_MANAGER_CALLBACK:
+                callback->fn_component_manager_callback(callback->component_manager);
                 break;
             default:
                 assert(0);

@@ -7,6 +7,7 @@
 #include "../room/k_room.h"
 #include "../object/k_object.h"
 #include "../component/k_component.h"
+#include "../component/k_component_manager.h"
 
 static void k__callback_del(struct k_callback *callback) {
 
@@ -161,6 +162,51 @@ void k__component_del_all_callbacks(struct k_component *component) {
     }
 
     k_list_init(&component->callback_list);
+}
+
+/* endregion */
+
+/* region [component_manager_callback] */
+
+struct k_callback *k_component_manager_add_step_begin_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
+
+}
+
+struct k_callback *k_component_manager_add_alarm_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager, int timeout_diff), int delay_ms) {
+
+}
+
+struct k_callback *k_component_manager_add_step_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
+
+}
+
+struct k_callback *k_component_manager_add_step_end_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
+    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_callback_manager, manager, fn_callback);
+}
+
+struct k_callback *k_component_manager_add_draw_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager), int z_group, int z_layer) {
+
+}
+
+void k_component_manager_del_callback(struct k_callback *manager_callback) {
+
+    if (NULL != manager_callback) {
+        k__callback_del(manager_callback);
+    }
+}
+
+void k__component_manager_del_all_callbacks(struct k_component_manager *manager) {
+
+    struct k_callback *callback;
+    struct k_list *list = &manager->callback_list;
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(list, iter, next)) {
+        callback = container_of(iter, struct k_callback, context_list_node);
+
+        k__callback_del(callback);
+    }
+
+    k_list_init(&manager->callback_list);
 }
 
 /* endregion */
