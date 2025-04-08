@@ -64,15 +64,20 @@ static struct k_collision_box *k__object_add_collision_box(struct k_object *obje
 }
 
 void k_object_del_collision_box(struct k_collision_box *box) {
-    if (NULL != box)
+
+    if (NULL != box) {
         k_object_del_component(box->component);
+    }
 }
 
 struct k_collision_box *k_object_add_collision_point(struct k_object *object, const struct k_collision_point_config *config) {
-    if (NULL == config)    return NULL;
-    if (NULL == config->x) return NULL;
-    if (NULL == config->y) return NULL;
-    return k__object_add_collision_box(object, K_COLLISION_POINT, config);
+
+    if (NULL == config)
+        return NULL;
+    if (NULL == config->x || NULL == config->y)
+        return NULL;
+
+    return k__object_add_collision_box(object, K__COLLISION_POINT, config);
 }
 
 struct k_collision_box *k_object_add_collision_line(struct k_object *object, const struct k_collision_line_config *config) {
@@ -86,7 +91,7 @@ struct k_collision_box *k_object_add_collision_line(struct k_object *object, con
          * 从几何的角度看，可以认为对边或对角重合的矩形“退化”成线段或点。
          * 但这里将线段“转化”为矩形不是从几何角度出发考虑问题，而是从编码角度。
          */
-        struct k_collision_rectangle_config rect_config;
+        struct k_collision_rect_config rect_config;
         rect_config.group_id  = config->group_id;
         rect_config.x         = config->x;
         rect_config.y         = config->y;
@@ -94,16 +99,16 @@ struct k_collision_box *k_object_add_collision_line(struct k_object *object, con
         rect_config.offset_y1 = config->offset_y1;
         rect_config.offset_x2 = config->offset_x2;
         rect_config.offset_y2 = config->offset_y2;
-        return k_object_add_collision_rectangle(object, &rect_config);
+        return k_object_add_collision_rect(object, &rect_config);
     }
 
     if (NULL == config->x || NULL == config->y)
         return NULL;
 
-    return k__object_add_collision_box(object, K_COLLISION_LINE, config);
+    return k__object_add_collision_box(object, K__COLLISION_LINE, config);
 }
 
-struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, const struct k_collision_rectangle_config *config) {
+struct k_collision_box *k_object_add_collision_rect(struct k_object *object, const struct k_collision_rect_config *config) {
 
     if (NULL == config)
         return NULL;
@@ -121,7 +126,7 @@ struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object
     if (NULL == config->x || NULL == config->y)
         return NULL;
 
-    return k__object_add_collision_box(object, K_COLLISION_RECTANGLE, config);
+    return k__object_add_collision_box(object, K__COLLISION_RECTANGLE, config);
 }
 
 struct k_collision_box *k_object_add_collision_circle(struct k_object *object, const struct k_collision_circle_config *config) {
@@ -142,7 +147,7 @@ struct k_collision_box *k_object_add_collision_circle(struct k_object *object, c
     if (NULL == config->x || NULL == config->y)
         return NULL;
 
-    return k__object_add_collision_box(object, K_COLLISION_CIRCLE, config);
+    return k__object_add_collision_box(object, K__COLLISION_CIRCLE, config);
 }
 
 /* endregion */

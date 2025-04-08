@@ -109,26 +109,26 @@ static int check_collision_circle_circle(float x1, float y1, float r1, float x2,
 /* 检测点和碰撞盒是否发生碰撞。`(x, y)` 是点的坐标，`box` 是碰撞盒 */
 static int check_collision_point_box(float x, float y, struct k_collision_box *box) {
     switch (box->type) {
-        case K_COLLISION_POINT: {
+        case K__COLLISION_POINT: {
             float x2 = *(box->x) + box->point.offset_x;
             float y2 = *(box->y) + box->point.offset_y;
             return check_collision_point_point(x, y, x2, y2);
         }
-        case K_COLLISION_LINE: {
+        case K__COLLISION_LINE: {
             float lx1 = *(box->x) + box->line.offset_x1;
             float ly1 = *(box->y) + box->line.offset_y1;
             float lx2 = *(box->x) + box->line.offset_x2;
             float ly2 = *(box->y) + box->line.offset_y2;
             return check_collision_point_line(x, y, lx1, ly1, lx2, ly2);
         }
-        case K_COLLISION_RECTANGLE: {
+        case K__COLLISION_RECTANGLE: {
             float rx1 = *(box->x) + box->rect.offset_x1;
             float ry1 = *(box->y) + box->rect.offset_y1;
             float rx2 = *(box->x) + box->rect.offset_x2;
             float ry2 = *(box->y) + box->rect.offset_y2;
             return check_collision_point_rect(x, y, rx1, ry1, rx2, ry2);
         }
-        case K_COLLISION_CIRCLE: {
+        case K__COLLISION_CIRCLE: {
             float cx = *(box->x) + box->circle.offset_cx;
             float cy = *(box->y) + box->circle.offset_cy;
             float r  = box->circle.r;
@@ -141,26 +141,26 @@ static int check_collision_point_box(float x, float y, struct k_collision_box *b
 /* 检测线段和碰撞盒是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是线段的端点坐标，`box` 是碰撞盒 */
 static int check_collision_line_box(float x1, float y1, float x2, float y2, struct k_collision_box *box) {
     switch (box->type) {
-        case K_COLLISION_POINT: {
+        case K__COLLISION_POINT: {
             float px = *(box->x) + box->point.offset_x;
             float py = *(box->y) + box->point.offset_y;
             return check_collision_point_line(px, py, x1, y1, x2, y2);
         }
-        case K_COLLISION_LINE: {
+        case K__COLLISION_LINE: {
             float x3 = *(box->x) + box->line.offset_x1;
             float y3 = *(box->y) + box->line.offset_y1;
             float x4 = *(box->x) + box->line.offset_x2;
             float y4 = *(box->y) + box->line.offset_y2;
             return check_collision_line_line(x1, y1, x2, y2, x3, y3, x4, y4);
         }
-        case K_COLLISION_RECTANGLE: {
+        case K__COLLISION_RECTANGLE: {
             float rx1 = *(box->x) + box->rect.offset_x1;
             float ry1 = *(box->y) + box->rect.offset_y1;
             float rx2 = *(box->x) + box->rect.offset_x2;
             float ry2 = *(box->y) + box->rect.offset_y2;
             return check_collision_line_rect(x1, y1, x2, y2, rx1, ry1, rx2, ry2);
         }
-        case K_COLLISION_CIRCLE: {
+        case K__COLLISION_CIRCLE: {
             float cx = *(box->x) + box->circle.offset_cx;
             float cy = *(box->y) + box->circle.offset_cy;
             float r  = box->circle.r;
@@ -173,26 +173,26 @@ static int check_collision_line_box(float x1, float y1, float x2, float y2, stru
 /* 检测矩形和碰撞盒是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是矩形的对角坐标，`box` 是碰撞盒 */
 static int check_collision_rect_box(float x1, float y1, float x2, float y2, struct k_collision_box *box) {
     switch (box->type) {
-        case K_COLLISION_POINT: {
+        case K__COLLISION_POINT: {
             float px = *(box->x) + box->point.offset_x;
             float py = *(box->y) + box->point.offset_y;
             return check_collision_point_rect(px, py, x1, y1, x2, y2);
         }
-        case K_COLLISION_LINE: {
+        case K__COLLISION_LINE: {
             float lx1 = *(box->x) + box->line.offset_x1;
             float ly1 = *(box->y) + box->line.offset_y1;
             float lx2 = *(box->x) + box->line.offset_x2;
             float ly2 = *(box->y) + box->line.offset_y2;
             return check_collision_line_rect(lx1, ly1, lx2, ly2, x1, y1, x2, y2);
         }
-        case K_COLLISION_RECTANGLE: {
+        case K__COLLISION_RECTANGLE: {
             float x3 = *(box->x) + box->rect.offset_x1;
             float y3 = *(box->y) + box->rect.offset_y1;
             float x4 = *(box->x) + box->rect.offset_x2;
             float y4 = *(box->y) + box->rect.offset_y2;
             return check_collision_rect_rect(x1, y1, x2, y2, x3, y3, x4, y4);
         }
-        case K_COLLISION_CIRCLE: {
+        case K__COLLISION_CIRCLE: {
             float cx = *(box->x) + box->circle.offset_cx;
             float cy = *(box->y) + box->circle.offset_cy;
             float r  = box->circle.r;
@@ -205,26 +205,26 @@ static int check_collision_rect_box(float x1, float y1, float x2, float y2, stru
 /* 检测圆和碰撞盒是否发生碰撞。`(cx, cy)` 是圆的圆心坐标，`r` 是圆的半径，`box` 是碰撞盒 */
 static int check_collision_circle_box(float cx, float cy, float r, struct k_collision_box *box) {
     switch (box->type) {
-        case K_COLLISION_POINT: {
+        case K__COLLISION_POINT: {
             float px = *(box->x) + box->point.offset_x;
             float py = *(box->y) + box->point.offset_y;
             return check_collision_point_circle(px, py, cx, cy, r);
         }
-        case K_COLLISION_LINE: {
+        case K__COLLISION_LINE: {
             float lx1 = *(box->x) + box->line.offset_x1;
             float ly1 = *(box->y) + box->line.offset_y1;
             float lx2 = *(box->x) + box->line.offset_x2;
             float ly2 = *(box->y) + box->line.offset_y2;
             return check_collision_line_circle(lx1, ly1, lx2, ly2, cx, cy, r);
         }
-        case K_COLLISION_RECTANGLE: {
+        case K__COLLISION_RECTANGLE: {
             float rx1 = *(box->x) + box->rect.offset_x1;
             float ry1 = *(box->y) + box->rect.offset_y1;
             float rx2 = *(box->x) + box->rect.offset_x2;
             float ry2 = *(box->y) + box->rect.offset_y2;
             return check_collision_rect_circle(rx1, ry1, rx2, ry2, cx, cy, r);
         }
-        case K_COLLISION_CIRCLE: {
+        case K__COLLISION_CIRCLE: {
             float x2 = *(box->x) + box->circle.offset_cx;
             float y2 = *(box->y) + box->circle.offset_cy;
             float r2 =box->circle.r;

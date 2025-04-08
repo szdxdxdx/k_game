@@ -1,5 +1,3 @@
-#include <assert.h>
-
 #include "k_log.h"
 
 #include "SDL_render.h"
@@ -100,7 +98,7 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
     if (NULL == points || points_num <= 1)
         return -1;
 
-    SDL_FPoint buf[64];
+    SDL_FPoint buf[80];
     int buf_size = 0;
 
     size_t count = 0;
@@ -157,12 +155,12 @@ int k_canvas_draw_circle(float cx, float cy, float r) {
     cy -= k__window.view_y;
 
     /* 数组大小应是 8 的倍数，因为每轮循环都会往 buf 中添加 8 个点 */
-    SDL_FPoint buf[64];
+    SDL_FPoint buf[80];
     int buf_size = 0;
 
-    float x   = r;
-    float y   = 0.0f;
     float err = 0.0f;
+    float x = r;
+    float y = 0.0f;
     while (1) {
 
         buf[buf_size + 0] = (SDL_FPoint){ cx + x, cy + y };

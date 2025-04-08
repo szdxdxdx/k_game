@@ -103,7 +103,7 @@ struct k_collision_box *k_object_add_collision_line(struct k_object *object, con
 /* region [rectangle] */
 
 /** \brief 矩形碰撞盒的配置 */
-struct k_collision_rectangle_config {
+struct k_collision_rect_config {
 
     /** \brief 碰撞组 */
     int group_id;
@@ -129,7 +129,7 @@ struct k_collision_rectangle_config {
  *
  * 若成功，函数返回碰撞盒的指针，否则返回 `NULL`。
  */
-struct k_collision_box *k_object_add_collision_rectangle(struct k_object *object, const struct k_collision_rectangle_config *config);
+struct k_collision_box *k_object_add_collision_rect(struct k_object *object, const struct k_collision_rect_config *config);
 
 /* endregion */
 

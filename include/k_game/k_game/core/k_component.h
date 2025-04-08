@@ -34,7 +34,7 @@ struct k_component_entity_config {
 
     void (*fn_fini)(struct k_component *component);
 
-    int (*fn_command)(struct k_component *component, char *get_result, size_t n, const char *command);
+    int (*fn_interact)(struct k_component *component, char *get_result, size_t n, const char *command);
 };
 
 #define K_COMPONENT_ENTITY_CONFIG_INIT \
