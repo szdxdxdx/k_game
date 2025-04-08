@@ -1,6 +1,6 @@
-#include "k_game/core/k_room.h"
-#include "k_game/core/k_object.h"
-#include "k_game/core/k_component.h"
+#include "k_game/core/k_callback.h"
+
+#include "./k_callback_context.h"
 
 #include "../room/k_room.h"
 #include "../object/k_object.h"
@@ -40,7 +40,7 @@ void k_room_del_callback(struct k_callback *room_callback) {
     }
 }
 
-void k_room_del_all_callbacks(struct k_room *room) {
+void k__room_del_all_callbacks(struct k_room *room) {
 
     struct k_callback *callback;
     struct k_list *list = &room->callback_list;

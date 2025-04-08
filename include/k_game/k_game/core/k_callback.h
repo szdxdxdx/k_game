@@ -1,11 +1,15 @@
 #ifndef K_CALLBACK_H
 #define K_CALLBACK_H
 
-struct k_callback;
-
 struct k_room;
 struct k_object;
 struct k_component;
+
+/**
+ * \brief
+ *
+ */
+struct k_callback;
 
 /* region [room_callback] */
 
@@ -25,9 +29,6 @@ struct k_callback *k_room_add_draw_callback(void *data, void (*fn_callback)(void
  * 若 `callback` 为 `NULL`，则函数立即返回。
  */
 void k_room_del_callback(struct k_callback *room_callback);
-
-/** \brief 删除房间所有的事件回调 */
-void k_room_del_all_callbacks(struct k_room *room);
 
 /* endregion */
 

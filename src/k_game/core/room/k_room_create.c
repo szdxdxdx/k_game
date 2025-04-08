@@ -8,6 +8,7 @@
 #include "./k_room_registry.h"
 
 #include "../component/k_component_manager_map.h"
+#include "../callback/k_callback_context.h"
 
 /* region [steps] */
 
@@ -116,7 +117,7 @@ static void step_del_all_callbacks(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k_room_del_all_callbacks(room);
+    k__room_del_all_callbacks(room);
 }
 
 static void step_del_component_managers(void *context) {
