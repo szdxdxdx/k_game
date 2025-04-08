@@ -10,6 +10,8 @@
 #include "../image/k_image.h"
 #include "../sprite/k_sprite.h"
 
+#define k__array_len(arr) (sizeof(arr) / sizeof(arr[0]))
+
 void k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_SetRenderDrawColor(k__window.renderer, a, g, b, a);
 }
@@ -22,7 +24,46 @@ int k_canvas_draw_point(float x, float y) {
     return 0;
 }
 
+int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) {
+
+    if (NULL == points)
+        return -1;
+
+    if (points_num == 0)
+        return 0;
+
+    SDL_FPoint buf[64];
+    int buf_size = 0;
+
+    size_t count = 0;
+    while (1) {
+
+        buf[buf_size].x = points[count].x - k__window.view_x;
+        buf[buf_size].y = points[count].y - k__window.view_y;
+        buf_size++;
+        count++;
+
+        if (count == points_num) {
+            SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size);
+            break;
+        }
+        else if (buf_size == k__array_len(buf)) {
+            SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size);
+
+            if (count == points_num) {
+                break;
+            }
+            else {
+                buf_size = 0;
+            }
+        }
+    }
+
+    return 0;
+}
+
 int k_canvas_draw_line(float x1, float y1, float x2, float y2) {
+
     x1 -= k__window.view_x;
     y1 -= k__window.view_y;
     x2 -= k__window.view_x;
@@ -32,15 +73,13 @@ int k_canvas_draw_line(float x1, float y1, float x2, float y2) {
     return 0;
 }
 
-#define k__array_len(arr) (sizeof(arr) / sizeof(arr[0]))
-
 int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
     assert(NULL != points);
 
     if (points_num <= 1)
         return -1;
 
-    SDL_FPoint buf[80];
+    SDL_FPoint buf[64];
     int buf_size = 0;
 
     size_t count = 0;
@@ -73,6 +112,7 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
 }
 
 int k_canvas_draw_rect(float x, float y, float w, float h) {
+
     SDL_FRect rect;
     rect.x = x - k__window.view_x;
     rect.y = y - k__window.view_y;
@@ -84,10 +124,12 @@ int k_canvas_draw_rect(float x, float y, float w, float h) {
 }
 
 int k_canvas_draw_circle(float cx, float cy, float r) {
+
     cx -= k__window.view_x;
     cy -= k__window.view_y;
 
-    SDL_FPoint buf[80]; /* 数组大小应是 8 的倍数 */
+    /* 数组大小应是 8 的倍数，因为每轮循环都会往 buf 中添加 8 个点 */
+    SDL_FPoint buf[64];
     int buf_size = 0;
 
     float x   = r;
@@ -221,7 +263,6 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
             return -1;
         }
     }
-
     else {
         if (options->scaled_w <= 0.0f || options->scaled_h <= 0.0f)
             return 0;
@@ -271,4 +312,6 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
             return -1;
         }
     }
+
+    return 0;
 }

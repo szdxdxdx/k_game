@@ -49,7 +49,7 @@ static void k__sprite_renderer_draw_sprite(struct k_component *component) {
         k_canvas_draw_sprite(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
     }
     else {
-        struct k_sprite_draw_options opts;
+        struct k_canvas_draw_sprite_options opts;
         opts.scaled_w = renderer->scaled_w;
         opts.scaled_h = renderer->scaled_h;
         opts.angle    = renderer->angle;
