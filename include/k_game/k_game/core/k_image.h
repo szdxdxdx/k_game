@@ -3,14 +3,10 @@
 
 #include <stdint.h>
 
-
-
 /**
  * TODO docs
  */
 struct k_image;
-
-/* region [image_load] */
 
 struct k_image *k_image_load(const char *filepath);
 
@@ -22,28 +18,14 @@ struct k_image *k_image_load(const char *filepath);
  */
 void k_image_release(struct k_image *image);
 
-/* endregion */
-
-/* region [image_find] */
-
 int k_image_set_name(struct k_image *image, const char *image_name);
 
 struct k_image *k_image_find(const char *image_name);
-
-/* endregion */
-
-/* region [image_get] */
 
 int k_image_get_width(struct k_image *image);
 
 int k_image_get_height(struct k_image *image);
 
-/* endregion */
-
-/* region [image_transform] */
-
 struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h);
-
-/* endregion */
 
 #endif

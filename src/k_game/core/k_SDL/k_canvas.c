@@ -41,7 +41,7 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) 
     if (points_num == 0)
         return 0;
 
-    SDL_FPoint buf[64];
+    SDL_FPoint buf[80];
     int buf_size = 0;
 
     size_t count = 0;
@@ -61,7 +61,7 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) 
 
             break;
         }
-        else if (buf_size == k__array_len(buf)) {
+        else if (buf_size >= k__array_len(buf)) {
 
             if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
                 k_log_error("Failed to draw points, SDL error: %s", SDL_GetError());
@@ -118,7 +118,7 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
 
             break;
         }
-        else if (buf_size == k__array_len(buf)) {
+        else if (buf_size >= k__array_len(buf)) {
 
             if (0 != SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size)) {
                 k_log_error("Failed to draw lines, SDL error: %s", SDL_GetError());
@@ -144,7 +144,27 @@ int k_canvas_draw_rect(float x, float y, float w, float h) {
     rect.y = y - k__window.view_y;
     rect.w = w;
     rect.h = h;
-    SDL_RenderDrawRectF(k__window.renderer, &rect);
+
+    if (0 != SDL_RenderDrawRectF(k__window.renderer, &rect)) {
+        k_log_error("Failed to draw rect, SDL error: %s", SDL_GetError());
+        return -1;
+    }
+
+    return 0;
+}
+
+int k_canvas_fill_rect(float x, float y, float w, float h) {
+
+    SDL_FRect rect;
+    rect.x = x - k__window.view_x;
+    rect.y = y - k__window.view_y;
+    rect.w = w;
+    rect.h = h;
+
+    if (0 != SDL_RenderFillRectF(k__window.renderer, &rect)) {
+        k_log_error("Failed to draw rect, SDL error: %s", SDL_GetError());
+        return -1;
+    }
 
     return 0;
 }
@@ -185,7 +205,7 @@ int k_canvas_draw_circle(float cx, float cy, float r) {
             SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size);
             break;
         }
-        else if (buf_size == k__array_len(buf)) {
+        else if (buf_size >= k__array_len(buf)) {
             SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size);
             buf_size = 0;
         }
@@ -199,8 +219,7 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
     if (NULL == image)
         return -1;
 
-    /* TODO 检查输出的矩形有没有在视野范围内
-     */
+    /* TODO 在视野范围内时才绘制图片 */
 
     SDL_Rect src;
     if (NULL == src_rect) {
@@ -267,6 +286,8 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
 
     if (sprite->frames_num <= frame_idx)
         return -1;
+
+    /* TODO 在视野范围内时才绘制精灵 */
 
     struct k_sprite_frame *frame = &sprite->frames[frame_idx];
 

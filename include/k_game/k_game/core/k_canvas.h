@@ -30,6 +30,8 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num);
 
 int k_canvas_draw_rect(float x, float y, float w, float h);
 
+int k_canvas_fill_rect(float x, float y, float w, float h);
+
 int k_canvas_draw_circle(float cx, float cy, float r);
 
 /** \brief 用于指定在绘制图片时应用的变换效果 */

@@ -78,7 +78,3 @@ void k_sprite_destroy(struct k_sprite *sprite) {
     k__sprite_registry_del(sprite);
     k_mem_free(sprite);
 }
-
-/* region [sprite_get] */
-
-/* endregion */

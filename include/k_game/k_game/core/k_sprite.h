@@ -13,8 +13,6 @@ struct k_image;
  */
 struct k_sprite;
 
-/* region [sprite_create] */
-
 /** \brief 用于创建精灵帧的配置 */
 struct k_sprite_frame_config {
 
@@ -122,10 +120,6 @@ int k_sprite_set_name(struct k_sprite *sprite, const char *sprite_name);
  */
 struct k_sprite *k_sprite_find(const char *sprite_name);
 
-/* endregion */
-
-/* region [sprite_get/set] */
-
 /** \brief 获取精灵的宽 */
 int k_sprite_get_width(struct k_sprite *sprite);
 
@@ -143,61 +137,5 @@ int k_sprite_get_frames_num(struct k_sprite *sprite);
 
 /** \brief 获取精灵帧的延时，单位：毫秒 */
 int k_sprite_get_frame_delay(struct k_sprite *sprite, size_t frame_idx);
-
-/* endregion */
-
-/* region [sprite_draw] */
-
-/** \brief 用于指定在绘制精灵帧时应用的变换效果 */
-struct k_sprite_draw_options {
-
-    /**
-     * \brief 缩放绘制精灵
-     *
-     * `scaled_w` 和 `scaled_h` 分别指定目标宽高，
-     * 绘制时，精灵图的宽高将被拉伸或压缩至该值。
-     * 伸缩变换的原点为精灵的原点。
-     *
-     * 若目标宽高之一为 0 或负值，则精灵图被压缩至不可见。
-     * 若不希望缩放精灵，请指定目标宽高为精灵原本的宽高，
-     * 使用 `k_sprite_get_width()` 和 `k_sprite_get_height()`。
-     */
-    float scaled_w;
-    float scaled_h;
-
-    /**
-     * \brief 旋转绘制精灵
-     *
-     * `angle` 指定旋转角度，单位采用角度制，顺时针方向为正方向。
-     * 旋转变换的原点为精灵的原点。
-     *
-     * 若不需要旋转，请将 `angle` 指定为 0.0f。
-     */
-    float angle;
-
-    /**
-     * \brief 翻转绘制精灵
-     *
-     * `flip_x` 和 `flip_y` 分别指定是否启用水平、竖直翻转,
-     * 0 表示不启用，非 0 则启用。
-     *
-     * 翻转变换的原点为精灵的原点。
-     */
-    int flip_x;
-    int flip_y;
-};
-
-/**
- * \brief 绘制精灵帧
- *
- * 该函数用于在房间内绘制一张精灵帧。
- * `frame_idx` 指定要绘制帧的索引。`x` 和 `y` 指定精灵原点的绘制位置坐标。
- * `options` 用于执行缩放、旋转和翻转变换，若为 `NULL` 则不应用任何变换。
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
-// int k_sprite_draw(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_sprite_draw_options *options);
-
-/* endregion */
 
 #endif
