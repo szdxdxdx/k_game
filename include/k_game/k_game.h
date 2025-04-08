@@ -7,6 +7,7 @@
 #include "./k_game/core/k_mouse.h"
 #include "./k_game/core/k_image.h"
 #include "./k_game/core/k_sound.h"
+#include "./k_game/core/k_canvas.h"
 #include "./k_game/core/k_sprite.h"
 #include "./k_game/core/k_room.h"
 #include "./k_game/core/k_view.h"

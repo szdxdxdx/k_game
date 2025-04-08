@@ -1,13 +1,13 @@
 #include <math.h>
 
-#include "./_internal.h"
+#include "k_game/core/k_canvas.h"
 
-#include "../../core/k_SDL/k_window.h"
+#include "./_internal.h"
 
 static void k__sprite_renderer_debug_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
 
-    SDL_SetRenderDrawColor(k__window.renderer, 255, 102, 0, 255);
+    k_canvas_set_color(255, 102, 0, 255);
 
     float dst_x = *(renderer->x);
     float dst_y = *(renderer->y);
@@ -87,14 +87,14 @@ draw_rect:
         x4 = x_new + dst_x;
         y4 = y_new + dst_y;
 
-        SDL_FPoint points[5] = {
+        struct k_float_point points[5] = {
             { x1, y1 },
             { x2, y2 },
             { x3, y3 },
             { x4, y4 },
             { x1, y1 },
         };
-        SDL_RenderDrawLinesF(k__window.renderer, points, 5);
+        k_canvas_draw_lines(points, 5);
     }
 
 draw_position:
@@ -113,8 +113,8 @@ draw_position:
         y3 = dst_y - len_c;
         x4 = dst_x - len_s;
         y4 = dst_y + len_c;
-        SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2);
-        SDL_RenderDrawLineF(k__window.renderer, x3, y3, x4, y4);
+        k_canvas_draw_line(x1, y1, x2, y2);
+        k_canvas_draw_line(x3, y3, x4, y4);
     }
 }
 

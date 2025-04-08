@@ -44,8 +44,9 @@ void k_object_destroy(struct k_object *object) {
     if (NULL == object)
         return;
 
-    if (NULL != object->fn_destroy)
+    if (NULL != object->fn_destroy) {
         object->fn_destroy(object);
+    }
 
     k_object_del_all_components(object);
     k_object_del_all_callbacks(object);
