@@ -8,6 +8,7 @@
 #include "./k_window.h"
 
 #include "../image/k_image.h"
+#include "../sprite/k_sprite.h"
 
 void k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_SetRenderDrawColor(k__window.renderer, a, g, b, a);
@@ -189,4 +190,77 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
     }
 
     return 0;
+}
+
+int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
+
+    if (NULL == sprite)
+        return -1;
+
+    if (sprite->frames_num <= frame_idx)
+        return -1;
+
+    struct k_sprite_frame *frame = &sprite->frames[frame_idx];
+
+    if (NULL == options) {
+
+        SDL_Rect src;
+        src.x = frame->offset_x;
+        src.y = frame->offset_y;
+        src.w = sprite->sprite_w;
+        src.h = sprite->sprite_h;
+
+        SDL_FRect dst;
+        dst.x = x - sprite->origin_x - k__window.view_x;
+        dst.y = y - sprite->origin_y - k__window.view_y;
+        dst.w = (float)sprite->sprite_w;
+        dst.h = (float)sprite->sprite_h;
+
+        if (0 != SDL_RenderCopyF(k__window.renderer, frame->image->texture, &src, &dst)) {
+            k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
+            return -1;
+        }
+    }
+
+    else {
+        if (options->scaled_w <= 0 || options->scaled_h <= 0)
+            return 0;
+
+        SDL_Rect src;
+        src.x = frame->offset_x;
+        src.y = frame->offset_y;
+        src.w = sprite->sprite_w;
+        src.h = sprite->sprite_h;
+
+        /* 将精灵原点移动到【经过伸缩、翻转】变换后的图片上 */
+
+        float sprite_w = (float)sprite->sprite_w;
+        float sprite_h = (float)sprite->sprite_h;
+        float scala_x  = options->scaled_w / sprite_w;
+        float scala_y  = options->scaled_h / sprite_h;
+        float origin_x = scala_x * (options->flip_x ? (sprite_w - sprite->origin_x) : sprite->origin_x);
+        float origin_y = scala_y * (options->flip_y ? (sprite_h - sprite->origin_y) : sprite->origin_y);
+
+        SDL_FRect dst;
+        dst.x = x - origin_x - k__window.view_x;
+        dst.y = y - origin_y - k__window.view_y;
+        dst.w = options->scaled_w;
+        dst.h = options->scaled_h;
+
+        if (dst.w <= 0.0f || dst.h <= 0.0f)
+            return 0;
+
+        SDL_FPoint center;
+        center.x = origin_x;
+        center.y = origin_y;
+
+        SDL_RendererFlip flip = SDL_FLIP_NONE;
+        if (options->flip_x) { flip |= SDL_FLIP_HORIZONTAL; }
+        if (options->flip_y) { flip |= SDL_FLIP_VERTICAL;   }
+
+        if (0 != SDL_RenderCopyExF(k__window.renderer, frame->image->texture, &src, &dst, options->angle, &center, flip)) {
+            k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
+            return -1;
+        }
+    }
 }

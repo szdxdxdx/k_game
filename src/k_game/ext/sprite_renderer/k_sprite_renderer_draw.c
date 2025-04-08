@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "k_game/core/k_time.h"
+#include "k_game/core/k_canvas.h"
 
 #include "./_internal.h"
 
@@ -45,7 +46,7 @@ static void k__sprite_renderer_draw_sprite(struct k_component *component) {
     }
 
     if (transform_none == renderer->transform_flags) {
-        k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
+        k_canvas_draw_sprite(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
     }
     else {
         struct k_sprite_draw_options opts;
@@ -54,7 +55,7 @@ static void k__sprite_renderer_draw_sprite(struct k_component *component) {
         opts.angle    = renderer->angle;
         opts.flip_x   = renderer->transform_flags & transform_flip_x;
         opts.flip_y   = renderer->transform_flags & transform_flip_y;
-        k_sprite_draw(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
+        k_canvas_draw_sprite(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
     }
 
     if (NULL != fn_loop_callback) {
