@@ -16,17 +16,6 @@ static void bubble_set_state_float(struct k_object *object) {
         config.offset_y2 = 10;
         bubble->collision_box = k_object_add_collision_rectangle(object, &config);
     }
-
-    {
-        struct k_collision_circle_config config;
-        config.group_id  = YX_COLLISION_GROUP_BUBBLE;
-        config.x         = &bubble->x;
-        config.y         = &bubble->y;
-        config.offset_cx = -8;
-        config.offset_cy = -6;
-        config.r         = 8;
-        bubble->collision_box = k_object_add_collision_circle(object, &config);
-    }
 }
 
 struct k_object *yx_bubble_create(float x, float y) {

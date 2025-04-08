@@ -223,7 +223,7 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
     }
 
     else {
-        if (options->scaled_w <= 0 || options->scaled_h <= 0)
+        if (options->scaled_w <= 0.0f || options->scaled_h <= 0.0f)
             return 0;
 
         SDL_Rect src;
@@ -232,31 +232,39 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
         src.w = sprite->sprite_w;
         src.h = sprite->sprite_h;
 
-        /* 将精灵原点移动到【经过伸缩、翻转】变换后的图片上 */
-
         float sprite_w = (float)sprite->sprite_w;
         float sprite_h = (float)sprite->sprite_h;
         float scala_x  = options->scaled_w / sprite_w;
         float scala_y  = options->scaled_h / sprite_h;
-        float origin_x = scala_x * (options->flip_x ? (sprite_w - sprite->origin_x) : sprite->origin_x);
-        float origin_y = scala_y * (options->flip_y ? (sprite_h - sprite->origin_y) : sprite->origin_y);
+
+        SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+        float origin_x;
+        float origin_y;
+
+        if (options->flip_x) {
+            origin_x = scala_x * (sprite_w - sprite->origin_x);
+            flip |= SDL_FLIP_HORIZONTAL;
+        } else {
+            origin_x = scala_x * sprite->origin_x;
+        }
+
+        if (options->flip_y) {
+            origin_y = scala_y * (sprite_h - sprite->origin_y);
+            flip |= SDL_FLIP_VERTICAL;
+        } else {
+            origin_y = scala_y * sprite->origin_y;
+        }
+
+        SDL_FPoint center;
+        center.x = origin_x;
+        center.y = origin_y;
 
         SDL_FRect dst;
         dst.x = x - origin_x - k__window.view_x;
         dst.y = y - origin_y - k__window.view_y;
         dst.w = options->scaled_w;
         dst.h = options->scaled_h;
-
-        if (dst.w <= 0.0f || dst.h <= 0.0f)
-            return 0;
-
-        SDL_FPoint center;
-        center.x = origin_x;
-        center.y = origin_y;
-
-        SDL_RendererFlip flip = SDL_FLIP_NONE;
-        if (options->flip_x) { flip |= SDL_FLIP_HORIZONTAL; }
-        if (options->flip_y) { flip |= SDL_FLIP_VERTICAL;   }
 
         if (0 != SDL_RenderCopyExF(k__window.renderer, frame->image->texture, &src, &dst, options->angle, &center, flip)) {
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
