@@ -12,14 +12,25 @@
 
 #define k__array_len(arr) (sizeof(arr) / sizeof(arr[0]))
 
-void k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-    SDL_SetRenderDrawColor(k__window.renderer, a, g, b, a);
+int k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+
+    if (0 != SDL_SetRenderDrawColor(k__window.renderer, a, g, b, a)) {
+        k_log_error("Failed to set color, SDL error: %s", SDL_GetError());
+        return -1;
+    }
+
+    return 0;
 }
 
 int k_canvas_draw_point(float x, float y) {
+
     x -= k__window.view_x;
     y -= k__window.view_y;
-    SDL_RenderDrawPointF(k__window.renderer, x, y);
+
+    if (0 != SDL_RenderDrawPointF(k__window.renderer, x, y)) {
+        k_log_error("Failed to draw point, SDL error: %s", SDL_GetError());
+        return -1;
+    }
 
     return 0;
 }
@@ -44,18 +55,25 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) 
         count++;
 
         if (count == points_num) {
-            SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size);
+
+            if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
+                k_log_error("Failed to draw points, SDL error: %s", SDL_GetError());
+                return -1;
+            }
+
             break;
         }
         else if (buf_size == k__array_len(buf)) {
-            SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size);
 
-            if (count == points_num) {
+            if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
+                k_log_error("Failed to draw points, SDL error: %s", SDL_GetError());
+                return -1;
+            }
+
+            if (count == points_num)
                 break;
-            }
-            else {
-                buf_size = 0;
-            }
+
+            buf_size = 0;
         }
     }
 
@@ -68,15 +86,18 @@ int k_canvas_draw_line(float x1, float y1, float x2, float y2) {
     y1 -= k__window.view_y;
     x2 -= k__window.view_x;
     y2 -= k__window.view_y;
-    SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2);
+
+    if (0 != SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2)) {
+        k_log_error("Failed to draw line, SDL error: %s", SDL_GetError());
+        return -1;
+    }
 
     return 0;
 }
 
 int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
-    assert(NULL != points);
 
-    if (points_num <= 1)
+    if (NULL == points || points_num <= 1)
         return -1;
 
     SDL_FPoint buf[64];
@@ -91,20 +112,27 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
         count++;
 
         if (count == points_num) {
-            SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size);
+
+            if (0 != SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size)) {
+                k_log_error("Failed to draw lines, SDL error: %s", SDL_GetError());
+                return -1;
+            }
+
             break;
         }
         else if (buf_size == k__array_len(buf)) {
-            SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size);
 
-            if (count == points_num) {
+            if (0 != SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size)) {
+                k_log_error("Failed to draw lines, SDL error: %s", SDL_GetError());
+                return -1;
+            }
+
+            if (count == points_num)
                 break;
-            }
-            else {
-                buf[0].x = buf[k__array_len(buf) - 1].x;
-                buf[0].y = buf[k__array_len(buf) - 1].y;
-                buf_size = 1;
-            }
+
+            buf[0].x = buf[k__array_len(buf) - 1].x;
+            buf[0].y = buf[k__array_len(buf) - 1].y;
+            buf_size = 1;
         }
     }
 
