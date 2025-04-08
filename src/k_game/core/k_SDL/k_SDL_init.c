@@ -169,8 +169,8 @@ static int step_create_canvas(void *config_) {
     int canvas_h = config->canvas_h;
 
     if (canvas_w == 0 && canvas_h == 0) {
-        canvas_w = config->window_w;
-        canvas_h = config->window_h;
+        canvas_w = (int)((float)config->window_w * 1.25f);
+        canvas_h = (int)((float)config->window_h * 1.25f);
     }
     else {
         if (canvas_w <= 0 || canvas_h <= 0) {

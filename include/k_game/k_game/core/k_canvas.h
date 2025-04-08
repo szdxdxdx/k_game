@@ -32,8 +32,6 @@ int k_canvas_draw_rect(float x, float y, float w, float h);
 
 int k_canvas_draw_circle(float cx, float cy, float r);
 
-/* region [draw_image] */
-
 /** \brief 用于指定在绘制图片时应用的变换效果 */
 struct k_canvas_draw_image_options {
 
@@ -85,10 +83,6 @@ struct k_canvas_draw_image_options {
  */
 int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options);
 
-/* endregion */
-
-/* region [draw_sprite] */
-
 /** \brief 用于指定在绘制精灵帧时应用的变换效果 */
 struct k_canvas_draw_sprite_options {
 
@@ -137,7 +131,5 @@ struct k_canvas_draw_sprite_options {
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options);
-
-/* endregion */
 
 #endif
