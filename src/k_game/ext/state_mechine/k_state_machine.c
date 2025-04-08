@@ -1,4 +1,5 @@
 #include "k_game/core/k_component.h"
+#include "k_game/core/k_callback.h"
 
 #include "k_game/ext/k_state_machine.h"
 #include "./k_state_machine_typedef.h"
@@ -48,7 +49,7 @@ static void k__state_machine_step(struct k_component *component) {
 static int k__state_machine_init(struct k_component *component, void *params) {
     (void *)params;
 
-    struct k_component_callback *callback = k_component_add_step_callback(component, k__state_machine_step);
+    struct k_callback *callback = k_component_add_step_callback(component, k__state_machine_step);
     if (NULL == callback)
         return -1;
 

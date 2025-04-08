@@ -4,7 +4,7 @@
 #include "./k_callback_step.h"
 #include "./k_callback_draw.h"
 
-void k__callback_del(struct k_callback_base *callback) {
+void k__callback_del(struct k_callback *callback) {
 
     switch (callback->event) {
         case K_ALARM_CALLBACK:

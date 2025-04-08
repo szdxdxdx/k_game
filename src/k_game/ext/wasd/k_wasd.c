@@ -1,8 +1,9 @@
 #include "./k_wasd_typedef.h"
 
+#include "k_game/core/k_time.h"
 #include "k_game/core/k_keyboard.h"
 #include "k_game/core/k_component.h"
-#include "k_game/core/k_time.h"
+#include "k_game/core/k_callback.h"
 
 #include "k_game/ext/k_wasd.h"
 

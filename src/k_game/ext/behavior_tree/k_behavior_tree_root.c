@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "k_game/core/k_object.h"
+#include "k_game/core/k_callback.h"
 
 #include "./_internal.h"
 

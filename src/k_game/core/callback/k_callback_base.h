@@ -3,6 +3,12 @@
 
 #include <stdint.h>
 
+#include "k_list.h"
+
+struct k_room;
+struct k_object;
+struct k_component;
+
 enum k_callback_context {
 
     K_ROOM_CALLBACK,
@@ -32,12 +38,14 @@ enum k_callback_state {
     K_CALLBACK_DELETED,
 };
 
-struct k_callback_base {
-    enum k_callback_context context : 8;
-    enum k_callback_event   event   : 8;
-    enum k_callback_state   state   : 8;
+struct k_callback {
+    uint8_t context : 8;
+    uint8_t event   : 8;
+    uint8_t state   : 8;
+
+    struct k_list_node context_list_node;
 };
 
-void k__callback_del(struct k_callback_base *callback);
+void k__callback_del(struct k_callback *callback);
 
 #endif

@@ -7,6 +7,7 @@
 #include "k_game/core/k_mem_alloc.h"
 #include "k_game/core/k_object.h"
 #include "k_game/core/k_component.h"
+#include "k_game/core/k_callback.h"
 
 #include "k_game/ext/k_collision.h"
 
@@ -107,7 +108,7 @@ struct k_collision_debugger {
 
     struct k_collision_group *group;
 
-    struct k_object_callback *cb_debug_draw;
+    struct k_callback *cb_debug_draw;
 };
 
 int k__collision_manager_init_group_map(struct k_collision_manager *manager);

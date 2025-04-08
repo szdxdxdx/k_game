@@ -153,35 +153,4 @@ float k_room_get_height(void);
 
 /* endregion */
 
-/* region [room_add_callback] */
-
-/**
- * \brief 房间回调
- *
- * TODO docs
- */
-struct k_room_callback;
-
-struct k_room_callback *k_room_add_step_begin_callback(void *data, void (*fn_callback)(void *data));
-
-struct k_room_callback *k_room_add_alarm_callback(void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms);
-
-struct k_room_callback *k_room_add_step_callback(void *data, void (*fn_callback)(void *data));
-
-struct k_room_callback *k_room_add_step_end_callback(void *data, void (*fn_callback)(void *data));
-
-struct k_room_callback *k_room_add_draw_callback(void *data, void (*fn_callback)(void *data), int z_group, int z_layer);
-
-/**
- * \brief 删除房间的事件回调
- *
- * 若 `callback` 为 `NULL`，则函数立即返回。
- */
-void k_room_del_callback(struct k_room_callback *callback);
-
-/** \brief 删除房间所有的事件回调 */
-void k_room_del_all_callbacks(struct k_room *room);
-
-/* endregion */
-
 #endif

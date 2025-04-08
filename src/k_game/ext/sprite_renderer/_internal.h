@@ -5,6 +5,7 @@
 
 #include "k_game/core/k_sprite.h"
 #include "k_game/core/k_component.h"
+#include "k_game/core/k_callback.h"
 
 #include "k_game/ext/k_sprite_renderer.h"
 #include "./k_sprite_renderer_typedef.h"
@@ -23,9 +24,9 @@ struct k_sprite_renderer {
 
     int z_group;
     int z_layer;
-    struct k_component_callback *cb_draw_sprite;
+    struct k_callback *cb_draw_sprite;
 
-    struct k_component_callback *cb_debug_draw;
+    struct k_callback *cb_debug_draw;
 
     float *x;
     float *y;

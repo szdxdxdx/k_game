@@ -13,6 +13,7 @@
 #include "./k_game/core/k_view.h"
 #include "./k_game/core/k_object.h"
 #include "./k_game/core/k_component.h"
+#include "./k_game/core/k_callback.h"
 #include "./k_game/core/k_game_run.h"
 
 #include "./k_game/ext/k_wasd.h"
