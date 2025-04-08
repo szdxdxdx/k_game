@@ -53,8 +53,6 @@ struct k_callback *k_object_add_draw_callback(struct k_object *object, void (*fn
 
 void k_object_del_callback(struct k_callback *object_callback);
 
-void k_object_del_all_callbacks(struct k_object *object);
-
 /* endregion */
 
 /* region [component_callback] */
@@ -70,8 +68,6 @@ struct k_callback *k_component_add_step_end_callback(struct k_component *compone
 struct k_callback *k_component_add_draw_callback(struct k_component *component, void (*fn_callback)(struct k_component *component), int z_group, int z_layer);
 
 void k_component_del_callback(struct k_callback *component_callback);
-
-void k_component_del_all_callbacks(struct k_component *component);
 
 /* endregion */
 

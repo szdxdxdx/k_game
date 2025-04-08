@@ -6,6 +6,7 @@
 #include "./k_object_pool.h"
 
 #include "../room/k_room.h"
+#include "../callback/k_callback_context.h"
 
 /* region [object_create] */
 
@@ -49,7 +50,7 @@ void k_object_destroy(struct k_object *object) {
     }
 
     k_object_del_all_components(object);
-    k_object_del_all_callbacks(object);
+    k__object_del_all_callbacks(object);
 
     k_mem_free(object->data);
     k__object_pool_release(object);

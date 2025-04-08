@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "k_game/core/k_callback.h"
 
 #include "./k_callback_context.h"
@@ -5,6 +7,23 @@
 #include "../room/k_room.h"
 #include "../object/k_object.h"
 #include "../component/k_component.h"
+
+static void k__callback_del(struct k_callback *callback) {
+
+    switch (callback->event) {
+        case K_ALARM_CALLBACK:
+            k__alarm_callback_manager_del_callback(callback);
+            break;
+        case K_STEP_CALLBACK:
+            k__step_callback_manager_del_callback(callback);
+            break;
+        case K_DRAW_CALLBACK:
+            k__draw_callback_manager_del_callback(callback);
+            break;
+        default:
+            assert(0);
+    }
+}
 
 /* region [room_callback] */
 
@@ -85,7 +104,7 @@ void k_object_del_callback(struct k_callback *object_callback) {
     }
 }
 
-void k_object_del_all_callbacks(struct k_object *object) {
+void k__object_del_all_callbacks(struct k_object *object) {
 
     struct k_callback *callback;
     struct k_list *list = &object->callback_list;
@@ -130,7 +149,7 @@ void k_component_del_callback(struct k_callback *component_callback) {
     }
 }
 
-void k_component_del_all_callbacks(struct k_component *component) {
+void k__component_del_all_callbacks(struct k_component *component) {
 
     struct k_callback *callback;
     struct k_list *list = &component->callback_list;

@@ -46,6 +46,4 @@ struct k_callback {
     struct k_list_node context_list_node;
 };
 
-void k__callback_del(struct k_callback *callback);
-
 #endif

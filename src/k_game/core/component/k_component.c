@@ -7,6 +7,7 @@
 #include "./k_component_type.h"
 
 #include "../object/k_object.h"
+#include "../callback/k_callback_context.h"
 
 /* region [component_create] */
 
@@ -48,7 +49,7 @@ static struct k_component *k__component_create(struct k_component_type *componen
 
 fn_create_failed:
     k_list_del(&component->list_node);
-    k_component_del_all_callbacks(component);
+    k__component_del_all_callbacks(component);
     k_mem_free(component->data);
 malloc_data_failed:
     k_mem_free(component);
@@ -65,7 +66,7 @@ static void k__component_destroy(struct k_component *component) {
     }
 
     k_list_del(&component->list_node);
-    k_component_del_all_callbacks(component);
+    k__component_del_all_callbacks(component);
 
     k_mem_free(component->data);
     k_mem_free(component);
