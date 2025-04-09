@@ -9,10 +9,12 @@ struct yx_camera_target {
 
     struct yx_camera_manager *manager;
 
+    /* 记录 target 在 secondary_targets 中的索引，若是 main_target 则该值无效 */
     size_t target_idx;
 
     float *x;
     float *y;
+
     float weight;
 };
 
@@ -26,9 +28,6 @@ struct yx_camera_manager {
     size_t secondary_targets_num;
 
     struct k_callback *cb_camera_move;
-
-    float cx;
-    float cy;
 };
 
 static struct k_component_type *yx__camera_component_type;
@@ -44,7 +43,58 @@ void yx_camera_follow(void *camera_manager) {
     if (NULL == main_target)
         return;
 
-    k_view_set_position(*main_target->x, *main_target->y);
+    float current_view_x;
+    float current_view_y;
+    float current_view_w;
+    float current_view_h;
+    k_view_get_rect(&current_view_x, &current_view_y, &current_view_w, &current_view_h);
+
+    float sum_wx = (*main_target->x) * main_target->weight;
+    float sum_wy = (*main_target->y) * main_target->weight;
+    float sum_w = main_target->weight;
+
+    float padding = 20.0f;
+
+    struct yx_camera_target *secondary_target;
+    size_t i = 0;
+    for (; i < manager->secondary_targets_num; i++) {
+        secondary_target = manager->secondary_targets[i];
+
+        float x = *secondary_target->x;
+        float y = *secondary_target->y;
+
+        if (x < current_view_x - padding) continue;
+        if (y < current_view_y - padding) continue;
+        if (x > current_view_x + current_view_w + padding) continue;
+        if (y > current_view_y + current_view_h + padding) continue;
+
+        sum_wx += x * secondary_target->weight;
+        sum_wy += y * secondary_target->weight;
+        sum_w  += secondary_target->weight;
+    }
+    float wx = sum_wx / sum_w;
+    float wy = sum_wy / sum_w;
+
+    float current_cx;
+    float current_cy;
+    k_view_get_position(&current_cx, &current_cy);
+
+    float dx = wx - current_cx;
+    float dy = wy - current_cy;
+    float dist = dx * dx + dy * dy;
+
+    float new_cx;
+    float new_cy;
+
+    if (dist < 6.0f) {
+        new_cx = wx;
+        new_cy = wy;
+    } else {
+        new_cx = current_cx + dx * 0.06f;
+        new_cy = current_cy + dy * 0.06f;
+    }
+
+    k_view_set_position(new_cx, new_cy);
 }
 
 /* endregion */
@@ -155,9 +205,6 @@ int yx_camera_manager_init(struct k_component_manager *component_manager, void *
 
     manager->main_target = NULL;
     manager->secondary_targets_num = 0;
-
-    manager->cx = 0;
-    manager->cy = 0;
 
     return 0;
 }
