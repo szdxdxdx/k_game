@@ -49,11 +49,15 @@ void yx_camera_follow(void *camera_manager) {
     float current_view_h;
     k_view_get_rect(&current_view_x, &current_view_y, &current_view_w, &current_view_h);
 
+    float padding = 20.0f;
+    float min_x = current_view_x - padding;
+    float min_y = current_view_y - padding;
+    float max_x = current_view_x + current_view_w + padding;
+    float max_y = current_view_y + current_view_h + padding;
+
     float sum_wx = (*main_target->x) * main_target->weight;
     float sum_wy = (*main_target->y) * main_target->weight;
     float sum_w = main_target->weight;
-
-    float padding = 20.0f;
 
     struct yx_camera_target *secondary_target;
     size_t i = 0;
@@ -63,32 +67,33 @@ void yx_camera_follow(void *camera_manager) {
         float x = *secondary_target->x;
         float y = *secondary_target->y;
 
-        if (x < current_view_x - padding) continue;
-        if (y < current_view_y - padding) continue;
-        if (x > current_view_x + current_view_w + padding) continue;
-        if (y > current_view_y + current_view_h + padding) continue;
+        if (x < min_x || max_x < x) continue;
+        if (y < min_y || max_y < y) continue;
 
-        sum_wx += x * secondary_target->weight;
-        sum_wy += y * secondary_target->weight;
+        sum_wx += secondary_target->weight * x;
+        sum_wy += secondary_target->weight * y;
         sum_w  += secondary_target->weight;
     }
-    float wx = sum_wx / sum_w;
-    float wy = sum_wy / sum_w;
+
+    float target_cx = sum_wx / sum_w;
+    float target_cy = sum_wy / sum_w;
 
     float current_cx;
     float current_cy;
     k_view_get_position(&current_cx, &current_cy);
 
-    float dx = wx - current_cx;
-    float dy = wy - current_cy;
+    /* ------------------------------------------------------------------------ */
+
+    float dx = target_cx - current_cx;
+    float dy = target_cy - current_cy;
     float dist = dx * dx + dy * dy;
 
     float new_cx;
     float new_cy;
 
     if (dist < 6.0f) {
-        new_cx = wx;
-        new_cy = wy;
+        new_cx = target_cx;
+        new_cy = target_cy;
     } else {
         new_cx = current_cx + dx * 0.06f;
         new_cy = current_cy + dy * 0.06f;
