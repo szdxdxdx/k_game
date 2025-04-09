@@ -78,14 +78,6 @@ int k_room_add_component_manager(struct k_component_type *component_type, void *
     return k__component_manager_create(k__current_room, component_type, params);
 }
 
-struct k_component_manager *k_room_get_component_manager(struct k_component_type *component_type) {
-
-    if (NULL == component_type)
-        return NULL;
-
-    return k__component_manager_map_find(k__current_room, component_type->manager_type);
-}
-
 void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {
     /* 【暂未公布的 API】 */
 
@@ -94,14 +86,6 @@ void k__room_del_component_manager(struct k_room *room, struct k_component_type 
         return;
 
     k__component_manager_destroy(manager);
-}
-
-/* endregion */
-
-/* region [component_manager_get] */
-
-void *k_component_manager_get_data(struct k_component_manager *manager) {
-    return manager->data;
 }
 
 /* endregion */

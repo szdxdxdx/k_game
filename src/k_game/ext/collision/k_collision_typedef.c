@@ -34,20 +34,6 @@ int k_room_add_collision_manager(void) {
 
 /* endregion */
 
-/* region [get_room_component_manager] */
-
-struct k_collision_manager *k__collision_get_manager(void) {
-
-    struct k_component_manager *component_manager = k_room_get_component_manager(k__collision_component_type);
-    if (NULL == component_manager)
-        return NULL;
-
-    struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
-    return manager;
-}
-
-/* endregion */
-
 /* region [object_add_component] */
 
 static struct k_collision_box *k__object_add_collision_box(struct k_object *object, enum k_collision_box_type box_type, const void *config) {

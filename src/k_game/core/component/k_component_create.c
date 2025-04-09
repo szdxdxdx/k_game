@@ -78,29 +78,6 @@ static void k__component_destroy(struct k_component *component) {
 
 /* endregion */
 
-/* region [component_get] */
-
-void *k_component_get_data(struct k_component *component) {
-    return component->data;
-}
-
-struct k_object *k_component_get_object(struct k_component *component) {
-    return component->object;
-}
-
-struct k_component_manager *k_component_get_manager(struct k_component *component) {
-    return component->manager;
-}
-
-void *k_component_get_manager_data(struct k_component *component) {
-    if (NULL == component->manager)
-        return NULL;
-    else
-        return component->manager->data;
-}
-
-/* endregion */
-
 /* region [object_add_component] */
 
 struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params) {

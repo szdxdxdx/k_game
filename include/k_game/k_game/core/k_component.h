@@ -83,19 +83,11 @@ struct k_component_type *k_component_type_find(const char *type_name);
  */
 struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
 
-struct k_object *k_component_get_object(struct k_component *component);
-
 void k_object_del_component(struct k_component *component);
 
 // TODO struct k_component *k_object_get_component(struct k_object *object, struct k_component_type *component_type);
 
 // TODO int k_get_objects_with_component(size_t component_type_id, struct k_object ***get_objects, size_t *n);
-
-/* endregion */
-
-/* region [component_get] */
-
-void *k_component_get_data(struct k_component *component);
 
 /* endregion */
 
@@ -108,6 +100,23 @@ void *k_component_get_data(struct k_component *component);
  */
 int k_room_add_component_manager(struct k_component_type *component_type, void *params);
 
+/* endregion */
+
+/* region [component_get/manager_get] */
+
+void *k_component_get_data(struct k_component *component);
+
+struct k_object *k_component_get_object(struct k_component *component);
+
+/**
+ * \brief 获取管理该组件实例的管理器
+ *
+ * 函数返回与该组件实例关联的管理器。
+ * 若创建该组件时房间没有挂载该组件类型的管理器，
+ * 或是该组件类型没有定义管理器，则函数返回 `NULL`。
+ */
+struct k_component_manager *k_component_get_manager(struct k_component *component);
+
 /**
  * \brief 获取当前房间的组件管理器
  *
@@ -115,23 +124,11 @@ int k_room_add_component_manager(struct k_component_type *component_type, void *
  */
 struct k_component_manager *k_room_get_component_manager(struct k_component_type *component_type);
 
-/* endregion */
-
-/* region [component_manager_get] */
-
 void *k_component_manager_get_data(struct k_component_manager *manager);
 
-/**
- * \brief 获取管理该组件实例的管理器
- *
- * 函数返回与该组件实例关联的管理器。
- *
- * 若创建该组件时，房间没有挂载该组件类型的管理器，
- * 或是该组件类型没有定义管理器，则函数返回 `NULL`。
- */
-struct k_component_manager *k_component_get_manager(struct k_component *component);
-
 void *k_component_get_manager_data(struct k_component *component);
+
+void *k_room_get_component_manager_data(struct k_component_type *component_type);
 
 /* endregion */
 

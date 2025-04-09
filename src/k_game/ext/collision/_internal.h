@@ -129,8 +129,6 @@ int k__collision_manager_init(struct k_component_manager *component_manager, voi
 
 void k__collision_manager_fini(struct k_component_manager *component_manager);
 
-struct k_collision_manager *k__collision_get_manager(void);
-
 /* endregion */
 
 #endif

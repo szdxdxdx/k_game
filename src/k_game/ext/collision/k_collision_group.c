@@ -74,21 +74,13 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
 
 struct k_collision_group *k__collision_find_or_add_group(int group_id) {
 
-    struct k_component_manager *component_manager = k_room_get_component_manager(k__collision_component_type);
-    if (NULL == component_manager)
-        return NULL;
-
-    struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
+    struct k_collision_manager *manager = k_room_get_component_manager_data(k__collision_component_type);
     return k__collision_manager_find_or_add_group(manager, group_id);
 }
 
 struct k_collision_group *k__collision_find_group(int group_id) {
 
-    struct k_component_manager *component_manager = k_room_get_component_manager(k__collision_component_type);
-    if (NULL == component_manager)
-        return NULL;
-
-    struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
+    struct k_collision_manager *manager = k_room_get_component_manager_data(k__collision_component_type);
     struct k_int_hash_map_node *map_node = k_int_hash_map_get(&manager->group_map, group_id);
     if (NULL == map_node)
         return NULL;
