@@ -3,10 +3,16 @@
 
 #include "k_game.h"
 
+struct yx_camera_target;
+
 int yx_camera_component_define(void);
 
-void yx_room_add_camera_manager(void);
+int yx_room_add_camera(void);
 
-int yx_object_add_camera_follow(struct k_object *object, float *x, float *y, float weight);
+struct yx_camera_target *yx_object_add_camera_follow(struct k_object *object, float *x, float *y);
+
+void yx_camera_set_main_target(struct yx_camera_target *target);
+
+void yx_camera_target_set_weight(struct yx_camera_target *target, float weight);
 
 #endif

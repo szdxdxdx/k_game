@@ -215,7 +215,9 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     }
 
     {
-        yx_object_add_camera_follow(object, &player->x, &player->y, 5.0f);
+        struct yx_camera_target *target = yx_object_add_camera_follow(object, &player->x, &player->y);
+        yx_camera_set_main_target(target);
+        yx_camera_target_set_weight(target, 3.0f);
     }
 
     return object;

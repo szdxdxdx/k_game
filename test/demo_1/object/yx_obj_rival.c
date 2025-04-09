@@ -47,7 +47,7 @@ struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
     }
 
     {
-        yx_object_add_camera_follow(object, &rival->x, &rival->y, 1.0f);
+        yx_object_add_camera_follow(object, &rival->x, &rival->y);
     }
 
     return object;
