@@ -101,13 +101,6 @@ struct k_collision_group {
 
     struct k_list box_list;
 
-    struct k_object *debugger;
-};
-
-struct k_collision_debugger {
-
-    struct k_collision_group *group;
-
     struct k_callback *cb_debug_draw;
 };
 

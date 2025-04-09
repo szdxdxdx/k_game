@@ -16,6 +16,7 @@ struct k_component_manager {
 
     struct k_room *room;
 
+    /* experimental */
     struct k_list callback_list;
 };
 

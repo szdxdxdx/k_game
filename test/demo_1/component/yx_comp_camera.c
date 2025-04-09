@@ -2,7 +2,6 @@
 
 #include "./yx_comp_camera.h"
 
-struct yx_camera;
 struct yx_camera_target;
 struct yx_camera_manager;
 
@@ -22,10 +21,12 @@ struct yx_camera_manager {
     struct yx_camera_target *targets[YX__CAMERA_TARGET_MAX];
 
     size_t targets_num;
+
+    struct k_callback *cb_camera_move;
 };
 
-void yx_camera_step_end(struct k_component_manager *component_manager) {
-    struct yx_camera_manager *manager = k_component_manager_get_data(component_manager);
+void yx_camera_move(void *camera_manager) {
+    struct yx_camera_manager *manager = camera_manager;
 
     if (0 == manager->targets_num)
         return;
@@ -95,7 +96,8 @@ int yx_camera_manager_init(struct k_component_manager *component_manager, void *
     struct yx_camera_manager *manager = k_component_manager_get_data(component_manager);
     manager->targets_num = 0;
 
-    if (NULL == k_component_manager_add_step_end_callback(component_manager, yx_camera_step_end))
+    manager->cb_camera_move = k_room_add_step_end_callback(manager, yx_camera_move);
+    if (NULL == manager->cb_camera_move)
         return -1;
 
     return 0;
@@ -104,7 +106,7 @@ int yx_camera_manager_init(struct k_component_manager *component_manager, void *
 void yx_camera_manager_fini(struct k_component_manager *component_manager) {
     struct yx_camera_manager *manager = k_component_manager_get_data(component_manager);
 
-    (void)manager;
+    k_room_del_callback(manager->cb_camera_move);
 }
 
 static struct k_component_type *yx__camera_component_type;

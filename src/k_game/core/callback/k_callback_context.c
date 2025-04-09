@@ -168,6 +168,8 @@ void k__component_del_all_callbacks(struct k_component *component) {
 
 /* region [component_manager_callback] */
 
+/*  */
+
 struct k_callback *k_component_manager_add_step_begin_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
     return k__step_callback_manager_add_component_manager_callback(&manager->room->step_begin_callback_manager, manager, fn_callback);
 }
