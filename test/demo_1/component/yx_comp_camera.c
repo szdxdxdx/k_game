@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "./yx_comp_camera.h"
 
 /* region [struct_def] */
@@ -49,15 +51,14 @@ void yx_camera_follow(void *camera_manager) {
     float current_view_h;
     k_view_get_rect(&current_view_x, &current_view_y, &current_view_w, &current_view_h);
 
-    float padding = 20.0f;
-    float min_x = current_view_x - padding;
-    float min_y = current_view_y - padding;
-    float max_x = current_view_x + current_view_w + padding;
-    float max_y = current_view_y + current_view_h + padding;
-
     float sum_wx = (*main_target->x) * main_target->weight;
     float sum_wy = (*main_target->y) * main_target->weight;
     float sum_w = main_target->weight;
+
+    float min_x = current_view_x;
+    float min_y = current_view_y;
+    float max_x = current_view_x + current_view_w;
+    float max_y = current_view_y + current_view_h;
 
     struct yx_camera_target *secondary_target;
     size_t i = 0;
@@ -67,8 +68,8 @@ void yx_camera_follow(void *camera_manager) {
         float x = *secondary_target->x;
         float y = *secondary_target->y;
 
-        if (x < min_x || max_x < x) continue;
-        if (y < min_y || max_y < y) continue;
+        if (x < min_x || max_x < x || y < min_y || max_y < y)
+            continue;
 
         sum_wx += secondary_target->weight * x;
         sum_wy += secondary_target->weight * y;
@@ -82,23 +83,10 @@ void yx_camera_follow(void *camera_manager) {
     float current_cy;
     k_view_get_position(&current_cx, &current_cy);
 
-    /* ------------------------------------------------------------------------ */
-
-    float dx = target_cx - current_cx;
-    float dy = target_cy - current_cy;
-    float dist = dx * dx + dy * dy;
-
-    float new_cx;
-    float new_cy;
-
-    if (dist < 6.0f) {
-        new_cx = target_cx;
-        new_cy = target_cy;
-    } else {
-        new_cx = current_cx + dx * 0.06f;
-        new_cy = current_cy + dy * 0.06f;
-    }
-
+    float delta = k_get_step_delta();
+    float factor = 2.0f - 2.0f * expf(-delta);
+    float new_cx = current_cx + (target_cx - current_cx) * factor;
+    float new_cy = current_cy + (target_cy - current_cy) * factor;
     k_view_set_position(new_cx, new_cy);
 }
 

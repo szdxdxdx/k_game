@@ -151,7 +151,7 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
         renderer_config.x       = &weapon->x;
         renderer_config.y       = &weapon->y;
         renderer_config.sprite  = yx_spr_iris_gun;
-        renderer_config.z_group = YX_COLLISION_GROUP_BULLET;
+        renderer_config.z_group = 0;
         renderer_config.z_layer = 0;
         weapon->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
     }
