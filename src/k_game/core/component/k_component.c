@@ -12,8 +12,8 @@
 /* region [component_create] */
 
 static struct k_component *k__component_create(struct k_component_type *component_type, struct k_object *object, void *params) {
-    struct k_component_entity_type *entity_type = &component_type->entity_type;
-    struct k_component_manager_type *manager_type = component_type->manager_type;
+    struct k_component_entity_type *entity_type   = &component_type->entity_type;
+    struct k_component_manager_type *manager_type =  component_type->manager_type;
 
     struct k_component *component = k_mem_alloc(sizeof(struct k_component));
     if (NULL == component)
@@ -28,6 +28,7 @@ static struct k_component *k__component_create(struct k_component_type *componen
     }
 
     component->type = component_type;
+
     if (NULL != manager_type) {
         component->manager = k__component_manager_map_find(object->room, manager_type);
     } else {
@@ -51,8 +52,10 @@ fn_create_failed:
     k_list_del(&component->list_node);
     k__component_del_all_callbacks(component);
     k_mem_free(component->data);
+
 malloc_data_failed:
     k_mem_free(component);
+
 malloc_component_failed:
     return NULL;
 }
@@ -101,21 +104,23 @@ void *k_component_get_manager_data(struct k_component *component) {
 
 struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params) {
 
-    if (NULL == object || NULL == component_type)
+    if (NULL == object || NULL == component_type) {
         return NULL;
-    else
-        return k__component_create(component_type, object, params);
+    }
+
+    return k__component_create(component_type, object, params);
 }
 
 void k_object_del_component(struct k_component *component) {
 
-    if (NULL != component)
-        k__component_destroy(component);
+    if (NULL == component) {
+        return;
+    }
+
+    k__component_destroy(component);
 }
 
-void k_object_del_all_components(struct k_object *object) {
-    /* TODO assert(NULL != object) */
-
+void k__object_del_all_components(struct k_object *object) {
     struct k_component *component;
     struct k_list *component_list = &object->component_list;
     struct k_list_node *iter, *next;

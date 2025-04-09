@@ -24,4 +24,6 @@ struct k_component {
     void *data;
 };
 
+void k__object_del_all_components(struct k_object *object);
+
 #endif

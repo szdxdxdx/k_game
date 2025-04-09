@@ -44,8 +44,9 @@ int k__component_manager_map_init(void) {
 
     struct k_array **p = k_array_shift_right(room_array, 0, room_array->capacity);
     size_t i = 0;
-    for (; i < room_array->size; i++)
+    for (; i < room_array->size; i++) {
         p[i] = NULL_ARRAY;
+    }
 
     return 0;
 }
@@ -61,8 +62,9 @@ void k__component_manager_map_deinit(void) {
          * 而销毁房间时已移除完该房间的组件管理器，
          * 所以下述 if 判断结果理应为 false。
          */
-        if (NULL_ARRAY != manager_array)
+        if (NULL_ARRAY != manager_array) {
             k_array_destroy(manager_array);
+        }
     }
 
     k_array_destruct(room_array);
@@ -101,8 +103,9 @@ room_array_grow:
 
         p_manager_array = k_array_get_elem_addr(room_array, room_id);
 
-        for (; p < p_manager_array; p++)
+        for (; p < p_manager_array; p++) {
             *p = NULL_ARRAY;
+        }
     }
 
 manager_array_create:
@@ -132,8 +135,9 @@ manager_array_grow:
 
         p_manager = k_array_get_elem_addr(*p_manager_array, manager_type_id);
 
-        for (; p < p_manager; p++)
+        for (; p < p_manager; p++) {
             *p = NULL;
+        }
     }
 
 manger_array_set_item:
@@ -182,8 +186,9 @@ void k__room_del_all_component_managers(struct k_room *room) {
     struct k_component_manager **end = k_array_get_elem_addr(*p_manager_array, (*p_manager_array)->size);
     for (; p_manager < end; p_manager++) {
 
-        if (NULL != *p_manager)
+        if (NULL != *p_manager) {
             k__component_manager_destroy(*p_manager);
+        }
     }
 
     k_array_destroy(*p_manager_array);

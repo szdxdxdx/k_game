@@ -87,8 +87,6 @@ struct k_object *k_component_get_object(struct k_component *component);
 
 void k_object_del_component(struct k_component *component);
 
-void k_object_del_all_components(struct k_object *object);
-
 // TODO struct k_component *k_object_get_component(struct k_object *object, struct k_component_type *component_type);
 
 // TODO int k_get_objects_with_component(size_t component_type_id, struct k_object ***get_objects, size_t *n);
