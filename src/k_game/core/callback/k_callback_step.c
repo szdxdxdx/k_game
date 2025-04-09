@@ -46,8 +46,8 @@ struct k_callback *k__step_callback_manager_add_room_callback(struct k_step_call
         return NULL;
 
     callback->base.context = K__ROOM_CALLBACK;
-    callback->base.event   = K_STEP_CALLBACK;
-    callback->base.state   = K_CALLBACK_INACTIVE;
+    callback->base.event   = K__STEP_CALLBACK;
+    callback->base.state   = K__CALLBACK_INACTIVE;
 
     callback->manager = manager;
     k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
@@ -55,7 +55,7 @@ struct k_callback *k__step_callback_manager_add_room_callback(struct k_step_call
 
     callback->fn_room_callback = fn_callback;
     callback->data = data;
-    k_list_add_tail(&room->callback_list, &callback->base.context_list_node);
+    k_list_add_tail(&room->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -67,8 +67,8 @@ struct k_callback *k__step_callback_manager_add_object_callback(struct k_step_ca
         return NULL;
 
     callback->base.context = K__OBJECT_CALLBACK;
-    callback->base.event   = K_STEP_CALLBACK;
-    callback->base.state   = K_CALLBACK_INACTIVE;
+    callback->base.event   = K__STEP_CALLBACK;
+    callback->base.state   = K__CALLBACK_INACTIVE;
 
     callback->manager = manager;
     k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
@@ -77,7 +77,7 @@ struct k_callback *k__step_callback_manager_add_object_callback(struct k_step_ca
 
     callback->fn_object_callback = fn_callback;
     callback->object = object;
-    k_list_add_tail(&object->callback_list, &callback->base.context_list_node);
+    k_list_add_tail(&object->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -89,8 +89,8 @@ struct k_callback *k__step_callback_manager_add_component_callback(struct k_step
         return NULL;
 
     callback->base.context = K__COMPONENT_CALLBACK;
-    callback->base.event   = K_STEP_CALLBACK;
-    callback->base.state   = K_CALLBACK_INACTIVE;
+    callback->base.event   = K__STEP_CALLBACK;
+    callback->base.state   = K__CALLBACK_INACTIVE;
 
     callback->manager = manager;
     k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
@@ -99,7 +99,7 @@ struct k_callback *k__step_callback_manager_add_component_callback(struct k_step
 
     callback->fn_component_callback = fn_callback;
     callback->component = component;
-    k_list_add_tail(&component->callback_list, &callback->base.context_list_node);
+    k_list_add_tail(&component->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -110,18 +110,17 @@ struct k_callback *k__step_callback_manager_add_component_manager_callback(struc
     if (NULL == callback)
         return NULL;
 
-    callback->base.context = K__COMPONENT_CALLBACK;
-    callback->base.event   = K_STEP_CALLBACK;
-    callback->base.state   = K_CALLBACK_INACTIVE;
+    callback->base.context = K__COMPONENT_MANAGER_CALLBACK;
+    callback->base.event   = K__STEP_CALLBACK;
+    callback->base.state   = K__CALLBACK_INACTIVE;
 
     callback->manager = manager;
     k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
-
     callback->fn_component_manager_callback = fn_callback;
     callback->component_manager = component_manager;
-    k_list_add_tail(&component_manager->callback_list, &callback->base.context_list_node);
+    k_list_add_tail(&component_manager->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -132,24 +131,24 @@ struct k_callback *k__step_callback_manager_add_component_manager_callback(struc
 
 void k__step_callback_manager_del_callback(struct k_callback *callback) {
 
-    if (K_CALLBACK_DELETED == callback->state)
+    if (K__CALLBACK_DELETED == callback->state)
         return;
 
     struct k_step_callback *step_callback = container_of(callback, struct k_step_callback, base);
 
     switch (callback->state) {
-        case K_CALLBACK_INACTIVE:
-            callback->state = K_CALLBACK_DELETED;
+        case K__CALLBACK_INACTIVE:
+            callback->state = K__CALLBACK_DELETED;
             break;
-        case K_CALLBACK_ACTIVE:
+        case K__CALLBACK_ACTIVE:
             k_list_add_tail(&step_callback->manager->pending_list, &step_callback->pending_list_node);
-            callback->state = K_CALLBACK_DELETED;
+            callback->state = K__CALLBACK_DELETED;
             break;
         default:
             assert(0);
     }
 
-    k_list_del(&step_callback->base.context_list_node);
+    k_list_del(&step_callback->base.context_callback_list_node);
 }
 
 /* endregion */
@@ -186,13 +185,13 @@ void k__step_callback_manager_flush(struct k_step_callback_manager *manager) {
         callback = container_of(iter, struct k_step_callback, pending_list_node);
 
         switch (callback->base.state) {
-            case K_CALLBACK_INACTIVE:
+            case K__CALLBACK_INACTIVE:
                 k_list_del(&callback->pending_list_node);
                 k_list_node_loop(&callback->pending_list_node);
                 k_list_add_tail(callback_list, &callback->callback_list_node);
-                callback->base.state = K_CALLBACK_ACTIVE;
+                callback->base.state = K__CALLBACK_ACTIVE;
                 break;
-            case K_CALLBACK_DELETED:
+            case K__CALLBACK_DELETED:
                 k_list_del(&callback->callback_list_node);
                 k_list_del(&callback->pending_list_node);
                 k_mem_free(callback);
@@ -211,7 +210,7 @@ void k__step_callback_manager_exec(struct k_step_callback_manager *manager) {
     for (k_list_for_each(callback_list, iter)) {
         callback = container_of(iter, struct k_step_callback, callback_list_node);
 
-        if (K_CALLBACK_ACTIVE != callback->base.state)
+        if (K__CALLBACK_ACTIVE != callback->base.state)
             continue;
 
         switch (callback->base.context) {

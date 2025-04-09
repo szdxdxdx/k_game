@@ -12,13 +12,13 @@
 static void k__callback_del(struct k_callback *callback) {
 
     switch (callback->event) {
-        case K_ALARM_CALLBACK:
+        case K__ALARM_CALLBACK:
             k__alarm_callback_manager_del_callback(callback);
             break;
-        case K_STEP_CALLBACK:
+        case K__STEP_CALLBACK:
             k__step_callback_manager_del_callback(callback);
             break;
-        case K_DRAW_CALLBACK:
+        case K__DRAW_CALLBACK:
             k__draw_callback_manager_del_callback(callback);
             break;
         default:
@@ -66,7 +66,7 @@ void k__room_del_all_callbacks(struct k_room *room) {
     struct k_list *list = &room->callback_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(list, iter, next)) {
-        callback = container_of(iter, struct k_callback, context_list_node);
+        callback = container_of(iter, struct k_callback, context_callback_list_node);
 
         k__callback_del(callback);
     }
@@ -111,7 +111,7 @@ void k__object_del_all_callbacks(struct k_object *object) {
     struct k_list *list = &object->callback_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(list, iter, next)) {
-        callback = container_of(iter, struct k_callback, context_list_node);
+        callback = container_of(iter, struct k_callback, context_callback_list_node);
 
         k__callback_del(callback);
     }
@@ -156,7 +156,7 @@ void k__component_del_all_callbacks(struct k_component *component) {
     struct k_list *list = &component->callback_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(list, iter, next)) {
-        callback = container_of(iter, struct k_callback, context_list_node);
+        callback = container_of(iter, struct k_callback, context_callback_list_node);
 
         k__callback_del(callback);
     }
@@ -169,15 +169,15 @@ void k__component_del_all_callbacks(struct k_component *component) {
 /* region [component_manager_callback] */
 
 struct k_callback *k_component_manager_add_step_begin_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
-
+    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_begin_callback_manager, manager, fn_callback);
 }
 
 struct k_callback *k_component_manager_add_alarm_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager, int timeout_diff), int delay_ms) {
-
+    return k__alarm_callback_manager_add_component_manager_callback(&manager->room->alarm_callback_manager, manager, fn_callback, delay_ms);
 }
 
 struct k_callback *k_component_manager_add_step_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
-
+    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_callback_manager, manager, fn_callback);
 }
 
 struct k_callback *k_component_manager_add_step_end_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
@@ -185,7 +185,7 @@ struct k_callback *k_component_manager_add_step_end_callback(struct k_component_
 }
 
 struct k_callback *k_component_manager_add_draw_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager), int z_group, int z_layer) {
-
+    return k__draw_callback_manager_add_component_manager_callback(&manager->room->draw_callback_manager, manager, fn_callback, z_group, z_layer);
 }
 
 void k_component_manager_del_callback(struct k_callback *manager_callback) {
@@ -201,7 +201,7 @@ void k__component_manager_del_all_callbacks(struct k_component_manager *manager)
     struct k_list *list = &manager->callback_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(list, iter, next)) {
-        callback = container_of(iter, struct k_callback, context_list_node);
+        callback = container_of(iter, struct k_callback, context_callback_list_node);
 
         k__callback_del(callback);
     }
