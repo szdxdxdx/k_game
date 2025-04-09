@@ -36,8 +36,8 @@ static int init_room(void *params) {
 
     {
         struct yx_obj_player_config config;
-        config.x = 200;
-        config.y = 300;
+        config.x = 300;
+        config.y = 400;
         config.spr_idle = yx_spr_ynx_idle;
         config.spr_run  = yx_spr_ynx_run;
         room_arena->player = yx_player_create(&config);
@@ -45,7 +45,16 @@ static int init_room(void *params) {
 
     {
         struct yx_obj_rival_config config;
-        config.x = 500;
+        config.x = 800;
+        config.y = 600;
+        config.spr_idle = yx_spr_liliko_idle;
+        config.spr_run  = yx_spr_liliko_run;
+        yx_rival_create(&config);
+    }
+
+    {
+        struct yx_obj_rival_config config;
+        config.x = 400;
         config.y = 300;
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
@@ -54,17 +63,8 @@ static int init_room(void *params) {
 
     {
         struct yx_obj_rival_config config;
-        config.x = 700;
+        config.x = 600;
         config.y = 500;
-        config.spr_idle = yx_spr_liliko_idle;
-        config.spr_run  = yx_spr_liliko_run;
-        yx_rival_create(&config);
-    }
-
-    {
-        struct yx_obj_rival_config config;
-        config.x = 300;
-        config.y = 600;
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
         yx_rival_create(&config);
