@@ -1,6 +1,6 @@
 #include <math.h>
 
-#include "./yx_comp_camera.h"
+#include "./yx_camera.h"
 
 /* region [struct_def] */
 

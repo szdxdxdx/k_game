@@ -1,5 +1,6 @@
 #include "./yx_all_object.h"
-#include "../component/yx_comp_camera.h"
+
+#include "../utils/camera/yx_camera.h"
 
 struct k_object *yx_rival_create(const struct yx_obj_rival_config *config) {
 

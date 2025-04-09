@@ -4,7 +4,7 @@
 
 #include "../../sprite/_public.h"
 #include "../../object/yx_all_object.h"
-#include "../../component/yx_comp_camera.h"
+#include "../../utils/camera/yx_camera.h"
 
 static void set_debug(void *data) {
 

@@ -1,5 +1,6 @@
 #include "./yx_all_object.h"
-#include "../component/yx_comp_camera.h"
+
+#include "../utils/camera/yx_camera.h"
 
 /* region [state] */
 

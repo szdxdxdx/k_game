@@ -3,7 +3,7 @@
 
 #include "./sprite/_public.h"
 #include "./room/_public.h"
-#include "./component/yx_comp_camera.h"
+#include "./utils/camera/yx_camera.h"
 
 static void define_component_type(void) {
     yx_camera_component_define();

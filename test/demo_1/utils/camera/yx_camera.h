@@ -1,5 +1,5 @@
-#ifndef YX_COMP_CAMERA_H
-#define YX_COMP_CAMERA_H
+#ifndef YX_CAMERA_H
+#define YX_CAMERA_H
 
 #include "k_game.h"
 
