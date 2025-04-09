@@ -1,4 +1,3 @@
-#include "k_seq_step.h"
 #include "k_log.h"
 
 #include "k_game/core/k_mem_alloc.h"
@@ -7,136 +6,71 @@
 #include "./k_component_type.h"
 #include "./k_component_type_registry.h"
 
-/* region [steps] */
-
-struct step_context {
-    const struct k_component_manager_config *manager_config;
-    const struct k_component_entity_config *entity_config;
-    struct k_component_type *component_type;
-};
-
-static int step_malloc(void *context) {
-    struct step_context *ctx = context;
-
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
-    if (NULL != ctx->manager_config) {
-        ctx->component_type = k_mem_alloc(sizeof(struct k_component_type) + sizeof(struct k_component_manager_type));
-        if (NULL == ctx->component_type) {
-            return -1;
-        } else {
-            ctx->component_type->manager_type = ptr_offset(ctx->component_type, sizeof(struct k_component_type));
-            return 0;
-        }
-    } else {
-        ctx->component_type = k_mem_alloc(sizeof(struct k_component_type));
-        if (NULL == ctx->component_type) {
-            return -1;
-        } else {
-            ctx->component_type->manager_type = NULL;
-            return 0;
-        }
+static int check_config(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
+
+    if (NULL == entity_config) {
+        k_log_error("Invalid component config: entity_config is NULL");
+        return -1;
     }
+
+    if (NULL == entity_config->fn_init) {
+        k_log_error("Invalid component config: entity_config->fn_init is NULL");
+        return -1;
+    }
+
+    return 0;
 }
 
-static void step_free(void *context) {
-    struct step_context *ctx = context;
-    struct k_component_type *component_type = ctx->component_type;
+static int id_counter = 0;
 
-    k_mem_free(component_type);
-}
+struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
 
-static size_t id_counter = 0;
+    if (0 != check_config(manager_config, entity_config)) {
+        k_log_error("Failed to define component type");
+        return NULL;
+    }
 
-static int step_set_properties(void *context) {
-    struct step_context *ctx = context;
-    struct k_component_type *component_type = ctx->component_type;
+    struct k_component_type *component_type;
+
+    if (NULL != manager_config) {
+        component_type = k_mem_alloc(sizeof(struct k_component_type) + sizeof(struct k_component_manager_type));
+    } else {
+        component_type = k_mem_alloc(sizeof(struct k_component_type));
+    }
+
+    if (NULL == component_type) {
+        k_log_error("Failed to define component type");
+        return NULL;
+    }
+
+    if (NULL != manager_config) {
+        component_type->manager_type = ptr_offset(component_type, sizeof(struct k_component_type));
+    } else {
+        component_type->manager_type = NULL;
+    }
 
     struct k_component_entity_type *entity_type = &component_type->entity_type;
-    const struct k_component_entity_config *entity_config = ctx->entity_config;
     entity_type->data_size = entity_config->data_size;
     entity_type->fn_init   = entity_config->fn_init;
     entity_type->fn_fini   = entity_config->fn_fini;
 
-    if (NULL != component_type->manager_type) {
-
-        struct k_component_manager_type *manager_type = component_type->manager_type;
-        const struct k_component_manager_config *manager_config = ctx->manager_config;
+    struct k_component_manager_type *manager_type = component_type->manager_type;
+    if (NULL != manager_type) {
         manager_type->type_id   = id_counter++;
         manager_type->data_size = manager_config->data_size;
         manager_type->fn_init   = manager_config->fn_init;
         manager_type->fn_fini   = manager_config->fn_fini;
     }
 
-    return 0;
-}
-
-static int step_registry_add(void *context) {
-    struct step_context *ctx = context;
-    struct k_component_type *component_type = ctx->component_type;
-
     k__component_type_registry_add(component_type);
-    return 0;
-}
 
-static void step_registry_del(void *context) {
-    struct step_context *ctx = context;
-    struct k_component_type *component_type = ctx->component_type;
-
-    k__component_type_registry_del(component_type);
-}
-
-static struct k_seq_step steps[] = {
-    { step_malloc,         step_free         },
-    { step_set_properties, NULL              },
-    { step_registry_add,   step_registry_del },
-};
-
-/* endregion */
-
-static int check_config(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
-
-    const char *err_msg;
-
-#define check_config_assert(cond) \
-    do { if ( ! (cond)) { err_msg = "assert( " #cond " )"; goto err; }} while(0)
-
-    check_config_assert(NULL != entity_config);
-    check_config_assert(NULL != entity_config->fn_init);
-
-    return 0;
-
-err:
-    k_log_error("Invalid component config: %s", err_msg);
-    return -1;
-}
-
-struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
-
-    if (0 != check_config(manager_config, entity_config))
-        goto err;
-
-    struct step_context ctx;
-    ctx.manager_config = manager_config;
-    ctx.entity_config  = entity_config;
-    ctx.component_type = NULL;
-
-    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx))
-        goto err;
-
-    return ctx.component_type;
-
-err:
-    k_log_error("Failed to define component type");
-    return NULL;
+    return component_type;
 }
 
 void k__component_undef(struct k_component_type *component_type) {
 
-    struct step_context ctx;
-    ctx.manager_config = NULL;
-    ctx.entity_config  = NULL;
-    ctx.component_type = component_type;
-
-    k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
+    k__component_type_registry_del(component_type);
+    k_mem_free(component_type);
 }
