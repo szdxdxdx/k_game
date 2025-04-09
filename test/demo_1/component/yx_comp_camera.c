@@ -137,6 +137,9 @@ void yx_room_add_camera_manager(void) {
 
 int yx_object_add_camera_follow(struct k_object *object, float *x, float *y) {
 
+    if (NULL == object || NULL == x || NULL == y)
+        return -1;
+
     float *xy[2] = { x, y };
 
     struct k_component *component = k_object_add_component(object, yx__camera_component_type, xy);

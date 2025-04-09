@@ -65,9 +65,10 @@ static struct k_collision_box *k__object_add_collision_box(struct k_object *obje
 
 void k_object_del_collision_box(struct k_collision_box *box) {
 
-    if (NULL != box) {
-        k_object_del_component(box->component);
-    }
+    if (NULL == box)
+        return;
+
+    k_object_del_component(box->component);
 }
 
 struct k_collision_box *k_object_add_collision_point(struct k_object *object, const struct k_collision_point_config *config) {

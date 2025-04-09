@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "./_internal.h"
 
 /* region [collision_box_init] */
@@ -15,7 +17,6 @@ int k__collision_box_init(struct k_component *component, void *params) {
     int group_id;
 
     switch (box_config->type) {
-
         case K__COLLISION_POINT: {
             const struct k_collision_point_config *point_config = box_config->config;
             group_id  = point_config->group_id;
@@ -61,6 +62,8 @@ int k__collision_box_init(struct k_component *component, void *params) {
             box->circle.r         = circle_config->r;
             break;
         }
+        default:
+            assert(0);
     }
 
     struct k_collision_group *group = k__collision_manager_find_or_add_group(manager, group_id);
