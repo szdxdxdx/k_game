@@ -227,6 +227,8 @@ struct k_callback *k__draw_callback_manager_add_component_callback(struct k_draw
 
 struct k_callback *k__draw_callback_manager_add_component_manager_callback(struct k_draw_callback_manager *manager, struct k_component_manager *component_manager, void (*fn_callback)(struct k_component_manager *component_manager), int z_group, int z_layer) {
 
+    assert(0); /* experimental */
+
     struct k_draw_callback_layer *layer = find_or_create_layer(manager, z_group, z_layer);
     if (NULL == layer)
         return NULL;
@@ -387,6 +389,7 @@ void k__draw_callback_manager_exec(struct k_draw_callback_manager *manager) {
                         callback->fn_component_callback(callback->component);
                         break;
                     case K__COMPONENT_MANAGER_CALLBACK:
+                        assert(0); /* experimental */
                         callback->fn_component_manager_callback(callback->component_manager);
                         break;
                     default:

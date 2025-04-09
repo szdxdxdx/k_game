@@ -106,6 +106,8 @@ struct k_callback *k__step_callback_manager_add_component_callback(struct k_step
 
 struct k_callback *k__step_callback_manager_add_component_manager_callback(struct k_step_callback_manager *manager, struct k_component_manager *component_manager, void (*fn_callback)(struct k_component_manager *component_manager)) {
 
+    assert(0); /* experimental */
+
     struct k_step_callback *callback = k_mem_alloc(sizeof(struct k_step_callback));
     if (NULL == callback)
         return NULL;
@@ -224,6 +226,7 @@ void k__step_callback_manager_exec(struct k_step_callback_manager *manager) {
                 callback->fn_component_callback(callback->component);
                 break;
             case K__COMPONENT_MANAGER_CALLBACK:
+                assert(0); /* experimental */
                 callback->fn_component_manager_callback(callback->component_manager);
                 break;
             default:
