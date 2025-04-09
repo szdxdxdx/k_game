@@ -84,3 +84,10 @@ void k_view_set_position(float cx, float cy) {
     k__mouse.x_at_room = k__mouse.x_at_view + k__window.view_x;
     k__mouse.y_at_room = k__mouse.y_at_view + k__window.view_y;
 }
+
+void k_view_get_rect(float *get_x, float *get_y, float *get_w, float *get_h) {
+    if (NULL != get_x) { *get_x = k__window.view_x; }
+    if (NULL != get_y) { *get_y = k__window.view_y; }
+    if (NULL != get_w) { *get_w = k__window.view_w; }
+    if (NULL != get_h) { *get_h = k__window.view_h; }
+}

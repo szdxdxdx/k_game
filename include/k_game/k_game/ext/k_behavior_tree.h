@@ -341,8 +341,8 @@ void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *builder);
 void k__behavior_tree_builder_repeat(struct k_behavior_tree_builder *builder, size_t n);
-void k__behavior_tree_builder_retry(struct k_behavior_tree_builder *builder, size_t n);
-void k__behavior_tree_builder_timeout(struct k_behavior_tree_builder *builder, int timeout_ms);
+void k__behavior_tree_builder_retry(struct k_behavior_tree_builder *builder, size_t n);         /* <- TODO */
+void k__behavior_tree_builder_timeout(struct k_behavior_tree_builder *builder, int timeout_ms); /* <- TODO */
 void k__behavior_tree_builder_delay(struct k_behavior_tree_builder *builder, int delay_ms);
 
 /* endregion */

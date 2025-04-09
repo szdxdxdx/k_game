@@ -24,4 +24,12 @@ void k_view_fit_rect(float w, float h);
  */
 void k_view_set_position(float cx, float cy);
 
+/**
+ * \brief 获取视野矩形的位置和宽高
+ *
+ * 函数返回视野矩形的宽高，以及矩形左上角在房间中的坐标。
+ * 所有的参数都作为出参，若为 `NULL` 则不返回任何值。
+ */
+void k_view_get_rect(float *get_x, float *get_y, float *get_w, float *get_h);
+
 #endif
