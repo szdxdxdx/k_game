@@ -42,8 +42,9 @@ struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h)
     return new_image;
 
 err:
-    if (NULL != scaled_texture)
+    if (NULL != scaled_texture) {
         SDL_DestroyTexture(scaled_texture);
+    }
 
     return NULL;
 }

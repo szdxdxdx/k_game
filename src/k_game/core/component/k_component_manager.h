@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include "k_list.h"
+
 struct k_component_type;
 struct k_room;
 
@@ -12,7 +14,9 @@ struct k_component_manager {
 
     struct k_component_type *component_type;
 
-    struct k_room *room; /* [?] 不是必须的 */
+    struct k_room *room;
+
+    struct k_list callback_list;
 };
 
 void k__component_manager_destroy(struct k_component_manager *manager);
