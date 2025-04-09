@@ -32,4 +32,12 @@ void k_view_set_position(float cx, float cy);
  */
 void k_view_get_rect(float *get_x, float *get_y, float *get_w, float *get_h);
 
+/**
+ * \brief 获取视野矩形中心的位置
+ *
+ * 函数返回视野矩形的中心点在房间中的坐标。
+ * 所有的参数都作为出参，若为 `NULL` 则不返回任何值。
+ */
+void k_view_get_position(float *get_cx, float *get_cy);
+
 #endif

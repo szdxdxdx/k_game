@@ -52,6 +52,24 @@ static int init_room(void *params) {
         yx_rival_create(&config);
     }
 
+    {
+        struct yx_obj_rival_config config;
+        config.x = 700;
+        config.y = 500;
+        config.spr_idle = yx_spr_liliko_idle;
+        config.spr_run  = yx_spr_liliko_run;
+        yx_rival_create(&config);
+    }
+
+    {
+        struct yx_obj_rival_config config;
+        config.x = 300;
+        config.y = 600;
+        config.spr_idle = yx_spr_liliko_idle;
+        config.spr_run  = yx_spr_liliko_run;
+        yx_rival_create(&config);
+    }
+
     // yx_test_bt();
 
     return 0;

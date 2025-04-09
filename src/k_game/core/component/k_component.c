@@ -61,6 +61,7 @@ malloc_component_failed:
 }
 
 static void k__component_destroy(struct k_component *component) {
+
     struct k_component_entity_type *entity_type = &component->type->entity_type;
 
     if (entity_type->fn_fini != NULL) {
@@ -104,20 +105,17 @@ void *k_component_get_manager_data(struct k_component *component) {
 
 struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params) {
 
-    if (NULL == object || NULL == component_type) {
+    if (NULL == object || NULL == component_type)
         return NULL;
-    }
-
-    return k__component_create(component_type, object, params);
+    else
+        return k__component_create(component_type, object, params);
 }
 
 void k_object_del_component(struct k_component *component) {
 
-    if (NULL == component) {
-        return;
+    if (NULL != component) {
+        k__component_destroy(component);
     }
-
-    k__component_destroy(component);
 }
 
 void k__object_del_all_components(struct k_object *object) {

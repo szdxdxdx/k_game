@@ -91,3 +91,8 @@ void k_view_get_rect(float *get_x, float *get_y, float *get_w, float *get_h) {
     if (NULL != get_w) { *get_w = k__window.view_w; }
     if (NULL != get_h) { *get_h = k__window.view_h; }
 }
+
+void k_view_get_position(float *get_cx, float *get_cy) {
+    if (NULL != get_cx) { *get_cx = k__window.view_x + k__window.view_w / 2; }
+    if (NULL != get_cy) { *get_cy = k__window.view_y + k__window.view_h / 2; }
+}

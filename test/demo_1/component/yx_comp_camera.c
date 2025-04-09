@@ -2,6 +2,8 @@
 
 #include "./yx_comp_camera.h"
 
+/* region [struct_def] */
+
 struct yx_camera_target;
 struct yx_camera_manager;
 
@@ -13,6 +15,7 @@ struct yx_camera_target {
 
     float *x;
     float *y;
+    float weight;
 };
 
 struct yx_camera_manager {
@@ -23,7 +26,14 @@ struct yx_camera_manager {
     size_t targets_num;
 
     struct k_callback *cb_camera_move;
+
+    float cx;
+    float cy;
 };
+
+/* endregion */
+
+/* region [camera_move] */
 
 void yx_camera_move(void *camera_manager) {
     struct yx_camera_manager *manager = camera_manager;
@@ -40,10 +50,8 @@ void yx_camera_move(void *camera_manager) {
     size_t i = 1;
     for (; i < manager->targets_num; i++) {
         target = manager->targets[i];
-        if (*target->x < min_x) { min_x = *target->x; }
-        if (*target->x > max_x) { max_x = *target->x; }
-        if (*target->y < min_y) { min_y = *target->y; }
-        if (*target->y > max_y) { max_y = *target->y; }
+        if (*target->x < min_x) min_x = *target->x; else if (*target->x > max_x) max_x = *target->x;
+        if (*target->y < min_y) min_y = *target->y; else if (*target->y > max_y) max_y = *target->y;
     }
 
     float cx = (min_x + max_x) * 0.5f;
@@ -55,6 +63,35 @@ void yx_camera_move(void *camera_manager) {
 
     k_view_set_position(cx, cy);
 }
+
+void yx_camera_move_2(void *camera_manager) {
+    struct yx_camera_manager *manager = camera_manager;
+
+    if (0 == manager->targets_num)
+        return;
+
+    float sum_wx = 0.0f;
+    float sum_wy = 0.0f;
+    float sum_w  = 0.0f;
+
+    size_t i = 0;
+    for (; i < manager->targets_num; i++) {
+        struct yx_camera_target *target = manager->targets[i];
+
+        sum_wx += *target->x * target->weight;
+        sum_wy += *target->y * target->weight;
+        sum_w  += target->weight;
+    }
+
+    float cx = sum_wx / sum_w;
+    float cy = sum_wy / sum_w;
+
+    k_view_set_position(cx, cy);
+}
+
+/* endregion */
+
+/* region [camera_target] */
 
 int yx_camera_target_init(struct k_component *component, void *params) {
 
@@ -71,9 +108,10 @@ int yx_camera_target_init(struct k_component *component, void *params) {
     manager->targets[manager->targets_num] = target;
     manager->targets_num += 1;
 
-    float **xy = (float **)params;
-    target->x = xy[0];
-    target->y = xy[1];
+    float **xyw = (float **)params;
+    target->x = xyw[0];
+    target->y = xyw[1];
+    target->weight = *xyw[2];
 
     return 0;
 }
@@ -90,15 +128,21 @@ void yx_camera_target_fini(struct k_component *component) {
     manager->targets_num -= 1;
 }
 
+/* endregion */
+
+/* region [camera_manager] */
+
 int yx_camera_manager_init(struct k_component_manager *component_manager, void *params) {
     (void *)params;
 
     struct yx_camera_manager *manager = k_component_manager_get_data(component_manager);
     manager->targets_num = 0;
 
-    manager->cb_camera_move = k_room_add_step_end_callback(manager, yx_camera_move);
+    manager->cb_camera_move = k_room_add_step_end_callback(manager, yx_camera_move_2);
     if (NULL == manager->cb_camera_move)
         return -1;
+
+    k_view_get_position(&manager->cx, &manager->cy);
 
     return 0;
 }
@@ -108,6 +152,10 @@ void yx_camera_manager_fini(struct k_component_manager *component_manager) {
 
     k_room_del_callback(manager->cb_camera_move);
 }
+
+/* endregion */
+
+/* region [camera_typedef] */
 
 static struct k_component_type *yx__camera_component_type;
 
@@ -135,16 +183,18 @@ void yx_room_add_camera_manager(void) {
     k_room_add_component_manager(yx__camera_component_type, NULL);
 }
 
-int yx_object_add_camera_follow(struct k_object *object, float *x, float *y) {
+int yx_object_add_camera_follow(struct k_object *object, float *x, float *y, float weight) {
 
-    if (NULL == object || NULL == x || NULL == y)
+    if (NULL == object || NULL == x || NULL == y || weight <= 0.0f)
         return -1;
 
-    float *xy[2] = { x, y };
+    float *xyw[3] = { x, y, &weight };
 
-    struct k_component *component = k_object_add_component(object, yx__camera_component_type, xy);
+    struct k_component *component = k_object_add_component(object, yx__camera_component_type, xyw);
     if (NULL == component)
         return -1;
     else
         return 0;
 }
+
+/* endregion */
