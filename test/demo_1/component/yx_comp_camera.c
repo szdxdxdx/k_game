@@ -40,26 +40,11 @@ static struct k_component_type *yx__camera_component_type;
 void yx_camera_follow(void *camera_manager) {
     struct yx_camera_manager *manager = camera_manager;
 
-    if (NULL == manager->main_target)
+    struct yx_camera_target *main_target = manager->main_target;
+    if (NULL == main_target)
         return;
 
-    float sum_wx = 0.0f;
-    float sum_wy = 0.0f;
-    float sum_w  = 0.0f;
-
-    size_t i = 0;
-    for (; i < manager->secondary_targets_num; i++) {
-        struct yx_camera_target *target = manager->secondary_targets[i];
-
-        sum_wx += *target->x * target->weight;
-        sum_wy += *target->y * target->weight;
-        sum_w  += target->weight;
-    }
-
-    float cx = sum_wx / sum_w;
-    float cy = sum_wy / sum_w;
-
-    k_view_set_position(cx, cy);
+    k_view_set_position(*main_target->x, *main_target->y);
 }
 
 /* endregion */
