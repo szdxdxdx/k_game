@@ -20,14 +20,7 @@ struct k_sprite_renderer;
 /** \brief 用于初始化精灵渲染器的配置参数 */
 struct k_sprite_renderer_config {
 
-    /**
-     * \brief 渲染器关联的坐标
-     *
-     * 渲染器通过指针关联一个外部的坐标。
-     * 渲染器的绘制位置会随着外部坐标的变化而自动更新。
-     *
-     * 在绘制时，渲染器通过指针读取坐标，并在该位置绘制精灵。
-     */
+    /** \brief 渲染器关联的坐标 */
     float *x;
     float *y;
 

@@ -1,4 +1,5 @@
 #include <math.h>
+#include <assert.h>
 
 #include "k_game/core/k_view.h"
 #include "k_game/core/k_time.h"
@@ -57,8 +58,7 @@ static void k__camera_move_towards(struct k_camera *camera, float dst_x, float d
     k_view_set_position(next_x, next_y);
 }
 
-void k__camera_step(void *camera_) {
-    struct k_camera *camera = camera_;
+static void k__camera_auto_follow(struct k_camera *camera) {
 
     if (0 == camera->targets_num)
         return;
@@ -143,4 +143,20 @@ void k__camera_step(void *camera_) {
     }
 
     k__camera_move_towards(camera, dst_cx, dst_cy);
+}
+
+void k__camera_update(void *camera_) {
+    struct k_camera *camera = camera_;
+
+    switch (camera->state) {
+        case K__CAMERA_DISABLE:
+            assert(0);
+            break;
+        case K__CAMERA_AUTO_FOLLOW:
+            k__camera_auto_follow(camera);
+            break;
+        case K__CAMERA_CINEMATIC:
+            assert(0);
+            break;
+    }
 }

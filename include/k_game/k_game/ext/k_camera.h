@@ -16,6 +16,8 @@ struct k_camera;
 /** \brief 摄像机的跟随目标 */
 struct k_camera_target;
 
+/* region [room_add_camera] */
+
 /**
  * \brief 给当前房间添加摄像机
  *
@@ -25,19 +27,9 @@ struct k_camera_target;
  */
 int k_room_add_camera(void);
 
-/** \brief 设置摄像机的最大移动速度，单位：像素/秒
- *
- * 最大移动速度必须为正值。若设置成功，函数返回 0，否则返回非 0。
- */
-int k_camera_set_max_speed(float speed);
+/* endregion */
 
-/**
- * \brief 设置摄像机的加速度，单位：像素/秒^2
- *
- * 加速度必须为正值。
- * 若设置成功，函数返回 0，否则返回非 0。
- */
-int k_camera_set_acceleration(float acceleration);
+/* region [camera_target] */
 
 /**
  * \brief 向摄像机添加跟随的对象
@@ -75,11 +67,32 @@ int k_camera_set_primary_target(struct k_camera_target *target);
 /**
  * \brief 设置摄像机跟随目标的权重
  *
- * 权重越大，视野中心越靠近该目标。
+ * 跟随目标的权重越大，视野中心越靠近该目标。
  *
  * 权重必须为正值。
  * 设置成功返回 0，失败返回非 0。
  */
 int k_camera_set_target_weight(struct k_camera_target *target, float weight);
+
+/* endregion */
+
+/* region [camera_speed] */
+
+/** \brief 设置摄像机的最大移动速度，单位：像素/秒
+ *
+ * 最大移动速度必须为正值。
+ * 若设置成功，函数返回 0，否则返回非 0。
+ */
+int k_camera_set_max_speed(float max_speed);
+
+/**
+ * \brief 设置摄像机的加速度，单位：像素/秒^2
+ *
+ * 加速度必须为正值。
+ * 若设置成功，函数返回 0，否则返回非 0。
+ */
+int k_camera_set_acceleration(float acceleration);
+
+/* endregion */
 
 #endif

@@ -16,7 +16,7 @@ struct k_object;
  */
 struct k_collision_box;
 
-/* region [room_add_collision_box_manager] */
+/* region [room_add_collision_manager] */
 
 /**
  * \brief 给当前房间添加碰撞盒管理器
@@ -36,21 +36,13 @@ int k_room_add_collision_manager(void);
 /** \brief 点形碰撞盒的配置 */
 struct k_collision_point_config {
 
-    /**
-     * \brief 碰撞组
+    /** \brief 碰撞组
      *
-     * 指定该碰撞盒所属的分组，`group_id` 可以是任意整数。
+     * 可以是任意整数，用于标识该碰撞盒所属的分组。
      */
     int group_id;
 
-    /**
-     * \brief 碰撞盒关联的坐标
-     *
-     * 碰撞盒通过指针关联一个外部的坐标。
-     * 碰撞盒的位置会随着外部坐标的变化而自动更新。
-     *
-     * 碰撞检测时，将根据关联坐标计算出碰撞盒的实际位置。
-     */
+    /** \brief 碰撞盒关联的坐标 */
     float *x;
     float *y;
 

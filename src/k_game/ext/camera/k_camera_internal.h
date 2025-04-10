@@ -12,8 +12,11 @@
 struct k_camera_target;
 struct k_camera;
 
-struct k_camera_target {
+extern struct k_component_type *k__camera_component_type;
 
+/* region [camera_target] */
+
+struct k_camera_target {
     struct k_component *component;
 
     float *x;
@@ -26,29 +29,36 @@ int k__camera_target_init(struct k_component *component, void *params);
 
 void k__camera_target_fini(struct k_component *component);
 
-struct k_camera {
+/* endregion */
 
-    struct k_object *object;
+/* region [camera] */
+
+enum k_camera_state {
+    K__CAMERA_DISABLE,
+    K__CAMERA_AUTO_FOLLOW,
+    K__CAMERA_CINEMATIC,
+};
 
 #define K__CAMERA_TARGET_MAX 16
 
-    struct k_camera_target *targets[K__CAMERA_TARGET_MAX];
+struct k_camera {
 
-    size_t targets_num;
+    enum k_camera_state state;
 
-    struct k_camera_target *primary_target;
-
-    struct k_callback *cb_camera_step;
-
+    float acceleration;
+    float max_speed;
     float vx;
     float vy;
 
-    float max_speed;
-    float acceleration;
+    struct k_camera_target *primary_target;
+    struct k_camera_target *targets[K__CAMERA_TARGET_MAX];
+    size_t targets_num;
+
+    struct k_callback *cb_camera_move;
 };
 
-extern struct k_component_type *k__camera_component_type;
+void k__camera_update(void *camera_);
 
-void k__camera_step(void *camera_);
+/* endregion */
 
 #endif

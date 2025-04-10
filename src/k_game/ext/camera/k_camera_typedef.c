@@ -10,19 +10,22 @@ int k_camera_init(struct k_component_manager *component_manager, void *params) {
 
     struct k_camera *camera = k_component_manager_get_data(component_manager);
 
-    camera->cb_camera_step = k_room_add_step_end_callback(camera, k__camera_step);
-    if (NULL == camera->cb_camera_step)
+    struct k_callback *callback = k_room_add_step_end_callback(camera, k__camera_update);
+    if (NULL == callback)
         return -1;
+
+    camera->state = K__CAMERA_AUTO_FOLLOW;
+
+    camera->cb_camera_move = callback;
+
+    camera->max_speed    = 512.0f;
+    camera->acceleration = 256.0f;
+    camera->vx = 0.0f;
+    camera->vy = 0.0f;
 
     camera->primary_target = NULL;
     camera->targets[0]     = NULL;
     camera->targets_num    = 0;
-
-    camera->vx = 0.0f;
-    camera->vy = 0.0f;
-    camera->max_speed = 512.0f;
-
-    camera->acceleration = 256.0f;
 
     return 0;
 }
@@ -30,7 +33,7 @@ int k_camera_init(struct k_component_manager *component_manager, void *params) {
 void k_camera_fini(struct k_component_manager *component_manager) {
     struct k_camera *camera = k_component_manager_get_data(component_manager);
 
-    k_room_del_callback(camera->cb_camera_step);
+    k_room_del_callback(camera->cb_camera_move);
 }
 
 struct k_component_type *k__camera_component_type;
