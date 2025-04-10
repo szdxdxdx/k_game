@@ -38,7 +38,7 @@ static struct k_component_type *yx__camera_component_type;
 
 /* region [camera_move] */
 
-void yx_camera_follow(void *camera_manager) {
+void yx_camera_move(void *camera_manager) {
     struct yx_camera_manager *manager = camera_manager;
 
     struct yx_camera_target *main_target = manager->main_target;
@@ -65,28 +65,36 @@ void yx_camera_follow(void *camera_manager) {
     for (; i < manager->secondary_targets_num; i++) {
         secondary_target = manager->secondary_targets[i];
 
-        float x = *secondary_target->x;
-        float y = *secondary_target->y;
+        if ((*secondary_target->x) < min_x) { continue; }
+        if ((*secondary_target->x) > max_x) { continue; }
+        if ((*secondary_target->y) < min_y) { continue; }
+        if ((*secondary_target->y) > max_y) { continue; }
 
-        if (x < min_x || max_x < x || y < min_y || max_y < y)
-            continue;
-
-        sum_wx += secondary_target->weight * x;
-        sum_wy += secondary_target->weight * y;
+        sum_wx += (*secondary_target->x) * secondary_target->weight;
+        sum_wy += (*secondary_target->y) * secondary_target->weight;
         sum_w  += secondary_target->weight;
     }
 
-    float target_cx = sum_wx / sum_w;
-    float target_cy = sum_wy / sum_w;
+    float dst_x = sum_wx / sum_w;
+    float dst_y = sum_wy / sum_w;
 
-    float current_cx;
-    float current_cy;
-    k_view_get_position(&current_cx, &current_cy);
+    float cx;
+    float cy;
+    k_view_get_position(&cx, &cy);
 
-    float delta = k_get_step_delta();
-    float factor = 2.0f - 2.0f * expf(-delta);
-    float new_cx = current_cx + (target_cx - current_cx) * factor;
-    float new_cy = current_cy + (target_cy - current_cy) * factor;
+    float new_cx;
+    float new_cy;
+    float dx = dst_x - cx;
+    float dy = dst_y - cy;
+    if (dx * dx + dy * dy <= 0.4f) {
+        new_cx = dst_x;
+        new_cy = dst_y;
+    } else {
+        float delta = k_get_step_delta();
+        float factor = 2.0f - 2.0f * expf(-delta);
+        new_cx = cx + dx * factor;
+        new_cy = cy + dy * factor;
+    }
     k_view_set_position(new_cx, new_cy);
 }
 
@@ -188,11 +196,11 @@ void yx_camera_target_fini(struct k_component *component) {
 /* region [camera_manager] */
 
 int yx_camera_manager_init(struct k_component_manager *component_manager, void *params) {
-    (void *)params;
+    (void)params;
 
     struct yx_camera_manager *manager = k_component_manager_get_data(component_manager);
 
-    manager->cb_camera_move = k_room_add_step_end_callback(manager, yx_camera_follow);
+    manager->cb_camera_move = k_room_add_step_end_callback(manager, yx_camera_move);
     if (NULL == manager->cb_camera_move)
         return -1;
 
