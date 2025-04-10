@@ -90,16 +90,13 @@ static void k__camera_auto_follow(struct k_camera *camera) {
         float sum_wy = 0.0f;
         float sum_w  = 0.0f;
 
-        float curr_view_x;
-        float curr_view_y;
-        float curr_view_w;
-        float curr_view_h;
-        k_view_get_rect(&curr_view_x, &curr_view_y, &curr_view_w, &curr_view_h);
-
-        float curr_view_left   = curr_view_x;
-        float curr_view_top    = curr_view_y;
-        float curr_view_right  = curr_view_x + curr_view_w;
-        float curr_view_bottom = curr_view_y + curr_view_h;
+        float view_left;
+        float view_top;
+        float view_w;
+        float view_h;
+        k_view_get_rect(&view_left, &view_top, &view_w, &view_h);
+        float view_right  = view_left + view_w;
+        float view_bottom = view_top + view_h;
 
         size_t i = 0;
         for (; i < camera->targets_num; i++) {
@@ -108,10 +105,10 @@ static void k__camera_auto_follow(struct k_camera *camera) {
             float target_x = *target->x;
             float target_y = *target->y;
 
-            if (target_x < curr_view_left)   continue;
-            if (target_y < curr_view_top)    continue;
-            if (target_x > curr_view_right)  continue;
-            if (target_y > curr_view_bottom) continue;
+            if (target_x < view_left)   continue;
+            if (target_y < view_top)    continue;
+            if (target_x > view_right)  continue;
+            if (target_y > view_bottom) continue;
 
             sum_wx += target_x * target->weight;
             sum_wy += target_y * target->weight;
@@ -121,24 +118,27 @@ static void k__camera_auto_follow(struct k_camera *camera) {
         dst_cx = sum_wx / sum_w;
         dst_cy = sum_wy / sum_w;
 
-        float half_view_w = curr_view_w / 2;
-        float half_view_h = curr_view_h / 2;
+        float view_half_w = view_w / 2;
+        float view_half_h = view_h / 2;
 
-        float max_cx = *(camera->primary_target->x) + half_view_w;
-        float min_cx = *(camera->primary_target->x) - half_view_w;
-        float max_cy = *(camera->primary_target->y) + half_view_h;
-        float min_cy = *(camera->primary_target->y) - half_view_h;
-
-        if (dst_cx < min_cx) {
-            dst_cx = min_cx;
-        } else if (dst_cx > max_cx) {
+        float max_cx = *(camera->primary_target->x) + view_half_w;
+        if (dst_cx > max_cx) {
             dst_cx = max_cx;
+        } else {
+            float min_cx = *(camera->primary_target->x) - view_half_w;
+            if (dst_cx < min_cx) {
+                dst_cx = min_cx;
+            }
         }
 
-        if (dst_cy < min_cy) {
-            dst_cy = min_cy;
-        } else if (dst_cy > max_cy) {
+        float max_cy = *(camera->primary_target->y) + view_half_h;
+        if (dst_cy > max_cy) {
             dst_cy = max_cy;
+        } else {
+            float min_cy = *(camera->primary_target->y) - view_half_h;
+            if (dst_cy < min_cy) {
+                dst_cy = min_cy;
+            }
         }
     }
 
