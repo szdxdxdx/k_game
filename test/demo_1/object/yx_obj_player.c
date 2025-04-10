@@ -55,15 +55,18 @@ static void state_enter_running(struct k_object *object) {
 static void state_step_running(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    if (player->next_x == player->x && player->next_y == player->y) {
-        k_state_machine_change_state(player->state_machine, STATE_IDLE);
-        return;
+    if (player->next_x == player->x) {
+        if (player->next_y == player->y) {
+            k_state_machine_change_state(player->state_machine, STATE_IDLE);
+            return;
+        }
     }
-
-    if (player->next_x < player->x) {
-        k_sprite_renderer_flip_x(player->spr_rdr, 0);
-    } else {
-        k_sprite_renderer_flip_x(player->spr_rdr, 1);
+    else {
+        if (player->next_x < player->x) {
+            k_sprite_renderer_flip_x(player->spr_rdr, 0);
+        } else {
+            k_sprite_renderer_flip_x(player->spr_rdr, 1);
+        }
     }
 
     if (player->next_y != player->y) {
