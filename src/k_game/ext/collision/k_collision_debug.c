@@ -77,7 +77,7 @@ int k_collision_set_debug(int group_id, int debug) {
         if (NULL == group->cb_debug_draw)
             return 0;
 
-        k_room_del_callback(group->cb_debug_draw);
+        k_callback_del(group->cb_debug_draw);
         group->cb_debug_draw = NULL;
         return 0;
     }

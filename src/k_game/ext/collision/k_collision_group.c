@@ -66,7 +66,7 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
     k_int_hash_map_del(&group->group_map_node);
 
     if (NULL != group->cb_debug_draw) {
-        k_room_del_callback(group->cb_debug_draw);
+        k_callback_del(group->cb_debug_draw);
     }
 
     k_mem_free(group);

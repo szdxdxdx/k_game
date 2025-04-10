@@ -136,14 +136,13 @@ struct k_draw_callback {
         void (*fn_room_callback)(void *data);
         void (*fn_object_callback)(struct k_object *object);
         void (*fn_component_callback)(struct k_component *component);
-        void (*fn_component_manager_callback)(struct k_component_manager *component_manager);
+        void (*fn_component_manager_callback)(void *data);
     };
 
     union {
         void *data;
         struct k_object *object;
         struct k_component *component;
-        struct k_component_manager *component_manager;
     };
 };
 
@@ -225,9 +224,7 @@ struct k_callback *k__draw_callback_manager_add_component_callback(struct k_draw
     return &callback->base;
 }
 
-struct k_callback *k__draw_callback_manager_add_component_manager_callback(struct k_draw_callback_manager *manager, struct k_component_manager *component_manager, void (*fn_callback)(struct k_component_manager *component_manager), int z_group, int z_layer) {
-
-    assert(0); /* experimental */
+struct k_callback *k__draw_callback_manager_add_component_manager_callback(struct k_draw_callback_manager *manager, struct k_component_manager *component_manager, void *data, void (*fn_callback)(void *data), int z_group, int z_layer) {
 
     struct k_draw_callback_layer *layer = find_or_create_layer(manager, z_group, z_layer);
     if (NULL == layer)
@@ -246,7 +243,7 @@ struct k_callback *k__draw_callback_manager_add_component_manager_callback(struc
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_component_manager_callback = fn_callback;
-    callback->component_manager = component_manager;
+    callback->data = data;
     k_list_add_tail(&component_manager->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
@@ -389,8 +386,7 @@ void k__draw_callback_manager_exec(struct k_draw_callback_manager *manager) {
                         callback->fn_component_callback(callback->component);
                         break;
                     case K__COMPONENT_MANAGER_CALLBACK:
-                        assert(0); /* experimental */
-                        callback->fn_component_manager_callback(callback->component_manager);
+                        callback->fn_component_manager_callback(callback->data);
                         break;
                     default:
                         assert(0);

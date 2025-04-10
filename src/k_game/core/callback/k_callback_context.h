@@ -12,7 +12,6 @@ void k__object_del_all_callbacks(struct k_object *object);
 
 void k__component_del_all_callbacks(struct k_component *component);
 
-/* experimental */
 void k__component_manager_del_all_callbacks(struct k_component_manager *manager);
 
 #endif

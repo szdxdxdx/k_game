@@ -26,6 +26,14 @@ static void k__callback_del(struct k_callback *callback) {
     }
 }
 
+void k_callback_del(struct k_callback *callback) {
+
+    if (NULL == callback)
+        return;
+
+    k__callback_del(callback);
+}
+
 /* region [room_callback] */
 
 struct k_callback *k_room_add_step_begin_callback(void *data, void (*fn_callback)(void *data)) {
@@ -51,13 +59,6 @@ struct k_callback *k_room_add_step_end_callback(void *data, void (*fn_callback)(
 struct k_callback *k_room_add_draw_callback(void *data, void (*fn_callback)(void *data), int z_group, int z_layer) {
     struct k_room *room = k__current_room;
     return k__draw_callback_manager_add_room_callback(&room->draw_callback_manager, room, data, fn_callback, z_group, z_layer);
-}
-
-void k_room_del_callback(struct k_callback *room_callback) {
-
-    if (NULL != room_callback) {
-        k__callback_del(room_callback);
-    }
 }
 
 void k__room_del_all_callbacks(struct k_room *room) {
@@ -98,13 +99,6 @@ struct k_callback *k_object_add_draw_callback(struct k_object *object, void (*fn
     return k__draw_callback_manager_add_object_callback(&object->room->draw_callback_manager, object, fn_callback, z_group, z_layer);
 }
 
-void k_object_del_callback(struct k_callback *object_callback) {
-
-    if (NULL != object_callback) {
-        k__callback_del(object_callback);
-    }
-}
-
 void k__object_del_all_callbacks(struct k_object *object) {
 
     struct k_callback *callback;
@@ -143,13 +137,6 @@ struct k_callback *k_component_add_draw_callback(struct k_component *component, 
     return k__draw_callback_manager_add_component_callback(&component->object->room->draw_callback_manager, component, fn_callback, z_group, z_layer);
 }
 
-void k_component_del_callback(struct k_callback *component_callback) {
-
-    if (NULL != component_callback) {
-        k__callback_del(component_callback);
-    }
-}
-
 void k__component_del_all_callbacks(struct k_component *component) {
 
     struct k_callback *callback;
@@ -170,31 +157,24 @@ void k__component_del_all_callbacks(struct k_component *component) {
 
 /*  */
 
-struct k_callback *k_component_manager_add_step_begin_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
-    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_begin_callback_manager, manager, fn_callback);
+struct k_callback *k_component_manager_add_step_begin_callback(struct k_component_manager *manager, void *data, void (*fn_callback)(void *data)) {
+    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_begin_callback_manager, manager, data, fn_callback);
 }
 
-struct k_callback *k_component_manager_add_alarm_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager, int timeout_diff), int delay_ms) {
-    return k__alarm_callback_manager_add_component_manager_callback(&manager->room->alarm_callback_manager, manager, fn_callback, delay_ms);
+struct k_callback *k_component_manager_add_alarm_callback(struct k_component_manager *manager, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
+    return k__alarm_callback_manager_add_component_manager_callback(&manager->room->alarm_callback_manager, manager, data, fn_callback, delay_ms);
 }
 
-struct k_callback *k_component_manager_add_step_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
-    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_callback_manager, manager, fn_callback);
+struct k_callback *k_component_manager_add_step_callback(struct k_component_manager *manager, void *data, void (*fn_callback)(void *data)) {
+    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_callback_manager, manager, data, fn_callback);
 }
 
-struct k_callback *k_component_manager_add_step_end_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager)) {
-    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_callback_manager, manager, fn_callback);
+struct k_callback *k_component_manager_add_step_end_callback(struct k_component_manager *manager, void *data, void (*fn_callback)(void *data)) {
+    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_callback_manager, manager, data, fn_callback);
 }
 
-struct k_callback *k_component_manager_add_draw_callback(struct k_component_manager *manager, void (*fn_callback)(struct k_component_manager *manager), int z_group, int z_layer) {
-    return k__draw_callback_manager_add_component_manager_callback(&manager->room->draw_callback_manager, manager, fn_callback, z_group, z_layer);
-}
-
-void k_component_manager_del_callback(struct k_callback *manager_callback) {
-
-    if (NULL != manager_callback) {
-        k__callback_del(manager_callback);
-    }
+struct k_callback *k_component_manager_add_draw_callback(struct k_component_manager *manager, void *data, void (*fn_callback)(void *data), int z_group, int z_layer) {
+    return k__draw_callback_manager_add_component_manager_callback(&manager->room->draw_callback_manager, manager, data, fn_callback, z_group, z_layer);
 }
 
 void k__component_manager_del_all_callbacks(struct k_component_manager *manager) {

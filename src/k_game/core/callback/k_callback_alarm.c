@@ -27,14 +27,13 @@ struct k_alarm_callback {
         void (*fn_room_callback)(void *data, int timeout_diff);
         void (*fn_object_callback)(struct k_object *object, int timeout_diff);
         void (*fn_component_callback)(struct k_component *component, int timeout_diff);
-        void (*fn_component_manager_callback)(struct k_component_manager *component_manager, int timeout_diff);
+        void (*fn_component_manager_callback)(void *data, int timeout_diff);
     };
 
     union {
         void *data;
         struct k_object *object;
         struct k_component *component;
-        struct k_component_manager *component_manager;
     };
 };
 
@@ -117,9 +116,7 @@ struct k_callback *k__alarm_callback_manager_add_component_callback(struct k_ala
     return &callback->base;
 }
 
-struct k_callback *k__alarm_callback_manager_add_component_manager_callback(struct k_alarm_callback_manager *manager, struct k_component_manager *component_manager, void (*fn_callback)(struct k_component_manager *component_manager, int timeout_diff), int delay_ms) {
-
-    assert(0); /* experimental */
+struct k_callback *k__alarm_callback_manager_add_component_manager_callback(struct k_alarm_callback_manager *manager, struct k_component_manager *component_manager, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
 
     struct k_alarm_callback *callback = k_mem_alloc(sizeof(struct k_alarm_callback));
     if (NULL == callback)
@@ -138,7 +135,7 @@ struct k_callback *k__alarm_callback_manager_add_component_manager_callback(stru
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_component_manager_callback = fn_callback;
-    callback->component_manager = component_manager;
+    callback->data = data;
     k_list_add_tail(&component_manager->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
@@ -273,8 +270,7 @@ void k__alarm_callback_manager_exec(struct k_alarm_callback_manager *manager) {
                 callback->fn_component_callback(callback->component, timeout_diff);
                 break;
             case K__COMPONENT_MANAGER_CALLBACK:
-                assert(0); /* experimental */
-                callback->fn_component_manager_callback(callback->component_manager, timeout_diff);
+                callback->fn_component_manager_callback(callback->data, timeout_diff);
                 break;
             default:
                 assert(0);

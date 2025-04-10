@@ -33,7 +33,7 @@ int k_camera_init(struct k_component_manager *component_manager, void *params) {
 void k_camera_fini(struct k_component_manager *component_manager) {
     struct k_camera *camera = k_component_manager_get_data(component_manager);
 
-    k_room_del_callback(camera->cb_camera_move);
+    k_callback_del(camera->cb_camera_move);
 }
 
 struct k_component_type *k__camera_component_type;

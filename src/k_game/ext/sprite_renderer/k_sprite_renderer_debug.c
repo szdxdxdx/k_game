@@ -125,7 +125,7 @@ int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
         if (NULL == renderer->cb_debug_draw)
             return 0;
 
-        k_component_del_callback(renderer->cb_debug_draw);
+        k_callback_del(renderer->cb_debug_draw);
         renderer->cb_debug_draw = NULL;
         return 0;
     }

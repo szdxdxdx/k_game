@@ -15,8 +15,6 @@ enum k_callback_context {
     K__ROOM_CALLBACK,
     K__OBJECT_CALLBACK,
     K__COMPONENT_CALLBACK,
-
-    /* experimental */
     K__COMPONENT_MANAGER_CALLBACK,
 };
 
