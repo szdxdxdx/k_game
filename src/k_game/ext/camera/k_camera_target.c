@@ -7,7 +7,7 @@ int k__camera_target_init(struct k_component *component, void *params) {
     if (NULL == camera)
         return -1;
 
-    if (K__CAMERA_SECONDARY_TARGET_MAX <= camera->targets_num)
+    if (K__CAMERA_TARGET_MAX <= camera->targets_num)
         return -1;
 
     struct k_camera_target *target = k_component_get_data(component);
@@ -54,6 +54,23 @@ struct k_camera_target *k_camera_add_follow_object(struct k_object *object, floa
     return k_component_get_data(component);
 }
 
+struct k_camera_target *k_camera_add_follow_target(float *x, float *y) {
+    /* TODO */
+    return NULL;
+}
+
+void k_camera_del_target(struct k_camera_target *target) {
+
+    if (NULL == target)
+        return;
+
+    if (NULL != target->component) {
+        k_object_del_component(target->component);
+    } else {
+        /* TODO */
+    }
+}
+
 int k_camera_set_primary_target(struct k_camera_target *target) {
 
     if (NULL == target)
@@ -63,19 +80,22 @@ int k_camera_set_primary_target(struct k_camera_target *target) {
     if (NULL == camera)
         return -1;
 
-    /* TODO assert( camera follow this target ) */
+    /* TODO assert( camera follow this target )
+     *
+     * if (camera != k_component_get_manager_data(target->component)) {
+     *     return -1;
+     * }
+     */
 
     camera->primary_target = target;
-
     return 0;
 }
 
 int k_camera_set_target_weight(struct k_camera_target *target, float weight) {
 
-    if (NULL == target && weight <= 0.0f) {
+    if (NULL == target || weight <= 0.0f)
         return -1;
-    } else {
-        target->weight = weight;
-        return 0;
-    }
+
+    target->weight = weight;
+    return 0;
 }

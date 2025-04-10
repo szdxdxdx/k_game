@@ -345,8 +345,8 @@ struct k_sprite *k_sprite_renderer_get_sprite(struct k_sprite_renderer *renderer
 int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug);
 
 /** \brief 精灵渲染器调试模式的绘制深度 */
-#define K_SPRITE_RENDERER_DEBUG_Z_LAYER 100000
-#define K_SPRITE_RENDERER_DEBUG_Z_GROUP 100000
+#define K__SPRITE_RENDERER_DEBUG_Z_LAYER 100000
+#define K__SPRITE_RENDERER_DEBUG_Z_GROUP 100000
 
 /* endregion */
 

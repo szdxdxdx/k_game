@@ -105,8 +105,10 @@ struct k_state_machine *k_object_add_state_machine(struct k_object *object) {
 
 void k_object_del_state_machine(struct k_state_machine *machine) {
 
-    if (NULL != machine)
-        k_object_del_component(machine->component);
+    if (NULL == machine)
+        return;
+
+    k_object_del_component(machine->component);
 }
 
 /* endregion */

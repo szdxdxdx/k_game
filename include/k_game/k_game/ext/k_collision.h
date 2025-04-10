@@ -23,7 +23,7 @@ struct k_collision_box;
  *
  * 必须先给房间添加碰撞盒管理器，才能给房间内的对象挂载碰撞盒。
  *
- * 若成功，函数返回非 0，否则返回 0。
+ * 若添加成功，函数返回非 0，否则返回 0。
  */
 int k_room_add_collision_manager(void);
 
@@ -288,8 +288,8 @@ size_t k_collision_query_circle(struct k_collision_box **result, size_t n, int g
 int k_collision_set_debug(int group_id, int debug);
 
 /** \brief 碰撞组调试模式的绘制深度 */
-#define K_COLLISION_DEBUG_Z_LAYER 100000
-#define K_COLLISION_DEBUG_Z_GROUP 100000
+#define K__COLLISION_DEBUG_Z_LAYER 100000
+#define K__COLLISION_DEBUG_Z_GROUP 100000
 
 /* endregion */
 

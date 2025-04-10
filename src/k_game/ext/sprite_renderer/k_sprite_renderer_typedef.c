@@ -81,8 +81,11 @@ struct k_sprite_renderer *k_object_add_sprite_renderer(struct k_object *object, 
 }
 
 void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer) {
-    if (NULL != renderer)
-        k_object_del_component(renderer->component);
+
+    if (NULL == renderer)
+        return;
+
+    k_object_del_component(renderer->component);
 }
 
 /* endregion */

@@ -7,15 +7,14 @@
 #include "k_game/core/k_component.h"
 #include "k_game/core/k_callback.h"
 
+#include "k_game/ext/k_camera.h"
+
 struct k_camera_target;
 struct k_camera;
 
 struct k_camera_target {
 
     struct k_component *component;
-
-    /* 记录 target 在 secondary_targets 中的索引，若是 primary_target 则该值无效 */
-    size_t target_idx;
 
     float *x;
     float *y;
@@ -29,8 +28,11 @@ void k__camera_target_fini(struct k_component *component);
 
 struct k_camera {
 
-#define K__CAMERA_SECONDARY_TARGET_MAX 24
-    struct k_camera_target *targets[K__CAMERA_SECONDARY_TARGET_MAX];
+    struct k_object *object;
+
+#define K__CAMERA_TARGET_MAX 16
+
+    struct k_camera_target *targets[K__CAMERA_TARGET_MAX];
 
     size_t targets_num;
 

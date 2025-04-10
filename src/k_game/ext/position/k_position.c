@@ -118,6 +118,7 @@ int position_init(struct k_component *component, void *params) {
 
     *(position->world_x) = *(position->parent->world_x) + position->local_x;
     *(position->world_y) = *(position->parent->world_y) + position->local_y;
+
     return 0;
 }
 
@@ -179,8 +180,11 @@ struct k_position *k_object_add_position(struct k_object *object, const struct k
 }
 
 void k_object_del_position(struct k_position *position) {
-    if (NULL != position)
-        k_object_del_component(position->component);
+
+    if (NULL == position)
+        return;
+
+    k_object_del_component(position->component);
 }
 
 /* endregion */
