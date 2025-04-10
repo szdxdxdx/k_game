@@ -5,12 +5,12 @@
 #include "./k_window.h"
 
 struct k_mouse_context k__mouse = {
-    .x_at_window = 0,
-    .y_at_window = 0,
-    .x_at_view   = 0,
-    .y_at_view   = 0,
-    .x_at_room   = 0,
-    .y_at_room   = 0,
+    .x_at_window  = 0,
+    .y_at_window  = 0,
+    .x_at_view    = 0,
+    .y_at_view    = 0,
+    .x_at_room    = 0,
+    .y_at_room    = 0,
     .button_state = { 0 }
 };
 

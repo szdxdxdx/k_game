@@ -23,10 +23,9 @@ struct k_printf_config config = { ... };
 int arr[] = { 1, 2, 3, 4, 5 };
 
 k_printf(config, "%s %arr", "arr[] =", arr, 5);
-
 ```
 
-## 详细示例
+## 完整示例
 
 ```C
 /* 以下为完整的示例代码 */

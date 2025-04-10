@@ -5,7 +5,7 @@
 #include "./k_object_pool.h"
 
 #include "../room/k_room.h"
-#include "../component//k_component.h"
+#include "../component/k_component.h"
 #include "../callback/k_callback_context.h"
 
 /* region [object_create] */
