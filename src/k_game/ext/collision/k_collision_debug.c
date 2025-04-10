@@ -89,7 +89,8 @@ int k_collision_set_debug(int group_id, int debug) {
         if (NULL != group->cb_debug_draw)
             return 0;
 
-        group->cb_debug_draw = k_room_add_draw_callback(
+        group->cb_debug_draw = k_component_manager_add_draw_callback(
+            group->manager->component_manager,
             group,
             k__collision_draw_group,
             K__COLLISION_DEBUG_Z_GROUP,

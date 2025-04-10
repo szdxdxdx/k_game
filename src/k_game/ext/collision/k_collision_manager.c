@@ -8,6 +8,7 @@ int k__collision_manager_init(struct k_component_manager *component_manager, voi
     if (0 != k__collision_manager_init_group_map(manager))
         return -1;
 
+    manager->component_manager = component_manager;
     return 0;
 }
 

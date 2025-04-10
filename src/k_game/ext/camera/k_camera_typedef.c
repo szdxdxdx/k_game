@@ -5,18 +5,16 @@
 #include "./k_camera_internal.h"
 #include "./k_camera_typedef.h"
 
-int k_camera_init(struct k_component_manager *component_manager, void *params) {
+int k_camera_init(struct k_component_manager *manager, void *params) {
     (void)params;
 
-    struct k_camera *camera = k_component_manager_get_data(component_manager);
-
-    struct k_callback *callback = k_room_add_step_end_callback(camera, k__camera_update);
-    if (NULL == callback)
-        return -1;
+    struct k_camera *camera = k_component_manager_get_data(manager);
 
     camera->state = K__CAMERA_AUTO_FOLLOW;
 
-    camera->cb_camera_move = callback;
+    camera->cb_camera_move = k_component_manager_add_step_end_callback(manager, camera, k__camera_update);
+    if (NULL == camera->cb_camera_move)
+        return -1;
 
     camera->max_speed    = 512.0f;
     camera->acceleration = 256.0f;
@@ -33,7 +31,6 @@ int k_camera_init(struct k_component_manager *component_manager, void *params) {
 void k_camera_fini(struct k_component_manager *component_manager) {
     struct k_camera *camera = k_component_manager_get_data(component_manager);
 
-    k_callback_del(camera->cb_camera_move);
 }
 
 struct k_component_type *k__camera_component_type;

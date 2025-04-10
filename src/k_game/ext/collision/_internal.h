@@ -99,6 +99,8 @@ struct k_collision_group {
 
     struct k_int_hash_map_node group_map_node;
 
+    struct k_collision_manager *manager;
+
     struct k_list box_list;
 
     struct k_callback *cb_debug_draw;
@@ -121,6 +123,8 @@ struct k_collision_group *k__collision_find_group(int group_id);
 /* region [collision_manager] */
 
 struct k_collision_manager {
+
+    struct k_component_manager *component_manager;
 
     struct k_int_hash_map group_map;
 };

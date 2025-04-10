@@ -72,7 +72,7 @@ void k__room_del_all_callbacks(struct k_room *room) {
         k__callback_del(callback);
     }
 
-    k_list_init(&room->callback_list);
+    // k_list_init(&room->callback_list);
 }
 
 /* endregion */
@@ -110,7 +110,7 @@ void k__object_del_all_callbacks(struct k_object *object) {
         k__callback_del(callback);
     }
 
-    k_list_init(&object->callback_list);
+    // k_list_init(&object->callback_list);
 }
 
 /* endregion */
@@ -148,7 +148,7 @@ void k__component_del_all_callbacks(struct k_component *component) {
         k__callback_del(callback);
     }
 
-    k_list_init(&component->callback_list);
+    // k_list_init(&component->callback_list);
 }
 
 /* endregion */
@@ -188,7 +188,7 @@ void k__component_manager_del_all_callbacks(struct k_component_manager *manager)
         k__callback_del(callback);
     }
 
-    k_list_init(&manager->callback_list);
+    // k_list_init(&manager->callback_list);
 }
 
 /* endregion */
