@@ -96,35 +96,73 @@ void yx_camera_step(void *camera_) {
     if (NULL == primary_target)
         return;
 
+    float dst_cx;
+    float dst_cy;
+
+    if (0 == camera->secondary_targets_num) {
+        dst_cx = *primary_target->x;
+        dst_cy = *primary_target->y;
+        goto move_camera;
+    }
+
+    float primary_target_x = *primary_target->x;
+    float primary_target_y = *primary_target->y;
+
+    float sum_wx = primary_target_x * primary_target->weight;
+    float sum_wy = primary_target_y * primary_target->weight;
+    float sum_w  = primary_target->weight;
+
     float curr_view_x;
     float curr_view_y;
     float curr_view_w;
     float curr_view_h;
     k_view_get_rect(&curr_view_x, &curr_view_y, &curr_view_w, &curr_view_h);
 
-    float sum_wx = (*primary_target->x) * primary_target->weight;
-    float sum_wy = (*primary_target->y) * primary_target->weight;
-    float sum_w = primary_target->weight;
+    float curr_view_left   = curr_view_x;
+    float curr_view_top    = curr_view_y;
+    float curr_view_right  = curr_view_x + curr_view_w;
+    float curr_view_bottom = curr_view_y + curr_view_h;
 
     size_t i = 0;
     for (; i < camera->secondary_targets_num; i++) {
         struct yx_camera_target *secondary_target = camera->secondary_targets[i];
 
-        if ((*secondary_target->x) < curr_view_x) continue;
-        if ((*secondary_target->y) < curr_view_y) continue;
-        if ((*secondary_target->x) > curr_view_x + curr_view_w) continue;
-        if ((*secondary_target->y) > curr_view_y + curr_view_h) continue;
+        float secondary_target_x = *secondary_target->x;
+        float secondary_target_y = *secondary_target->y;
 
-        sum_wx += (*secondary_target->x) * secondary_target->weight;
-        sum_wy += (*secondary_target->y) * secondary_target->weight;
+        if (secondary_target_x < curr_view_left)   continue;
+        if (secondary_target_y < curr_view_top)    continue;
+        if (secondary_target_x > curr_view_right)  continue;
+        if (secondary_target_y > curr_view_bottom) continue;
+
+        sum_wx += secondary_target_x * secondary_target->weight;
+        sum_wy += secondary_target_y * secondary_target->weight;
         sum_w  += secondary_target->weight;
     }
 
-    float dst_cx = sum_wx / sum_w;
-    float dst_cy = sum_wy / sum_w;
+    dst_cx = sum_wx / sum_w;
+    dst_cy = sum_wy / sum_w;
 
+    float half_view_w = curr_view_w / 2;
+    float max_cx = primary_target_x + half_view_w;
+    float min_cx = primary_target_x - half_view_w;
+    if (dst_cx < min_cx) {
+        dst_cx = min_cx;
+    }
+    else if (dst_cx > max_cx) {
+        dst_cx = max_cx;
+    }
 
+    float half_view_h = curr_view_h / 2;
+    float max_cy = primary_target_y + half_view_h;
+    float min_cy = primary_target_y - half_view_h;
+    if (dst_cy < min_cy) {
+        dst_cy = min_cy;
+    } else if (dst_cy > max_cy) {
+        dst_cy = max_cy;
+    }
 
+move_camera:
     yx_camera_move_towards(camera, dst_cx, dst_cy);
 }
 
