@@ -8,13 +8,13 @@ int k__collision_box_component_define(void) {
 
     struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
     entity_config.data_size = sizeof(struct k_collision_box);
-    entity_config.fn_init   = k__collision_box_init;
-    entity_config.fn_fini   = k__collision_box_fini;
+    entity_config.fn_init = k__collision_box_init;
+    entity_config.fn_fini = k__collision_box_fini;
 
     struct k_component_manager_config manager_config = K_COMPONENT_MANAGER_CONFIG_INIT;
     manager_config.data_size = sizeof(struct k_collision_manager);
-    manager_config.fn_init   = k__collision_manager_init;
-    manager_config.fn_fini   = k__collision_manager_fini;
+    manager_config.fn_init = k__collision_manager_init;
+    manager_config.fn_fini = k__collision_manager_fini;
 
     struct k_component_type *type = k_component_define(&manager_config, &entity_config);
     if (NULL == type)

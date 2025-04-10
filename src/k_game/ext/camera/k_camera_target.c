@@ -1,47 +1,43 @@
 #include "./k_camera_internal.h"
 
-/* region [object_add_camera_follow] */
-
 int k__camera_target_init(struct k_component *component, void *params) {
+    float **xy = (float **)params;
 
     struct k_camera *camera = k_component_get_manager_data(component);
     if (NULL == camera)
         return -1;
 
-    if (K__CAMERA_SECONDARY_TARGET_MAX <= camera->secondary_targets_num)
+    if (K__CAMERA_SECONDARY_TARGET_MAX <= camera->targets_num)
         return -1;
 
-    float **xy = (float **)params;
-
     struct k_camera_target *target = k_component_get_data(component);
+    target->component = component;
     target->x = xy[0];
     target->y = xy[1];
     target->weight = 1.0f;
 
-    size_t top_idx = camera->secondary_targets_num;
-    target->target_idx = top_idx;
-    camera->secondary_targets[top_idx] = target;
-    camera->secondary_targets_num += 1;
+    camera->targets[camera->targets_num] = target;
+    camera->targets_num += 1;
 
     return 0;
 }
 
 void k__camera_target_fini(struct k_component *component) {
-    struct k_camera_target *target_to_del = k_component_get_data(component);
+    struct k_camera_target *target = k_component_get_data(component);
     struct k_camera *camera = k_component_get_manager_data(component);
 
-    if (target_to_del == camera->primary_target) {
+    if (target == camera->primary_target) {
         camera->primary_target = NULL;
     }
-    else {
-        size_t last_idx = camera->secondary_targets_num - 1;
-        if (target_to_del->target_idx != last_idx) {
-            struct k_camera_target *swap_target = camera->secondary_targets[last_idx];
-            swap_target->target_idx = target_to_del->target_idx;
-            camera->secondary_targets[target_to_del->target_idx] = swap_target;
+
+    size_t idx = 0;
+    for (; idx < camera->targets_num; idx++) {
+        if (camera->targets[idx] == target) {
+            camera->targets[idx] = camera->targets[camera->targets_num - 1];
         }
-        camera->secondary_targets_num -= 1;
     }
+
+    camera->targets_num -= 1;
 }
 
 struct k_camera_target *k_camera_add_follow_object(struct k_object *object, float *x, float *y) {
@@ -58,8 +54,6 @@ struct k_camera_target *k_camera_add_follow_object(struct k_object *object, floa
     return k_component_get_data(component);
 }
 
-/* endregion */
-
 int k_camera_set_primary_target(struct k_camera_target *target) {
 
     if (NULL == target)
@@ -69,26 +63,10 @@ int k_camera_set_primary_target(struct k_camera_target *target) {
     if (NULL == camera)
         return -1;
 
-    if (camera->primary_target == target)
-        return 0;
-
-    if (NULL == camera->primary_target) {
-
-        size_t last_idx = camera->secondary_targets_num - 1;
-        if (target->target_idx != last_idx) {
-            struct k_camera_target *swap_target = camera->secondary_targets[last_idx];
-            swap_target->target_idx = target->target_idx;
-            camera->secondary_targets[target->target_idx] = swap_target;
-        }
-        camera->secondary_targets_num -= 1;
-    }
-    else {
-        struct k_camera_target *old_main_target = camera->primary_target;
-        old_main_target->target_idx = target->target_idx;
-        camera->secondary_targets[target->target_idx] = old_main_target;
-    }
+    /* TODO assert( camera follow this target ) */
 
     camera->primary_target = target;
+
     return 0;
 }
 

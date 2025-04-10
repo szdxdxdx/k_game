@@ -15,11 +15,13 @@ int k_camera_init(struct k_component_manager *component_manager, void *params) {
         return -1;
 
     camera->primary_target = NULL;
-    camera->secondary_targets_num = 0;
+    camera->targets[0]     = NULL;
+    camera->targets_num    = 0;
 
     camera->vx = 0.0f;
     camera->vy = 0.0f;
     camera->max_speed = 512.0f;
+
     camera->acceleration = 256.0f;
 
     return 0;

@@ -149,8 +149,8 @@ int k__position_component_define(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_position);
-    config.fn_init   = position_init;
-    config.fn_fini   = position_fini;
+    config.fn_init = position_init;
+    config.fn_fini = position_fini;
 
     struct k_component_type *type = k_component_define(NULL, &config);
     if (NULL == type)

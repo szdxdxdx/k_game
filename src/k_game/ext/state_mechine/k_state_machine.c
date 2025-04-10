@@ -79,8 +79,8 @@ int k__state_machine_component_define(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_state_machine);
-    config.fn_init   = k__state_machine_init;
-    config.fn_fini   = k__state_machine_fini;
+    config.fn_init = k__state_machine_init;
+    config.fn_fini = k__state_machine_fini;
 
     struct k_component_type *type = k_component_define(NULL, &config);
     if (NULL == type)

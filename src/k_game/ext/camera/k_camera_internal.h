@@ -12,6 +12,8 @@ struct k_camera;
 
 struct k_camera_target {
 
+    struct k_component *component;
+
     /* 记录 target 在 secondary_targets 中的索引，若是 primary_target 则该值无效 */
     size_t target_idx;
 
@@ -27,12 +29,12 @@ void k__camera_target_fini(struct k_component *component);
 
 struct k_camera {
 
-    struct k_camera_target *primary_target;
-
 #define K__CAMERA_SECONDARY_TARGET_MAX 24
-    struct k_camera_target *secondary_targets[K__CAMERA_SECONDARY_TARGET_MAX];
+    struct k_camera_target *targets[K__CAMERA_SECONDARY_TARGET_MAX];
 
-    size_t secondary_targets_num;
+    size_t targets_num;
+
+    struct k_camera_target *primary_target;
 
     struct k_callback *cb_camera_step;
 
