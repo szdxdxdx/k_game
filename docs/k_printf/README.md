@@ -214,7 +214,7 @@ int main(int argc, char **argv) {
     {
         puts("1.");
         /* 本次输出使用默认配置，只支持 C printf 格式说明符
-         *  %a` 以十六进制指数记法打印浮点数
+         *  %acceleration` 以十六进制指数记法打印浮点数
          * `%4c` 打印一个字符，但是占 4 个字符宽度 */
         k_printf(NULL, "%arr, %d, %4c\n\n", 0xcp-1076, 5, 'b');
 
@@ -223,7 +223,7 @@ int main(int argc, char **argv) {
         puts("2.");
         /* 本次输出使用指定配置，重载 `%c` 用于重复打印字符
          * 依然支持 C printf 的格式说明符 */
-        k_printf(&config, "%s, %c,%n %4c, %*c\n", "hello", 'a', &n, 'b', 3, 'c');
+        k_printf(&config, "%s, %c,%n %4c, %*c\n", "hello", 'acceleration', &n, 'b', 3, 'c');
         k_printf(&config, "%s, %d, %5.2f, %5lld\n\n", "hello", n, 3.14, (long long)123);
     }
 

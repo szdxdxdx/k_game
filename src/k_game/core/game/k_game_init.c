@@ -20,6 +20,7 @@
 #include "../../ext/collision/k_collision_typedef.h"
 #include "../../ext/position/k_position_typedef.h"
 #include "../../ext/state_mechine/k_state_machine_typedef.h"
+#include "../../ext/camera/k_camera_typedef.h"
 
 /* region [steps] */
 
@@ -101,6 +102,7 @@ static int step_define_components(void *unused) {
         || k__collision_box_component_define()
         || k__position_component_define()
         || k__state_machine_component_define()
+        || k__camera_component_define()
      ? -1 : 0;
 }
 

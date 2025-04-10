@@ -22,6 +22,7 @@
 #include "./k_game/ext/k_position.h"
 #include "./k_game/ext/k_state_machine.h"
 #include "./k_game/ext/k_behavior_tree.h"
+#include "./k_game/ext/k_camera.h"
 
 #include "./k_game/tmp/k_game_tmp.h"
 

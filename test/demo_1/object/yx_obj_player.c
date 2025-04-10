@@ -1,7 +1,5 @@
 #include "./yx_all_object.h"
 
-#include "../utils/camera/yx_camera.h"
-
 /* region [state] */
 
 static void state_enter_idle(struct k_object *object);
@@ -216,9 +214,9 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     }
 
     {
-        struct yx_camera_target *target = yx_object_add_camera_follow(object, &player->x, &player->y);
-        yx_camera_set_primary_target(target);
-        yx_camera_target_set_weight(target, 3.0f);
+        struct k_camera_target *target = k_camera_add_follow_object(object, &player->x, &player->y);
+        k_camera_set_primary_target(target);
+        k_camera_set_target_weight(target, 3.0f);
     }
 
     return object;

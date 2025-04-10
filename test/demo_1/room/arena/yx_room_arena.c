@@ -4,7 +4,6 @@
 
 #include "../../sprite/_public.h"
 #include "../../object/yx_all_object.h"
-#include "../../utils/camera/yx_camera.h"
 
 static void set_debug(void *data) {
 
@@ -23,7 +22,8 @@ static int init_room(void *params) {
     struct yx_room_arena *room_arena = k_room_get_data();
 
     k_room_add_collision_manager();
-    yx_room_add_camera();
+
+    k_room_add_camera();
 
     k_room_add_step_callback(NULL, set_debug);
     k_room_add_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
