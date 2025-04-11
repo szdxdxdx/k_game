@@ -95,6 +95,9 @@ int k_canvas_draw_line(float x1, float y1, float x2, float y2) {
     x2 -= k__window.view_x;
     y2 -= k__window.view_y;
 
+    if ((x1 < x2) ? (x2 < 0.0f || k__window.view_w < x1) : (x1 < 0.0f || k__window.view_w < x2)) return 0;
+    if ((y1 < y2) ? (y2 < 0.0f || k__window.view_h < y1) : (y1 < 0.0f || k__window.view_h < y2)) return 0;
+
     if (0 != SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2)) {
         k_log_error("Failed to draw line, SDL error: %s", SDL_GetError());
         return -1;
@@ -158,14 +161,8 @@ int k_canvas_draw_rect(float x, float y, float w, float h) {
     rect.w = w;
     rect.h = h;
 
-    if (k__window.view_w < rect.x)
-        return 0;
-    if (k__window.view_h < rect.y)
-        return 0;
-    if (rect.x + rect.w < 0.0f)
-        return 0;
-    if (rect.y + rect.h < 0.0f)
-        return 0;
+    if (k__window.view_w < rect.x || rect.x + rect.w < 0.0f) return 0;
+    if (k__window.view_h < rect.y || rect.y + rect.h < 0.0f) return 0;
 
     if (0 != SDL_RenderDrawRectF(k__window.renderer, &rect)) {
         k_log_error("Failed to draw rect, SDL error: %s", SDL_GetError());
@@ -177,11 +174,17 @@ int k_canvas_draw_rect(float x, float y, float w, float h) {
 
 int k_canvas_fill_rect(float x, float y, float w, float h) {
 
+    if (w <= 0.0f || h <= 0.0f)
+        return 0;
+
     SDL_FRect rect;
     rect.x = x - k__window.view_x;
     rect.y = y - k__window.view_y;
     rect.w = w;
     rect.h = h;
+
+    if (k__window.view_w < rect.x || rect.x + rect.w < 0.0f) return 0;
+    if (k__window.view_h < rect.y || rect.y + rect.h < 0.0f) return 0;
 
     if (0 != SDL_RenderFillRectF(k__window.renderer, &rect)) {
         k_log_error("Failed to draw rect, SDL error: %s", SDL_GetError());
@@ -195,6 +198,9 @@ int k_canvas_draw_circle(float cx, float cy, float r) {
 
     cx -= k__window.view_x;
     cy -= k__window.view_y;
+
+    if (k__window.view_w < cx - r || cx + r < 0.0f) return 0;
+    if (k__window.view_h < cy - r || cy + r < 0.0f) return 0;
 
     /* 数组大小应是 8 的倍数，因为每轮循环都会往 buf 中添加 8 个点 */
     SDL_FPoint buf[80];
@@ -224,11 +230,19 @@ int k_canvas_draw_circle(float cx, float cy, float r) {
         }
 
         if (x < y) {
-            SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size);
+            if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
+                k_log_error("Failed to draw circle, SDL error: %s", SDL_GetError());
+                return -1;
+            }
+
             break;
         }
         else if (buf_size >= k__canvas_buf_capacity(buf)) {
-            SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size);
+            if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
+                k_log_error("Failed to draw circle, SDL error: %s", SDL_GetError());
+                return -1;
+            }
+
             buf_size = 0;
         }
     }
@@ -272,13 +286,15 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
         dst.w = (float)image->image_w;
         dst.h = (float)image->image_h;
 
+        if (k__window.view_w < dst.x || dst.x + dst.w < 0.0f) return 0;
+        if (k__window.view_h < dst.y || dst.y + dst.h < 0.0f) return 0;
+
         if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
             return -1;
         }
     }
     else {
-
         SDL_FRect dst;
         dst.x = x - k__window.view_x;
         dst.y = y - k__window.view_y;
@@ -323,17 +339,20 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
 
     if (NULL == options) {
 
-        SDL_Rect src;
-        src.x = frame->offset_x;
-        src.y = frame->offset_y;
-        src.w = sprite->sprite_w;
-        src.h = sprite->sprite_h;
-
         SDL_FRect dst;
         dst.x = x - sprite->origin_x - k__window.view_x;
         dst.y = y - sprite->origin_y - k__window.view_y;
         dst.w = (float)sprite->sprite_w;
         dst.h = (float)sprite->sprite_h;
+
+        if (k__window.view_w < dst.x || dst.x + dst.w < 0.0f) return 0;
+        if (k__window.view_h < dst.y || dst.y + dst.h < 0.0f) return 0;
+
+        SDL_Rect src;
+        src.x = frame->offset_x;
+        src.y = frame->offset_y;
+        src.w = sprite->sprite_w;
+        src.h = sprite->sprite_h;
 
         if (0 != SDL_RenderCopyF(k__window.renderer, frame->image->texture, &src, &dst)) {
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
