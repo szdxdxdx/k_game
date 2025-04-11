@@ -6,11 +6,13 @@
 struct k_image;
 struct k_sprite;
 
+/** \brief 表示一个点坐标 */
 struct k_float_point {
     float x;
     float y;
 };
 
+/** \brief 表示一个矩形结构，`(x, y)` 为矩形左上角的坐标，`w` 和 `h` 为宽和高 */
 struct k_int_rect {
     int x;
     int y;
@@ -31,14 +33,8 @@ struct k_int_rect {
  * \brief 设置画笔的颜色
  *
  * 更改画笔的颜色为 `(r, g, b, a)` 所指定的颜色值，
- * 其中 `r, g, b` 分别指定红色、绿色、蓝色通道的值，
- * `a` 指定透明度通道的值，每个通道的取值范围是 0 ~ 255。
- *
- * 例如 `(r, g, b, a)`：
- * - 嫣汐橙 `(255, 102,   0, 255)` 或 `(0xff, 0f66, 0x00, 0xff)`
- * - 初音绿 `( 57, 197, 187, 255)` 或 `(0x39, 0xc5, 0xbb, 0xff)`
- * - 阿绫红 `(238,   0,   0, 255)` 或 `(0xee, 0x00, 0x00, 0xff)`
- * - 天依蓝 `(102, 204, 255, 255)` 或 `(0x66, 0xcc, 0xff, 0xff)`
+ * `r, g, b, a` 分别指定红色通道、绿色通道、蓝色通道和透明度通道的值。
+ * 每个通道的取值范围是 0 ~ 255，用十六进制表示法则是 0x00 ~ 0xff。
  */
 void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
@@ -53,12 +49,7 @@ void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
 /**
  * \brief 设置画笔的颜色
  *
- * 更改画笔的颜色为 `hex_rgba` 所指定十六进制 `0xRRGGBBAA` 格式的颜色值。
- * 例如：
- * - 嫣汐橙 `0xff6600ff`
- * - 初音绿 `0x39c5bbff`
- * - 阿绫红 `0xee0000ff`
- * - 天依蓝 `0x66ccffff`
+ * 更改画笔颜色为 `hex_rgba` 所指定的十六进制 `0xRRGGBBAA` 格式的颜色值。
  */
 void k_canvas_set_draw_color_rgba(uint32_t hex_rgba);
 
@@ -73,18 +64,74 @@ uint32_t k_canvas_get_draw_color_rgba(void);
 
 /* region [draw_graphics] */
 
+/**
+ * \brief 在房间内绘制一个点
+ *
+ * `(x, y)` 为绘制点的坐标。
+ * 若绘制成功，函数返回 0，否则返回非 0。
+ */
 int k_canvas_draw_point(float x, float y);
 
+/**
+ * \brief 在房间内绘制多个点
+ *
+ * `points` 为绘制点坐标数组，`points_num` 指定数组长度。
+ * 若绘制成功，函数返回 0，否则返回非 0。
+ */
 int k_canvas_draw_points(const struct k_float_point *points, size_t points_num);
 
+/**
+ * \brief 在房间内绘制一条线段
+ *
+ * `(x1, y1)` 和 `(x2, y2)` 为绘制线段的两个端点坐标。
+ * 若绘制成功，函数返回 0，否则返回非 0。
+ */
 int k_canvas_draw_line(float x1, float y1, float x2, float y2);
 
+/**
+ * \brief 在房间内连续绘制多条线段
+ *
+ * `points` 为点坐标数组，`points_num` 指定数组长度。
+ * 函数将一次将点连接起来绘制线段，共绘制 `points_num - 1` 条线段。
+ * 若 `points` 中的点个数少于 2，则不绘制任何内容。
+ *
+ * 若绘制成功，函数返回 0，否则返回非 0。
+ *
+ * 提示：你可以令 `points` 中的最后一个点等于第一个点来绘制任意多边形。
+ */
 int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num);
 
+/**
+ * \brief 在房间内绘制一个轴对齐矩形
+ *
+ * `(x, y)` 为矩形的左上角坐标，`w` 和 `h` 为矩形的宽和高。
+ * 若宽高 `w` 或 `h` 为 0 或负值，则不绘制任何内容。
+ *
+ * 若绘制成功，函数返回 0，否则返回非 0。
+ *
+ * 提示：若想通过一组对角坐标来绘制矩形，或是绘制旋转的矩形，
+ * 你可以使用 `k_canvas_draw_lines()` 来绘制矩形的边。
+ */
 int k_canvas_draw_rect(float x, float y, float w, float h);
 
+/**
+ * \brief 在房间内绘制一个填充的轴对齐矩形
+ *
+ * `(x, y)` 为矩形的左上角坐标，`w` 和 `h` 为矩形的宽和高。
+ * 若宽高 `w` 或 `h` 为 0 或负值，则不绘制任何内容。
+ *
+ * 若绘制成功，函数返回 0，否则返回非 0。
+ */
 int k_canvas_fill_rect(float x, float y, float w, float h);
 
+/**
+ * \brief 在房间内绘制一个圆
+ *
+ * `(cx, cy)` 为圆的圆心坐标，`r` 为半径。
+ * 若半径 `r` 为 0 或负值，则不绘制任何内容。
+ *
+ * 若绘制成功，函数返回 0，否则返回非 0。
+ */
 int k_canvas_draw_circle(float cx, float cy, float r);
 
 /* endregion */
@@ -132,7 +179,7 @@ struct k_canvas_draw_image_options {
 };
 
 /**
- * \brief 在房间内绘制图片
+ * \brief 在房间内绘制一张图片
  *
  * `src_rect` 指定源矩形区域，若为 `NULL` 则绘制整张图片，否则绘制原图中指定的裁剪部分。
  * `x` 和 `y` 指定图片左上角在房间中的坐标。
@@ -186,7 +233,7 @@ struct k_canvas_draw_sprite_options {
 };
 
 /**
- * \brief 在房间内绘制精灵帧
+ * \brief 在房间内绘制一张精灵帧
  *
  * `frame_idx` 指定要绘制帧的索引。`x` 和 `y` 指定精灵原点的在房间中的坐标。
  * `options` 用于执行缩放、旋转和翻转变换，若为 `NULL` 则不应用任何变换。

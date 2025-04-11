@@ -126,8 +126,11 @@ int k_canvas_draw_line(float x1, float y1, float x2, float y2) {
 
 int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
 
-    if (NULL == points || points_num <= 1)
+    if (NULL == points)
         return -1;
+
+    if (points_num <= 1)
+        return 0;
 
     SDL_FPoint buf[80];
     int buf_size = 0;
@@ -213,6 +216,9 @@ int k_canvas_fill_rect(float x, float y, float w, float h) {
 }
 
 int k_canvas_draw_circle(float cx, float cy, float r) {
+
+    if (r <= 0.0f)
+        return 0;
 
     cx -= k__window.view_x;
     cy -= k__window.view_y;
