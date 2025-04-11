@@ -186,7 +186,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
         WASD_config.key_left  = 'A';
         WASD_config.key_down  = 'S';
         WASD_config.key_right = 'D';
-        WASD_config.speed     = 192.0f * 5;
+        WASD_config.speed     = 192.0f;
         WASD_config.x         = &player->next_x;
         WASD_config.y         = &player->next_y;
         player->WASD = k_object_add_component(object, WASD, &WASD_config);
@@ -223,7 +223,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
     {
         struct k_camera_target *target = k_camera_add_follow_object(object, &player->x, &player->y);
         k_camera_set_primary_target(target);
-        k_camera_set_target_weight(target, 2.0f);
+        k_camera_set_target_weight(target, 4.0f);
     }
 
     return object;

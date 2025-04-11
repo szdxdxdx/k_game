@@ -137,10 +137,9 @@ int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
         renderer->cb_debug_draw = k_component_add_draw_callback(
             renderer->component,
             k__sprite_renderer_debug_draw,
-            K__SPRITE_RENDERER_DEBUG_Z_GROUP,
-            K__SPRITE_RENDERER_DEBUG_Z_LAYER
+            K_DEBUG_Z_GROUP,
+            K_DEBUG_Z_LAYER
         );
-
         if (NULL == renderer->cb_debug_draw)
             return -1;
 

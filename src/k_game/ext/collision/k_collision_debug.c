@@ -93,8 +93,8 @@ int k_collision_set_debug(int group_id, int debug) {
             group->manager->component_manager,
             group,
             k__collision_draw_group,
-            K__COLLISION_DEBUG_Z_GROUP,
-            K__COLLISION_DEBUG_Z_LAYER
+            K_DEBUG_Z_GROUP,
+            K_DEBUG_Z_LAYER
         );
         if (NULL == group->cb_debug_draw)
             return -1;

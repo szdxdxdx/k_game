@@ -106,6 +106,7 @@ int k_camera_set_debug(int debug) {
             return 0;
 
         k_callback_del(camera->cb_camera_debug);
+        camera->cb_camera_debug = NULL;
         return 0;
     }
     else {
@@ -116,8 +117,8 @@ int k_camera_set_debug(int debug) {
             manager,
             camera,
             k__camera_debug_draw,
-            K__CAMERA_DEBUG_Z_GROUP,
-            K__CAMERA_DEBUG_Z_LAYER
+            K_DEBUG_Z_GROUP,
+            K_DEBUG_Z_LAYER
         );
         if (NULL == camera->cb_camera_debug)
             return -1;

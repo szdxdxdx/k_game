@@ -279,10 +279,6 @@ size_t k_collision_query_circle(struct k_collision_box **result, size_t n, int g
  */
 int k_collision_set_debug(int group_id, int debug);
 
-/** \brief 碰撞组调试模式的绘制深度 */
-#define K__COLLISION_DEBUG_Z_LAYER 100000
-#define K__COLLISION_DEBUG_Z_GROUP 100000
-
 /* endregion */
 
 #endif
