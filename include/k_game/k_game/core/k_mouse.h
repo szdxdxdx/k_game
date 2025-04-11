@@ -1,9 +1,9 @@
 #ifndef K_MOUSE_H
 #define K_MOUSE_H
 
-int k_mouse_x(void);
+float k_mouse_x(void);
 
-int k_mouse_y(void);
+float k_mouse_y(void);
 
 enum k_mouse_button {
     K_BUTTON_LEFT   = 0,

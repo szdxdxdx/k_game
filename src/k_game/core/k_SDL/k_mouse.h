@@ -5,14 +5,21 @@
 
 struct k_mouse_context {
 
-    int   x_at_window;
-    int   y_at_window;
-    float x_at_view;
-    float y_at_view;
-    float x_at_room;
-    float y_at_room;
+    /* 鼠标在游戏窗口中的位置 */
+    int window_x;
+    int window_y;
 
-    /* 每个按键用 3 个 bit 记录状态：
+    /* 鼠标在视野中的位置 */
+    float view_x;
+    float view_y;
+
+    /* 鼠标在房间中的位置 */
+    float room_x;
+    float room_y;
+
+    /* 记录鼠标按键状态
+     *
+     * 每个按键用 3 个 bit 记录状态：
      * - 0b100 表示该按键在上一帧被按下或按住
      * - 0b010 表示该按键在这一帧被按下
      * - 0b001 表示该按键在这一帧抬起

@@ -145,7 +145,9 @@ static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
 
 struct k_keyboard_context {
 
-    /* 每个按键用 3 个 bit 记录状态：
+    /* 记录键盘按键状态
+     *
+     * 每个按键用 3 个 bit 记录状态：
      * - 0b100 表示该按键在上一帧被按下或按住
      * - 0b010 表示该按键在这一帧被按下
      * - 0b001 表示该按键在这一帧抬起

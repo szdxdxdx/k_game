@@ -27,7 +27,9 @@ struct k_int_rect {
 
 /* region [set_color] */
 
-int k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+void k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
+void k_canvas_get_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
 
 #define k_canvas_set_hex_color(hex) \
     k_canvas_set_color( \

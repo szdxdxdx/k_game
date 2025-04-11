@@ -5,12 +5,12 @@
 #include "./k_window.h"
 
 struct k_mouse_context k__mouse = {
-    .x_at_window  = 0,
-    .y_at_window  = 0,
-    .x_at_view    = 0,
-    .y_at_view    = 0,
-    .x_at_room    = 0,
-    .y_at_room    = 0,
+    .window_x = 0,
+    .window_y = 0,
+    .view_x   = 0,
+    .view_y   = 0,
+    .room_x   = 0,
+    .room_y   = 0,
     .button_state = { 0 }
 };
 
@@ -66,21 +66,21 @@ void k__SDL_handle_event_mouse_button_up(SDL_MouseButtonEvent *event) {
 
 void k__SDL_handle_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
 
-    k__mouse.x_at_window = event->x;
-    k__mouse.x_at_view   = (float)k__mouse.x_at_window * k__window.view_window_ratio;
-    k__mouse.x_at_room   = k__mouse.x_at_view + k__window.view_x;
+    k__mouse.window_x = event->x;
+    k__mouse.view_x   = (float)k__mouse.window_x * k__window.view_window_ratio;
+    k__mouse.room_x   = k__mouse.view_x + k__window.view_x;
 
-    k__mouse.y_at_window = event->y;
-    k__mouse.y_at_view   = (float)k__mouse.y_at_window * k__window.view_window_ratio;
-    k__mouse.y_at_room   = k__mouse.y_at_view + k__window.view_y;
+    k__mouse.window_y = event->y;
+    k__mouse.view_y   = (float)k__mouse.window_y * k__window.view_window_ratio;
+    k__mouse.room_y   = k__mouse.view_y + k__window.view_y;
 }
 
-int k_mouse_x(void) {
-    return (int)k__mouse.x_at_room;
+float k_mouse_x(void) {
+    return k__mouse.room_x;
 }
 
-int k_mouse_y(void) {
-    return (int)k__mouse.y_at_room;
+float k_mouse_y(void) {
+    return k__mouse.room_y;
 }
 
 int k_mouse_button_pressed(enum k_mouse_button button) {

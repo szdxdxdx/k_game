@@ -47,8 +47,8 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
     struct k_object *obj_bullet = k_object_create(sizeof(struct yx_obj_bullet));
     struct yx_obj_bullet *bullet = k_object_get_data(obj_bullet);
 
-    float mouse_x = (float)k_mouse_x();
-    float mouse_y = (float)k_mouse_y();
+    float mouse_x = k_mouse_x();
+    float mouse_y = k_mouse_y();
     float weapon_x = weapon->x;
     float weapon_y = weapon->y;
 
@@ -92,11 +92,11 @@ static void shoot(struct k_object *object) {
 static void draw_weapon(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
-    float mouse_x = (float)k_mouse_x();
+    float mouse_x = k_mouse_x();
     float weapon_x = weapon->x;
 
     if (mouse_x != weapon_x) {
-        float angle = atanf(((float)k_mouse_y() - weapon->y) / (mouse_x - weapon_x));
+        float angle = atanf((k_mouse_y() - weapon->y) / (mouse_x - weapon_x));
         angle *= 180.0f / 3.1415926f;
 
         k_sprite_renderer_rotate(weapon->spr_rdr, angle);
@@ -114,7 +114,9 @@ void mouse_drag(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
     if (k_key_down(K_KEY_LEFT_SHIFT)) {
-        k_position_set_world_position(weapon->position, (float)k_mouse_x(), (float)k_mouse_y());
+        float x = k_mouse_x();
+        float y = k_mouse_y();
+        k_position_set_world_position(weapon->position, x, y);
     }
 }
 
