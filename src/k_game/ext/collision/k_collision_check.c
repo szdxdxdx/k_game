@@ -70,8 +70,9 @@ static int check_collision_line_rect(float lx1, float ly1, float lx2, float ly2,
 /* 检测线段与圆是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是线段的端点坐标，`(cx, cy)` 和 `r` 是圆的圆心坐标和半径 */
 static int check_collision_line_circle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
 
-    if (check_collision_point_circle(x1, y1, cx, cy, r)) return 1;
-    if (check_collision_point_circle(x2, y2, cx, cy, r)) return 1;
+    float rr = r * r;
+    if ((x1 - cx) * (x1 - cx) + (y2 - cy) * (y2 - cy) <= rr) return 1;
+    if ((x1 - cx) * (x1 - cx) + (y2 - cy) * (y2 - cy) <= rr) return 1;
 
     float dx = x2 - x1;
     float dy = y2 - y1;
@@ -79,8 +80,7 @@ static int check_collision_line_circle(float x1, float y1, float x2, float y2, f
     float px = x1 + t * dx;
     float py = y1 + t * dy;
 
-    return check_collision_point_rect(px, py, x1, y1, x2, y2)
-        && check_collision_point_circle(px, py, cx, cy, r);
+    return check_collision_point_rect(px, py, x1, y1, x2, y2) && ((px - cx) * (px - cx) + (py - cy) * (py - cy) <= rr);
 }
 
 /* 检测两个矩形是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是第一个矩形的对角坐标，`(x3, y3)` 和 `(x4, y4)` 是第二个矩形的对角坐标 */
@@ -91,14 +91,23 @@ static int check_collision_rect_rect(float x1, float y1, float x2, float y2, flo
 
 /* 检测矩形和圆是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是矩形的一组对角坐标，`(cx, cy)` 和 `r` 是圆形的圆心坐标和半径 */
 static int check_collision_rect_circle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
-    return check_collision_point_rect(cx - r, cy, x1, y1, x2, y2)
-        || check_collision_point_rect(cx + r, cy, x1, y1, x2, y2)
-        || check_collision_point_rect(cx, cy - r, x1, y1, x2, y2)
-        || check_collision_point_rect(cx, cy + r, x1, y1, x2, y2)
-        || check_collision_point_circle(x1, y1, cx, cy, r)
-        || check_collision_point_circle(x1, y2, cx, cy, r)
-        || check_collision_point_circle(x2, y1, cx, cy, r)
-        || check_collision_point_circle(x2, y2, cx, cy, r);
+
+    if (check_collision_point_rect(cx - r, cy, x1, y1, x2, y2)) return 1;
+    if (check_collision_point_rect(cx + r, cy, x1, y1, x2, y2)) return 1;
+    if (check_collision_point_rect(cx, cy - r, x1, y1, x2, y2)) return 1;
+    if (check_collision_point_rect(cx, cy + r, x1, y1, x2, y2)) return 1;
+
+    float x1_cx = x1 - cx;
+    float y1_cy = y1 - cy;
+    float x2_cx = x2 - cx;
+    float y2_cy = y2 - cy;
+    float rr = r * r;
+    if (x1_cx * x1_cx + y1_cy * y1_cy <= rr) return 1;
+    if (x2_cx * x2_cx + y1_cy * y1_cy <= rr) return 1;
+    if (x1_cx * x1_cx + y2_cy * y2_cy <= rr) return 1;
+    if (x2_cx * x2_cx + y2_cy * y2_cy <= rr) return 1;
+
+    return 0;
 }
 
 /* 检测两个圆是否发生碰撞。`(x1, y1)` 和 `r1` 是第一个圆的圆心坐标和半径，`(x2, y2)` 和 `r2` 是第二个圆的圆心坐标和半径 */

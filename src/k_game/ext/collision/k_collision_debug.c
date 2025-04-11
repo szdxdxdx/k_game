@@ -24,18 +24,13 @@ static void k__collision_draw_box(struct k_collision_box *box) {
             break;
         }
         case K__COLLISION_RECTANGLE: {
-            float x1 = *(box->x) + box->rect.offset_x1;
-            float y1 = *(box->y) + box->rect.offset_y1;
-            float x2 = *(box->x) + box->rect.offset_x2;
-            float y2 = *(box->y) + box->rect.offset_y2;
-            struct k_float_point points[] = {
-                { x1, y1 },
-                { x1, y2 },
-                { x2, y2 },
-                { x2, y1 },
-                { x1, y1 }
-            };
-            k_canvas_draw_lines(points, 5);
+            float x = *(box->x) + box->rect.offset_x1;
+            float y = *(box->y) + box->rect.offset_y1;
+            float w = box->rect.offset_x2 - box->rect.offset_x1;
+            float h = box->rect.offset_y2 - box->rect.offset_y1;
+            if (w < 0) { x += w; w = -w; }
+            if (h < 0) { y += h; h = -h; }
+            k_canvas_draw_rect(x, y, w, h);
             break;
         }
         case K__COLLISION_CIRCLE: {

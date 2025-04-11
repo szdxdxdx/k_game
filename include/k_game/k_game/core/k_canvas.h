@@ -18,8 +18,14 @@ struct k_int_rect {
     int h;
 };
 
+/* region [debug_z_index] */
+
 #define K_DEBUG_Z_GROUP 666666
 #define K_DEBUG_Z_LAYER 0
+
+/* endregion */
+
+/* region [set_color] */
 
 int k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
@@ -30,6 +36,10 @@ int k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
         0xff & ((uint32_t)(hex) >>  8), \
         0xff & ((uint32_t)(hex)) \
     )
+
+/* endregion */
+
+/* region [draw_graphics] */
 
 int k_canvas_draw_point(float x, float y);
 
@@ -44,6 +54,10 @@ int k_canvas_draw_rect(float x, float y, float w, float h);
 int k_canvas_fill_rect(float x, float y, float w, float h);
 
 int k_canvas_draw_circle(float cx, float cy, float r);
+
+/* endregion */
+
+/* region [draw_image] */
 
 /** \brief 用于指定在绘制图片时应用的变换效果 */
 struct k_canvas_draw_image_options {
@@ -96,6 +110,10 @@ struct k_canvas_draw_image_options {
  */
 int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options);
 
+/* endregion */
+
+/* region [draw_sprite] */
+
 /** \brief 用于指定在绘制精灵帧时应用的变换效果 */
 struct k_canvas_draw_sprite_options {
 
@@ -144,5 +162,7 @@ struct k_canvas_draw_sprite_options {
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options);
+
+/* endregion */
 
 #endif

@@ -8,7 +8,7 @@
 #include "../image/k_image.h"
 #include "../sprite/k_sprite.h"
 
-#define k__array_len(arr) (sizeof(arr) / sizeof(arr[0]))
+/* region [set_color] */
 
 int k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 
@@ -20,10 +20,19 @@ int k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return 0;
 }
 
+/* endregion */
+
+/* region [draw_graphics] */
+
+#define k__canvas_buf_capacity(arr) (sizeof(arr) / sizeof(arr[0]))
+
 int k_canvas_draw_point(float x, float y) {
 
     x -= k__window.view_x;
     y -= k__window.view_y;
+
+    if (x < 0.0f || k__window.view_w < x) return 0;
+    if (y < 0.0f || k__window.view_h < y) return 0;
 
     if (0 != SDL_RenderDrawPointF(k__window.renderer, x, y)) {
         k_log_error("Failed to draw point, SDL error: %s", SDL_GetError());
@@ -45,33 +54,34 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) 
     int buf_size = 0;
 
     size_t count = 0;
-    while (1) {
+    while (count < points_num) {
 
-        buf[buf_size].x = points[count].x - k__window.view_x;
-        buf[buf_size].y = points[count].y - k__window.view_y;
-        buf_size++;
+        float x = points[count].x - k__window.view_x;
+        float y = points[count].y - k__window.view_y;
         count++;
 
-        if (count == points_num) {
+        if (x < 0.0f || k__window.view_w < x) continue;
+        if (y < 0.0f || k__window.view_h < y) continue;
+
+        buf[buf_size].x = x;
+        buf[buf_size].y = y;
+        buf_size++;
+
+        if (buf_size >= k__canvas_buf_capacity(buf)) {
 
             if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
                 k_log_error("Failed to draw points, SDL error: %s", SDL_GetError());
                 return -1;
             }
-
-            break;
-        }
-        else if (buf_size >= k__array_len(buf)) {
-
-            if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
-                k_log_error("Failed to draw points, SDL error: %s", SDL_GetError());
-                return -1;
-            }
-
-            if (count == points_num)
-                break;
 
             buf_size = 0;
+        }
+    }
+
+    if (0 != buf_size) {
+        if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
+            k_log_error("Failed to draw points, SDL error: %s", SDL_GetError());
+            return -1;
         }
     }
 
@@ -118,7 +128,7 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
 
             break;
         }
-        else if (buf_size >= k__array_len(buf)) {
+        else if (buf_size >= k__canvas_buf_capacity(buf)) {
 
             if (0 != SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size)) {
                 k_log_error("Failed to draw lines, SDL error: %s", SDL_GetError());
@@ -128,8 +138,8 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
             if (count == points_num)
                 break;
 
-            buf[0].x = buf[k__array_len(buf) - 1].x;
-            buf[0].y = buf[k__array_len(buf) - 1].y;
+            buf[0].x = buf[k__canvas_buf_capacity(buf) - 1].x;
+            buf[0].y = buf[k__canvas_buf_capacity(buf) - 1].y;
             buf_size = 1;
         }
     }
@@ -139,11 +149,23 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
 
 int k_canvas_draw_rect(float x, float y, float w, float h) {
 
+    if (w <= 0.0f || h <= 0.0f)
+        return 0;
+
     SDL_FRect rect;
     rect.x = x - k__window.view_x;
     rect.y = y - k__window.view_y;
     rect.w = w;
     rect.h = h;
+
+    if (k__window.view_w < rect.x)
+        return 0;
+    if (k__window.view_h < rect.y)
+        return 0;
+    if (rect.x + rect.w < 0.0f)
+        return 0;
+    if (rect.y + rect.h < 0.0f)
+        return 0;
 
     if (0 != SDL_RenderDrawRectF(k__window.renderer, &rect)) {
         k_log_error("Failed to draw rect, SDL error: %s", SDL_GetError());
@@ -205,7 +227,7 @@ int k_canvas_draw_circle(float cx, float cy, float r) {
             SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size);
             break;
         }
-        else if (buf_size >= k__array_len(buf)) {
+        else if (buf_size >= k__canvas_buf_capacity(buf)) {
             SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size);
             buf_size = 0;
         }
@@ -213,6 +235,10 @@ int k_canvas_draw_circle(float cx, float cy, float r) {
 
     return 0;
 }
+
+/* endregion */
+
+/* region [draw_image] */
 
 int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
 
@@ -278,6 +304,10 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
 
     return 0;
 }
+
+/* endregion */
+
+/* region [draw_sprite] */
 
 int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
 
@@ -362,3 +392,5 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
 
     return 0;
 }
+
+/* endregion */

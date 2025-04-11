@@ -10,9 +10,9 @@ static void bubble_set_state_float(struct k_object *object) {
         config.group_id  = YX_COLLISION_GROUP_BUBBLE;
         config.x         = &bubble->x;
         config.y         = &bubble->y;
-        config.offset_x1 = -8;
+        config.offset_x1 = 8;
         config.offset_y1 = -6;
-        config.offset_x2 = 8;
+        config.offset_x2 = -8;
         config.offset_y2 = 10;
         bubble->collision_box = k_object_add_collision_rect(object, &config);
     }
