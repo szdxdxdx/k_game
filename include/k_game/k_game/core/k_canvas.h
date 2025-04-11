@@ -27,17 +27,13 @@ struct k_int_rect {
 
 /* region [set_color] */
 
-void k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-void k_canvas_get_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
+void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
 
-#define k_canvas_set_hex_color(hex) \
-    k_canvas_set_color( \
-        0xff & ((uint32_t)(hex) >> 24), \
-        0xff & ((uint32_t)(hex) >> 16), \
-        0xff & ((uint32_t)(hex) >>  8), \
-        0xff & ((uint32_t)(hex)) \
-    )
+void k_canvas_set_draw_color_rgba(uint32_t hex_rgba);
+
+uint32_t k_canvas_get_draw_color_rgba(void);
 
 /* endregion */
 

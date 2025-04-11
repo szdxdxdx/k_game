@@ -19,7 +19,7 @@ static void k__camera_auto_follow_debug_draw(struct k_camera *camera) {
 
 draw_targets_line:
     {
-        k_canvas_set_hex_color(0x55dd66ff);
+        k_canvas_set_draw_color_rgba(0x55dd66ff);
 
         k_canvas_draw_circle(dst_x, dst_y, r);
 
@@ -68,7 +68,7 @@ draw_view_center:
         float view_cy;
         k_view_get_position(&view_cx, &view_cy);
 
-        k_canvas_set_hex_color(0xffdd66ff);
+        k_canvas_set_draw_color_rgba(0xffdd66ff);
         k_canvas_draw_circle(view_cx, view_cy, r);
 
         if (dst_x != view_cx || dst_y != view_cy) {

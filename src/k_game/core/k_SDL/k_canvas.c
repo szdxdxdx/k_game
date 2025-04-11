@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "k_log.h"
 
 #include "SDL_render.h"
@@ -10,12 +12,30 @@
 
 /* region [set_color] */
 
-void k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_SetRenderDrawColor(k__window.renderer, r, g, b, a);
 }
 
-void k_canvas_get_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
+void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
     SDL_GetRenderDrawColor(k__window.renderer, r, g, b, a);
+}
+
+void k_canvas_set_draw_color_rgba(uint32_t hex_rgba) {
+    uint8_t r = 0xff & (hex_rgba >> 24);
+    uint8_t g = 0xff & (hex_rgba >> 16);
+    uint8_t b = 0xff & (hex_rgba >> 8);
+    uint8_t a = 0xff & (hex_rgba);
+    k_canvas_set_draw_color(r, g, b, a);
+}
+
+uint32_t k_canvas_get_draw_color_rgba(void) {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
+    k_canvas_get_draw_color(&r, &g, &b, &a);
+    uint32_t color = (r << 24) | (g << 16) | (b << 8) | a;
+    return color;
 }
 
 /* endregion */
