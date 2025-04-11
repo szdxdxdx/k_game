@@ -49,20 +49,20 @@ void log_v1(int level, const char *fmt, va_list args) {
 
 /* region [v2] */
 
-void log_v2(int level, const char *fmt, const char *file, int line, va_list args) {
+void log_v2(int level, const char *file, int line, const char *fn, const char *fmt, va_list args) {
 
     char buf[512];
-    snprintf(buf, sizeof(buf), "%s %s   %s:%d\n", level_str(level), fmt, file, line);
+    snprintf(buf, sizeof(buf), "%s %s() %s:%d\n%s\n", level_str(level), fn, file, line, fmt);
     vfprintf(stdout, buf, args);
 }
 
 /* endregion */
 
-void k__log(int level, const char *file, int line, const char *fmt, ...) {
+void k__log(int level, const char *file, int line, const char *fn, const char *fmt, ...) {
 
     va_list args;
     va_start(args, fmt);
-    log_v1(level, fmt, args);
-    //log_v2(level, fmt, file, line, args);
+    //log_v1(level, fmt, args);
+    log_v2(level, file, line, fn, fmt, args);
     va_end(args);
 }

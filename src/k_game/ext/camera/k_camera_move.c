@@ -115,29 +115,35 @@ static void k__camera_auto_follow(struct k_camera *camera) {
             sum_w  += target->weight;
         }
 
-        dst_cx = sum_wx / sum_w;
-        dst_cy = sum_wy / sum_w;
-
-        float view_half_w = view_w / 2;
-        float view_half_h = view_h / 2;
-
-        float max_cx = *(camera->primary_target->x) + view_half_w;
-        if (dst_cx > max_cx) {
-            dst_cx = max_cx;
-        } else {
-            float min_cx = *(camera->primary_target->x) - view_half_w;
-            if (dst_cx < min_cx) {
-                dst_cx = min_cx;
-            }
+        if (0.0f == sum_w) {
+            dst_cx = *(camera->primary_target->x);
+            dst_cy = *(camera->primary_target->y);
         }
+        else {
+            dst_cx = sum_wx / sum_w;
+            dst_cy = sum_wy / sum_w;
 
-        float max_cy = *(camera->primary_target->y) + view_half_h;
-        if (dst_cy > max_cy) {
-            dst_cy = max_cy;
-        } else {
-            float min_cy = *(camera->primary_target->y) - view_half_h;
-            if (dst_cy < min_cy) {
-                dst_cy = min_cy;
+            float view_half_w = view_w / 2;
+            float view_half_h = view_h / 2;
+
+            float max_cx = *(camera->primary_target->x) + view_half_w;
+            if (dst_cx > max_cx) {
+                dst_cx = max_cx;
+            } else {
+                float min_cx = *(camera->primary_target->x) - view_half_w;
+                if (dst_cx < min_cx) {
+                    dst_cx = min_cx;
+                }
+            }
+
+            float max_cy = *(camera->primary_target->y) + view_half_h;
+            if (dst_cy > max_cy) {
+                dst_cy = max_cy;
+            } else {
+                float min_cy = *(camera->primary_target->y) - view_half_h;
+                if (dst_cy < min_cy) {
+                    dst_cy = min_cy;
+                }
             }
         }
     }

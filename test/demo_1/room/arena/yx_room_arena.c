@@ -24,6 +24,8 @@ static int init_room(void *params) {
     k_room_add_collision_manager();
 
     k_room_add_camera();
+    k_camera_set_max_speed(1000.0f);
+    k_camera_set_acceleration(600.0f);
 
     k_room_add_step_callback(NULL, set_debug);
     k_room_add_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
@@ -85,8 +87,8 @@ static void enter_room(void) {
 struct k_room *yx_room_arena_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_w    = 1920;
-    config.room_h    = 1080;
+    config.room_w    = 1920 * 5;
+    config.room_h    = 1080 * 5;
     config.data_size = sizeof(struct yx_room_arena);
     config.fn_init   = init_room;
     config.fn_enter  = enter_room;

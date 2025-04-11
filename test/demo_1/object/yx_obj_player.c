@@ -126,6 +126,10 @@ static void player_step(struct k_object *object) {
     if (k_key_pressed('G')) {
         k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_run);
     }
+
+    if (k_key_pressed('V')) {
+        k_view_set_position(player->x + 2.0f, player->y + 2.0f);
+    }
 }
 
 static void player_touch_bubble(struct k_object *object) {
@@ -182,7 +186,7 @@ struct k_object *yx_player_create(const struct yx_obj_player_config *config) {
         WASD_config.key_left  = 'A';
         WASD_config.key_down  = 'S';
         WASD_config.key_right = 'D';
-        WASD_config.speed     = 192.0f;
+        WASD_config.speed     = 192.0f * 5;
         WASD_config.x         = &player->next_x;
         WASD_config.y         = &player->next_y;
         player->WASD = k_object_add_component(object, WASD, &WASD_config);

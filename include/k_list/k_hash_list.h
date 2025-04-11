@@ -22,9 +22,11 @@ static inline void k_hash_list_init(struct k_hash_list *list) {
 }
 
 static inline void k_hash_list_init_all(struct k_hash_list *lists, size_t lists_num) {
+
     size_t i = 0;
-    for (; i < lists_num; i++)
+    for (; i < lists_num; i++) {
         k_hash_list_init(&lists[i]);
+    }
 }
 
 static inline void k_hash_list_add(struct k_hash_list *list, struct k_hash_list_node *node) {

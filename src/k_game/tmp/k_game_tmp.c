@@ -15,8 +15,8 @@ void k_draw_grid(void *unused) {
 
     SDL_SetRenderDrawColor(k__window.renderer, 100, 100, 100, 255);
 
-    int canvas_w = k__window.canvas_w;
-    int canvas_h = k__window.canvas_h;
+    int canvas_w = (int)k__window.canvas_w;
+    int canvas_h = (int)k__window.canvas_h;
 
     int x = grid_size - 1 - (int)k__window.view_x;
     for (; x < canvas_w; x += grid_size) {

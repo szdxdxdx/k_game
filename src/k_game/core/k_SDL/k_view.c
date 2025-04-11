@@ -1,15 +1,19 @@
 #include <math.h>
 
+#include "k_log.h"
+
 #include "k_game/core/k_view.h"
 #include "./k_window.h"
 #include "./k_mouse.h"
 
 #include "../room/k_room.h"
 
-void k_view_fit_rect(float w, float h) {
+int k_view_fit_rect(float w, float h) {
 
-    if (w <= 0 || h <= 0)
-        return;
+    if (w <= 0 || isnan(w) || isinf(w) || h <= 0 || isnan(h) || isinf(h)){
+        k_log_error("invalid parameters `w`=%f, `h`=%f", w, h);
+        return -1;
+    }
 
     float aspect = k__window.window_aspect_ratio;
 
@@ -55,9 +59,16 @@ void k_view_fit_rect(float w, float h) {
     k__mouse.y_at_view = (float)k__mouse.y_at_window * k__window.view_window_ratio;
     k__mouse.x_at_room = k__mouse.x_at_view + k__window.view_x;
     k__mouse.y_at_room = k__mouse.y_at_view + k__window.view_y;
+
+    return 0;
 }
 
-void k_view_set_position(float cx, float cy) {
+int k_view_set_position(float cx, float cy) {
+
+    if (isnan(cx) || isinf(cx) || isnan(cy) || isinf(cy)) {
+        k_log_error("invalid parameters `cx`=%f, `cy`=%f", cx, cy);
+        return -1;
+    }
 
     struct k_room *room = k__current_room;
 
@@ -83,6 +94,8 @@ void k_view_set_position(float cx, float cy) {
 
     k__mouse.x_at_room = k__mouse.x_at_view + k__window.view_x;
     k__mouse.y_at_room = k__mouse.y_at_view + k__window.view_y;
+
+    return 0;
 }
 
 void k_view_get_rect(float *get_x, float *get_y, float *get_w, float *get_h) {

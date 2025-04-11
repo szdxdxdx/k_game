@@ -92,8 +92,9 @@ struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config) {
     pool->free_lists       = free_lists;
 
     size_t i = 0;
-    for (; i < lists_num; i++)
+    for (; i < lists_num; i++) {
         free_lists[i] = NULL;
+    }
 
     return pool;
 }
@@ -123,8 +124,9 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
     pool->free_lists       = free_lists;
 
     size_t i = 0;
-    for (; i < lists_num; i++)
+    for (; i < lists_num; i++) {
         free_lists[i] = NULL;
+    }
 
     return pool;
 }
