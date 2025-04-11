@@ -6,17 +6,17 @@
 
 #include "./k_camera_internal.h"
 
-static void k__camera_move_towards(struct k_camera *camera, float dst_x, float dst_y) {
+static void k__camera_move_towards(struct k_camera *camera) {
 
     float curr_x;
     float curr_y;
     k_view_get_position(&curr_x, &curr_y);
 
-    if (curr_x == dst_x && curr_y == dst_y)
+    if (curr_x == camera->dst_x && curr_y == camera->dst_y)
         return;
 
-    float dist_x = dst_x - curr_x;
-    float dist_y = dst_y - curr_y;
+    float dist_x = camera->dst_x - curr_x;
+    float dist_y = camera->dst_y - curr_y;
     float dist = sqrtf(dist_x * dist_x + dist_y * dist_y);
 
     float next_x;
@@ -25,8 +25,8 @@ static void k__camera_move_towards(struct k_camera *camera, float dst_x, float d
     if (dist < 0.25f) {
         camera->vx = 0.0f;
         camera->vy = 0.0f;
-        next_x = dst_x;
-        next_y = dst_y;
+        next_x = camera->dst_x;
+        next_y = camera->dst_y;
     }
     else {
         float dir_x = dist_x / dist;
@@ -63,9 +63,6 @@ static void k__camera_auto_follow(struct k_camera *camera) {
     if (0 == camera->targets_num)
         return;
 
-    float dst_cx;
-    float dst_cy;
-
     if (NULL == camera->primary_target) {
         float sum_wx = 0.0f;
         float sum_wy = 0.0f;
@@ -82,8 +79,8 @@ static void k__camera_auto_follow(struct k_camera *camera) {
             sum_w  += target->weight;
         }
 
-        dst_cx = sum_wx / sum_w;
-        dst_cy = sum_wy / sum_w;
+        camera->dst_x = sum_wx / sum_w;
+        camera->dst_y = sum_wy / sum_w;
     }
     else {
         float sum_wx = 0.0f;
@@ -116,42 +113,42 @@ static void k__camera_auto_follow(struct k_camera *camera) {
         }
 
         if (0.0f == sum_w) {
-            dst_cx = *(camera->primary_target->x);
-            dst_cy = *(camera->primary_target->y);
+            camera->dst_x = *(camera->primary_target->x);
+            camera->dst_y = *(camera->primary_target->y);
         }
         else {
-            dst_cx = sum_wx / sum_w;
-            dst_cy = sum_wy / sum_w;
+            camera->dst_x = sum_wx / sum_w;
+            camera->dst_y = sum_wy / sum_w;
 
             float view_half_w = view_w / 2;
             float view_half_h = view_h / 2;
 
             float max_cx = *(camera->primary_target->x) + view_half_w;
-            if (dst_cx > max_cx) {
-                dst_cx = max_cx;
+            if (camera->dst_x > max_cx) {
+                camera->dst_x = max_cx;
             } else {
                 float min_cx = *(camera->primary_target->x) - view_half_w;
-                if (dst_cx < min_cx) {
-                    dst_cx = min_cx;
+                if (camera->dst_x < min_cx) {
+                    camera->dst_x = min_cx;
                 }
             }
 
             float max_cy = *(camera->primary_target->y) + view_half_h;
-            if (dst_cy > max_cy) {
-                dst_cy = max_cy;
+            if (camera->dst_y > max_cy) {
+                camera->dst_y = max_cy;
             } else {
                 float min_cy = *(camera->primary_target->y) - view_half_h;
-                if (dst_cy < min_cy) {
-                    dst_cy = min_cy;
+                if (camera->dst_y < min_cy) {
+                    camera->dst_y = min_cy;
                 }
             }
         }
     }
 
-    k__camera_move_towards(camera, dst_cx, dst_cy);
+    k__camera_move_towards(camera);
 }
 
-void k__camera_update(void *camera_) {
+void k__camera_move(void *camera_) {
     struct k_camera *camera = camera_;
 
     switch (camera->state) {

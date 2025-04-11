@@ -95,4 +95,14 @@ int k_camera_set_acceleration(float acceleration);
 
 /* endregion */
 
+/* region [camera_debug] */
+
+int k_camera_set_debug(int debug);
+
+/** \brief 碰撞组调试模式的绘制深度 */
+#define K__CAMERA_DEBUG_Z_LAYER 100000
+#define K__CAMERA_DEBUG_Z_GROUP 100000
+
+/* endregion */
+
 #endif

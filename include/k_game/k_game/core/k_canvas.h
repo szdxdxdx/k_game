@@ -20,6 +20,14 @@ struct k_int_rect {
 
 int k_canvas_set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
+#define k_canvas_set_hex_color(hex) \
+    k_canvas_set_color( \
+        0xff & ((uint32_t)(hex) >> 24), \
+        0xff & ((uint32_t)(hex) >> 16), \
+        0xff & ((uint32_t)(hex) >>  8), \
+        0xff & ((uint32_t)(hex)) \
+    )
+
 int k_canvas_draw_point(float x, float y);
 
 int k_canvas_draw_points(const struct k_float_point *points, size_t points_num);

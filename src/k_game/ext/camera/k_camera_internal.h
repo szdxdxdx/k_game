@@ -49,15 +49,18 @@ struct k_camera {
     float max_speed;
     float vx;
     float vy;
+    float dst_x;
+    float dst_y;
 
     struct k_camera_target *primary_target;
     struct k_camera_target *targets[K__CAMERA_TARGET_MAX];
     size_t targets_num;
 
     struct k_callback *cb_camera_move;
+    struct k_callback *cb_camera_debug;
 };
 
-void k__camera_update(void *camera_);
+void k__camera_move(void *camera_);
 
 /* endregion */
 

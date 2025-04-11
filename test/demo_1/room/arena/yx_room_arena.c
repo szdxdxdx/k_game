@@ -9,10 +9,14 @@ static void set_debug(void *data) {
 
     if (k_key_pressed('B')) {
 
-        if (k_key_down(K_KEY_LEFT_SHIFT))
+        if (k_key_down(K_KEY_LEFT_SHIFT)) {
             k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 0);
-        else
+            k_camera_set_debug(0);
+        }
+        else {
             k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 1);
+            k_camera_set_debug(1);
+        }
     }
 }
 
