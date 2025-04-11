@@ -1,7 +1,7 @@
 
 * [k_game](/k_game/)
   * [k_callback.h](/k_game/k_callback.md)
-  * [page1](/k_game/page1)
+  * [k_view.h](/k_game/k_view.md)
   * [page2](/k_game/page2)
 
 * 其他工具
