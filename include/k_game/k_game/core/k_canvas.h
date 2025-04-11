@@ -20,13 +20,6 @@ struct k_int_rect {
     int h;
 };
 
-/* region [debug_z_index] */
-
-#define K_DEBUG_Z_GROUP 666666
-#define K_DEBUG_Z_LAYER 0
-
-/* endregion */
-
 /* region [set_color] */
 
 /**
@@ -182,6 +175,8 @@ struct k_canvas_draw_image_options {
  * \brief 在房间内绘制一张图片
  *
  * `src_rect` 指定源矩形区域，若为 `NULL` 则绘制整张图片，否则绘制原图中指定的裁剪部分。
+ * 若 `src_rect` 指定裁剪部分的宽高为 0 或负数，则不绘制任何内容。
+ *
  * `x` 和 `y` 指定图片左上角在房间中的坐标。
  * `options` 用于执行缩放、旋转和镜像翻转变换，若为 `NULL` 则不应用任何变换。
  *
@@ -241,6 +236,13 @@ struct k_canvas_draw_sprite_options {
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options);
+
+/* endregion */
+
+/* region [debug_z_index] */
+
+#define K_DEBUG_Z_GROUP 666666
+#define K_DEBUG_Z_LAYER 0
 
 /* endregion */
 
