@@ -11,54 +11,47 @@ static void k__camera_auto_follow_debug_draw(struct k_camera *camera) {
     float dst_y = camera->dst_y;
     float r = 3.0f;
 
-    if (0 != camera->targets_num) {
-        goto draw_targets_line;
-    } else {
+    if (0 == camera->targets_num)
         goto draw_view_center;
-    }
 
-draw_targets_line:
-    {
-        k_canvas_set_draw_color_rgba(0x55dd66ff);
+    k_canvas_set_draw_color_rgba(0x39c5bbff);
+    k_canvas_draw_circle(dst_x, dst_y, r);
 
-        k_canvas_draw_circle(dst_x, dst_y, r);
+    if (NULL == camera->primary_target) {
 
-        if (NULL == camera->primary_target) {
+        size_t i = 0;
+        for (; i < camera->targets_num; i++) {
+            struct k_camera_target *target = camera->targets[i];
 
-            size_t i = 0;
-            for (; i < camera->targets_num; i++) {
-                struct k_camera_target *target = camera->targets[i];
-
-                float target_x = *target->x;
-                float target_y = *target->y;
-                k_canvas_draw_line(target_x, target_y, dst_x, dst_y);
-            }
+            float target_x = *target->x;
+            float target_y = *target->y;
+            k_canvas_draw_line(target_x, target_y, dst_x, dst_y);
         }
-        else {
-            float view_left;
-            float view_top;
-            float view_w;
-            float view_h;
-            k_view_get_rect(&view_left, &view_top, &view_w, &view_h);
-            float view_right  = view_left + view_w;
-            float view_bottom = view_top + view_h;
+    }
+    else {
+        float view_left;
+        float view_top;
+        float view_w;
+        float view_h;
+        k_view_get_rect(&view_left, &view_top, &view_w, &view_h);
+        float view_right  = view_left + view_w;
+        float view_bottom = view_top + view_h;
 
-            size_t i = 0;
-            for (; i < camera->targets_num; i++) {
-                struct k_camera_target *target = camera->targets[i];
+        size_t i = 0;
+        for (; i < camera->targets_num; i++) {
+            struct k_camera_target *target = camera->targets[i];
 
-                float target_x = *target->x;
-                float target_y = *target->y;
+            float target_x = *target->x;
+            float target_y = *target->y;
 
-                if (target != camera->primary_target) {
-                    if (target_x < view_left)   continue;
-                    if (target_y < view_top)    continue;
-                    if (target_x > view_right)  continue;
-                    if (target_y > view_bottom) continue;
-                }
-
-                k_canvas_draw_line(target_x, target_y, dst_x, dst_y);
+            if (target != camera->primary_target) {
+                if (target_x < view_left)   continue;
+                if (target_y < view_top)    continue;
+                if (target_x > view_right)  continue;
+                if (target_y > view_bottom) continue;
             }
+
+            k_canvas_draw_line(target_x, target_y, dst_x, dst_y);
         }
     }
 
@@ -69,8 +62,7 @@ draw_view_center:
         k_view_get_position(&view_cx, &view_cy);
 
         k_canvas_set_draw_color_rgba(0xffdd66ff);
-        k_canvas_draw_circle(view_cx, view_cy, r);
-
+        k_canvas_draw_circle(view_cx, view_cy, 2 * r);
         if (dst_x != view_cx || dst_y != view_cy) {
             k_canvas_draw_line(view_cx, view_cy, dst_x, dst_y);
         }

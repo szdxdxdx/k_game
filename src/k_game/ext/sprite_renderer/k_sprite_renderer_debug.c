@@ -121,7 +121,6 @@ draw_position:
 int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
 
     if (0 == debug) {
-
         if (NULL == renderer->cb_debug_draw)
             return 0;
 
@@ -130,7 +129,6 @@ int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
         return 0;
     }
     else {
-
         if (NULL != renderer->cb_debug_draw)
             return 0;
 

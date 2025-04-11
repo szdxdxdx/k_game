@@ -27,12 +27,46 @@ struct k_int_rect {
 
 /* region [set_color] */
 
+/**
+ * \brief 设置画笔的颜色
+ *
+ * 更改画笔的颜色为 `(r, g, b, a)` 所指定的颜色值，
+ * 其中 `r, g, b` 分别指定红色、绿色、蓝色通道的值，
+ * `a` 指定透明度通道的值，每个通道的取值范围是 0 ~ 255。
+ *
+ * 例如 `(r, g, b, a)`：
+ * - 嫣汐橙 `(255, 102,   0, 255)` 或 `(0xff, 0f66, 0x00, 0xff)`
+ * - 初音绿 `( 57, 197, 187, 255)` 或 `(0x39, 0xc5, 0xbb, 0xff)`
+ * - 阿绫红 `(238,   0,   0, 255)` 或 `(0xee, 0x00, 0x00, 0xff)`
+ * - 天依蓝 `(102, 204, 255, 255)` 或 `(0x66, 0xcc, 0xff, 0xff)`
+ */
 void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
+/**
+ * \brief 获取画笔的颜色
+ *
+ * 函数通过参数列表返回当前画笔的颜色，若传 `NULL` 则不接受该出参。
+ * `r, g, b, a` 分别返回红色通道、绿色通道、蓝色通道和透明度通道的值。
+ */
 void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
 
+/**
+ * \brief 设置画笔的颜色
+ *
+ * 更改画笔的颜色为 `hex_rgba` 所指定十六进制 `0xRRGGBBAA` 格式的颜色值。
+ * 例如：
+ * - 嫣汐橙 `0xff6600ff`
+ * - 初音绿 `0x39c5bbff`
+ * - 阿绫红 `0xee0000ff`
+ * - 天依蓝 `0x66ccffff`
+ */
 void k_canvas_set_draw_color_rgba(uint32_t hex_rgba);
 
+/**
+ * \brief 获取画笔的颜色
+ *
+ * 函数返回当前画笔的颜色值，为十六进制 `0xRRGGBBAA` 格式。
+ */
 uint32_t k_canvas_get_draw_color_rgba(void);
 
 /* endregion */

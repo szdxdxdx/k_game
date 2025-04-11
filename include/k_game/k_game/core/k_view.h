@@ -21,7 +21,7 @@ int k_view_fit_rect(float w, float h);
  * \brief 设置视野矩形的中心点坐标
  *
  * 将视野矩形的中心点移至房间的 `(cx, cy)` 处。
- * 若指定的坐标位置会导致视野矩形超出房间边界，
+ * 若指定的坐标位置会导致视野矩形超出房间的边界，
  * 则函数会修正坐标，使视野矩形仍被完全包含在房间内。
  *
  * 若设置成功，函数返回 0，否则返回非 0。
@@ -31,16 +31,17 @@ int k_view_set_position(float cx, float cy);
 /**
  * \brief 获取视野矩形的位置和宽高
  *
- * 函数返回视野矩形的宽高，以及矩形左上角在房间中的坐标。
- * 所有的参数都作为出参，若为 `NULL` 则不返回任何值。
+ * 函数通过参数列表返回视野矩形的位置和宽高，若传 `NULL` 则不接受该出参。
+ * `get_x` 和 `get_y` 返回视野矩形左上角在房间中的坐标，
+ * `get_w` 和 `get_h` 返回视野矩形的宽高。
  */
 void k_view_get_rect(float *get_x, float *get_y, float *get_w, float *get_h);
 
 /**
  * \brief 获取视野矩形中心的位置
  *
- * 函数返回视野矩形的中心点在房间中的坐标。
- * 所有的参数都作为出参，若为 `NULL` 则不返回任何值。
+ * 函数通过出参 `get_cx` 和 `get_cy` 返回视野矩形中心点的在房间中的坐标。
+ * 若传 `NULL` 则不接受该出参。
  */
 void k_view_get_position(float *get_cx, float *get_cy);
 

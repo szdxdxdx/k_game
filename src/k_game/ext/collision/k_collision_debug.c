@@ -46,7 +46,7 @@ static void k__collision_draw_box(struct k_collision_box *box) {
 static void k__collision_draw_group(void *data) {
     struct k_collision_group *group = data;
 
-    k_canvas_set_draw_color_rgba(0xff0099ff);
+    k_canvas_set_draw_color_rgba(0xee0000ff);
 
     struct k_collision_box *box;
     struct k_list *list = &group->box_list;
