@@ -73,7 +73,7 @@ struct k_room_config {
 /** \brief 创建房间所需的配置参数的默认值 */
 #define K_ROOM_CONFIG_INIT \
 { \
-    .room_w     = 600,  \
+    .room_w     = 640,  \
     .room_h     = 480,  \
     .room_speed = 60,   \
     .data_size  = 0,    \
