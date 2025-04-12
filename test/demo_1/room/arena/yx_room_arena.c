@@ -89,8 +89,8 @@ static void enter_room(void) {
 struct k_room *yx_room_arena_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_w    = 1920;
-    config.room_h    = 1080;
+    config.room_w    = 1920 * 1.5f;
+    config.room_h    = 1080 * 1.5f;
     config.data_size = sizeof(struct yx_room_arena);
     config.fn_init   = init_room;
     config.fn_enter  = enter_room;

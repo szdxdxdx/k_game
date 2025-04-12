@@ -20,24 +20,6 @@ void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
     SDL_GetRenderDrawColor(k__window.renderer, r, g, b, a);
 }
 
-void k_canvas_set_draw_color_rgba(uint32_t hex_rgba) {
-    uint8_t r = 0xff & (hex_rgba >> 24);
-    uint8_t g = 0xff & (hex_rgba >> 16);
-    uint8_t b = 0xff & (hex_rgba >> 8);
-    uint8_t a = 0xff & (hex_rgba);
-    k_canvas_set_draw_color(r, g, b, a);
-}
-
-uint32_t k_canvas_get_draw_color_rgba(void) {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
-    k_canvas_get_draw_color(&r, &g, &b, &a);
-    uint32_t color = (r << 24) | (g << 16) | (b << 8) | a;
-    return color;
-}
-
 /* endregion */
 
 /* region [draw_graphics] */
@@ -49,8 +31,10 @@ int k_canvas_draw_point(float x, float y) {
     x -= k__window.view_x;
     y -= k__window.view_y;
 
-    if (x < 0.0f || k__window.view_w < x) return 0;
-    if (y < 0.0f || k__window.view_h < y) return 0;
+    if (x < 0.0f || k__window.view_w < x)
+        return 0;
+    if (y < 0.0f || k__window.view_h < y)
+        return 0;
 
     if (0 != SDL_RenderDrawPointF(k__window.renderer, x, y)) {
         k_log_error("Failed to draw point, SDL error: %s", SDL_GetError());
@@ -78,8 +62,10 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) 
         float y = points[count].y - k__window.view_y;
         count++;
 
-        if (x < 0.0f || k__window.view_w < x) continue;
-        if (y < 0.0f || k__window.view_h < y) continue;
+        if (x < 0.0f || k__window.view_w < x)
+            continue;
+        if (y < 0.0f || k__window.view_h < y)
+            continue;
 
         buf[buf_size].x = x;
         buf[buf_size].y = y;
@@ -113,8 +99,10 @@ int k_canvas_draw_line(float x1, float y1, float x2, float y2) {
     x2 -= k__window.view_x;
     y2 -= k__window.view_y;
 
-    if ((x1 < x2) ? (x2 < 0.0f || k__window.view_w < x1) : (x1 < 0.0f || k__window.view_w < x2)) return 0;
-    if ((y1 < y2) ? (y2 < 0.0f || k__window.view_h < y1) : (y1 < 0.0f || k__window.view_h < y2)) return 0;
+    if ((x1 < x2) ? (x2 < 0.0f || k__window.view_w < x1) : (x1 < 0.0f || k__window.view_w < x2))
+        return 0;
+    if ((y1 < y2) ? (y2 < 0.0f || k__window.view_h < y1) : (y1 < 0.0f || k__window.view_h < y2))
+        return 0;
 
     if (0 != SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2)) {
         k_log_error("Failed to draw line, SDL error: %s", SDL_GetError());
@@ -179,8 +167,10 @@ int k_canvas_draw_rect(float x, float y, float w, float h) {
     x -= k__window.view_x;
     y -= k__window.view_y;
 
-    if (k__window.view_w < x || x + w < 0.0f) return 0;
-    if (k__window.view_h < y || y + h < 0.0f) return 0;
+    if (k__window.view_w < x || x + w < 0.0f)
+        return 0;
+    if (k__window.view_h < y || y + h < 0.0f)
+        return 0;
 
     SDL_FRect rect;
     rect.x = x;
@@ -204,8 +194,10 @@ int k_canvas_fill_rect(float x, float y, float w, float h) {
     x -= k__window.view_x;
     y -= k__window.view_y;
 
-    if (k__window.view_w < x || x + w < 0.0f) return 0;
-    if (k__window.view_h < y || y + h < 0.0f) return 0;
+    if (k__window.view_w < x || x + w < 0.0f)
+        return 0;
+    if (k__window.view_h < y || y + h < 0.0f)
+        return 0;
 
     SDL_FRect rect;
     rect.x = x;
@@ -317,8 +309,10 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
         dst.w = (float)image->image_w;
         dst.h = (float)image->image_h;
 
-        if (k__window.view_w < dst.x || dst.x + dst.w < 0.0f) return 0;
-        if (k__window.view_h < dst.y || dst.y + dst.h < 0.0f) return 0;
+        if (k__window.view_w < dst.x || dst.x + dst.w < 0.0f)
+            return 0;
+        if (k__window.view_h < dst.y || dst.y + dst.h < 0.0f)
+            return 0;
 
         if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
@@ -329,9 +323,11 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
         if (options->scaled_w <= 0.0f || options->scaled_h <= 0.0f)
             return 0;
 
-        float R = options->scaled_w / 2.0f + options->scaled_h / 2.0f;
-        if (x + R < 0.0f || k__window.view_w < x - R) return 0;
-        if (y + R < 0.0f || k__window.view_h < y - R) return 0;
+        float R = (options->scaled_w + options->scaled_h) / 2.0f;
+        if (x + R < 0.0f || k__window.view_w < x - R)
+            return 0;
+        if (y + R < 0.0f || k__window.view_h < y - R)
+            return 0;
 
         SDL_FRect dst;
         dst.x = x;
@@ -381,8 +377,10 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
         dst.w = (float)sprite->sprite_w;
         dst.h = (float)sprite->sprite_h;
 
-        if (k__window.view_w < dst.x || dst.x + dst.w < 0.0f) return 0;
-        if (k__window.view_h < dst.y || dst.y + dst.h < 0.0f) return 0;
+        if (k__window.view_w < dst.x || dst.x + dst.w < 0.0f)
+            return 0;
+        if (k__window.view_h < dst.y || dst.y + dst.h < 0.0f)
+            return 0;
 
         SDL_Rect src;
         src.x = frame->offset_x;
@@ -414,9 +412,15 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
             flip |= SDL_FLIP_VERTICAL;
         }
 
-        float R = options->scaled_w + options->scaled_h + fabsf(origin_x) + fabsf(origin_y);
-        if (x + R < 0.0f || k__window.view_w < x - R) return 0;
-        if (y + R < 0.0f || k__window.view_h < y - R) return 0;
+        {
+            float half_w = options->scaled_w / 2.0f;
+            float half_h = options->scaled_h / 2.0f;
+            float R = half_w + half_h + fabsf(origin_x - half_w) + fabsf(origin_y - half_h);
+            if (x + R < 0.0f || k__window.view_w < x - R)
+                return 0;
+            if (y + R < 0.0f || k__window.view_h < y - R)
+                return 0;
+        }
 
         SDL_Rect src;
         src.x = frame->offset_x;
