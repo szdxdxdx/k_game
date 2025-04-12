@@ -2,7 +2,7 @@
 
 #include "../_internal.h"
 
-#include "../../sprite/_public.h"
+#include "../../sprite/yx_all_sprite.h"
 #include "../../object/yx_all_object.h"
 
 static void set_debug(void *data) {

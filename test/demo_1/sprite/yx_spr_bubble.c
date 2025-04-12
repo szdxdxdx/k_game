@@ -1,4 +1,6 @@
-#include "./_internal.h"
+#include "./yx_all_sprite.h"
+
+#include "../utils/sprite_sheet/yx_sprite_sheet.h"
 
 struct k_sprite *yx_spr_bubble_appear = NULL;
 struct k_sprite *yx_spr_bubble_float  = NULL;

@@ -2,7 +2,7 @@
 
 #include "./yx_all_object.h"
 
-#include "../sprite/yx_spr_iris.h"
+#include "../sprite/yx_all_sprite.h"
 
 /* region [bullet] */
 

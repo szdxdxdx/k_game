@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./sprite/_public.h"
+#include "./sprite/yx_all_sprite.h"
 #include "./room/_public.h"
 
 static void load_sprite(void) {
