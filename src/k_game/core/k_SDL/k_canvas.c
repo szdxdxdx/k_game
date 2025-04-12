@@ -37,7 +37,7 @@ int k_canvas_draw_point(float x, float y) {
         return 0;
 
     if (0 != SDL_RenderDrawPointF(k__window.renderer, x, y)) {
-        k_log_error("Failed to draw point, SDL error: %s", SDL_GetError());
+        k_log_error("SDL error: %s", SDL_GetError());
         return -1;
     }
 
@@ -74,7 +74,7 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) 
         if (buf_size >= k__canvas_buf_capacity(buf)) {
 
             if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
-                k_log_error("Failed to draw points, SDL error: %s", SDL_GetError());
+                k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
             }
 
@@ -84,7 +84,7 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) 
 
     if (0 != buf_size) {
         if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
-            k_log_error("Failed to draw points, SDL error: %s", SDL_GetError());
+            k_log_error("SDL error: %s", SDL_GetError());
             return -1;
         }
     }
@@ -105,7 +105,7 @@ int k_canvas_draw_line(float x1, float y1, float x2, float y2) {
         return 0;
 
     if (0 != SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2)) {
-        k_log_error("Failed to draw line, SDL error: %s", SDL_GetError());
+        k_log_error("SDL error: %s", SDL_GetError());
         return -1;
     }
 
@@ -134,7 +134,7 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
         if (count == points_num) {
 
             if (0 != SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size)) {
-                k_log_error("Failed to draw lines, SDL error: %s", SDL_GetError());
+                k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
             }
 
@@ -143,7 +143,7 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
         else if (buf_size >= k__canvas_buf_capacity(buf)) {
 
             if (0 != SDL_RenderDrawLinesF(k__window.renderer, buf, buf_size)) {
-                k_log_error("Failed to draw lines, SDL error: %s", SDL_GetError());
+                k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
             }
 
@@ -179,7 +179,7 @@ int k_canvas_draw_rect(float x, float y, float w, float h) {
     rect.h = h;
 
     if (0 != SDL_RenderDrawRectF(k__window.renderer, &rect)) {
-        k_log_error("Failed to draw rect, SDL error: %s", SDL_GetError());
+        k_log_error("SDL error: %s", SDL_GetError());
         return -1;
     }
 
@@ -206,7 +206,7 @@ int k_canvas_fill_rect(float x, float y, float w, float h) {
     rect.h = h;
 
     if (0 != SDL_RenderFillRectF(k__window.renderer, &rect)) {
-        k_log_error("Failed to draw rect, SDL error: %s", SDL_GetError());
+        k_log_error("SDL error: %s", SDL_GetError());
         return -1;
     }
 
@@ -253,7 +253,7 @@ int k_canvas_draw_circle(float cx, float cy, float r) {
 
         if (x < y) {
             if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
-                k_log_error("Failed to draw circle, SDL error: %s", SDL_GetError());
+                k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
             }
 
@@ -261,7 +261,7 @@ int k_canvas_draw_circle(float cx, float cy, float r) {
         }
         else if (buf_size >= k__canvas_buf_capacity(buf)) {
             if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
-                k_log_error("Failed to draw circle, SDL error: %s", SDL_GetError());
+                k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
             }
 
@@ -315,7 +315,7 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
             return 0;
 
         if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
-            k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
+            k_log_error("SDL error: %s", SDL_GetError());
             return -1;
         }
     }
@@ -344,7 +344,7 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
         if (options->flip_y) { flip |= SDL_FLIP_VERTICAL;   }
 
         if (0 != SDL_RenderCopyExF(k__window.renderer, image->texture, &src, &dst, options->angle, &center, flip)) {
-            k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
+            k_log_error("SDL error: %s", SDL_GetError());
             return -1;
         }
     }
@@ -389,7 +389,7 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
         src.h = sprite->sprite_h;
 
         if (0 != SDL_RenderCopyF(k__window.renderer, frame->image->texture, &src, &dst)) {
-            k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
+            k_log_error("SDL error: %s", SDL_GetError());
             return -1;
         }
     }
@@ -439,7 +439,7 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
         center.y = origin_y;
 
         if (0 != SDL_RenderCopyExF(k__window.renderer, frame->image->texture, &src, &dst, options->angle, &center, flip)) {
-            k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
+            k_log_error("SDL error: %s", SDL_GetError());
             return -1;
         }
     }
