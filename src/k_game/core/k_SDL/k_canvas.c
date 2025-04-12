@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <math.h>
 
 #include "k_log.h"
 
@@ -176,14 +176,17 @@ int k_canvas_draw_rect(float x, float y, float w, float h) {
     if (w <= 0.0f || h <= 0.0f)
         return 0;
 
+    x -= k__window.view_x;
+    y -= k__window.view_y;
+
+    if (k__window.view_w < x || x + w < 0.0f) return 0;
+    if (k__window.view_h < y || y + h < 0.0f) return 0;
+
     SDL_FRect rect;
-    rect.x = x - k__window.view_x;
-    rect.y = y - k__window.view_y;
+    rect.x = x;
+    rect.y = y;
     rect.w = w;
     rect.h = h;
-
-    if (k__window.view_w < rect.x || rect.x + rect.w < 0.0f) return 0;
-    if (k__window.view_h < rect.y || rect.y + rect.h < 0.0f) return 0;
 
     if (0 != SDL_RenderDrawRectF(k__window.renderer, &rect)) {
         k_log_error("Failed to draw rect, SDL error: %s", SDL_GetError());
@@ -198,14 +201,17 @@ int k_canvas_fill_rect(float x, float y, float w, float h) {
     if (w <= 0.0f || h <= 0.0f)
         return 0;
 
+    x -= k__window.view_x;
+    y -= k__window.view_y;
+
+    if (k__window.view_w < x || x + w < 0.0f) return 0;
+    if (k__window.view_h < y || y + h < 0.0f) return 0;
+
     SDL_FRect rect;
-    rect.x = x - k__window.view_x;
-    rect.y = y - k__window.view_y;
+    rect.x = x;
+    rect.y = y;
     rect.w = w;
     rect.h = h;
-
-    if (k__window.view_w < rect.x || rect.x + rect.w < 0.0f) return 0;
-    if (k__window.view_h < rect.y || rect.y + rect.h < 0.0f) return 0;
 
     if (0 != SDL_RenderFillRectF(k__window.renderer, &rect)) {
         k_log_error("Failed to draw rect, SDL error: %s", SDL_GetError());
@@ -283,8 +289,6 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
     if (NULL == image)
         return -1;
 
-    /* TODO 在视野范围内时才绘制图片 */
-
     SDL_Rect src;
     if (NULL == src_rect) {
         src.x = 0;
@@ -302,11 +306,14 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
         src.h = src_rect->h;
     }
 
+    x -= k__window.view_x;
+    y -= k__window.view_y;
+
     if (NULL == options) {
 
         SDL_FRect dst;
-        dst.x = x - k__window.view_x;
-        dst.y = y - k__window.view_y;
+        dst.x = x;
+        dst.y = y;
         dst.w = (float)image->image_w;
         dst.h = (float)image->image_h;
 
@@ -319,14 +326,18 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
         }
     }
     else {
+        if (options->scaled_w <= 0.0f || options->scaled_h <= 0.0f)
+            return 0;
+
+        float R = options->scaled_w / 2.0f + options->scaled_h / 2.0f;
+        if (x + R < 0.0f || k__window.view_w < x - R) return 0;
+        if (y + R < 0.0f || k__window.view_h < y - R) return 0;
+
         SDL_FRect dst;
-        dst.x = x - k__window.view_x;
-        dst.y = y - k__window.view_y;
+        dst.x = x;
+        dst.y = y;
         dst.w = options->scaled_w;
         dst.h = options->scaled_h;
-
-        if (dst.w <= 0.0f || dst.h <= 0.0f)
-            return 0;
 
         SDL_FPoint center;
         center.x = options->pivot_x;
@@ -357,15 +368,16 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
     if (sprite->frames_num <= frame_idx)
         return -1;
 
-    /* TODO 在视野范围内时才绘制精灵 */
+    x -= k__window.view_x;
+    y -= k__window.view_y;
 
     struct k_sprite_frame *frame = &sprite->frames[frame_idx];
 
     if (NULL == options) {
 
         SDL_FRect dst;
-        dst.x = x - sprite->origin_x - k__window.view_x;
-        dst.y = y - sprite->origin_y - k__window.view_y;
+        dst.x = x - sprite->origin_x;
+        dst.y = y - sprite->origin_y;
         dst.w = (float)sprite->sprite_w;
         dst.h = (float)sprite->sprite_h;
 
@@ -387,45 +399,40 @@ int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, flo
         if (options->scaled_w <= 0.0f || options->scaled_h <= 0.0f)
             return 0;
 
+        float scala_x  = options->scaled_w / (float)sprite->sprite_w;
+        float scala_y  = options->scaled_h / (float)sprite->sprite_h;
+        float origin_x = scala_x * sprite->origin_x;
+        float origin_y = scala_y * sprite->origin_y;
+
+        SDL_RendererFlip flip = SDL_FLIP_NONE;
+        if (options->flip_x) {
+            origin_x = options->scaled_w - origin_x;
+            flip |= SDL_FLIP_HORIZONTAL;
+        }
+        if (options->flip_y) {
+            origin_y = options->scaled_h - origin_y;
+            flip |= SDL_FLIP_VERTICAL;
+        }
+
+        float R = options->scaled_w + options->scaled_h + fabsf(origin_x) + fabsf(origin_y);
+        if (x + R < 0.0f || k__window.view_w < x - R) return 0;
+        if (y + R < 0.0f || k__window.view_h < y - R) return 0;
+
         SDL_Rect src;
         src.x = frame->offset_x;
         src.y = frame->offset_y;
         src.w = sprite->sprite_w;
         src.h = sprite->sprite_h;
 
-        float sprite_w = (float)sprite->sprite_w;
-        float sprite_h = (float)sprite->sprite_h;
-        float scala_x  = options->scaled_w / sprite_w;
-        float scala_y  = options->scaled_h / sprite_h;
-
-        SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-        float origin_x;
-        float origin_y;
-
-        if (options->flip_x) {
-            origin_x = scala_x * (sprite_w - sprite->origin_x);
-            flip |= SDL_FLIP_HORIZONTAL;
-        } else {
-            origin_x = scala_x * sprite->origin_x;
-        }
-
-        if (options->flip_y) {
-            origin_y = scala_y * (sprite_h - sprite->origin_y);
-            flip |= SDL_FLIP_VERTICAL;
-        } else {
-            origin_y = scala_y * sprite->origin_y;
-        }
+        SDL_FRect dst;
+        dst.x = x - origin_x;
+        dst.y = y - origin_y;
+        dst.w = options->scaled_w;
+        dst.h = options->scaled_h;
 
         SDL_FPoint center;
         center.x = origin_x;
         center.y = origin_y;
-
-        SDL_FRect dst;
-        dst.x = x - origin_x - k__window.view_x;
-        dst.y = y - origin_y - k__window.view_y;
-        dst.w = options->scaled_w;
-        dst.h = options->scaled_h;
 
         if (0 != SDL_RenderCopyExF(k__window.renderer, frame->image->texture, &src, &dst, options->angle, &center, flip)) {
             k_log_error("Failed to draw image, SDL error: %s", SDL_GetError());
