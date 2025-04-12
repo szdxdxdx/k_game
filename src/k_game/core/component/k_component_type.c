@@ -11,12 +11,12 @@
 static int check_config(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
 
     if (NULL == entity_config) {
-        k_log_error("Invalid component config: entity_config is NULL");
+        k_log_error("`entity_config` is NULL");
         return -1;
     }
 
     if (NULL == entity_config->fn_init) {
-        k_log_error("Invalid component config: entity_config->fn_init is NULL");
+        k_log_error("`entity_config->fn_init` is NULL");
         return -1;
     }
 
@@ -27,27 +27,23 @@ static int id_counter = 0;
 
 struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
 
-    if (0 != check_config(manager_config, entity_config)) {
-        k_log_error("Failed to define component type");
-        return NULL;
-    }
+    if (0 != check_config(manager_config, entity_config))
+        goto err;
 
     struct k_component_type *component_type;
 
     if (NULL != manager_config) {
         component_type = k_mem_alloc(sizeof(struct k_component_type) + sizeof(struct k_component_manager_type));
-    } else {
-        component_type = k_mem_alloc(sizeof(struct k_component_type));
-    }
+        if (NULL == component_type)
+            goto err;
 
-    if (NULL == component_type) {
-        k_log_error("Failed to define component type");
-        return NULL;
-    }
-
-    if (NULL != manager_config) {
         component_type->manager_type = ptr_offset(component_type, sizeof(struct k_component_type));
-    } else {
+    }
+    else {
+        component_type = k_mem_alloc(sizeof(struct k_component_type));
+        if (NULL == component_type)
+            goto err;
+
         component_type->manager_type = NULL;
     }
 
@@ -67,6 +63,10 @@ struct k_component_type *k_component_define(const struct k_component_manager_con
     k__component_type_registry_add(component_type);
 
     return component_type;
+
+err:
+    k_log_error("Failed to define component type");
+    return NULL;
 }
 
 void k__component_undef(struct k_component_type *component_type) {

@@ -170,19 +170,15 @@ static const struct k_seq_step steps[] = {
 int k__init_game(const struct k_game_config *config) {
 
     if (NULL == config) {
-        k_log_error("Game config is NULL");
-        goto err;
+        k_log_error("`config` is NULL");
+        return -1;
     }
 
     if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), (void *)config)) {
-        goto err;
+        return -1;
     }
 
     return 0;
-
-err:
-    k_log_error("Failed to initialize game");
-    return -1;
 }
 
 void k__deinit_game(const struct k_game_config *config) {

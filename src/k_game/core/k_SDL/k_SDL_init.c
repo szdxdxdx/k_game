@@ -174,7 +174,7 @@ static int step_create_canvas(void *config_) {
     }
     else {
         if (canvas_w <= 0 || canvas_h <= 0) {
-            k_log_error("Failed to create game canvas: invalid canvas size");
+            k_log_error("invalid canvas size: `canvas_w`=%d, `canvas_h`=%d", canvas_w, canvas_h);
             return -1;
         }
     }
@@ -183,7 +183,7 @@ static int step_create_canvas(void *config_) {
     int    access = SDL_TEXTUREACCESS_TARGET;
     SDL_Texture* canvas = SDL_CreateTexture(k__window.renderer, format, access, canvas_w, canvas_h);
     if (NULL == canvas) {
-        k_log_error("Failed to create game canvas: %s", SDL_GetError());
+        k_log_error("SDL error: %s", SDL_GetError());
         return -1;
     }
 
