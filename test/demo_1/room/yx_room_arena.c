@@ -20,7 +20,7 @@ static void set_debug(void *data) {
     }
 }
 
-static int init_room(void *params) {
+static int init_arena_room(void *params) {
     (void)params;
 
     struct yx_room_arena *room_arena = k_room_get_data();
@@ -35,7 +35,7 @@ static int init_room(void *params) {
 
     {
         struct yx_obj_bubble_maker_config config;
-        yx_obj_bubble_maker_create(&config);
+        yx_craete_bubble_maker(&config);
     }
 
     {
@@ -44,7 +44,7 @@ static int init_room(void *params) {
         config.y = 400;
         config.spr_idle = yx_spr_ynx_idle;
         config.spr_run  = yx_spr_ynx_run;
-        room_arena->player = yx_player_create(&config);
+        room_arena->player = yx_create_player(&config);
     }
 
     {
@@ -53,7 +53,7 @@ static int init_room(void *params) {
         config.y = 600;
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
-        yx_rival_create(&config);
+        yx_create_rival(&config);
     }
 
     {
@@ -62,7 +62,7 @@ static int init_room(void *params) {
         config.y = 300;
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
-        yx_rival_create(&config);
+        yx_create_rival(&config);
     }
 
     {
@@ -71,7 +71,7 @@ static int init_room(void *params) {
         config.y = 500;
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
-        yx_rival_create(&config);
+        yx_create_rival(&config);
     }
 
     // yx_test_bt();
@@ -79,21 +79,21 @@ static int init_room(void *params) {
     return 0;
 }
 
-static void enter_room(void) {
+static void enter_arena_room(void) {
     struct yx_room_arena *room_arena = k_room_get_data();
 
     struct yx_obj_player *player = k_object_get_data(room_arena->player);
     k_view_set_position(player->x, player->y);
 }
 
-struct k_room *yx_room_arena_create(void) {
+struct k_room *yx_create_arena_room(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.room_w    = 1920 * 1.5f;
     config.room_h    = 1080 * 1.5f;
     config.data_size = sizeof(struct yx_room_arena);
-    config.fn_init   = init_room;
-    config.fn_enter  = enter_room;
+    config.fn_init   = init_arena_room;
+    config.fn_enter  = enter_arena_room;
 
     return k_room_create(&config, NULL);
 }

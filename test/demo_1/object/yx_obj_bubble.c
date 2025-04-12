@@ -18,7 +18,7 @@ static void bubble_set_state_float(struct k_object *object) {
     }
 }
 
-struct k_object *yx_bubble_create(float x, float y) {
+struct k_object *yx_create_bubble(float x, float y) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_bubble));
     struct yx_obj_bubble *bubble = k_object_get_data(object);
@@ -41,7 +41,7 @@ struct k_object *yx_bubble_create(float x, float y) {
     return object;
 }
 
-void yx_bubble_pop(struct k_object *obj_bubble) {
+void yx_pop_bubble(struct k_object *obj_bubble) {
 
     if (NULL == obj_bubble)
         return;

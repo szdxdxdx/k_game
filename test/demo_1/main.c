@@ -20,7 +20,7 @@ static void load_sound(void) {
 
 static void create_room(void) {
 
-    struct k_room *room = yx_room_arena_create();
+    struct k_room *room = yx_create_empty_room();
 
     k_room_goto(room);
 }

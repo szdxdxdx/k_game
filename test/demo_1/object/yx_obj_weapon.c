@@ -25,7 +25,7 @@ static void bullet_touch_bubble(struct k_object *object) {
         float y2 = bullet->y + padding;
         struct k_collision_box *box = k_collision_check_rect(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
         if (NULL != box)
-            yx_bubble_pop(k_collision_box_get_object(box));
+            yx_pop_bubble(k_collision_box_get_object(box));
     }
 }
 
@@ -125,7 +125,7 @@ void after_move(struct k_object *object) {
     k_sprite_renderer_set_z_layer(weapon->spr_rdr, (int)weapon->y);
 }
 
-struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *config) {
+struct yx_obj_weapon *yx_create_weapon(const struct yx_obj_weapon_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_weapon));
 
@@ -161,7 +161,7 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
     return weapon;
 }
 
-void yx_obj_weapon_destroy(struct yx_obj_weapon *weapon) {
+void yx_destroy_weapon(struct yx_obj_weapon *weapon) {
 
     if (NULL != weapon)
         k_object_destroy(weapon->object);

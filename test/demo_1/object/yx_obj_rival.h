@@ -9,7 +9,7 @@ struct yx_obj_rival_config {
     struct k_sprite *spr_run;
 };
 
-struct k_object *yx_rival_create(const struct yx_obj_rival_config *config);
+struct k_object *yx_create_rival(const struct yx_obj_rival_config *config);
 
 struct yx_obj_rival {
 
