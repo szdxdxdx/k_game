@@ -1,5 +1,5 @@
-#ifndef YX_ALL_OBJECT_H
-#define YX_ALL_OBJECT_H
+#ifndef YX_OBJ_H
+#define YX_OBJ_H
 
 #include "./yx_obj_player.h"
 #include "./yx_obj_rival.h"

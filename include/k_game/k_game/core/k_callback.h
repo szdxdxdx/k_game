@@ -1,16 +1,7 @@
 #ifndef K_CALLBACK_H
 #define K_CALLBACK_H
 
-struct k_room;
-struct k_object;
-struct k_component;
-struct k_component_manager;
-
-/**
- * \brief
- *
- */
-struct k_callback;
+#include "./k_game_fwd.h"
 
 /**
  * \brief 删除事件回调

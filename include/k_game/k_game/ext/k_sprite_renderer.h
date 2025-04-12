@@ -1,8 +1,7 @@
 #ifndef K_SPRITE_RENDERER_H
 #define K_SPRITE_RENDERER_H
 
-struct k_sprite;
-struct k_object;
+#include "k_game/core/k_game_fwd.h"
 
 /**
  * \brief 精灵渲染器

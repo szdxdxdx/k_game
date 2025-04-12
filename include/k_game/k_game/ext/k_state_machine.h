@@ -1,8 +1,7 @@
 #ifndef K_STATE_MACHINE_H
 #define K_STATE_MACHINE_H
 
-struct k_object;
-struct k_component;
+#include "k_game/core/k_game_fwd.h"
 
 /**
  * \brief 状态机

@@ -1,9 +1,7 @@
 #ifndef K_SOUND_H
 #define K_SOUND_H
 
-struct k_sound_bgm;
-
-struct k_sound_sfx;
+#include "./k_game_fwd.h"
 
 /* region [bgm_load] */
 

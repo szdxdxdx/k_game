@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./sprite/yx_all_sprite.h"
-#include "./room/_public.h"
+#include "k_game.h"
+
+#include "./sprite/yx_spr.h"
+#include "./room/yx_room.h"
 
 static void load_sprite(void) {
     yx_load_spr_ynx();

@@ -3,10 +3,7 @@
 
 #include <stdint.h>
 
-/**
- * TODO docs
- */
-struct k_image;
+#include "./k_game_fwd.h"
 
 struct k_image *k_image_load(const char *filepath);
 

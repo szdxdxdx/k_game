@@ -3,26 +3,7 @@
 
 #include <stddef.h>
 
-struct k_room;
-struct k_object;
-
-/**
- * \brief 组件
- * TODO docs
- */
-struct k_component;
-
-/**
- * \brief 组件管理器
- * TODO docs
- */
-struct k_component_manager;
-
-/**
- * \brief 组件类型
- * TODO docs
- */
-struct k_component_type;
+#include "./k_game_fwd.h"
 
 /* region [component_define] */
 

@@ -1,5 +1,5 @@
-#ifndef YX_ALL_SPRITE_H
-#define YX_ALL_SPRITE_H
+#ifndef YX_SPR_H
+#define YX_SPR_H
 
 #include "k_game/core/k_sprite.h"
 

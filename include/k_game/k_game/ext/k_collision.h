@@ -1,7 +1,7 @@
 #ifndef K_COLLISION_H
 #define K_COLLISION_H
 
-struct k_object;
+#include "k_game/core/k_game_fwd.h"
 
 /**
  * \brief 碰撞盒

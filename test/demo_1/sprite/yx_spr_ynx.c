@@ -1,4 +1,4 @@
-#include "./yx_all_sprite.h"
+#include "./yx_spr.h"
 
 #include "../utils/sprite_sheet/yx_sprite_sheet.h"
 

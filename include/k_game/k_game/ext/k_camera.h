@@ -1,7 +1,7 @@
 #ifndef K_CAMERA_H
 #define K_CAMERA_H
 
-struct k_object;
+#include "k_game/core/k_game_fwd.h"
 
 /**
  * \brief 摄像机

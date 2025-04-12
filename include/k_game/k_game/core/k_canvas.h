@@ -3,8 +3,7 @@
 
 #include <stdint.h>
 
-struct k_image;
-struct k_sprite;
+#include "./k_game_fwd.h"
 
 /** \brief 表示一个点坐标 */
 struct k_float_point {

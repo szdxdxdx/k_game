@@ -3,15 +3,7 @@
 
 #include <stddef.h>
 
-struct k_image;
-
-/**
- * \brief 精灵
- *
- * 精灵可以是一张静态图片，或是一组连续的动画帧，
- * 用来表示游戏中的各种可见元素，例如：角色、敌人、道具等。
- */
-struct k_sprite;
+#include "./k_game_fwd.h"
 
 /** \brief 用于创建精灵帧的配置 */
 struct k_sprite_frame_config {

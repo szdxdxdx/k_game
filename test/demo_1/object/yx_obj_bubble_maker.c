@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "./yx_all_object.h"
+#include "./yx_obj.h"
 
 static float my_rand(float min, float max) {
     int min_ = (int)min;

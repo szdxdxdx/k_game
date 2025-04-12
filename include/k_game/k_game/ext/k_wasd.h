@@ -1,7 +1,7 @@
 #ifndef K_WASD_H
 #define K_WASD_H
 
-enum k_keyboard_key;
+#include "k_game/core/k_keyboard.h"
 
 struct k_WASD_config {
 

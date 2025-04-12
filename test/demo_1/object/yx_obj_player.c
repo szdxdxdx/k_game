@@ -1,4 +1,4 @@
-#include "./yx_all_object.h"
+#include "./yx_obj.h"
 
 /* region [state] */
 

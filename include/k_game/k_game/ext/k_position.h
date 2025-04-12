@@ -3,7 +3,7 @@
 
 #include "k_list.h"
 
-struct k_object;
+#include "k_game/core/k_game_fwd.h"
 
 /* TODO docs
  */

@@ -1,9 +1,9 @@
 #include <limits.h>
 
-#include "../_internal.h"
+#include "./yx_room_arena.h"
 
-#include "../../sprite/yx_all_sprite.h"
-#include "../../object/yx_all_object.h"
+#include "../sprite/yx_spr.h"
+#include "../object/yx_obj.h"
 
 static void set_debug(void *data) {
 
