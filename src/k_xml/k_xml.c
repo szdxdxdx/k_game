@@ -15,11 +15,6 @@ struct k_xml_doc {
     struct k_xml_node *root;
 };
 
-enum k_xml_node_type {
-    K__XML_ELEM_NODE,
-    K__XML_TEXT_NODE,
-};
-
 struct k_xml_node {
     struct k_list_node list_node;
     struct k_xml_doc *doc;
@@ -71,6 +66,10 @@ struct k_xml_doc *k__xml_create_doc(void) {
 
 void k__xml_doc_destroy_node(struct k_xml_node *node);
 
+void k__xml_destroy_doc(struct k_xml_doc *doc) {
+    k__xml_doc_destroy_node(doc->root);
+}
+
 /* endregion */
 
 /* region [node] */
@@ -83,7 +82,7 @@ struct k_xml_elem_node *k__xml_doc_create_elem_node(struct k_xml_doc *doc, const
 
     k_list_node_loop(&node->base.list_node);
     node->base.doc    = doc;
-    node->base.type   = K__XML_ELEM_NODE;
+    node->base.type   = K_XML_ELEM_NODE;
     node->base.parent = NULL;
 
     node->tag = tag;
@@ -146,7 +145,7 @@ struct k_xml_text_node *k__xml_doc_create_text_node(struct k_xml_doc *doc, const
 
     k_list_node_loop(&node->base.list_node);
     node->base.doc    = doc;
-    node->base.type   = K__XML_TEXT_NODE;
+    node->base.type   = K_XML_TEXT_NODE;
     node->base.parent = NULL;
 
     node->text = text;
@@ -164,12 +163,12 @@ void k__xml_doc_destroy_text_node(struct k_xml_text_node *node) {
 void k__xml_doc_destroy_node(struct k_xml_node *node) {
 
     switch (node->type) {
-        case K__XML_ELEM_NODE: {
+        case K_XML_ELEM_NODE: {
             struct k_xml_elem_node *elem_node = container_of(node, struct k_xml_elem_node, base);
             k__xml_doc_destroy_elem_node(elem_node);
             break;
         }
-        case K__XML_TEXT_NODE: {
+        case K_XML_TEXT_NODE: {
             struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, base);
             k__xml_doc_destroy_text_node(text_node);
             break;
@@ -181,57 +180,10 @@ void k__xml_doc_destroy_node(struct k_xml_node *node) {
 
 /* endregion */
 
-/* region [print] */
-
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define MAGENTA "\033[35m"
-#define CLEAR   "\033[0m"
-
-void k__xml_print(struct k_xml_node *node) {
-
-    if (NULL == node) {
-        printf("(null)");
-        return;
-    }
-
-    if (K__XML_ELEM_NODE == node->type) {
-        struct k_xml_elem_node *elem_node = container_of(node, struct k_xml_elem_node, base);
-
-        printf("<" MAGENTA "%s" CLEAR, elem_node->tag);
-
-        struct k_list_node *attr_iter;
-        for (k_list_for_each(&elem_node->attr_list, attr_iter)) {
-            struct k_xml_attr *attr = container_of(attr_iter, struct k_xml_attr, list_node);
-
-            printf(" " GREEN "%s" CLEAR "=\"" YELLOW "%s" CLEAR "\"", attr->key, attr->val);
-        }
-
-        printf(">");
-
-        struct k_list_node *child_iter;
-        for (k_list_for_each(&elem_node->child_list, child_iter)) {
-            struct k_xml_node *child = container_of(child_iter, struct k_xml_node, list_node);
-
-            k__xml_print(child);
-        }
-
-        printf("</" MAGENTA "%s" CLEAR ">", elem_node->tag);
-    }
-    else if (K__XML_TEXT_NODE == node->type) {
-        struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, base);
-        printf(RED "%s" CLEAR, text_node->text);
-    }
-}
-
-/* endregion */
-
 /* region [parser] */
 
 struct k_xml_parser {
 
-    char *text;
     char *p;
 
     struct k_xml_doc *doc;
@@ -310,7 +262,7 @@ err:
     return text;
 }
 
-struct k_xml_elem_node *k__xml_parse_elem_node(struct k_xml_parser *parser) {
+struct k_xml_elem_node *k__xml_parse(struct k_xml_parser *parser) {
 
     if ('<' != *(parser->p))
         return NULL;
@@ -387,7 +339,7 @@ struct k_xml_elem_node *k__xml_parse_elem_node(struct k_xml_parser *parser) {
             }
             else {
                 parser->p = p;
-                struct k_xml_elem_node *elem_child = k__xml_parse_elem_node(parser);
+                struct k_xml_elem_node *elem_child = k__xml_parse(parser);
                 if (NULL == elem_child)
                     goto err;
 
@@ -428,7 +380,60 @@ err:
     return NULL;
 }
 
+/* endregion */
+
+/* region [print] */
+
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define MAGENTA "\033[35m"
+#define CLEAR   "\033[0m"
+
+void k__xml_print(struct k_xml_node *node) {
+
+    if (NULL == node) {
+        printf("(null)");
+        return;
+    }
+
+    if (K_XML_ELEM_NODE == node->type) {
+        struct k_xml_elem_node *elem_node = container_of(node, struct k_xml_elem_node, base);
+
+        printf("<" MAGENTA "%s" CLEAR, elem_node->tag);
+
+        struct k_list_node *attr_iter;
+        for (k_list_for_each(&elem_node->attr_list, attr_iter)) {
+            struct k_xml_attr *attr = container_of(attr_iter, struct k_xml_attr, list_node);
+
+            printf(" " GREEN "%s" CLEAR "=\"" YELLOW "%s" CLEAR "\"", attr->key, attr->val);
+        }
+
+        printf(">");
+
+        struct k_list_node *child_iter;
+        for (k_list_for_each(&elem_node->child_list, child_iter)) {
+            struct k_xml_node *child = container_of(child_iter, struct k_xml_node, list_node);
+
+            k__xml_print(child);
+        }
+
+        printf("</" MAGENTA "%s" CLEAR ">", elem_node->tag);
+    }
+    else if (K_XML_TEXT_NODE == node->type) {
+        struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, base);
+        printf(RED "%s" CLEAR, text_node->text);
+    }
+}
+
+/* endregion */
+
+/* region [k_xml] */
+
 struct k_xml_node *k_xml_parse(char *text) {
+
+    if (NULL == text || '\0' == *text)
+        return NULL;
 
     struct k_xml_parser parser;
     parser.doc = k__xml_create_doc();
@@ -437,7 +442,7 @@ struct k_xml_node *k_xml_parse(char *text) {
     if ('<' != *(parser.p))
         goto err;
 
-    struct k_xml_elem_node *elem = k__xml_parse_elem_node(&parser);
+    struct k_xml_elem_node *elem = k__xml_parse(&parser);
     if (NULL == elem)
         goto err;
 
@@ -453,16 +458,20 @@ err:
     return NULL;
 }
 
-/* endregion */
+void k_xml_free(struct k_xml_node *node) {
 
-/* region [k_xml] */
+    if (NULL == node)
+        return;
+
+    k__xml_destroy_doc(node->doc);
+}
 
 struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node) {
 
     if (NULL == node)
         return NULL;
 
-    if (K__XML_ELEM_NODE == node->type) {
+    if (K_XML_ELEM_NODE == node->type) {
         struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, base);
 
         struct k_list *child_list = &elem->child_list;
@@ -488,7 +497,7 @@ struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node) {
     if (NULL == parent)
         return NULL;
 
-    assert(K__XML_ELEM_NODE == parent->type);
+    assert(K_XML_ELEM_NODE == parent->type);
 
     struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, base);
     struct k_list *parent_child_list = &elem->child_list;
@@ -513,7 +522,7 @@ const char *k_xml_get_tag(struct k_xml_node *elem_node) {
 
     if (NULL == elem_node)
         return NULL;
-    if (K__XML_ELEM_NODE != elem_node->type)
+    if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
 
     struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
@@ -526,7 +535,7 @@ const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr) {
         return NULL;
     if (NULL == attr || '\0' == *attr)
         return NULL;
-    if (K__XML_ELEM_NODE != elem_node->type)
+    if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
 
     struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
@@ -547,7 +556,7 @@ const char *k_xml_get_text(struct k_xml_node *text_node) {
 
     if (NULL == text_node)
         return NULL;
-    if (K__XML_TEXT_NODE != text_node->type)
+    if (K_XML_TEXT_NODE != text_node->type)
         return NULL;
 
     struct k_xml_text_node *text = container_of(text_node, struct k_xml_text_node, base);
@@ -571,11 +580,10 @@ int main(void) {
                   "    </book>\n"
                   "</bookstore>";
 
-
-
     struct k_xml_node *root = k_xml_parse(text);
 
     k__xml_print(root);
 
+    k_xml_free(root);
     return 0;
 }

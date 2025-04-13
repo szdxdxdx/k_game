@@ -5,7 +5,14 @@
 
 struct k_xml_node;
 
+enum k_xml_node_type {
+    K_XML_ELEM_NODE,
+    K_XML_TEXT_NODE,
+};
+
 struct k_xml_node *k_xml_parse(char *text);
+
+void k_xml_free(struct k_xml_node *node);
 
 struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node);
 
