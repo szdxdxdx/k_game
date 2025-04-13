@@ -8,42 +8,43 @@ struct k_xml_doc {
     size_t elems_num;
 };
 
-enum k_xml_type {
-    K__XML_ELEM,
-    K__XML_TEXT,
+enum k_xml_node_type {
+    K__XML_ELEM_NODE,
+    K__XML_TEXT_NODE,
 };
 
 struct k_xml_attr {
+    struct k_xml_attr *next_attr;
     const char *key;
     const char *val;
 };
 
-struct k_xml_elem {
+struct k_xml_elem_node {
+    enum k_xml_node_type type;
 
-    struct k_xml *children;
-    size_t children_count;
+    struct k_xml_node *parent;
+    struct k_xml_node *first_child;
+    struct k_xml_node *next_sibling;
 
     char *tag;
 
-    struct k_xml_attr *attr;
-    size_t attr_count;
+    struct k_xml_attr *first_attr;
 };
 
-struct k_xml_text {
+struct k_xml_text_node {
+    enum k_xml_node_type type;
+
+    struct k_xml_node *parent;
+
     char *text;
     size_t len;
 };
 
-struct k_xml {
-
-    struct k_xml_doc *doc;
-
-    struct k_xml *parent;
-
-    enum k_xml_type type;
+struct k_xml_node {
     union {
-        struct k_xml_elem elem;
-        struct k_xml_text text;
+        enum k_xml_node_type type;
+        struct k_xml_elem_node elem;
+        struct k_xml_text_node text;
     };
 };
 
@@ -60,34 +61,3 @@ struct k_xml_parser {
 
     struct k_xml_doc *doc;
 };
-
-/* region [api] */
-
-struct k_xml *k_xml_parse(const char *text) {
-
-    struct k_xml_parser parser;
-
-    return NULL;
-}
-
-void k_xml_free(struct k_xml *elem) {
-
-}
-
-struct k_xml *k_xml_get_child(struct k_xml *elem, size_t idx) {
-    return NULL;
-}
-
-struct k_xml *k_xml_get_parent(struct k_xml *elem) {
-    return NULL;
-}
-
-const char *k_xml_get_tag(struct k_xml *elem) {
-    return NULL;
-}
-
-const char *k_xml_get_attr(struct k_xml *elem, const char *attr) {
-    return NULL;
-}
-
-/* endregion */

@@ -25,7 +25,7 @@ static void tmp(void) {
 
     char text[] = "<__root><a>1<b>2</b></a><c>3</c></root>";
 
-    struct k_xml *xml = k_xml_parse(text);
+    k_xml_parse(text);
 }
 
 #if 1
