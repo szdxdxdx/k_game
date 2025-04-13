@@ -196,9 +196,7 @@ static void k__xml_doc_destroy_node(struct k_xml_node *node) {
 /* region [parser] */
 
 struct k_xml_parser {
-
     char *p;
-
     struct k_xml_doc *doc;
 };
 
@@ -453,7 +451,7 @@ struct k_xml_node *k_xml_parse(char *text) {
         goto err;
 
     if ('\0' != *(skip_space(parser.p))) {
-        k__xml_doc_destroy_elem_node(elem);
+        k__xml_destroy_doc(parser.doc);
         goto err;
     }
 
@@ -593,13 +591,13 @@ const char *k_xml_get_tag(struct k_xml_node *elem_node) {
     return elem->tag;
 }
 
-const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr) {
+const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr_key) {
 
     if (NULL == elem_node)
         return NULL;
     if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
-    if (NULL == attr || '\0' == *attr)
+    if (NULL == attr_key || '\0' == *attr_key)
         return NULL;
 
     struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
@@ -610,7 +608,7 @@ const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr) {
     for (k_list_for_each(attr_list, iter)) {
         attr_node = container_of(iter, struct k_xml_attr, list_node);
 
-        if (0 == strcmp(attr_node->key, attr))
+        if (0 == strcmp(attr_node->key, attr_key))
             return attr_node->val;
     }
 
@@ -654,17 +652,17 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
     return next_attr;
 }
 
-const char *k_xml_get_text(struct k_xml_node *text_node) {
+const char *k_xml_get_text(struct k_xml_node *node) {
 
-    if (NULL == text_node)
+    if (NULL == node)
         return NULL;
 
-    if (K_XML_TEXT_NODE == text_node->type) {
-        struct k_xml_text_node *text = container_of(text_node, struct k_xml_text_node, base);
+    if (K_XML_TEXT_NODE == node->type) {
+        struct k_xml_text_node *text = container_of(node, struct k_xml_text_node, base);
         return text->text;
     }
-    else if (K_XML_ELEM_NODE == text_node->type) {
-        struct k_xml_elem_node *elem = container_of(text_node, struct k_xml_elem_node, base);
+    else if (K_XML_ELEM_NODE == node->type) {
+        struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, base);
 
         struct k_list *child_list = &elem->child_list;
         if (k_list_is_empty(child_list))
