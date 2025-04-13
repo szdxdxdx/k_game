@@ -33,6 +33,7 @@ struct k_xml_elem_node {
 };
 
 struct k_xml_attr {
+    struct k_xml_elem_node *elem;
     struct k_list_node list_node;
     const char *key;
     const char *val;
@@ -64,7 +65,7 @@ static struct k_xml_doc *k__xml_create_doc(void) {
     struct k_mem_pool_config config;
     config.fn_malloc        = malloc;
     config.fn_free          = free;
-    config.alloc_size_align = 16;
+    config.alloc_size_align = 8;
     config.block_size_max   = 80;
     config.alloc_chunk_size = 2048;
 
@@ -113,8 +114,9 @@ static int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *k
         return -1;
 
     k_list_add_tail(&node->attr_list, &attr->list_node);
-    attr->key = key;
-    attr->val = val;
+    attr->elem = node;
+    attr->key  = key;
+    attr->val  = val;
     return 0;
 }
 
@@ -336,7 +338,7 @@ static struct k_xml_elem_node *k__xml_parse(struct k_xml_parser *parser) {
             if ('>' != *(p + 1)) {
                 goto err;
             } else {
-                parser->p = p + 2;
+                *p = '\0';
                 p += 2;
                 goto done;
             }
@@ -613,6 +615,43 @@ const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr) {
     }
 
     return NULL;
+}
+
+struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char **get_key, const char **get_val) {
+
+    if (NULL == elem_node)
+        return NULL;
+    if (K_XML_ELEM_NODE != elem_node->type)
+        return NULL;
+
+    struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
+
+    struct k_list *attr_list = &elem->attr_list;
+    if (k_list_is_empty(attr_list))
+        return NULL;
+
+    struct k_list_node *first = k_list_get_first(attr_list);
+    struct k_xml_attr *attr = container_of(first, struct k_xml_attr, list_node);
+
+    if (NULL != get_key) { *get_key = attr->key; }
+    if (NULL != get_val) { *get_val = attr->val; }
+    return attr;
+}
+
+struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get_key, const char **get_val) {
+
+    if (NULL == attr)
+        return NULL;
+
+    struct k_list_node *next = attr->list_node.next;
+    struct k_xml_elem_node *elem = attr->elem;
+    if (next == &elem->attr_list.head)
+        return NULL;
+
+    struct k_xml_attr *next_attr = container_of(next, struct k_xml_attr, list_node);
+    if (NULL != get_key) { *get_key = next_attr->key; }
+    if (NULL != get_val) { *get_val = next_attr->val; }
+    return next_attr;
 }
 
 const char *k_xml_get_text(struct k_xml_node *text_node) {
