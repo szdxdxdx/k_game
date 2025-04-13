@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "k_list.h"
+#include "k_mem_pool.h"
 
 #include "k_xml.h"
 
@@ -12,6 +14,8 @@
 struct k_xml_doc {
 
     struct k_xml_node *root;
+
+    struct k_mem_pool mem_pool;
 };
 
 struct k_xml_node {
@@ -44,36 +48,48 @@ struct k_xml_text_node {
 
 /* region [doc] */
 
-void *k__xml_mem_alloc(struct k_xml_doc *doc, size_t size) {
-    (void)doc;
-    return malloc(size);
+static void *k__xml_mem_alloc(struct k_xml_doc *doc, size_t size) {
+    return k_mem_pool_alloc(&doc->mem_pool, size);
 }
 
-void k__xml_mem_free(struct k_xml_doc *doc, void *p) {
-    (void)doc;
-    free(p);
+static void k__xml_mem_free(struct k_xml_doc *doc, void *p) {
+    k_mem_pool_free(&doc->mem_pool, p);
 }
 
-struct k_xml_doc *k__xml_create_doc(void) {
+static struct k_xml_doc *k__xml_create_doc(void) {
 
     struct k_xml_doc *doc = malloc(sizeof(struct k_xml_doc));
     if (NULL == doc)
         return NULL;
 
+    struct k_mem_pool_config config;
+    config.fn_malloc        = malloc;
+    config.fn_free          = free;
+    config.alloc_size_align = 16;
+    config.block_size_max   = 80;
+    config.alloc_chunk_size = 2048;
+
+    if (NULL == k_mem_pool_construct(&doc->mem_pool, &config))
+        return NULL;
+
     return doc;
 }
 
-void k__xml_doc_destroy_node(struct k_xml_node *node);
+static void k__xml_doc_destroy_node(struct k_xml_node *node);
 
-void k__xml_destroy_doc(struct k_xml_doc *doc) {
+static void k__xml_destroy_doc(struct k_xml_doc *doc) {
+
     k__xml_doc_destroy_node(doc->root);
+
+    k_mem_pool_destruct(&doc->mem_pool);
+    free(doc);
 }
 
 /* endregion */
 
 /* region [node] */
 
-struct k_xml_elem_node *k__xml_doc_create_elem_node(struct k_xml_doc *doc, const char *tag) {
+static struct k_xml_elem_node *k__xml_doc_create_elem_node(struct k_xml_doc *doc, const char *tag) {
 
     struct k_xml_elem_node *node = k__xml_mem_alloc(doc, sizeof(struct k_xml_elem_node));
     if (NULL == node)
@@ -91,7 +107,7 @@ struct k_xml_elem_node *k__xml_doc_create_elem_node(struct k_xml_doc *doc, const
     return node;
 }
 
-int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *key, const char *val) {
+static int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *key, const char *val) {
 
     struct k_xml_attr *attr = k__xml_mem_alloc(node->base.doc, sizeof(struct k_xml_attr));
     if (NULL == attr)
@@ -103,41 +119,37 @@ int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *key, con
     return 0;
 }
 
-void k__xml_elem_node_add_child(struct k_xml_elem_node *node, struct k_xml_node *child) {
+static void k__xml_elem_node_add_child(struct k_xml_elem_node *node, struct k_xml_node *child) {
     child->parent = &node->base;
     k_list_add_tail(&node->child_list, &child->list_node);
 }
 
-void k__xml_doc_destroy_elem_node(struct k_xml_elem_node *node) {
+static void k__xml_doc_destroy_elem_node(struct k_xml_elem_node *node) {
 
     struct k_xml_doc *doc = node->base.doc;
 
-    {
-        struct k_xml_attr *attr;
-        struct k_list *attr_list = &node->attr_list;
-        struct k_list_node *iter, *next;
-        for (k_list_for_each_s(attr_list, iter, next)) {
-            attr = container_of(iter, struct k_xml_attr, list_node);
+    struct k_xml_attr *attr;
+    struct k_list *attr_list = &node->attr_list;
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(attr_list, iter, next)) {
+        attr = container_of(iter, struct k_xml_attr, list_node);
 
-            k__xml_mem_free(doc, attr);
-        }
+        k__xml_mem_free(doc, attr);
     }
 
-    {
-        struct k_xml_node *child;
-        struct k_list *child_list = &node->child_list;
-        struct k_list_node *iter, *next;
-        for (k_list_for_each_s(child_list, iter, next)) {
-            child = container_of(iter, struct k_xml_node, list_node);
+    struct k_xml_node *child;
+    struct k_list *child_list = &node->child_list;
+    struct k_list_node *iter_, *next_;
+    for (k_list_for_each_s(child_list, iter_, next_)) {
+        child = container_of(iter_, struct k_xml_node, list_node);
 
-            k__xml_doc_destroy_node(child);
-        }
+        k__xml_doc_destroy_node(child);
     }
 
     k__xml_mem_free(doc, node);
 }
 
-struct k_xml_text_node *k__xml_doc_create_text_node(struct k_xml_doc *doc, const char *text) {
+static struct k_xml_text_node *k__xml_doc_create_text_node(struct k_xml_doc *doc, const char *text) {
 
     struct k_xml_text_node *node = k__xml_mem_alloc(doc, sizeof(struct k_xml_text_node));
     if (NULL == node)
@@ -153,14 +165,14 @@ struct k_xml_text_node *k__xml_doc_create_text_node(struct k_xml_doc *doc, const
     return node;
 }
 
-void k__xml_doc_destroy_text_node(struct k_xml_text_node *node) {
+static void k__xml_doc_destroy_text_node(struct k_xml_text_node *node) {
 
     struct k_xml_doc *doc = node->base.doc;
 
     k__xml_mem_free(doc, node);
 }
 
-void k__xml_doc_destroy_node(struct k_xml_node *node) {
+static void k__xml_doc_destroy_node(struct k_xml_node *node) {
 
     switch (node->type) {
         case K_XML_ELEM_NODE: {
@@ -294,7 +306,7 @@ err:
     return text;
 }
 
-struct k_xml_elem_node *k__xml_parse(struct k_xml_parser *parser) {
+static struct k_xml_elem_node *k__xml_parse(struct k_xml_parser *parser) {
 
     if ('<' != *(parser->p))
         return NULL;
