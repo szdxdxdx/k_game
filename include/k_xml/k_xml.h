@@ -20,6 +20,12 @@ struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node);
 
 struct k_xml_node *k_xml_get_parent(struct k_xml_node *node);
 
+struct k_xml_node *k_xml_find_child_by_tag(struct k_xml_node *node, const char *tag);
+
+struct k_xml_node *k_xml_find_next_by_tag(struct k_xml_node *node, const char *tag);
+
+enum k_xml_node_type k_xml_get_type(struct k_xml_node *node);
+
 const char *k_xml_get_tag(struct k_xml_node *elem_node);
 
 const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr);

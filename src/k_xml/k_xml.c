@@ -105,6 +105,7 @@ int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *key, con
 }
 
 void k__xml_elem_node_add_child(struct k_xml_elem_node *node, struct k_xml_node *child) {
+    child->parent = &node->base;
     k_list_add_tail(&node->child_list, &child->list_node);
 }
 
@@ -207,21 +208,6 @@ static char *extract_ident(char *text) {
         end++;
     }
 
-    while (1) {
-        if (isalnum((unsigned char)*end) || '_' == *end) {
-            end++;
-        } else if (':' == *end) {
-            end++;
-            if (isalnum((unsigned char)*end) || '_' == *end) {
-                end++;
-            } else {
-                goto err;
-            }
-        } else {
-            break;
-        }
-    }
-
     return end;
 
 err:
@@ -254,6 +240,11 @@ static char *extract_string(char *text) {
         else {
             end++;
         }
+    }
+
+    if (0 < entities_count) {
+
+
     }
 
     return end;
@@ -468,9 +459,6 @@ void k_xml_free(struct k_xml_node *node) {
 
 struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node) {
 
-    if (NULL == node)
-        return NULL;
-
     if (K_XML_ELEM_NODE == node->type) {
         struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, base);
 
@@ -490,14 +478,9 @@ struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node) {
 
 struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node) {
 
-    if (NULL == node)
-        return NULL;
-
     struct k_xml_node *parent = node->parent;
     if (NULL == parent)
         return NULL;
-
-    assert(K_XML_ELEM_NODE == parent->type);
 
     struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, base);
     struct k_list *parent_child_list = &elem->child_list;
@@ -511,17 +494,68 @@ struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node) {
 }
 
 struct k_xml_node *k_xml_get_parent(struct k_xml_node *node) {
+    return node->parent;
+}
 
-    if (NULL == node)
+struct k_xml_node *k_xml_find_child_by_tag(struct k_xml_node *node, const char *tag) {
+
+    if (K_XML_ELEM_NODE != node->type)
+        return NULL;
+    if (NULL == tag || '\0' == *tag)
         return NULL;
 
-    return node->parent;
+    struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, base);
+
+    struct k_list *child_list = &elem->child_list;
+    if (k_list_is_empty(child_list))
+        return NULL;
+
+    struct k_list_node *iter;
+    for (k_list_for_each(child_list, iter)) {
+        struct k_xml_node *child = container_of(iter, struct k_xml_node, list_node);
+
+        if (K_XML_ELEM_NODE == child->type) {
+            struct k_xml_elem_node *child_elem = container_of(child, struct k_xml_elem_node, base);
+
+            if (0 == strcmp(child_elem->tag, tag))
+                return child;
+        }
+    }
+
+    return NULL;
+}
+
+struct k_xml_node *k_xml_find_next_by_tag(struct k_xml_node *node, const char *tag) {
+
+    struct k_xml_node *parent = node->parent;
+    if (NULL == parent)
+        return NULL;
+
+    struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, base);
+
+    struct k_xml_node *sibling;
+    struct k_list *parent_child_list = &elem->child_list;
+    struct k_list_node *iter = node->list_node.next;
+    for (; iter != &parent_child_list->head; iter = iter->next) {
+        sibling = container_of(iter, struct k_xml_node, list_node);
+
+        if (K_XML_ELEM_NODE == sibling->type) {
+            struct k_xml_elem_node *sibling_elem = container_of(sibling, struct k_xml_elem_node, base);
+
+            if (0 == strcmp(sibling_elem->tag, tag))
+                return sibling;
+        }
+    }
+
+    return NULL;
+}
+
+enum k_xml_node_type k_xml_get_type(struct k_xml_node *node) {
+    return node->type;
 }
 
 const char *k_xml_get_tag(struct k_xml_node *elem_node) {
 
-    if (NULL == elem_node)
-        return NULL;
     if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
 
@@ -531,19 +565,18 @@ const char *k_xml_get_tag(struct k_xml_node *elem_node) {
 
 const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr) {
 
-    if (NULL == elem_node)
+    if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
     if (NULL == attr || '\0' == *attr)
-        return NULL;
-    if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
 
     struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
 
+    struct k_xml_attr *attr_node;
     struct k_list *attr_list = &elem->attr_list;
     struct k_list_node *iter;
     for (k_list_for_each(attr_list, iter)) {
-        struct k_xml_attr *attr_node = container_of(iter, struct k_xml_attr, list_node);
+        attr_node = container_of(iter, struct k_xml_attr, list_node);
 
         if (0 == strcmp(attr_node->key, attr))
             return attr_node->val;
@@ -554,36 +587,33 @@ const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr) {
 
 const char *k_xml_get_text(struct k_xml_node *text_node) {
 
-    if (NULL == text_node)
-        return NULL;
-    if (K_XML_TEXT_NODE != text_node->type)
-        return NULL;
+    if (K_XML_TEXT_NODE == text_node->type) {
+        struct k_xml_text_node *text = container_of(text_node, struct k_xml_text_node, base);
+        return text->text;
+    }
+    else if (K_XML_ELEM_NODE == text_node->type) {
+        struct k_xml_elem_node *elem = container_of(text_node, struct k_xml_elem_node, base);
 
-    struct k_xml_text_node *text = container_of(text_node, struct k_xml_text_node, base);
-    return text->text;
+        struct k_list *child_list = &elem->child_list;
+        if (k_list_is_empty(child_list))
+            return NULL;
+
+        struct k_xml_node *child;
+        struct k_list_node *iter;
+        for (k_list_for_each(child_list, iter)) {
+            child = container_of(iter, struct k_xml_node, list_node);
+
+            if (K_XML_TEXT_NODE == child->type) {
+                struct k_xml_text_node *text = container_of(child, struct k_xml_text_node, base);
+                return text->text;
+            }
+        }
+
+        return NULL;
+    }
+    else {
+        return NULL;
+    }
 }
 
 /* endregion */
-
-int main(void) {
-    setbuf(stdout, NULL);
-
-    char text[] = "<bookstore>\n"
-                  "    <p:book title=\"C语言\" author=\"Dennis Ritchie\">\n"
-                  "        <summary>这本书讲述了C语言的基本语法和实现原理。</summary>\n"
-                  "        <price currency=\"USD\">29.99</price>\n"
-                  "        <note>适合初学者 &amp; 系统程序员</note>\n"
-                  "    </p:book>\n"
-                  "    <book title=\"XML解析指南\" author=\"某作者\">\n"
-                  "    <summary>内容包括：标签、属性、实体、树结构等。</summary>\n"
-                  "        <price currency=\"CNY\">59.00</price>\n"
-                  "    </book>\n"
-                  "</bookstore>";
-
-    struct k_xml_node *root = k_xml_parse(text);
-
-    k__xml_print(root);
-
-    k_xml_free(root);
-    return 0;
-}
