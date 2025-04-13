@@ -1,10 +1,58 @@
+
+#include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <assert.h>
+#include <string.h>
 
 #include "k_xml.h"
+
+#include "k_printf.h"
+
+void k_xml_print(struct k_printf_buf *buf, struct k_xml_node *node) {
+
+    enum k_xml_node_type type = k_xml_get_type(node);
+    if (K_XML_ELEM_NODE == type) {
+
+        const char *tag = k_xml_get_tag(node);
+        buf->fn_printf(buf, "<%s", tag);
+
+        buf->fn_puts(buf, ">", 1);
+
+        struct k_xml_node *child = k_xml_get_first_child(node);
+        for (; NULL != child; child = k_xml_get_next_sibling(child)) {
+            k_xml_print(buf, child);
+        }
+
+        buf->fn_printf(buf, "</%s>", tag);
+    }
+    else if (K_XML_TEXT_NODE == type) {
+        buf->fn_printf(buf, "%s", k_xml_get_text(node));
+    }
+}
+
+void k_printf_spec_k_xml(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+    (void)spec;
+
+    struct k_xml_node *node = (struct k_xml_node *)va_arg(*args, void *);
+    k_xml_print(buf, node);
+}
+
+k_printf_callback_fn match_spec_xml(const char **str) {
+
+    if (0 == strncmp(*str, "xml", 3)) {
+        *str += 3;
+        return k_printf_spec_k_xml;
+    } else {
+        return NULL;
+    }
+}
+
+static struct k_printf_config xml = {
+    .fn_match_spec = match_spec_xml
+};
 
 static void tmp(void) {
 
@@ -23,15 +71,7 @@ static void tmp(void) {
 
     struct k_xml_node *bookstore = k_xml_parse(text);
 
-    struct k_xml_node *book_1 = k_xml_find_child_by_tag(bookstore, "book");
-    struct k_xml_node *price_1 = k_xml_find_child_by_tag(book_1, "price");
-
-    struct k_xml_node *book_2 = k_xml_find_next_by_tag(book_1, "book");
-    struct k_xml_node *price_2 = k_xml_find_child_by_tag(book_2, "price");
-
-    printf("bookstore a=\"%s\"\n", k_xml_get_attr(bookstore, "a"));
-    printf("price_1 : %s\n", k_xml_get_text(price_1));
-    printf("price_2 : %s\n", k_xml_get_text(price_2));
+    k_printf(&xml, "%xml", bookstore);
 
     k_xml_free(bookstore);
 }

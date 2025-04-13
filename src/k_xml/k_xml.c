@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "k_list.h"
 #include "k_mem_pool.h"
@@ -19,7 +18,7 @@ struct k_xml_doc {
 };
 
 struct k_xml_node {
-    struct k_list_node list_node;
+    struct k_list_node sibling_list_node;
     struct k_xml_doc *doc;
     enum k_xml_node_type type;
     struct k_xml_node *parent;
@@ -95,7 +94,7 @@ static struct k_xml_elem_node *k__xml_doc_create_elem_node(struct k_xml_doc *doc
     if (NULL == node)
         return NULL;
 
-    k_list_node_loop(&node->base.list_node);
+    k_list_node_loop(&node->base.sibling_list_node);
     node->base.doc    = doc;
     node->base.type   = K_XML_ELEM_NODE;
     node->base.parent = NULL;
@@ -121,7 +120,7 @@ static int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *k
 
 static void k__xml_elem_node_add_child(struct k_xml_elem_node *node, struct k_xml_node *child) {
     child->parent = &node->base;
-    k_list_add_tail(&node->child_list, &child->list_node);
+    k_list_add_tail(&node->child_list, &child->sibling_list_node);
 }
 
 static void k__xml_doc_destroy_elem_node(struct k_xml_elem_node *node) {
@@ -141,7 +140,7 @@ static void k__xml_doc_destroy_elem_node(struct k_xml_elem_node *node) {
     struct k_list *child_list = &node->child_list;
     struct k_list_node *iter_, *next_;
     for (k_list_for_each_s(child_list, iter_, next_)) {
-        child = container_of(iter_, struct k_xml_node, list_node);
+        child = container_of(iter_, struct k_xml_node, sibling_list_node);
 
         k__xml_doc_destroy_node(child);
     }
@@ -155,7 +154,7 @@ static struct k_xml_text_node *k__xml_doc_create_text_node(struct k_xml_doc *doc
     if (NULL == node)
         return NULL;
 
-    k_list_node_loop(&node->base.list_node);
+    k_list_node_loop(&node->base.sibling_list_node);
     node->base.doc    = doc;
     node->base.type   = K_XML_TEXT_NODE;
     node->base.parent = NULL;
@@ -473,6 +472,9 @@ void k_xml_free(struct k_xml_node *node) {
 
 struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node) {
 
+    if (NULL == node)
+        return NULL;
+
     if (K_XML_ELEM_NODE == node->type) {
         struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, base);
 
@@ -481,7 +483,7 @@ struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node) {
             return NULL;
 
         struct k_list_node *list_node = k_list_get_first(child_list);
-        struct k_xml_node *child = container_of(list_node, struct k_xml_node, list_node);
+        struct k_xml_node *child = container_of(list_node, struct k_xml_node, sibling_list_node);
 
         return child;
     }
@@ -492,6 +494,9 @@ struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node) {
 
 struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node) {
 
+    if (NULL == node)
+        return NULL;
+
     struct k_xml_node *parent = node->parent;
     if (NULL == parent)
         return NULL;
@@ -499,11 +504,11 @@ struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node) {
     struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, base);
     struct k_list *parent_child_list = &elem->child_list;
 
-    struct k_list_node *next = node->list_node.next;
+    struct k_list_node *next = node->sibling_list_node.next;
     if (next == &parent_child_list->head)
         return NULL;
 
-    struct k_xml_node *sibling = container_of(next, struct k_xml_node, list_node);
+    struct k_xml_node *sibling = container_of(next, struct k_xml_node, sibling_list_node);
     return sibling;
 }
 
@@ -513,6 +518,8 @@ struct k_xml_node *k_xml_get_parent(struct k_xml_node *node) {
 
 struct k_xml_node *k_xml_find_child_by_tag(struct k_xml_node *node, const char *tag) {
 
+    if (NULL == node)
+        return NULL;
     if (K_XML_ELEM_NODE != node->type)
         return NULL;
     if (NULL == tag || '\0' == *tag)
@@ -526,7 +533,7 @@ struct k_xml_node *k_xml_find_child_by_tag(struct k_xml_node *node, const char *
 
     struct k_list_node *iter;
     for (k_list_for_each(child_list, iter)) {
-        struct k_xml_node *child = container_of(iter, struct k_xml_node, list_node);
+        struct k_xml_node *child = container_of(iter, struct k_xml_node, sibling_list_node);
 
         if (K_XML_ELEM_NODE == child->type) {
             struct k_xml_elem_node *child_elem = container_of(child, struct k_xml_elem_node, base);
@@ -541,6 +548,11 @@ struct k_xml_node *k_xml_find_child_by_tag(struct k_xml_node *node, const char *
 
 struct k_xml_node *k_xml_find_next_by_tag(struct k_xml_node *node, const char *tag) {
 
+    if (NULL == node)
+        return NULL;
+    if (NULL == tag || '\0' == *tag)
+        return NULL;
+
     struct k_xml_node *parent = node->parent;
     if (NULL == parent)
         return NULL;
@@ -549,9 +561,9 @@ struct k_xml_node *k_xml_find_next_by_tag(struct k_xml_node *node, const char *t
 
     struct k_xml_node *sibling;
     struct k_list *parent_child_list = &elem->child_list;
-    struct k_list_node *iter = node->list_node.next;
+    struct k_list_node *iter = node->sibling_list_node.next;
     for (; iter != &parent_child_list->head; iter = iter->next) {
-        sibling = container_of(iter, struct k_xml_node, list_node);
+        sibling = container_of(iter, struct k_xml_node, sibling_list_node);
 
         if (K_XML_ELEM_NODE == sibling->type) {
             struct k_xml_elem_node *sibling_elem = container_of(sibling, struct k_xml_elem_node, base);
@@ -570,6 +582,8 @@ enum k_xml_node_type k_xml_get_type(struct k_xml_node *node) {
 
 const char *k_xml_get_tag(struct k_xml_node *elem_node) {
 
+    if (NULL == elem_node)
+        return NULL;
     if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
 
@@ -579,6 +593,8 @@ const char *k_xml_get_tag(struct k_xml_node *elem_node) {
 
 const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr) {
 
+    if (NULL == elem_node)
+        return NULL;
     if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
     if (NULL == attr || '\0' == *attr)
@@ -601,6 +617,9 @@ const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr) {
 
 const char *k_xml_get_text(struct k_xml_node *text_node) {
 
+    if (NULL == text_node)
+        return NULL;
+
     if (K_XML_TEXT_NODE == text_node->type) {
         struct k_xml_text_node *text = container_of(text_node, struct k_xml_text_node, base);
         return text->text;
@@ -615,7 +634,7 @@ const char *k_xml_get_text(struct k_xml_node *text_node) {
         struct k_xml_node *child;
         struct k_list_node *iter;
         for (k_list_for_each(child_list, iter)) {
-            child = container_of(iter, struct k_xml_node, list_node);
+            child = container_of(iter, struct k_xml_node, sibling_list_node);
 
             if (K_XML_TEXT_NODE == child->type) {
                 struct k_xml_text_node *text = container_of(child, struct k_xml_text_node, base);
