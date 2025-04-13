@@ -44,6 +44,11 @@ struct k_xml_text_node {
     const char *text;
 };
 
+struct k_xml_comment_node {
+    struct k_xml_node base;
+    const char *comment;
+};
+
 /* endregion */
 
 /* region [doc] */
@@ -147,6 +152,7 @@ static void k__xml_doc_destroy_elem_node(struct k_xml_elem_node *node) {
         k__xml_doc_destroy_node(child);
     }
 
+    k_list_del(&node->base.sibling_list_node);
     k__xml_mem_free(doc, node);
 }
 
@@ -167,10 +173,29 @@ static struct k_xml_text_node *k__xml_doc_create_text_node(struct k_xml_doc *doc
 }
 
 static void k__xml_doc_destroy_text_node(struct k_xml_text_node *node) {
+    k_list_del(&node->base.sibling_list_node);
+    k__xml_mem_free(node->base.doc, node);
+}
 
-    struct k_xml_doc *doc = node->base.doc;
+static struct k_xml_comment_node *k__xml_doc_create_comment_node(struct k_xml_doc *doc, const char *comment) {
 
-    k__xml_mem_free(doc, node);
+    struct k_xml_comment_node *node = k__xml_mem_alloc(doc, sizeof(struct k_xml_comment_node));
+    if (NULL == node)
+        return NULL;
+
+    k_list_node_loop(&node->base.sibling_list_node);
+    node->base.doc    = doc;
+    node->base.type   = K_XML_COMMENT_NODE;
+    node->base.parent = NULL;
+
+    node->comment = comment;
+
+    return node;
+}
+
+static void k__xml_doc_destroy_comment_node(struct k_xml_comment_node *node) {
+    k_list_del(&node->base.sibling_list_node);
+    k__xml_mem_free(node->base.doc, node);
 }
 
 static void k__xml_doc_destroy_node(struct k_xml_node *node) {
@@ -208,17 +233,17 @@ static char *skip_space(char *p) {
 }
 
 static char *extract_ident(char *text) {
+    char *p = text;
 
-    char *begin = text;
-    if ( ! isalpha((unsigned char)*begin) && '_' != *begin)
+    if (! isalpha((unsigned char)*p) && '_' != *p)
         goto err;
 
-    char *end = begin + 1;
-    while (isalnum((unsigned char)*end) || '_' == *end) {
-        end++;
+    p++;
+    while (isalnum((unsigned char)*p) || '_' == *p) {
+        p++;
     }
 
-    return end;
+    return p;
 
 err:
     return text;
@@ -268,38 +293,76 @@ static int decode_entities(char *begin, const char *end) {
 
 static char *extract_string(char *text) {
 
-    char *begin = text;
-    if ('\"' != *begin && '\'' != *begin)
+    char *p = text;
+
+    if ('\"' != *p && '\'' != *p)
         goto err;
+
+    char *quote = p;
 
     int has_entities = 0;
 
-    char *end = begin + 1;
+    p++;
     while (1) {
-        if (*begin == *end) {
+        if (*quote == *p) {
             break;
         }
-        else if ('\0' == *end) {
+        else if ('\0' == *p) {
             goto err;
         }
-        else if ('&' == *end) {
-            end++;
+        else if ('&' == *p) {
+            p++;
             has_entities = 1;
         }
         else {
-            end++;
+            p++;
         }
     }
 
     if (has_entities) {
-        if (0 != decode_entities(begin, end))
+        if (0 != decode_entities(quote, p))
             goto err;
     }
     else {
-        *end = '\0';
+        *p = '\0';
     }
 
-    return end;
+    return p;
+
+err:
+    return text;
+}
+
+static char *extract_comment(char *text) {
+
+    char *p = text;
+
+    if ('<' != *p) goto err; else p++;
+    if ('!' != *p) goto err; else p++;
+    if ('-' != *p) goto err; else p++;
+    if ('-' != *p) goto err; else p++;
+
+    while (1) {
+        if ('\0' == *p) {
+            goto err;
+        }
+        else if ('-' == *p) {
+            p++;
+            if ('-' == *p) {
+                p++;
+                if ('>' == *p) {
+                    *(p - 2) = '\0';
+                    return p + 1;
+                }
+                else {
+                    goto err;
+                }
+            }
+        }
+        else {
+            p++;
+        }
+    }
 
 err:
     return text;
@@ -379,6 +442,11 @@ static struct k_xml_elem_node *k__xml_parse(struct k_xml_parser *parser) {
 
                 p += 1;
                 goto done;
+            }
+            else if ('!' == *(p + 1)) {
+
+                /* comment node */
+
             }
             else {
                 parser->p = p;

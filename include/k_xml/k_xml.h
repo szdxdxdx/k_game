@@ -10,6 +10,7 @@ struct k_xml_node;
 enum k_xml_node_type {
     K_XML_ELEM_NODE,
     K_XML_TEXT_NODE,
+    K_XML_COMMENT_NODE,
 };
 
 /** \brief xml 元素节点的属性 */
@@ -30,7 +31,8 @@ struct k_xml_node *k_xml_parse(char *text);
 /**
  * \brief 释放 xml 节点所在的 xml 树
  *
- * 无论传入的节点 `node` 位于树中的哪个位置，都会释放整棵树。
+ * 无论节点 `node` 位于树中的哪个位置，都会释放整棵树。
+ *
  * 若 `node` 为 `NULL`，则函数立即返回。
  */
 void k_xml_free(struct k_xml_node *node);
