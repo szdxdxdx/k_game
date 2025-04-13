@@ -1,6 +1,5 @@
 #include <ctype.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 
@@ -214,16 +213,58 @@ err:
     return text;
 }
 
+static int decode_entities(char *begin, const char *end) {
+
+    char *p1 = NULL;
+    char *p2 = begin;
+
+    while (p2 < end) {
+        if ('&' != *p2) {
+            p2++;
+        } else {
+            p1 = p2;
+            p2++;
+            if (0 == strncmp(p2, "amp;",  4)) { *p1 = '&';  p2 += 4; break; }
+            if (0 == strncmp(p2, "lt;",   3)) { *p1 = '<';  p2 += 3; break; }
+            if (0 == strncmp(p2, "gt;",   3)) { *p1 = '>';  p2 += 3; break; }
+            if (0 == strncmp(p2, "quot;", 5)) { *p1 = '\"'; p2 += 5; break; }
+            if (0 == strncmp(p2, "apos;", 5)) { *p1 = '\''; p2 += 5; break; }
+            return -1;
+        }
+    }
+
+    p1++;
+
+    while (p2 < end) {
+        if ('&' != *p2) {
+            *p1 = *p2;
+            p1++;
+            p2++;
+        } else {
+            p2++;
+            if (0 == strncmp(p2, "amp;",  4)) { *p1 = '&';  p1 += 1; p2 += 4; continue; }
+            if (0 == strncmp(p2, "lt;",   3)) { *p1 = '<';  p1 += 1; p2 += 3; continue; }
+            if (0 == strncmp(p2, "gt;",   3)) { *p1 = '>';  p1 += 1; p2 += 3; continue; }
+            if (0 == strncmp(p2, "quot;", 5)) { *p1 = '\"'; p1 += 1; p2 += 5; continue; }
+            if (0 == strncmp(p2, "apos;", 5)) { *p1 = '\''; p1 += 1; p2 += 5; continue; }
+        }
+    }
+
+    *p1 = '\0';
+
+    return 0;
+}
+
 static char *extract_string(char *text) {
 
     char *begin = text;
     if ('\"' != *begin && '\'' != *begin)
         goto err;
 
-    int entities_count = 0;
+    int has_entities = 0;
+
     char *end = begin + 1;
     while (1) {
-
         if (*begin == *end) {
             break;
         }
@@ -231,20 +272,20 @@ static char *extract_string(char *text) {
             goto err;
         }
         else if ('&' == *end) {
-            for (end++; *end != ';'; end++) {
-                if ('&' == *end || '\0' == *end)
-                    goto err;
-            }
-            entities_count += 1;
+            end++;
+            has_entities = 1;
         }
         else {
             end++;
         }
     }
 
-    if (0 < entities_count) {
-
-
+    if (has_entities) {
+        if (0 != decode_entities(begin, end))
+            goto err;
+    }
+    else {
+        *end = '\0';
     }
 
     return end;
@@ -340,24 +381,31 @@ struct k_xml_elem_node *k__xml_parse(struct k_xml_parser *parser) {
         }
         else {
             char *text = p;
-            p += 1;
+            int has_entities = 0;
             while ('<' != *p) {
                 if ('\0' == *p)
                     goto err;
-                else
+                else if ('&' == *p) {
+                    has_entities = 1;
                     p++;
+                }
+                else {
+                    p++;
+                }
             }
 
             char *text_end = p;
 
-            if (text != text_end) {
-
-                struct k_xml_text_node *text_node = k__xml_doc_create_text_node(parser->doc, text);
-                if (NULL == text_node)
+            if (has_entities) {
+                if (0 != decode_entities(text, text_end))
                     goto err;
-
-                k__xml_elem_node_add_child(elem, &text_node->base);
             }
+
+            struct k_xml_text_node *text_node = k__xml_doc_create_text_node(parser->doc, text);
+            if (NULL == text_node)
+                goto err;
+
+            k__xml_elem_node_add_child(elem, &text_node->base);
         }
     }
 
@@ -369,52 +417,6 @@ done:
 err:
     k__xml_doc_destroy_elem_node(elem);
     return NULL;
-}
-
-/* endregion */
-
-/* region [print] */
-
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define MAGENTA "\033[35m"
-#define CLEAR   "\033[0m"
-
-void k__xml_print(struct k_xml_node *node) {
-
-    if (NULL == node) {
-        printf("(null)");
-        return;
-    }
-
-    if (K_XML_ELEM_NODE == node->type) {
-        struct k_xml_elem_node *elem_node = container_of(node, struct k_xml_elem_node, base);
-
-        printf("<" MAGENTA "%s" CLEAR, elem_node->tag);
-
-        struct k_list_node *attr_iter;
-        for (k_list_for_each(&elem_node->attr_list, attr_iter)) {
-            struct k_xml_attr *attr = container_of(attr_iter, struct k_xml_attr, list_node);
-
-            printf(" " GREEN "%s" CLEAR "=\"" YELLOW "%s" CLEAR "\"", attr->key, attr->val);
-        }
-
-        printf(">");
-
-        struct k_list_node *child_iter;
-        for (k_list_for_each(&elem_node->child_list, child_iter)) {
-            struct k_xml_node *child = container_of(child_iter, struct k_xml_node, list_node);
-
-            k__xml_print(child);
-        }
-
-        printf("</" MAGENTA "%s" CLEAR ">", elem_node->tag);
-    }
-    else if (K_XML_TEXT_NODE == node->type) {
-        struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, base);
-        printf(RED "%s" CLEAR, text_node->text);
-    }
 }
 
 /* endregion */
