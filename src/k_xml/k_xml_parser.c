@@ -141,7 +141,7 @@ static int k__xml_parse(struct k_xml_parser *parser) {
     return 0;
 }
 
-int k_xml_parse(char *text) {
+int k_xml_parse_(char *text) {
 
     struct k_xml_parser parser;
     parser.text = text;

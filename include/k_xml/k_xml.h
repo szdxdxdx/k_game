@@ -3,12 +3,9 @@
 
 #include <stddef.h>
 
-int k_xml_parse(char *text);
-
 struct k_xml_node;
-struct k_xml_doc;
 
-struct k_xml_node *k_xml_get_root(struct k_xml_doc *doc);
+struct k_xml_node *k_xml_parse(char *text);
 
 struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node);
 
