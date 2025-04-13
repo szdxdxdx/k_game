@@ -73,7 +73,7 @@ void k__xml_doc_destroy_node(struct k_xml_node *node);
 
 /* endregion */
 
-/* region [elem_node] */
+/* region [node] */
 
 struct k_xml_elem_node *k__xml_doc_create_elem_node(struct k_xml_doc *doc, const char *tag) {
 
@@ -138,10 +138,6 @@ void k__xml_doc_destroy_elem_node(struct k_xml_elem_node *node) {
     k__xml_mem_free(doc, node);
 }
 
-/* endregion */
-
-/* region [text_node] */
-
 struct k_xml_text_node *k__xml_doc_create_text_node(struct k_xml_doc *doc, const char *text) {
 
     struct k_xml_text_node *node = k__xml_mem_alloc(doc, sizeof(struct k_xml_text_node));
@@ -165,10 +161,6 @@ void k__xml_doc_destroy_text_node(struct k_xml_text_node *node) {
     k__xml_mem_free(doc, node);
 }
 
-/* endregion */
-
-/* region [node] */
-
 void k__xml_doc_destroy_node(struct k_xml_node *node) {
 
     switch (node->type) {
@@ -191,18 +183,24 @@ void k__xml_doc_destroy_node(struct k_xml_node *node) {
 
 /* region [print] */
 
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define MAGENTA "\033[35m"
+#define CLEAR   "\033[0m"
+
 void k__xml_print(struct k_xml_node *node) {
 
     if (K__XML_ELEM_NODE == node->type) {
         struct k_xml_elem_node *elem_node = container_of(node, struct k_xml_elem_node, base);
 
-        printf("<%s", elem_node->tag);
+        printf("<" MAGENTA "%s" CLEAR, elem_node->tag);
 
         struct k_list_node *attr_iter;
         for (k_list_for_each(&elem_node->attr_list, attr_iter)) {
             struct k_xml_attr *attr = container_of(attr_iter, struct k_xml_attr, list_node);
 
-            printf(" %s=\"%s\"", attr->key, attr->val);
+            printf(" " GREEN "%s" CLEAR "=\"" YELLOW "%s" CLEAR "\"", attr->key, attr->val);
         }
 
         printf(">");
@@ -214,11 +212,11 @@ void k__xml_print(struct k_xml_node *node) {
             k__xml_print(child);
         }
 
-        printf("</%s>", elem_node->tag);
+        printf("</" MAGENTA "%s" CLEAR ">", elem_node->tag);
     }
     else if (K__XML_TEXT_NODE == node->type) {
         struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, base);
-        printf("%s", text_node->text);
+        printf(RED "%s" CLEAR, text_node->text);
     }
 }
 
