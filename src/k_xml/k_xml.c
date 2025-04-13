@@ -191,6 +191,11 @@ void k__xml_doc_destroy_node(struct k_xml_node *node) {
 
 void k__xml_print(struct k_xml_node *node) {
 
+    if (NULL == node) {
+        printf("(null)");
+        return;
+    }
+
     if (K__XML_ELEM_NODE == node->type) {
         struct k_xml_elem_node *elem_node = container_of(node, struct k_xml_elem_node, base);
 
@@ -248,6 +253,21 @@ static char *extract_ident(char *text) {
     char *end = begin + 1;
     while (isalnum((unsigned char)*end) || '_' == *end) {
         end++;
+    }
+
+    while (1) {
+        if (isalnum((unsigned char)*end) || '_' == *end) {
+            end++;
+        } else if (':' == *end) {
+            end++;
+            if (isalnum((unsigned char)*end) || '_' == *end) {
+                end++;
+            } else {
+                goto err;
+            }
+        } else {
+            break;
+        }
     }
 
     return end;
@@ -435,12 +455,123 @@ err:
 
 /* endregion */
 
+/* region [k_xml] */
+
+struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node) {
+
+    if (NULL == node)
+        return NULL;
+
+    if (K__XML_ELEM_NODE == node->type) {
+        struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, base);
+
+        struct k_list *child_list = &elem->child_list;
+        if (k_list_is_empty(child_list))
+            return NULL;
+
+        struct k_list_node *list_node = k_list_get_first(child_list);
+        struct k_xml_node *child = container_of(list_node, struct k_xml_node, list_node);
+
+        return child;
+    }
+    else {
+        return NULL;
+    }
+}
+
+struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node) {
+
+    if (NULL == node)
+        return NULL;
+
+    struct k_xml_node *parent = node->parent;
+    if (NULL == parent)
+        return NULL;
+
+    assert(K__XML_ELEM_NODE == parent->type);
+
+    struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, base);
+    struct k_list *parent_child_list = &elem->child_list;
+
+    struct k_list_node *next = node->list_node.next;
+    if (next == &parent_child_list->head)
+        return NULL;
+
+    struct k_xml_node *sibling = container_of(next, struct k_xml_node, list_node);
+    return sibling;
+}
+
+struct k_xml_node *k_xml_get_parent(struct k_xml_node *node) {
+
+    if (NULL == node)
+        return NULL;
+
+    return node->parent;
+}
+
+const char *k_xml_get_tag(struct k_xml_node *elem_node) {
+
+    if (NULL == elem_node)
+        return NULL;
+    if (K__XML_ELEM_NODE != elem_node->type)
+        return NULL;
+
+    struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
+    return elem->tag;
+}
+
+const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr) {
+
+    if (NULL == elem_node)
+        return NULL;
+    if (NULL == attr || '\0' == *attr)
+        return NULL;
+    if (K__XML_ELEM_NODE != elem_node->type)
+        return NULL;
+
+    struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
+
+    struct k_list *attr_list = &elem->attr_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(attr_list, iter)) {
+        struct k_xml_attr *attr_node = container_of(iter, struct k_xml_attr, list_node);
+
+        if (0 == strcmp(attr_node->key, attr))
+            return attr_node->val;
+    }
+
+    return NULL;
+}
+
+const char *k_xml_get_text(struct k_xml_node *text_node) {
+
+    if (NULL == text_node)
+        return NULL;
+    if (K__XML_TEXT_NODE != text_node->type)
+        return NULL;
+
+    struct k_xml_text_node *text = container_of(text_node, struct k_xml_text_node, base);
+    return text->text;
+}
+
+/* endregion */
+
 int main(void) {
     setbuf(stdout, NULL);
 
-    char text[] = "  <window x='100' y=\"100\">\n"
-                  "    <button>click me</button>\n"
-                  "</window>";
+    char text[] = "<bookstore>\n"
+                  "    <p:book title=\"C语言\" author=\"Dennis Ritchie\">\n"
+                  "        <summary>这本书讲述了C语言的基本语法和实现原理。</summary>\n"
+                  "        <price currency=\"USD\">29.99</price>\n"
+                  "        <note>适合初学者 &amp; 系统程序员</note>\n"
+                  "    </p:book>\n"
+                  "    <book title=\"XML解析指南\" author=\"某作者\">\n"
+                  "    <summary>内容包括：标签、属性、实体、树结构等。</summary>\n"
+                  "        <price currency=\"CNY\">59.00</price>\n"
+                  "    </book>\n"
+                  "</bookstore>";
+
+
 
     struct k_xml_node *root = k_xml_parse(text);
 
