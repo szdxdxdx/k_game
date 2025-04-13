@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "k_list.h"
+
 #include "k_xml.h"
 
 struct k_xml_token_ident {
@@ -17,15 +19,18 @@ struct k_xml_token_string {
 };
 
 struct k_xml_token_attr {
-    struct k_xml_token_attr *next;
+    struct k_list_node list_node;
     struct k_xml_token_ident  key;
     struct k_xml_token_string val;
 };
 
-struct k_xml_token_node {
+struct k_xml_token_elem_node {
+
     struct k_xml_token_node *parent;
+
     struct k_xml_token_ident tag;
-    struct k_xml_token_attr *attr;
+    struct k_list attrs;
+    size_t attrs_num;
 };
 
 struct k_xml_parser {
@@ -33,7 +38,9 @@ struct k_xml_parser {
     char *text;
     char *p;
 
-    struct k_xml_token_node *node;
+    void *data;
+
+    int (*fn_create_elem_node)(void *data);
 };
 
 static char *skip_space(char *text) {
@@ -45,7 +52,7 @@ static char *skip_space(char *text) {
 
 static char *extract_ident(char *text, struct k_xml_token_ident *get_ident) {
 
-    char *begin = skip_space(text);
+    char *begin = text;
     if ( ! isalpha((unsigned char)*begin) && '_' != *begin)
         goto err;
 
@@ -64,7 +71,7 @@ err:
 
 static char *extract_string(char *text, struct k_xml_token_string *get_string) {
 
-    char *begin = skip_space(text);
+    char *begin = text;
     if ('\"' != *begin && '\'' != *begin)
         goto err;
 
@@ -110,26 +117,23 @@ static char *extract_attr(char *text, struct k_xml_token_attr *get_attr) {
         goto err;
 
     p = skip_space(key.end);
+
     if ('=' != *p)
         goto err;
     else
         p++;
 
+    p = skip_space(p);
+
     if (p == extract_string(p, &val))
         goto err;
 
-    get_attr->key  = key;
-    get_attr->val  = val;
-    get_attr->next = NULL;
+    get_attr->key = key;
+    get_attr->val = val;
     return 0;
 
 err:
     return text;
-}
-
-static int extract_tag_start(struct k_xml_parser *parser) {
-
-
 }
 
 static int k__xml_parse(struct k_xml_parser *parser) {
@@ -162,7 +166,7 @@ static void test_extract_attr(char *text) {
     }
 }
 
-int main(void) {
+int main11(void) {
 
     test_extract_attr(" _=1");
     test_extract_attr("a='hello'");
