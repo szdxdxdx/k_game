@@ -20,7 +20,7 @@ static void load_sound(void) {
 
 static void create_room(void) {
 
-    struct k_room *room = yx_create_empty_room();
+    struct k_room *room = yx_create_arena_room();
 
     k_room_goto(room);
 }
@@ -32,7 +32,7 @@ static int fn_init_game(void) {
     return 0;
 }
 
-int main_(int argc, char **argv) {
+int main(int argc, char **argv) {
     system("chcp 65001");
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);

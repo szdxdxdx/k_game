@@ -75,7 +75,7 @@ static inline uint32_t k_canvas_get_draw_color_rgba(void) {
 /**
  * \brief 在房间内绘制一个点
  *
- * `(x, y)` 为绘制点的坐标。
+ * `(x, y)` 为点的坐标。
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_draw_point(float x, float y);
@@ -83,7 +83,7 @@ int k_canvas_draw_point(float x, float y);
 /**
  * \brief 在房间内绘制多个点
  *
- * `points` 为绘制点坐标数组，`points_num` 指定数组长度。
+ * `points` 为点坐标的数组，`points_num` 指定数组长度。
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_draw_points(const struct k_float_point *points, size_t points_num);
@@ -91,7 +91,7 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num);
 /**
  * \brief 在房间内绘制一条线段
  *
- * `(x1, y1)` 和 `(x2, y2)` 为绘制线段的两个端点坐标。
+ * `(x1, y1)` 和 `(x2, y2)` 为线段的两个端点坐标。
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_draw_line(float x1, float y1, float x2, float y2);
@@ -99,13 +99,13 @@ int k_canvas_draw_line(float x1, float y1, float x2, float y2);
 /**
  * \brief 在房间内连续绘制多条线段
  *
- * `points` 为点坐标数组，`points_num` 指定数组长度。
+ * `points` 为点坐标的数组，`points_num` 指定数组长度。
  * 函数将一次将点连接起来绘制线段，共绘制 `points_num - 1` 条线段。
  * 若 `points` 中的点个数少于 2，则不绘制任何内容。
  *
  * 若绘制成功，函数返回 0，否则返回非 0。
  *
- * 提示：你可以令 `points` 中的最后一个点等于第一个点来绘制任意多边形。
+ * 提示：若要绘制任意多边形，可以令 `points` 中始末两点的坐标相同。
  */
 int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num);
 
@@ -145,6 +145,21 @@ int k_canvas_draw_circle(float cx, float cy, float r);
 /* endregion */
 
 /* region [draw_image] */
+
+struct k_canvas_draw_image_options;
+
+/**
+ * \brief 在房间内绘制一张图片
+ *
+ * `src_rect` 指定源矩形区域，若为 `NULL` 则绘制整张图片，否则绘制原图中指定的裁剪部分。
+ * 若 `src_rect` 指定裁剪部分的宽高为 0 或负数，则不绘制任何内容。
+ *
+ * `x` 和 `y` 指定图片左上角在房间中的坐标。
+ * `options` 用于执行缩放、旋转和镜像翻转变换，若为 `NULL` 则不应用任何变换。
+ *
+ * 若成功，函数返回 0，否则返回非 0。
+ */
+int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options);
 
 /** \brief 用于指定在绘制图片时应用的变换效果 */
 struct k_canvas_draw_image_options {
@@ -186,22 +201,21 @@ struct k_canvas_draw_image_options {
     int flip_y;
 };
 
-/**
- * \brief 在房间内绘制一张图片
- *
- * `src_rect` 指定源矩形区域，若为 `NULL` 则绘制整张图片，否则绘制原图中指定的裁剪部分。
- * 若 `src_rect` 指定裁剪部分的宽高为 0 或负数，则不绘制任何内容。
- *
- * `x` 和 `y` 指定图片左上角在房间中的坐标。
- * `options` 用于执行缩放、旋转和镜像翻转变换，若为 `NULL` 则不应用任何变换。
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
-int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options);
-
 /* endregion */
 
 /* region [draw_sprite] */
+
+struct k_canvas_draw_sprite_options;
+
+/**
+ * \brief 在房间内绘制一张精灵帧
+ *
+ * `frame_idx` 指定要绘制帧的索引。`x` 和 `y` 指定精灵原点的在房间中的坐标。
+ * `options` 用于执行缩放、旋转和翻转变换，若为 `NULL` 则不应用任何变换。
+ *
+ * 若成功，函数返回 0，否则返回非 0。
+ */
+int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options);
 
 /** \brief 用于指定在绘制精灵帧时应用的变换效果 */
 struct k_canvas_draw_sprite_options {
@@ -241,16 +255,6 @@ struct k_canvas_draw_sprite_options {
     int flip_x;
     int flip_y;
 };
-
-/**
- * \brief 在房间内绘制一张精灵帧
- *
- * `frame_idx` 指定要绘制帧的索引。`x` 和 `y` 指定精灵原点的在房间中的坐标。
- * `options` 用于执行缩放、旋转和翻转变换，若为 `NULL` 则不应用任何变换。
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
-int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options);
 
 /* endregion */
 
