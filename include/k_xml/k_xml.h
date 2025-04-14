@@ -52,7 +52,14 @@ struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node);
 struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node);
 
 /**
- * \brief 获取  xml 节点的父节点
+ * \brief 获取 xml 节点的前一个兄弟节点
+ *
+ * 函数返回 `node` 的前一个兄弟节点，若没有前一个节点则返回 `NULL`。
+ */
+struct k_xml_node *k_xml_get_prev_sibling(struct k_xml_node *node);
+
+/**
+ * \brief 获取 xml 节点的父节点
  *
  * 函数返回 `node` 的父节点，若 `node` 是根节点则返回 `NULL`。
  */
@@ -117,14 +124,10 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
 /**
  * \brief 获取 xml 节点的文本内容
  *
- * 若 `node` 是元素节点，则遍历它的所有子节点，找出第一个文本子节点，
- * 并返回该子节点的文本字符串，若找不到则返回空字符串 ""。
- *
- * 若 `node` 是文本节点，则返回该文本节点的文本字符串。
- *
- * 若 `node` 是注释节点，则返回该注释节点的注释文本字符串。
- *
- * 其余情况返回 `NULL`。
+ * - 若 `node` 是元素节点，则遍历它的所有子节点，找出第一个文本子节点，
+ *   并返回该子节点的文本字符串，若找不到则返回空字符串 ""。
+ * - 若 `node` 是文本节点或注释节点，则返回其内容字符串。
+ * - 其余情况则返回 `NULL`。
  */
 const char *k_xml_get_text(struct k_xml_node *node);
 

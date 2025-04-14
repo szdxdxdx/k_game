@@ -59,8 +59,13 @@ void k_printf_spec_k_xml(struct k_printf_buf *buf, const struct k_printf_spec *s
     (void)spec;
 
     struct k_xml_node *node = (struct k_xml_node *)va_arg(*args, void *);
-    k_xml_print(buf, node);
-    buf->fn_printf(buf, RESET);
+
+    if (NULL == node) {
+        buf->fn_printf(buf, "(null)");
+    } else {
+        k_xml_print(buf, node);
+        buf->fn_printf(buf, RESET);
+    }
 }
 
 k_printf_callback_fn match_spec_xml(const char **str) {
@@ -79,7 +84,9 @@ static struct k_printf_config xml = {
 
 static void tmp(void) {
 
-    char text[] = "<bookstore a=\"&lt;&lt;\">\n"
+    char text[] = "<!-- 注释 -->"
+                  "      s "
+                  "<bookstore a=\"&lt;&lt;\">\n"
                   "    <!-- 注释 -->\n"
                   "    <book title=\"C语言\" author=\"Dennis Ritchie\">\n"
                   "        <summary>这本书讲述了C语言的基本语法和实现原理。</summary>\n"
@@ -95,6 +102,7 @@ static void tmp(void) {
 
     struct k_xml_node *bookstore = k_xml_parse(text);
 
+    k_printf(&xml, "%xml", k_xml_get_prev_sibling(bookstore));
     k_printf(&xml, "%xml", bookstore);
 
     k_xml_free(bookstore);
