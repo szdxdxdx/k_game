@@ -117,10 +117,14 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
 /**
  * \brief 获取 xml 节点的文本内容
  *
+ * 若 `node` 是元素节点，则遍历它的所有子节点，找出第一个文本子节点，
+ * 并返回该子节点的文本字符串，若找不到则返回空字符串 ""。
+ *
  * 若 `node` 是文本节点，则返回该文本节点的文本字符串。
  *
- * 若 `node` 是元素节点，则遍历它的所有子节点，找出第一个文本子节点，
- * 并返回该子节点的文本字符串，若找不到则返回 `NULL`
+ * 若 `node` 是注释节点，则返回该注释节点的注释文本字符串。
+ *
+ * 其余情况返回 `NULL`。
  */
 const char *k_xml_get_text(struct k_xml_node *node);
 

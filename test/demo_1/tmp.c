@@ -50,6 +50,9 @@ void k_xml_print(struct k_printf_buf *buf, struct k_xml_node *node) {
     else if (K_XML_TEXT_NODE == type) {
         buf->fn_printf(buf, MAGENTA "%s", k_xml_get_text(node));
     }
+    else if (K_XML_COMMENT_NODE == type) {
+        buf->fn_printf(buf, RED "<!--%s-->", k_xml_get_text(node));
+    }
 }
 
 void k_printf_spec_k_xml(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
@@ -77,6 +80,7 @@ static struct k_printf_config xml = {
 static void tmp(void) {
 
     char text[] = "<bookstore a=\"&lt;&lt;\">\n"
+                  "    <!-- 注释 -->\n"
                   "    <book title=\"C语言\" author=\"Dennis Ritchie\">\n"
                   "        <summary>这本书讲述了C语言的基本语法和实现原理。</summary>\n"
                   "        <price currency=\"USD\">29.99</price>\n"
