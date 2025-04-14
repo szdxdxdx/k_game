@@ -84,8 +84,7 @@ static struct k_printf_config xml = {
 
 static void tmp(void) {
 
-    char text[] = "<!-- 注释 -->"
-                  "      s "
+    char text[] = "<!-- 注释 -->\n"
                   "<bookstore a=\"&lt;&lt;\">\n"
                   "    <!-- 注释 -->\n"
                   "    <book title=\"C语言\" author=\"Dennis Ritchie\">\n"
@@ -102,6 +101,7 @@ static void tmp(void) {
 
     struct k_xml_node *bookstore = k_xml_parse(text);
 
+    k_printf(&xml, "%xml", k_xml_get_prev_sibling(k_xml_get_prev_sibling(bookstore)));
     k_printf(&xml, "%xml", k_xml_get_prev_sibling(bookstore));
     k_printf(&xml, "%xml", bookstore);
 

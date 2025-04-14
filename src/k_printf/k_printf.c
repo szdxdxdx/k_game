@@ -18,7 +18,7 @@ struct k_printf_str_buf {
     int max_len;
 };
 
-static void str_buf_puts(struct k_printf_buf *printf_buf, const char *str, size_t len) {
+static void str_buf_puts_n(struct k_printf_buf *printf_buf, const char *str, size_t len) {
 
     if (-1 == printf_buf->n)
         return;
@@ -88,7 +88,7 @@ static void str_buf_init(struct k_printf_str_buf *str_buf, char *buf, size_t cap
 
     static char buf_[1] = { '\0' };
 
-    str_buf->printf_buf.fn_puts    = str_buf_puts,
+    str_buf->printf_buf.fn_puts_n  = str_buf_puts_n,
     str_buf->printf_buf.fn_printf  = str_buf_printf,
     str_buf->printf_buf.fn_vprintf = str_buf_vprintf,
     str_buf->printf_buf.n          = 0;
@@ -117,7 +117,7 @@ struct k_printf_file_buf {
     FILE *file;
 };
 
-static void file_buf_puts(struct k_printf_buf *printf_buf, const char *str, size_t len) {
+static void file_buf_puts_n(struct k_printf_buf *printf_buf, const char *str, size_t len) {
 
     if (-1 == printf_buf->n)
         return;
@@ -162,7 +162,7 @@ static void file_buf_printf(struct k_printf_buf *printf_buf, const char *fmt, ..
 
 static void file_buf_init(struct k_printf_file_buf *printf_buf, FILE *file) {
 
-    printf_buf->printf_buf.fn_puts    = file_buf_puts,
+    printf_buf->printf_buf.fn_puts_n  = file_buf_puts_n,
     printf_buf->printf_buf.fn_printf  = file_buf_printf,
     printf_buf->printf_buf.fn_vprintf = file_buf_vprintf,
     printf_buf->printf_buf.n          = 0;
@@ -529,7 +529,7 @@ static int x_printf(const struct k_printf_config *config, struct k_printf_buf *b
         }
 
         if (s < p) {
-            buf->fn_puts(buf, s, p - s);
+            buf->fn_puts_n(buf, s, p - s);
         }
 
         if ('\0' == *p)

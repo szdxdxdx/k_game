@@ -83,7 +83,7 @@ static void printf_callback_spec_arr(struct k_printf_buf *buf, const struct k_pr
     /* 第二步，向缓冲区输出内容 */
 
     if (len == 0) {
-        buf->fn_puts(buf, "[]", 2);
+        buf->fn_puts_n(buf, "[]", 2);
         return;
     }
 
@@ -97,7 +97,7 @@ static void printf_callback_spec_arr(struct k_printf_buf *buf, const struct k_pr
     for (;;) {
         i++;
         if (i % line_len == 0)
-            buf->fn_puts(buf, "\n ", 2);
+            buf->fn_puts_n(buf, "\n ", 2);
         if (len - 1 == i)
             break;
         buf->fn_printf(buf, " %*d,", min_width, arr[i]);
@@ -138,15 +138,15 @@ static void printf_callback_spec_c(struct k_printf_buf *buf, const struct k_prin
     /* 第二步，向缓冲区输出内容 */
 
     if (repeat == 1) {
-        buf->fn_puts(buf, &ch, 1);
+        buf->fn_puts_n(buf, &ch, 1);
         return;
     }
 
-    char ch_buf[64];
+    char ch_buf[128];
 
     if (repeat <= sizeof(ch_buf)) {
         memset(ch_buf, ch, repeat);
-        buf->fn_puts(buf, ch_buf, repeat);
+        buf->fn_puts_n(buf, ch_buf, repeat);
         return;
     }
 
@@ -154,11 +154,11 @@ static void printf_callback_spec_c(struct k_printf_buf *buf, const struct k_prin
 
     int putc_num = 0;
     while (putc_num + sizeof(ch_buf) <= repeat) {
-        buf->fn_puts(buf, ch_buf, sizeof(ch_buf));
+        buf->fn_puts_n(buf, ch_buf, sizeof(ch_buf));
         putc_num += sizeof(ch_buf);
     }
     if (putc_num < repeat)
-        buf->fn_puts(buf, ch_buf, repeat - putc_num);
+        buf->fn_puts_n(buf, ch_buf, repeat - putc_num);
 }
 
 /* 本示例教你如何匹配自定义格式说明符：

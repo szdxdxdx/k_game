@@ -82,7 +82,7 @@ typedef void (*k_printf_callback_fn)(struct k_printf_buf *buf, const struct k_pr
 struct k_printf_buf {
 
     /** \brief 往缓冲区中写入指定长度的字符串 */
-    void (*fn_puts)(struct k_printf_buf *buf, const char *str, size_t len);
+    void (*fn_puts_n)(struct k_printf_buf *buf, const char *str, size_t len);
 
     /** \brief 往缓冲区格式化写入格式化字符串（格式说明符同 C printf） */
     void (*fn_printf)(struct k_printf_buf *buf, const char *fmt, ...);

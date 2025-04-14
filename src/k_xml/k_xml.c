@@ -388,9 +388,10 @@ static struct k_xml_text_node *k__xml_parse_text_node(struct k_xml_parser *parse
 
         if ( ! isspace((unsigned char)*p)) {
             is_blank = 0;
-        }
-        else if ('&' == *p) {
-            has_entities = 1;
+
+            if ('&' == *p) {
+                has_entities = 1;
+            }
         }
 
         p++;
