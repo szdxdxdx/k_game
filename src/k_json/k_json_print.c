@@ -79,7 +79,7 @@ static void print_json(struct k_printf_buf *buf, struct k_json *json) {
     }
 }
 
-void k_printf_callback_k_json(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+void k__json_print(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
     struct k_json *json = va_arg(*args, void *);
     if (NULL != json)
         print_json(buf, json);

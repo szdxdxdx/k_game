@@ -100,7 +100,7 @@ struct k_json *k_json_obj_get(struct k_json *json, const char *key) {
         return pair->val;
 }
 
-struct k_json *k_json_get(struct k_json *json, ...) {
+struct k_json *k_json_deep_get(struct k_json *json, ...) {
 
     if (NULL == json || K__JSON_OBJ != json->type)
         return NULL;
@@ -160,51 +160,6 @@ size_t k_json_arr_get_size(struct k_json *json) {
     assert(K__JSON_ARR == json->type);
 
     return k__json_arr_get_size((struct k__json_arr *)json);
-}
-
-int k_json_get_i(struct k_json *json, int *get_i) {
-    assert(NULL != json);
-    assert(NULL != get_i);
-
-    if (K__JSON_NUM == json->type) {
-        *get_i = ((struct k__json_num *)json)->num_i;
-        return 0;
-    }
-    else if (K__JSON_BOOL == json->type) {
-        *get_i = ((struct k__json_bool *)json)->is_true ? 1 : 0;
-        return 0;
-    }
-    else {
-        return -1;
-    }
-}
-
-int k_json_get_f(struct k_json *json, double *get_f) {
-    assert(NULL != json);
-    assert(NULL != get_f);
-
-    if (K__JSON_NUM != json->type)
-        return -1;
-
-    *get_f = ((struct k__json_num *)json)->num_f;
-    return 0;
-}
-
-int k_json_get_s(struct k_json *json, const char **get_s) {
-    assert(NULL != json);
-    assert(NULL != get_s);
-
-    if (K__JSON_STR == json->type) {
-        *get_s = ((struct k__json_str *)json)->str;
-        return 0;
-    }
-    else if (K__JSON_NUM == json->type) {
-        *get_s = k__json_num_get_s((struct k__json_num *)json);
-        return 0;
-    }
-    else {
-        return -1;
-    }
 }
 
 int k_json_num_get_i(struct k_json *json) {

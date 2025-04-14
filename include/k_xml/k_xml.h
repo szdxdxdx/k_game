@@ -3,18 +3,57 @@
 
 #include <stddef.h>
 
+
+
+/*
+ * [!] 功能不完善的 xml 解析器
+ *
+ * ---
+ *
+ * 该解析器可以解析下述的 xml 文本：
+ *
+ * ```xml
+ * <book id="1" available="true">
+ *      <!-- 测试 -->
+ *      <title>Learn &lt;C&gt;</title>
+ *      price：39.99
+ * </book>
+ * ```
+ *
+ * 解析结果：
+ * 根节点为元素节点，tag 为 book，有 id 和 available 两个属性。
+ * 根节点下一共有 5 个子节点：
+ *  - 第 1 个是文本节点，文本内容是换行字符和一些空格字符
+ *  - 第 2 个是注释节点，文本内容是“ 测试 ”
+ *  - 第 3 个是文本节点，文本内容是换行字符和一些空格字符
+ *  - 第 4 个是元素节点，tag 为 title。 有一个文本子节点，内容是“Learn <C>”。
+ *    子节点文本中的实体引用 `&lt;` 和 `&gt;` 被替换成 `<` 和 `>` 符号。
+ *  - 第 5 个是文本节点，文本内容是 “price：39.99” 以及前后的空格与换行字符。
+ *
+ * ---
+ *
+ * 仅支持：
+ * - 解析元素节点，例如： <book></book>
+ * - 解析闭合的元素节点： <book id="1" available="true" />
+ * - 解析带属性的元素节点： <book id="1" available="true"></book>
+ * - 解析文本节点，例如： <price>39.99</price>
+ * - 解析注释节点，例如： <!-- 注释 -->
+ * - 五个基本的实体引用： &lt; &gt; &amp; &apos; &quot;
+ *
+ * ---
+ *
+ * 该模块是我在项目的后期阶段匆匆赶出来的。临近结题，我没有时间设计。
+ * 确定好要提供的 api 后，我用一个下午时间实现了最基础的文本解析，
+ * 晚上将代码封装成模块，第二天简单修复了部分错误，并补充文档注释。
+ * 目前它是一个摇摇欲坠的模块。我之后会重构它，api 可能会有所变动。
+ *
+ * json 和 xml 解析器分别是在项目初期和末期时写的，但写得都是一坨。
+ */
+
+
+
 /** \brief xml 节点 */
 struct k_xml_node;
-
-/** \brief xml 节点的类型 */
-enum k_xml_node_type {
-    K_XML_ELEM_NODE,
-    K_XML_TEXT_NODE,
-    K_XML_COMMENT_NODE,
-};
-
-/** \brief xml 元素节点的属性 */
-struct k_xml_attr;
 
 /**
  * \brief 解析 xml 文本
@@ -37,12 +76,26 @@ struct k_xml_node *k_xml_parse(char *text);
  */
 void k_xml_free(struct k_xml_node *node);
 
+/** \brief xml 节点的类型 */
+enum k_xml_node_type {
+    K_XML_ELEM_NODE,
+    K_XML_TEXT_NODE,
+    K_XML_COMMENT_NODE,
+};
+
+/**
+ * \brief 获取 xml 节点的类型
+ *
+ * 函数返回 `node` 节点的类型。请确保传入有效的指针。
+ */
+enum k_xml_node_type k_xml_get_type(struct k_xml_node *node);
+
 /**
  * \brief 获取 xml 节点的第一个子节点
  *
- * 函数返回 `node` 的第一个子节点，若没有子节点则返回 `NULL`。
+ * 函数返回元素节点 `elem_node` 的第一个子节点，若没有则返回 `NULL`。
  */
-struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node);
+struct k_xml_node *k_xml_get_first_child(struct k_xml_node *elem_node);
 
 /**
  * \brief 获取 xml 节点的下一个兄弟节点
@@ -80,13 +133,6 @@ struct k_xml_node *k_xml_find_child_by_tag(struct k_xml_node *node, const char *
 struct k_xml_node *k_xml_find_next_by_tag(struct k_xml_node *node, const char *tag);
 
 /**
- * \brief 获取 xml 节点的类型
- *
- * 函数返回 `node` 节点的类型。请确保传入有效的指针。
- */
-enum k_xml_node_type k_xml_get_type(struct k_xml_node *node);
-
-/**
  * \brief 获取 xml 节点的标签名
  *
  * 函数返回元素节点 `elem_node` 的标签名，
@@ -102,6 +148,9 @@ const char *k_xml_get_tag(struct k_xml_node *elem_node);
  * 若未找到，或节点不是元素节点，则函数返回 `NULL`。
  */
 const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr_key);
+
+/** \brief xml 元素节点的属性 */
+struct k_xml_attr;
 
 /**
  * \brief 获取 xml 元素节点的第一个属性

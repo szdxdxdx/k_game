@@ -601,12 +601,7 @@ err:
     return NULL;
 }
 
-/* region [k_xml] */
-
-struct k_xml_node *k_xml_parse(char *text) {
-
-    if (NULL == text || '\0' == *text)
-        return NULL;
+static struct k_xml_node *k__xml_parse(char *text) {
 
     struct k_xml_doc *doc = k__xml_create_doc();
     if (NULL == doc)
@@ -655,6 +650,18 @@ err:
     return NULL;
 }
 
+/* endregion */
+
+/* region [k_xml] */
+
+struct k_xml_node *k_xml_parse(char *text) {
+
+    if (NULL == text || '\0' == *text)
+        return NULL;
+
+    return k__xml_parse(text);
+}
+
 void k_xml_free(struct k_xml_node *node) {
 
     if (NULL == node)
@@ -663,13 +670,17 @@ void k_xml_free(struct k_xml_node *node) {
     k__xml_destroy_doc(node->doc);
 }
 
-struct k_xml_node *k_xml_get_first_child(struct k_xml_node *node) {
+enum k_xml_node_type k_xml_get_type(struct k_xml_node *node) {
+    return node->type;
+}
 
-    if (NULL == node)
+struct k_xml_node *k_xml_get_first_child(struct k_xml_node *elem_node) {
+
+    if (NULL == elem_node)
         return NULL;
 
-    if (K_XML_ELEM_NODE == node->type) {
-        struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, base);
+    if (K_XML_ELEM_NODE == elem_node->type) {
+        struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
 
         struct k_list *child_list = &elem->child_list;
         if (k_list_is_empty(child_list))
@@ -789,10 +800,6 @@ struct k_xml_node *k_xml_find_next_by_tag(struct k_xml_node *node, const char *t
     }
 
     return NULL;
-}
-
-enum k_xml_node_type k_xml_get_type(struct k_xml_node *node) {
-    return node->type;
 }
 
 const char *k_xml_get_tag(struct k_xml_node *elem_node) {

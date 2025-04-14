@@ -13,6 +13,15 @@ k_printf_callback_fn match_spec_xml(const char **str) {
 
     switch (*p) {
 
+        case 'j': {
+            p++;
+            if ('s' == *p) p++; else return NULL;
+            if ('o' == *p) p++; else return NULL;
+            if ('n' == *p) p++; else return NULL;
+            fn_callback = k__printf_spec_k_json;
+            goto done;
+        }
+
         case 'x': {
             p++;
             if ('m' == *p) p++; else return NULL;

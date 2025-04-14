@@ -5,4 +5,6 @@ struct k_json;
 
 struct k_json *k_json_parse(const char *text);
 
+void k_json_free(struct k_json *json);
+
 #endif
