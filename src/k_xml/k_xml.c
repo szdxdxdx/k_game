@@ -333,14 +333,54 @@ err:
     return text;
 }
 
-static char *extract_comment(char *text) {
+static struct k_xml_elem_node *k__xml_parse(struct k_xml_parser *parser);
 
-    char *p = text;
+static struct k_xml_text_node *k__xml_parse_text_node(struct k_xml_parser *parser) {
+
+    char *p = parser->p;
+
+    if ('<' == *p)
+        return NULL;
+
+    char *text_begin = p;
+    p++;
+
+    int has_entities = 0;
+    while ('<' != *p && '\0' != *p) {
+        if ('&' == *p) {
+            has_entities = 1;
+        }
+        p++;
+    }
+
+    if (has_entities) {
+        if (0 != decode_entities(text_begin, p))
+            goto err;
+    }
+
+    struct k_xml_text_node *text_node = k__xml_doc_create_text_node(parser->doc, text_begin);
+    if (NULL == text_node)
+        goto err;
+
+    parser->p = p;
+    return text_node;
+
+err:
+    return NULL;
+}
+
+static struct k_xml_comment_node *k__xml_parse_comment_node(struct k_xml_parser *parser) {
+
+    char *p = parser->p;
+
+    char *comment_begin = p;
 
     if ('<' != *p) goto err; else p++;
     if ('!' != *p) goto err; else p++;
     if ('-' != *p) goto err; else p++;
     if ('-' != *p) goto err; else p++;
+
+    char *comment_text_begin = p;
 
     while (1) {
         if ('\0' == *p) {
@@ -351,8 +391,9 @@ static char *extract_comment(char *text) {
             if ('-' == *p) {
                 p++;
                 if ('>' == *p) {
-                    *(p - 2) = '\0';
-                    return p + 1;
+                    p++;
+                    *(p - 3) = '\0';
+                    break;
                 }
                 else {
                     goto err;
@@ -364,16 +405,24 @@ static char *extract_comment(char *text) {
         }
     }
 
+    struct k_xml_comment_node *comment_node = k__xml_doc_create_comment_node(parser->doc, comment_text_begin);
+    if (NULL == comment_node)
+        goto err;
+
+    *comment_begin = '\0';
+    parser->p = p;
+    return comment_node;
+
 err:
-    return text;
+    return NULL;
 }
 
-static struct k_xml_elem_node *k__xml_parse(struct k_xml_parser *parser) {
+static struct k_xml_elem_node *k__xml_parse_elem_node(struct k_xml_parser *parser) {
+
+    char *p = parser->p;
 
     if ('<' != *(parser->p))
         return NULL;
-
-    char *p = parser->p;
 
     char *elem_begin = p;
 
@@ -498,7 +547,47 @@ err:
     return NULL;
 }
 
-/* endregion */
+static struct k_xml_node *k__xml_parse_node(struct k_xml_parser *parser) {
+
+    char *p = parser->p;
+
+    char *node_begin = p;
+
+    p = skip_space(p);
+
+    if ('<' == *p) {
+        parser->p = p;
+        if ('!' == *(p + 1)) {
+            struct k_xml_comment_node *comment = k__xml_parse_comment_node(parser);
+            if (NULL == comment)
+                goto err;
+            else
+                return &comment->base;
+        } else {
+            struct k_xml_elem_node *elem= k__xml_parse_elem_node(parser);
+            if (NULL == elem)
+                goto err;
+            else
+                return &elem->base;
+        }
+    }
+    else {
+        parser->p = node_begin;
+        struct k_xml_text_node *text = k__xml_parse_text_node(parser);
+        if (NULL == text)
+            goto err;
+        else
+            return &text->base;
+    }
+
+err:
+    return NULL;
+}
+
+static struct k_xml_elem_node *k__xml_parse(struct k_xml_parser *parser) {
+
+
+}
 
 /* region [k_xml] */
 
