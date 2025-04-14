@@ -24,7 +24,7 @@ struct k_xml_attr;
  * 函数会直接修改 `text` 字符串，写入 `\0` 字符分割内容。
  * 请确保 `text` 是可修改的缓冲区，而非字符串常量。
  *
- * 若解析成功，函数返回 DOM 树根节点指针，否则返回 `NULL`。
+ * 若解析成功，函数返回 xml 树根节点指针，否则返回 `NULL`。
  */
 struct k_xml_node *k_xml_parse(char *text);
 
@@ -116,7 +116,7 @@ struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char
  * \brief 获取 xml 元素节点的下一个属性
  *
  * 函数返回 `attr` 的下一个属性，用于继续遍历属性列表。
- * 出参 `get_key` 和 `get_val` 分别返回下一个属性的键和值。
+ * 出参 `get_key` 和 `get_val` 分别返回该属性的键和值。
  * 若 `attr` 已是最后一个属性，则函数返回 `NULL`。
  */
 struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get_key, const char **get_val);
@@ -124,10 +124,14 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
 /**
  * \brief 获取 xml 节点的文本内容
  *
- * - 若 `node` 是元素节点，则遍历它的所有子节点，找出第一个文本子节点，
- *   并返回该子节点的文本字符串，若找不到则返回空字符串 ""。
- * - 若 `node` 是文本节点或注释节点，则返回其内容字符串。
- * - 其余情况则返回 `NULL`。
+ * 若 `node` 是元素节点，则函数遍历它的所有子节点，找出第一个文本子节点，
+ * 并返回该子节点的文本字符串，若找不到则返回空字符串 ""。
+ *
+ * 若 `node` 是文本节点，则函数返回文本字符串。
+ *
+ * 若 `node` 是注释节点，则函数返回注释内容字符串。
+ *
+ * 其余情况，则函数返回 `NULL`。
  */
 const char *k_xml_get_text(struct k_xml_node *node);
 
