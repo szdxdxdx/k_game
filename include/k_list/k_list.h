@@ -37,19 +37,26 @@ static inline void k_list_init(struct k_list *list) {
     k_list_node_loop(&list->head);
 }
 
-static inline void k_list_add(struct k_list_node *prev, struct k_list_node *node) {
+static inline void k_list_insert_after(struct k_list_node *prev, struct k_list_node *node) {
     node->next = prev->next;
     prev->next->prev = node;
     prev->next = node;
     node->prev = prev;
 }
 
+static inline void k_list_insert_before(struct k_list_node *next, struct k_list_node *node) {
+    node->prev = next->prev;
+    next->prev->next = node;
+    next->prev = node;
+    node->next = next;
+}
+
 static inline void k_list_add_head(struct k_list *list, struct k_list_node *node) {
-    k_list_add(&list->head, node);
+    k_list_insert_after(&list->head, node);
 }
 
 static inline void k_list_add_tail(struct k_list *list, struct k_list_node *node) {
-    k_list_add(list->head.prev, node);
+    k_list_insert_before(&list->head, node);
 }
 
 static inline void k_list_del(struct k_list_node *node) {
@@ -66,6 +73,14 @@ static inline struct k_list_node *k_list_get_first(struct k_list *list) {
 }
 
 static inline struct k_list_node *k_list_tail(struct k_list *list) {
+    return &list->head;
+}
+
+static inline struct k_list_node *k_list_get_last(struct k_list *list) {
+    return list->head.prev;
+}
+
+static inline struct k_list_node *k_list_head(struct k_list *list) {
     return &list->head;
 }
 

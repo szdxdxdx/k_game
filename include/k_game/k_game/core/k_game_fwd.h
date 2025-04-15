@@ -44,4 +44,18 @@ struct k_component_manager;
 
 struct k_callback;
 
+/** \brief 表示一个点坐标 */
+struct k_float_point {
+    float x;
+    float y;
+};
+
+/** \brief 表示一个矩形结构，`(x, y)` 为矩形左上角的坐标，`w` 和 `h` 为宽和高 */
+struct k_int_rect {
+    int x;
+    int y;
+    int w;
+    int h;
+};
+
 #endif

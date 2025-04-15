@@ -219,7 +219,7 @@ void k__alarm_callback_manager_flush(struct k_alarm_callback_manager *manager) {
                         if (timeout <= callback_in_list->timeout)
                             break;
                     }
-                    k_list_add(iter_->prev, &callback->callback_list_node);
+                    k_list_insert_before(iter_, &callback->callback_list_node);
                 }
                 /* TODO 改用优先队列后，修改这个代码块 */
 

@@ -61,7 +61,7 @@ static struct k_draw_callback_group *find_or_create_group(struct k_draw_callback
         if (group_id < group_get_id(group_in_list))
             break;
     }
-    k_list_add(iter->prev, &new_group->group_list_node);
+    k_list_insert_before(iter, &new_group->group_list_node);
 
     return new_group;
 }
@@ -114,7 +114,7 @@ static inline struct k_draw_callback_layer *find_or_create_layer(struct k_draw_c
         if (z_index < layer_get_z_index(layer_in_list))
             break;
     }
-    k_list_add(iter->prev, &new_layer->layer_list_node);
+    k_list_insert_before(iter, &new_layer->layer_list_node);
 
     return new_layer;
 }
