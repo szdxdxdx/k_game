@@ -24,6 +24,16 @@ void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
 
 /* region [draw_graphics] */
 
+int k_canvas_clear(void) {
+
+    if (0 != SDL_RenderClear(k__window.renderer)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        return -1;
+    }
+
+    return 0;
+}
+
 #define k__canvas_buf_capacity(arr) (sizeof(arr) / sizeof(arr[0]))
 
 int k_canvas_draw_point(float x, float y) {

@@ -26,8 +26,6 @@ static void enter_empty_room(void) {
 
 static int init_empty_room(void *params) {
     k_room_add_draw_callback(NULL, room_ui, 0, 0);
-
-    k_room_add_draw_callback(NULL, k_clean_room_canvas, INT_MIN, 0);
     return 0;
 }
 

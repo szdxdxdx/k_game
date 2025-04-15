@@ -59,6 +59,14 @@ static inline uint32_t k_canvas_get_draw_color_rgba(void) {
 /* region [draw_graphics] */
 
 /**
+ * \brief 清空房间画布内容
+ *
+ * 用当前画笔的颜色覆盖房间画布。
+ * 若成功，函数返回 0，否则返回非 0。
+ */
+int k_canvas_clear(void);
+
+/**
  * \brief 在房间内绘制一个点
  *
  * `(x, y)` 为点的坐标。

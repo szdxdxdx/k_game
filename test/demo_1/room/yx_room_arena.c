@@ -1,9 +1,48 @@
 #include <limits.h>
+#include <math.h>
 
 #include "./yx_room_arena.h"
 
 #include "../sprite/yx_spr.h"
 #include "../object/yx_obj.h"
+
+/* region [background] */
+
+static void draw_background(void *unused) {
+    (void)unused;
+
+    k_canvas_set_draw_color_rgba(0x1e1e1eff);
+    k_canvas_clear();
+
+    k_canvas_set_draw_color_rgba(0x323333ff);
+
+    float view_x;
+    float view_y;
+    float view_w;
+    float view_h;
+    k_view_get_rect(&view_x, &view_y, &view_w, &view_h);
+
+    float grid_size = 48;
+
+    float w = k_room_get_width();
+    float h = k_room_get_height();
+
+    float x = floorf(view_x / grid_size) * grid_size;
+    float x_to   = ceilf((view_x + view_w) / grid_size) * grid_size;
+    while (x < x_to) {
+        k_canvas_draw_line(x, 0, x, h);
+        x += grid_size;
+    }
+
+    float y = floorf(view_y / grid_size) * grid_size;
+    float y_to = ceilf((view_y + view_h) / grid_size) * grid_size;
+    while (y < y_to) {
+        k_canvas_draw_line(0, y, w, y);
+        y += grid_size;
+    }
+}
+
+/* endregion */
 
 static void set_debug(void *data) {
 
@@ -30,8 +69,7 @@ static int init_arena_room(void *params) {
     k_room_add_camera();
 
     k_room_add_step_callback(NULL, set_debug);
-    k_room_add_draw_callback(NULL, k_clean_room_canvas, INT_MIN, INT_MIN);
-    k_room_add_draw_callback(NULL, k_draw_grid, INT_MIN, INT_MIN + 1);
+    k_room_add_draw_callback(NULL, draw_background, INT_MIN, 0);
 
     {
         struct yx_obj_bubble_maker_config config;
