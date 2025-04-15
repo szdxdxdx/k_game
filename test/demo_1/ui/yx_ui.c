@@ -5,6 +5,7 @@
 #include "k_mem_pool.h"
 
 #include "k_game/core/k_object.h"
+#include "k_game/core/k_canvas.h"
 
 /* region [ui_context] */
 
@@ -90,6 +91,8 @@ struct yx_ui_elem {
 
     struct k_list child_list;
 
+    struct yx_ui *ui_context;
+
     void *data;
 
     void (*fn_draw)(struct yx_ui_elem *elem);
@@ -101,6 +104,13 @@ int yx_ui_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
 
 int yx_ui_append_child(struct yx_ui_elem *elem, struct yx_ui_elem *child) {
 
+    if (NULL == elem || NULL == child)
+        return -1;
+    if (elem->ui_context != child->ui_context)
+        return -1;
+
+    k_list_add_tail(&elem->child_list, &child->sibling_node);
+    return 0;
 }
 
 /* region [create_elem] */
@@ -114,7 +124,7 @@ struct yx_ui_elem *yx__ui_elem_create(struct yx_ui *ui, size_t data_size) {
     void *data = NULL;
 
     if (0 < data_size) {
-        yx__ui_mem_alloc(ui, data_size);
+        data = yx__ui_mem_alloc(ui, data_size);
         if (NULL == data) {
             yx__ui_mem_free(ui, elem);
             return NULL;
@@ -124,6 +134,7 @@ struct yx_ui_elem *yx__ui_elem_create(struct yx_ui *ui, size_t data_size) {
     elem->sibling_node.prev = NULL;
     elem->sibling_node.next = NULL;
     k_list_init(&elem->child_list);
+    elem->ui_context = ui;
     elem->data = data;
     elem->fn_draw = NULL;
 
@@ -147,9 +158,40 @@ struct yx_ui_elem *yx_ui_create_body(struct yx_ui *ui) {
 
 /* region [elem_button] */
 
+struct yx_ui_elem_button {
+    struct yx_ui_elem *elem;
+
+    float x;
+    float y;
+    float w;
+    float h;
+    uint32_t background_color;
+};
+
+void yx_ui_elem_button(struct yx_ui_elem *elem) {
+    struct yx_ui_elem_button *button = elem->data;
+
+    k_canvas_set_draw_color_rgba(button->background_color);
+    k_canvas_fill_rect(button->x, button->y, button->w, button->h);
+}
+
 struct yx_ui_elem *yx_ui_create_button(struct yx_ui *ui) {
 
+    struct yx_ui_elem *elem = yx__ui_elem_create(ui, sizeof(struct yx_ui_elem_button));
+    if (NULL == elem)
+        return NULL;
 
+    struct yx_ui_elem_button *button = elem->data;
+    button->elem = elem;
+    button->x = 10.0f;
+    button->y = 10.0f;
+    button->w = 100.0f;
+    button->h = 50.0f;
+    button->background_color = 0xff0099ff;
+
+    elem->fn_draw = yx_ui_elem_button;
+
+    return elem;
 }
 
 /* endregion */
@@ -178,7 +220,7 @@ void yx_ui_draw_elem(struct yx_ui_elem *elem) {
     for (k_list_for_each(child_list, iter)) {
         child = container_of(iter, struct yx_ui_elem, sibling_node);
 
-        yx_ui_draw_elem(elem);
+        yx_ui_draw_elem(child);
     }
 }
 
