@@ -23,30 +23,32 @@ static inline void k_hash_list_init(struct k_hash_list *list) {
 
 static inline void k_hash_list_init_all(struct k_hash_list *lists, size_t lists_num) {
 
-    size_t i = 0;
-    for (; i < lists_num; i++) {
-        k_hash_list_init(&lists[i]);
+    struct k_hash_list *list = lists;
+    for (; list < lists + lists_num; list++) {
+        k_hash_list_init(list);
     }
 }
 
 static inline void k_hash_list_add(struct k_hash_list *list, struct k_hash_list_node *node) {
 
-    if (list->first != NULL)
+    if (list->first != NULL) {
         list->first->pprev = &node->next;
+    }
     node->next  = list->first;
     list->first = node;
     node->pprev = &list->first;
 }
 
 static inline void k_hash_list_node_loop(struct k_hash_list_node *node) {
-    node->next = node;
+    node->next  = node;
     node->pprev = &node;
 }
 
 static inline void k_hash_list_del(struct k_hash_list_node *node) {
 
-    if (NULL != node->next)
+    if (NULL != node->next) {
         node->next->pprev = node->pprev;
+    }
     *(node->pprev) = node->next;
 }
 
