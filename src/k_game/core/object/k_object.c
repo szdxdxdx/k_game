@@ -32,7 +32,7 @@ struct k_object *k_object_create(size_t data_size) {
     k_list_init(&object->component_list);
 
     object->room = room;
-    object->fn_destroy = NULL;
+    object->fn_destroy_callback = NULL;
 
     return object;
 }
@@ -42,8 +42,8 @@ void k_object_destroy(struct k_object *object) {
     if (NULL == object)
         return;
 
-    if (NULL != object->fn_destroy) {
-        object->fn_destroy(object);
+    if (NULL != object->fn_destroy_callback) {
+        object->fn_destroy_callback(object);
     }
 
     k__object_del_all_components(object);
@@ -62,7 +62,7 @@ void *k_object_get_data(struct k_object *object) {
 }
 
 void k_object_set_destroy_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
-    object->fn_destroy = fn_callback;
+    object->fn_destroy_callback = fn_callback;
 }
 
 /* endregion */

@@ -15,7 +15,7 @@ struct k_object {
 
     void *data;
 
-    void (*fn_destroy)(struct k_object *object);
+    void (*fn_destroy_callback)(struct k_object *object);
 };
 
 #endif

@@ -15,7 +15,7 @@
  * free_list 使用单链串起一组空闲 block。分配内存时优先使用 free_list 中的空闲 block。
  *
  * 若申请的内存大小超过 `block_size_max`，内存池会调用 `fn_malloc()` 来分配 block。
- * 归还该 block 时，也不会将其链入 `free_list`，而是调用 `fn_destroy()`。
+ * 归还该 block 时，也不会将其链入 `free_list`，而是调用 `fn_destroy_callback()`。
  *
  * 创建或构造内存池时不会预分配 chunk，等到用户第一次向内存池索要内存时才创建第一个 chunk。
  * 内存池使用期间不会归还 chunk 的内存，等到销毁或析构内存池时才归还所有 chunk。
