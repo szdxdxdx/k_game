@@ -18,9 +18,16 @@ void ui_init(void) {
     ui = k_ui_create_context();
 
     struct k_ui_elem *box = k_ui_create_elem(ui, "box");
-    struct k_ui_elem *text = k_ui_create_elem(ui, "text");
-    k_ui_add_child(box, text);
-    struct k_ui_elem *button = k_ui_create_elem(ui, "button");
+    {
+        struct k_ui_elem *button = k_ui_create_elem(ui, "button");
+        {
+            struct k_ui_elem *text = k_ui_create_elem(ui, "text");
+            {
+                k_ui_set(text, "text", "click me!");
+            }
+        }
+        k_ui_add_child(button, text);
+    }
     k_ui_add_child(box, button);
 }
 

@@ -1,7 +1,23 @@
 #ifndef YX_SPRITE_SHEET_H
 #define YX_SPRITE_SHEET_H
 
-#include "k_game.h"
+#include "k_game/core/k_game_fwd.h"
+
+struct yx_sprite_sheet_config;
+
+/**
+ * \brief 从 aseprite 导出的精灵表中加载精灵
+ *
+ * aseprite 是专门用来绘制像素画的软件，可以用它来绘制像素游戏素材，
+ * 支持导出素材精灵表 .png 和配置 .json。
+ *
+ * 注意：本函数使用 k_json 模块解析配置，而 k_json 模块尚未完善，
+ * 不一定能正确解析 json 文本。所以本函数也是处于试验阶段。
+ *
+ * 本函数将根据配置，从精灵表图片中加载精灵。
+ * 若加载成功，函数返回 0，否则返回非 0。
+ */
+int yx_sprite_load_from_sheet(const struct yx_sprite_sheet_config *config);
 
 /** \brief 用于定义 aseprite 精灵表中精灵的配置项 */
 struct yx_sprite_sheet_sprite_config {
@@ -47,7 +63,7 @@ struct yx_sprite_sheet_config {
      * \brief 精灵
      *
      * 指向精灵配置数组的指针，用于定义精灵表中的精灵。
-     * 数组的最后一项必须是哨兵值 `{ NULL }`。
+     * 数组最后一项必须是哨兵值 `{ .get_sprite = NULL }`，或者简写成 `{ NULL }`。
      */
     struct yx_sprite_sheet_sprite_config *sprites;
 };
@@ -60,12 +76,5 @@ struct yx_sprite_sheet_config {
     .scale           = 1.0f, \
     .sprites         = NULL, \
 }
-
-/**
- * \brief 从 aseprite 导出的精灵表中加载精灵
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
-int yx_sprite_load_from_sheet(const struct yx_sprite_sheet_config *config);
 
 #endif

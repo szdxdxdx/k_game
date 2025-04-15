@@ -32,6 +32,8 @@ static int fn_init_game(void) {
     return 0;
 }
 
+#if 1
+
 int main(int argc, char **argv) {
     system("chcp 65001");
     setbuf(stdout, NULL);
@@ -43,3 +45,5 @@ int main(int argc, char **argv) {
 
     return k_game_run(&config);
 }
+
+#endif

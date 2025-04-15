@@ -4,7 +4,11 @@
 #include "k_read_file.h"
 #include "k_json.h"
 
+#include "k_game/core/k_sprite.h"
+#include "k_game/core/k_image.h"
+
 #include "./yx_sprite_sheet.h"
+#include "k_log.h"
 
 struct yx_sprite_sheet {
     struct k_image *image;
@@ -30,8 +34,10 @@ static struct k_sprite *sprite_sheet_extract(struct yx_sprite_sheet *sheet, cons
     }
 
     /* 没有找到 tag */
-    if (tags_num == i || NULL == j_tag)
+    if (tags_num == i || NULL == j_tag) {
+        k_log_error("Not found tag: %s", tag);
         goto err;
+    }
 
     /* 获取各帧信息在精灵表中的位置 */
     int from = k_json_num_get_i(k_json_obj_get(j_tag, "from"));
@@ -44,8 +50,10 @@ static struct k_sprite *sprite_sheet_extract(struct yx_sprite_sheet *sheet, cons
 
     /* 分配内存用于填写精灵帧信息 */
     frame_config = malloc(frames_num * sizeof(struct k_sprite_frame_config));
-    if (NULL == frame_config)
+    if (NULL == frame_config) {
+        k_log_error("malloc() failed");
         return NULL;
+    }
 
     /* 读取第 1 帧，确定精灵的宽高 */
     struct k_json *j_frame = k_json_obj_get(k_json_arr_get(j_frames, from), "frame");
@@ -85,23 +93,47 @@ static struct k_sprite *sprite_sheet_extract(struct yx_sprite_sheet *sheet, cons
 
 err:
     free(frame_config);
+
+    k_log_error("Failed to extract sprite, tag: %s", tag);
     return NULL;
 }
 
 static int check_config(const struct yx_sprite_sheet_config *config) {
 
-    if (NULL == config)
-        return -1;
-    if (NULL == config->image_filepath || '\0' == config->image_filepath[0])
-        return -1;
-    if (NULL == config->config_filepath || '\0' == config->config_filepath[0])
-        return -1;
-    if (config->scale <= 0.0f)
-        return -1;
-    if (NULL == config->sprites)
-        return -1;
+    if (NULL == config) {
+        k_log_error("`config` is NULL");
+        goto err;
+    }
+    if (NULL == config->image_filepath || '\0' == config->image_filepath[0]) {
+        k_log_error("Invalided  `image_filepath`");
+        goto err;
+    }
+    if (NULL == config->config_filepath || '\0' == config->config_filepath[0]) {
+        k_log_error("Invalided  `config_filepath`");
+        goto err;
+    }
+    if (config->scale <= 0.0f) {
+        k_log_error("Invalided `scale`");
+        goto err;
+    }
+    if (NULL == config->sprites) {
+        k_log_error("`sprites` is NULL");
+        goto err;
+    }
+
+    struct yx_sprite_sheet_sprite_config *sprite_config = config->sprites;
+    for (; sprite_config->get_sprite != NULL; sprite_config++) {
+        if (NULL == sprite_config->tag || '\0' == sprite_config->tag[0]) {
+            k_log_error("Invalided `tag`");
+            goto err;
+        }
+    }
 
     return 0;
+
+err:
+    k_log_error("Invalided config");
+    return -1;
 }
 
 static int sprite_sheet_load(struct yx_sprite_sheet *sheet, const struct yx_sprite_sheet_config *config) {
@@ -111,8 +143,10 @@ static int sprite_sheet_load(struct yx_sprite_sheet *sheet, const struct yx_spri
     struct k_json *j_config = NULL;
 
     image = k_image_load(config->image_filepath);
-    if (NULL == image)
+    if (NULL == image) {
+        k_log_error("Failed to load image");
         goto err;
+    }
 
     if (1.0f != config->scale) {
         int scaled_w = (int)(config->scale * (float)k_image_get_width(image));
@@ -127,12 +161,16 @@ static int sprite_sheet_load(struct yx_sprite_sheet *sheet, const struct yx_spri
     }
 
     buf = k_read_txt_file(config->config_filepath, NULL, 0, NULL);
-    if (NULL == buf)
+    if (NULL == buf) {
+        k_log_error("Failed to read config (.json) file");
         goto err;
+    }
 
     j_config = k_json_parse(buf);
-    if (NULL == j_config)
+    if (NULL == j_config) {
+        k_log_error("Failed to parse json");
         goto err;
+    }
 
     sheet->image    = image;
     sheet->scale    = config->scale;
@@ -145,6 +183,7 @@ err:
     free(buf);
     k_json_free(j_config);
 
+    k_log_error("Failed to load sprite sheet");
     return -1;
 }
 
@@ -184,19 +223,23 @@ err:
 int yx_sprite_load_from_sheet(const struct yx_sprite_sheet_config *config) {
 
     if (0 != check_config(config))
-        return -1;
+        goto err;
 
     struct yx_sprite_sheet sheet;
     if (0 != sprite_sheet_load(&sheet, config))
-        return -1;
+        goto err;
 
     if (0 != sprite_sheet_extract_all(&sheet, config)) {
         k_image_release(sheet.image);
         k_json_free(sheet.j_config);
-        return -1;
+        goto err;
     }
     else {
         k_json_free(sheet.j_config);
         return 0;
     }
+
+err:
+    k_log_error("Failed to load sprites from sheet");
+    return -1;
 }
