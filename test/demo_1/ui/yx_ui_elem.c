@@ -1,52 +1,52 @@
-#include <string.h>
+#include <assert.h>
 
 #include "./yx_ui_ext.h"
 #include "./yx_ui_context.h"
 #include "./yx_ui_elem.h"
 
-
-static void yx__ui_elem_default_fn_draw(struct yx_ui_elem *elem) {
+static void default_fn_destruct(struct yx_ui_elem *elem) {
     (void)elem;
 }
 
-static int yx__ui_elem_default_fn_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
+static void default_fn_draw(struct yx_ui_elem *elem) {
+    (void)elem;
+}
+
+static int default_fn_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
     (void)elem;
     (void)key;
     (void)val;
     return -1;
 }
 
-struct yx_ui_elem *yx__ui_elem_create(struct yx_ui_context *ui, size_t data_size) {
+int yx__ui_elem_construct(struct yx_ui_elem *elem, struct yx_ui_context *ui) {
+    assert(NULL != elem);
+    assert(NULL != ui);
 
-    struct yx_ui_elem *elem = yx__ui_mem_alloc(ui, sizeof(struct yx_ui_elem));
-    if (NULL == elem)
-        return NULL;
+    if (NULL == ui || NULL == elem)
+        return -1;
 
-    void *data = NULL;
-
-    if (0 < data_size) {
-        data = yx__ui_mem_alloc(ui, data_size);
-        if (NULL == data) {
-            yx__ui_mem_free(ui, elem);
-            return NULL;
-        }
-    }
-
-    elem->sibling_node.prev = NULL;
-    elem->sibling_node.next = NULL;
-
+    k_list_node_loop(&elem->sibling_link);
     k_list_init(&elem->child_list);
 
     elem->ui = ui;
 
-    elem->fn_draw     = yx__ui_elem_default_fn_draw;
-    elem->fn_set_attr = yx__ui_elem_default_fn_set_attr;
+    static struct yx_ui_elem_v_tbl v_tbl = {
+        .fn_draw     = default_fn_draw,
+        .fn_set_attr = default_fn_set_attr
+    };
+    elem->v_tbl = &v_tbl;
 
-    return elem;
+    return 0;
+}
+
+void yx__ui_elem_destruct(struct yx_ui_elem *elem) {
+    assert(NULL != elem);
+    k_list_del(&elem->sibling_link);
 }
 
 int yx_ui_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
-    return elem->fn_set_attr(elem, key, val);
+    return elem->v_tbl->fn_set_attr(elem, key, val);
 }
 
 int yx_ui_append_child(struct yx_ui_elem *elem, struct yx_ui_elem *child) {
@@ -56,19 +56,19 @@ int yx_ui_append_child(struct yx_ui_elem *elem, struct yx_ui_elem *child) {
     if (elem->ui != child->ui)
         return -1;
 
-    k_list_add_tail(&elem->child_list, &child->sibling_node);
+    k_list_add_tail(&elem->child_list, &child->sibling_link);
     return 0;
 }
 
 void yx__ui_elem_draw(struct yx_ui_elem *elem) {
 
-    elem->fn_draw(elem);
+    elem->v_tbl->fn_draw(elem);
 
     struct yx_ui_elem *child;
     struct k_list *child_list = &elem->child_list;
     struct k_list_node *iter;
     for (k_list_for_each(child_list, iter)) {
-        child = container_of(iter, struct yx_ui_elem, sibling_node);
+        child = container_of(iter, struct yx_ui_elem, sibling_link);
 
         yx__ui_elem_draw(child);
     }

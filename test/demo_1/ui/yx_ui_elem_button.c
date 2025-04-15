@@ -4,21 +4,11 @@
 
 #include "k_game/core/k_canvas.h"
 
-#include "./yx_ui_elem.h"
+#include "./yx_ui_elem_button.h"
 #include "./yx_ui_utils.h"
 
-struct yx_ui_button {
-    struct yx_ui_elem super;
-
-    float x;
-    float y;
-    float w;
-    float h;
-    uint32_t background_color;
-};
-
-static int yx_ui_button_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
-    struct yx_ui_button *button = container_of(elem, struct yx_ui_button, super);
+static int yx__ui_button_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
+    struct yx_ui_button *button = (struct yx_ui_button *)elem;
 
     if (0 == strncmp(key, "x", 1)) {
         char *end;
@@ -65,19 +55,21 @@ static int yx_ui_button_set_attr(struct yx_ui_elem *elem, const char *key, const
     return -1;
 }
 
-static void yx_ui_button_draw(struct yx_ui_elem *elem) {
-    struct yx_ui_button *button = container_of(elem, struct yx_ui_button, super);
+static void yx__ui_button_draw(struct yx_ui_elem *elem) {
+    struct yx_ui_button *button = (struct yx_ui_button *)elem;
 
     k_canvas_set_draw_color_rgba(button->background_color);
     k_canvas_fill_rect(button->x, button->y, button->w, button->h);
 }
 
-struct yx_ui_elem *yx_ui_button_create(struct yx_ui_context *ui) {
+static void yx__ui_button_destruct(struct yx_ui_elem *elem) {
+    yx__ui_elem_destruct(elem);
+}
 
-    struct yx_ui_button *button = yx__ui_mem_alloc(ui, sizeof(struct yx_ui_button));
-    if (NULL == button)
+static struct yx_ui_elem *yx__ui_button_construct(struct yx_ui_button *button, struct yx_ui_context *ui) {
+
+    if (0 != yx__ui_elem_construct(&button->super, ui))
         return NULL;
-
 
     button->x = 10.0f;
     button->y = 10.0f;
@@ -85,8 +77,10 @@ struct yx_ui_elem *yx_ui_button_create(struct yx_ui_context *ui) {
     button->h = 50.0f;
     button->background_color = 0xff0099ff;
 
-    button->super.fn_draw = yx_ui_button_draw;
-    button->super.fn_set_attr = yx_ui_button_set_attr;
+    struct yx_ui_elem_v_tbl *v_tbl = button->super.v_tbl;
+    v_tbl->fn_destruct = yx__ui_button_destruct;
+    v_tbl->fn_draw     = yx__ui_button_draw;
+    v_tbl->fn_set_attr = yx__ui_button_set_attr;
 
     return &button->super;
 }
