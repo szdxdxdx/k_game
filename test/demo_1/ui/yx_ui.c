@@ -1,10 +1,15 @@
 #include <string.h>
+
+#include "k_list.h"
+
 #include "k_game/core/k_object.h"
 
 /* region [ui_context] */
 
 struct yx_ui {
     struct k_object *object;
+
+    struct yx_ui_elem *body;
 };
 
 struct yx_ui *yx_ui_create_context(void) {
@@ -19,12 +24,19 @@ struct yx_ui *yx_ui_create_context(void) {
     return ui;
 }
 
+struct yx_ui_elem *yx_ui_get_body(struct yx_ui *ui) {
+    return ui->body;
+}
+
 /* endregion */
 
 /* region [ui_elem_base] */
 
 struct yx_ui_elem {
 
+    struct k_list_node sibling_node;
+
+    struct k_list child_list;
 };
 
 /* endregion */

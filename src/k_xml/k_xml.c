@@ -14,44 +14,66 @@ struct k_xml_elem_node;
 
 struct k_xml_doc {
 
+    /* 用链表串联所有的顶层节点（可能包含注释节点） */
     struct k_list top_node_list;
 
+    /* 指向根节点 */
     struct k_xml_node *root;
 
     struct k_mem_pool mem_pool;
 };
 
 struct k_xml_node {
+
+    /* 用于访问该节点的兄弟节点 */
     struct k_list_node sibling_list_node;
-    struct k_xml_doc *doc;
-    enum k_xml_node_type type;
+
     struct k_xml_node *parent;
+
+    struct k_xml_doc *doc;
+
+    enum k_xml_node_type type;
 };
 
 struct k_xml_elem_node {
     struct k_xml_node base;
 
     const char *tag;
+
+    /* 用链表串联所有的属性 */
     struct k_list attr_list;
+
+    /* 用链表串联所有的孩子节点 */
     struct k_list child_list;
 };
 
 struct k_xml_attr {
-    struct k_xml_elem_node *elem;
+
+    /* 属性链表节点的指针域 */
     struct k_list_node list_node;
+
+    /* 该属性所属的元素节点 */
+    struct k_xml_elem_node *elem;
+
+    /* 属性的键和值 */
     const char *key;
     const char *val;
 };
 
 struct k_xml_text_node {
     struct k_xml_node base;
+
+    /* 文本内容 */
     const char *text;
-    size_t len;
+
+    /* 标记文本内容是否全是空白字符 */
     int is_blank;
 };
 
 struct k_xml_comment_node {
     struct k_xml_node base;
+
+    /* 注释的文本内容 */
     const char *comment;
 };
 
@@ -60,6 +82,7 @@ struct k_xml_comment_node {
 /* region */
 
 static struct k_xml_elem_node *k__xml_create_elem_node(struct k_xml_doc *doc, const char *tag);
+
 static void k__xml_destroy_node(struct k_xml_node *node);
 
 /* endregion */
@@ -194,8 +217,7 @@ static struct k_xml_text_node *k__xml_create_text_node(struct k_xml_doc *doc) {
     node->base.type   = K_XML_TEXT_NODE;
     node->base.parent = NULL;
 
-    node->text     = "";
-    node->len      = 0;
+    node->text = "";
     node->is_blank = 1;
 
     return node;
@@ -409,7 +431,6 @@ static struct k_xml_text_node *k__xml_parse_text_node(struct k_xml_parser *parse
         goto err;
 
     text->text = text_begin;
-    text->len  = text_len;
     text->is_blank = is_blank;
 
     parser->p = p;

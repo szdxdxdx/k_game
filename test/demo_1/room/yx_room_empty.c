@@ -5,8 +5,7 @@
 
 #include "./yx_room_empty.h"
 
-#include "../sprite/yx_spr.h"
-#include "../object/yx_obj_bubble.h"
+#include "../ui/yx_ui.h"
 
 static void draw_background(void *unused) {
     (void)unused;
@@ -14,13 +13,30 @@ static void draw_background(void *unused) {
     k_canvas_clear();
 }
 
-static void room_ui(void *data) {
+static struct yx_ui *ui;
 
+static void room_init_ui(void) {
+    ui = yx_ui_create_context();
+
+    struct yx_ui_elem *button = yx_ui_create_elem("button");
+    yx_ui_set_attr(button, "x", "100px");
+    yx_ui_set_attr(button, "y", "100px");
+    yx_ui_set_attr(button, "w", "50px");
+    yx_ui_set_attr(button, "h", "10px");
+    yx_ui_set_attr(button, "color", "#ff6600ff");
+
+    struct yx_ui_elem *body = yx_ui_get_body(ui);
+    yx_ui_append_child(body, button);
+}
+
+static void room_draw_ui(void *unused) {
+    yx_ui_draw(ui);
 }
 
 static int init_empty_room(void *params) {
     k_room_add_draw_callback(NULL, draw_background, INT_MIN, 0);
-    k_room_add_draw_callback(NULL, room_ui, 0, 0);
+    k_room_add_draw_callback(NULL, room_draw_ui, INT_MAX, 0);
+    room_init_ui();
     return 0;
 }
 
