@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stddef.h>
 
+/* region [k_printf] */
+
 struct k_printf_config;
 
 /**
@@ -49,6 +51,12 @@ int k_vasprintf(const struct k_printf_config *config, char **get_s, const char *
 
 /** @} */
 
+/* endregion */
+
+/* region [k_printf_config] */
+
+/* region [k_printf_callback] */
+
 struct k_printf_buf;
 struct k_printf_spec;
 
@@ -56,7 +64,7 @@ struct k_printf_spec;
  * \brief 自定义格式说明符的回调函数
  *
  * 在回调中，k_printf 提供给你一个抽象的缓冲区接口 `k_printf_buf`，
- * 你需要使用 `k_printf_buf` 提供的函数往缓冲区中写入内容，
+ * 你需要使用 `k_printf_buf_XXX()` 系列的函数往缓冲区中写入内容，
  * 不用考虑缓冲区类型是 `char []` 还是 `FILE *`。
  *
  * C printf 支持使用 `+-#0 *.*` 修饰格式说明符的转换行为，k_printf 也支持。
@@ -69,44 +77,49 @@ struct k_printf_spec;
  * 在回调中，k_printf 传入不定长参数列表的指针 `args`。
  * 传递的是指针，是因为 k_printf 需要知道执行完你在回调后消耗了多少实参。
  * 你应通过 `va_arg(*args, type)` 从列表中获取一个 type 类型的实参。
- * 
+ *
  * 留意 C 在传递不定长参数时存在类型提升。例如 `char` 被提升为 `int`，
- * 若要读取一个 `char` 类型实参，应使用 `(char)va_arg(*args, int)`。
+ * 若要读取一个 `char` 类型实参，应使用 `(char)(va_arg(*args, int))`。
  *
  * 你应按需消耗实参。不要残留下应该由你来处理的实参，不要多消耗不属于你的实参，
  * 否则后续的格式说明符会匹配到错误的实参，可能导致程序崩溃。
  */
 typedef void (*k_printf_callback_fn)(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args);
 
+/* region [k_printf_buf] */
+
 /** \brief 缓冲区接口，对 `char []` 和 `FILE *` 两类缓冲区统一的操作接口 */
-struct k_printf_buf {
+struct k_printf_buf;
 
-    /** \brief 往缓冲区中写入指定长度的字符串 */
-    void (*fn_puts_n)(struct k_printf_buf *buf, const char *str, size_t len);
+/** \brief 往缓冲区中写入指定长度的字符串 */
+void k_printf_buf_puts_n(struct k_printf_buf *buf, const char *str, size_t len);
 
-    /** \brief 往缓冲区格式化写入格式化字符串（格式说明符同 C printf） */
-    void (*fn_printf)(struct k_printf_buf *buf, const char *fmt, ...);
+/** \brief 往缓冲区格式化写入格式化字符串（格式说明符同 C printf） */
+void k_printf_buf_printf(struct k_printf_buf *buf, const char *fmt, ...);
 
-    /** \brief 往缓冲区格式化写入格式化字符串（格式说明符同 C printf） */
-    void (*fn_vprintf)(struct k_printf_buf *buf, const char *fmt, va_list args);
+/** \brief 往缓冲区格式化写入格式化字符串（格式说明符同 C printf） */
+void k_printf_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list args);
 
-    /**
-     * \brief 到目前为止已经打印出的字符数量（忽略缓冲区实际大小）
-     *
-     * C printf 一族的函数会返回格式化后的字符串长度，无论缓冲区是否能完全容纳格式化后的字符串。
-     * 例如，当我们只关心格式化后的字符串长度，而不需要真正写入内容时，可以使用 `snprintf()`，
-     * 并指定使用 0 大小的缓冲区，`snprintf()` 不会写入任何内容，只是返回格式化后的字符串长度。
-     *
-     * k_printf 一族的函数也有相同的行为。
-     *
-     * `n` 记录着到目前为止已打印出的字符数量（忽略缓冲区实际大小）。
-     * k_printf 一族的函数返回值，就是将字符串格式化完毕后 `n` 的值。
-     *
-     * 若想实现与 `printf()` 的 `%n` 相似的功能，你需要在你的回调中读取 `n`。
-     * 若读取到 `n` 为负值，说明输出途中出现错误。
-     */
-    int n;
-};
+/**
+ * \brief 到目前为止已经打印出的字符数量（忽略缓冲区实际大小）
+ *
+ * C printf 一族的函数会返回格式化后的字符串长度，无论缓冲区是否能完全容纳格式化后的字符串。
+ * 例如，当我们只关心格式化后的字符串长度，而不需要真正写入内容时，可以使用 `snprintf()`，
+ * 并指定使用 0 大小的缓冲区，`snprintf()` 不会写入任何内容，只是返回格式化后的字符串长度。
+ *
+ * k_printf 一族的函数也有相同的行为。
+ *
+ * `n` 记录着到目前为止已打印出的字符数量（忽略缓冲区实际大小）。
+ * k_printf 一族的函数返回值，就是将字符串格式化完毕后 `n` 的值。
+ *
+ * 若想实现与 `printf()` 的 `%n` 相似的功能，你需要在你的回调中读取 `n`。
+ * 若读取到 `n` 为负值，说明输出途中出现错误。
+ */
+int k_printf_buf_get_n(struct k_printf_buf *buf);
+
+/* endregion */
+
+/* region [k_printf_spec] */
 
 /** \brief 格式说明符 */
 struct k_printf_spec {
@@ -182,6 +195,10 @@ struct k_printf_spec {
     const char *end;
 };
 
+/* endregion */
+
+/* endregion */
+
 /**
  * \brief k_printf 的行为配置
  *
@@ -220,6 +237,8 @@ struct k_printf_config {
     k_printf_callback_fn (*fn_match_spec)(const char **str);
 };
 
+/* region [k_printf_match_spec_helper] */
+
 /** \brief 用于定义一对格式说明符与回调，仅用于 `k_printf_match_spec_helper` */
 struct k_printf_spec_callback_tuple {
 
@@ -246,5 +265,9 @@ struct k_printf_spec_callback_tuple {
  * 假定 `%k` 和 `%kk` 都是你自定义的格式说明符，请把 `%kk` 放在 `%k` 前面。
  */
 k_printf_callback_fn k_printf_match_spec_helper(const struct k_printf_spec_callback_tuple *tuples, const char **str);
+
+/* endregion */
+
+/* endregion */
 
 #endif

@@ -17,37 +17,37 @@ static void print_xml_node(struct k_printf_buf *buf, struct k_xml_node *node) {
     switch (type) {
         case K_XML_ELEM_NODE: {
             const char *tag = k_xml_get_tag(node);
-            buf->fn_printf(buf, CYAN "<%s", tag);
+            k_printf_buf_printf(buf, CYAN "<%s", tag);
 
             const char *key;
             const char *val;
             struct k_xml_attr *attr = k_xml_get_first_attr(node, &key, &val);
             for (; NULL != attr; attr = k_xml_get_next_attr(attr, &key, &val)) {
-                buf->fn_printf(buf, " " YELLOW "%s" CYAN "=\"" GREEN "%s" CYAN "\"", key, val);
+                k_printf_buf_printf(buf, " " YELLOW "%s" CYAN "=\"" GREEN "%s" CYAN "\"", key, val);
             }
 
             struct k_xml_node *child = k_xml_get_first_child(node);
 
             if (NULL == child) {
-                buf->fn_printf(buf, CYAN "/>");
+                k_printf_buf_printf(buf, CYAN "/>");
                 return;
             } else {
-                buf->fn_printf(buf, CYAN ">");
+                k_printf_buf_printf(buf, CYAN ">");
             }
 
             for (; NULL != child; child = k_xml_get_next_sibling(child)) {
                 print_xml_node(buf, child);
             }
 
-            buf->fn_printf(buf, CYAN "</%s>", tag);
+            k_printf_buf_printf(buf, CYAN "</%s>", tag);
             break;
         }
         case K_XML_TEXT_NODE: {
-            buf->fn_printf(buf, MAGENTA "%s", k_xml_get_text(node));
+            k_printf_buf_printf(buf, MAGENTA "%s", k_xml_get_text(node));
             break;
         }
         case K_XML_COMMENT_NODE: {
-            buf->fn_printf(buf, RED "<!--%s-->", k_xml_get_text(node));
+            k_printf_buf_printf(buf, RED "<!--%s-->", k_xml_get_text(node));
             break;
         }
         default:
@@ -61,9 +61,9 @@ void k__printf_spec_k_xml(struct k_printf_buf *buf, const struct k_printf_spec *
     struct k_xml_node *node = (struct k_xml_node *)va_arg(*args, void *);
 
     if (NULL == node) {
-        buf->fn_printf(buf, "(null)");
+        k_printf_buf_printf(buf, "(null)");
     } else {
         print_xml_node(buf, node);
-        buf->fn_printf(buf, RESET);
+        k_printf_buf_printf(buf, RESET);
     }
 }

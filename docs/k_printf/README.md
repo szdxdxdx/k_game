@@ -9,7 +9,7 @@
 
 void my_spec_arr(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
 
-    /* 在回调中使用 `k_printf_buf->fn_tbl` 提供的函数往缓冲区 `buf `中写入内容，
+    /* 在回调中使用 `k_printf_buf_XXX()` 系列的函数往缓冲区 `buf `中写入内容，
      * 不需要考虑缓冲区类型是 `char []` 还是 `FILE *`。
      */
 }
@@ -83,26 +83,26 @@ static void printf_callback_spec_arr(struct k_printf_buf *buf, const struct k_pr
     /* 第二步，向缓冲区输出内容 */
 
     if (len == 0) {
-        buf->fn_puts_n(buf, "[]", 2);
+        k_printf_buf_puts_n(buf, "[]", 2);
         return;
     }
 
     if (len == 1) {
-        buf->fn_printf(buf, "[ %*d ]", min_width, arr[0]);
+        k_printf_buf_printf(buf, "[ %*d ]", min_width, arr[0]);
         return;
     }
 
     int i = 0;
-    buf->fn_printf(buf, "[ %*d,", min_width, arr[i]);
+    k_printf_buf_printf(buf, "[ %*d,", min_width, arr[i]);
     for (;;) {
         i++;
         if (i % line_len == 0)
-            buf->fn_puts_n(buf, "\n ", 2);
+            k_printf_buf_puts_n(buf, "\n ", 2);
         if (len - 1 == i)
             break;
-        buf->fn_printf(buf, " %*d,", min_width, arr[i]);
+        k_printf_buf_printf(buf, " %*d,", min_width, arr[i]);
     }
-    buf->fn_printf(buf, " %*d ]", min_width, arr[i]);
+    k_printf_buf_printf(buf, " %*d ]", min_width, arr[i]);
 }
 
 /* 本示例教你如何重载 k_printf 的格式说明符 `%c`
@@ -138,7 +138,7 @@ static void printf_callback_spec_c(struct k_printf_buf *buf, const struct k_prin
     /* 第二步，向缓冲区输出内容 */
 
     if (repeat == 1) {
-        buf->fn_puts_n(buf, &ch, 1);
+        k_printf_buf_puts_n(buf, &ch, 1);
         return;
     }
 
@@ -146,7 +146,7 @@ static void printf_callback_spec_c(struct k_printf_buf *buf, const struct k_prin
 
     if (repeat <= sizeof(ch_buf)) {
         memset(ch_buf, ch, repeat);
-        buf->fn_puts_n(buf, ch_buf, repeat);
+        k_printf_buf_puts_n(buf, ch_buf, repeat);
         return;
     }
 
@@ -154,11 +154,11 @@ static void printf_callback_spec_c(struct k_printf_buf *buf, const struct k_prin
 
     int putc_num = 0;
     while (putc_num + sizeof(ch_buf) <= repeat) {
-        buf->fn_puts_n(buf, ch_buf, sizeof(ch_buf));
+        k_printf_buf_puts_n(buf, ch_buf, sizeof(ch_buf));
         putc_num += sizeof(ch_buf);
     }
     if (putc_num < repeat)
-        buf->fn_puts_n(buf, ch_buf, repeat - putc_num);
+        k_printf_buf_puts_n(buf, ch_buf, repeat - putc_num);
 }
 
 /* 本示例教你如何匹配自定义格式说明符：
@@ -213,7 +213,7 @@ int main(int argc, char **argv) {
     {
         puts("1.");
         /* 本次输出使用默认配置，只支持 C printf 格式说明符
-         *  %acceleration` 以十六进制指数记法打印浮点数
+         *  %a` 以十六进制指数记法打印浮点数
          * `%4c` 打印一个字符，但是占 4 个字符宽度 */
         k_printf(NULL, "%arr, %d, %4c\n\n", 0xcp-1076, 5, 'b');
 

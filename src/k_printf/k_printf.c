@@ -7,6 +7,14 @@
 
 #include "k_printf.h"
 
+/* region [printf_buf] */
+
+struct k_printf_buf {
+    void (*fn_puts_n)(struct k_printf_buf *buf, const char *str, size_t len);
+    void (*fn_vprintf)(struct k_printf_buf *buf, const char *fmt, va_list args);
+    int n;
+};
+
 /* region [str_buf] */
 
 struct k_printf_str_buf {
@@ -77,19 +85,11 @@ static void str_buf_vprintf(struct k_printf_buf *printf_buf, const char *fmt, va
     }
 }
 
-static void str_buf_printf(struct k_printf_buf *printf_buf, const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    str_buf_vprintf(printf_buf, fmt, args);
-    va_end(args);
-}
-
 static void str_buf_init(struct k_printf_str_buf *str_buf, char *buf, size_t capacity) {
 
     static char buf_[1] = { '\0' };
 
     str_buf->printf_buf.fn_puts_n  = str_buf_puts_n,
-    str_buf->printf_buf.fn_printf  = str_buf_printf,
     str_buf->printf_buf.fn_vprintf = str_buf_vprintf,
     str_buf->printf_buf.n          = 0;
 
@@ -153,20 +153,33 @@ static void file_buf_vprintf(struct k_printf_buf *printf_buf, const char *fmt, v
         printf_buf->n = -1;
 }
 
-static void file_buf_printf(struct k_printf_buf *printf_buf, const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    file_buf_vprintf(printf_buf, fmt, args);
-    va_end(args);
-}
-
 static void file_buf_init(struct k_printf_file_buf *printf_buf, FILE *file) {
 
     printf_buf->printf_buf.fn_puts_n  = file_buf_puts_n,
-    printf_buf->printf_buf.fn_printf  = file_buf_printf,
     printf_buf->printf_buf.fn_vprintf = file_buf_vprintf,
     printf_buf->printf_buf.n          = 0;
     printf_buf->file                  = file;
+}
+
+/* endregion */
+
+void k_printf_buf_puts_n(struct k_printf_buf *buf, const char *str, size_t len) {
+    buf->fn_puts_n(buf, str, len);
+}
+
+void k_printf_buf_printf(struct k_printf_buf *buf, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    buf->fn_vprintf(buf, fmt, args);
+    va_end(args);
+}
+
+void k_printf_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list args) {
+    buf->fn_vprintf(buf, fmt, args);
+}
+
+int k_printf_buf_get_n(struct k_printf_buf *buf) {
+    return buf->n;
 }
 
 /* endregion */
@@ -588,7 +601,7 @@ int k_vfprintf(const struct k_printf_config *config, FILE *file, const char *fmt
     struct k_printf_file_buf file_buf;
     file_buf_init(&file_buf, file);
 
-    return x_printf(config, (struct k_printf_buf *)&file_buf, fmt, args);
+    return x_printf(config, &file_buf.printf_buf, fmt, args);
 }
 
 int k_sprintf(const struct k_printf_config *config, char *buf, const char *fmt, ...) {
@@ -622,7 +635,7 @@ int k_vsnprintf(const struct k_printf_config *config, char *buf, size_t n, const
     struct k_printf_str_buf str_buf;
     str_buf_init(&str_buf, buf, n);
 
-    return x_printf(config, (struct k_printf_buf *)&str_buf, fmt, args);
+    return x_printf(config, &str_buf.printf_buf, fmt, args);
 }
 
 int k_asprintf(const struct k_printf_config *config, char **get_s, const char *fmt, ...) {
