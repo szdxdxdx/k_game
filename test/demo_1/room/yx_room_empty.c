@@ -8,23 +8,18 @@
 #include "../sprite/yx_spr.h"
 #include "../object/yx_obj_bubble.h"
 
-static void room_ui(void *data) {
-
-    k_canvas_draw_sprite(yx_spr_bubble_float, 0, 160, 100, NULL);
-
-    struct k_ui_button {
-
-    };
-
-
+static void draw_background(void *unused) {
+    (void)unused;
+    k_canvas_set_draw_color_rgba(0x1e1e1eff);
+    k_canvas_clear();
 }
 
-static void enter_empty_room(void) {
-
+static void room_ui(void *data) {
 
 }
 
 static int init_empty_room(void *params) {
+    k_room_add_draw_callback(NULL, draw_background, INT_MIN, 0);
     k_room_add_draw_callback(NULL, room_ui, 0, 0);
     return 0;
 }
@@ -32,8 +27,7 @@ static int init_empty_room(void *params) {
 struct k_room *yx_create_empty_room(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.fn_init  = init_empty_room;
-    config.fn_enter = enter_empty_room;
+    config.fn_init = init_empty_room;
 
     return k_room_create(&config, NULL);
 }

@@ -64,12 +64,11 @@ static int init_arena_room(void *params) {
 
     struct yx_room_arena *room_arena = k_room_get_data();
 
-    k_room_add_collision_manager();
-
-    k_room_add_camera();
-
     k_room_add_step_callback(NULL, set_debug);
     k_room_add_draw_callback(NULL, draw_background, INT_MIN, 0);
+
+    k_room_add_camera();
+    k_room_add_collision_manager();
 
     {
         struct yx_obj_bubble_maker_config config;
@@ -111,8 +110,6 @@ static int init_arena_room(void *params) {
         config.spr_run  = yx_spr_liliko_run;
         yx_create_rival(&config);
     }
-
-    // yx_test_bt();
 
     return 0;
 }
