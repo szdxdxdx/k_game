@@ -53,7 +53,7 @@ void yx__ui_mem_free(struct yx_ui *ui, void *p) {
     k_mem_pool_free(&ui->mem_pool, p);
 }
 
-struct yx_ui_elem *yx_ui_create_body(struct yx_ui *ui);
+struct yx_ui_elem *yx_ui_elem_body_create(struct yx_ui *ui);
 
 struct yx_ui *yx_ui_create_context(void) {
 
@@ -82,7 +82,7 @@ struct yx_ui *yx_ui_create_context(void) {
     }
 
     {
-        body = yx_ui_create_body(ui);
+        body = yx_ui_elem_body_create(ui);
         if (NULL == body)
             goto err;
 
@@ -144,15 +144,15 @@ int yx_ui_append_child(struct yx_ui_elem *elem, struct yx_ui_elem *child) {
 
 /* region [create_elem] */
 
-void yx_ui_elem_default_fn_draw(struct yx_ui_elem *elem) {
+static void yx__ui_elem_default_fn_draw(struct yx_ui_elem *elem) {
     (void)elem;
 }
 
-int yx_ui_elem_default_fn_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
+static int yx__ui_elem_default_fn_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
     (void)elem;
     (void)key;
     (void)val;
-    return 0;
+    return -1;
 }
 
 struct yx_ui_elem *yx__ui_elem_create(struct yx_ui *ui, size_t data_size) {
@@ -180,8 +180,8 @@ struct yx_ui_elem *yx__ui_elem_create(struct yx_ui *ui, size_t data_size) {
 
     elem->data = data;
 
-    elem->fn_draw     = yx_ui_elem_default_fn_draw;
-    elem->fn_set_attr = yx_ui_elem_default_fn_set_attr;
+    elem->fn_draw     = yx__ui_elem_default_fn_draw;
+    elem->fn_set_attr = yx__ui_elem_default_fn_set_attr;
 
     return elem;
 }
@@ -190,7 +190,7 @@ struct yx_ui_elem *yx__ui_elem_create(struct yx_ui *ui, size_t data_size) {
 
 /* region [elem_body] */
 
-struct yx_ui_elem *yx_ui_create_body(struct yx_ui *ui) {
+struct yx_ui_elem *yx_ui_elem_body_create(struct yx_ui *ui) {
 
     struct yx_ui_elem *elem = yx__ui_elem_create(ui, 0);
     if (NULL == elem)
@@ -213,7 +213,7 @@ struct yx_ui_elem_button {
     uint32_t background_color;
 };
 
-int yx_ui_set_attr_button(struct yx_ui_elem *elem, const char *key, const char *val) {
+static int yx_ui_elem_button_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
     struct yx_ui_elem_button *button = elem->data;
 
     if (0 == strncmp(key, "x", 1)) {
@@ -261,14 +261,14 @@ int yx_ui_set_attr_button(struct yx_ui_elem *elem, const char *key, const char *
     return -1;
 }
 
-void yx_ui_elem_button(struct yx_ui_elem *elem) {
+static void yx_ui_elem_button_draw(struct yx_ui_elem *elem) {
     struct yx_ui_elem_button *button = elem->data;
 
     k_canvas_set_draw_color_rgba(button->background_color);
     k_canvas_fill_rect(button->x, button->y, button->w, button->h);
 }
 
-struct yx_ui_elem *yx_ui_create_button(struct yx_ui *ui) {
+struct yx_ui_elem *yx_ui_elem_button_create(struct yx_ui *ui) {
 
     struct yx_ui_elem *elem = yx__ui_elem_create(ui, sizeof(struct yx_ui_elem_button));
     if (NULL == elem)
@@ -282,8 +282,8 @@ struct yx_ui_elem *yx_ui_create_button(struct yx_ui *ui) {
     button->h = 50.0f;
     button->background_color = 0xff0099ff;
 
-    elem->fn_draw = yx_ui_elem_button;
-    elem->fn_set_attr = yx_ui_set_attr_button;
+    elem->fn_draw = yx_ui_elem_button_draw;
+    elem->fn_set_attr = yx_ui_elem_button_set_attr;
 
     return elem;
 }
@@ -293,7 +293,7 @@ struct yx_ui_elem *yx_ui_create_button(struct yx_ui *ui) {
 struct yx_ui_elem *yx_ui_create_elem(struct yx_ui *ui, const char *elem_type) {
 
     if (0 == strncmp(elem_type, "button", 6)) {
-        return yx_ui_create_button(ui);
+        return yx_ui_elem_button_create(ui);
     }
 
     return NULL;
