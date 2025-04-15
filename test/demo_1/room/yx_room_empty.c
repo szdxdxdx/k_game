@@ -13,7 +13,7 @@ static void draw_background(void *unused) {
     k_canvas_clear();
 }
 
-static struct yx_ui *ui;
+static struct yx_ui_context *ui;
 
 static void room_init_ui(void) {
     ui = yx_ui_create_context();
@@ -25,7 +25,7 @@ static void room_init_ui(void) {
     yx_ui_set_attr(button, "h", "10");
     yx_ui_set_attr(button, "background_color", "#ff6600ff");
 
-    struct yx_ui_elem *body = yx_ui_get_body(ui);
+    struct yx_ui_elem *body = yx_ui_get_root(ui);
     yx_ui_append_child(body, button);
 }
 
