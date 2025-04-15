@@ -19,11 +19,11 @@ static void room_init_ui(void) {
     ui = yx_ui_create_context();
 
     struct yx_ui_elem *button = yx_ui_create_elem(ui, "button");
-    yx_ui_set_attr(button, "x", "100px");
-    yx_ui_set_attr(button, "y", "100px");
-    yx_ui_set_attr(button, "w", "50px");
-    yx_ui_set_attr(button, "h", "10px");
-    yx_ui_set_attr(button, "color", "#ff6600ff");
+    yx_ui_set_attr(button, "x", "100");
+    yx_ui_set_attr(button, "y", "100");
+    yx_ui_set_attr(button, "w", "50");
+    yx_ui_set_attr(button, "h", "10");
+    yx_ui_set_attr(button, "background_color", "#ff6600ff");
 
     struct yx_ui_elem *body = yx_ui_get_body(ui);
     yx_ui_append_child(body, button);

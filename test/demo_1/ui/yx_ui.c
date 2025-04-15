@@ -1,11 +1,38 @@
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <ctype.h>
 
 #include "k_list.h"
 #include "k_mem_pool.h"
 
 #include "k_game/core/k_object.h"
 #include "k_game/core/k_canvas.h"
+
+/* region [utils] */
+
+int parse_hex_color(const char *str, uint32_t *out_color) {
+    if (!str || str[0] != '#' || strlen(str) != 9) return 0;
+
+    uint32_t value = 0;
+    int i = 1;
+    for (; i < 9; ++i) {
+        char c = str[i];
+        if (!isxdigit(c)) return 0;
+
+        value <<= 4;
+        if (c >= '0' && c <= '9')
+            value |= (c - '0');
+        else if (c >= 'a' && c <= 'f')
+            value |= (c - 'a' + 10);
+        else if (c >= 'A' && c <= 'F')
+            value |= (c - 'A' + 10);
+    }
+
+    *out_color = value;
+    return 1;
+}
+/* endregion */
 
 /* region [ui_context] */
 
@@ -96,10 +123,12 @@ struct yx_ui_elem {
     void *data;
 
     void (*fn_draw)(struct yx_ui_elem *elem);
+
+    int (*fn_set_attr)(struct yx_ui_elem *elem, const char *key, const char *val);
 };
 
 int yx_ui_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
-
+    return elem->fn_set_attr(elem, key, val);
 }
 
 int yx_ui_append_child(struct yx_ui_elem *elem, struct yx_ui_elem *child) {
@@ -114,6 +143,17 @@ int yx_ui_append_child(struct yx_ui_elem *elem, struct yx_ui_elem *child) {
 }
 
 /* region [create_elem] */
+
+void yx_ui_elem_default_fn_draw(struct yx_ui_elem *elem) {
+    (void)elem;
+}
+
+int yx_ui_elem_default_fn_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
+    (void)elem;
+    (void)key;
+    (void)val;
+    return 0;
+}
 
 struct yx_ui_elem *yx__ui_elem_create(struct yx_ui *ui, size_t data_size) {
 
@@ -133,10 +173,15 @@ struct yx_ui_elem *yx__ui_elem_create(struct yx_ui *ui, size_t data_size) {
 
     elem->sibling_node.prev = NULL;
     elem->sibling_node.next = NULL;
+
     k_list_init(&elem->child_list);
+
     elem->ui_context = ui;
+
     elem->data = data;
-    elem->fn_draw = NULL;
+
+    elem->fn_draw     = yx_ui_elem_default_fn_draw;
+    elem->fn_set_attr = yx_ui_elem_default_fn_set_attr;
 
     return elem;
 }
@@ -168,6 +213,54 @@ struct yx_ui_elem_button {
     uint32_t background_color;
 };
 
+int yx_ui_set_attr_button(struct yx_ui_elem *elem, const char *key, const char *val) {
+    struct yx_ui_elem_button *button = elem->data;
+
+    if (0 == strncmp(key, "x", 1)) {
+        char *end;
+        float val_f = strtof(val, &end);
+        if (end == val)
+            return -1;
+
+        button->x = val_f;
+    }
+    else if (0 == strncmp(key, "y", 1)) {
+        char *end;
+        float val_f = strtof(val, &end);
+        if (end == val)
+            return -1;
+
+        button->y = val_f;
+    }
+    else if (0 == strncmp(key, "w", 1)) {
+        char *end;
+        float val_f = strtof(val, &end);
+        if (end == val)
+            return -1;
+
+        button->w = val_f;
+    }
+    else if (0 == strncmp(key, "h", 1)) {
+        char *end;
+        float val_f = strtof(val, &end);
+        if (end == val)
+            return -1;
+
+        button->h = val_f;
+    }
+    else if (0 == strncmp(key, "background_color", 16)) {
+
+        uint32_t color;
+        if ( ! parse_hex_color(val, &color))
+            return -1;
+
+        button->background_color = color;
+        return 0;
+    }
+
+    return -1;
+}
+
 void yx_ui_elem_button(struct yx_ui_elem *elem) {
     struct yx_ui_elem_button *button = elem->data;
 
@@ -190,6 +283,7 @@ struct yx_ui_elem *yx_ui_create_button(struct yx_ui *ui) {
     button->background_color = 0xff0099ff;
 
     elem->fn_draw = yx_ui_elem_button;
+    elem->fn_set_attr = yx_ui_set_attr_button;
 
     return elem;
 }
