@@ -4,6 +4,7 @@
 #include "./k_component_manager.h"
 #include "./k_component_manager_map.h"
 
+#include "../object/k_object.h"
 #include "../room/k_room.h"
 
 /* region [component_get] */
@@ -26,6 +27,10 @@ void *k_component_get_manager_data(struct k_component *component) {
         return NULL;
 
     return component->manager->data;
+}
+
+void *k_component_get_object_data(struct k_component *component) {
+    return component->object->data;
 }
 
 /* endregion */

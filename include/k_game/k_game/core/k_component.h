@@ -85,6 +85,8 @@ void *k_component_get_data(struct k_component *component);
 
 struct k_object *k_component_get_object(struct k_component *component);
 
+void *k_component_get_object_data(struct k_component *component);
+
 /**
  * \brief 获取管理该组件实例的管理器
  *

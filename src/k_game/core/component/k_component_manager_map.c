@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "k_array.h"
 
 #include "k_game/core/k_mem_alloc.h"
@@ -77,6 +78,8 @@ void k__component_manager_map_deinit(void) {
 }
 
 int k__component_manager_map_add(struct k_room *room, struct k_component_manager *manager) {
+    assert(NULL != room);
+    assert(NULL != manager);
 
     size_t room_id = room->room_id;
     size_t manager_type_id = manager->component_type->manager_type->type_id;
@@ -152,6 +155,8 @@ manger_array_set_item:
 }
 
 void k__component_manager_map_del(struct k_room *room, struct k_component_manager_type *manager_type) {
+    assert(NULL != room);
+    assert(NULL != manager_type);
 
     struct k_array *room_array = &component_manager_map.map;
     if (room_array->size <= room->room_id)
@@ -166,6 +171,8 @@ void k__component_manager_map_del(struct k_room *room, struct k_component_manage
 }
 
 struct k_component_manager *k__component_manager_map_find(struct k_room *room, struct k_component_manager_type *manager_type) {
+    assert(NULL != room);
+    assert(NULL != manager_type);
 
     struct k_array *room_array = &component_manager_map.map;
     if (room_array->size <= room->room_id)
@@ -179,6 +186,7 @@ struct k_component_manager *k__component_manager_map_find(struct k_room *room, s
 }
 
 void k__room_del_all_component_managers(struct k_room *room) {
+    assert(NULL != room);
 
     struct k_array *room_array = &component_manager_map.map;
     if (room_array->size <= room->room_id)
