@@ -18,7 +18,7 @@ static struct yx_ui *ui;
 static void room_init_ui(void) {
     ui = yx_ui_create_context();
 
-    struct yx_ui_elem *button = yx_ui_create_elem("button");
+    struct yx_ui_elem *button = yx_ui_create_elem(ui, "button");
     yx_ui_set_attr(button, "x", "100px");
     yx_ui_set_attr(button, "y", "100px");
     yx_ui_set_attr(button, "w", "50px");

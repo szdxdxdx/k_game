@@ -11,7 +11,7 @@ void yx_ui_draw(struct yx_ui *ui);
 
 struct yx_ui_elem *yx_ui_get_body(struct yx_ui *ui);
 
-struct yx_ui_elem *yx_ui_create_elem(const char *elem_type);
+struct yx_ui_elem *yx_ui_create_elem(struct yx_ui *ui, const char *elem_type);
 
 int yx_ui_set_attr(struct yx_ui_elem *elem, const char *key, const char *val);
 
