@@ -9,7 +9,7 @@ static void test(void) {
     struct k_int_array *arr = k_int_array_create(8);
 
     int elem = 1;
-    k_int_array_push_back(arr, &elem);
+    k_int_array_push_back(arr, elem);
 
     int elems[] = { 1, 4, 5, 1, 4 };
     k_int_array_push_back_all(arr, elems, 5);

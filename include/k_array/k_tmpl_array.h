@@ -1,24 +1,19 @@
 
 /* 本头文件为动态数组的宏模板，支持以下参数：
  *
- * - k_tmpl_array_name             必须定义此宏，用于指定数组结构体的名字
- * - k_tmpl_array_elem             必须定义此宏，指定数组中元素的类型
- * - k_tmpl_array_impl             若定义此宏，则生成函数定义，否则只生成函数声明。
- * - k_tmpl_array_fn_malloc        若定义此宏，则使用指定的内存分配函数，否则使用 `malloc()`
- * - k_tmpl_array_fn_free          若定义此宏，则使用指定的内存分配函数，否则使用 `free()`
- * - k_tmpl_array_pass_elem_by_val 若定义此宏，则往数组中插入单个元素时传递值，否则传递指针
- * - k_tmpl_array_static_fn        若定义此宏，则用 static 修饰生成的函数
+ * - k_tmpl_array_name      必须定义此宏，用于指定数组结构体的名字
+ * - k_tmpl_array_elem      必须定义此宏，指定数组中元素的类型
+ * - k_tmpl_array_impl      若定义此宏，则生成函数定义，否则只生成函数声明。
+ * - k_tmpl_array_fn_malloc 若定义此宏，则使用指定的内存分配函数，否则使用 `malloc()`
+ * - k_tmpl_array_fn_free   若定义此宏，则使用指定的内存分配函数，否则使用 `free()`
+ * - k_tmpl_array_pass_val  若定义此宏，则操作单个元素时传递值，否则传递指针
+ * - k_tmpl_array_static_fn 若定义此宏，则用 static 修饰生成的函数
  */
-
 #if defined(k_tmpl_array_name) && defined(k_tmpl_array_elem)
 
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>
-
-/* region [internal] */
-
-/* region [fn_malloc] */
 
 #if defined(k_tmpl_array_fn_malloc) && defined(k_tmpl_array_fn_free)
 #define k__tmpl_array_mem_alloc k_tmpl_array_fn_malloc
@@ -32,35 +27,17 @@
 #define k__tmpl_array_mem_free  free
 #endif
 
-/* endregion */
-
-/* region [pass_elem] */
-
-#ifdef k_tmpl_array_pass_elem_by_val
-#define k__tmpl_array_pass_elem_by_val 1
-#else
-#define k__tmpl_array_pass_elem_by_val 0
-#endif
-
-/* endregion */
-
-/* region [static] */
-
 #ifdef k_tmpl_array_static_fn
-#define k__tmpl_array_static_fn static
+#define k__tmpl_array_static_fn static inline
 #else
 #define k__tmpl_array_static_fn
 #endif
-
-/* endregion */
 
 #define k__tmpl_array k_tmpl_array_name
 
 #define k__tmpl_array_x_(array_name, x) array_name##_##x
 #define k__tmpl_array_x(array_name, x) k__tmpl_array_x_(array_name, x)
 #define k__tmpl_array_(x) k__tmpl_array_x(k_tmpl_array_name, x)
-
-/* endregion */
 
 /** \brief 支持动态扩容的数组容器 */
 struct k__tmpl_array {
@@ -157,21 +134,27 @@ k__tmpl_array_static_fn k_tmpl_array_elem *k__tmpl_array_(shift_right)(struct k_
  */
 k__tmpl_array_static_fn int k__tmpl_array_(insert_all)(struct k__tmpl_array *arr, size_t idx, const k_tmpl_array_elem *elems, size_t elems_num);
 
-/** \brief 在数组尾部追加多个元素，若成功，函数返回 0，否则返回非 0 */
-k__tmpl_array_static_fn int k__tmpl_array_(push_back_all)(struct k__tmpl_array *arr, const k_tmpl_array_elem *elems, size_t elems_num);
-
-#if k__tmpl_array_pass_elem_by_val
+#if defined(k_tmpl_array_pass_val)
 
 /** \brief 在数组指定位置插入一个元素，若成功，函数返回 0，否则返回非 0 */
 k__tmpl_array_static_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, k_tmpl_array_elem elem);
-
-/** \brief 在数组尾部追加一个元素，若成功，函数返回 0，否则返回非 0 */
-k__tmpl_array_static_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, k_tmpl_array_elem elem);
 
 #else
 
 /** \brief 在数组指定位置插入一个元素，若成功，函数返回 0，否则返回非 0 */
 k__tmpl_array_static_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, const k_tmpl_array_elem *elem);
+
+#endif
+
+/** \brief 在数组尾部追加多个元素，若成功，函数返回 0，否则返回非 0 */
+k__tmpl_array_static_fn int k__tmpl_array_(push_back_all)(struct k__tmpl_array *arr, const k_tmpl_array_elem *elems, size_t elems_num);
+
+#if defined(k_tmpl_array_pass_val)
+
+/** \brief 在数组尾部追加一个元素，若成功，函数返回 0，否则返回非 0 */
+k__tmpl_array_static_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, k_tmpl_array_elem elem);
+
+#else
 
 /** \brief 在数组尾部追加一个元素，若成功，函数返回 0，否则返回非 0 */
 k__tmpl_array_static_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, const k_tmpl_array_elem *elem);
@@ -369,18 +352,10 @@ k__tmpl_array_static_fn int k__tmpl_array_(insert_all)(struct k__tmpl_array *arr
     return 0;
 }
 
-k__tmpl_array_static_fn int k__tmpl_array_(push_back_all)(struct k__tmpl_array *arr, const k_tmpl_array_elem *elems, size_t elems_num) {
-    return k__tmpl_array_(insert_all)(arr, arr->size, elems, elems_num);
-}
-
-#if k__tmpl_array_pass_elem_by_val
+#if defined(k_tmpl_array_pass_val)
 
 k__tmpl_array_static_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, k_tmpl_array_elem elem) {
     return k__tmpl_array_(insert_all)(arr, idx, &elem, 1);
-}
-
-k__tmpl_array_static_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, k_tmpl_array_elem elem) {
-    return k__tmpl_array_(insert_all)(arr, arr->size, &elem, 1);
 }
 
 #else
@@ -388,6 +363,20 @@ k__tmpl_array_static_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr,
 k__tmpl_array_static_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, const k_tmpl_array_elem *elem) {
     return k__tmpl_array_(insert_all)(arr, idx, elem, 1);
 }
+
+#endif
+
+k__tmpl_array_static_fn int k__tmpl_array_(push_back_all)(struct k__tmpl_array *arr, const k_tmpl_array_elem *elems, size_t elems_num) {
+    return k__tmpl_array_(insert_all)(arr, arr->size, elems, elems_num);
+}
+
+#if defined(k_tmpl_array_pass_val)
+
+k__tmpl_array_static_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, k_tmpl_array_elem elem) {
+    return k__tmpl_array_(insert_all)(arr, arr->size, &elem, 1);
+}
+
+#else
 
 k__tmpl_array_static_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, const k_tmpl_array_elem *elem) {
     return k__tmpl_array_(insert_all)(arr, arr->size, elem, 1);
@@ -448,12 +437,12 @@ k__tmpl_array_static_fn void k__tmpl_array_(free_storage)(struct k__tmpl_array *
 #undef k__tmpl_array_x_impl
 #undef k__tmpl_array_mem_alloc
 #undef k__tmpl_array_mem_free
-#undef k__tmpl_array_pass_elem_by_val
+#undef k__tmpl_array_pass_val
 
 #undef k_tmpl_array_name
 #undef k_tmpl_array_elem
 #undef k_tmpl_array_fn_malloc
 #undef k_tmpl_array_fn_free
-#undef k_tmpl_array_pass_elem_by_val
+#undef k_tmpl_array_pass_val
 
 #endif
