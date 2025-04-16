@@ -1,24 +1,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define k_tmpl_array_elem_type float
-#define k_tmpl_array_name      float_array
-#define k_tmpl_array_pass_elem_by_val
-#define k_tmpl_array_impl
-#include "k_tmpl_array.h"
+#include "./k_int_array.h"
+#include "./k_array.h"
 
 static void test(void) {
 
-    struct float_array *arr = float_array_create(8);
+    struct k_int_array *arr = k_int_array_create(8);
 
-    float_array_push_back(arr, 1);
+    int elem = 1;
+    k_int_array_push_back(arr, &elem);
 
-    float elems[] = { 1, 4, 5, 1, 4 };
-    float_array_push_back_all(arr, elems, 5);
+    int elems[] = { 1, 4, 5, 1, 4 };
+    k_int_array_push_back_all(arr, elems, 5);
 
     int i = 0;
     for (; i < arr->size; i++) {
-        printf("%.0f ", arr->storage[i]);
+        printf("%d ", arr->storage[i]);
     }
 }
 

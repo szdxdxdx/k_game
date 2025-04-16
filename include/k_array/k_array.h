@@ -3,24 +3,7 @@
 
 #include <stddef.h>
 
-/**
- * \brief 数组容器
- *
- * 数组支持动态扩容，能存储任意数据类型。
- *
- * 你可以对数组的 `storage` 指针做显式类型转换，配合下标运算符取得元素。
- * 若数组 `arr` 存储的元素类型为 `T`，可以这样操作取得索引为 `idx` 的元素：
- * ```C
- * T *elem_addr  = &((T *)arr->storage)[idx];
- * T  elem_value =  ((T *)arr->storage)[idx];
- * ```
- *
- * 或使用 `k_array_get_elem()` 和 `k_array_get_elem_addr()`。
- * ```C
- * T *elem_addr  = k_array_get_elem_addr(arr, idx);
- * T  elem_value = k_array_get_elem(arr, idx, T);
- * ```
- */
+/** \brief 支持动态扩容的数组容器 */
 struct k_array {
 
     /* [private] */
@@ -38,7 +21,22 @@ struct k_array {
     /** \brief [read-only] 容器持有的元素的数量 */
     size_t size;
 
-    /** \brief [read-only] 指向存储元素的连续空间的指针 */
+    /**
+     * \brief [read-only] 指向存储元素的连续空间的指针
+     *
+     * 你可以对数组的 `storage` 指针做显式类型转换，配合下标运算符取得元素。
+     * 若数组 `arr` 存储的元素类型为 `T`，可以这样操作取得索引为 `idx` 的元素：
+     * ```C
+     * T *elem_addr  = &((T *)arr->storage)[idx];
+     * T  elem_value =  ((T *)arr->storage)[idx];
+     * ```
+     *
+     * 或使用 `k_array_get_elem()` 和 `k_array_get_elem_addr()`。
+     * ```C
+     * T *elem_addr  = k_array_get_elem_addr(arr, idx);
+     * T  elem_value = k_array_get_elem(arr, idx, T);
+     * ```
+     */
     void *storage;
 };
 
@@ -61,7 +59,7 @@ struct k_array_config {
 /**
  * \brief 创建数组
  *
- * 若成功，函数返回数组容器的指针，否则返回 `NULL`。
+ * 若创建成功，函数返回数组容器的指针，否则返回 `NULL`。
  */
 struct k_array *k_array_create(const struct k_array_config *config);
 
@@ -76,8 +74,7 @@ void k_array_destroy(struct k_array *arr);
  * \brief 构造数组
  *
  * 在 `arr` 所指向的内存段上原地构造数组。
- *
- * 若成功，函数返回值同入参 `arr`，否则返回 `NULL`。
+ * 若构造成功，函数返回值同入参 `arr`，否则返回 `NULL`。
  */
 struct k_array *k_array_construct(struct k_array *arr, const struct k_array_config *config);
 
@@ -85,7 +82,6 @@ struct k_array *k_array_construct(struct k_array *arr, const struct k_array_conf
  * \brief 析构数组
  *
  * 原地析构 `arr` 所指向的内存段上的动态数组。
- *
  * 若 `arr` 为 `NULL`，则函数立即返回。
  */
 void k_array_destruct(struct k_array *arr);
@@ -150,41 +146,20 @@ void *k_array_shift_right(struct k_array *arr, size_t idx, size_t n);
 /**
  * \brief 在数组指定位置插入多个元素
  *
- * 本函数将 `elems` 视为一个 C 风格的数组的首地址，把 `elems` 指向的内存段中的 `elems_num` 个元素
- * （总共 `elems_num * arr->elem_size` 字节）的内存数据复制到数组 `arr` 中索引为 `idx` 的位置。
- *
- * 注意：要添加的元素不能来自容器内部，即 `elems` 所指向的内存段不能和数组的 `storage` 所指向的内存段有交集。
- * 若有交集，在执行插入操作时，数组会腾挪元素或动态扩容，导致 `elems` 所指向内存段的数据会发生变化或失效。
+ * 本函数将 `elems` 指向的内存段中的 `elems_num` 个元素复制插入到数组 `arr` 中索引为 `idx` 的位置，
+ * 总共复制 `elems_num * arr->elem_size` 字节的内存数据。
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_array_insert_all(struct k_array *arr, size_t idx, const void *elems, size_t elems_num);
 
-/**
- * \brief 在数组指定位置插入一个元素
- *
- * 要插入的元素 `elem` 不能来自容器内部，详见 `k_array_insert_all()`。
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
+/** \brief 在数组指定位置插入一个元素。若成功，函数返回 0，否则返回非 0 */
 int k_array_insert(struct k_array *arr, size_t idx, const void *elem);
 
-/**
- * \brief 在数组尾部追加多个元素
- *
- * 要追加的元素 `elems` 不能来自容器内部，详见 `k_array_insert_all()`。
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
+/** \brief 在数组尾部追加多个元素。若成功，函数返回 0，否则返回非 0 */
 int k_array_push_back_all(struct k_array *arr, const void *elems, size_t elems_num);
 
-/**
- * \brief 在数组尾部追加一个元素
- *
- * 要追加的元素 `elem` 不能来自容器内部，详见 `k_array_insert_all()`。
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
+/** \brief 在数组尾部追加一个元素。若成功，函数返回 0，否则返回非 0 */
 int k_array_push_back(struct k_array *arr, const void *elem);
 
 /**
@@ -211,15 +186,5 @@ void k_array_clear(struct k_array *arr);
 
 /** \brief 清空数组，并释放存储元素所用的内存 */
 void k_array_free_storage(struct k_array *arr);
-
-/**
- * \brief 将数组指定区间（左闭右开）内的元素覆盖填充为指定值
- *
- * 要填充的元素 `elem` 不能来自容器内部，详见 `k_array_insert_all()`。
- *
- * 你需保证传入的区间索引在数组 `size` 的范围内。
- * 若超过了 `size` 范围，你应该先调用 `k_array_shift_right()`，在调用本函数。
- */
-void k_array_fill(struct k_array *arr, size_t idx_from, size_t idx_to, const void *elem);
 
 #endif

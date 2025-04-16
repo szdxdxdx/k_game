@@ -168,6 +168,14 @@ int k_array_insert_all(struct k_array *arr, size_t idx, const void *elems, size_
     assert(idx <= arr->size);
     assert(NULL != elems);
 
+    /* 要添加的元素不能来自容器内部，即 `elems` 所指向的内存段不能和数组的 `storage` 所指向的内存段有交集。
+     * 若有交集，在执行插入操作时，数组会腾挪元素或动态扩容，导致 `elems` 所指向内存段的数据会发生变化或失效。
+     *
+     * 或者，我可以先判断 `elems` 是否在容器内，若是则分配内存复制一份元素，再执行插入操作。
+     * 但操作结束后， `elems` 指向的内存段的数据可能发生了改变，与 const 的语义不符。
+     */
+    assert( ! (arr->storage <= elems && elems < ptr_offset(arr->storage, arr->capacity * arr->elem_size)));
+
     void *insert_position = k_array_shift_right(arr, idx, elems_num);
     if (NULL == insert_position)
         return -1;
@@ -230,31 +238,4 @@ void k_array_free_storage(struct k_array *arr) {
     arr->capacity = 0;
     arr->size     = 0;
     arr->storage  = NULL;
-}
-
-void k_array_fill(struct k_array *arr, size_t idx_from, size_t idx_to, const void *elem) {
-    assert(NULL != arr);
-    assert(idx_from <= idx_to);
-    assert(idx_to <= arr->size);
-    assert(NULL != elem);
-
-    void *p_from = ptr_offset(arr->storage, idx_from * arr->elem_size);
-    void *p_to   = ptr_offset(arr->storage, idx_to * arr->elem_size);
-
-    memcpy(p_from, elem, arr->elem_size);
-
-    void *p_now = (void *)((uintptr_t)p_from + arr->elem_size);
-    for (;;) {
-        size_t filled_size    = (uintptr_t)p_now - (uintptr_t)p_from;
-        size_t remaining_size = (uintptr_t)p_to  - (uintptr_t)p_now;
-
-        if (filled_size < remaining_size) {
-            memcpy(p_now, p_from, filled_size);
-            p_now = (void *)((uintptr_t)p_now + filled_size);
-        }
-        else {
-            memcpy(p_now, p_from, remaining_size);
-            break;
-        }
-    }
 }
