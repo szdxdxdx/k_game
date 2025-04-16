@@ -1,6 +1,7 @@
 
 #include "./yx_ui_elem_root.h"
 #include "./yx_ui_elem.h"
+#include "yx_ui_context.h"
 
 struct yx_ui_elem *yx_ui_elem_root_create(struct yx_ui_context *ui) {
 

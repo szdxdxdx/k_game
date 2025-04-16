@@ -15,7 +15,8 @@ static void draw_background(void *unused) {
 
 static struct yx_ui_context *ui;
 
-static void room_init_ui(void) {
+static void init_ui(void) {
+
     ui = yx_ui_create_context();
 
     struct yx_ui_elem *button = yx_ui_create_elem(ui, "button");
@@ -29,14 +30,15 @@ static void room_init_ui(void) {
     yx_ui_append_child(body, button);
 }
 
-static void room_draw_ui(void *unused) {
+static void draw_ui(void *unused) {
+    /* 每帧手动调用绘制 ui */
     yx_ui_draw(ui);
 }
 
 static int init_empty_room(void *params) {
     k_room_add_draw_callback(NULL, draw_background, INT_MIN, 0);
-    k_room_add_draw_callback(NULL, room_draw_ui, INT_MAX, 0);
-    room_init_ui();
+    k_room_add_draw_callback(NULL, draw_ui, INT_MAX, 0);
+    init_ui();
     return 0;
 }
 

@@ -1,6 +1,5 @@
 #include <assert.h>
 
-#include "./yx_ui_ext.h"
 #include "./yx_ui_context.h"
 #include "./yx_ui_elem.h"
 
@@ -43,6 +42,11 @@ int yx__ui_elem_construct(struct yx_ui_elem *elem, struct yx_ui_context *ui) {
 void yx__ui_elem_destruct(struct yx_ui_elem *elem) {
     assert(NULL != elem);
     k_list_del(&elem->sibling_link);
+}
+
+
+struct yx_ui_elem *yx_ui_create_elem(struct yx_ui_context *ui, const char *elem_type) {
+
 }
 
 int yx_ui_set_attr(struct yx_ui_elem *elem, const char *key, const char *val) {
