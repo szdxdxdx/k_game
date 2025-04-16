@@ -1,8 +1,7 @@
 
-#define k_tmpl_array_set_fn_malloc k__json_mem_alloc
-#define k_tmpl_array_set_fn_free   k__json_mem_free
-#define k_tmpl_array_define_fn
-
+#define k_array_tmpl_set_fn_malloc k__json_mem_alloc
+#define k_array_tmpl_set_fn_free   k__json_mem_free
+#define k_array_tmpl_define_fn
 #include "./_internal.h"
 
 struct k__json_arr *k__create_json_arr(void) {

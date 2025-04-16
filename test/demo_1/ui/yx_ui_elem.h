@@ -3,27 +3,22 @@
 
 #include "k_list.h"
 
+#include "./yx_ui_elem_array.h"
+
 struct yx_ui_context;
 struct yx_ui_elem_v_tbl;
 
 struct yx_ui_elem {
 
-    struct k_list_node sibling_link;
-
-    struct k_list child_list;
-
     struct yx_ui_context *ui;
 
+    const char *elem_type;
+
+    struct yx_ui_elem *parent;
+
+    struct yx_ui_elem_array children;
+
     struct yx_ui_elem_v_tbl *v_tbl;
-};
-
-struct yx_ui_elem_v_tbl {
-
-    void (*fn_destruct)(struct yx_ui_elem *elem);
-
-    void (*fn_draw)(struct yx_ui_elem *elem);
-
-    int (*fn_set_attr)(struct yx_ui_elem *elem, const char *key, const char *val);
 };
 
 int yx__ui_elem_construct(struct yx_ui_elem *elem, struct yx_ui_context *ui);

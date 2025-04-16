@@ -17,22 +17,22 @@ static struct yx_ui_context *ui;
 
 static void init_ui(void) {
 
-    ui = yx_ui_create_context();
+    // ui = yx_ui_create_context();
 
-    struct yx_ui_elem *button = yx_ui_create_elem(ui, "button");
-    yx_ui_set_attr(button, "x", "100");
-    yx_ui_set_attr(button, "y", "100");
-    yx_ui_set_attr(button, "w", "50");
-    yx_ui_set_attr(button, "h", "10");
-    yx_ui_set_attr(button, "background_color", "#ff6600ff");
+    // struct yx_ui_elem *button = yx_ui_create_elem(ui, "button");
+    // yx_ui_set_attr(button, "x", "100");
+    // yx_ui_set_attr(button, "y", "100");
+    // yx_ui_set_attr(button, "w", "50");
+    // yx_ui_set_attr(button, "h", "10");
+    // yx_ui_set_attr(button, "background_color", "#ff6600ff");
 
-    struct yx_ui_elem *body = yx_ui_get_root(ui);
-    yx_ui_append_child(body, button);
+    // struct yx_ui_elem *body = yx_ui_get_root(ui);
+    // yx_ui_append_child(body, button);
 }
 
 static void draw_ui(void *unused) {
     /* 每帧手动调用绘制 ui */
-    yx_ui_draw(ui);
+    //yx_ui_draw(ui);
 }
 
 static int init_empty_room(void *params) {
