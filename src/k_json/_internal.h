@@ -79,11 +79,15 @@ void k__destroy_json_str (struct k__json_str  *json_str);
 
 /* region [arr] */
 
+#define k_tmpl_array_struct_name k_json_array
+#define k_tmpl_array_elem_type   struct k_json *
+#define k_tmpl_array_define_struct
+#define k_tmpl_array_elem_pass_by_val
+#include "k_tmpl_array.h"
+
 struct k__json_arr {
     struct k_json json;
-    size_t capacity;
-    size_t size;
-    struct k_json **arr;
+    struct k_json_array arr_;
 };
 
 struct k__json_arr *k__create_json_arr(void);
@@ -112,7 +116,7 @@ struct k__json_obj_pair {
 };
 
 struct k__json_obj  *k__create_json_obj (void);
-void k__destroy_json_obj (struct k__json_obj  *json_obj);
+void k__destroy_json_obj (struct k__json_obj *json_obj);
 int k__json_obj_add (struct k__json_obj *json_obj, const char *key, size_t key_len, struct k_json *val);
 struct k__json_obj_pair *k__json_obj_get(struct k__json_obj *json_obj, const char *key, size_t key_len);
 void k__json_obj_del(struct k__json_obj *json_obj, const char *key);

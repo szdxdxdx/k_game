@@ -27,23 +27,23 @@ static void print_json(struct k_printf_buf *buf, struct k_json *json) {
         case K__JSON_ARR: {
             struct k__json_arr *json_arr = (struct k__json_arr *)json;
 
-            if (json_arr->size == 0) {
+            if (json_arr->arr_.size == 0) {
                 k_printf_buf_puts_n(buf, "[]", 2);
                 break;
             }
 
             k_printf_buf_puts_n(buf, "[", 1);
-            print_json(buf, json_arr->arr[0]);
+            print_json(buf, json_arr->arr_.storage[0]);
 
-            if (json_arr->size == 1) {
+            if (json_arr->arr_.size == 1) {
                 k_printf_buf_puts_n(buf, "]", 1);
                 break;
             }
 
             size_t i = 1;
-            for (; i < json_arr->size; i++) {
+            for (; i < json_arr->arr_.size; i++) {
                 k_printf_buf_puts_n(buf, ",", 1);
-                print_json(buf, (struct k_json *)json_arr->arr[i]);
+                print_json(buf, (struct k_json *)json_arr->arr_.storage[i]);
             }
 
             k_printf_buf_puts_n(buf, "]", 1);
