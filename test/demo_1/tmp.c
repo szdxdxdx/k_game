@@ -1,33 +1,3 @@
-# k_printf
-
-`k_printf()` 是对 C 标准库的 `printf()` 的包装，允许自定义格式说明符和对应回调。
-
-## 简单示例
-
-```C
-/* 第一步，编写自定义格式说明符 `%arr` 的回调函数，用于打印 int 数组 */
-
-void my_spec_arr(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
-
-    /* 在回调中使用 `k_printf_buf_XXX()` 系列的函数往缓冲区 `buf `中写入内容，
-     * 不需要考虑缓冲区类型是 `char []` 还是 `FILE *`。
-     */
-}
-
-/* 第二步，编写 k_printf 的配置，注册自定义格式说明符 `%arr` */
-
-struct k_printf_config config = { ... };
-
-/* 第三步，使用 k_printf */
-
-int arr[] = { 1, 2, 3, 4, 5 };
-
-k_printf(config, "arr[] = %arr", arr, 5);
-```
-
-## 完整示例
-
-```C
 /* 以下为完整的示例代码 */
 
 #include <stdarg.h>
@@ -274,4 +244,3 @@ int main(int argc, char **argv) {
 }
 
 #endif
-```

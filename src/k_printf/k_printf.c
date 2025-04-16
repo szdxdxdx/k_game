@@ -436,7 +436,7 @@ k_printf_callback_fn k_printf_match_spec_helper(const struct k_printf_spec_callb
 
 /* endregion */
 
-/* region [x_printf] */
+/* region [k__printf] */
 
 /* 提取字符串开头的非负整数值（最大返回 `INT_MAX`），并移动字符串指针跳过数字 */
 static int extract_non_negative_int(const char **str) {
@@ -532,7 +532,7 @@ static k_printf_callback_fn extract_spec(const struct k_printf_config *config, c
  *
  * 本函数是 k_printf 家族所有函数的核心实现。
  */
-static int x_printf(const struct k_printf_config *config, struct k_printf_buf *buf, const char *fmt, va_list args) {
+static int k__printf(const struct k_printf_config *config, struct k_printf_buf *buf, const char *fmt, va_list args) {
 
     const char *s = fmt;
     const char *p = s;
@@ -601,7 +601,7 @@ int k_vfprintf(const struct k_printf_config *config, FILE *file, const char *fmt
     struct k_printf_file_buf file_buf;
     file_buf_init(&file_buf, file);
 
-    return x_printf(config, &file_buf.printf_buf, fmt, args);
+    return k__printf(config, &file_buf.printf_buf, fmt, args);
 }
 
 int k_sprintf(const struct k_printf_config *config, char *buf, const char *fmt, ...) {
@@ -635,7 +635,7 @@ int k_vsnprintf(const struct k_printf_config *config, char *buf, size_t n, const
     struct k_printf_str_buf str_buf;
     str_buf_init(&str_buf, buf, n);
 
-    return x_printf(config, &str_buf.printf_buf, fmt, args);
+    return k__printf(config, &str_buf.printf_buf, fmt, args);
 }
 
 int k_asprintf(const struct k_printf_config *config, char **get_s, const char *fmt, ...) {

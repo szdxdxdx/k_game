@@ -101,19 +101,12 @@ void k_printf_buf_printf(struct k_printf_buf *buf, const char *fmt, ...);
 void k_printf_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list args);
 
 /**
- * \brief 到目前为止已经打印出的字符数量（忽略缓冲区实际大小）
+ * \brief 获取截至目前应打印出的字符的数量
  *
- * C printf 一族的函数会返回格式化后的字符串长度，无论缓冲区是否能完全容纳格式化后的字符串。
- * 例如，当我们只关心格式化后的字符串长度，而不需要真正写入内容时，可以使用 `snprintf()`，
- * 并指定使用 0 大小的缓冲区，`snprintf()` 不会写入任何内容，只是返回格式化后的字符串长度。
+ * 函数将忽略缓冲区的实际大小，返回到目前为止应该要打印出的字符的数量。
+ * 若输出途中出现错误，则函数返回负值。
  *
- * k_printf 一族的函数也有相同的行为。
- *
- * `n` 记录着到目前为止已打印出的字符数量（忽略缓冲区实际大小）。
- * k_printf 一族的函数返回值，就是将字符串格式化完毕后 `n` 的值。
- *
- * 若想实现与 `printf()` 的 `%n` 相似的功能，你需要在你的回调中读取 `n`。
- * 若读取到 `n` 为负值，说明输出途中出现错误。
+ * 你可以用本函数实现与 C printf 的 `%n` 类似的功能。
  */
 int k_printf_buf_get_n(struct k_printf_buf *buf);
 
