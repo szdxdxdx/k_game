@@ -49,7 +49,7 @@ struct k_array_config {
     void *(*fn_malloc)(size_t size);
 
     /** \brief 内存释放函数 */
-    void (*fn_free)(void *ptr);
+    void (*fn_free)(void *p);
 
     /** \brief 数组所存储的元素的大小 */
     size_t elem_size;
