@@ -40,28 +40,25 @@ struct k_array {
     void *storage;
 };
 
-/** \brief 用于构造数组的配置参数 */
-struct k_array_config {
+/** \brief 用于构造数组的可选配置参数 */
+struct k_array_options {
 
     /** \brief 内存分配函数 */
     void *(*fn_malloc)(size_t size);
 
     /** \brief 内存释放函数 */
     void (*fn_free)(void *p);
-
-    /** \brief 数组所存储的元素的大小 */
-    size_t elem_size;
-
-    /** \brief 初始容量 */
-    size_t init_capacity;
 };
 
 /**
  * \brief 创建数组
  *
+ * `elem_size` 指定数组所存储的元素的大小，
+ * `options` 为可选的配置参数，若为 `NULL` 则使用默认配置。
+ *
  * 若创建成功，函数返回数组容器的指针，否则返回 `NULL`。
  */
-struct k_array *k_array_create(const struct k_array_config *config);
+struct k_array *k_array_create(size_t elem_size, const struct k_array_options *options);
 
 /**
  * \brief 销毁数组
@@ -73,10 +70,12 @@ void k_array_destroy(struct k_array *arr);
 /**
  * \brief 构造数组
  *
- * 在 `arr` 所指向的内存段上原地构造数组。
+ * 在 `arr` 所指向的内存段上原地构造数组。`elem_size` 指定数组所存储的元素的大小，
+ * `options` 为可选的配置参数，若为 `NULL` 则使用默认配置。
+ *
  * 若构造成功，函数返回值同入参 `arr`，否则返回 `NULL`。
  */
-struct k_array *k_array_construct(struct k_array *arr, const struct k_array_config *config);
+struct k_array *k_array_construct(struct k_array *arr, size_t elem_size, const struct k_array_options *options);
 
 /**
  * \brief 析构数组

@@ -9,13 +9,13 @@ struct k_sound_sfx *k_sound_sfx_load(const char *file_path) {
     if (NULL == file_path || '\0' == file_path[0])
         return NULL;
 
-    struct k_sound_sfx *sound = k_mem_alloc(sizeof(struct k_sound_sfx));
+    struct k_sound_sfx *sound = k__mem_alloc(sizeof(struct k_sound_sfx));
     if (NULL == sound)
         return NULL;
 
     Mix_Chunk *chunk = Mix_LoadWAV(file_path);
     if (NULL == chunk) {
-        k_mem_free(sound);
+        k__mem_free(sound);
         return NULL;
     }
 
@@ -31,5 +31,5 @@ void k_sound_sfx_release(struct k_sound_sfx *sound) {
 
     k__sound_sfx_registry_del(sound);
     Mix_FreeChunk(sound->chunk);
-    k_mem_free(sound);
+    k__mem_free(sound);
 }

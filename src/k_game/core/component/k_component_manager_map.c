@@ -40,12 +40,10 @@ static struct k_array * const NULL_ARRAY = &(struct k_array){ .size=0 };
 
 int k__component_manager_map_init(void) {
 
-    struct k_array_config config;
-    config.fn_malloc     = k_mem_alloc;
-    config.fn_free       = k_mem_free;
-    config.elem_size     = sizeof(struct k_array *);
-    config.init_capacity = 8;
-    struct k_array *room_array = k_array_construct(&component_manager_map.map, &config);
+    struct k_array_options options;
+    options.fn_malloc = k__mem_alloc;
+    options.fn_free   = k__mem_free;
+    struct k_array *room_array = k_array_construct(&component_manager_map.map, sizeof(struct k_array *), &options);
     if (NULL == room_array)
         return -1;
 
@@ -123,13 +121,16 @@ manager_array_create:
         if (init_capacity < manager_type_id)
             init_capacity = manager_type_id;
 
-        struct k_array_config config;
-        config.fn_malloc     = k_mem_alloc;
-        config.fn_free       = k_mem_free;
-        config.elem_size     = sizeof(struct k_component_manager *);
-        config.init_capacity = init_capacity;
-        *p_manager_array = k_array_create(&config);
+        struct k_array_options options;
+        options.fn_malloc = k__mem_alloc;
+        options.fn_free   = k__mem_free;
+        *p_manager_array = k_array_create(sizeof(struct k_component_manager *), &options);
         if (NULL == *p_manager_array) {
+            *p_manager_array = NULL_ARRAY;
+            return -1;
+        }
+        if (0 != k_array_reserve(*p_manager_array, init_capacity)) {
+            k_array_destroy(*p_manager_array);
             *p_manager_array = NULL_ARRAY;
             return -1;
         }

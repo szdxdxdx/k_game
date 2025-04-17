@@ -15,14 +15,14 @@ static struct k_component *k__component_create(struct k_component_type *componen
     struct k_component_entity_type *entity_type   = &component_type->entity_type;
     struct k_component_manager_type *manager_type =  component_type->manager_type;
 
-    struct k_component *component = k_mem_alloc(sizeof(struct k_component));
+    struct k_component *component = k__mem_alloc(sizeof(struct k_component));
     if (NULL == component)
         goto malloc_component_failed;
 
     if (0 == entity_type->data_size) {
         component->data = NULL;
     } else {
-        component->data = k_mem_alloc(entity_type->data_size);
+        component->data = k__mem_alloc(entity_type->data_size);
         if (NULL == component->data)
             goto malloc_data_failed;
     }
@@ -51,10 +51,10 @@ static struct k_component *k__component_create(struct k_component_type *componen
 fn_create_failed:
     k_list_del(&component->list_node);
     k__component_del_all_callbacks(component);
-    k_mem_free(component->data);
+    k__mem_free(component->data);
 
 malloc_data_failed:
-    k_mem_free(component);
+    k__mem_free(component);
 
 malloc_component_failed:
     return NULL;
@@ -72,8 +72,8 @@ static void k__component_destroy(struct k_component *component) {
     k_list_del(&component->list_node);
     k__component_del_all_callbacks(component);
 
-    k_mem_free(component->data);
-    k_mem_free(component);
+    k__mem_free(component->data);
+    k__mem_free(component);
 }
 
 /* endregion */

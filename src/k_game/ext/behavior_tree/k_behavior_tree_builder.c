@@ -86,12 +86,7 @@ static struct k_behavior_tree_builder *k__behavior_tree_builder_create(struct k_
     builder->failed  = 0;
     builder->started = 0;
 
-    struct k_array_config config;
-    config.fn_malloc     = malloc;
-    config.fn_free       = free;
-    config.elem_size     = sizeof(struct k_bt_builder_stack_node);
-    config.init_capacity = 16;
-    if (NULL == k_array_construct(&builder->stack, &config)) {
+    if (NULL == k_array_construct(&builder->stack, sizeof(struct k_bt_builder_stack_node), NULL)) {
         k_behavior_tree_destroy(tree);
         free(builder);
         goto err;

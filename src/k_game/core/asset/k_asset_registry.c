@@ -5,7 +5,7 @@
 int k__asset_registry_init(struct k_asset_registry *registry) {
 
     size_t buckets_num = 32;
-    struct k_hash_list *buckets = k_mem_alloc(buckets_num * sizeof(struct k_hash_list));
+    struct k_hash_list *buckets = k__mem_alloc(buckets_num * sizeof(struct k_hash_list));
     if (NULL == buckets)
         return -1;
 
@@ -26,7 +26,7 @@ void k__asset_registry_cleanup(struct k_asset_registry *registry, void (*fn_rele
         fn_release_asset(registry_node);
     }
 
-    k_mem_free(registry->name_map.buckets);
+    k__mem_free(registry->name_map.buckets);
 }
 
 void k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node) {

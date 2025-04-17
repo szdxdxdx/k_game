@@ -192,12 +192,7 @@ static struct k_behavior_tree_node *parallel_create(struct k_behavior_tree *tree
     parallel->super.fn_add_child = parallel_add_child;
     parallel->super.fn_destroy   = parallel_destroy;
 
-    struct k_array_config config;
-    config.fn_malloc     = malloc;
-    config.fn_free       = free;
-    config.elem_size     = sizeof(struct k_behavior_tree_parallel_item);
-    config.init_capacity = 4;
-    if (NULL == k_array_construct(&parallel->children, &config)) {
+    if (NULL == k_array_construct(&parallel->children, sizeof(struct k_behavior_tree_parallel_item), NULL)) {
         free(parallel);
         return NULL;
     }

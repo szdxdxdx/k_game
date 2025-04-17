@@ -40,7 +40,7 @@ struct k_step_callback {
 
 struct k_callback *k__step_callback_manager_add_room_callback(struct k_step_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data)) {
 
-    struct k_step_callback *callback = k_mem_alloc(sizeof(struct k_step_callback));
+    struct k_step_callback *callback = k__mem_alloc(sizeof(struct k_step_callback));
     if (NULL == callback)
         return NULL;
 
@@ -61,7 +61,7 @@ struct k_callback *k__step_callback_manager_add_room_callback(struct k_step_call
 
 struct k_callback *k__step_callback_manager_add_object_callback(struct k_step_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object)) {
 
-    struct k_step_callback *callback = k_mem_alloc(sizeof(struct k_step_callback));
+    struct k_step_callback *callback = k__mem_alloc(sizeof(struct k_step_callback));
     if (NULL == callback)
         return NULL;
 
@@ -83,7 +83,7 @@ struct k_callback *k__step_callback_manager_add_object_callback(struct k_step_ca
 
 struct k_callback *k__step_callback_manager_add_component_callback(struct k_step_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component)) {
 
-    struct k_step_callback *callback = k_mem_alloc(sizeof(struct k_step_callback));
+    struct k_step_callback *callback = k__mem_alloc(sizeof(struct k_step_callback));
     if (NULL == callback)
         return NULL;
 
@@ -105,7 +105,7 @@ struct k_callback *k__step_callback_manager_add_component_callback(struct k_step
 
 struct k_callback *k__step_callback_manager_add_component_manager_callback(struct k_step_callback_manager *manager, struct k_component_manager *component_manager, void *data, void (*fn_callback)(void *data)) {
 
-    struct k_step_callback *callback = k_mem_alloc(sizeof(struct k_step_callback));
+    struct k_step_callback *callback = k__mem_alloc(sizeof(struct k_step_callback));
     if (NULL == callback)
         return NULL;
 
@@ -170,7 +170,7 @@ void k__step_callback_manager_deinit(struct k_step_callback_manager *manager) {
     for (k_list_for_each_s(list, iter, next)) {
         callback = container_of(iter, struct k_step_callback, callback_list_node);
 
-        k_mem_free(callback);
+        k__mem_free(callback);
     }
 }
 
@@ -193,7 +193,7 @@ void k__step_callback_manager_flush(struct k_step_callback_manager *manager) {
             case K__CALLBACK_DELETED:
                 k_list_del(&callback->callback_list_node);
                 k_list_del(&callback->pending_list_node);
-                k_mem_free(callback);
+                k__mem_free(callback);
                 break;
             default:
                 assert(0);

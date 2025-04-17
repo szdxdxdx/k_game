@@ -8,7 +8,7 @@
  * - k_array_tmpl_set_fn_malloc    若定义此宏，则使用指定的内存分配函数，否则使用 `malloc()`
  * - k_array_tmpl_set_fn_free      若定义此宏，则使用指定的内存释放函数，否则使用 `free()`
  * - k_array_tmpl_elem_pass_by_val 若定义此宏，则操作单个元素（例如：插入单个元素）时传递值，否则传递指针
- * - k_array_tmpl_static_fn        若定义此宏，则用 static 修饰生成的函数
+ * - k_array_tmpl_static_fn        若定义此宏，则用 static 修饰函数
  */
 #if defined(k_array_tmpl_struct_name) && defined(k_array_tmpl_elem_type)
 
@@ -62,11 +62,9 @@ struct k__array_tmpl {
 /**
  * \brief 创建数组
  *
- * `init_capacity` 指定数组的初始容量。
- *
  * 若创建成功，函数返回数组容器的指针，否则返回 `NULL`。
  */
-k__array_tmpl_static struct k__array_tmpl *k__array_tmpl_(create)(size_t init_capacity);
+k__array_tmpl_static struct k__array_tmpl *k__array_tmpl_(create)(void);
 
 /**
  * \brief 销毁数组
@@ -78,10 +76,11 @@ k__array_tmpl_static void k__array_tmpl_(destroy)(struct k__array_tmpl *arr);
 /**
  * \brief 构造数组
  *
- * 在 `arr` 所指向的内存段上原地构造数组，`init_capacity` 指定数组的初始容量。
+ * 在 `arr` 所指向的内存段上原地构造数组。
+ *
  * 若构造成功，函数返回值同入参 `arr`，否则返回 `NULL`。
  */
-k__array_tmpl_static struct k__array_tmpl *k__array_tmpl_(construct)(struct k__array_tmpl *arr, size_t init_capacity);
+k__array_tmpl_static struct k__array_tmpl *k__array_tmpl_(construct)(struct k__array_tmpl *arr);
 
 /**
  * \brief 析构数组
@@ -195,7 +194,7 @@ k__array_tmpl_static void k__array_tmpl_(free_storage)(struct k__array_tmpl *arr
 
 #if defined(k_array_tmpl_define_fn)
 
-k__array_tmpl_static struct k__array_tmpl *k__array_tmpl_(create)(size_t init_capacity) {
+k__array_tmpl_static struct k__array_tmpl *k__array_tmpl_(create)(void) {
 
     struct k__array_tmpl *arr = k__array_tmpl_mem_alloc(sizeof(struct k__array_tmpl));
     if (NULL == arr)
@@ -204,11 +203,6 @@ k__array_tmpl_static struct k__array_tmpl *k__array_tmpl_(create)(size_t init_ca
     arr->capacity  = 0;
     arr->size      = 0;
     arr->storage   = NULL;
-
-    if (0 != k__array_tmpl_(reserve)(arr, init_capacity)) {
-        k__array_tmpl_mem_free(arr);
-        return NULL;
-    }
 
     return arr;
 }
@@ -222,15 +216,12 @@ k__array_tmpl_static void k__array_tmpl_(destroy)(struct k__array_tmpl *arr) {
     k__array_tmpl_mem_free(arr);
 }
 
-k__array_tmpl_static struct k__array_tmpl *k__array_tmpl_(construct)(struct k__array_tmpl *arr, size_t init_capacity) {
+k__array_tmpl_static struct k__array_tmpl *k__array_tmpl_(construct)(struct k__array_tmpl *arr) {
     assert(NULL != arr);
 
     arr->capacity  = 0;
     arr->size      = 0;
     arr->storage   = NULL;
-
-    if (0 != k__array_tmpl_(reserve)(arr, init_capacity))
-        return NULL;
 
     return arr;
 }

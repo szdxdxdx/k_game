@@ -24,7 +24,7 @@ void k__object_pool_cleanup(struct k_object_pool *pool) {
 
 struct k_object *k__object_pool_acquire(struct k_object_pool *pool) {
 
-    struct k_object *object = k_mem_alloc(sizeof(struct k_object)); /* TODO pool_alloc */
+    struct k_object *object = k__mem_alloc(sizeof(struct k_object)); /* TODO pool_alloc */
     if (NULL == object)
         return NULL;
 
@@ -34,5 +34,5 @@ struct k_object *k__object_pool_acquire(struct k_object_pool *pool) {
 
 void k__object_pool_release(struct k_object *object) {
     k_list_del(&object->pool_node);
-    k_mem_free(object); /* TODO pool_free */
+    k__mem_free(object); /* TODO pool_free */
 }

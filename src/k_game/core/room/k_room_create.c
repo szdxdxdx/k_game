@@ -31,7 +31,7 @@ static int step_malloc(void *context) {
 
     size_t alloc_size = sizeof(struct k_room) + config->data_size;
 
-    struct k_room *room = k_mem_alloc(alloc_size);
+    struct k_room *room = k__mem_alloc(alloc_size);
     if (NULL == room)
         return -1;
 
@@ -49,7 +49,7 @@ static void step_free(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    k_mem_free(room);
+    k__mem_free(room);
 }
 
 static int step_set_properties(void *context) {

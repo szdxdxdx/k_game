@@ -42,7 +42,7 @@ struct k_sprite *k_sprite_create(const struct k_sprite_config *config) {
 
     /* sprite 结构体和精灵帧 frames 共处同一个大内存块 */
     size_t frames_size = config->frames_num * sizeof(struct k_sprite_frame);
-    struct k_sprite *sprite = k_mem_alloc(sizeof(struct k_sprite) + frames_size);
+    struct k_sprite *sprite = k__mem_alloc(sizeof(struct k_sprite) + frames_size);
     if (NULL == sprite)
         goto err;
 
@@ -76,5 +76,5 @@ void k_sprite_destroy(struct k_sprite *sprite) {
         return;
 
     k__sprite_registry_del(sprite);
-    k_mem_free(sprite);
+    k__mem_free(sprite);
 }

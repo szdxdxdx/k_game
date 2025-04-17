@@ -21,7 +21,7 @@ struct k_object *k_object_create(size_t data_size) {
     if (0 == data_size) {
         object->data = NULL;
     } else {
-        object->data = k_mem_alloc(data_size);
+        object->data = k__mem_alloc(data_size);
         if (NULL == object->data) {
             k__object_pool_release(object);
             return NULL;
@@ -49,7 +49,7 @@ void k_object_destroy(struct k_object *object) {
     k__object_del_all_components(object);
     k__object_del_all_callbacks(object);
 
-    k_mem_free(object->data);
+    k__mem_free(object->data);
     k__object_pool_release(object);
 }
 

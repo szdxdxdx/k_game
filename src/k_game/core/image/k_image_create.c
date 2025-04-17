@@ -6,7 +6,7 @@
 
 struct k_image *k__image_create(SDL_Texture *texture) {
 
-    struct k_image *image = k_mem_alloc(sizeof(struct k_image));
+    struct k_image *image = k__mem_alloc(sizeof(struct k_image));
     if (NULL == image)
         return NULL;
 
@@ -22,5 +22,5 @@ void k__image_destroy(struct k_image *image) {
     SDL_DestroyTexture(image->texture);
 
     k__image_registry_del(image);
-    k_mem_free(image);
+    k__mem_free(image);
 }

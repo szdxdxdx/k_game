@@ -18,7 +18,7 @@ static int k__component_manager_create(struct k_room *room, struct k_component_t
 
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
-    struct k_component_manager *manager = k_mem_alloc(sizeof(struct k_component_manager) + manager_type->data_size);
+    struct k_component_manager *manager = k__mem_alloc(sizeof(struct k_component_manager) + manager_type->data_size);
     if (NULL == manager)
         return -1;
 
@@ -46,7 +46,7 @@ static int k__component_manager_create(struct k_room *room, struct k_component_t
 fn_init_failed:
     k__component_manager_map_del(room, manager_type);
 map_add_failed:
-    k_mem_free(manager);
+    k__mem_free(manager);
     return -1;
 }
 
@@ -63,7 +63,7 @@ void k__component_manager_destroy(struct k_component_manager *manager) {
 
     k__component_manager_map_del(manager->room, manager_type);
 
-    k_mem_free(manager);
+    k__mem_free(manager);
 }
 
 /* endregion */

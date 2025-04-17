@@ -12,7 +12,7 @@ static void *get_val(struct k_str_map_node *node) {
     return (void *)((char *)node + sizeof(struct k_str_map_node));
 }
 
-static struct k_str_map_options default_options = {
+static const struct k_str_map_options default_options = {
     .fn_malloc = malloc,
     .fn_free   = free,
 };

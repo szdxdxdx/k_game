@@ -109,12 +109,7 @@ static struct k_behavior_tree_node *selector_create(struct k_behavior_tree *tree
     selector->super.fn_add_child = selector_add_child;
     selector->super.fn_destroy   = selector_destroy;
 
-    struct k_array_config config;
-    config.fn_malloc     = malloc;
-    config.fn_free       = free;
-    config.elem_size     = sizeof(struct k_behavior_tree_node *);
-    config.init_capacity = 4;
-    if (NULL == k_array_construct(&selector->children, &config)) {
+    if (NULL == k_array_construct(&selector->children, sizeof(struct k_behavior_tree_node *), NULL)) {
         free(selector);
         return NULL;
     }

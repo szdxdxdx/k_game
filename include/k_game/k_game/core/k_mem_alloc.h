@@ -3,8 +3,8 @@
 
 #include <stddef.h>
 
-void *k_mem_alloc(size_t size);
+void *k__mem_alloc(size_t size);
 
-void k_mem_free(void *p);
+void k__mem_free(void *p);
 
 #endif

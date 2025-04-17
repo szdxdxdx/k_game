@@ -33,14 +33,14 @@ struct k_component_type *k_component_define(const struct k_component_manager_con
     struct k_component_type *component_type;
 
     if (NULL != manager_config) {
-        component_type = k_mem_alloc(sizeof(struct k_component_type) + sizeof(struct k_component_manager_type));
+        component_type = k__mem_alloc(sizeof(struct k_component_type) + sizeof(struct k_component_manager_type));
         if (NULL == component_type)
             goto err;
 
         component_type->manager_type = ptr_offset(component_type, sizeof(struct k_component_type));
     }
     else {
-        component_type = k_mem_alloc(sizeof(struct k_component_type));
+        component_type = k__mem_alloc(sizeof(struct k_component_type));
         if (NULL == component_type)
             goto err;
 
@@ -72,5 +72,5 @@ err:
 void k__component_undef(struct k_component_type *component_type) {
 
     k__component_type_registry_del(component_type);
-    k_mem_free(component_type);
+    k__mem_free(component_type);
 }

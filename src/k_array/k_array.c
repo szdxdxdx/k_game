@@ -1,32 +1,37 @@
 #include <assert.h>
 #include <limits.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "k_array.h"
 
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
-struct k_array *k_array_create(const struct k_array_config *config) {
-    assert(NULL != config);
-    assert(NULL != config->fn_malloc);
-    assert(NULL != config->fn_free);
-    assert(0 < config->elem_size);
+const static struct k_array_options default_options = {
+    .fn_malloc = malloc,
+    .fn_free   = free,
+};
 
-    struct k_array *arr = config->fn_malloc(sizeof(struct k_array));
+struct k_array *k_array_create(size_t elem_size, const struct k_array_options *options) {
+    assert(0 < elem_size);
+
+    if (NULL == options) {
+        options = &default_options;
+    }
+
+    assert(NULL != options->fn_malloc);
+    assert(NULL != options->fn_free);
+
+    struct k_array *arr = options->fn_malloc(sizeof(struct k_array));
     if (NULL == arr)
         return NULL;
 
-    arr->fn_malloc = config->fn_malloc;
-    arr->fn_free   = config->fn_free;
-    arr->elem_size = config->elem_size;
+    arr->fn_malloc = options->fn_malloc;
+    arr->fn_free   = options->fn_free;
+    arr->elem_size = elem_size;
     arr->capacity  = 0;
     arr->size      = 0;
     arr->storage   = NULL;
-
-    if (0 != k_array_reserve(arr, config->init_capacity)) {
-        config->fn_free(arr);
-        return NULL;
-    }
 
     return arr;
 }
@@ -40,22 +45,23 @@ void k_array_destroy(struct k_array *arr) {
     arr->fn_free(arr);
 }
 
-struct k_array *k_array_construct(struct k_array *arr, const struct k_array_config *config) {
+struct k_array *k_array_construct(struct k_array *arr, size_t elem_size, const struct k_array_options *options) {
     assert(NULL != arr);
-    assert(NULL != config);
-    assert(NULL != config->fn_malloc);
-    assert(NULL != config->fn_free);
-    assert(0 < config->elem_size);
+    assert(0 < elem_size);
 
-    arr->fn_malloc = config->fn_malloc;
-    arr->fn_free   = config->fn_free;
-    arr->elem_size = config->elem_size;
+    if (NULL == options) {
+        options = &default_options;
+    }
+
+    assert(NULL != options->fn_malloc);
+    assert(NULL != options->fn_free);
+
+    arr->fn_malloc = options->fn_malloc;
+    arr->fn_free   = options->fn_free;
+    arr->elem_size = elem_size;
     arr->capacity  = 0;
     arr->size      = 0;
     arr->storage   = NULL;
-
-    if (0 != k_array_reserve(arr, config->init_capacity))
-        return NULL;
 
     return arr;
 }

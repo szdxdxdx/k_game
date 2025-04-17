@@ -33,7 +33,7 @@ static struct k_draw_callback_group *find_or_create_group(struct k_draw_callback
         return found_group;
     }
 
-    struct k_draw_callback_group *new_group = k_mem_alloc(sizeof(struct k_draw_callback_group));
+    struct k_draw_callback_group *new_group = k__mem_alloc(sizeof(struct k_draw_callback_group));
     if (NULL == new_group)
         return NULL;
 
@@ -42,9 +42,9 @@ static struct k_draw_callback_group *find_or_create_group(struct k_draw_callback
     k_list_init(&new_group->layer_list);
 
     size_t layer_map_buckets_num = 16;
-    struct k_hash_list *buckets = k_mem_alloc(sizeof(struct k_hash_list) * layer_map_buckets_num);
+    struct k_hash_list *buckets = k__mem_alloc(sizeof(struct k_hash_list) * layer_map_buckets_num);
     if (NULL == buckets) {
-        k_mem_free(new_group);
+        k__mem_free(new_group);
         return NULL;
     } else {
         k_int_hash_map_init(&new_group->layer_map, buckets, layer_map_buckets_num);
@@ -95,7 +95,7 @@ static inline struct k_draw_callback_layer *find_or_create_layer(struct k_draw_c
         return found_layer;
     }
 
-    struct k_draw_callback_layer *new_layer = k_mem_alloc(sizeof(struct k_draw_callback_layer));
+    struct k_draw_callback_layer *new_layer = k__mem_alloc(sizeof(struct k_draw_callback_layer));
     if (NULL == new_layer)
         return NULL;
 
@@ -155,7 +155,7 @@ struct k_callback *k__draw_callback_manager_add_room_callback(struct k_draw_call
     if (NULL == layer)
         return NULL;
 
-    struct k_draw_callback *callback = k_mem_alloc(sizeof(struct k_draw_callback));
+    struct k_draw_callback *callback = k__mem_alloc(sizeof(struct k_draw_callback));
     if (NULL == callback)
         return NULL;
 
@@ -180,7 +180,7 @@ struct k_callback *k__draw_callback_manager_add_object_callback(struct k_draw_ca
     if (NULL == layer)
         return NULL;
 
-    struct k_draw_callback *callback = k_mem_alloc(sizeof(struct k_draw_callback));
+    struct k_draw_callback *callback = k__mem_alloc(sizeof(struct k_draw_callback));
     if (NULL == callback)
         return NULL;
 
@@ -205,7 +205,7 @@ struct k_callback *k__draw_callback_manager_add_component_callback(struct k_draw
     if (NULL == layer)
         return NULL;
 
-    struct k_draw_callback *callback = k_mem_alloc(sizeof(struct k_draw_callback));
+    struct k_draw_callback *callback = k__mem_alloc(sizeof(struct k_draw_callback));
     if (NULL == callback)
         return NULL;
 
@@ -230,7 +230,7 @@ struct k_callback *k__draw_callback_manager_add_component_manager_callback(struc
     if (NULL == layer)
         return NULL;
 
-    struct k_draw_callback *callback = k_mem_alloc(sizeof(struct k_draw_callback));
+    struct k_draw_callback *callback = k__mem_alloc(sizeof(struct k_draw_callback));
     if (NULL == callback)
         return NULL;
 
@@ -282,7 +282,7 @@ void k__draw_callback_manager_del_callback(struct k_callback *callback) {
 int k__draw_callback_manager_init(struct k_draw_callback_manager *manager) {
 
     size_t buckets_num = 16;
-    struct k_hash_list *buckets = k_mem_alloc(sizeof(struct k_hash_list) * buckets_num);
+    struct k_hash_list *buckets = k__mem_alloc(sizeof(struct k_hash_list) * buckets_num);
     if (NULL == buckets) {
         return -1;
     } else {
@@ -317,13 +317,13 @@ void k__draw_callback_manager_deinit(struct k_draw_callback_manager *manager) {
             for (k_list_for_each_s(callback_list, iter__, next__)) {
                 draw_callback = container_of(iter__, struct k_draw_callback, callback_list_node);
 
-                k_mem_free(draw_callback);
+                k__mem_free(draw_callback);
             }
-            k_mem_free(layer);
+            k__mem_free(layer);
         }
-        k_mem_free(group->layer_map.buckets);
+        k__mem_free(group->layer_map.buckets);
     }
-    k_mem_free(manager->group_map.buckets);
+    k__mem_free(manager->group_map.buckets);
 }
 
 void k__draw_callback_manager_flush(struct k_draw_callback_manager *manager) {
@@ -344,7 +344,7 @@ void k__draw_callback_manager_flush(struct k_draw_callback_manager *manager) {
             case K__CALLBACK_DELETED:
                 k_list_del(&callback->callback_list_node);
                 k_list_del(&callback->pending_list_node);
-                k_mem_free(callback);
+                k__mem_free(callback);
                 break;
             default:
                 assert(0);

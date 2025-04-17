@@ -11,7 +11,7 @@ struct k__json_arr *k__create_json_arr(void) {
         return NULL;
 
     json_arr->json.type = K__JSON_ARR;
-    k_json_array_construct(&json_arr->arr_, 0);
+    k_json_array_construct(&json_arr->arr_);
 
     return json_arr;
 }
