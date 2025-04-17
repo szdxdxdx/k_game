@@ -22,5 +22,5 @@ void yx_ui_draw(struct yx_ui_context *ui) {
     struct yx_ui_elem *root = ui->root;
     root->v_tbl->fn_measure(root);
     root->v_tbl->fn_layout(root);
-    root->v_tbl->fn_draw(root);
+    root->v_tbl->fn_paint(root);
 }

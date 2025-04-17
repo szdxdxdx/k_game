@@ -3,10 +3,9 @@
 
 struct yx_ui_elem;
 
-#define k_array_tmpl_struct_name      yx_ui_elem_array
-#define k_array_tmpl_elem_type        struct yx_ui_elem *
-#define k_array_tmpl_define_struct
-#define k_array_tmpl_elem_pass_by_val
+#define k_tmpl_array_struct_name yx_ui_elem_array
+#define k_tmpl_array_elem_type   struct yx_ui_elem *
+#define k_tmpl_array_define_struct
 #include "k_array_tmpl.h"
 
 #endif

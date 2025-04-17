@@ -79,10 +79,9 @@ void k__destroy_json_str (struct k__json_str  *json_str);
 
 /* region [arr] */
 
-#define k_array_tmpl_struct_name k_json_array
-#define k_array_tmpl_elem_type   struct k_json *
-#define k_array_tmpl_define_struct
-#define k_array_tmpl_elem_pass_by_val
+#define k_tmpl_array_struct_name k_json_array
+#define k_tmpl_array_elem_type   struct k_json *
+#define k_tmpl_array_define_struct
 #include "k_array_tmpl.h"
 
 struct k__json_arr {
