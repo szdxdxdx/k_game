@@ -1,8 +1,13 @@
 #include <stdlib.h>
 
-#include "k_game/core/k_object.h"
+#include "./yx_ui_internal.h"
 
-#include "./yx_ui.h"
+struct yx_ui_context *yx_ui_create_context(void) {
 
-#include "./yx_ui_context.h"
-#include "./yx_ui_elem.h"
+    struct yx_ui_context *ui = malloc(sizeof(struct yx_ui_context));
+    if (NULL == ui)
+        return NULL;
+
+    ui->root = NULL;
+    return ui;
+}

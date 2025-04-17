@@ -1,6 +1,5 @@
-#include <stdint.h>
-#include <string.h>
-#include <ctype.h>
+
+#include "./yx_ui_internal.h"
 
 int yx__ui_parse_hex_color(const char *str, uint32_t *out_color) {
     if (!str || str[0] != '#' || strlen(str) != 9) return 0;
