@@ -5,6 +5,8 @@
 #include "./yx_room_empty.h"
 
 #include "../llk/llk_ui_context.h"
+#include "../llk/llk_ui_elem.h"
+#include "../llk/llk_ui_linear_layout.h"
 
 static void draw_background(void *unused) {
     (void)unused;
@@ -17,6 +19,12 @@ static struct llk_ui_context *ui;
 static void init_ui(void) {
 
     ui = llk_ui_create_context();
+
+    struct llk_ui_elem *root = llk_ui_get_root(ui);
+
+    struct llk_ui_elem *layout = llk_ui_create_linear_layout(ui);
+
+    llk_ui_append_child(root, layout);
 }
 
 static void draw_ui(void *unused) {

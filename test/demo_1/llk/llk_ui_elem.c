@@ -2,6 +2,7 @@
 
 struct llk_ui_elem *llk_ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui) {
 
+    elem->elem_type_name = "";
     elem->ui = ui;
 
     elem->parent = NULL;
@@ -43,4 +44,20 @@ struct llk_ui_elem *llk_ui_construct_elem(struct llk_ui_elem *elem, struct llk_u
     elem->fn_paint = NULL;
 
     return elem;
+}
+
+int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
+
+    if (NULL == parent || NULL == child)
+        return -1;
+    if (NULL != child->parent)
+        return -1;
+    if (child->ui != parent->ui)
+        return -1;
+
+    if (0 != llk_ui_elem_array_push_back(&parent->children, child))
+        return -1;
+
+    child->parent = parent;
+    return 0;
 }

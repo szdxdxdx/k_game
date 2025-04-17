@@ -17,6 +17,8 @@ enum llk_ui_unit {
     LLK_UI_UNIT_PERCENT,
     LLK_UI_UNIT_AUTO,
     LLK_UI_UNIT_FIT_CONTENT,
+    LLK_UI_UNIT_VW,
+    LLK_UI_UNIT_VH,
 
     LLK_UI_UNIT_RGBA,
 };
@@ -34,6 +36,8 @@ struct llk_ui_u32 {
 };
 
 struct llk_ui_elem {
+
+    const char *elem_type_name;
 
     struct llk_ui_context *ui;
 
@@ -82,5 +86,7 @@ struct llk_ui_elem {
 };
 
 struct llk_ui_elem *llk_ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui);
+
+int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
 
 #endif
