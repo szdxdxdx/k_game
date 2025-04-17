@@ -6,6 +6,9 @@
 struct llk_ui_context {
 
     struct llk_ui_elem *root;
+
+    float view_w;
+    float view_h;
 };
 
 struct llk_ui_context *llk_ui_create_context(void);

@@ -2,31 +2,7 @@
 
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
-
-/* region [root] */
-
-struct llk_ui_root {
-    struct llk_ui_elem super;
-};
-
-struct llk_ui_elem *llk_ui_create_root(struct llk_ui_context *ui) {
-
-    struct llk_ui_root *root = malloc(sizeof(struct llk_ui_root));
-    if (NULL == root)
-        return NULL;
-
-    llk_ui_construct_elem(&root->super, ui);
-    root->super.w.unit = LLK_UI_UNIT_VW;
-    root->super.w.val  = 100.0f;
-    root->super.h.unit = LLK_UI_UNIT_VH;
-    root->super.h.val  = 100.0f;
-
-    ui->root = &root->super;
-
-    return ui->root;
-}
-
-/* endregion */
+#include "./llk_ui_root.h"
 
 /* region [ui-context] */
 
