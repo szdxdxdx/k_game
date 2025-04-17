@@ -24,8 +24,8 @@ struct k_str_map {
     size_t rehash_threshold;
 };
 
-/** \brief 用于构造哈希表的配置参数 */
-struct k_str_map_config {
+/** \brief 用于构造哈希表的可选配置参数 */
+struct k_str_map_options {
 
     /** \brief 内存分配函数 */
     void *(*fn_malloc)(size_t size);
@@ -37,9 +37,11 @@ struct k_str_map_config {
 /**
  * \brief 创建哈希表
  *
- * 若成功，函数返回哈希表容器的指针，否则返回 `NULL`。
+ * `options` 是可选的配置，若为 `NULL` 则使用默认配置。
+ *
+ * 若创建成功，函数返回哈希表容器的指针，否则返回 `NULL`。
  */
-struct k_str_map *k_str_map_create(const struct k_str_map_config *config);
+struct k_str_map *k_str_map_create(const struct k_str_map_options *options);
 
 /**
  * \brief 销毁哈希表
@@ -48,8 +50,22 @@ struct k_str_map *k_str_map_create(const struct k_str_map_config *config);
  */
 void k_str_map_destroy(struct k_str_map *map);
 
-struct k_str_map *k_str_map_construct(struct k_str_map *map, const struct k_str_map_config *config);
+/**
+ * \brief 构造哈希表
+ *
+ * 在 `map` 所指向的内存段上原地构造哈希表。
+ * `options` 是可选的配置，若为 `NULL` 则使用默认配置。
+ * 
+ * 若构造成功，函数返回值同入参 `map`，否则返回 `NULL`。
+ */
+struct k_str_map *k_str_map_construct(struct k_str_map *map, const struct k_str_map_options *options);
 
+/**
+ * \brief 析构哈希表
+ *
+ * 原地析构 `map` 所指向的内存段上的哈希表。
+ * 若 `map` 为 `NULL`，则函数立即返回。
+ */
 void k_str_map_destruct(struct k_str_map *map);
 
 /**

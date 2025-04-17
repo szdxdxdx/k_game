@@ -1,32 +1,41 @@
 #include <assert.h>
 #include <limits.h>
+#include <stdlib.h>
 
 #include "k_str_map.h"
-
-#define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
 struct k_str_map_node {
     struct k_str_hash_map_node hash_map_node;
 };
 
-struct k_str_map *k_str_map_create(const struct k_str_map_config *config) {
-    assert(NULL != config);
-    assert(NULL != config->fn_malloc);
-    assert(NULL != config->fn_free);
+static void *get_val(struct k_str_map_node *node) {
+    return (void *)((char *)node + sizeof(struct k_str_map_node));
+}
 
-    struct k_str_map *map = config->fn_malloc(sizeof(struct k_str_map));
+static struct k_str_map_options default_options = {
+    .fn_malloc = malloc,
+    .fn_free   = free,
+};
+
+struct k_str_map *k_str_map_create(const struct k_str_map_options *options) {
+
+    if (NULL == options) {
+        options = &default_options;
+    }
+
+    struct k_str_map *map = options->fn_malloc(sizeof(struct k_str_map));
     if (NULL == map)
         return NULL;
 
     size_t buckets_num = 17;
-    struct k_hash_list *buckets = config->fn_malloc(sizeof(struct k_hash_list) * buckets_num);
+    struct k_hash_list *buckets = options->fn_malloc(sizeof(struct k_hash_list) * buckets_num);
     if (NULL == buckets) {
-        config->fn_free(map);
+        options->fn_free(map);
         return NULL;
     }
 
-    map->fn_malloc = config->fn_malloc;
-    map->fn_free   = config->fn_free;
+    map->fn_malloc = options->fn_malloc;
+    map->fn_free   = options->fn_free;
     map->size      = 0;
     map->rehash_threshold = 29;
     k_str_hash_map_init(&map->hash_map, buckets, buckets_num);
@@ -55,21 +64,22 @@ void k_str_map_destroy(struct k_str_map *map) {
     map->fn_free(map);
 }
 
-struct k_str_map *k_str_map_construct(struct k_str_map *map, const struct k_str_map_config *config) {
+struct k_str_map *k_str_map_construct(struct k_str_map *map, const struct k_str_map_options *options) {
     assert(NULL != map);
-    assert(NULL != config);
-    assert(NULL != config->fn_malloc);
-    assert(NULL != config->fn_free);
+
+    if (NULL == options) {
+        options = &default_options;
+    }
 
     size_t buckets_num = 17;
-    struct k_hash_list *buckets = config->fn_malloc(sizeof(struct k_hash_list) * buckets_num);
+    struct k_hash_list *buckets = options->fn_malloc(sizeof(struct k_hash_list) * buckets_num);
     if (NULL == buckets) {
-        config->fn_free(map);
+        options->fn_free(map);
         return NULL;
     }
 
-    map->fn_malloc = config->fn_malloc;
-    map->fn_free   = config->fn_free;
+    map->fn_malloc = options->fn_malloc;
+    map->fn_free   = options->fn_free;
     map->size      = 0;
     map->rehash_threshold = 29;
     k_str_hash_map_init(&map->hash_map, buckets, buckets_num);
@@ -164,7 +174,7 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t value_size) {
         }
     }
 
-    return ptr_offset(map_node, sizeof(struct k_str_map_node));
+    return get_val(map_node);
 }
 
 void *k_str_map_add(struct k_str_map *map, const char *key, size_t value_size) {
@@ -188,7 +198,7 @@ void *k_str_map_add(struct k_str_map *map, const char *key, size_t value_size) {
         rehash(map);
     }
 
-    return ptr_offset(map_node, sizeof(struct k_str_map_node));
+    return get_val(map_node);
 }
 
 void k_str_map_del(struct k_str_map *map, const char *key) {
@@ -217,7 +227,7 @@ void *k_str_map_get(struct k_str_map *map, const char *key) {
     }
     else {
         struct k_str_map_node *map_node = container_of(hash_map_node, struct k_str_map_node, hash_map_node);
-        return ptr_offset(map_node, sizeof(struct k_str_map_node));
+        return get_val(map_node);
     }
 }
 
