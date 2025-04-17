@@ -9,7 +9,6 @@
 
 #include "./yx_ui_context.h"
 #include "./yx_ui_elem.h"
-#include "./yx_ui_elem_array.h"
 #include "./yx_ui_utils.h"
 #include "./yx_ui_val.h"
 

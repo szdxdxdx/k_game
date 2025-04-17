@@ -17,7 +17,11 @@ static struct yx_ui_context *ui;
 
 static void init_ui(void) {
 
-    // ui = yx_ui_create_context();
+    ui = yx_ui_create_context();
+
+    struct yx_ui_elem *root = yx_ui_create_elem_box(ui);
+
+    yx_ui_set_root(ui, root);
 
     // struct yx_ui_elem *button = yx_ui_create_elem(ui, "button");
     // yx_ui_set_attr(button, "x", "100");
@@ -32,7 +36,7 @@ static void init_ui(void) {
 
 static void draw_ui(void *unused) {
     /* 每帧手动调用绘制 ui */
-    //yx_ui_draw(ui);
+    yx_ui_draw(ui);
 }
 
 static int init_empty_room(void *params) {

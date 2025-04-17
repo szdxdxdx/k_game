@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 enum yx_ui_unit {
+    YX_UNIT_INVALID,
     YX_UNIT_PX,
     YX_UNIT_PERCENT,
     YX_UNIT_AUTO,
@@ -13,7 +14,11 @@ enum yx_ui_unit {
 
 struct yx_ui_val {
     uint8_t unit;
-    float val;
+    union {
+        float    f_val;
+        uint32_t u32_val;
+        int32_t  i32_val;
+    };
 };
 
 #endif

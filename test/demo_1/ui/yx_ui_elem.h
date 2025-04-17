@@ -14,16 +14,18 @@ struct yx_ui_elem {
 
     struct yx_ui_context *ui;
 
-    const char *elem_type_name;
-
     struct yx_ui_elem *parent;
     struct yx_ui_elem_array children;
 
+    struct yx_ui_val specified_w;
+    struct yx_ui_val specified_h;
+
     float x;
     float y;
+    float computed_w;
+    float computed_h;
 
-    struct yx_ui_val w;
-    struct yx_ui_val h;
+    uint32_t background_color;
 
     struct yx_ui_elem_v_tbl *v_tbl;
 };
@@ -33,6 +35,8 @@ struct yx_ui_elem_v_tbl {
     void (*fn_measure)(struct yx_ui_elem *elem);
 
     void (*fn_layout)(struct yx_ui_elem *elem);
+
+    void (*fn_paint)(struct yx_ui_elem *elem);
 };
 
 struct yx_ui_elem *yx__ui_elem_construct(struct yx_ui_elem *elem, struct yx_ui_context *ui);
