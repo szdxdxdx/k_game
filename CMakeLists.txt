@@ -20,7 +20,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/libs/webui-windows-gcc-x64/include")
 
 file(GLOB_RECURSE SRC_FILES
-    "${CMAKE_SOURCE_DIR}/test/demo_1/*.c"
+    "${CMAKE_SOURCE_DIR}/test/*.c"
     "${CMAKE_SOURCE_DIR}/src/*.c")
 
 link_directories(
