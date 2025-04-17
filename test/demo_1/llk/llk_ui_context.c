@@ -17,6 +17,8 @@ struct llk_ui_context *llk_ui_create_context(void) {
         return NULL; /* TODO free */
 
     ui->root = root;
+    ui->vw = 400.0f; /* tmp */
+    ui->vh = 300.0f; /* tmp */
 
     return ui;
 }
@@ -27,6 +29,9 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 
 void llk_ui_draw(struct llk_ui_context *ui) {
 
+    llk_ui_elem_measure(ui->root);
+    llk_ui_elem_layout(ui->root);
+    llk_ui_elem_paint(ui->root);
 }
 
 /* endregion */

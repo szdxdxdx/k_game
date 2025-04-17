@@ -9,6 +9,8 @@
 
 enum llk_ui_unit {
 
+    LLK_UI_UNIT_NO_VAL,
+
     LLK_UI_UNIT_PX,
     LLK_UI_UNIT_PERCENT,
 
@@ -55,7 +57,7 @@ struct llk_ui_elem {
 
     /* ------------------------------------------------------------------------ */
 
-    struct llk_ui_u32 background_color;
+    uint32_t background_color;
 
     /* ------------------------------------------------------------------------ */
 
@@ -73,5 +75,9 @@ struct llk_ui_elem *llk_ui_construct_elem(struct llk_ui_elem *elem, struct llk_u
 int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
 
 void llk_ui_elem_measure(struct llk_ui_elem *elem);
+
+void llk_ui_elem_layout(struct llk_ui_elem *elem);
+
+void llk_ui_elem_paint(struct llk_ui_elem *elem);
 
 #endif

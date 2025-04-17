@@ -22,6 +22,11 @@ static void init_ui(void) {
     struct llk_ui_elem *root = llk_ui_get_root(ui);
 
     struct llk_ui_elem *box_1 = llk_ui_create_elem(ui);
+    box_1->w.unit = LLK_UI_UNIT_PX;
+    box_1->w.val = 100.0f;
+    box_1->h.unit = LLK_UI_UNIT_PX;
+    box_1->h.val = 100.0f;
+    box_1->background_color = 0x66ccffff;
 
     llk_ui_append_child(root, box_1);
 }
