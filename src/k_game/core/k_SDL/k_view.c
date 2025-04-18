@@ -31,12 +31,12 @@ int k_view_fit_rect(float w, float h) {
         view_new_h = w / aspect;
     }
 
-    float view_max_w = k__canvas.room_w;
+    float view_max_w = k__canvas.room_viewport.w;
     if (view_max_w > k__current_room->room_w) {
         view_max_w = k__current_room->room_w;
     }
 
-    float view_max_h = k__canvas.room_h;
+    float view_max_h = k__canvas.room_viewport.h;
     if (view_max_h > k__current_room->room_h) {
         view_max_h = k__current_room->room_h;
     }

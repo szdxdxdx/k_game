@@ -344,21 +344,19 @@ int k_canvas_ui_draw_lines(const struct k_float_point *points, size_t points_num
 
 /* region [draw_rect] */
 
-
-
-/* endregion */
-
-int k_canvas_room_draw_rect(float x, float y, float w, float h) {
+static int k__canvas_draw_rect(enum k_canvas_viewport viewport, float x, float y, float w, float h) {
 
     if (w <= 0.0f || h <= 0.0f)
         return 0;
 
-    x -= k__window.view_x;
-    y -= k__window.view_y;
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
 
-    if (k__window.view_w < x || x + w < 0.0f)
+    k__canvas_convert_xy(&x, &y);
+
+    if (x + w < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x)
         return 0;
-    if (k__window.view_h < y || y + h < 0.0f)
+    if (y + h < k__canvas.clip_rect.x || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y)
         return 0;
 
     SDL_FRect rect;
@@ -375,17 +373,31 @@ int k_canvas_room_draw_rect(float x, float y, float w, float h) {
     return 0;
 }
 
-int k_canvas_room_fill_rect(float x, float y, float w, float h) {
+int k_canvas_room_draw_rect(float x, float y, float w, float h) {
+    return k__canvas_draw_rect(K__CANVAS_VIEWPORT_ROOM, x, y, w, h);
+}
+
+int k_canvas_ui_draw_rect(float x, float y, float w, float h) {
+    return k__canvas_draw_rect(K__CANVAS_VIEWPORT_UI, x, y, w, h);
+}
+
+/* endregion */
+
+/* region [fill_rect] */
+
+static int k__canvas_fill_rect(enum k_canvas_viewport viewport, float x, float y, float w, float h) {
 
     if (w <= 0.0f || h <= 0.0f)
         return 0;
 
-    x -= k__window.view_x;
-    y -= k__window.view_y;
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
 
-    if (k__window.view_w < x || x + w < 0.0f)
+    k__canvas_convert_xy(&x, &y);
+
+    if (x + w < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x)
         return 0;
-    if (k__window.view_h < y || y + h < 0.0f)
+    if (y + h < k__canvas.clip_rect.x || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y)
         return 0;
 
     SDL_FRect rect;
@@ -402,16 +414,32 @@ int k_canvas_room_fill_rect(float x, float y, float w, float h) {
     return 0;
 }
 
-int k_canvas_room_draw_circle(float cx, float cy, float r) {
+int k_canvas_room_fill_rect(float x, float y, float w, float h) {
+    return k__canvas_fill_rect(K__CANVAS_VIEWPORT_ROOM, x, y, w, h);
+}
+
+int k_canvas_ui_fill_rect(float x, float y, float w, float h) {
+    return k__canvas_fill_rect(K__CANVAS_VIEWPORT_UI, x, y, w, h);
+}
+
+/* endregion */
+
+/* region [draw_circle] */
+
+static int k__canvas_draw_circle(enum k_canvas_viewport viewport, float cx, float cy, float r) {
 
     if (r <= 0.0f)
         return 0;
 
-    cx -= k__window.view_x;
-    cy -= k__window.view_y;
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
 
-    if (k__window.view_w < cx - r || cx + r < 0.0f) return 0;
-    if (k__window.view_h < cy - r || cy + r < 0.0f) return 0;
+    k__canvas_convert_xy(&cx, &cy);
+
+    if (cx + r < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < cx - r)
+        return 0;
+    if (cy + r < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < cy - r)
+        return 0;
 
     /* 数组大小应是 8 的倍数，因为每轮循环都会往 buf 中添加 8 个点 */
     SDL_FPoint buf[80];
@@ -461,11 +489,21 @@ int k_canvas_room_draw_circle(float cx, float cy, float r) {
     return 0;
 }
 
+int k_canvas_room_draw_circle(float cx, float cy, float r) {
+    return k__canvas_draw_circle(K__CANVAS_VIEWPORT_ROOM, cx, cy, r);
+}
+
+int k_canvas_ui_draw_circle(float cx, float cy, float r) {
+    return k__canvas_draw_circle(K__CANVAS_VIEWPORT_UI, cx, cy, r);
+}
+
+/* endregion */
+
 /* endregion */
 
 /* region [draw_image] */
 
-int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
+static int k__canvas_draw_image(enum k_canvas_viewport viewport, struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
 
     if (NULL == image)
         return -1;
@@ -487,8 +525,10 @@ int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src
         src.h = src_rect->h;
     }
 
-    x -= k__window.view_x;
-    y -= k__window.view_y;
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
+
+    k__canvas_convert_xy(&x, &y);
 
     if (NULL == options) {
 
@@ -498,9 +538,9 @@ int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src
         dst.w = (float)image->image_w;
         dst.h = (float)image->image_h;
 
-        if (k__window.view_w < dst.x || dst.x + dst.w < 0.0f)
+        if (k__canvas.clip_rect.x + k__canvas.clip_rect.w < dst.x || dst.x + dst.w < k__canvas.clip_rect.x)
             return 0;
-        if (k__window.view_h < dst.y || dst.y + dst.h < 0.0f)
+        if (k__canvas.clip_rect.y + k__canvas.clip_rect.h < dst.y || dst.y + dst.h < k__canvas.clip_rect.y)
             return 0;
 
         if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
@@ -513,9 +553,9 @@ int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src
             return 0;
 
         float R = (options->scaled_w + options->scaled_h) / 2.0f;
-        if (x + R < 0.0f || k__window.view_w < x - R)
+        if (x + R < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x - R)
             return 0;
-        if (y + R < 0.0f || k__window.view_h < y - R)
+        if (y + R < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.y < y - R)
             return 0;
 
         SDL_FRect dst;
@@ -541,11 +581,19 @@ int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src
     return 0;
 }
 
+int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
+    return k__canvas_draw_image(K__CANVAS_VIEWPORT_ROOM, image, src_rect, x, y, options);
+}
+
+int k_canvas_ui_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
+    return k__canvas_draw_image(K__CANVAS_VIEWPORT_UI, image, src_rect, x, y, options);
+}
+
 /* endregion */
 
 /* region [draw_sprite] */
 
-int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
+static int k__canvas_draw_sprite(enum k_canvas_viewport viewport, struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
 
     if (NULL == sprite)
         return -1;
@@ -553,8 +601,10 @@ int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x
     if (sprite->frames_num <= frame_idx)
         return -1;
 
-    x -= k__window.view_x;
-    y -= k__window.view_y;
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
+
+    k__canvas_convert_xy(&x, &y);
 
     struct k_sprite_frame *frame = &sprite->frames[frame_idx];
 
@@ -566,9 +616,9 @@ int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x
         dst.w = (float)sprite->sprite_w;
         dst.h = (float)sprite->sprite_h;
 
-        if (k__window.view_w < dst.x || dst.x + dst.w < 0.0f)
+        if (k__canvas.clip_rect.x + k__canvas.clip_rect.w < dst.x || dst.x + dst.w < k__canvas.clip_rect.x)
             return 0;
-        if (k__window.view_h < dst.y || dst.y + dst.h < 0.0f)
+        if (k__canvas.clip_rect.y + k__canvas.clip_rect.h < dst.y || dst.y + dst.h < k__canvas.clip_rect.y)
             return 0;
 
         SDL_Rect src;
@@ -605,9 +655,9 @@ int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x
             float half_w = options->scaled_w / 2.0f;
             float half_h = options->scaled_h / 2.0f;
             float R = half_w + half_h + fabsf(origin_x - half_w) + fabsf(origin_y - half_h);
-            if (x + R < 0.0f || k__window.view_w < x - R)
+            if (x + R < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x - R)
                 return 0;
-            if (y + R < 0.0f || k__window.view_h < y - R)
+            if (y + R < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y - R)
                 return 0;
         }
 
@@ -636,20 +686,12 @@ int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x
     return 0;
 }
 
-/* endregion */
-
-/* region */
-
-static int k__canvas_draw(float x, float y) {
-
+int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
+    return k__canvas_draw_sprite(K__CANVAS_VIEWPORT_ROOM, sprite, frame_idx, x, y, options);
 }
 
-int k_canvas_room_draw(float x, float y) {
-
-}
-
-int k_canvas_ui_draw(float x, float y) {
-
+int k_canvas_ui_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
+    return k__canvas_draw_sprite(K__CANVAS_VIEWPORT_UI, sprite, frame_idx, x, y, options);
 }
 
 /* endregion */
