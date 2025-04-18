@@ -169,18 +169,18 @@ static int step_create_canvas(void *config_) {
     float window_w = (float)config->window_w;
     float window_h = (float)config->window_h;
 
-    float canvas_room_x = 0.0f;
-    float canvas_room_y = 0.0f;
-    float canvas_room_w = window_w * 1.25f; /* tmp */
-    float canvas_room_h = window_h * 1.25f; /* tmp */
+    float room_viewport_x = 0.0f;
+    float room_viewport_y = 0.0f;
+    float room_viewport_w = window_w * 1.25f; /* tmp */
+    float room_viewport_h = window_h * 1.25f; /* tmp */
 
-    float canvas_ui_x = canvas_room_w + 1.0f;
-    float canvas_ui_y = 0.0f;
-    float canvas_ui_w = window_w;
-    float canvas_ui_h = window_h;
+    float ui_viewport_x = room_viewport_w + 1.0f;
+    float ui_viewport_y = 0.0f;
+    float ui_viewport_w = window_w;
+    float ui_viewport_h = window_h;
 
-    int canvas_w = (int)(canvas_ui_x + canvas_ui_w);
-    int canvas_h = (int)(SDL_max(canvas_room_h, canvas_ui_h));
+    int canvas_w = (int)(ui_viewport_x + ui_viewport_w);
+    int canvas_h = (int)(SDL_max(room_viewport_h, ui_viewport_h));
 
     Uint32 format = SDL_PIXELFORMAT_RGBA8888;
     int    access = SDL_TEXTUREACCESS_TARGET;
@@ -191,17 +191,18 @@ static int step_create_canvas(void *config_) {
     }
 
     k__canvas.canvas = canvas;
-    k__canvas.target = K__CANVAS_TARGET_NONE;
 
-    k__canvas.room_x = canvas_room_x;
-    k__canvas.room_y = canvas_room_y;
-    k__canvas.room_w = canvas_room_w;
-    k__canvas.room_h = canvas_room_h;
+    k__canvas.room_viewport.x = room_viewport_x;
+    k__canvas.room_viewport.y = room_viewport_y;
+    k__canvas.room_viewport.w = room_viewport_w;
+    k__canvas.room_viewport.h = room_viewport_h;
 
-    k__canvas.ui_x = canvas_ui_x;
-    k__canvas.ui_y = canvas_ui_y;
-    k__canvas.ui_w = canvas_ui_w;
-    k__canvas.ui_h = canvas_ui_h;
+    k__canvas.ui_viewport.x = ui_viewport_x;
+    k__canvas.ui_viewport.y = ui_viewport_y;
+    k__canvas.ui_viewport.w = ui_viewport_w;
+    k__canvas.ui_viewport.h = ui_viewport_h;
+
+    k__canvas.current_viewport = K__CANVAS_VIEWPORT_ROOM;
 
     return 0;
 }

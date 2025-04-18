@@ -3,31 +3,20 @@
 
 #include "SDL_render.h"
 
-enum k_canvas_target {
-    K__CANVAS_TARGET_NONE,
-    K__CANVAS_TARGET_ROOM,
-    K__CANVAS_TARGET_UI,
+enum k_canvas_viewport {
+    K__CANVAS_VIEWPORT_ROOM,
+    K__CANVAS_VIEWPORT_UI,
 };
 
 struct k_canvas {
 
     SDL_Texture *canvas;
 
-    enum k_canvas_target target;
+    SDL_FRect room_viewport;
+    SDL_FRect ui_viewport;
+    enum k_canvas_viewport current_viewport;
 
-    /* 画布分左上角房间区域和右上角 ui 区域，分别用于绘制房间和 ui */
-
-    /* 画布的房间区域 */
-    float room_x;
-    float room_y; /* 画布的房间区域左上角应是 (0,0) */
-    float room_w;
-    float room_h;
-
-    /* 画布的 ui 区域 */
-    float ui_x;
-    float ui_y;
-    float ui_w;
-    float ui_h; /* 画布的 ui 区域宽高应是与窗口宽高保持一致 */
+    SDL_FRect clip_rect;
 };
 
 extern struct k_canvas k__canvas;

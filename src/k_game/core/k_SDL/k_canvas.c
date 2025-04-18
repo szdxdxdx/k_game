@@ -1,4 +1,5 @@
 #include <math.h>
+#include <assert.h>
 
 #include "k_log.h"
 
@@ -13,6 +14,99 @@
 #include "../sprite/k_sprite.h"
 
 struct k_canvas k__canvas;
+
+static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
+
+    switch (viewport) {
+        case K__CANVAS_VIEWPORT_ROOM: {
+
+            if (K__CANVAS_VIEWPORT_ROOM == k__canvas.current_viewport)
+                return 0;
+
+            SDL_Rect clip;
+            clip.x = (int)k__canvas.room_viewport.x;
+            clip.y = (int)k__canvas.room_viewport.y;
+            clip.w = (int)k__canvas.room_viewport.w;
+            clip.h = (int)k__canvas.room_viewport.h;
+            if (SDL_RenderSetClipRect(k__window.renderer, &clip)) {
+                k_log_error("SDL error: %s", SDL_GetError());
+                return -1;
+            }
+
+            k__canvas.current_viewport = K__CANVAS_VIEWPORT_ROOM;
+            k__canvas.clip_rect.x = k__canvas.room_viewport.x;
+            k__canvas.clip_rect.y = k__canvas.room_viewport.y;
+            k__canvas.clip_rect.w = k__canvas.room_viewport.w;
+            k__canvas.clip_rect.h = k__canvas.room_viewport.h;
+
+            return 0;
+        }
+        case K__CANVAS_VIEWPORT_UI: {
+
+            if (K__CANVAS_VIEWPORT_UI == k__canvas.current_viewport)
+                return 0;
+
+            SDL_Rect clip;
+            clip.x = (int)k__canvas.ui_viewport.x;
+            clip.y = (int)k__canvas.ui_viewport.y;
+            clip.w = (int)k__canvas.ui_viewport.w;
+            clip.h = (int)k__canvas.ui_viewport.h;
+            if (SDL_RenderSetClipRect(k__window.renderer, &clip)) {
+                k_log_error("SDL error: %s", SDL_GetError());
+                return -1;
+            }
+
+            k__canvas.current_viewport = K__CANVAS_VIEWPORT_UI;
+            k__canvas.clip_rect.x = k__canvas.ui_viewport.x;
+            k__canvas.clip_rect.y = k__canvas.ui_viewport.y;
+            k__canvas.clip_rect.w = k__canvas.ui_viewport.w;
+            k__canvas.clip_rect.h = k__canvas.ui_viewport.h;
+
+            return 0;
+        }
+        default: {
+            assert(0);
+            return -1;
+        }
+    }
+}
+
+static void k__canvas_convert_xy(float *x, float *y) {
+
+    switch (k__canvas.current_viewport) {
+        case K__CANVAS_VIEWPORT_ROOM: {
+
+            float x_in_room = *x;
+            float x_in_view = x_in_room - k__window.view_x;
+            float x_in_canvas = k__canvas.room_viewport.x + x_in_view;
+            *x = x_in_canvas;
+
+            float y_in_room = *y;
+            float y_in_view = y_in_room - k__window.view_y;
+            float y_in_canvas = k__canvas.room_viewport.y + y_in_view;
+            *y = y_in_canvas;
+
+            return;
+        }
+        case K__CANVAS_VIEWPORT_UI: {
+
+            float x_in_window = *x;
+            float x_in_ui = x_in_window;
+            float x_in_canvas = k__canvas.ui_viewport.x + x_in_ui;
+            *x = x_in_canvas;
+
+            float y_in_window = *y;
+            float y_in_ui = y_in_window;
+            float y_in_canvas = k__canvas.ui_viewport.y + y_in_ui;
+            *y = y_in_canvas;
+
+            return;
+        }
+        default: {
+            assert(0);
+        }
+    }
+}
 
 /* region [set_color] */
 
@@ -40,14 +134,18 @@ int k_canvas_room_clear(void) {
 
 #define k__canvas_buf_capacity(arr) (sizeof(arr) / sizeof(arr[0]))
 
-int k_canvas_room_draw_point(float x, float y) {
+/* region [draw_point] */
 
-    x -= k__window.view_x;
-    y -= k__window.view_y;
+static int k__canvas_draw_point(enum k_canvas_viewport viewport, float x, float y) {
 
-    if (x < 0.0f || k__window.view_w < x)
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
+
+    k__canvas_convert_xy(&x, &y);
+
+    if (x < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x)
         return 0;
-    if (y < 0.0f || k__window.view_h < y)
+    if (y < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y)
         return 0;
 
     if (0 != SDL_RenderDrawPointF(k__window.renderer, x, y)) {
@@ -58,7 +156,19 @@ int k_canvas_room_draw_point(float x, float y) {
     return 0;
 }
 
-int k_canvas_room_draw_points(const struct k_float_point *points, size_t points_num) {
+int k_canvas_room_draw_point(float x, float y) {
+    return k__canvas_draw_point(K__CANVAS_VIEWPORT_ROOM, x, y);
+}
+
+int k_canvas_ui_draw_point(float x, float y) {
+    return k__canvas_draw_point(K__CANVAS_VIEWPORT_UI, x, y);
+}
+
+/* endregion */
+
+/* region [draw_points] */
+
+static int k__canvas_draw_points(enum k_canvas_viewport viewport, const struct k_float_point *points, size_t points_num) {
 
     if (NULL == points)
         return -1;
@@ -66,19 +176,24 @@ int k_canvas_room_draw_points(const struct k_float_point *points, size_t points_
     if (points_num == 0)
         return 0;
 
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
+
     SDL_FPoint buf[80];
     int buf_size = 0;
 
     size_t count = 0;
     while (count < points_num) {
 
-        float x = points[count].x - k__window.view_x;
-        float y = points[count].y - k__window.view_y;
+        float x = points[count].x;
+        float y = points[count].y;
         count++;
 
-        if (x < 0.0f || k__window.view_w < x)
+        k__canvas_convert_xy(&x, &y);
+
+        if (x < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x)
             continue;
-        if (y < 0.0f || k__window.view_h < y)
+        if (y < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y)
             continue;
 
         buf[buf_size].x = x;
@@ -106,17 +221,41 @@ int k_canvas_room_draw_points(const struct k_float_point *points, size_t points_
     return 0;
 }
 
-int k_canvas_room_draw_line(float x1, float y1, float x2, float y2) {
+int k_room_canvas_draw_points(const struct k_float_point *points, size_t points_num) {
+    return k__canvas_draw_points(K__CANVAS_VIEWPORT_ROOM, points, points_num);
+}
 
-    x1 -= k__window.view_x;
-    y1 -= k__window.view_y;
-    x2 -= k__window.view_x;
-    y2 -= k__window.view_y;
+int k_ui_canvas_draw_points(const struct k_float_point *points, size_t points_num) {
+    return k__canvas_draw_points(K__CANVAS_VIEWPORT_UI, points, points_num);
+}
 
-    if ((x1 < x2) ? (x2 < 0.0f || k__window.view_w < x1) : (x1 < 0.0f || k__window.view_w < x2))
-        return 0;
-    if ((y1 < y2) ? (y2 < 0.0f || k__window.view_h < y1) : (y1 < 0.0f || k__window.view_h < y2))
-        return 0;
+/* endregion */
+
+/* region [draw_line] */
+
+static int k__canvas_draw_line(enum k_canvas_viewport viewport, float x1, float y1, float x2, float y2) {
+
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
+
+    k__canvas_convert_xy(&x1, &y1);
+    k__canvas_convert_xy(&x2, &y2);
+
+    if (x1 < x2) {
+        if (x2 < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x1)
+            return 0;
+    } else {
+        if (x1 < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x2)
+            return 0;
+    }
+
+    if (y1 < y2) {
+        if (y2 < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y1)
+            return 0;
+    } else {
+        if (y1 < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y2)
+            return 0;
+    }
 
     if (0 != SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2)) {
         k_log_error("SDL error: %s", SDL_GetError());
@@ -126,7 +265,19 @@ int k_canvas_room_draw_line(float x1, float y1, float x2, float y2) {
     return 0;
 }
 
-int k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_num) {
+int k_canvas_room_draw_line(float x1, float y1, float x2, float y2) {
+    return k__canvas_draw_line(K__CANVAS_VIEWPORT_ROOM, x1, y1, x2, y2);
+}
+
+int k_canvas_ui_draw_line(float x1, float y1, float x2, float y2) {
+    return k__canvas_draw_line(K__CANVAS_VIEWPORT_UI, x1, y1, x2, y2);
+}
+
+/* endregion */
+
+/* region [draw_lines] */
+
+static int k__canvas_draw_lines(enum k_canvas_viewport viewport, const struct k_float_point *points, size_t points_num) {
 
     if (NULL == points)
         return -1;
@@ -134,16 +285,24 @@ int k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_n
     if (points_num <= 1)
         return 0;
 
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
+
     SDL_FPoint buf[80];
     int buf_size = 0;
 
     size_t count = 0;
     while (1) {
 
-        buf[buf_size].x = points[count].x - k__window.view_x;
-        buf[buf_size].y = points[count].y - k__window.view_y;
-        buf_size++;
+        float x = points[count].x;
+        float y = points[count].y;
         count++;
+
+        k__canvas_convert_xy(&x, &y);
+
+        buf[buf_size].x = x;
+        buf[buf_size].y = y;
+        buf_size++;
 
         if (count == points_num) {
 
@@ -172,6 +331,22 @@ int k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_n
 
     return 0;
 }
+
+int k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_num) {
+    return k__canvas_draw_lines(K__CANVAS_VIEWPORT_ROOM, points, points_num);
+}
+
+int k_canvas_ui_draw_lines(const struct k_float_point *points, size_t points_num) {
+    return k__canvas_draw_lines(K__CANVAS_VIEWPORT_UI, points, points_num);
+}
+
+/* endregion */
+
+/* region [draw_rect] */
+
+
+
+/* endregion */
 
 int k_canvas_room_draw_rect(float x, float y, float w, float h) {
 
@@ -459,6 +634,22 @@ int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x
     }
 
     return 0;
+}
+
+/* endregion */
+
+/* region */
+
+static int k__canvas_draw(float x, float y) {
+
+}
+
+int k_canvas_room_draw(float x, float y) {
+
+}
+
+int k_canvas_ui_draw(float x, float y) {
+
 }
 
 /* endregion */
