@@ -31,20 +31,6 @@ struct k_window_context {
 
     /* ------------------------------------------------------------------------ */
 
-    /* 画布 */
-    SDL_Texture *canvas;
-
-    /* 画布的房间区域 */
-    float canvas_room_x; /* 房间区域的左上角坐标应是 (0, 0) */
-    float canvas_room_y;
-    float canvas_room_w;
-    float canvas_room_h;
-
-    /* 画布的 ui 区域 */
-    float canvas_ui_x;
-    float canvas_ui_y;
-    float canvas_ui_w; /* ui 区域的宽高应是与窗口宽高保持一致 */
-    float canvas_ui_h;
 };
 
 extern struct k_window_context k__window;

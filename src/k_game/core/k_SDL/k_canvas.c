@@ -5,10 +5,14 @@
 #include "SDL_render.h"
 
 #include "k_game/core/k_canvas.h"
+
+#include "./k_canvas.h"
 #include "./k_window.h"
 
 #include "../image/k_image.h"
 #include "../sprite/k_sprite.h"
+
+struct k_canvas k__canvas;
 
 /* region [set_color] */
 

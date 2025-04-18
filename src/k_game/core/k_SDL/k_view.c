@@ -3,8 +3,10 @@
 #include "k_log.h"
 
 #include "k_game/core/k_view.h"
+
 #include "./k_window.h"
 #include "./k_mouse.h"
+#include "./k_canvas.h"
 
 #include "../room/k_room.h"
 
@@ -29,12 +31,12 @@ int k_view_fit_rect(float w, float h) {
         view_new_h = w / aspect;
     }
 
-    float view_max_w = (float)k__window.canvas_room_w;
+    float view_max_w = k__canvas.canvas_room_w;
     if (view_max_w > k__current_room->room_w) {
         view_max_w = k__current_room->room_w;
     }
 
-    float view_max_h = (float)k__window.canvas_room_h;
+    float view_max_h = k__canvas.canvas_room_h;
     if (view_max_h > k__current_room->room_h) {
         view_max_h = k__current_room->room_h;
     }

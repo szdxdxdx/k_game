@@ -7,6 +7,7 @@
 #include "../k_SDL/k_SDL_event.h"
 #include "../k_SDL/k_time.h"
 #include "../k_SDL/k_window.h"
+#include "../k_SDL/k_canvas.h"
 
 struct k_room *k__current_room = NULL;
 
@@ -33,7 +34,7 @@ void k__room_run(struct k_room *room) {
 
         k__SDL_handle_event_with_frame_delay(room->step_interval_ms);
 
-        SDL_SetRenderTarget(k__window.renderer, k__window.canvas);
+        SDL_SetRenderTarget(k__window.renderer, k__canvas.canvas);
 
         k__step_callback_manager_flush(&room->step_begin_callback_manager);
         k__step_callback_manager_exec(&room->step_begin_callback_manager);
@@ -54,7 +55,7 @@ void k__room_run(struct k_room *room) {
 
         view_rect.w = (int)k__window.view_w;
         view_rect.h = (int)k__window.view_h;
-        SDL_RenderCopyF(k__window.renderer, k__window.canvas, &view_rect, NULL);
+        SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &view_rect, NULL);
 
         SDL_RenderPresent(k__window.renderer);
     }

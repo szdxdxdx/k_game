@@ -5,10 +5,10 @@
 
 #include "k_log.h"
 #include "k_seq_step.h"
-#include "k_min_max.h"
 
 #include "./k_SDL_init.h"
 #include "./k_window.h"
+#include "k_canvas.h"
 
 /* region [steps] */
 
@@ -190,17 +190,18 @@ static int step_create_canvas(void *config_) {
         return -1;
     }
 
-    k__window.canvas = canvas;
+    k__canvas.canvas = canvas;
+    k__canvas.canvas_target = K__CANVAS_TARGET_NONE;
 
-    k__window.canvas_room_x = canvas_room_x;
-    k__window.canvas_room_y = canvas_room_y;
-    k__window.canvas_room_w = canvas_room_w;
-    k__window.canvas_room_h = canvas_room_h;
+    k__canvas.canvas_room_x = canvas_room_x;
+    k__canvas.canvas_room_y = canvas_room_y;
+    k__canvas.canvas_room_w = canvas_room_w;
+    k__canvas.canvas_room_h = canvas_room_h;
 
-    k__window.canvas_ui_x = canvas_ui_x;
-    k__window.canvas_ui_y = canvas_ui_y;
-    k__window.canvas_ui_w = canvas_ui_w;
-    k__window.canvas_ui_h = canvas_ui_h;
+    k__canvas.canvas_ui_x = canvas_ui_x;
+    k__canvas.canvas_ui_y = canvas_ui_y;
+    k__canvas.canvas_ui_w = canvas_ui_w;
+    k__canvas.canvas_ui_h = canvas_ui_h;
 
     return 0;
 }
@@ -208,10 +209,10 @@ static int step_create_canvas(void *config_) {
 static void step_destroy_canvas(void *unused) {
     (void)unused;
 
-    SDL_DestroyTexture(k__window.canvas);
+    SDL_DestroyTexture(k__canvas.canvas);
 }
 
-static int step_set_view(void *unused) {
+static int step_init_view(void *unused) {
     (void)unused;
 
     k__window.view_x = 0;
@@ -224,7 +225,7 @@ static int step_set_view(void *unused) {
 }
 
 static struct k_seq_step steps[] = {
-    { step_before_init,     NULL                  },
+    { step_before_init, NULL                  },
     { step_init_SDL,        step_quit_SDL         },
     { step_init_SDL_img,    step_quit_SDL_img     },
     { step_init_SDL_mix,    step_quit_SDL_mix     },
@@ -232,7 +233,7 @@ static struct k_seq_step steps[] = {
     { step_create_window,   step_destroy_window   },
     { step_create_renderer, step_destroy_renderer },
     { step_create_canvas,   step_destroy_canvas   },
-    { step_set_view,        NULL                  },
+    { step_init_view,       NULL                  },
 };
 
 /* endregion */
