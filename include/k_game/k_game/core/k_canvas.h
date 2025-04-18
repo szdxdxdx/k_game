@@ -65,6 +65,8 @@ static inline uint32_t k_canvas_get_draw_color_rgba(void) {
  */
 int k_canvas_room_clear(void);
 
+int k_canvas_ui_clear(void);
+
 /**
  * \brief 在房间内绘制一个点
  *
@@ -72,6 +74,8 @@ int k_canvas_room_clear(void);
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_room_draw_point(float x, float y);
+
+int k_canvas_ui_draw_point(float x, float y);
 
 /**
  * \brief 在房间内绘制多个点
@@ -124,6 +128,8 @@ int k_canvas_room_draw_rect(float x, float y, float w, float h);
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_room_fill_rect(float x, float y, float w, float h);
+
+int k_canvas_ui_fill_rect(float x, float y, float w, float h);
 
 /**
  * \brief 在房间内绘制一个圆

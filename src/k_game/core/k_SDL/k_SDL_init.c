@@ -204,6 +204,8 @@ static int step_create_canvas(void *config_) {
 
     k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
 
+    SDL_SetRenderTarget(k__window.renderer, canvas);
+
     return 0;
 }
 
