@@ -4,15 +4,7 @@
 #include "./k_mouse.h"
 #include "./k_window.h"
 
-struct k_mouse_context k__mouse = {
-    .window_x = 0,
-    .window_y = 0,
-    .view_x   = 0,
-    .view_y   = 0,
-    .room_x   = 0,
-    .room_y   = 0,
-    .button_state = { 0 }
-};
+struct k_mouse_context k__mouse;
 
 static void refresh_button_state(enum k_mouse_button button) {
 
@@ -66,12 +58,12 @@ void k__SDL_handle_event_mouse_button_up(SDL_MouseButtonEvent *event) {
 
 void k__SDL_handle_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
 
-    k__mouse.window_x = event->x;
-    k__mouse.view_x   = (float)k__mouse.window_x * k__window.view_window_ratio;
+    k__mouse.window_x = (float)event->x;
+    k__mouse.view_x   = k__mouse.window_x * k__window.view_window_ratio;
     k__mouse.room_x   = k__mouse.view_x + k__window.view_x;
 
-    k__mouse.window_y = event->y;
-    k__mouse.view_y   = (float)k__mouse.window_y * k__window.view_window_ratio;
+    k__mouse.window_y = (float)event->y;
+    k__mouse.view_y   = k__mouse.window_y * k__window.view_window_ratio;
     k__mouse.room_y   = k__mouse.view_y + k__window.view_y;
 }
 

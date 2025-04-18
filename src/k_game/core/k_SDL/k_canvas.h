@@ -11,26 +11,25 @@ enum k_canvas_target {
 
 struct k_canvas {
 
-    /* 画布 */
     SDL_Texture *canvas;
 
-    enum k_canvas_target canvas_target;
+    enum k_canvas_target target;
+
+    /* 画布分左上角房间区域和右上角 ui 区域，分别用于绘制房间和 ui */
 
     /* 画布的房间区域 */
-    float canvas_room_x; /* 房间区域的左上角坐标应是 (0, 0) */
-    float canvas_room_y;
-    float canvas_room_w;
-    float canvas_room_h;
+    float room_x;
+    float room_y; /* 画布的房间区域左上角应是 (0,0) */
+    float room_w;
+    float room_h;
 
     /* 画布的 ui 区域 */
-    float canvas_ui_x;
-    float canvas_ui_y;
-    float canvas_ui_w; /* ui 区域的宽高应是与窗口宽高保持一致 */
-    float canvas_ui_h;
+    float ui_x;
+    float ui_y;
+    float ui_w;
+    float ui_h; /* 画布的 ui 区域宽高应是与窗口宽高保持一致 */
 };
 
 extern struct k_canvas k__canvas;
-
-void k__canvas_set_target(enum k_canvas_target target);
 
 #endif

@@ -8,7 +8,7 @@
 
 #include "./k_SDL_init.h"
 #include "./k_window.h"
-#include "k_canvas.h"
+#include "./k_canvas.h"
 
 /* region [steps] */
 
@@ -124,9 +124,9 @@ static int step_create_window(void *config_) {
     }
 
     k__window.window   = window;
-    k__window.window_w = w;
-    k__window.window_h = h;
-    k__window.window_aspect_ratio = (float)k__window.window_w / (float)k__window.window_h;
+    k__window.window_w = (float)w;
+    k__window.window_h = (float)h;
+    k__window.window_aspect_ratio = k__window.window_w / k__window.window_h;
     return 0;
 }
 
@@ -191,17 +191,17 @@ static int step_create_canvas(void *config_) {
     }
 
     k__canvas.canvas = canvas;
-    k__canvas.canvas_target = K__CANVAS_TARGET_NONE;
+    k__canvas.target = K__CANVAS_TARGET_NONE;
 
-    k__canvas.canvas_room_x = canvas_room_x;
-    k__canvas.canvas_room_y = canvas_room_y;
-    k__canvas.canvas_room_w = canvas_room_w;
-    k__canvas.canvas_room_h = canvas_room_h;
+    k__canvas.room_x = canvas_room_x;
+    k__canvas.room_y = canvas_room_y;
+    k__canvas.room_w = canvas_room_w;
+    k__canvas.room_h = canvas_room_h;
 
-    k__canvas.canvas_ui_x = canvas_ui_x;
-    k__canvas.canvas_ui_y = canvas_ui_y;
-    k__canvas.canvas_ui_w = canvas_ui_w;
-    k__canvas.canvas_ui_h = canvas_ui_h;
+    k__canvas.ui_x = canvas_ui_x;
+    k__canvas.ui_y = canvas_ui_y;
+    k__canvas.ui_w = canvas_ui_w;
+    k__canvas.ui_h = canvas_ui_h;
 
     return 0;
 }
@@ -217,8 +217,8 @@ static int step_init_view(void *unused) {
 
     k__window.view_x = 0;
     k__window.view_y = 0;
-    k__window.view_w = (float)k__window.window_w;
-    k__window.view_h = (float)k__window.window_h;
+    k__window.view_w = k__window.window_w;
+    k__window.view_h = k__window.window_h;
     k__window.view_window_ratio = 1.0f;
 
     return 0;

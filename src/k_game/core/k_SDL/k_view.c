@@ -31,12 +31,12 @@ int k_view_fit_rect(float w, float h) {
         view_new_h = w / aspect;
     }
 
-    float view_max_w = k__canvas.canvas_room_w;
+    float view_max_w = k__canvas.room_w;
     if (view_max_w > k__current_room->room_w) {
         view_max_w = k__current_room->room_w;
     }
 
-    float view_max_h = k__canvas.canvas_room_h;
+    float view_max_h = k__canvas.room_h;
     if (view_max_h > k__current_room->room_h) {
         view_max_h = k__current_room->room_h;
     }
@@ -55,10 +55,10 @@ int k_view_fit_rect(float w, float h) {
 
     k__window.view_w = view_new_w;
     k__window.view_h = view_new_h;
-    k__window.view_window_ratio = k__window.view_w / (float)k__window.window_w;
+    k__window.view_window_ratio = k__window.view_w / k__window.window_w;
 
-    k__mouse.view_x = (float)k__mouse.window_x * k__window.view_window_ratio;
-    k__mouse.view_y = (float)k__mouse.window_y * k__window.view_window_ratio;
+    k__mouse.view_x = k__mouse.window_x * k__window.view_window_ratio;
+    k__mouse.view_y = k__mouse.window_y * k__window.view_window_ratio;
     k__mouse.room_x = k__mouse.view_x + k__window.view_x;
     k__mouse.room_y = k__mouse.view_y + k__window.view_y;
 

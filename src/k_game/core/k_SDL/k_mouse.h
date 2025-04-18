@@ -6,8 +6,8 @@
 struct k_mouse_context {
 
     /* 鼠标在游戏窗口中的位置 */
-    int window_x;
-    int window_y;
+    float window_x;
+    float window_y;
 
     /* 鼠标在视野中的位置 */
     float view_x;

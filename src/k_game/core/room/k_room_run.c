@@ -16,7 +16,7 @@ void k__room_run(struct k_room *room) {
 
     room->game_loop = 1;
 
-    k_view_fit_rect((float)k__window.window_w, (float)k__window.window_h);
+    k_view_fit_rect(k__window.window_w, k__window.window_h);
     k_view_set_position(0, 0);
 
     if (NULL != room->fn_enter) {
