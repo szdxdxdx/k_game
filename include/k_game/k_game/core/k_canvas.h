@@ -13,8 +13,10 @@
  * 更改画笔的颜色为 `(r, g, b, a)` 所指定的颜色值，
  * `r, g, b, a` 分别指定红色通道、绿色通道、蓝色通道和透明度通道的值。
  * 每个通道的取值范围是 0 ~ 255，用十六进制表示法则是 0x00 ~ 0xff。
+ *
+ * 若设置成功，函数返回 0，否则返回非 0。
  */
-void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+int k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
 /**
  * \brief 获取画笔的颜色
@@ -29,12 +31,12 @@ void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
  *
  * 更改画笔颜色为 `hex_rgba` 所指定的十六进制 `0xRRGGBBAA` 格式的颜色值。
  */
-static inline void k_canvas_set_draw_color_rgba(uint32_t hex_rgba) {
+static inline int k_canvas_set_draw_color_rgba(uint32_t hex_rgba) {
     uint8_t r = 0xff & (hex_rgba >> 24);
     uint8_t g = 0xff & (hex_rgba >> 16);
     uint8_t b = 0xff & (hex_rgba >> 8);
     uint8_t a = 0xff & (hex_rgba);
-    k_canvas_set_draw_color(r, g, b, a);
+    return k_canvas_set_draw_color(r, g, b, a);
 }
 
 /**
@@ -56,8 +58,6 @@ static inline uint32_t k_canvas_get_draw_color_rgba(void) {
 
 /* endregion */
 
-/* region [draw_graphics] */
-
 /**
  * \brief 清空房间画布内容
  *
@@ -66,6 +66,10 @@ static inline uint32_t k_canvas_get_draw_color_rgba(void) {
 int k_canvas_room_clear(void);
 
 int k_canvas_ui_clear(void);
+
+/* region [draw_graphics] */
+
+/* region [draw_point] */
 
 /**
  * \brief 在房间内绘制一个点
@@ -77,6 +81,10 @@ int k_canvas_room_draw_point(float x, float y);
 
 int k_canvas_ui_draw_point(float x, float y);
 
+/* endregion */
+
+/* region [draw_points] */
+
 /**
  * \brief 在房间内绘制多个点
  *
@@ -85,6 +93,12 @@ int k_canvas_ui_draw_point(float x, float y);
  */
 int k_canvas_room_draw_points(const struct k_float_point *points, size_t points_num);
 
+int k_canvas_ui_draw_points(const struct k_float_point *points, size_t points_num);
+
+/* endregion */
+
+/* region [draw_line] */
+
 /**
  * \brief 在房间内绘制一条线段
  *
@@ -92,6 +106,12 @@ int k_canvas_room_draw_points(const struct k_float_point *points, size_t points_
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_room_draw_line(float x1, float y1, float x2, float y2);
+
+int k_canvas_ui_draw_line(float x1, float y1, float x2, float y2);
+
+/* endregion */
+
+/* region [draw_lines] */
 
 /**
  * \brief 在房间内连续绘制多条线段
@@ -106,6 +126,12 @@ int k_canvas_room_draw_line(float x1, float y1, float x2, float y2);
  */
 int k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_num);
 
+int k_canvas_ui_draw_lines(const struct k_float_point *points, size_t points_num);
+
+/* endregion */
+
+/* region [draw_rect] */
+
 /**
  * \brief 在房间内绘制一个轴对齐矩形
  *
@@ -119,6 +145,12 @@ int k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_n
  */
 int k_canvas_room_draw_rect(float x, float y, float w, float h);
 
+int k_canvas_ui_draw_rect(float x, float y, float w, float h);
+
+/* endregion */
+
+/* region [fill_rect] */
+
 /**
  * \brief 在房间内绘制一个填充的轴对齐矩形
  *
@@ -131,6 +163,10 @@ int k_canvas_room_fill_rect(float x, float y, float w, float h);
 
 int k_canvas_ui_fill_rect(float x, float y, float w, float h);
 
+/* endregion */
+
+/* region [draw_circle] */
+
 /**
  * \brief 在房间内绘制一个圆
  *
@@ -140,6 +176,10 @@ int k_canvas_ui_fill_rect(float x, float y, float w, float h);
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_room_draw_circle(float cx, float cy, float r);
+
+int k_canvas_ui_draw_circle(float cx, float cy, float r);
+
+/* endregion */
 
 /* endregion */
 
@@ -159,6 +199,8 @@ struct k_canvas_draw_image_options;
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options);
+
+int k_canvas_ui_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options);
 
 /** \brief 用于指定在绘制图片时应用的变换效果 */
 struct k_canvas_draw_image_options {
@@ -215,6 +257,8 @@ struct k_canvas_draw_sprite_options;
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options);
+
+int k_canvas_ui_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options);
 
 /** \brief 用于指定在绘制精灵帧时应用的变换效果 */
 struct k_canvas_draw_sprite_options {

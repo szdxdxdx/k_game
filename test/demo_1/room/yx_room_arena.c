@@ -77,7 +77,9 @@ static int init_arena_room(void *params) {
 
     {
         struct yx_obj_bubble_maker_config config;
-        yx_craete_bubble_maker(&config);
+        // yx_create_bubble_maker(&config);
+
+        yx_create_bubble(300, 300);
     }
 
     {

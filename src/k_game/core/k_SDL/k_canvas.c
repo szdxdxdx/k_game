@@ -17,17 +17,19 @@ struct k_canvas k__canvas;
 
 static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
 
-    {
-        SDL_Texture *texture = SDL_GetRenderTarget(k__window.renderer);
-        if (texture != k__canvas.canvas) {
-            SDL_SetRenderTarget(k__window.renderer, k__canvas.canvas);
-            k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
-        }
+    if (SDL_GetRenderTarget(k__window.renderer) != k__canvas.canvas) {
+        if (0 != SDL_SetRenderTarget(k__window.renderer, k__canvas.canvas))
+            goto SDL_error;
+
+        k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
     }
 
     switch (viewport) {
+        case K__CANVAS_VIEWPORT_NONE: {
+            assert(0);
+            return -1;
+        }
         case K__CANVAS_VIEWPORT_ROOM: {
-
             if (K__CANVAS_VIEWPORT_ROOM == k__canvas.current_viewport)
                 return 0;
 
@@ -36,24 +38,16 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             clip.y = (int)k__canvas.room_viewport.y;
             clip.w = (int)k__window.view_w;
             clip.h = (int)k__window.view_h;
-            if (SDL_RenderSetViewport(k__window.renderer, &clip)) {
-                k_log_error("SDL error: %s", SDL_GetError());
-                return -1;
-            }
+            if (SDL_RenderSetViewport(k__window.renderer, &clip))
+                goto SDL_error;
 
             k__canvas.current_viewport = K__CANVAS_VIEWPORT_ROOM;
-            k__canvas.viewport_rect.x = k__canvas.room_viewport.x;
-            k__canvas.viewport_rect.y = k__canvas.room_viewport.y;
-            k__canvas.viewport_rect.w = k__window.view_w;
-            k__canvas.viewport_rect.h = k__window.view_h;
-
             k__canvas.viewport_w = k__window.view_w;
             k__canvas.viewport_h = k__window.view_h;
 
             return 0;
         }
         case K__CANVAS_VIEWPORT_UI: {
-
             if (K__CANVAS_VIEWPORT_UI == k__canvas.current_viewport)
                 return 0;
 
@@ -62,55 +56,34 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             clip.y = (int)k__canvas.ui_viewport.y;
             clip.w = (int)k__canvas.ui_viewport.w;
             clip.h = (int)k__canvas.ui_viewport.h;
-            if (SDL_RenderSetViewport(k__window.renderer, &clip)) {
-                k_log_error("SDL error: %s", SDL_GetError());
-                return -1;
-            }
+            if (SDL_RenderSetViewport(k__window.renderer, &clip))
+                goto SDL_error;
 
             k__canvas.current_viewport = K__CANVAS_VIEWPORT_UI;
-            k__canvas.viewport_rect.x = k__canvas.ui_viewport.x;
-            k__canvas.viewport_rect.y = k__canvas.ui_viewport.y;
-            k__canvas.viewport_rect.w = k__canvas.ui_viewport.w;
-            k__canvas.viewport_rect.h = k__canvas.ui_viewport.h;
-
             k__canvas.viewport_w = k__canvas.ui_viewport.w;
             k__canvas.viewport_h = k__canvas.ui_viewport.h;
 
             return 0;
         }
-        default: {
-            assert(0);
-            return -1;
-        }
     }
+
+    assert(0);
+    return -1;
+
+SDL_error:
+    k_log_error("SDL error: %s", SDL_GetError());
+    return -1;
 }
 
 static void k__canvas_convert_xy(float *x, float *y) {
 
     switch (k__canvas.current_viewport) {
-        case K__CANVAS_VIEWPORT_ROOM: {
-
-            float x_in_room = *x;
-            float x_in_view = x_in_room - k__window.view_x;
-            *x = x_in_view;
-
-            float y_in_room = *y;
-            float y_in_view = y_in_room - k__window.view_y;
-            *y = y_in_view;
-
-            return;
-        }
+        case K__CANVAS_VIEWPORT_ROOM:
+            *x -= k__window.view_x;
+            *y -= k__window.view_y;
+            break;
         case K__CANVAS_VIEWPORT_UI: {
-
-            float x_in_window = *x;
-            float x_in_ui = x_in_window;
-            *x = x_in_ui;
-
-            float y_in_window = *y;
-            float y_in_ui = y_in_window;
-            *y = y_in_ui;
-
-            return;
+            break;
         }
         default: {
             assert(0);
@@ -120,8 +93,14 @@ static void k__canvas_convert_xy(float *x, float *y) {
 
 /* region [set_color] */
 
-void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-    SDL_SetRenderDrawColor(k__window.renderer, r, g, b, a);
+int k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+
+    if (0 != SDL_SetRenderDrawColor(k__window.renderer, r, g, b, a)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        return -1;
+    }
+
+    return 0;
 }
 
 void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
@@ -137,16 +116,18 @@ int k_canvas_room_clear(void) {
     if (0 != k__canvas_set_viewport(K__CANVAS_VIEWPORT_ROOM))
         return -1;
 
-    SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_NONE);
-
-    if (0 != SDL_RenderFillRectF(k__window.renderer, NULL)) {
-        k_log_error("SDL error: %s", SDL_GetError());
-        return -1;
-    }
-
-    SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_BLEND);
+    if (0 != SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_NONE))
+        goto SDL_error;
+    if (0 != SDL_RenderFillRectF(k__window.renderer, NULL))
+        goto SDL_error;
+    if (0 != SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_BLEND))
+        goto SDL_error;
 
     return 0;
+
+SDL_error:
+    k_log_error("SDL error: %s", SDL_GetError());
+    return -1;
 }
 
 int k_canvas_ui_clear(void) {
@@ -154,42 +135,44 @@ int k_canvas_ui_clear(void) {
     if (0 != k__canvas_set_viewport(K__CANVAS_VIEWPORT_UI))
         return -1;
 
-    SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_NONE);
-
-    if (0 != SDL_RenderFillRectF(k__window.renderer, NULL)) {
-        k_log_error("SDL error: %s", SDL_GetError());
-        return -1;
-    }
-
-    SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_BLEND);
+    if (0 != SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_NONE))
+        goto SDL_error;
+    if (0 != SDL_RenderFillRectF(k__window.renderer, NULL))
+        goto SDL_error;
+    if (SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_BLEND))
+        goto SDL_error;
 
     return 0;
+
+SDL_error:
+    k_log_error("SDL error: %s", SDL_GetError());
+    return -1;
 }
 
 /* endregion */
 
 /* region [cull] */
 
-int k__canvas_cull_point(float x, float y) {
+static int k__canvas_cull_point(float x, float y) {
     return x < 0.0f
         || y < 0.0f
         || x > k__canvas.viewport_w
         || y > k__canvas.viewport_h;
 }
 
-int k__canvas_cull_line(float x1, float y1, float x2, float y2) {
+static int k__canvas_cull_line(float x1, float y1, float x2, float y2) {
     return ((x1 < x2) ? (x2 < 0.0f || 0.0f + k__canvas.viewport_w < x1) : (x1 < 0.0f || 0.0f + k__canvas.viewport_w < x2))
         || ((y1 < y2) ? (y2 < 0.0f || 0.0f + k__canvas.viewport_h < y1) : (y1 < 0.0f || 0.0f + k__canvas.viewport_h < y2));
 }
 
-int k__canvas_cull_rect(float x, float y, float w, float h) {
+static int k__canvas_cull_rect(float x, float y, float w, float h) {
     return x > k__canvas.viewport_w
         || y > k__canvas.viewport_h
         || x + w < 0.0f
         || y + h < 0.0f;
 }
 
-int k__canvas_cull_circle(float cx, float cy, float r) {
+static int k__canvas_cull_circle(float cx, float cy, float r) {
     return cx + r < 0.0f
         || cy + r < 0.0f
         || k__canvas.viewport_w < cx - r
@@ -285,11 +268,11 @@ static int k__canvas_draw_points(enum k_canvas_viewport viewport, const struct k
     return 0;
 }
 
-int k_room_canvas_draw_points(const struct k_float_point *points, size_t points_num) {
+int k_canvas_room_draw_points(const struct k_float_point *points, size_t points_num) {
     return k__canvas_draw_points(K__CANVAS_VIEWPORT_ROOM, points, points_num);
 }
 
-int k_ui_canvas_draw_points(const struct k_float_point *points, size_t points_num) {
+int k_canvas_ui_draw_points(const struct k_float_point *points, size_t points_num) {
     return k__canvas_draw_points(K__CANVAS_VIEWPORT_UI, points, points_num);
 }
 
@@ -405,9 +388,7 @@ static int k__canvas_draw_rect(enum k_canvas_viewport viewport, float x, float y
 
     k__canvas_convert_xy(&x, &y);
 
-    if (x + w < k__canvas.viewport_rect.x || k__canvas.viewport_rect.x + k__canvas.viewport_rect.w < x)
-        return 0;
-    if (y + h < k__canvas.viewport_rect.x || k__canvas.viewport_rect.y + k__canvas.viewport_rect.h < y)
+    if (k__canvas_cull_rect(x, y, w, h))
         return 0;
 
     SDL_FRect rect;

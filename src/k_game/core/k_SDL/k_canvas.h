@@ -20,8 +20,6 @@ struct k_canvas {
 
     enum k_canvas_viewport current_viewport;
 
-    SDL_FRect viewport_rect;
-
     float viewport_w;
     float viewport_h;
 };
