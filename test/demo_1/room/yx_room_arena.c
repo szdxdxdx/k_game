@@ -11,20 +11,14 @@
 static void draw_background(void *unused) {
     (void)unused;
 
-    //k_canvas_set_draw_color_rgba(0x1e1e1eff);
-
-    k_canvas_set_draw_color_rgba(0xffffffff);
-    //k_canvas_ui_clear();
-
+    // k_canvas_set_draw_color_rgba(0x1e1e1eff);
     k_canvas_set_draw_color_rgba(0xcc66ffff);
     k_canvas_room_clear();
 
-    //k_canvas_set_draw_color_rgba(0xff0000ff);
-    //k_canvas_ui_fill_rect(3, 3, 100, 100);
-
-    return;
-
-    k_canvas_set_draw_color_rgba(0x323333ff);
+    k_canvas_set_draw_color_rgba(0x00000000);
+    k_canvas_ui_clear();
+    k_canvas_set_draw_color_rgba(0xff0000ff);
+    k_canvas_ui_fill_rect(0, 0, 100, 100);
 
     float view_x;
     float view_y;
@@ -36,6 +30,8 @@ static void draw_background(void *unused) {
 
     float w = k_room_get_width();
     float h = k_room_get_height();
+
+    k_canvas_set_draw_color_rgba(0x323333ff);
 
     float x = floorf(view_x / grid_size) * grid_size;
     float x_to   = ceilf((view_x + view_w) / grid_size) * grid_size;
@@ -74,10 +70,8 @@ static int init_arena_room(void *params) {
 
     struct yx_room_arena *room_arena = k_room_get_data();
 
-    //k_room_add_step_callback(NULL, set_debug);
+    k_room_add_step_callback(NULL, set_debug);
     k_room_add_draw_callback(NULL, draw_background, INT_MIN, 0);
-
-    return 0;
 
     k_room_add_camera();
     k_room_add_collision_manager();

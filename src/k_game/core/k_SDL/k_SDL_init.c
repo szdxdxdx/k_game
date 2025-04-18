@@ -190,6 +190,8 @@ static int step_create_canvas(void *config_) {
         return -1;
     }
 
+    SDL_SetTextureBlendMode(canvas, SDL_BLENDMODE_BLEND);
+
     k__canvas.canvas = canvas;
 
     k__canvas.room_viewport.x = room_viewport_x;
