@@ -3,8 +3,6 @@
 
 #include "SDL_render.h"
 
-#include "k_game/core/k_canvas.h"
-
 struct k_window_context {
 
     /* 窗口 */
@@ -35,10 +33,6 @@ struct k_window_context {
 
     /* 画布 */
     SDL_Texture *canvas;
-
-    /* 整块画布的大小 */
-    int canvas_w;
-    int canvas_h;
 
     /* 画布的房间区域 */
     float canvas_room_x; /* 房间区域的左上角坐标应是 (0, 0) */

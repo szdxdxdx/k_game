@@ -5,6 +5,7 @@
 
 #include "k_log.h"
 #include "k_seq_step.h"
+#include "k_min_max.h"
 
 #include "./k_SDL_init.h"
 #include "./k_window.h"
@@ -165,13 +166,21 @@ static void step_destroy_renderer(void *unused) {
 static int step_create_canvas(void *config_) {
     struct k_game_config *config = config_;
 
-    int canvas_room_w = (int)((float)config->window_w * 1.25f); /* tmp */
-    int canvas_room_h = (int)((float)config->window_h * 1.25f); /* tmp */
-    int canvas_ui_w = config->window_w;
-    int canvas_ui_h = config->window_h;
+    float window_w = (float)config->window_w;
+    float window_h = (float)config->window_h;
 
-    int canvas_w = canvas_room_w + canvas_ui_w;
-    int canvas_h = canvas_room_h;
+    float canvas_room_x = 0.0f;
+    float canvas_room_y = 0.0f;
+    float canvas_room_w = window_w * 1.25f; /* tmp */
+    float canvas_room_h = window_h * 1.25f; /* tmp */
+
+    float canvas_ui_x = canvas_room_w + 1.0f;
+    float canvas_ui_y = 0.0f;
+    float canvas_ui_w = window_w;
+    float canvas_ui_h = window_h;
+
+    int canvas_w = (int)(canvas_ui_x + canvas_ui_w);
+    int canvas_h = (int)(SDL_max(canvas_room_h, canvas_ui_h));
 
     Uint32 format = SDL_PIXELFORMAT_RGBA8888;
     int    access = SDL_TEXTUREACCESS_TARGET;
@@ -182,8 +191,17 @@ static int step_create_canvas(void *config_) {
     }
 
     k__window.canvas = canvas;
-    k__window.canvas_room_w = (float)canvas_w;
-    k__window.canvas_room_h = (float)canvas_h;
+
+    k__window.canvas_room_x = canvas_room_x;
+    k__window.canvas_room_y = canvas_room_y;
+    k__window.canvas_room_w = canvas_room_w;
+    k__window.canvas_room_h = canvas_room_h;
+
+    k__window.canvas_ui_x = canvas_ui_x;
+    k__window.canvas_ui_y = canvas_ui_y;
+    k__window.canvas_ui_w = canvas_ui_w;
+    k__window.canvas_ui_h = canvas_ui_h;
+
     return 0;
 }
 
