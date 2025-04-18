@@ -17,6 +17,12 @@ struct llk_ui_elem *llk_ui_construct_elem(struct llk_ui_elem *elem, struct llk_u
     elem->h.unit = LLK_UI_UNIT_PX;
     elem->h.val  = 0.0f;
 
+    elem->left.unit   = LLK_UI_UNIT_NO_VAL;
+    elem->right.unit  = LLK_UI_UNIT_NO_VAL;
+    elem->top.unit    = LLK_UI_UNIT_NO_VAL;
+    elem->bottom.unit = LLK_UI_UNIT_NO_VAL;
+
+
     elem->background_color = 0x00000000;
 
     elem->fn_measure = NULL;
@@ -185,6 +191,8 @@ void llk_ui_elem_layout(struct llk_ui_elem *elem) {
                 elem->bottom.computed_val = 0.0f;
                 break;
         }
+
+        elem->y = parent->y + parent->h.computed_val - elem->top.computed_val;
     }
     else {
         elem->y = parent->y;

@@ -28,7 +28,19 @@ static void init_ui(void) {
     box_1->h.val = 100.0f;
     box_1->background_color = 0x66ccffff;
 
+    struct llk_ui_elem *box_2 = llk_ui_create_elem(ui);
+    box_2->w.unit = LLK_UI_UNIT_PX;
+    box_2->w.val = 100.0f;
+    box_2->h.unit = LLK_UI_UNIT_PX;
+    box_2->h.val = 100.0f;
+    box_2->right.unit = LLK_UI_UNIT_PX;
+    box_2->right.val = 0.0f;
+    box_2->bottom.unit = LLK_UI_UNIT_PX;
+    box_2->bottom.val = 0.0f;
+    box_2->background_color = 0xee0000ff;
+
     llk_ui_append_child(root, box_1);
+    llk_ui_append_child(root, box_2);
 }
 
 static void draw_ui(void *unused) {
