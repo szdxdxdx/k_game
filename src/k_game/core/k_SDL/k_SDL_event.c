@@ -8,7 +8,6 @@
 
 #include "../game/k_game_context.h"
 #include "../room/k_room.h"
-#include "k_window.h"
 
 static void k__SDL_poll_events(void) {
 

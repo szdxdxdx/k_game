@@ -26,9 +26,9 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             SDL_Rect clip;
             clip.x = (int)k__canvas.room_viewport.x;
             clip.y = (int)k__canvas.room_viewport.y;
-            clip.w = (int)k__canvas.room_viewport.w;
-            clip.h = (int)k__canvas.room_viewport.h;
-            if (SDL_RenderSetClipRect(k__window.renderer, &clip)) {
+            clip.w = (int)k__window.view_w;
+            clip.h = (int)k__window.view_h;
+            if (SDL_RenderSetViewport(k__window.renderer, &clip)) {
                 k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
             }
@@ -36,8 +36,8 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             k__canvas.current_viewport = K__CANVAS_VIEWPORT_ROOM;
             k__canvas.clip_rect.x = k__canvas.room_viewport.x;
             k__canvas.clip_rect.y = k__canvas.room_viewport.y;
-            k__canvas.clip_rect.w = k__canvas.room_viewport.w;
-            k__canvas.clip_rect.h = k__canvas.room_viewport.h;
+            k__canvas.clip_rect.w = k__window.view_w;
+            k__canvas.clip_rect.h = k__window.view_h;
 
             return 0;
         }
@@ -51,7 +51,7 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             clip.y = (int)k__canvas.ui_viewport.y;
             clip.w = (int)k__canvas.ui_viewport.w;
             clip.h = (int)k__canvas.ui_viewport.h;
-            if (SDL_RenderSetClipRect(k__window.renderer, &clip)) {
+            if (SDL_RenderSetViewport(k__window.renderer, &clip)) {
                 k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
             }
@@ -72,6 +72,7 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
 }
 
 static void k__canvas_convert_xy(float *x, float *y) {
+    return;
 
     switch (k__canvas.current_viewport) {
         case K__CANVAS_VIEWPORT_ROOM: {
@@ -120,9 +121,12 @@ void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
 
 /* endregion */
 
-/* region [draw_graphics] */
+/* region [clear] */
 
-int k_canvas_room_clear(void) {
+static int k__canvas_clear(enum k_canvas_viewport viewport) {
+
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
 
     if (0 != SDL_RenderClear(k__window.renderer)) {
         k_log_error("SDL error: %s", SDL_GetError());
@@ -131,6 +135,18 @@ int k_canvas_room_clear(void) {
 
     return 0;
 }
+
+int k_canvas_room_clear(void) {
+    return k__canvas_clear(K__CANVAS_VIEWPORT_ROOM);
+}
+
+int k_canvas_ui_clear(void) {
+    return k__canvas_clear(K__CANVAS_VIEWPORT_UI);
+}
+
+/* endregion */
+
+/* region [draw_graphics] */
 
 #define k__canvas_buf_capacity(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -702,12 +718,12 @@ void k__canvas_present(void) {
 
     SDL_SetRenderTarget(k__window.renderer, NULL);
 
-    SDL_Rect room_viewport;
-    room_viewport.x = (int)(k__canvas.room_viewport.x);
-    room_viewport.y = (int)(k__canvas.room_viewport.y);
-    room_viewport.w = (int)(k__canvas.room_viewport.w);
-    room_viewport.h = (int)(k__canvas.room_viewport.h);
-    SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &room_viewport, NULL);
+    SDL_Rect room_view;
+    room_view.x = (int)(k__canvas.room_viewport.x);
+    room_view.y = (int)(k__canvas.room_viewport.y);
+    room_view.w = (int)(k__window.view_w);
+    room_view.h = (int)(k__window.view_h);
+    SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &room_view, NULL);
 
     SDL_RenderPresent(k__window.renderer);
 
