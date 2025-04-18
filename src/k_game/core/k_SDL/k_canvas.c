@@ -695,3 +695,23 @@ int k_canvas_ui_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, 
 }
 
 /* endregion */
+
+/* region [present] */
+
+void k__canvas_present(void) {
+
+    SDL_SetRenderTarget(k__window.renderer, NULL);
+
+    SDL_Rect room_viewport;
+    room_viewport.x = (int)(k__canvas.room_viewport.x);
+    room_viewport.y = (int)(k__canvas.room_viewport.y);
+    room_viewport.w = (int)(k__canvas.room_viewport.w);
+    room_viewport.h = (int)(k__canvas.room_viewport.h);
+    SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &room_viewport, NULL);
+
+    SDL_RenderPresent(k__window.renderer);
+
+    SDL_SetRenderTarget(k__window.renderer, k__canvas.canvas);
+}
+
+/* endregion */

@@ -202,7 +202,7 @@ static int step_create_canvas(void *config_) {
     k__canvas.ui_viewport.w = ui_viewport_w;
     k__canvas.ui_viewport.h = ui_viewport_h;
 
-    k__canvas.current_viewport = K__CANVAS_VIEWPORT_ROOM;
+    k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
 
     return 0;
 }
