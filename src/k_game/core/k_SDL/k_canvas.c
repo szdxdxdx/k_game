@@ -17,10 +17,12 @@ struct k_canvas k__canvas;
 
 static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
 
-    SDL_Texture *t = SDL_GetRenderTarget(k__window.renderer);
-    if (t != k__canvas.canvas) {
-        SDL_SetRenderTarget(k__window.renderer, k__canvas.canvas);
-        k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
+    {
+        SDL_Texture *texture = SDL_GetRenderTarget(k__window.renderer);
+        if (texture != k__canvas.canvas) {
+            SDL_SetRenderTarget(k__window.renderer, k__canvas.canvas);
+            k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
+        }
     }
 
     switch (viewport) {
@@ -40,10 +42,13 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             }
 
             k__canvas.current_viewport = K__CANVAS_VIEWPORT_ROOM;
-            k__canvas.clip_rect.x = k__canvas.room_viewport.x;
-            k__canvas.clip_rect.y = k__canvas.room_viewport.y;
-            k__canvas.clip_rect.w = k__window.view_w;
-            k__canvas.clip_rect.h = k__window.view_h;
+            k__canvas.viewport_rect.x = k__canvas.room_viewport.x;
+            k__canvas.viewport_rect.y = k__canvas.room_viewport.y;
+            k__canvas.viewport_rect.w = k__window.view_w;
+            k__canvas.viewport_rect.h = k__window.view_h;
+
+            k__canvas.viewport_w = k__window.view_w;
+            k__canvas.viewport_h = k__window.view_h;
 
             return 0;
         }
@@ -63,10 +68,13 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             }
 
             k__canvas.current_viewport = K__CANVAS_VIEWPORT_UI;
-            k__canvas.clip_rect.x = k__canvas.ui_viewport.x;
-            k__canvas.clip_rect.y = k__canvas.ui_viewport.y;
-            k__canvas.clip_rect.w = k__canvas.ui_viewport.w;
-            k__canvas.clip_rect.h = k__canvas.ui_viewport.h;
+            k__canvas.viewport_rect.x = k__canvas.ui_viewport.x;
+            k__canvas.viewport_rect.y = k__canvas.ui_viewport.y;
+            k__canvas.viewport_rect.w = k__canvas.ui_viewport.w;
+            k__canvas.viewport_rect.h = k__canvas.ui_viewport.h;
+
+            k__canvas.viewport_w = k__canvas.ui_viewport.w;
+            k__canvas.viewport_h = k__canvas.ui_viewport.h;
 
             return 0;
         }
@@ -84,12 +92,10 @@ static void k__canvas_convert_xy(float *x, float *y) {
 
             float x_in_room = *x;
             float x_in_view = x_in_room - k__window.view_x;
-            float x_in_canvas = k__canvas.room_viewport.x + x_in_view;
             *x = x_in_view;
 
             float y_in_room = *y;
             float y_in_view = y_in_room - k__window.view_y;
-            float y_in_canvas = k__canvas.room_viewport.y + y_in_view;
             *y = y_in_view;
 
             return;
@@ -98,12 +104,10 @@ static void k__canvas_convert_xy(float *x, float *y) {
 
             float x_in_window = *x;
             float x_in_ui = x_in_window;
-            float x_in_canvas = k__canvas.ui_viewport.x + x_in_ui;
             *x = x_in_ui;
 
             float y_in_window = *y;
             float y_in_ui = y_in_window;
-            float y_in_canvas = k__canvas.ui_viewport.y + y_in_ui;
             *y = y_in_ui;
 
             return;
@@ -164,6 +168,36 @@ int k_canvas_ui_clear(void) {
 
 /* endregion */
 
+/* region [cull] */
+
+int k__canvas_cull_point(float x, float y) {
+    return x < 0.0f
+        || y < 0.0f
+        || x > k__canvas.viewport_w
+        || y > k__canvas.viewport_h;
+}
+
+int k__canvas_cull_line(float x1, float y1, float x2, float y2) {
+    return ((x1 < x2) ? (x2 < 0.0f || 0.0f + k__canvas.viewport_w < x1) : (x1 < 0.0f || 0.0f + k__canvas.viewport_w < x2))
+        || ((y1 < y2) ? (y2 < 0.0f || 0.0f + k__canvas.viewport_h < y1) : (y1 < 0.0f || 0.0f + k__canvas.viewport_h < y2));
+}
+
+int k__canvas_cull_rect(float x, float y, float w, float h) {
+    return x > k__canvas.viewport_w
+        || y > k__canvas.viewport_h
+        || x + w < 0.0f
+        || y + h < 0.0f;
+}
+
+int k__canvas_cull_circle(float cx, float cy, float r) {
+    return cx + r < 0.0f
+        || cy + r < 0.0f
+        || k__canvas.viewport_w < cx - r
+        || k__canvas.viewport_h < cy - r;
+}
+
+/* endregion */
+
 /* region [draw_graphics] */
 
 #define k__canvas_buf_capacity(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -177,10 +211,8 @@ static int k__canvas_draw_point(enum k_canvas_viewport viewport, float x, float 
 
     k__canvas_convert_xy(&x, &y);
 
-    // if (x < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x)
-    //     return 0;
-    // if (y < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y)
-    //     return 0;
+    if (k__canvas_cull_point(x, y))
+        return 0;
 
     if (0 != SDL_RenderDrawPointF(k__window.renderer, x, y)) {
         k_log_error("SDL error: %s", SDL_GetError());
@@ -225,9 +257,7 @@ static int k__canvas_draw_points(enum k_canvas_viewport viewport, const struct k
 
         k__canvas_convert_xy(&x, &y);
 
-        if (x < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x)
-            continue;
-        if (y < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y)
+        if (k__canvas_cull_point(x, y))
             continue;
 
         buf[buf_size].x = x;
@@ -275,21 +305,8 @@ static int k__canvas_draw_line(enum k_canvas_viewport viewport, float x1, float 
     k__canvas_convert_xy(&x1, &y1);
     k__canvas_convert_xy(&x2, &y2);
 
-    if (x1 < x2) {
-        if (x2 < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x1)
-            return 0;
-    } else {
-        if (x1 < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x2)
-            return 0;
-    }
-
-    if (y1 < y2) {
-        if (y2 < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y1)
-            return 0;
-    } else {
-        if (y1 < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y2)
-            return 0;
-    }
+    if (k__canvas_cull_line(x1, y1, x2, y2))
+        return 0;
 
     if (0 != SDL_RenderDrawLineF(k__window.renderer, x1, y1, x2, y2)) {
         k_log_error("SDL error: %s", SDL_GetError());
@@ -388,9 +405,9 @@ static int k__canvas_draw_rect(enum k_canvas_viewport viewport, float x, float y
 
     k__canvas_convert_xy(&x, &y);
 
-    if (x + w < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x)
+    if (x + w < k__canvas.viewport_rect.x || k__canvas.viewport_rect.x + k__canvas.viewport_rect.w < x)
         return 0;
-    if (y + h < k__canvas.clip_rect.x || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y)
+    if (y + h < k__canvas.viewport_rect.x || k__canvas.viewport_rect.y + k__canvas.viewport_rect.h < y)
         return 0;
 
     SDL_FRect rect;
@@ -429,10 +446,8 @@ static int k__canvas_fill_rect(enum k_canvas_viewport viewport, float x, float y
 
     k__canvas_convert_xy(&x, &y);
 
-    // if (x + w < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x)
-    //     return 0;
-    // if (y + h < k__canvas.clip_rect.x || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y)
-    //     return 0;
+    if (k__canvas_cull_rect(x, y, w, h))
+        return 0;
 
     SDL_FRect rect;
     rect.x = x;
@@ -470,9 +485,7 @@ static int k__canvas_draw_circle(enum k_canvas_viewport viewport, float cx, floa
 
     k__canvas_convert_xy(&cx, &cy);
 
-    if (cx + r < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < cx - r)
-        return 0;
-    if (cy + r < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < cy - r)
+    if (k__canvas_cull_circle(cx, cy, r))
         return 0;
 
     /* 数组大小应是 8 的倍数，因为每轮循环都会往 buf 中添加 8 个点 */
@@ -572,9 +585,7 @@ static int k__canvas_draw_image(enum k_canvas_viewport viewport, struct k_image 
         dst.w = (float)image->image_w;
         dst.h = (float)image->image_h;
 
-        if (k__canvas.clip_rect.x + k__canvas.clip_rect.w < dst.x || dst.x + dst.w < k__canvas.clip_rect.x)
-            return 0;
-        if (k__canvas.clip_rect.y + k__canvas.clip_rect.h < dst.y || dst.y + dst.h < k__canvas.clip_rect.y)
+        if (k__canvas_cull_rect(dst.x, dst.y, dst.w, dst.h))
             return 0;
 
         if (0 != SDL_RenderCopyF(k__window.renderer, image->texture, &src, &dst)) {
@@ -586,10 +597,7 @@ static int k__canvas_draw_image(enum k_canvas_viewport viewport, struct k_image 
         if (options->scaled_w <= 0.0f || options->scaled_h <= 0.0f)
             return 0;
 
-        float R = (options->scaled_w + options->scaled_h) / 2.0f;
-        if (x + R < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x - R)
-            return 0;
-        if (y + R < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.y < y - R)
+        if (k__canvas_cull_circle(x, y, (options->scaled_w + options->scaled_h) / 2.0f))
             return 0;
 
         SDL_FRect dst;
@@ -650,9 +658,7 @@ static int k__canvas_draw_sprite(enum k_canvas_viewport viewport, struct k_sprit
         dst.w = (float)sprite->sprite_w;
         dst.h = (float)sprite->sprite_h;
 
-        if (k__canvas.clip_rect.x + k__canvas.clip_rect.w < dst.x || dst.x + dst.w < k__canvas.clip_rect.x)
-            return 0;
-        if (k__canvas.clip_rect.y + k__canvas.clip_rect.h < dst.y || dst.y + dst.h < k__canvas.clip_rect.y)
+        if (k__canvas_cull_rect(dst.x, dst.y, dst.w, dst.h))
             return 0;
 
         SDL_Rect src;
@@ -689,9 +695,8 @@ static int k__canvas_draw_sprite(enum k_canvas_viewport viewport, struct k_sprit
             float half_w = options->scaled_w / 2.0f;
             float half_h = options->scaled_h / 2.0f;
             float R = half_w + half_h + fabsf(origin_x - half_w) + fabsf(origin_y - half_h);
-            if (x + R < k__canvas.clip_rect.x || k__canvas.clip_rect.x + k__canvas.clip_rect.w < x - R)
-                return 0;
-            if (y + R < k__canvas.clip_rect.y || k__canvas.clip_rect.y + k__canvas.clip_rect.h < y - R)
+
+            if (k__canvas_cull_circle(x, y, R))
                 return 0;
         }
 
@@ -749,7 +754,6 @@ void k__canvas_present(void) {
     ui.w = (int)(k__canvas.ui_viewport.w);
     ui.h = (int)(k__canvas.ui_viewport.h);
     SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &ui, NULL);
-    // SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, NULL, NULL);
 
     SDL_RenderPresent(k__window.renderer);
 

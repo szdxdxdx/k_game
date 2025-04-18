@@ -13,11 +13,17 @@ struct k_canvas {
 
     SDL_Texture *canvas;
 
+    /* 将画布分为左右两个区域，左边绘制房间，右边绘制 ui */
+
     SDL_FRect room_viewport;
     SDL_FRect ui_viewport;
+
     enum k_canvas_viewport current_viewport;
 
-    SDL_FRect clip_rect;
+    SDL_FRect viewport_rect;
+
+    float viewport_w;
+    float viewport_h;
 };
 
 extern struct k_canvas k__canvas;
