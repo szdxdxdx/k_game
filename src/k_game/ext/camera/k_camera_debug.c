@@ -15,7 +15,7 @@ static void k__camera_auto_follow_debug_draw(struct k_camera *camera) {
         goto draw_view_center;
 
     k_canvas_set_draw_color_rgba(0x39c5bbff);
-    k_canvas_draw_circle(dst_x, dst_y, r);
+    k_canvas_room_draw_circle(dst_x, dst_y, r);
 
     if (NULL == camera->primary_target) {
 
@@ -25,7 +25,7 @@ static void k__camera_auto_follow_debug_draw(struct k_camera *camera) {
 
             float target_x = *target->x;
             float target_y = *target->y;
-            k_canvas_draw_line(target_x, target_y, dst_x, dst_y);
+            k_canvas_room_draw_line(target_x, target_y, dst_x, dst_y);
         }
     }
     else {
@@ -51,7 +51,7 @@ static void k__camera_auto_follow_debug_draw(struct k_camera *camera) {
                 if (target_y > view_bottom) continue;
             }
 
-            k_canvas_draw_line(target_x, target_y, dst_x, dst_y);
+            k_canvas_room_draw_line(target_x, target_y, dst_x, dst_y);
         }
     }
 
@@ -62,9 +62,9 @@ draw_view_center:
         k_view_get_position(&view_cx, &view_cy);
 
         k_canvas_set_draw_color_rgba(0xffdd66ff);
-        k_canvas_draw_circle(view_cx, view_cy, 2 * r);
+        k_canvas_room_draw_circle(view_cx, view_cy, 2 * r);
         if (dst_x != view_cx || dst_y != view_cy) {
-            k_canvas_draw_line(view_cx, view_cy, dst_x, dst_y);
+            k_canvas_room_draw_line(view_cx, view_cy, dst_x, dst_y);
         }
     }
 }

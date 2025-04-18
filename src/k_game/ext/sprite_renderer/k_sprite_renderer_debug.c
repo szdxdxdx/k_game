@@ -94,7 +94,7 @@ draw_rect:
             { x4, y4 },
             { x1, y1 },
         };
-        k_canvas_draw_lines(points, 5);
+        k_canvas_room_draw_lines(points, 5);
     }
 
 draw_position:
@@ -113,8 +113,8 @@ draw_position:
         y3 = dst_y - len_c;
         x4 = dst_x - len_s;
         y4 = dst_y + len_c;
-        k_canvas_draw_line(x1, y1, x2, y2);
-        k_canvas_draw_line(x3, y3, x4, y4);
+        k_canvas_room_draw_line(x1, y1, x2, y2);
+        k_canvas_room_draw_line(x3, y3, x4, y4);
     }
 }
 

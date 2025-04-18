@@ -61,10 +61,9 @@ static inline uint32_t k_canvas_get_draw_color_rgba(void) {
 /**
  * \brief 清空房间画布内容
  *
- * 用当前画笔的颜色覆盖房间画布。
- * 若成功，函数返回 0，否则返回非 0。
+ * 用当前画笔的颜色覆盖房间。若成功，函数返回 0，否则返回非 0。
  */
-int k_canvas_clear(void);
+int k_canvas_room_clear(void);
 
 /**
  * \brief 在房间内绘制一个点
@@ -72,7 +71,7 @@ int k_canvas_clear(void);
  * `(x, y)` 为点的坐标。
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
-int k_canvas_draw_point(float x, float y);
+int k_canvas_room_draw_point(float x, float y);
 
 /**
  * \brief 在房间内绘制多个点
@@ -80,7 +79,7 @@ int k_canvas_draw_point(float x, float y);
  * `points` 为点坐标的数组，`points_num` 指定数组长度。
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
-int k_canvas_draw_points(const struct k_float_point *points, size_t points_num);
+int k_canvas_room_draw_points(const struct k_float_point *points, size_t points_num);
 
 /**
  * \brief 在房间内绘制一条线段
@@ -88,7 +87,7 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num);
  * `(x1, y1)` 和 `(x2, y2)` 为线段的两个端点坐标。
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
-int k_canvas_draw_line(float x1, float y1, float x2, float y2);
+int k_canvas_room_draw_line(float x1, float y1, float x2, float y2);
 
 /**
  * \brief 在房间内连续绘制多条线段
@@ -101,7 +100,7 @@ int k_canvas_draw_line(float x1, float y1, float x2, float y2);
  *
  * 提示：若要绘制任意多边形，可以令 `points` 中始末两点的坐标相同。
  */
-int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num);
+int k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_num);
 
 /**
  * \brief 在房间内绘制一个轴对齐矩形
@@ -112,9 +111,9 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num);
  * 若绘制成功，函数返回 0，否则返回非 0。
  *
  * 提示：若想通过一组对角坐标来绘制矩形，或是绘制旋转的矩形，
- * 你可以使用 `k_canvas_draw_lines()` 来绘制矩形的边。
+ * 你可以使用 `k_canvas_room_draw_lines()` 来绘制矩形的边。
  */
-int k_canvas_draw_rect(float x, float y, float w, float h);
+int k_canvas_room_draw_rect(float x, float y, float w, float h);
 
 /**
  * \brief 在房间内绘制一个填充的轴对齐矩形
@@ -124,7 +123,7 @@ int k_canvas_draw_rect(float x, float y, float w, float h);
  *
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
-int k_canvas_fill_rect(float x, float y, float w, float h);
+int k_canvas_room_fill_rect(float x, float y, float w, float h);
 
 /**
  * \brief 在房间内绘制一个圆
@@ -134,7 +133,7 @@ int k_canvas_fill_rect(float x, float y, float w, float h);
  *
  * 若绘制成功，函数返回 0，否则返回非 0。
  */
-int k_canvas_draw_circle(float cx, float cy, float r);
+int k_canvas_room_draw_circle(float cx, float cy, float r);
 
 /* endregion */
 
@@ -153,7 +152,7 @@ struct k_canvas_draw_image_options;
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
-int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options);
+int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options);
 
 /** \brief 用于指定在绘制图片时应用的变换效果 */
 struct k_canvas_draw_image_options {
@@ -209,7 +208,7 @@ struct k_canvas_draw_sprite_options;
  *
  * 若成功，函数返回 0，否则返回非 0。
  */
-int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options);
+int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options);
 
 /** \brief 用于指定在绘制精灵帧时应用的变换效果 */
 struct k_canvas_draw_sprite_options {

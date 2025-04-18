@@ -208,7 +208,7 @@ void llk_ui_elem_layout(struct llk_ui_elem *elem) {
 void llk_ui_elem_paint(struct llk_ui_elem *elem) {
 
     k_canvas_set_draw_color_rgba(elem->background_color);
-    k_canvas_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
+    k_canvas_room_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
 
     size_t i = 0;
     for (; i < elem->children.size; i++) {

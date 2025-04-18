@@ -10,7 +10,7 @@
 static void draw_background(void *unused) {
     (void)unused;
     k_canvas_set_draw_color_rgba(0x1e1e1eff);
-    k_canvas_clear();
+    k_canvas_room_clear();
 }
 
 static struct llk_ui_context *ui;

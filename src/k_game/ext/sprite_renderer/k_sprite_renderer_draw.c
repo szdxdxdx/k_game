@@ -46,7 +46,7 @@ static void k__sprite_renderer_draw_sprite(struct k_component *component) {
     }
 
     if (transform_none == renderer->transform_flags) {
-        k_canvas_draw_sprite(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
+        k_canvas_room_draw_sprite(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
     }
     else {
         struct k_canvas_draw_sprite_options opts;
@@ -55,7 +55,7 @@ static void k__sprite_renderer_draw_sprite(struct k_component *component) {
         opts.angle    = renderer->angle;
         opts.flip_x   = renderer->transform_flags & transform_flip_x;
         opts.flip_y   = renderer->transform_flags & transform_flip_y;
-        k_canvas_draw_sprite(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
+        k_canvas_room_draw_sprite(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
     }
 
     if (NULL != fn_loop_callback) {

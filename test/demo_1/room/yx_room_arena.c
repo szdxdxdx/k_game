@@ -12,7 +12,7 @@ static void draw_background(void *unused) {
     (void)unused;
 
     k_canvas_set_draw_color_rgba(0x1e1e1eff);
-    k_canvas_clear();
+    k_canvas_room_clear();
 
     k_canvas_set_draw_color_rgba(0x323333ff);
 
@@ -30,14 +30,14 @@ static void draw_background(void *unused) {
     float x = floorf(view_x / grid_size) * grid_size;
     float x_to   = ceilf((view_x + view_w) / grid_size) * grid_size;
     while (x < x_to) {
-        k_canvas_draw_line(x, 0, x, h);
+        k_canvas_room_draw_line(x, 0, x, h);
         x += grid_size;
     }
 
     float y = floorf(view_y / grid_size) * grid_size;
     float y_to = ceilf((view_y + view_h) / grid_size) * grid_size;
     while (y < y_to) {
-        k_canvas_draw_line(0, y, w, y);
+        k_canvas_room_draw_line(0, y, w, y);
         y += grid_size;
     }
 }

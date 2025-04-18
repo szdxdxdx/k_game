@@ -11,8 +11,8 @@ static void k__collision_draw_box(struct k_collision_box *box) {
             float x = *(box->x) + box->point.offset_x;
             float y = *(box->y) + box->point.offset_y;
             float r = 1.0f;
-            k_canvas_draw_line(x - r, y, x + r, y);
-            k_canvas_draw_line(x, y - r, x, y + r);
+            k_canvas_room_draw_line(x - r, y, x + r, y);
+            k_canvas_room_draw_line(x, y - r, x, y + r);
             break;
         }
         case K__COLLISION_LINE: {
@@ -20,7 +20,7 @@ static void k__collision_draw_box(struct k_collision_box *box) {
             float y1 = *(box->y) + box->line.offset_y1;
             float x2 = *(box->x) + box->line.offset_x2;
             float y2 = *(box->y) + box->line.offset_y2;
-            k_canvas_draw_line(x1, y1, x2, y2);
+            k_canvas_room_draw_line(x1, y1, x2, y2);
             break;
         }
         case K__COLLISION_RECTANGLE: {
@@ -30,14 +30,14 @@ static void k__collision_draw_box(struct k_collision_box *box) {
             float h = box->rect.offset_y2 - box->rect.offset_y1;
             if (w < 0) { x += w; w = -w; }
             if (h < 0) { y += h; h = -h; }
-            k_canvas_draw_rect(x, y, w, h);
+            k_canvas_room_draw_rect(x, y, w, h);
             break;
         }
         case K__COLLISION_CIRCLE: {
             float cx = *(box->x) + box->circle.offset_cx;
             float cy = *(box->y) + box->circle.offset_cy;
             float r  = box->circle.r;
-            k_canvas_draw_circle(cx, cy, r);
+            k_canvas_room_draw_circle(cx, cy, r);
             break;
         }
     }

@@ -24,7 +24,7 @@ void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
 
 /* region [draw_graphics] */
 
-int k_canvas_clear(void) {
+int k_canvas_room_clear(void) {
 
     if (0 != SDL_RenderClear(k__window.renderer)) {
         k_log_error("SDL error: %s", SDL_GetError());
@@ -36,7 +36,7 @@ int k_canvas_clear(void) {
 
 #define k__canvas_buf_capacity(arr) (sizeof(arr) / sizeof(arr[0]))
 
-int k_canvas_draw_point(float x, float y) {
+int k_canvas_room_draw_point(float x, float y) {
 
     x -= k__window.view_x;
     y -= k__window.view_y;
@@ -54,7 +54,7 @@ int k_canvas_draw_point(float x, float y) {
     return 0;
 }
 
-int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) {
+int k_canvas_room_draw_points(const struct k_float_point *points, size_t points_num) {
 
     if (NULL == points)
         return -1;
@@ -102,7 +102,7 @@ int k_canvas_draw_points(const struct k_float_point *points, size_t points_num) 
     return 0;
 }
 
-int k_canvas_draw_line(float x1, float y1, float x2, float y2) {
+int k_canvas_room_draw_line(float x1, float y1, float x2, float y2) {
 
     x1 -= k__window.view_x;
     y1 -= k__window.view_y;
@@ -122,7 +122,7 @@ int k_canvas_draw_line(float x1, float y1, float x2, float y2) {
     return 0;
 }
 
-int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
+int k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_num) {
 
     if (NULL == points)
         return -1;
@@ -169,7 +169,7 @@ int k_canvas_draw_lines(const struct k_float_point *points, size_t points_num) {
     return 0;
 }
 
-int k_canvas_draw_rect(float x, float y, float w, float h) {
+int k_canvas_room_draw_rect(float x, float y, float w, float h) {
 
     if (w <= 0.0f || h <= 0.0f)
         return 0;
@@ -196,7 +196,7 @@ int k_canvas_draw_rect(float x, float y, float w, float h) {
     return 0;
 }
 
-int k_canvas_fill_rect(float x, float y, float w, float h) {
+int k_canvas_room_fill_rect(float x, float y, float w, float h) {
 
     if (w <= 0.0f || h <= 0.0f)
         return 0;
@@ -223,7 +223,7 @@ int k_canvas_fill_rect(float x, float y, float w, float h) {
     return 0;
 }
 
-int k_canvas_draw_circle(float cx, float cy, float r) {
+int k_canvas_room_draw_circle(float cx, float cy, float r) {
 
     if (r <= 0.0f)
         return 0;
@@ -286,7 +286,7 @@ int k_canvas_draw_circle(float cx, float cy, float r) {
 
 /* region [draw_image] */
 
-int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
+int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
 
     if (NULL == image)
         return -1;
@@ -366,7 +366,7 @@ int k_canvas_draw_image(struct k_image *image, const struct k_int_rect *src_rect
 
 /* region [draw_sprite] */
 
-int k_canvas_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
+int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
 
     if (NULL == sprite)
         return -1;
