@@ -26,9 +26,9 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             SDL_Rect clip;
             clip.x = (int)k__canvas.room_viewport.x;
             clip.y = (int)k__canvas.room_viewport.y;
-            clip.w = (int)k__window.view_w;
-            clip.h = (int)k__window.view_h;
-            if (SDL_RenderSetViewport(k__window.renderer, &clip)) {
+            clip.w = (int)k__canvas.room_viewport.w;
+            clip.h = (int)k__canvas.room_viewport.h;
+            if (SDL_RenderSetClipRect(k__window.renderer, &clip)) {
                 k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
             }
@@ -36,8 +36,8 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             k__canvas.current_viewport = K__CANVAS_VIEWPORT_ROOM;
             k__canvas.clip_rect.x = k__canvas.room_viewport.x;
             k__canvas.clip_rect.y = k__canvas.room_viewport.y;
-            k__canvas.clip_rect.w = k__window.view_w;
-            k__canvas.clip_rect.h = k__window.view_h;
+            k__canvas.clip_rect.w = k__canvas.room_viewport.w;
+            k__canvas.clip_rect.h = k__canvas.room_viewport.h;
 
             return 0;
         }
@@ -51,7 +51,7 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             clip.y = (int)k__canvas.ui_viewport.y;
             clip.w = (int)k__canvas.ui_viewport.w;
             clip.h = (int)k__canvas.ui_viewport.h;
-            if (SDL_RenderSetViewport(k__window.renderer, &clip)) {
+            if (SDL_RenderSetClipRect(k__window.renderer, &clip)) {
                 k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
             }
@@ -79,12 +79,12 @@ static void k__canvas_convert_xy(float *x, float *y) {
             float x_in_room = *x;
             float x_in_view = x_in_room - k__window.view_x;
             float x_in_canvas = k__canvas.room_viewport.x + x_in_view;
-            *x = x_in_view;
+            *x = x_in_canvas;
 
             float y_in_room = *y;
             float y_in_view = y_in_room - k__window.view_y;
             float y_in_canvas = k__canvas.room_viewport.y + y_in_view;
-            *y = y_in_view;
+            *y = y_in_canvas;
 
             return;
         }
