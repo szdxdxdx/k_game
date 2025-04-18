@@ -10,7 +10,7 @@
  * 例如，k_game 不会直接识别出 `#`，而是识别出 `shift` 和 `3`。
  *
  * `K_KEY_UNUSED_XXX` 一类的键码仅用作占位，不对应任何按键。
- * `K_KEY_ENUM_END` 仅表示枚举值的个数，不对应任何按键。
+ * `K_KEY_ENUM_END` 用来表示最后一个枚举值，不对应任何按键。
  */
 enum k_keyboard_key {
 
@@ -150,7 +150,7 @@ enum k_keyboard_key {
     K_KEY_F11            ,
     K_KEY_F12            ,
 
-    K_KEY_ENUM_END,
+    K_KEY_ENUM_END       = K_KEY_F12,
 };
 
 /* 按下按键 */

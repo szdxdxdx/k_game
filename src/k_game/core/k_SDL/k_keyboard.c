@@ -1,6 +1,7 @@
-
 #include "k_game/core/k_keyboard.h"
 #include "./k_keyboard.h"
+
+struct k_keyboard_context k__keyboard;
 
 static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
 
@@ -142,20 +143,6 @@ static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
         default: return K_KEY_ENUM_END;
     }
 }
-
-struct k_keyboard_context {
-
-    /* 记录键盘按键状态
-     *
-     * 每个按键用 3 个 bit 记录状态：
-     * - 0b100 表示该按键在上一帧被按下或按住
-     * - 0b010 表示该按键在这一帧被按下
-     * - 0b001 表示该按键在这一帧抬起
-     */
-    uint8_t key_state[SDL_NUM_SCANCODES];
-};
-
-static struct k_keyboard_context k__keyboard;
 
 static void refresh_key_state(enum k_keyboard_key key) {
 

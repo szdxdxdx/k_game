@@ -62,6 +62,8 @@ int k_view_fit_rect(float w, float h) {
     k__mouse.room_x = k__mouse.view_x + k__window.view_x;
     k__mouse.room_y = k__mouse.view_y + k__window.view_y;
 
+    k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
+
     return 0;
 }
 

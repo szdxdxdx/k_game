@@ -18,10 +18,10 @@ struct k_canvas k__canvas;
 static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
 
     if (SDL_GetRenderTarget(k__window.renderer) != k__canvas.canvas) {
+        k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
+
         if (0 != SDL_SetRenderTarget(k__window.renderer, k__canvas.canvas))
             goto SDL_error;
-
-        k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
     }
 
     switch (viewport) {
@@ -33,12 +33,13 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             if (K__CANVAS_VIEWPORT_ROOM == k__canvas.current_viewport)
                 return 0;
 
-            SDL_Rect clip;
-            clip.x = (int)k__canvas.room_viewport.x;
-            clip.y = (int)k__canvas.room_viewport.y;
-            clip.w = (int)k__window.view_w;
-            clip.h = (int)k__window.view_h;
-            if (SDL_RenderSetViewport(k__window.renderer, &clip))
+            SDL_Rect viewport_rect;
+            viewport_rect.x = (int)k__canvas.room_viewport.x;
+            viewport_rect.y = (int)k__canvas.room_viewport.y;
+            viewport_rect.w = (int)k__window.view_w;
+            viewport_rect.h = (int)k__window.view_h;
+
+            if (SDL_RenderSetViewport(k__window.renderer, &viewport_rect))
                 goto SDL_error;
 
             k__canvas.current_viewport = K__CANVAS_VIEWPORT_ROOM;
@@ -51,12 +52,13 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
             if (K__CANVAS_VIEWPORT_UI == k__canvas.current_viewport)
                 return 0;
 
-            SDL_Rect clip;
-            clip.x = (int)k__canvas.ui_viewport.x;
-            clip.y = (int)k__canvas.ui_viewport.y;
-            clip.w = (int)k__canvas.ui_viewport.w;
-            clip.h = (int)k__canvas.ui_viewport.h;
-            if (SDL_RenderSetViewport(k__window.renderer, &clip))
+            SDL_Rect viewport_rect;
+            viewport_rect.x = (int)k__canvas.ui_viewport.x;
+            viewport_rect.y = (int)k__canvas.ui_viewport.y;
+            viewport_rect.w = (int)k__canvas.ui_viewport.w;
+            viewport_rect.h = (int)k__canvas.ui_viewport.h;
+
+            if (SDL_RenderSetViewport(k__window.renderer, &viewport_rect))
                 goto SDL_error;
 
             k__canvas.current_viewport = K__CANVAS_VIEWPORT_UI;
@@ -721,6 +723,7 @@ int k_canvas_ui_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, 
 void k__canvas_present(void) {
 
     SDL_SetRenderTarget(k__window.renderer, NULL);
+    k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
 
     SDL_Rect room_view;
     room_view.x = (int)(k__canvas.room_viewport.x);
@@ -737,9 +740,6 @@ void k__canvas_present(void) {
     SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &ui, NULL);
 
     SDL_RenderPresent(k__window.renderer);
-
-    SDL_SetRenderTarget(k__window.renderer, k__canvas.canvas);
-    k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
 }
 
 /* endregion */

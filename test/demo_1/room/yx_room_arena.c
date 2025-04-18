@@ -11,13 +11,14 @@
 static void draw_background(void *unused) {
     (void)unused;
 
-    k_canvas_set_draw_color_rgba(0x1e1e1eff);
-    k_canvas_room_clear();
-
     k_canvas_set_draw_color_rgba(0x00000000);
     k_canvas_ui_clear();
-    k_canvas_set_draw_color_rgba(0xff0000ff);
+
+    k_canvas_set_draw_color_rgba(0xee0000ff);
     k_canvas_ui_fill_rect(0, 0, 100, 100);
+
+    k_canvas_set_draw_color_rgba(0x1e1e1eff);
+    k_canvas_room_clear();
 
     float view_x;
     float view_y;
@@ -33,7 +34,7 @@ static void draw_background(void *unused) {
     k_canvas_set_draw_color_rgba(0x323333ff);
 
     float x = floorf(view_x / grid_size) * grid_size;
-    float x_to   = ceilf((view_x + view_w) / grid_size) * grid_size;
+    float x_to = ceilf((view_x + view_w) / grid_size) * grid_size;
     while (x < x_to) {
         k_canvas_room_draw_line(x, 0, x, h);
         x += grid_size;
@@ -77,9 +78,7 @@ static int init_arena_room(void *params) {
 
     {
         struct yx_obj_bubble_maker_config config;
-        // yx_create_bubble_maker(&config);
-
-        yx_create_bubble(300, 300);
+        yx_create_bubble_maker(&config);
     }
 
     {
@@ -121,13 +120,6 @@ static int init_arena_room(void *params) {
     return 0;
 }
 
-static void enter_arena_room(void) {
-    struct yx_room_arena *room_arena = k_room_get_data();
-
-    //struct yx_obj_player *player = k_object_get_data(room_arena->player);
-    //k_view_set_position(player->x, player->y);
-}
-
 struct k_room *yx_create_arena_room(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
@@ -135,7 +127,6 @@ struct k_room *yx_create_arena_room(void) {
     config.room_h    = 1080 * 1.5f;
     config.data_size = sizeof(struct yx_room_arena);
     config.fn_init   = init_arena_room;
-    config.fn_enter  = enter_arena_room;
 
     return k_room_create(&config, NULL);
 }
