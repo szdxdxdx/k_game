@@ -190,7 +190,11 @@ static int step_create_canvas(void *config_) {
         return -1;
     }
 
-    SDL_SetTextureBlendMode(canvas, SDL_BLENDMODE_BLEND);
+    if (0 != SDL_SetTextureBlendMode(canvas, SDL_BLENDMODE_BLEND)) {
+        SDL_DestroyTexture(canvas);
+        k_log_error("SDL error: %s", SDL_GetError());
+        return -1;
+    }
 
     k__canvas.canvas = canvas;
 
@@ -205,9 +209,6 @@ static int step_create_canvas(void *config_) {
     k__canvas.ui_viewport.h = ui_viewport_h;
 
     k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
-
-    SDL_SetRenderTarget(k__window.renderer, canvas);
-
     return 0;
 }
 
@@ -230,7 +231,7 @@ static int step_init_view(void *unused) {
 }
 
 static struct k_seq_step steps[] = {
-    { step_before_init, NULL                  },
+    { step_before_init,     NULL                  },
     { step_init_SDL,        step_quit_SDL         },
     { step_init_SDL_img,    step_quit_SDL_img     },
     { step_init_SDL_mix,    step_quit_SDL_mix     },

@@ -11,8 +11,7 @@
 static void draw_background(void *unused) {
     (void)unused;
 
-    // k_canvas_set_draw_color_rgba(0x1e1e1eff);
-    k_canvas_set_draw_color_rgba(0xcc66ffff);
+    k_canvas_set_draw_color_rgba(0x1e1e1eff);
     k_canvas_room_clear();
 
     k_canvas_set_draw_color_rgba(0x00000000);
