@@ -124,8 +124,6 @@ static void enter_arena_room(void) {
 struct k_room *yx_create_arena_room(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_w    = 1920 * 1.5f;
-    config.room_h    = 1080 * 1.5f;
     config.data_size = sizeof(struct yx_room_arena);
     config.fn_init   = init_arena_room;
     config.fn_enter  = enter_arena_room;

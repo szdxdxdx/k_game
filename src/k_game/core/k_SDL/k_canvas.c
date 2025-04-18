@@ -72,7 +72,6 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
 }
 
 static void k__canvas_convert_xy(float *x, float *y) {
-    return;
 
     switch (k__canvas.current_viewport) {
         case K__CANVAS_VIEWPORT_ROOM: {
@@ -80,12 +79,12 @@ static void k__canvas_convert_xy(float *x, float *y) {
             float x_in_room = *x;
             float x_in_view = x_in_room - k__window.view_x;
             float x_in_canvas = k__canvas.room_viewport.x + x_in_view;
-            *x = x_in_canvas;
+            *x = x_in_view;
 
             float y_in_room = *y;
             float y_in_view = y_in_room - k__window.view_y;
             float y_in_canvas = k__canvas.room_viewport.y + y_in_view;
-            *y = y_in_canvas;
+            *y = y_in_view;
 
             return;
         }
