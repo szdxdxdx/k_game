@@ -40,7 +40,7 @@ void k__camera_target_fini(struct k_component *component) {
     camera->targets_num -= 1;
 }
 
-struct k_camera_target *k_camera_add_follow_object(struct k_object *object, float *x, float *y) {
+struct k_camera_target *k_camera_add_follow_target(struct k_object *object, float *x, float *y) {
 
     if (NULL == x || NULL == y)
         return NULL;
@@ -52,11 +52,6 @@ struct k_camera_target *k_camera_add_follow_object(struct k_object *object, floa
         return NULL;
 
     return k_component_get_data(component);
-}
-
-struct k_camera_target *k_camera_add_follow_target(float *x, float *y) {
-    /* TODO */
-    return NULL;
 }
 
 void k_camera_del_target(struct k_camera_target *target) {

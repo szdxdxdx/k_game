@@ -27,7 +27,7 @@
  * 行为树把 if-else 的判断和执行拆分开来，变成可以单独设计、任意组装的小模块，
  * 内置的 RUNNING 状态码机制使得需要 while 循环执行的耗时任务能被分步分帧执行。
  *
- * k_behavior_tree 的本质其实是一个 k_object。它没有外观，仅用于控制游戏的运作。
+ * k_behavior_tree 的本质是 k_object。它没有外观，仅用于控制游戏的运作。
  *
  * TODO k_behavior_tree
  *

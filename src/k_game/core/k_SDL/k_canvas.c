@@ -16,6 +16,8 @@
 
 struct k_canvas k__canvas;
 
+/* region [canvas_set_viewport] */
+
 static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
 
     if (SDL_GetRenderTarget(k__window.renderer) != k__canvas.canvas) {
@@ -83,11 +85,17 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
 static void k__canvas_convert_xy(float *x, float *y) {
 
     switch (k__canvas.current_viewport) {
-        case K__CANVAS_VIEWPORT_ROOM:
+        case K__CANVAS_VIEWPORT_ROOM: {
+
+            /* `(x, y)` 为在房间中的坐标，需将其转换为在视野中的坐标，
+             * SDL 会根据画布限定的视口调整坐标，所以这里不需要再转换为在画布中的坐标
+             */
             *x -= k__view.view_x;
             *y -= k__view.view_y;
             break;
+        }
         case K__CANVAS_VIEWPORT_UI: {
+            /* `(x, y)` 是在 UI 界面中的坐标，UI 界面、游戏窗口与画布的 UI 视口尺寸一致，不需要转换 */
             break;
         }
         default: {
@@ -96,16 +104,16 @@ static void k__canvas_convert_xy(float *x, float *y) {
     }
 }
 
-/* region [set_color] */
+/* endregion */
 
-int k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+/* region [canvas_set_color] */
+
+void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 
     if (0 != SDL_SetRenderDrawColor(k__window.renderer, r, g, b, a)) {
         k_log_error("SDL error: %s", SDL_GetError());
-        return -1;
+        assert(0);
     }
-
-    return 0;
 }
 
 void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
@@ -114,47 +122,63 @@ void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
 
 /* endregion */
 
-/* region [clear] */
+/* region [canvas_clear] */
 
-int k_canvas_room_clear(void) {
+void k_canvas_room_clear(void) {
 
-    if (0 != k__canvas_set_viewport(K__CANVAS_VIEWPORT_ROOM))
-        return -1;
+    if (0 != k__canvas_set_viewport(K__CANVAS_VIEWPORT_ROOM)) {
+        assert(0);
+        return;
+    }
 
-    if (0 != SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_NONE))
-        goto SDL_error;
-    if (0 != SDL_RenderFillRectF(k__window.renderer, NULL))
-        goto SDL_error;
-    if (0 != SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_BLEND))
-        goto SDL_error;
+    if (0 != SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_NONE)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+        return;
+    }
 
-    return 0;
+    if (0 != SDL_RenderFillRectF(k__window.renderer, NULL)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+        return;
+    }
 
-SDL_error:
-    k_log_error("SDL error: %s", SDL_GetError());
-    return -1;
+    if (0 != SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_BLEND)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+        return;
+    }
 }
 
-int k_canvas_ui_clear(void) {
+void k_canvas_ui_clear(void) {
 
-    if (0 != k__canvas_set_viewport(K__CANVAS_VIEWPORT_UI))
-        return -1;
+    if (0 != k__canvas_set_viewport(K__CANVAS_VIEWPORT_UI)) {
+        assert(0);
+        return;
+    }
 
-    if (0 != SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_NONE))
-        goto SDL_error;
-    if (0 != SDL_RenderFillRectF(k__window.renderer, NULL))
-        goto SDL_error;
-    if (SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_BLEND))
-        goto SDL_error;
+    if (0 != SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_NONE)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+        return;
+    }
 
-    return 0;
+    if (0 != SDL_RenderFillRectF(k__window.renderer, NULL)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+        return;
+    }
 
-SDL_error:
-    k_log_error("SDL error: %s", SDL_GetError());
-    return -1;
+    if (SDL_SetRenderDrawBlendMode(k__window.renderer, SDL_BLENDMODE_BLEND)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+        return;
+    }
 }
 
 /* endregion */
+
+/* region [canvas_draw] */
 
 /* region [cull] */
 
@@ -210,12 +234,12 @@ static int k__canvas_draw_point(enum k_canvas_viewport viewport, float x, float 
     return 0;
 }
 
-int k_canvas_room_draw_point(float x, float y) {
-    return k__canvas_draw_point(K__CANVAS_VIEWPORT_ROOM, x, y);
+void k_canvas_room_draw_point(float x, float y) {
+    k__canvas_draw_point(K__CANVAS_VIEWPORT_ROOM, x, y);
 }
 
-int k_canvas_ui_draw_point(float x, float y) {
-    return k__canvas_draw_point(K__CANVAS_VIEWPORT_UI, x, y);
+void k_canvas_ui_draw_point(float x, float y) {
+    k__canvas_draw_point(K__CANVAS_VIEWPORT_UI, x, y);
 }
 
 /* endregion */
@@ -273,12 +297,12 @@ static int k__canvas_draw_points(enum k_canvas_viewport viewport, const struct k
     return 0;
 }
 
-int k_canvas_room_draw_points(const struct k_float_point *points, size_t points_num) {
-    return k__canvas_draw_points(K__CANVAS_VIEWPORT_ROOM, points, points_num);
+void k_canvas_room_draw_points(const struct k_float_point *points, size_t points_num) {
+    k__canvas_draw_points(K__CANVAS_VIEWPORT_ROOM, points, points_num);
 }
 
-int k_canvas_ui_draw_points(const struct k_float_point *points, size_t points_num) {
-    return k__canvas_draw_points(K__CANVAS_VIEWPORT_UI, points, points_num);
+void k_canvas_ui_draw_points(const struct k_float_point *points, size_t points_num) {
+    k__canvas_draw_points(K__CANVAS_VIEWPORT_UI, points, points_num);
 }
 
 /* endregion */
@@ -304,12 +328,12 @@ static int k__canvas_draw_line(enum k_canvas_viewport viewport, float x1, float 
     return 0;
 }
 
-int k_canvas_room_draw_line(float x1, float y1, float x2, float y2) {
-    return k__canvas_draw_line(K__CANVAS_VIEWPORT_ROOM, x1, y1, x2, y2);
+void k_canvas_room_draw_line(float x1, float y1, float x2, float y2) {
+    k__canvas_draw_line(K__CANVAS_VIEWPORT_ROOM, x1, y1, x2, y2);
 }
 
-int k_canvas_ui_draw_line(float x1, float y1, float x2, float y2) {
-    return k__canvas_draw_line(K__CANVAS_VIEWPORT_UI, x1, y1, x2, y2);
+void k_canvas_ui_draw_line(float x1, float y1, float x2, float y2) {
+    k__canvas_draw_line(K__CANVAS_VIEWPORT_UI, x1, y1, x2, y2);
 }
 
 /* endregion */
@@ -371,12 +395,12 @@ static int k__canvas_draw_lines(enum k_canvas_viewport viewport, const struct k_
     return 0;
 }
 
-int k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_num) {
-    return k__canvas_draw_lines(K__CANVAS_VIEWPORT_ROOM, points, points_num);
+void k_canvas_room_draw_lines(const struct k_float_point *points, size_t points_num) {
+    k__canvas_draw_lines(K__CANVAS_VIEWPORT_ROOM, points, points_num);
 }
 
-int k_canvas_ui_draw_lines(const struct k_float_point *points, size_t points_num) {
-    return k__canvas_draw_lines(K__CANVAS_VIEWPORT_UI, points, points_num);
+void k_canvas_ui_draw_lines(const struct k_float_point *points, size_t points_num) {
+    k__canvas_draw_lines(K__CANVAS_VIEWPORT_UI, points, points_num);
 }
 
 /* endregion */
@@ -410,12 +434,12 @@ static int k__canvas_draw_rect(enum k_canvas_viewport viewport, float x, float y
     return 0;
 }
 
-int k_canvas_room_draw_rect(float x, float y, float w, float h) {
-    return k__canvas_draw_rect(K__CANVAS_VIEWPORT_ROOM, x, y, w, h);
+void k_canvas_room_draw_rect(float x, float y, float w, float h) {
+    k__canvas_draw_rect(K__CANVAS_VIEWPORT_ROOM, x, y, w, h);
 }
 
-int k_canvas_ui_draw_rect(float x, float y, float w, float h) {
-    return k__canvas_draw_rect(K__CANVAS_VIEWPORT_UI, x, y, w, h);
+void k_canvas_ui_draw_rect(float x, float y, float w, float h) {
+    k__canvas_draw_rect(K__CANVAS_VIEWPORT_UI, x, y, w, h);
 }
 
 /* endregion */
@@ -449,12 +473,12 @@ static int k__canvas_fill_rect(enum k_canvas_viewport viewport, float x, float y
     return 0;
 }
 
-int k_canvas_room_fill_rect(float x, float y, float w, float h) {
-    return k__canvas_fill_rect(K__CANVAS_VIEWPORT_ROOM, x, y, w, h);
+void k_canvas_room_fill_rect(float x, float y, float w, float h) {
+    k__canvas_fill_rect(K__CANVAS_VIEWPORT_ROOM, x, y, w, h);
 }
 
-int k_canvas_ui_fill_rect(float x, float y, float w, float h) {
-    return k__canvas_fill_rect(K__CANVAS_VIEWPORT_UI, x, y, w, h);
+void k_canvas_ui_fill_rect(float x, float y, float w, float h) {
+    k__canvas_fill_rect(K__CANVAS_VIEWPORT_UI, x, y, w, h);
 }
 
 /* endregion */
@@ -522,12 +546,12 @@ static int k__canvas_draw_circle(enum k_canvas_viewport viewport, float cx, floa
     return 0;
 }
 
-int k_canvas_room_draw_circle(float cx, float cy, float r) {
-    return k__canvas_draw_circle(K__CANVAS_VIEWPORT_ROOM, cx, cy, r);
+void k_canvas_room_draw_circle(float cx, float cy, float r) {
+    k__canvas_draw_circle(K__CANVAS_VIEWPORT_ROOM, cx, cy, r);
 }
 
-int k_canvas_ui_draw_circle(float cx, float cy, float r) {
-    return k__canvas_draw_circle(K__CANVAS_VIEWPORT_UI, cx, cy, r);
+void k_canvas_ui_draw_circle(float cx, float cy, float r) {
+    k__canvas_draw_circle(K__CANVAS_VIEWPORT_UI, cx, cy, r);
 }
 
 /* endregion */
@@ -538,8 +562,10 @@ int k_canvas_ui_draw_circle(float cx, float cy, float r) {
 
 static int k__canvas_draw_image(enum k_canvas_viewport viewport, struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
 
-    if (NULL == image)
+    if (NULL == image) {
+        k_log_error("image is NULL");
         return -1;
+    }
 
     SDL_Rect src;
     if (NULL == src_rect) {
@@ -609,12 +635,12 @@ static int k__canvas_draw_image(enum k_canvas_viewport viewport, struct k_image 
     return 0;
 }
 
-int k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
-    return k__canvas_draw_image(K__CANVAS_VIEWPORT_ROOM, image, src_rect, x, y, options);
+void k_canvas_room_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
+    k__canvas_draw_image(K__CANVAS_VIEWPORT_ROOM, image, src_rect, x, y, options);
 }
 
-int k_canvas_ui_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
-    return k__canvas_draw_image(K__CANVAS_VIEWPORT_UI, image, src_rect, x, y, options);
+void k_canvas_ui_draw_image(struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
+    k__canvas_draw_image(K__CANVAS_VIEWPORT_UI, image, src_rect, x, y, options);
 }
 
 /* endregion */
@@ -623,11 +649,15 @@ int k_canvas_ui_draw_image(struct k_image *image, const struct k_int_rect *src_r
 
 static int k__canvas_draw_sprite(enum k_canvas_viewport viewport, struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
 
-    if (NULL == sprite)
+    if (NULL == sprite) {
+        k_log_error("sprite is NULL");
         return -1;
+    }
 
-    if (sprite->frames_num <= frame_idx)
+    if (sprite->frames_num <= frame_idx) {
+        k_log_error("sprite frame index out of range");
         return -1;
+    }
 
     if (0 != k__canvas_set_viewport(viewport))
         return -1;
@@ -711,21 +741,27 @@ static int k__canvas_draw_sprite(enum k_canvas_viewport viewport, struct k_sprit
     return 0;
 }
 
-int k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
-    return k__canvas_draw_sprite(K__CANVAS_VIEWPORT_ROOM, sprite, frame_idx, x, y, options);
+void k_canvas_room_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
+    k__canvas_draw_sprite(K__CANVAS_VIEWPORT_ROOM, sprite, frame_idx, x, y, options);
 }
 
-int k_canvas_ui_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
-    return k__canvas_draw_sprite(K__CANVAS_VIEWPORT_UI, sprite, frame_idx, x, y, options);
+void k_canvas_ui_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
+    k__canvas_draw_sprite(K__CANVAS_VIEWPORT_UI, sprite, frame_idx, x, y, options);
 }
 
 /* endregion */
 
-/* region [present] */
+/* endregion */
+
+/* region [canvas_present] */
 
 void k__canvas_present(void) {
 
-    SDL_SetRenderTarget(k__window.renderer, NULL);
+    if (0 != SDL_SetRenderTarget(k__window.renderer, NULL)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+    }
+
     k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
 
     SDL_Rect room_view;
@@ -733,14 +769,22 @@ void k__canvas_present(void) {
     room_view.y = 0;
     room_view.w = (int)(k__view.view_w);
     room_view.h = (int)(k__view.view_h);
-    SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &room_view, NULL);
+
+    if (0 != SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &room_view, NULL)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+    }
 
     SDL_Rect ui;
     ui.x = k__canvas.ui_viewport_x;
     ui.y = k__canvas.ui_viewport_y;
     ui.w = k__canvas.ui_viewport_w;
     ui.h = k__canvas.ui_viewport_h;
-    SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &ui, NULL);
+
+    if (0 != SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &ui, NULL)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+    }
 
     SDL_RenderPresent(k__window.renderer);
 }

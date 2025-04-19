@@ -8,7 +8,7 @@
  *
  * 一般来说，游戏对象至少关联有一个精灵作为其外观表现。
  *
- * k_sprite_renderer 的本质其实是一个 k_component。
+ * k_sprite_renderer 的本质是 k_component。
  * 给对象挂载上精灵渲染器，并指定引用的精灵图，
  * 渲染器能重复循环绘制精灵帧，形成动画效果。
  */

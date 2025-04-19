@@ -15,7 +15,7 @@
  * 而状态机的核心优势，就在于它强制开发者以模块化的方式组织代码，
  * 避免了复杂的条件判断和全局变量的滥用，让代码逻辑更清晰。
  *
- * k_state_machine 的本质其实是一个 k_component。
+ * k_state_machine 的本质是 k_component。
  */
 struct k_state_machine;
 

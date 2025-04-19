@@ -1,7 +1,6 @@
 #include "k_printf_binding.h"
 
-
-k_printf_callback_fn match_spec_xml(const char **str) {
+static k_printf_callback_fn match_spec(const char **str) {
 
     const char *p = *str;
     const char *s = *str;
@@ -38,8 +37,6 @@ done:
     return fn_callback;
 }
 
-static struct k_printf_config k__fmt = {
-    .fn_match_spec = match_spec_xml
+extern struct k_printf_config *k_fmt = &(struct k_printf_config) {
+    .fn_match_spec = match_spec
 };
-
-extern struct k_printf_config *k_fmt = &k__fmt;

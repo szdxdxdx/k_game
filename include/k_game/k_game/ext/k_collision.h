@@ -10,7 +10,7 @@
  * 可以给敌人挂载上碰撞盒，在子弹移动过程中，检测自身是否击中敌人；
  * 或给子弹挂载上碰撞盒，在敌人移动过程中，检测自身是否被子弹击中。
  *
- * k_collision_box 的本质其实是 k_component，且配备了 k_component_manager。
+ * k_collision_box 的本质是 k_component，且配备了 k_component_manager。
  * 必须先给房间添加碰撞盒管理器，才能给房间内的对象挂载碰撞盒。
  * 碰撞检测只在当前房间内进行，不同房间的碰撞盒彼此没有关联。
  */

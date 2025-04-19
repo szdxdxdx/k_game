@@ -9,11 +9,15 @@
  * 摄像机用于控制视角的平滑移动与目标跟随，
  * 能根据多个跟随目标位置动态调整视野中心。
  *
- * k_camera 的本质其实是 k_component_manager。
+ * k_camera 的本质是 k_component_manager。
  */
 struct k_camera;
 
-/** \brief 摄像机的跟随目标 */
+/**
+ * \brief 摄像机的跟随目标
+ *
+ * k_camera_target 的本质是 k_component
+ */
 struct k_camera_target;
 
 /* region [room_add_camera] */
@@ -36,10 +40,7 @@ int k_room_add_camera(void);
  *
  * 若添加成功，函数返回跟随目标的指针，否则返回 `NULL`。
  */
-struct k_camera_target *k_camera_add_follow_object(struct k_object *object, float *x, float *y);
-
-/* TODO */
-struct k_camera_target *k_camera_add_follow_target(float *x, float *y);
+struct k_camera_target *k_camera_add_follow_target(struct k_object *object, float *x, float *y);
 
 /**
  * \brief 删除摄像机的跟随目标

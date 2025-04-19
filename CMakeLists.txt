@@ -39,3 +39,16 @@ add_executable(${TARGET} ${SRC_FILES})
 target_link_libraries(${TARGET}
     SDL2  SDL2_image  SDL2_mixer  SDL2_ttf
     webui-2-static  ws2_32)
+
+# ------------------------------------------------------------------------------------------------------
+
+# 为项目添加宏 `K__FILE_PATH`，展开结果为所在文件相对于项目根目录的相对路径
+get_target_property(TARGET_SRCS ${TARGET} SOURCES)
+foreach(TARGET_SRC ${TARGET_SRCS})
+    if(IS_ABSOLUTE ${TARGET_SRC})
+        file(RELATIVE_PATH TARGET_SRC_RELPATH ${PROJECT_SOURCE_DIR} ${TARGET_SRC})
+    else()
+        set(TARGET_SRC_RELPATH ${TARGET_SRC})
+    endif()
+    set_property(SOURCE ${TARGET_SRC} APPEND PROPERTY COMPILE_DEFINITIONS "K__FILE_PATH=\"${TARGET_SRC_RELPATH}\"")
+endforeach()
