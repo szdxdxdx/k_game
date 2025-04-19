@@ -5,11 +5,7 @@
 #include "./llk_ui_elem.h"
 #include "./llk_ui_context.h"
 
-struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui) {
-
-    struct llk_ui_elem *elem = malloc(sizeof(struct llk_ui_elem));
-    if (NULL == elem)
-        return NULL;
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui) {
 
     elem->ui = ui;
 
@@ -33,6 +29,16 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui) {
     return elem;
 }
 
+struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui) {
+
+    struct llk_ui_elem *elem = malloc(sizeof(struct llk_ui_elem));
+    if (NULL == elem)
+        return NULL;
+
+    llk__ui_construct_elem(elem, ui);
+    return elem;
+}
+
 int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
 
     if (NULL == parent || NULL == child)
@@ -48,7 +54,7 @@ int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
     return 0;
 }
 
-void llk_ui_elem_measure(struct llk_ui_elem *elem) {
+void llk__ui_elem_measure(struct llk_ui_elem *elem) {
 
     switch (elem->w.unit) {
         case LLK_UI_UNIT_PX:
@@ -92,11 +98,11 @@ void llk_ui_elem_measure(struct llk_ui_elem *elem) {
     for (k_list_for_each(child_list, iter)) {
         child = container_of(iter, struct llk_ui_elem, sibling_link);
 
-        llk_ui_elem_measure(child);
+        llk__ui_elem_measure(child);
     }
 }
 
-void llk_ui_elem_layout(struct llk_ui_elem *elem) {
+void llk__ui_elem_layout(struct llk_ui_elem *elem) {
 
     struct llk_ui_elem *parent = elem->parent;
 
@@ -198,11 +204,11 @@ void llk_ui_elem_layout(struct llk_ui_elem *elem) {
     for (k_list_for_each(child_list, iter)) {
         child = container_of(iter, struct llk_ui_elem, sibling_link);
 
-        llk_ui_elem_layout(child);
+        llk__ui_elem_layout(child);
     }
 }
 
-void llk_ui_elem_draw(struct llk_ui_elem *elem) {
+void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 
     k_canvas_set_draw_color_rgba(elem->background_color);
     k_canvas_room_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
@@ -213,6 +219,6 @@ void llk_ui_elem_draw(struct llk_ui_elem *elem) {
     for (k_list_for_each(child_list, iter)) {
         child = container_of(iter, struct llk_ui_elem, sibling_link);
 
-        llk_ui_elem_draw(child);
+        llk__ui_elem_draw(child);
     }
 }

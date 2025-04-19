@@ -35,6 +35,8 @@ struct llk_ui_float {
 
 struct llk_ui_elem {
 
+    const char *name;
+
     struct llk_ui_context *ui;
 
     struct llk_ui_elem *parent;
@@ -61,16 +63,16 @@ struct llk_ui_elem {
     uint32_t background_color;
 };
 
-struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui);
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui);
 
-struct llk_ui_elem *llk_ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui);
+struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui);
 
 int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
 
-void llk_ui_elem_measure(struct llk_ui_elem *elem);
+void llk__ui_elem_measure(struct llk_ui_elem *elem);
 
-void llk_ui_elem_layout(struct llk_ui_elem *elem);
+void llk__ui_elem_layout(struct llk_ui_elem *elem);
 
-void llk_ui_elem_draw(struct llk_ui_elem *elem);
+void llk__ui_elem_draw(struct llk_ui_elem *elem);
 
 #endif
