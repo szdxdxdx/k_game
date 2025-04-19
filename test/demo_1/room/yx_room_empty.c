@@ -22,7 +22,7 @@ static void init_ui(void) {
     struct llk_ui_elem *root = llk_ui_get_root(ui);
 
     struct llk_ui_elem *my_root = llk_ui_create_elem(ui);
-    my_root->name = "my_root";
+    my_root->debug_info = "my_root";
     my_root->w.unit = LLK_UI_UNIT_PERCENT;
     my_root->w.specified_val = 1.0f;
     my_root->h.unit = LLK_UI_UNIT_PERCENT;
@@ -31,7 +31,7 @@ static void init_ui(void) {
     llk_ui_append_child(root, my_root);
 
     struct llk_ui_elem *box_1 = llk_ui_create_elem(ui);
-    box_1->name = "box_1";
+    box_1->debug_info = "box_1";
     box_1->w.unit = LLK_UI_UNIT_PX;
     box_1->w.specified_val = 100.0f;
     box_1->h.unit = LLK_UI_UNIT_PX;
@@ -40,7 +40,7 @@ static void init_ui(void) {
     llk_ui_append_child(my_root, box_1);
 
     struct llk_ui_elem *box_2 = llk_ui_create_elem(ui);
-    box_2->name = "box_2";
+    box_2->debug_info = "box_2";
     box_2->w.unit = LLK_UI_UNIT_PX;
     box_2->w.specified_val = 100.0f;
     box_2->h.unit = LLK_UI_UNIT_PX;
@@ -53,7 +53,7 @@ static void init_ui(void) {
     llk_ui_append_child(my_root, box_2);
 
     struct llk_ui_elem *box_3 = llk_ui_create_elem(ui);
-    box_3->name = "box_3";
+    box_3->debug_info = "box_3";
     box_3->w.unit = LLK_UI_UNIT_PX;
     box_3->w.specified_val = 30.0f;
     box_3->h.unit = LLK_UI_UNIT_PERCENT;

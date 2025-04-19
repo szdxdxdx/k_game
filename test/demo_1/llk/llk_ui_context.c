@@ -40,30 +40,8 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 }
 
 void llk_ui_draw(struct llk_ui_context *ui) {
-
-
     struct llk_ui_elem *root = &ui->root;
     llk__ui_elem_measure(root);
     llk__ui_elem_layout(root);
     llk__ui_elem_draw(root);
-
-    return;
-
-    struct llk_ui_elem *child;
-    struct k_list *child_list = &root->child_list;
-    struct k_list_node *iter;
-    for (k_list_for_each(child_list, iter)) {
-        child = container_of(iter, struct llk_ui_elem, sibling_link);
-        llk__ui_elem_measure(child);
-    }
-
-    for (k_list_for_each(child_list, iter)) {
-        child = container_of(iter, struct llk_ui_elem, sibling_link);
-        llk__ui_elem_layout(child);
-    }
-
-    for (k_list_for_each(child_list, iter)) {
-        child = container_of(iter, struct llk_ui_elem, sibling_link);
-        llk__ui_elem_draw(child);
-    }
 }

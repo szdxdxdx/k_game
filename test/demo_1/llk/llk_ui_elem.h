@@ -35,8 +35,6 @@ struct llk_ui_float {
 
 struct llk_ui_elem {
 
-    const char *name;
-
     struct llk_ui_context *ui;
 
     struct llk_ui_elem *parent;
@@ -44,6 +42,10 @@ struct llk_ui_elem {
     struct k_list child_list;
 
     struct k_list_node sibling_link;
+
+    /* ------------------------------------------------------------------------ */
+
+    const char *debug_info;
 
     /* ------------------------------------------------------------------------ */
 

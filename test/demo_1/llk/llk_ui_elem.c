@@ -21,6 +21,8 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     llk_ui_float_init(elem->top);
     llk_ui_float_init(elem->bottom);
 
+    elem->debug_info = "";
+
     elem->x = 0.0f;
     elem->y = 0.0f;
 
