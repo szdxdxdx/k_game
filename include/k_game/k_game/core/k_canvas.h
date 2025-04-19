@@ -5,7 +5,7 @@
 
 #include "./k_game_fwd.h"
 
-/* region [set_color] */
+/* region [draw_color] */
 
 /**
  * \brief 设置画笔的颜色
@@ -58,7 +58,17 @@ static inline uint32_t k_canvas_get_draw_color_rgba(void) {
 
 /* endregion */
 
-/* region [clear] */
+/* region [ui vw/vh] */
+
+/** \brief 获取 UI 界面的画布宽度 */
+float k_canvas_ui_get_vw(void);
+
+/** \brief 获取 UI 界面的画布高度 */
+float k_canvas_ui_get_vh(void);
+
+/* endregion */
+
+/* region [canvas_draw] */
 
 /**
  * \brief 清空房间的画布内容
@@ -71,16 +81,7 @@ void k_canvas_room_clear(void);
 /** \brief 清空 UI 界面的画布内容 */
 void k_canvas_ui_clear(void);
 
-/* endregion */
-
-/* region [draw_graphics] */
-
-/**
- * \brief 在房间中绘制一个点
- *
- * `(x, y)` 为点的坐标。
- * 若绘制成功，函数返回 0，否则返回非 0。
- */
+/** \brief 在房间中绘制一个点 */
 void k_canvas_room_draw_point(float x, float y);
 
 /** \brief 在 UI 界面中绘制一个点 */
@@ -100,7 +101,6 @@ void k_canvas_ui_draw_points(const struct k_float_point *points, size_t points_n
  * \brief 在房间中在房间中绘制一条线段
  *
  * `(x1, y1)` 和 `(x2, y2)` 为线段的两个端点坐标。
- * 若绘制成功，函数返回 0，否则返回非 0。
  */
 void k_canvas_room_draw_line(float x1, float y1, float x2, float y2);
 
@@ -157,10 +157,6 @@ void k_canvas_room_draw_circle(float cx, float cy, float r);
 /** \brief 在 UI 界面中绘制一个圆 */
 void k_canvas_ui_draw_circle(float cx, float cy, float r);
 
-/* endregion */
-
-/* region [draw_image] */
-
 struct k_canvas_draw_image_options;
 
 /**
@@ -216,10 +212,6 @@ struct k_canvas_draw_image_options {
     int flip_x;
     int flip_y;
 };
-
-/* endregion */
-
-/* region [draw_sprite] */
 
 struct k_canvas_draw_sprite_options;
 

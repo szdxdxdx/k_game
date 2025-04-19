@@ -31,16 +31,16 @@ int k_view_set_position(float cx, float cy);
 /**
  * \brief 获取视野矩形的位置和宽高
  *
- * 函数通过参数列表返回视野矩形的位置和宽高，若传 `NULL` 则不接受该出参。
- * `get_x` 和 `get_y` 返回视野矩形左上角在房间中的坐标，
- * `get_w` 和 `get_h` 返回视野矩形的宽高。
+ * 出参 `get_x` 和 `get_y` 返回视野矩形左上角在房间中的坐标，
+ * 出参 `get_w` 和 `get_h` 返回视野矩形的宽高，
+ * 若传 `NULL` 则不接受该出参。
  */
 void k_view_get_rect(float *get_x, float *get_y, float *get_w, float *get_h);
 
 /**
  * \brief 获取视野矩形中心的位置
  *
- * 函数通过出参 `get_cx` 和 `get_cy` 返回视野矩形中心点的在房间中的坐标。
+ * 出参 `get_cx` 和 `get_cy` 返回视野矩形中心点的在房间中的坐标。
  * 若传 `NULL` 则不接受该出参。
  */
 void k_view_get_position(float *get_cx, float *get_cy);

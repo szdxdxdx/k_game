@@ -82,20 +82,17 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
     return -1;
 }
 
-static void k__canvas_convert_xy(float *x, float *y) {
+static void k__canvas_convert_to_viewport_xy(float *x, float *y) {
 
     switch (k__canvas.current_viewport) {
         case K__CANVAS_VIEWPORT_ROOM: {
-
-            /* `(x, y)` 为在房间中的坐标，需将其转换为在视野中的坐标，
-             * SDL 会根据画布限定的视口调整坐标，所以这里不需要再转换为在画布中的坐标
-             */
+            /* 原 `(x, y)` 为房间中的坐标。对应在画布的房间视口的坐标，就是在视野中的坐标 */
             *x -= k__view.view_x;
             *y -= k__view.view_y;
             break;
         }
         case K__CANVAS_VIEWPORT_UI: {
-            /* `(x, y)` 是在 UI 界面中的坐标，UI 界面、游戏窗口与画布的 UI 视口尺寸一致，不需要转换 */
+            /* 原 `(x, y)` 为 UI 界面中的坐标。UI 界面、游戏窗口与画布的 UI 视口尺寸一致，不需要转换 */
             break;
         }
         default: {
@@ -221,7 +218,7 @@ static int k__canvas_draw_point(enum k_canvas_viewport viewport, float x, float 
     if (0 != k__canvas_set_viewport(viewport))
         return -1;
 
-    k__canvas_convert_xy(&x, &y);
+    k__canvas_convert_to_viewport_xy(&x, &y);
 
     if (k__canvas_cull_point(x, y))
         return 0;
@@ -267,7 +264,7 @@ static int k__canvas_draw_points(enum k_canvas_viewport viewport, const struct k
         float y = points[count].y;
         count++;
 
-        k__canvas_convert_xy(&x, &y);
+        k__canvas_convert_to_viewport_xy(&x, &y);
 
         if (k__canvas_cull_point(x, y))
             continue;
@@ -314,8 +311,8 @@ static int k__canvas_draw_line(enum k_canvas_viewport viewport, float x1, float 
     if (0 != k__canvas_set_viewport(viewport))
         return -1;
 
-    k__canvas_convert_xy(&x1, &y1);
-    k__canvas_convert_xy(&x2, &y2);
+    k__canvas_convert_to_viewport_xy(&x1, &y1);
+    k__canvas_convert_to_viewport_xy(&x2, &y2);
 
     if (k__canvas_cull_line(x1, y1, x2, y2))
         return 0;
@@ -361,7 +358,7 @@ static int k__canvas_draw_lines(enum k_canvas_viewport viewport, const struct k_
         float y = points[count].y;
         count++;
 
-        k__canvas_convert_xy(&x, &y);
+        k__canvas_convert_to_viewport_xy(&x, &y);
 
         buf[buf_size].x = x;
         buf[buf_size].y = y;
@@ -415,7 +412,7 @@ static int k__canvas_draw_rect(enum k_canvas_viewport viewport, float x, float y
     if (0 != k__canvas_set_viewport(viewport))
         return -1;
 
-    k__canvas_convert_xy(&x, &y);
+    k__canvas_convert_to_viewport_xy(&x, &y);
 
     if (k__canvas_cull_rect(x, y, w, h))
         return 0;
@@ -454,7 +451,7 @@ static int k__canvas_fill_rect(enum k_canvas_viewport viewport, float x, float y
     if (0 != k__canvas_set_viewport(viewport))
         return -1;
 
-    k__canvas_convert_xy(&x, &y);
+    k__canvas_convert_to_viewport_xy(&x, &y);
 
     if (k__canvas_cull_rect(x, y, w, h))
         return 0;
@@ -493,7 +490,7 @@ static int k__canvas_draw_circle(enum k_canvas_viewport viewport, float cx, floa
     if (0 != k__canvas_set_viewport(viewport))
         return -1;
 
-    k__canvas_convert_xy(&cx, &cy);
+    k__canvas_convert_to_viewport_xy(&cx, &cy);
 
     if (k__canvas_cull_circle(cx, cy, r))
         return 0;
@@ -587,7 +584,7 @@ static int k__canvas_draw_image(enum k_canvas_viewport viewport, struct k_image 
     if (0 != k__canvas_set_viewport(viewport))
         return -1;
 
-    k__canvas_convert_xy(&x, &y);
+    k__canvas_convert_to_viewport_xy(&x, &y);
 
     if (NULL == options) {
 
@@ -662,7 +659,7 @@ static int k__canvas_draw_sprite(enum k_canvas_viewport viewport, struct k_sprit
     if (0 != k__canvas_set_viewport(viewport))
         return -1;
 
-    k__canvas_convert_xy(&x, &y);
+    k__canvas_convert_to_viewport_xy(&x, &y);
 
     struct k_sprite_frame *frame = &sprite->frames[frame_idx];
 

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "./llk_ui_elem_array.h"
+#include "k_list.h"
 
 #include "./llk_ui_fwd.h"
 
@@ -16,23 +16,22 @@ enum llk_ui_unit {
 
     LLK_UI_UNIT_VW,
     LLK_UI_UNIT_VH,
-
-    LLK_UI_UNIT_RGBA,
 };
 
 struct llk_ui_float {
-    unsigned int is_computed : 1;
-    enum llk_ui_unit unit : 7;
-    float val;
+
+    float specified_val;
+    enum llk_ui_unit unit;
+
     float computed_val;
 };
 
-struct llk_ui_u32 {
-    unsigned int is_computed : 1;
-    uint8_t unit;
-    uint32_t val;
-    uint32_t computed_val;
-};
+#define llk_ui_float_init(val) \
+( \
+    (val).unit = LLK_UI_UNIT_NO_VAL, \
+    (val).specified_val = 0.0f, \
+    (val).computed_val  = 0.0f \
+) \
 
 struct llk_ui_elem {
 
@@ -40,7 +39,9 @@ struct llk_ui_elem {
 
     struct llk_ui_elem *parent;
 
-    struct llk_ui_elem_array children;
+    struct k_list child_list;
+
+    struct k_list_node sibling_link;
 
     /* ------------------------------------------------------------------------ */
 

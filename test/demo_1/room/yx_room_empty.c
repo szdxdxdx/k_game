@@ -23,39 +23,39 @@ static void init_ui(void) {
 
     struct llk_ui_elem *my_root = llk_ui_create_elem(ui);
     my_root->w.unit = LLK_UI_UNIT_PERCENT;
-    my_root->w.val = 1.0f;
+    my_root->w.specified_val = 1.0f;
     my_root->h.unit = LLK_UI_UNIT_PERCENT;
-    my_root->h.val = 1.0f;
+    my_root->h.specified_val = 1.0f;
     my_root->background_color = 0xffffffff;
     llk_ui_append_child(root, my_root);
 
     struct llk_ui_elem *box_1 = llk_ui_create_elem(ui);
     box_1->w.unit = LLK_UI_UNIT_PX;
-    box_1->w.val = 100.0f;
+    box_1->w.specified_val = 100.0f;
     box_1->h.unit = LLK_UI_UNIT_PX;
-    box_1->h.val = 100.0f;
+    box_1->h.specified_val = 100.0f;
     box_1->background_color = 0x66ccffff;
     llk_ui_append_child(my_root, box_1);
 
     struct llk_ui_elem *box_2 = llk_ui_create_elem(ui);
     box_2->w.unit = LLK_UI_UNIT_PX;
-    box_2->w.val = 100.0f;
+    box_2->w.specified_val = 100.0f;
     box_2->h.unit = LLK_UI_UNIT_PX;
-    box_2->h.val = 100.0f;
+    box_2->h.specified_val = 100.0f;
     box_2->right.unit = LLK_UI_UNIT_PERCENT;
-    box_2->right.val = 0.5f;
+    box_2->right.specified_val = 0.5f;
     box_2->bottom.unit = LLK_UI_UNIT_PX;
-    box_2->bottom.val = 0.0f;
+    box_2->bottom.specified_val = 0.0f;
     box_2->background_color = 0xee0000ff;
     llk_ui_append_child(my_root, box_2);
 
     struct llk_ui_elem *box_3 = llk_ui_create_elem(ui);
     box_3->w.unit = LLK_UI_UNIT_PX;
-    box_3->w.val = 30.0f;
+    box_3->w.specified_val = 30.0f;
     box_3->h.unit = LLK_UI_UNIT_PERCENT;
-    box_3->h.val = 1.0f;
+    box_3->h.specified_val = 1.0f;
     box_3->right.unit = LLK_UI_UNIT_PX;
-    box_3->right.val = 10.0f;
+    box_3->right.specified_val = 10.0f;
     box_3->background_color = 0xff0099ff;
     llk_ui_append_child(my_root, box_3);
 }
