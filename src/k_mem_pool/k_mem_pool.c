@@ -35,9 +35,6 @@ struct k_mem_block {
 
 static int check_config(const struct k_mem_pool_config *config) {
 
-    if (NULL == config)
-        return -1;
-
     if (NULL == config->fn_malloc || NULL == config->fn_free)
         return -1;
 

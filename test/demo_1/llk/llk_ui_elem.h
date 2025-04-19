@@ -34,8 +34,6 @@ struct llk_ui_u32 {
 
 struct llk_ui_elem {
 
-    const char *elem_type_name;
-
     struct llk_ui_context *ui;
 
     struct llk_ui_elem *parent;
@@ -58,14 +56,6 @@ struct llk_ui_elem {
     /* ------------------------------------------------------------------------ */
 
     uint32_t background_color;
-
-    /* ------------------------------------------------------------------------ */
-
-    void (*fn_measure)(struct llk_ui_elem *elem);
-
-    void (*fn_layout)(struct llk_ui_elem *elem);
-
-    void (*fn_paint)(struct llk_ui_elem *elem);
 };
 
 struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui);
