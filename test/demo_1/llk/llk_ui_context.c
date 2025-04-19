@@ -4,7 +4,7 @@
 #include "./llk_ui_elem.h"
 #include "./llk_ui_root.h"
 
-/* region [ui-context] */
+/* region [ui_context] */
 
 struct llk_ui_context *llk_ui_create_context(void) {
 
@@ -31,7 +31,7 @@ void llk_ui_draw(struct llk_ui_context *ui) {
 
     llk_ui_elem_measure(ui->root);
     llk_ui_elem_layout(ui->root);
-    llk_ui_elem_paint(ui->root);
+    llk_ui_elem_draw(ui->root);
 }
 
 /* endregion */

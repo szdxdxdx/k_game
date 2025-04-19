@@ -21,12 +21,14 @@ enum llk_ui_unit {
 };
 
 struct llk_ui_float {
-    uint8_t unit;
+    unsigned int is_computed : 1;
+    enum llk_ui_unit unit : 7;
     float val;
     float computed_val;
 };
 
 struct llk_ui_u32 {
+    unsigned int is_computed : 1;
     uint8_t unit;
     uint32_t val;
     uint32_t computed_val;
@@ -68,6 +70,6 @@ void llk_ui_elem_measure(struct llk_ui_elem *elem);
 
 void llk_ui_elem_layout(struct llk_ui_elem *elem);
 
-void llk_ui_elem_paint(struct llk_ui_elem *elem);
+void llk_ui_elem_draw(struct llk_ui_elem *elem);
 
 #endif
