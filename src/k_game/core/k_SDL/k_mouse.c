@@ -3,6 +3,7 @@
 #include "k_game/core/k_mouse.h"
 #include "./k_mouse.h"
 #include "./k_window.h"
+#include "./k_view.h"
 
 struct k_mouse_context k__mouse;
 
@@ -59,12 +60,12 @@ void k__SDL_handle_event_mouse_button_up(SDL_MouseButtonEvent *event) {
 void k__SDL_handle_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
 
     k__mouse.window_x = (float)event->x;
-    k__mouse.view_x   = k__mouse.window_x * k__window.view_window_ratio;
-    k__mouse.room_x   = k__mouse.view_x + k__window.view_x;
+    k__mouse.view_x   = k__mouse.window_x * k__view.view_window_ratio;
+    k__mouse.room_x   = k__mouse.view_x + k__view.view_x;
 
     k__mouse.window_y = (float)event->y;
-    k__mouse.view_y   = k__mouse.window_y * k__window.view_window_ratio;
-    k__mouse.room_y   = k__mouse.view_y + k__window.view_y;
+    k__mouse.view_y   = k__mouse.window_y * k__view.view_window_ratio;
+    k__mouse.room_y   = k__mouse.view_y + k__view.view_y;
 }
 
 float k_mouse_x(void) {

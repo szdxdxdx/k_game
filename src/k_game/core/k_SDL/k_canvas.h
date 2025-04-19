@@ -27,23 +27,32 @@ enum k_canvas_viewport {
 
 struct k_canvas {
 
+    /* 离屏画布
+     *
+     * 每一帧先把图像绘制到这张画布上，
+     * 帧结束时再将它统一绘制到游戏窗口中。
+     */
     SDL_Texture *canvas;
 
-    /**
-     * \brief 画布的房间视口
+    /* 画布的房间视口
      *
      * 房间的绘制被限定在该矩形区域。
      * 实际使用的区域可能不会占满整个矩形，这取决于房间视野的范围。
      */
-    SDL_FRect room_viewport;
+    int room_viewport_x;
+    int room_viewport_y;
+    int room_viewport_w;
+    int room_viewport_h;
 
-    /**
-     * \brief 画布的 UI 视口
+    /* 画布的 UI 视口
      *
      * UI 内容的绘制被限定在该矩形区域。
      * 该矩形区域的宽高应该与游戏窗口宽高保持一致。
      */
-    SDL_FRect ui_viewport;
+    int ui_viewport_x;
+    int ui_viewport_y;
+    int ui_viewport_w;
+    int ui_viewport_h;
 
     /* 当前的视口区域 */
     enum k_canvas_viewport current_viewport;
@@ -53,8 +62,8 @@ struct k_canvas {
      * k_game 会粗略过滤掉超出视口的对象，避免不必要的绘制操作。
      * SDL 会根据视口的位置调整坐标，因此无需记录视口的 x 和 y。
      */
-    float viewport_w;
-    float viewport_h;
+    float current_viewport_w;
+    float current_viewport_h;
 };
 
 extern struct k_canvas k__canvas;

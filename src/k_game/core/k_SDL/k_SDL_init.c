@@ -9,6 +9,7 @@
 #include "./k_SDL_init.h"
 #include "./k_window.h"
 #include "./k_canvas.h"
+#include "./k_view.h"
 
 /* region [steps] */
 
@@ -166,21 +167,19 @@ static void step_destroy_renderer(void *unused) {
 static int step_create_canvas(void *config_) {
     struct k_game_config *config = config_;
 
-    float window_w = (float)config->window_w;
-    float window_h = (float)config->window_h;
+    int window_w = config->window_w;
+    int window_h = config->window_h;
 
-    float room_viewport_x = 0.0f;
-    float room_viewport_y = 0.0f;
-    float room_viewport_w = window_w * 1.25f; /* tmp */
-    float room_viewport_h = window_h * 1.25f; /* tmp */
+    int room_viewport_w = window_w + window_w / 4; /* tmp */
+    int room_viewport_h = window_h + window_h / 4; /* tmp */
 
-    float ui_viewport_x = room_viewport_w + 1.0f;
-    float ui_viewport_y = 0.0f;
-    float ui_viewport_w = window_w;
-    float ui_viewport_h = window_h;
+    int ui_viewport_x = room_viewport_w + 1;
+    int ui_viewport_y = 0;
+    int ui_viewport_w = window_w;
+    int ui_viewport_h = window_h;
 
-    int canvas_w = (int)(ui_viewport_x + ui_viewport_w);
-    int canvas_h = (int)(SDL_max(room_viewport_h, ui_viewport_h));
+    int canvas_w = ui_viewport_x + ui_viewport_w;
+    int canvas_h = SDL_max(room_viewport_h, ui_viewport_h);
 
     Uint32 format = SDL_PIXELFORMAT_RGBA8888;
     int    access = SDL_TEXTUREACCESS_TARGET;
@@ -198,15 +197,15 @@ static int step_create_canvas(void *config_) {
 
     k__canvas.canvas = canvas;
 
-    k__canvas.room_viewport.x = room_viewport_x;
-    k__canvas.room_viewport.y = room_viewport_y;
-    k__canvas.room_viewport.w = room_viewport_w;
-    k__canvas.room_viewport.h = room_viewport_h;
+    k__canvas.room_viewport_x = 0;
+    k__canvas.room_viewport_y = 0;
+    k__canvas.room_viewport_w = room_viewport_w;
+    k__canvas.room_viewport_h = room_viewport_h;
 
-    k__canvas.ui_viewport.x = ui_viewport_x;
-    k__canvas.ui_viewport.y = ui_viewport_y;
-    k__canvas.ui_viewport.w = ui_viewport_w;
-    k__canvas.ui_viewport.h = ui_viewport_h;
+    k__canvas.ui_viewport_x = ui_viewport_x;
+    k__canvas.ui_viewport_y = ui_viewport_y;
+    k__canvas.ui_viewport_w = ui_viewport_w;
+    k__canvas.ui_viewport_h = ui_viewport_h;
 
     k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
     return 0;
@@ -221,11 +220,11 @@ static void step_destroy_canvas(void *unused) {
 static int step_init_view(void *unused) {
     (void)unused;
 
-    k__window.view_x = 0;
-    k__window.view_y = 0;
-    k__window.view_w = k__window.window_w;
-    k__window.view_h = k__window.window_h;
-    k__window.view_window_ratio = 1.0f;
+    k__view.view_x = 0;
+    k__view.view_y = 0;
+    k__view.view_w = k__window.window_w;
+    k__view.view_h = k__window.window_h;
+    k__view.view_window_ratio = 1.0f;
 
     return 0;
 }
