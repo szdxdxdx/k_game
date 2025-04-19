@@ -1,9 +1,10 @@
 #include <stdlib.h>
 
-#include "k_game/core/k_window.h"
+#include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
+#include "./llk_ui_root.h"
 
 /* region [ui_context] */
 
@@ -13,15 +14,15 @@ struct llk_ui_context *llk_ui_create_context(void) {
     if (NULL == ui)
         return NULL;
 
-    struct llk_ui_elem *root =llk_ui_create_elem(ui);
+    struct llk_ui_elem *root =llk_ui_create_root(ui);
     if (NULL == root) {
         free(ui);
         return NULL;
     }
 
     ui->root = root;
-    ui->vw = k_window_get_width();
-    ui->vh = k_window_get_height();
+    ui->vw = k_canvas_ui_get_vw();
+    ui->vh = k_canvas_ui_get_vh();
 
     return ui;
 }

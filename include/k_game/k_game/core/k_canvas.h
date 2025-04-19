@@ -58,7 +58,7 @@ static inline uint32_t k_canvas_get_draw_color_rgba(void) {
 
 /* endregion */
 
-/* region [ui vw/vh] */
+/* region [get_vw] */
 
 /** \brief 获取 UI 界面的画布宽度 */
 float k_canvas_ui_get_vw(void);
@@ -68,7 +68,7 @@ float k_canvas_ui_get_vh(void);
 
 /* endregion */
 
-/* region [canvas_draw] */
+/* region [draw] */
 
 /**
  * \brief 清空房间的画布内容

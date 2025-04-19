@@ -16,7 +16,7 @@
 
 struct k_canvas k__canvas;
 
-/* region [canvas_set_viewport] */
+/* region [viewport] */
 
 static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
 
@@ -103,7 +103,21 @@ static void k__canvas_convert_to_viewport_xy(float *x, float *y) {
 
 /* endregion */
 
-/* region [canvas_set_color] */
+/* region [get_vw] */
+
+float k_canvas_ui_get_vw(void) {
+    return (float)k__canvas.ui_viewport_w;
+}
+
+float k_canvas_ui_get_vh(void) {
+    return (float)k__canvas.ui_viewport_h;
+}
+
+/* endregion */
+
+/* region [draw] */
+
+/* region [draw_color] */
 
 void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 
@@ -119,7 +133,7 @@ void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
 
 /* endregion */
 
-/* region [canvas_clear] */
+/* region [clear] */
 
 void k_canvas_room_clear(void) {
 
@@ -174,8 +188,6 @@ void k_canvas_ui_clear(void) {
 }
 
 /* endregion */
-
-/* region [canvas_draw] */
 
 /* region [cull] */
 
@@ -750,7 +762,7 @@ void k_canvas_ui_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x,
 
 /* endregion */
 
-/* region [canvas_present] */
+/* region [present] */
 
 void k__canvas_present(void) {
 

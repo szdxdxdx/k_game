@@ -1,7 +1,6 @@
 #ifndef K_GAME_H
 #define K_GAME_H
 
-#include "./k_game/core/k_window.h"
 #include "./k_game/core/k_mem_alloc.h"
 #include "./k_game/core/k_time.h"
 #include "./k_game/core/k_keyboard.h"

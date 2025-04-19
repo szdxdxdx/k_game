@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #include "./llk_ui_root.h"
 #include "./llk_ui_elem.h"
 #include "./llk_ui_context.h"
@@ -15,25 +13,19 @@ static struct llk_ui_elem window = {
 
 struct llk_ui_elem *llk_ui_create_root(struct llk_ui_context *ui) {
 
-    struct llk_ui_root *root = malloc(sizeof(struct llk_ui_root));
+    struct llk_ui_elem *root = llk_ui_create_elem(ui);
     if (NULL == root)
         return NULL;
 
-    struct llk_ui_elem *super = &root->super;
-    llk_ui_construct_elem(super, ui);
+    root->w.unit = LLK_UI_UNIT_PX;
+    root->w.specified_val = ui->vw;
+    root->h.computed_val  = ui->vw;
 
-    super->w.unit = LLK_UI_UNIT_VW;
-    super->w.specified_val = 1.0f;
+    root->h.unit = LLK_UI_UNIT_PX;
+    root->h.specified_val = ui->vh;
+    root->h.computed_val  = ui->vh;
 
-    super->h.unit = LLK_UI_UNIT_VH;
-    super->h.specified_val = 1.0f;
+    root->parent = &window;
 
-    super->parent = &window;
-
-    super->x = 0.0f;
-    super->y = 0.0f;
-
-    ui->root = &root->super;
-
-    return &root->super;
+    return root;
 }
