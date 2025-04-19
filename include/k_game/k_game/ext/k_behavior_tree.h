@@ -74,6 +74,12 @@ void k_behavior_tree_destroy(struct k_behavior_tree *tree);
 
 /* endregion */
 
+/* region [tree_tick] */
+
+void k_behavior_tree_tick(struct k_behavior_tree *tree);
+
+/* endregion */
+
 /* region [tree_add_node] */
 
 /** \brief 行为树的节点 */

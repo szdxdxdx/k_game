@@ -1,7 +1,5 @@
 #include <assert.h>
-
-#include "k_game/core/k_object.h"
-#include "k_game/core/k_callback.h"
+#include <stdlib.h>
 
 #include "./_internal.h"
 
@@ -15,8 +13,6 @@ struct k_behavior_tree_root_node {
 struct k_behavior_tree {
 
     struct k_behavior_tree_root_node root;
-
-    struct k_object *object;
 };
 
 static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
@@ -30,38 +26,11 @@ static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_t
     }
 }
 
-static void tree_tick(struct k_object *object) {
-    struct k_behavior_tree *tree = k_object_get_data(object);
-
-    struct k_behavior_tree_node *child = tree->root.child;
-
-    enum k_behavior_tree_status result = child->fn_tick(child);
-
-    assert(result == K_BT_SUCCESS
-        || result == K_BT_FAILURE
-        || result == K_BT_RUNNING
-    );
-}
-
-static void tree_destroy(struct k_object *object) {
-    struct k_behavior_tree *tree = k_object_get_data(object);
-
-    tree->root.child->fn_destroy(tree->root.child);
-}
-
 struct k_behavior_tree *k_behavior_tree_create(void) {
 
-    struct k_object *object = k_object_create(sizeof(struct k_behavior_tree));
-    if (NULL == object)
+    struct k_behavior_tree *tree = malloc(sizeof(struct k_behavior_tree));
+    if (NULL == tree)
         return NULL;
-
-    if (NULL == k_object_add_step_callback(object, tree_tick)) {
-        k_object_destroy(object);
-        return NULL;
-    }
-
-    struct k_behavior_tree *tree = k_object_get_data(object);
-    tree->object = object;
 
     tree->root.super.tree         = tree;
     tree->root.super.fn_interrupt = NULL;
@@ -71,15 +40,27 @@ struct k_behavior_tree *k_behavior_tree_create(void) {
 
     tree->root.child = &K__BEHAVIOR_TREE_DEFAULT_SUCCESS;
 
-    k_object_set_destroy_callback(object, tree_destroy);
-
     return tree;
 }
 
 void k_behavior_tree_destroy(struct k_behavior_tree *tree) {
 
-    if (NULL != tree)
-        k_object_destroy(tree->object);
+    if (NULL == tree)
+        return;
+
+    tree->root.child->fn_destroy(tree->root.child);
+}
+
+void k_behavior_tree_tick(struct k_behavior_tree *tree) {
+
+    struct k_behavior_tree_node *child = tree->root.child;
+
+    enum k_behavior_tree_status result = child->fn_tick(child);
+
+    assert(result == K_BT_SUCCESS
+        || result == K_BT_FAILURE
+        || result == K_BT_RUNNING
+    );
 }
 
 struct k_behavior_tree_node *k_behavior_tree_get_root(struct k_behavior_tree *tree) {
