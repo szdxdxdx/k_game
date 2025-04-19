@@ -1,19 +1,8 @@
 #include <assert.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "./_internal.h"
-
-struct k_behavior_tree_root_node {
-
-    struct k_behavior_tree_node super;
-
-    struct k_behavior_tree_node *child;
-};
-
-struct k_behavior_tree {
-
-    struct k_behavior_tree_root_node root;
-};
 
 static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
     struct k_behavior_tree_root_node *root = container_of(node, struct k_behavior_tree_root_node, super);
@@ -40,6 +29,8 @@ struct k_behavior_tree *k_behavior_tree_create(void) {
 
     tree->root.child = &K__BEHAVIOR_TREE_DEFAULT_SUCCESS;
 
+    tree->timestamp = 0;
+
     return tree;
 }
 
@@ -51,7 +42,11 @@ void k_behavior_tree_destroy(struct k_behavior_tree *tree) {
     tree->root.child->fn_destroy(tree->root.child);
 }
 
-void k_behavior_tree_tick(struct k_behavior_tree *tree) {
+enum k_behavior_tree_status k_behavior_tree_tick(struct k_behavior_tree *tree, int delta_time_ms) {
+    assert(NULL != tree);
+    assert(0 <= delta_time_ms);
+
+    tree->timestamp += delta_time_ms;
 
     struct k_behavior_tree_node *child = tree->root.child;
 
@@ -61,6 +56,8 @@ void k_behavior_tree_tick(struct k_behavior_tree *tree) {
         || result == K_BT_FAILURE
         || result == K_BT_RUNNING
     );
+
+    return result;
 }
 
 struct k_behavior_tree_node *k_behavior_tree_get_root(struct k_behavior_tree *tree) {

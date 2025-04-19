@@ -11,7 +11,7 @@ struct k_behavior_tree_delay_node {
 
     struct k_behavior_tree_node *child;
 
-    int delay_ms;
+    uint64_t delay_ms;
 
     uint64_t timeout;
 
@@ -24,15 +24,17 @@ struct k_behavior_tree_delay_node {
 static enum k_behavior_tree_status delay_tick(struct k_behavior_tree_node *node) {
     struct k_behavior_tree_delay_node *delay = container_of(node, struct k_behavior_tree_delay_node, super);
 
+    uint64_t timestamp = node->tree->timestamp;
+
     if (K__BT_DELAY_IDLE == delay->state) {
-        delay->timeout = delay->delay_ms + k_get_timestamp();
+        delay->timeout = delay->delay_ms + timestamp;
         delay->state = K__BT_DELAY_WAITING;
         return K_BT_RUNNING;
     }
 
     if (K__BT_DELAY_WAITING == delay->state) {
 
-        if (k_get_timestamp() < delay->timeout) {
+        if (timestamp < delay->timeout) {
             return K_BT_RUNNING;
         }
 
@@ -105,7 +107,7 @@ static struct k_behavior_tree_node *delay_create(struct k_behavior_tree *tree, i
 
     delay->child = &K__BEHAVIOR_TREE_DEFAULT_SUCCESS;
 
-    delay->delay_ms = delay_ms;
+    delay->delay_ms = (uint64_t)delay_ms;
     delay->timeout  = 0;
     delay->state    = K__BT_DELAY_IDLE;
 

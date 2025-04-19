@@ -10,6 +10,8 @@
     ((type *)((char *)(ptr) - offsetof(type, member)))
 #endif
 
+/* region [tree_node_base] */
+
 struct k_behavior_tree_node {
 
     struct k_behavior_tree *tree;
@@ -26,8 +28,32 @@ struct k_behavior_tree_node {
     void (*fn_destroy)(struct k_behavior_tree_node *node);
 };
 
+/* endregion */
+
+/* region [default_node] */
+
 /* 等效于 `NULL` 的默认节点，`fn_tick()` 始终返回成功，或始终返回失败 */
 extern struct k_behavior_tree_node K__BEHAVIOR_TREE_DEFAULT_SUCCESS;
 extern struct k_behavior_tree_node K__BEHAVIOR_TREE_DEFAULT_FAILURE;
+
+/* endregion */
+
+/* region [tree] */
+
+struct k_behavior_tree_root_node {
+
+    struct k_behavior_tree_node super;
+
+    struct k_behavior_tree_node *child;
+};
+
+struct k_behavior_tree {
+
+    struct k_behavior_tree_root_node root;
+
+    uint64_t timestamp;
+};
+
+/* endregion */
 
 #endif

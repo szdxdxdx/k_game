@@ -109,9 +109,7 @@ static void k__behavior_tree_builder_destroy(struct k_behavior_tree_builder *bui
         *(builder->result) = NULL;
     }
     else {
-        if (NULL == builder->result) {
-            *(builder->result) = builder->tree;
-        }
+        *(builder->result) = builder->tree;
     }
 
     k_array_destruct(&builder->stack);
@@ -125,6 +123,10 @@ static void k__behavior_tree_builder_destroy(struct k_behavior_tree_builder *bui
 /* region [builder] */
 
 struct k_behavior_tree_builder *k__behavior_tree_builder_begin(struct k_behavior_tree **get_tree) {
+
+    if (NULL == get_tree)
+        return NULL;
+
     return k__behavior_tree_builder_create(get_tree);
 }
 

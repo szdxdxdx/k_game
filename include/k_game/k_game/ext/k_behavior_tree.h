@@ -1,6 +1,8 @@
 #ifndef K_BEHAVIOR_TREE_H
 #define K_BEHAVIOR_TREE_H
 
+#include <stdint.h>
+
 /**
  * \brief 行为树
  *
@@ -26,8 +28,6 @@
  * 行为树的把游戏 AI 的决策逻辑拆解成一个个小模块，每个模块都有自己明确的任务。
  * 行为树把 if-else 的判断和执行拆分开来，变成可以单独设计、任意组装的小模块，
  * 内置的 RUNNING 状态码机制使得需要 while 循环执行的耗时任务能被分步分帧执行。
- *
- * k_behavior_tree 的本质是 k_object。它没有外观，仅用于控制游戏的运作。
  *
  * TODO k_behavior_tree
  *
@@ -76,7 +76,18 @@ void k_behavior_tree_destroy(struct k_behavior_tree *tree);
 
 /* region [tree_tick] */
 
-void k_behavior_tree_tick(struct k_behavior_tree *tree);
+/**
+ * \brief 执行一次行为树
+ *
+ * 执行一次行为树的更新操作，产生一个 tick 信号，先从根节点开始
+ * 沿着树的结构层层传递，驱动各个节点按照既定逻辑执行自己的任务。
+ *
+ * 行为树自身不感知时间的流动，你需要告知行为树本次 tick 距离上次过去了多久，
+ * `delta_time_ms` 指定流逝的时间，不能为负值，单位：毫秒。
+ *
+ * 函数返回本次 tick 结束后根节点返回的状态码。
+ */
+enum k_behavior_tree_status k_behavior_tree_tick(struct k_behavior_tree *tree, int delta_time_ms);
 
 /* endregion */
 
@@ -335,21 +346,21 @@ struct k_behavior_tree_builder;
 
 /* 【请忽略当前 region】若要使用 builder 模式构造行为树，请使用下方 region [builder] 中的宏 */
 
-struct k_behavior_tree_builder *k__behavior_tree_builder_begin(struct k_behavior_tree **get_tree);
-int  k__behavior_tree_builder_end(struct k_behavior_tree_builder *builder);
-int  k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data), void (*fn_interrupt)(void *data));
-void k__behavior_tree_builder_condition(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_check)(void *data));
-void k__behavior_tree_builder_sequence(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder, int success_policy, int failure_policy);
-void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *builder);
-void k__behavior_tree_builder_repeat(struct k_behavior_tree_builder *builder, size_t n);
-void k__behavior_tree_builder_retry(struct k_behavior_tree_builder *builder, size_t n);         /* <- TODO */
-void k__behavior_tree_builder_timeout(struct k_behavior_tree_builder *builder, int timeout_ms); /* <- TODO */
-void k__behavior_tree_builder_delay(struct k_behavior_tree_builder *builder, int delay_ms);
+/* please ignore -> */ struct k_behavior_tree_builder *k__behavior_tree_builder_begin(struct k_behavior_tree **get_tree);
+/* please ignore -> */ int  k__behavior_tree_builder_end(struct k_behavior_tree_builder *builder);
+/* please ignore -> */ int  k__behavior_tree_builder_pop(struct k_behavior_tree_builder *builder);
+/* please ignore -> */ void k__behavior_tree_builder_action(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_tick)(void *data), void (*fn_interrupt)(void *data));
+/* please ignore -> */ void k__behavior_tree_builder_condition(struct k_behavior_tree_builder *builder, void *data, enum k_behavior_tree_status (*fn_check)(void *data));
+/* please ignore -> */ void k__behavior_tree_builder_sequence(struct k_behavior_tree_builder *builder);
+/* please ignore -> */ void k__behavior_tree_builder_selector(struct k_behavior_tree_builder *builder);
+/* please ignore -> */ void k__behavior_tree_builder_parallel(struct k_behavior_tree_builder *builder, int success_policy, int failure_policy);
+/* please ignore -> */ void k__behavior_tree_builder_inverter(struct k_behavior_tree_builder *builder);
+/* please ignore -> */ void k__behavior_tree_builder_force_success(struct k_behavior_tree_builder *builder);
+/* please ignore -> */ void k__behavior_tree_builder_force_failure(struct k_behavior_tree_builder *builder);
+/* please ignore -> */ void k__behavior_tree_builder_repeat(struct k_behavior_tree_builder *builder, size_t n);
+/* please ignore -> */ void k__behavior_tree_builder_retry(struct k_behavior_tree_builder *builder, size_t n);         /* <- TODO */
+/* please ignore -> */ void k__behavior_tree_builder_timeout(struct k_behavior_tree_builder *builder, int timeout_ms); /* <- TODO */
+/* please ignore -> */ void k__behavior_tree_builder_delay(struct k_behavior_tree_builder *builder, int delay_ms);
 
 /* endregion */
 
@@ -395,13 +406,6 @@ void k__behavior_tree_builder_delay(struct k_behavior_tree_builder *builder, int
     for (k__behavior_tree_builder_delay(builder, delay_ms); k__behavior_tree_builder_pop(builder); )
 
 /* endregion */
-
-/* endregion */
-
-/* region [tree_get/set] */
-
-/* TODO */
-void k_behavior_tree_set_destroy_callback(struct k_behavior_tree *tree, void (*fn_callback)(struct k_behavior_tree *tree));
 
 /* endregion */
 
