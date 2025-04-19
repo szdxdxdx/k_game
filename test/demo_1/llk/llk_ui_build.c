@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "k_read_file.h"
 #include "k_xml.h"
@@ -9,9 +10,97 @@
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
 
-int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *key, const char *val) {
+static int parse_length_val(const char *str, float *get_val, enum llk_ui_unit *get_unit) {
 
-    printf("key: %s, val: %s\n", key, val);
+    char *end;
+    float val = strtof(str, &end);
+    if (end == str)
+        return -1;
+
+    if (*end == '\0') {
+        *get_val = val;
+        *get_unit = LLK_UI_UNIT_PX;
+        return 0;
+    }
+
+    if (strncmp(end, "px", 2) == 0) {
+        *get_val = val;
+        *get_unit = LLK_UI_UNIT_PX;
+        return 0;
+    }
+    else if (strncmp(end, "%", 1) == 0) {
+        *get_val = val / 100.0f;
+        *get_unit = LLK_UI_UNIT_PERCENT;
+        return 0;
+    }
+
+    return -1;
+}
+
+int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_key, const char *attr_val) {
+
+    if (0 == strncmp(attr_key, "w", 1)) {
+        float val;
+        enum llk_ui_unit unit;
+        if (0 == parse_length_val(attr_val, &val, &unit)) {
+            llk_ui_float_init(elem->w);
+            elem->w.specified_val = val;
+            elem->w.unit = unit;
+            return 0;
+        }
+    }
+    else if (0 == strncmp(attr_key, "h", 1)) {
+        float val;
+        enum llk_ui_unit unit;
+        if (0 == parse_length_val(attr_val, &val, &unit)) {
+            llk_ui_float_init(elem->h);
+            elem->h.specified_val = val;
+            elem->h.unit = unit;
+            return 0;
+        }
+    }
+    else if (0 == strncmp(attr_key, "left", 4)) {
+        float val;
+        enum llk_ui_unit unit;
+        if (0 == parse_length_val(attr_val, &val, &unit)) {
+            llk_ui_float_init(elem->left);
+            elem->left.specified_val = val;
+            elem->left.unit = unit;
+            return 0;
+        }
+    }
+    else if (0 == strncmp(attr_key, "right", 5)) {
+        float val;
+        enum llk_ui_unit unit;
+        if (0 == parse_length_val(attr_val, &val, &unit)) {
+            llk_ui_float_init(elem->right);
+            elem->right.specified_val = val;
+            elem->right.unit = unit;
+            return 0;
+        }
+    }
+    else if (0 == strncmp(attr_key, "top", 3)) {
+        float val;
+        enum llk_ui_unit unit;
+        if (0 == parse_length_val(attr_val, &val, &unit)) {
+            llk_ui_float_init(elem->top);
+            elem->top.specified_val = val;
+            elem->top.unit = unit;
+            return 0;
+        }
+    }
+    else if (0 == strncmp(attr_key, "bottom", 6)) {
+        float val;
+        enum llk_ui_unit unit;
+        if (0 == parse_length_val(attr_val, &val, &unit)) {
+            llk_ui_float_init(elem->bottom);
+            elem->bottom.specified_val = val;
+            elem->bottom.unit = unit;
+            return 0;
+        }
+    }
+
+    return -1;
 }
 
 struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, struct k_xml_node *xml) {
@@ -35,6 +124,8 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     }
 
     llk_ui_append_child(parent, elem);
+
+    elem->background_color = rand();
 
     return elem;
 }
