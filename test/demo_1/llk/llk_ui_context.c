@@ -3,6 +3,7 @@
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_context.h"
+#include "./llk_ui_elem.h"
 
 static struct llk_ui_elem llk__ui_window = {
     .parent = NULL,
@@ -17,34 +18,37 @@ struct llk_ui_context *llk_ui_create_context(void) {
     if (NULL == ui)
         return NULL;
 
-    ui->vw = k_canvas_ui_get_vw();
-    ui->vh = k_canvas_ui_get_vh();
+    float vw = k_canvas_ui_get_vw();
+    float vh = k_canvas_ui_get_vh();
 
-    struct llk_ui_elem *root = llk__ui_construct_elem(&ui->root, ui);
+    struct llk_ui_elem *root = llk_ui_create_elem(ui);
+    {
+        root->w.unit = LLK_UI_UNIT_PX;
+        root->w.specified_val = vw;
+        root->w.computed_val  = vw;
 
-    root->w.unit = LLK_UI_UNIT_PX;
-    root->w.specified_val = ui->vw;
-    root->w.computed_val  = ui->vw;
+        root->h.unit = LLK_UI_UNIT_PX;
+        root->h.specified_val = vh;
+        root->h.computed_val  = vh;
 
-    root->h.unit = LLK_UI_UNIT_PX;
-    root->h.specified_val = ui->vh;
-    root->h.computed_val  = ui->vh;
+        root->parent = &llk__ui_window;
+    }
 
-    root->parent = &llk__ui_window;
+    ui->root = root;
+    ui->vw = vw;
+    ui->vh = vh;
 
     return ui;
 }
 
 struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
-    return &ui->root;
+    return ui->root;
 }
 
 void llk_ui_draw(struct llk_ui_context *ui) {
 
-    struct llk_ui_elem *root = &ui->root;
-
     struct llk_ui_elem *child;
-    struct k_list *child_list = &root->child_list;
+    struct k_list *child_list = &ui->root->child_list;
     struct k_list_node *iter;
 
     for (k_list_for_each(child_list, iter)) {

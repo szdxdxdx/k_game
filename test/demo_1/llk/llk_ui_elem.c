@@ -38,6 +38,7 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui) {
         return NULL;
 
     llk__ui_construct_elem(elem, ui);
+
     return elem;
 }
 

@@ -300,7 +300,7 @@ static char *extract_ident(char *text) {
         goto err;
 
     p++;
-    while (isalnum((unsigned char)*p) || '_' == *p) {
+    while (isalnum((unsigned char)*p) || '_' == *p || '-' == *p) {
         p++;
     }
 
@@ -647,8 +647,9 @@ static struct k_xml_node *k__xml_parse(char *text) {
             }
             case K_XML_TEXT_NODE: {
                 struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, base);
-                if ( ! text_node->is_blank)
-                    goto err;
+                if ( ! text_node->is_blank) {
+                    // goto err;
+                }
 
                 k_list_add_tail(&doc->top_node_list, &node->sibling_link);
                 break;

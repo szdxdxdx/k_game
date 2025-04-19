@@ -6,6 +6,7 @@
 
 #include "../llk/llk_ui_context.h"
 #include "../llk/llk_ui_elem.h"
+#include "../llk/llk_ui_build.h"
 
 static void draw_background(void *unused) {
     (void)unused;
@@ -64,6 +65,10 @@ static void init_ui(void) {
     llk_ui_append_child(my_root, box_3);
 }
 
+static void init_ui_from_xml(void) {
+    ui = llk_ui_build_from_xml_file("demo_1/ui/ui.xml");
+}
+
 static void draw_ui(void *unused) {
     llk_ui_draw(ui);
 }
@@ -71,7 +76,7 @@ static void draw_ui(void *unused) {
 static int init_empty_room(void *params) {
     k_room_add_draw_callback(NULL, draw_background, INT_MIN, 0);
     k_room_add_draw_callback(NULL, draw_ui, INT_MAX, 0);
-    init_ui();
+    init_ui_from_xml();
     return 0;
 }
 

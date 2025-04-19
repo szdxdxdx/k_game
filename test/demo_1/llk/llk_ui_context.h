@@ -3,11 +3,9 @@
 
 #include "./llk_ui_fwd.h"
 
-#include "./llk_ui_elem.h"
-
 struct llk_ui_context {
 
-    struct llk_ui_elem root;
+    struct llk_ui_elem *root;
 
     float vw;
     float vh;
