@@ -94,7 +94,8 @@ enum k_xml_node_type k_xml_get_type(struct k_xml_node *node);
 /**
  * \brief 获取 xml 节点的第一个子节点
  *
- * 函数返回元素节点 `elem_node` 的第一个子节点，若没有则返回 `NULL`。
+ * 函数返回元素节点 `elem_node` 的第一个子节点，
+ * 若它没有子节点，或它不是元素节点，则返回 `NULL`。
  */
 struct k_xml_node *k_xml_get_first_child(struct k_xml_node *elem_node);
 
@@ -104,6 +105,33 @@ struct k_xml_node *k_xml_get_first_child(struct k_xml_node *elem_node);
  * 函数返回 `node` 的下一个兄弟节点，若没有下一个节点则返回 `NULL`。
  */
 struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node);
+
+/**
+ * \brief 遍历 xml 元素节点的子节点
+ *
+ * 示例，统计 xml 元素节点的子节点个数，以及子元素节点的个数：
+ * ```C
+ * struct k_xml_node *elem_node = ...;
+ *
+ * int elem_child_count = 0;
+ * int child_count = 0;
+ *
+ * struct k_xml_node *child_node;
+ * for ( k_xml_for_each_child(elem_node, child_node) ) {
+ *
+ *     child_count++;
+ *
+ *     if (K_XML_ELEM_NODE == k_xml_get_type(child_node))
+ *          child_count++;
+ * }
+ *
+ * printf("child_count = %d, elem_count = %d", child_count, elem_child_count);
+ * ```
+ */
+#define k_xml_for_each_child(elem_node, child_node) \
+    child_node = k_xml_get_first_child(elem_node); \
+    NULL != child_node; \
+    child_node = k_xml_get_next_sibling(child_node)
 
 /**
  * \brief 获取 xml 节点的前一个兄弟节点
@@ -156,7 +184,7 @@ struct k_xml_attr;
 /**
  * \brief 获取 xml 元素节点的第一个属性
  *
- * 函数返回元素节点 `elem_node` 的第一个属性，用于遍历属性列表的起点。
+ * 函数返回元素节点 `elem_node` 的第一个属性，用于遍历属性列表。
  * 出参 `get_key` 和 `get_val` 分别返回属性的键和值。
  * 若节点没有属性，或者不是元素节点，则函数返回 `NULL`。
  */
@@ -170,6 +198,27 @@ struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char
  * 若 `attr` 已是最后一个属性，则函数返回 `NULL`。
  */
 struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get_key, const char **get_val);
+
+/**
+ * \brief 遍历 xml 元素节点的属性
+ *
+ * 示例：
+ * ```C
+ * struct k_xml_node *elem_node = ...;
+ *
+ * struct k_xml_attr *attr;
+ * const char *key;
+ * const char *val;
+ * for ( k_xml_for_each_attr(elem_node, attr, key, val) ) {
+ *
+ *     printf("key: %s, val: %s", key, val);
+ * }
+ * ```
+ */
+#define k_xml_for_each_attr(elem_node, attr, key, val) \
+    attr = k_xml_get_first_attr(elem_node, &key, &val); \
+    NULL != attr; \
+    attr = k_xml_get_next_attr(attr, &key, &val)
 
 /**
  * \brief 获取 xml 节点的文本内容
