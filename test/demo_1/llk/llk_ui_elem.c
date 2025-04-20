@@ -1,9 +1,11 @@
+#include "k_log.h"
+
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_elem.h"
 #include "./llk_ui_context.h"
 
-static struct llk_ui_elem_v_tbl llk__ui_elem_default_v_tbl = {
+static struct llk_ui_elem_type_info llk__ui_elem_default_type_info = {
     .type_name    = "",
     .elem_size    = sizeof(struct llk_ui_elem),
     .fn_construct = NULL,
@@ -11,7 +13,7 @@ static struct llk_ui_elem_v_tbl llk__ui_elem_default_v_tbl = {
     .fn_draw      = NULL,
 };
 
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, struct llk_ui_elem_v_tbl *v_tbl) {
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type_info *type_info) {
 
     elem->ui = ui;
 
@@ -29,27 +31,30 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     elem->top.unit    = LLK_UI_UNIT_NO_VAL;
     elem->bottom.unit = LLK_UI_UNIT_NO_VAL;
 
-
-    elem->debug_info = "";
-
     elem->x = 0.0f;
     elem->y = 0.0f;
 
     elem->background_color = 0x00000000;
     elem->border_color     = 0x00000000;
 
-    elem->v_tbl = v_tbl;
+    elem->type = type_info;
 
     return elem;
 }
 
-struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui) {
+struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *type_name) {
 
-    struct llk_ui_elem *elem = llk__ui_mem_alloc(ui, sizeof(struct llk_ui_elem));
+    struct llk_ui_elem_type_info *type_info = k_str_map_get(&ui->elem_type_map, type_name);
+    if (NULL == type_info) {
+        k_log_error("llk UI element type `%s` not registered", type_name);
+        return NULL;
+    }
+
+    struct llk_ui_elem *elem = llk__ui_mem_alloc(ui, type_info->elem_size);
     if (NULL == elem)
         return NULL;
 
-    llk__ui_construct_elem(elem, ui, &llk__ui_elem_default_v_tbl);
+    llk__ui_construct_elem(elem, ui, type_info);
 
     return elem;
 }
@@ -231,8 +236,8 @@ void llk__ui_elem_draw(struct llk_ui_elem *elem) {
     k_canvas_set_draw_color_rgba(elem->border_color);
     k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
 
-    if (elem->v_tbl->fn_draw != NULL) {
-        elem->v_tbl->fn_draw(elem);
+    if (elem->type->fn_draw != NULL) {
+        elem->type->fn_draw(elem);
     }
 
     struct llk_ui_elem *child;

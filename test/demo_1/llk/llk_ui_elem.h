@@ -15,8 +15,6 @@ struct llk_ui_elem {
     struct k_list child_list;
     struct k_list_node sibling_link;
 
-    const char *debug_info;
-
     struct llk_ui_float w;
     struct llk_ui_float h;
 
@@ -31,14 +29,14 @@ struct llk_ui_elem {
     uint32_t background_color;
     uint32_t border_color;
 
-    struct llk_ui_elem_v_tbl *v_tbl;
+    const struct llk_ui_elem_type_info *type;
 };
 
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, struct llk_ui_elem_v_tbl *v_tbl);
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type_info *type_info);
 
 struct llk_ui_elem *llk__ui_destruct_elem(struct llk_ui_elem *elem);
 
-struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui);
+struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *type_name);
 
 int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *val);
 
@@ -50,7 +48,7 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem);
 
 void llk__ui_elem_draw(struct llk_ui_elem *elem);
 
-struct llk_ui_elem_v_tbl {
+struct llk_ui_elem_type_info {
 
     const char *type_name;
 

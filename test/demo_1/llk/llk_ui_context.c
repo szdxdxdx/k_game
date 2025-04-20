@@ -41,7 +41,7 @@ struct llk_ui_context *llk_ui_create_context(void) {
     float vw = k_canvas_ui_get_vw();
     float vh = k_canvas_ui_get_vh();
 
-    struct llk_ui_elem *root = llk_ui_create_elem(ui);
+    struct llk_ui_elem *root = llk_ui_create_elem(ui, "root");
     if (NULL == root)
         goto err;
 

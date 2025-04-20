@@ -39,20 +39,20 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     if (0 != check_config(ui, config))
         goto err;
 
-    size_t val_size = sizeof(struct llk_ui_elem_v_tbl) + strlen(config->type_name) + 1;
+    size_t val_size = sizeof(struct llk_ui_elem_type_info) + strlen(config->type_name) + 1;
 
-    struct llk_ui_elem_v_tbl *v_tbl = k_str_map_add(&ui->elem_type_map, config->type_name, val_size);
-    if (NULL == v_tbl)
+    struct llk_ui_elem_type_info *type_info = k_str_map_add(&ui->elem_type_map, config->type_name, val_size);
+    if (NULL == type_info)
         goto err;
 
-    char *type_name = (char *)v_tbl + sizeof(struct llk_ui_elem_v_tbl);
+    char *type_name = (char *)type_info + sizeof(struct llk_ui_elem_type_info);
     strcpy(type_name, config->type_name);
 
-    v_tbl->elem_size    = config->elem_size;
-    v_tbl->type_name    = type_name;
-    v_tbl->fn_construct = config->fn_construct;
-    v_tbl->fn_destruct  = config->fn_destruct;
-    v_tbl->fn_draw      = config->fn_draw;
+    type_info->elem_size    = config->elem_size;
+    type_info->type_name    = type_name;
+    type_info->fn_construct = config->fn_construct;
+    type_info->fn_destruct  = config->fn_destruct;
+    type_info->fn_draw      = config->fn_draw;
 
     return 0;
 

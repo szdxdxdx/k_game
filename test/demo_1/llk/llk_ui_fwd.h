@@ -4,7 +4,7 @@
 struct llk_ui_context;
 
 struct llk_ui_elem;
-struct llk_ui_elem_v_tbl;
+struct llk_ui_elem_type_info;
 
 enum llk_ui_unit {
 

@@ -10,7 +10,9 @@
 
 struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, struct k_xml_node *xml) {
 
-    struct llk_ui_elem *elem = llk_ui_create_elem(parent->ui);
+    const char *tag = k_xml_get_tag(xml);
+
+    struct llk_ui_elem *elem = llk_ui_create_elem(parent->ui, tag);
     if (NULL == elem)
         return NULL;
 
