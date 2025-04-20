@@ -6,16 +6,26 @@
 #include "../sprite/yx_spr.h"
 #include "../object/yx_obj.h"
 
-/* region [background] */
+#include "../llk/llk_ui_context.h"
+#include "../llk/llk_ui_elem.h"
+#include "../llk/llk_ui_build.h"
 
-static void draw_background(void *unused) {
-    (void)unused;
+/* region [ui] */
+
+static struct llk_ui_context *ui;
+
+static void room_draw_ui(void) {
 
     k_canvas_set_draw_color_rgba(0x00000000);
     k_canvas_ui_clear();
+    llk_ui_draw(ui);
+}
 
-    k_canvas_set_draw_color_rgba(0xee0000ff);
-    k_canvas_ui_fill_rect(0, 0, 100, 100);
+/* endregion */
+
+/* region [room_background] */
+
+static void room_draw_background() {
 
     k_canvas_set_draw_color_rgba(0x1e1e1eff);
     k_canvas_room_clear();
@@ -50,6 +60,16 @@ static void draw_background(void *unused) {
 
 /* endregion */
 
+/* region [room_draw] */
+
+static void room_draw(void *unused) {
+
+    room_draw_background();
+    room_draw_ui();
+}
+
+/* endregion */
+
 static void set_debug(void *data) {
 
     if (k_key_pressed('B')) {
@@ -62,6 +82,9 @@ static void set_debug(void *data) {
             k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 1);
             k_camera_set_debug(1);
         }
+        if (k_key_down(K_KEY_LEFT_CTRL)) {
+            ui = llk_ui_build_from_xml_file("demo_1/ui/ui.xml");
+        }
     }
 }
 
@@ -71,7 +94,7 @@ static int init_arena_room(void *params) {
     struct yx_room_arena *room_arena = k_room_get_data();
 
     k_room_add_step_callback(NULL, set_debug);
-    k_room_add_draw_callback(NULL, draw_background, INT_MIN, 0);
+    k_room_add_draw_callback(NULL, room_draw, INT_MIN, 0);
 
     k_room_add_camera();
     k_room_add_collision_manager();
