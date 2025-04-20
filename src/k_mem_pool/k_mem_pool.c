@@ -3,7 +3,7 @@
 
 #include "k_mem_pool.h"
 
-/* 向系统申请分配的大内存块的头部 */
+/* 向系统申请分配的 chunk 的头部 */
 struct k_mem_chunk {
 
     /* 链向下一个 chunk
@@ -17,15 +17,29 @@ struct k_mem_chunk {
 /* 分配给用户使用的内存块的头部 */
 struct k_mem_block {
 
-    /* 分配出的 block 启用 `child_list` 字段，记录其所属的 free_list，方便归还时直接链入。
-     * 已归入 free_list 的空闲 block 启用 `next` 字段链向下一个 block。
-     *
-     * 若 block 由 `fn_malloc()` 分配，则 `child_list` 标记为 NULL，归还时调用 `fn_free()`。
-     */
     union {
+        /* 分配出的 block 启用 `list` 字段
+         *
+         * 若 block 是从 chunk 中切出的，则 `list` 记录其所属的 free_list，归还时直接链入。
+         * 若 block 由 `fn_malloc()` 分配，则 `list` 标记为 `NULL`。
+         */
         struct k_mem_block **list;
-        struct k_mem_block  *next;
+
+        /* 已归还的 block 启用 `next` 字段
+         *
+         * 若 block 是从 chunk 中切出的，则归入 free_list，`next` 链向下一个 block。
+         * 若 block 由 `fn_malloc()` 分配，则 `next` 字段不会被使用。
+         */
+        struct k_mem_block *next;
     };
+};
+
+/* 由 `fn_malloc()` 分配的 block 的头部 */
+struct k_mem_big_block {
+    struct k_mem_pool *pool;
+    struct k_mem_big_block *next;
+    struct k_mem_big_block **pprev;
+    struct k_mem_block block;
 };
 
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
@@ -212,16 +226,16 @@ void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size) {
         return alloc_from_pool(pool, size);
     }
 
-    else if (size < SIZE_MAX - sizeof(struct k_mem_block)) {
-        struct k_mem_block *block = pool->fn_malloc(sizeof(struct k_mem_block) + size);
+    else if (size < SIZE_MAX - sizeof(struct k_mem_big_block)) {
+        struct k_mem_big_block *block = pool->fn_malloc(sizeof(struct k_mem_big_block) + size);
         if (NULL == block)
             return NULL;
 
-        /* 内存池没有追踪通过 `fn_malloc()` 分配出的大块 block，
-         * 若销毁或析构内存池前没有归还所有内存块，仍可能发生内存泄漏。
-         */
-        block->list = NULL;
-        return ptr_offset(block, sizeof(struct k_mem_block));
+        block->block.list = NULL;
+        block->pool = pool;
+        block->next = NULL; /* TODO */
+        block->pprev = NULL;
+        return ptr_offset(block, sizeof(struct k_mem_big_block));
     }
 
     else {
@@ -229,20 +243,21 @@ void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size) {
     }
 }
 
-void k_mem_pool_free(struct k_mem_pool *pool, void *p) {
-    assert(NULL != pool);
+void k_mem_pool_free(void *p) {
 
     if (NULL == p)
         return;
 
     struct k_mem_block *block = ptr_offset(p, -sizeof(struct k_mem_block));
-    if (NULL == block->list) {
-        pool->fn_free(block);
-        return;
+    if (NULL != block->list) {
+        struct k_mem_block **list = block->list;
+
+        block->next = *list;
+        *list = block;
     }
-
-    struct k_mem_block **list = block->list;
-
-    block->next = *list;
-    *list = block;
+    else {
+        struct k_mem_big_block *big_block = ptr_offset(p, -sizeof(struct k_mem_big_block));
+        struct k_mem_pool *pool = big_block->pool;
+        pool->fn_free(big_block);
+    }
 }

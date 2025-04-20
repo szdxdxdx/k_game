@@ -155,6 +155,6 @@ void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size);
  * 请确保归还的内存块属于该内存池！以及请勿重复归还内存块！
  * 归还内存块后，不应再读写该内存块中的内容！
  */
-void k_mem_pool_free(struct k_mem_pool *pool, void *p);
+void k_mem_pool_free(void *p);
 
 #endif

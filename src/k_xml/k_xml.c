@@ -93,7 +93,7 @@ static void *k__xml_mem_alloc(struct k_xml_doc *doc, size_t size) {
 }
 
 static void k__xml_mem_free(struct k_xml_doc *doc, void *p) {
-    k_mem_pool_free(&doc->mem_pool, p);
+    k_mem_pool_free(p);
 }
 
 static struct k_xml_doc *k__xml_create_doc(void) {
