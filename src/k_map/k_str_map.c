@@ -8,7 +8,7 @@ struct k_str_map_node {
     struct k_str_intrusive_map_node imap_node;
 };
 
-static void *get_val(struct k_str_map_node *node) {
+static void *k__str_map_node_get_val(struct k_str_map_node *node) {
     return (void *)((char *)node + sizeof(struct k_str_map_node));
 }
 
@@ -107,7 +107,7 @@ void k_str_map_destruct(struct k_str_map *map) {
     map->fn_free(imap->buckets);
 }
 
-static void rehash(struct k_str_map *map) {
+static void k__str_map_rehash(struct k_str_map *map) {
 
     static const size_t primes[] = {
         53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593,
@@ -170,11 +170,11 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t value_size) {
         map->size += 1;
 
         if (map->rehash_threshold < map->size) {
-            rehash(map);
+            k__str_map_rehash(map);
         }
     }
 
-    return get_val(map_node);
+    return k__str_map_node_get_val(map_node);
 }
 
 void *k_str_map_add(struct k_str_map *map, const char *key, size_t value_size) {
@@ -195,10 +195,10 @@ void *k_str_map_add(struct k_str_map *map, const char *key, size_t value_size) {
     map->size += 1;
 
     if (map->rehash_threshold < map->size) {
-        rehash(map);
+        k__str_map_rehash(map);
     }
 
-    return get_val(map_node);
+    return k__str_map_node_get_val(map_node);
 }
 
 void k_str_map_del(struct k_str_map *map, const char *key) {
@@ -227,7 +227,7 @@ void *k_str_map_get(struct k_str_map *map, const char *key) {
     }
     else {
         struct k_str_map_node *map_node = container_of(imap_node, struct k_str_map_node, imap_node);
-        return get_val(map_node);
+        return k__str_map_node_get_val(map_node);
     }
 }
 

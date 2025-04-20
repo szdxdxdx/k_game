@@ -32,6 +32,8 @@ void llk_ui_draw(struct llk_ui_context *ui);
 
 struct llk_ui_elem_type_config {
 
+    const char *elem_type_name;
+
     size_t elem_size;
 
     struct llk_ui_elem *(*fn_construct)(void *elem_);
@@ -40,5 +42,7 @@ struct llk_ui_elem_type_config {
 
     void (*fn_draw)(struct llk_ui_elem *elem);
 };
+
+int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config);
 
 #endif

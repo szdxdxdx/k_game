@@ -93,9 +93,6 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 
 void llk_ui_draw(struct llk_ui_context *ui) {
 
-    if (NULL == ui)
-        return;
-
     struct llk_ui_elem *child;
     struct k_list *child_list = &ui->root->child_list;
     struct k_list_node *iter;
