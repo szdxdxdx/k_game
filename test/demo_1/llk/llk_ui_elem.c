@@ -147,7 +147,7 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
                 break;
         }
 
-        elem->x = parent->x + parent->w.computed_val - elem->right.computed_val - elem->w.computed_val;
+        elem->x = parent->x + parent->w.computed_val - elem->w.computed_val - elem->right.computed_val;
     }
     else {
         elem->x = parent->x;
@@ -193,7 +193,7 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
                 break;
         }
 
-        elem->y = parent->y + parent->h.computed_val - elem->h.computed_val;
+        elem->y = parent->y + parent->h.computed_val - elem->h.computed_val - elem->bottom.computed_val;
     }
     else {
         elem->y = parent->y;
@@ -212,7 +212,7 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
 void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 
     k_canvas_set_draw_color_rgba(elem->background_color);
-    k_canvas_room_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
+    k_canvas_ui_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
 
     struct llk_ui_elem *child;
     struct k_list *child_list = &elem->child_list;

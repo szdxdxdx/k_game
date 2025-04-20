@@ -14,6 +14,10 @@
 
 static struct llk_ui_context *ui;
 
+static void room_build_ui(void) {
+    ui = llk_ui_build_from_xml_file("demo_1/ui/ui.xml");
+}
+
 static void room_draw_ui(void) {
 
     k_canvas_set_draw_color_rgba(0x00000000);
@@ -83,13 +87,15 @@ static void set_debug(void *data) {
             k_camera_set_debug(1);
         }
         if (k_key_down(K_KEY_LEFT_CTRL)) {
-            ui = llk_ui_build_from_xml_file("demo_1/ui/ui.xml");
+            room_build_ui();
         }
     }
 }
 
 static int init_arena_room(void *params) {
     (void)params;
+
+    room_build_ui();
 
     struct yx_room_arena *room_arena = k_room_get_data();
 
