@@ -27,6 +27,8 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     elem->background_color = 0x00000000;
     elem->border_color     = 0x00000000;
 
+    elem->fn_draw = NULL;
+
     return elem;
 }
 
@@ -217,6 +219,10 @@ void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 
     k_canvas_set_draw_color_rgba(elem->border_color);
     k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
+
+    if (elem->fn_draw != NULL) {
+        elem->fn_draw(elem);
+    }
 
     struct llk_ui_elem *child;
     struct k_list *child_list = &elem->child_list;

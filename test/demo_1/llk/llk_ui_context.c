@@ -16,11 +16,13 @@ static struct llk_ui_elem llk__ui_window = {
 
 struct llk_ui_context *llk_ui_create_context(void) {
 
-    struct llk_ui_context *ui = malloc(sizeof(struct llk_ui_context));
-    if (NULL == ui) {
-        k_log_error("Failed to create llk UI context, malloc() failed");
-        return NULL;
-    }
+    struct llk_ui_context *ui = NULL;
+    struct k_mem_pool *mem_pool = NULL;
+    struct k_str_map *map = NULL;
+
+    ui = malloc(sizeof(struct llk_ui_context));
+    if (NULL == ui)
+        goto err;
 
     struct k_mem_pool_config config;
     config.fn_malloc        = malloc;
@@ -28,36 +30,51 @@ struct llk_ui_context *llk_ui_create_context(void) {
     config.alloc_size_align = 16;
     config.block_size_max   = sizeof(struct llk_ui_elem) * 2;
     config.alloc_chunk_size = 1024;
-    if (NULL == k_mem_pool_construct(&ui->mem_pool, &config)) {
-        free(ui);
-        k_log_error("Failed to create llk UI context");
-        return NULL;
-    }
+    mem_pool = k_mem_pool_construct(&ui->mem_pool, &config);
+    if (NULL == mem_pool)
+        goto err;
+
+    map = k_str_map_construct(&ui->elem_type_map, NULL);
+    if (NULL == map)
+        goto err;
 
     float vw = k_canvas_ui_get_vw();
     float vh = k_canvas_ui_get_vh();
 
     struct llk_ui_elem *root = llk_ui_create_elem(ui);
-    {
-        root->w.unit = LLK_UI_UNIT_PX;
-        root->w.specified_val = vw;
-        root->w.computed_val  = vw;
+    if (NULL == root)
+        goto err;
 
-        root->h.unit = LLK_UI_UNIT_PX;
-        root->h.specified_val = vh;
-        root->h.computed_val  = vh;
-
-        root->parent = &llk__ui_window;
-    }
+    root->w.unit = LLK_UI_UNIT_PX;
+    root->w.specified_val = vw;
+    root->w.computed_val  = vw;
+    root->h.unit = LLK_UI_UNIT_PX;
+    root->h.specified_val = vh;
+    root->h.computed_val  = vh;
+    root->parent = &llk__ui_window;
 
     ui->root = root;
     ui->vw = vw;
     ui->vh = vh;
 
     return ui;
+
+err:
+    if (NULL != map)
+        k_str_map_destruct(map);
+
+    if (NULL != mem_pool)
+        k_mem_pool_destruct(mem_pool);
+
+    if (NULL != ui)
+        free(ui);
+
+    k_log_error("Failed to create llk UI context");
+    return NULL;
 }
 
 void llk_ui_destroy_context(struct llk_ui_context *ui) {
+    k_str_map_destruct(&ui->elem_type_map);
     k_mem_pool_destruct(&ui->mem_pool);
     free(ui);
 }
