@@ -16,10 +16,11 @@
  *
  * 若指定默认缓冲区 `buf` 为 `NULL` 或其容量 `buf_size` 为 0，则函数将一定分配新缓冲区。
  *
- * 出参 `get_len` 是可选的，若不为 `NULL` 则返回文本的长度，单位：字节，而非字符。
- *
  * 若读取成功，函数返回缓冲区指针，否则返回 `NULL`。
+ * 出参 `get_len` 返回文本的长度（单位：字节，而非字符），若为 `NULL` 则不接收。
  */
+char *k_read_txt_file(const char *file_path, char *buf, size_t buf_size, size_t *get_len);
+
 char *k_read_txt_file(const char *file_path, char *buf, size_t buf_size, size_t *get_len);
 
 #endif

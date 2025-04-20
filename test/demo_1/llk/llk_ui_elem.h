@@ -45,6 +45,8 @@ struct llk_ui_elem *llk__ui_destruct_elem(struct llk_ui_elem *elem);
 
 struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui);
 
+int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *val);
+
 int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
 
 void llk__ui_elem_measure(struct llk_ui_elem *elem);
