@@ -8,9 +8,6 @@
 
 #include "k_xml.h"
 
-#define k__xml_log_error(fmt, ...) \
-    fprintf("ERROR [k_xml] " fmt "\n", ##__VA_ARGS__)
-
 /* region [struct_def] */
 
 struct k_xml_elem_node;
@@ -329,7 +326,7 @@ static int decode_entities(char *begin, const char *end, size_t *get_len) {
             if (0 == strncmp(p2, "gt;",   3)) { *p1 = '>';  p2 += 3; break; }
             if (0 == strncmp(p2, "quot;", 5)) { *p1 = '\"'; p2 += 5; break; }
             if (0 == strncmp(p2, "apos;", 5)) { *p1 = '\''; p2 += 5; break; }
-            return -1;
+            goto err;
         }
     }
 
@@ -347,6 +344,7 @@ static int decode_entities(char *begin, const char *end, size_t *get_len) {
             if (0 == strncmp(p2, "gt;",   3)) { *p1 = '>';  p1 += 1; p2 += 3; continue; }
             if (0 == strncmp(p2, "quot;", 5)) { *p1 = '\"'; p1 += 1; p2 += 5; continue; }
             if (0 == strncmp(p2, "apos;", 5)) { *p1 = '\''; p1 += 1; p2 += 5; continue; }
+            goto err;
         }
     }
 
@@ -357,6 +355,9 @@ static int decode_entities(char *begin, const char *end, size_t *get_len) {
     }
 
     return 0;
+
+err:
+    return -1;
 }
 
 static char *extract_string(char *text) {
@@ -484,6 +485,7 @@ static struct k_xml_comment_node *k__xml_parse_comment_node(struct k_xml_parser 
 
     *comment_begin = '\0';
     parser->p = p;
+
     return comment_node;
 
 err:

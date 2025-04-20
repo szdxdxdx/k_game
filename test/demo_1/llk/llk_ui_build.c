@@ -193,7 +193,7 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
     char *text = k_read_txt_file(file_path, NULL, 0, NULL);
     if (NULL == text) {
         k_log_error("Failed to read file `%s`", file_path);
-        return NULL;
+        goto err;
     }
 
     struct k_xml_node *xml = k_xml_parse(text);
@@ -201,7 +201,7 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
     if (NULL == xml) {
         free(text);
         k_log_error("Failed to parse xml");
-        return NULL;
+        goto err;
     }
 
     struct llk_ui_context *ui = llk__ui_build_from_xml(xml);
@@ -210,4 +210,8 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
     free(text);
 
     return ui;
+
+err:
+    k_log_error("Failed to build llk UI");
+    return NULL;
 }
