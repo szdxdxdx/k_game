@@ -84,14 +84,16 @@ static int parse_color_val(const char *str, uint32_t *get_val) {
     return 0;
 }
 
-int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_key, const char *attr_val) {
+void llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_key, const char *attr_val) {
 
     if (0 == strncmp(attr_key, "w", 1)) {
         float val;
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
             llk_ui_float_set(&elem->w, val, unit);
-            return 0;
+            return;
+        } else {
+            k_log_warn("Illegal attribute value when building llk UI element, key: `%s`, value: `%s`", attr_key, attr_val);
         }
     }
     else if (0 == strncmp(attr_key, "h", 1)) {
@@ -99,7 +101,7 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
             llk_ui_float_set(&elem->h, val, unit);
-            return 0;
+            return;
         }
     }
     else if (0 == strncmp(attr_key, "left", 4)) {
@@ -107,7 +109,7 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
             llk_ui_float_set(&elem->left, val, unit);
-            return 0;
+            return;
         }
     }
     else if (0 == strncmp(attr_key, "right", 5)) {
@@ -115,7 +117,7 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
             llk_ui_float_set(&elem->right, val, unit);
-            return 0;
+            return;
         }
     }
     else if (0 == strncmp(attr_key, "top", 3)) {
@@ -123,7 +125,7 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
             llk_ui_float_set(&elem->top, val, unit);
-            return 0;
+            return;
         }
     }
     else if (0 == strncmp(attr_key, "bottom", 6)) {
@@ -131,19 +133,18 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
             llk_ui_float_set(&elem->bottom, val, unit);
-            return 0;
+            return;
         }
     }
     else if (0 == strncmp(attr_key, "background-color", 16)) {
         uint32_t color;
         if (0 == parse_color_val(attr_val, &color)) {
             elem->background_color = color;
-            return 0;
+            return;
         }
     }
 
-    k_log_error("Failed to parse elem attr, key: `%s`, val: `%s`", attr_key, attr_val);
-    return -1;
+    k_log_warn("Unused attribute when building llk UI element, key: `%s`, value: `%s`", attr_key, attr_val);
 }
 
 struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, struct k_xml_node *xml) {
@@ -165,9 +166,7 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     const char *key;
     const char *val;
     for (k_xml_for_each_attr(xml, attr, key, val)) {
-        if (0 != llk__ui_build_elem_attr_from_xml(elem, key, val)) {
-            return NULL;
-        }
+        llk__ui_build_elem_attr_from_xml(elem, key, val);
     }
 
     llk_ui_append_child(parent, elem);
@@ -175,7 +174,7 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     return elem;
 
 err:
-    k_log_error("Failed to build elem from xml node, node tag: `%s`", k_xml_get_tag(xml));
+    k_log_error("Failed to build llk UI element from xml node, node tag: `%s`", k_xml_get_tag(xml));
     return NULL;
 }
 
@@ -216,7 +215,7 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
     free(text);
 
     if (NULL == ui) {
-        k_log_error("Failed to create ui context");
+        k_log_error("Failed to create llk UI context");
         return NULL;
     }
 
