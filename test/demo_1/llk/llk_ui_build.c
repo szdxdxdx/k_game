@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "k_read_file.h"
 #include "k_xml.h"
@@ -37,15 +38,59 @@ static int parse_length_val(const char *str, float *get_val, enum llk_ui_unit *g
     return -1;
 }
 
+static int parse_color_val(const char *str, uint32_t *get_val) {
+
+    if (*str != '#')
+        return -1;
+
+    const char *color_begin = str + 1;
+    const char *p = color_begin;
+    while (isxdigit(*p)) {
+        p++;
+        if (p - color_begin > 8)
+            return -1;
+    }
+
+    if (*p != '\0')
+        return -1;
+
+    size_t color_len = p - color_begin;
+    if (color_len != 6 && color_len != 8)
+        return -1;
+
+    uint32_t color_val = 0;
+    p = color_begin;
+    for (; '\0' != *p; p++) {
+        char c = *p;
+        uint8_t v;
+        if ('0' <= c && c <= '9') {
+            v = c - '0';
+        } else if ('a' <= c && c <= 'f') {
+            v = c - 'a' + 10;
+        } else if ('A' <= c && c <= 'F') {
+            v = c - 'A' + 10;
+        } else {
+            return -1;
+        }
+
+        color_val = (color_val << 4) | v;
+    }
+
+    if (color_len == 6) {
+        color_val = (color_val << 8) | 0xFF;
+    }
+
+    *get_val = color_val;
+    return 0;
+}
+
 int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_key, const char *attr_val) {
 
     if (0 == strncmp(attr_key, "w", 1)) {
         float val;
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
-            llk_ui_float_init(elem->w);
-            elem->w.specified_val = val;
-            elem->w.unit = unit;
+            llk_ui_float_set(&elem->w, val, unit);
             return 0;
         }
     }
@@ -53,9 +98,7 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         float val;
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
-            llk_ui_float_init(elem->h);
-            elem->h.specified_val = val;
-            elem->h.unit = unit;
+            llk_ui_float_set(&elem->h, val, unit);
             return 0;
         }
     }
@@ -63,9 +106,7 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         float val;
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
-            llk_ui_float_init(elem->left);
-            elem->left.specified_val = val;
-            elem->left.unit = unit;
+            llk_ui_float_set(&elem->left, val, unit);
             return 0;
         }
     }
@@ -73,9 +114,7 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         float val;
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
-            llk_ui_float_init(elem->right);
-            elem->right.specified_val = val;
-            elem->right.unit = unit;
+            llk_ui_float_set(&elem->right, val, unit);
             return 0;
         }
     }
@@ -83,9 +122,7 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         float val;
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
-            llk_ui_float_init(elem->top);
-            elem->top.specified_val = val;
-            elem->top.unit = unit;
+            llk_ui_float_set(&elem->top, val, unit);
             return 0;
         }
     }
@@ -93,9 +130,14 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         float val;
         enum llk_ui_unit unit;
         if (0 == parse_length_val(attr_val, &val, &unit)) {
-            llk_ui_float_init(elem->bottom);
-            elem->bottom.specified_val = val;
-            elem->bottom.unit = unit;
+            llk_ui_float_set(&elem->bottom, val, unit);
+            return 0;
+        }
+    }
+    else if (0 == strncmp(attr_key, "background-color", 16)) {
+        uint32_t color;
+        if (0 == parse_color_val(attr_val, &color)) {
+            elem->background_color = color;
             return 0;
         }
     }
@@ -124,8 +166,6 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     }
 
     llk_ui_append_child(parent, elem);
-
-    elem->background_color = rand();
 
     return elem;
 }

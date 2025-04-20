@@ -13,13 +13,13 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     k_list_init(&elem->child_list);
     k_list_node_loop(&elem->sibling_link);
 
-    llk_ui_float_init(elem->w);
-    llk_ui_float_init(elem->h);
+    llk_ui_float_set(&elem->w, 1.0f, LLK_UI_UNIT_PERCENT);
+    llk_ui_float_set(&elem->h, 1.0f, LLK_UI_UNIT_PERCENT);
 
-    llk_ui_float_init(elem->left);
-    llk_ui_float_init(elem->right);
-    llk_ui_float_init(elem->top);
-    llk_ui_float_init(elem->bottom);
+    llk_ui_float_set(&elem->left,   0.0f, LLK_UI_UNIT_NO_VAL);
+    llk_ui_float_set(&elem->top,    0.0f, LLK_UI_UNIT_NO_VAL);
+    llk_ui_float_set(&elem->right,  0.0f, LLK_UI_UNIT_NO_VAL);
+    llk_ui_float_set(&elem->bottom, 0.0f, LLK_UI_UNIT_NO_VAL);
 
     elem->debug_info = "";
 
