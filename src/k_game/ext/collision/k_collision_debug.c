@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "./_internal.h"
 
 #include "k_game/core/k_canvas.h"
@@ -40,6 +42,8 @@ static void k__collision_draw_box(struct k_collision_box *box) {
             k_canvas_room_draw_circle(cx, cy, r);
             break;
         }
+        default:
+            assert(0);
     }
 }
 

@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "./_internal.h"
 
 /* region [utils] */
@@ -143,7 +145,10 @@ static int check_collision_point_box(float x, float y, struct k_collision_box *b
             float r  = box->circle.r;
             return check_collision_point_circle(x, y, cx, cy, r);
         }
-        default: return 0;
+        default: {
+            assert(0);
+            return 0;
+        }
     }
 }
 
@@ -175,7 +180,10 @@ static int check_collision_line_box(float x1, float y1, float x2, float y2, stru
             float r  = box->circle.r;
             return check_collision_line_circle(x1, y1, x2, y2, cx, cy, r);
         }
-        default: return 0;
+        default: {
+            assert(0);
+            return 0;
+        }
     }
 }
 
@@ -207,7 +215,10 @@ static int check_collision_rect_box(float x1, float y1, float x2, float y2, stru
             float r  = box->circle.r;
             return check_collision_rect_circle(x1, y1, x2, y2, cx, cy, r);
         }
-        default: return 0;
+        default: {
+            assert(0);
+            return 0;
+        }
     }
 }
 
@@ -239,7 +250,10 @@ static int check_collision_circle_box(float cx, float cy, float r, struct k_coll
             float r2 =box->circle.r;
             return check_collision_circle_circle(cx, cy, r, x2, y2, r2);
         }
-        default: return 0;
+        default: {
+            assert(0);
+            return 0;
+        }
     }
 }
 

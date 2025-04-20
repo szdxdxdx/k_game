@@ -1,6 +1,7 @@
 #include "./_internal.h"
 
 int k__collision_manager_init_group_map(struct k_collision_manager *manager) {
+
     size_t buckets_num = 32;
     struct k_hash_list *buckets = k__mem_alloc(sizeof(struct k_hash_list) * buckets_num);
     if (buckets == NULL)
@@ -76,12 +77,19 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
 struct k_collision_group *k__collision_find_or_add_group(int group_id) {
 
     struct k_collision_manager *manager = k_room_get_component_manager_data(k__collision_component_type);
-    return k__collision_manager_find_or_add_group(manager, group_id);
+    if (NULL == manager)
+        return NULL;
+
+    struct k_collision_group *group = k__collision_manager_find_or_add_group(manager, group_id);
+    return group;
 }
 
 struct k_collision_group *k__collision_find_group(int group_id) {
 
     struct k_collision_manager *manager = k_room_get_component_manager_data(k__collision_component_type);
+    if (NULL == manager)
+        return NULL;
+
     struct k_int_hash_map_node *map_node = k_int_hash_map_get(&manager->group_map, group_id);
     if (NULL == map_node)
         return NULL;
