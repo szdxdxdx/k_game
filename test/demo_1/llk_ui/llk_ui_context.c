@@ -12,9 +12,9 @@
 
 static struct llk_ui_elem llk__ui_window = {
     .parent = NULL,
-    .ui = NULL,
-    .x = 0,
-    .y = 0,
+    .ui     = NULL,
+    .x      = 0.0f,
+    .y      = 0.0f,
 };
 
 int llk__ui_registry_builtin_elem_types(struct llk_ui_context *ui) {

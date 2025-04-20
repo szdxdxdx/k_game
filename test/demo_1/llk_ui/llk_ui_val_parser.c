@@ -21,6 +21,16 @@ int llk__ui_parse_length_val(const char *str, float *get_val, enum llk_ui_unit *
         *get_unit = LLK_UI_UNIT_PERCENT;
         return 0;
     }
+    else if (strncmp(end, "vw", 2) == 0) {
+        *get_val = val / 100.0f;
+        *get_unit = LLK_UI_UNIT_VW;
+        return 0;
+    }
+    else if (strncmp(end, "vh", 2) == 0) {
+        *get_val = val / 100.0f;
+        *get_unit = LLK_UI_UNIT_VH;
+        return 0;
+    }
 
     return -1;
 }
