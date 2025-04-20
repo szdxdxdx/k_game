@@ -22,35 +22,31 @@
  */
 struct k_mem_pool {
 
-    /* 此结构体所有成员都应为【私有】，请勿直接访问。
-     * 公开结构体定义，仅仅是为了允许你能将其嵌入到其他结构体中。
-     */
-
-    /* [private] 内存分配函数 */
+    /** \brief [private] 内存分配函数 */
     void *(*fn_malloc)(size_t size);
 
-    /* [private] 内存释放函数 */
+    /** \brief [private] 内存释放函数 */
     void  (*fn_free)(void *p);
 
-    /* [private] 大内存块 chunk 的容量 */
+    /** \brief [read-only] 大内存块 chunk 的容量 */
     size_t chunk_capacity;
 
-    /* [private] 大内存块 chunk 已使用的大小 */
+    /** \brief [read-only] 大内存块 chunk 已使用的大小 */
     size_t chunk_used;
 
-    /* [private] 当前可用的 chunk，该 chunk 用单链串起前一个的已用尽的 chunk */
+    /** \brief [private] 当前可用的 chunk，该 chunk 用单链串起前一个的已用尽的 chunk */
     void *chunk;
 
-    /* [private] 对齐倍数 */
+    /** \brief [read-only] 对齐倍数 */
     size_t alloc_size_align;
 
-    /* [private] 从 chunk 中能切出最大的 block 的大小 */
+    /** \brief [read-only] 从 chunk 中能切出最大的 block 的大小 */
     size_t block_size_max;
 
-    /* [private] free_list 的数组 */
+    /** \brief [private] free_list 的数组 */
     void *free_lists;
 
-    /* [private] 用双链串起所有由 `fn_malloc()` 分配出的 block */
+    /** \brief [private] 用双链串起所有由 `fn_malloc()` 分配出的 block */
     void *heap_block_list;
 };
 
