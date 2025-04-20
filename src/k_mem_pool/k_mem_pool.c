@@ -35,10 +35,16 @@ struct k_mem_block {
 };
 
 /* 由 `fn_malloc()` 分配的 block 的头部 */
-struct k_mem_big_block {
+struct k_mem_heap_block {
+
+    /* 记录该 block 所属的内存池 */
     struct k_mem_pool *pool;
-    struct k_mem_big_block *next;
-    struct k_mem_big_block **pprev;
+
+    /* `next` 链向下一个 block，`pprev` 指向前一个 block 的 `next` 的地址 */
+    struct k_mem_heap_block *next;
+    struct k_mem_heap_block **pprev;
+
+    /* 分配给用户使用的内存块的头部 */
     struct k_mem_block block;
 };
 
@@ -47,7 +53,7 @@ struct k_mem_big_block {
 #define align_up(n, x)   (((n) + (x) - 1) / (x) * (x))
 #define align_down(n, x) ((n) / (x) * (x))
 
-static int check_config(const struct k_mem_pool_config *config) {
+static int k__mem_pool_check_config(const struct k_mem_pool_config *config) {
 
     if (NULL == config->fn_malloc || NULL == config->fn_free)
         return -1;
@@ -79,7 +85,7 @@ static int check_config(const struct k_mem_pool_config *config) {
 struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config) {
     assert(NULL != config);
 
-    if (0 != check_config(config))
+    if (0 != k__mem_pool_check_config(config))
         return NULL;
 
     size_t lists_num  = config->block_size_max / config->alloc_size_align + 1;
@@ -101,6 +107,7 @@ struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config) {
     pool->alloc_size_align = config->alloc_size_align;
     pool->block_size_max   = config->block_size_max;
     pool->free_lists       = free_lists;
+    pool->heap_block_list  = NULL;
 
     size_t i = 0;
     for (; i < lists_num; i++) {
@@ -114,7 +121,7 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
     assert(NULL != pool);
     assert(NULL != config);
 
-    if (0 != check_config(config))
+    if (0 != k__mem_pool_check_config(config))
         return NULL;
 
     size_t lists_num  = config->block_size_max / config->alloc_size_align + 1;
@@ -133,6 +140,7 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
     pool->alloc_size_align = config->alloc_size_align;
     pool->block_size_max   = config->block_size_max;
     pool->free_lists       = free_lists;
+    pool->heap_block_list  = NULL;
 
     size_t i = 0;
     for (; i < lists_num; i++) {
@@ -142,7 +150,7 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
     return pool;
 }
 
-static inline void free_all_chunks(struct k_mem_pool *pool) {
+static void k__mem_pool_free_all_chunks(struct k_mem_pool *pool) {
     struct k_mem_chunk *chunk = pool->chunk;
     while (NULL != chunk) {
         struct k_mem_chunk *next = chunk->next;
@@ -151,12 +159,22 @@ static inline void free_all_chunks(struct k_mem_pool *pool) {
     }
 }
 
+static void k__mem_pool_free_all_heap_blocks(struct k_mem_pool *pool) {
+    struct k_mem_heap_block *heap_block = pool->heap_block_list;
+    while (NULL != heap_block) {
+        struct k_mem_heap_block *next = heap_block->next;
+        pool->fn_free(heap_block);
+        heap_block = next;
+    }
+}
+
 void k_mem_pool_destroy(struct k_mem_pool *pool) {
 
     if (NULL == pool)
         return;
 
-    free_all_chunks(pool);
+    k__mem_pool_free_all_chunks(pool);
+    k__mem_pool_free_all_heap_blocks(pool);
     pool->fn_free(pool);
 }
 
@@ -165,20 +183,21 @@ void k_mem_pool_destruct(struct k_mem_pool *pool) {
     if (NULL == pool)
         return;
 
-    free_all_chunks(pool);
+    k__mem_pool_free_all_chunks(pool);
+    k__mem_pool_free_all_heap_blocks(pool);
     pool->fn_free(pool->free_lists);
 }
 
-static inline struct k_mem_block **select_free_list(struct k_mem_pool *pool, size_t block_size) {
+static struct k_mem_block **k__mem_pool_select_free_list(struct k_mem_pool *pool, size_t block_size) {
     struct k_mem_block **free_lists = pool->free_lists;
     return &free_lists[(block_size + pool->alloc_size_align - 1) / pool->alloc_size_align];
 }
 
-static void *alloc_from_pool(struct k_mem_pool *pool, size_t size) {
+static void *k__mem_pool_alloc_from_pool(struct k_mem_pool *pool, size_t size) {
 
     size_t block_size = align_up(size, pool->alloc_size_align);
 
-    struct k_mem_block **list = select_free_list(pool, block_size);
+    struct k_mem_block **list = k__mem_pool_select_free_list(pool, block_size);
     if (NULL != *list) {
         struct k_mem_block *block = *list;
         *list = block->next;
@@ -199,7 +218,7 @@ static void *alloc_from_pool(struct k_mem_pool *pool, size_t size) {
             size_t free_block_size = align_down(remaining_size - sizeof(struct k_mem_block), pool->alloc_size_align);
             if (pool->alloc_size_align <= free_block_size) {
 
-                struct k_mem_block **free_list = select_free_list(pool, free_block_size);
+                struct k_mem_block **free_list = k__mem_pool_select_free_list(pool, free_block_size);
                 struct k_mem_block *free_block = ptr_offset(pool->chunk, sizeof(struct k_mem_chunk) + pool->chunk_used);
 
                 free_block->next = *free_list;
@@ -219,25 +238,34 @@ static void *alloc_from_pool(struct k_mem_pool *pool, size_t size) {
     return ptr_offset(block, sizeof(struct k_mem_block));
 }
 
+static void *k__mem_pool_alloc_from_heap(struct k_mem_pool *pool, size_t size) {
+
+    struct k_mem_heap_block *block = pool->fn_malloc(sizeof(struct k_mem_heap_block) + size);
+        if (NULL == block)
+            return NULL;
+
+    block->block.list = NULL;
+    block->pool = pool;
+
+    if (pool->heap_block_list != NULL) {
+        ((struct k_mem_heap_block *)(pool->heap_block_list))->pprev = &block->next;
+    }
+    block->next = pool->heap_block_list;
+    pool->heap_block_list = block;
+    block->pprev = (struct k_mem_heap_block **)(&pool->heap_block_list);
+
+    return ptr_offset(block, sizeof(struct k_mem_heap_block));
+}
+
 void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size) {
     assert(NULL != pool);
 
     if (size <= pool->block_size_max) {
-        return alloc_from_pool(pool, size);
+        return k__mem_pool_alloc_from_pool(pool, size);
     }
-
-    else if (size < SIZE_MAX - sizeof(struct k_mem_big_block)) {
-        struct k_mem_big_block *block = pool->fn_malloc(sizeof(struct k_mem_big_block) + size);
-        if (NULL == block)
-            return NULL;
-
-        block->block.list = NULL;
-        block->pool = pool;
-        block->next = NULL; /* TODO */
-        block->pprev = NULL;
-        return ptr_offset(block, sizeof(struct k_mem_big_block));
+    else if (size < SIZE_MAX - sizeof(struct k_mem_heap_block)) {
+        return k__mem_pool_alloc_from_heap(pool, size);
     }
-
     else {
         return NULL;
     }
@@ -256,8 +284,13 @@ void k_mem_pool_free(void *p) {
         *list = block;
     }
     else {
-        struct k_mem_big_block *big_block = ptr_offset(p, -sizeof(struct k_mem_big_block));
-        struct k_mem_pool *pool = big_block->pool;
-        pool->fn_free(big_block);
+        struct k_mem_heap_block *heap_block = ptr_offset(p, -sizeof(struct k_mem_heap_block));
+
+        if (NULL != heap_block->next) {
+            heap_block->next->pprev = heap_block->pprev;
+        }
+        *(heap_block->pprev) = heap_block->next;
+
+        heap_block->pool->fn_free(heap_block);
     }
 }

@@ -26,16 +26,32 @@ struct k_mem_pool {
      * 公开结构体定义，仅仅是为了允许你能将其嵌入到其他结构体中。
      */
 
+    /* [private] 内存分配函数 */
     void *(*fn_malloc)(size_t size);
+
+    /* [private] 内存释放函数 */
     void  (*fn_free)(void *p);
 
+    /* [private] 大内存块 chunk 的容量 */
     size_t chunk_capacity;
+
+    /* [private] 大内存块 chunk 已使用的大小 */
     size_t chunk_used;
+
+    /* [private] 当前可用的 chunk，该 chunk 用单链串起前一个的已用尽的 chunk */
     void *chunk;
 
+    /* [private] 对齐倍数 */
     size_t alloc_size_align;
+
+    /* [private] 从 chunk 中能切出最大的 block 的大小 */
     size_t block_size_max;
+
+    /* [private] free_list 的数组 */
     void *free_lists;
+
+    /* [private] 用双链串起所有由 `fn_malloc()` 分配出的 block */
+    void *heap_block_list;
 };
 
 /** \brief 用于创建内存池的配置参数 */
@@ -50,12 +66,12 @@ struct k_mem_pool_config {
     /**
      * \brief 对齐倍数
      *
-     * 实际分配的内存大小会向上对齐到 `alloc_size_align` 的整数倍。例如：
+     * 内存池从 chunk 中分配出的 block 的大小会向上对齐到 `alloc_size_align` 的整数倍。例如：
      * - 若 `alloc_size_align` 为  8，用户申请 20 字节时，实际分配 24 字节。
      * - 若 `alloc_size_align` 为 16，用户申请 20 字节时，实际分配 32 字节。
      * - 若 `alloc_size_align` 为 16，用户申请 32 字节时，实际分配 32 字节。
      *
-     * `alloc_size_align` 必须是 8 的倍数。
+     * 要求 `alloc_size_align` 必须是 8 的倍数。
      */
     size_t alloc_size_align;
 
@@ -68,7 +84,7 @@ struct k_mem_pool_config {
      * - 若 `block_size_max` 为 128，用户申请 128 字节时，分配出的 block 来自 chunk。
      * - 若 `block_size_max` 为 128，用户申请 120 字节时，分配出的 block 来自 chunk。
      *
-     * `block_size_max` 必须大于 `alloc_size_align`，且是 `alloc_size_align` 的倍数。
+     * 要求 `block_size_max` 必须大于 `alloc_size_align`，且是 `alloc_size_align` 的倍数。
      */
     size_t block_size_max;
 
@@ -83,8 +99,8 @@ struct k_mem_pool_config {
      * 因为每个 block 包含一个头部，chunk 裁切的大小实际上略大于申请的大小。
      * 而每个 chunk 也包含一个头部，用于切割的区域是去除头部后的部分，略小于 `alloc_chunk_size`；
      *
-     * `alloc_chunk_size` 必须是 8 的倍数。
-     * `alloc_chunk_size` 必须大于 `block_size_max`，且建议大于很多倍。
+     * 要求 `alloc_chunk_size` 必须是 8 的倍数，
+     * `alloc_chunk_size` 必须大于 `block_size_max`，建议大很多倍。
      */
     size_t alloc_chunk_size;
 };
@@ -99,8 +115,7 @@ struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config);
 /**
  * \brief 销毁内存池
  *
- * 内存池不追踪已分配出的内存块，请确保在销毁前归还所有已分配的内存块！
- * 若未全数归还内存块就销毁内存池，仍可能发生内存泄漏。
+ * 销毁内存池，并释放分配出的所有内存块。
  *
  * 若 `pool` 为 `NULL`，则函数立即返回。
  */
@@ -118,10 +133,8 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
 /**
  * \brief 析构内存池
  *
- * 原地析构 `pool` 所指向的内存段上的内存池。
- *
- * 内存池不追踪已分配出的内存块，请确保在析构前归还所有已分配的内存块！
- * 若未全数归还内存块就析构内存池，仍可能发生内存泄漏。
+ * 原地析构 `pool` 所指向的内存段上的内存池，
+ * 并释放分配出的所有内存块。
  *
  * 若 `pool` 为 `NULL`，则函数立即返回。
  */
@@ -133,14 +146,12 @@ void k_mem_pool_destruct(struct k_mem_pool *pool);
  * 向内存池申请分配 `size` 字节的内存块。
  *
  * 若申请的大小超过 `block_size_max`，则内存池求助 `fn_malloc()`。
- *
- * 否则内存池尝试分配出 chunk 中切出的小块 block，
- * 实际分配出的内存块大小会向上对齐到 `alloc_size_align` 的倍数。
+ * 否则分配从 chunk 中切出的小块 block。
  *
  * 若分配成功，函数返回内存块指针，否则返回 `NULL`。
  *
  * 特殊地，若申请 0 字节大小的内存块，函数可能返回非 `NULL`,
- * 但该该指针指向的内存块无法存储任何数据，你不应读写该内存块中的内容。
+ * 但该指针指向的内存块无法存储任何数据，你不应读写该内存块中的内容。
  */
 void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size);
 
@@ -148,12 +159,9 @@ void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size);
  * \brief 归还内存块
  *
  * 向内存池归还指针 `p` 所指向的内存块。
+ * 请勿重复归还！归还后不应再读写该内存块中的内容！
  *
  * 若 `p` 为 `NULL`，则函数立即返回。
- *
- * 内存池不识别该内存块是否由自己分配，也不标记内存块是已分配或已归还。
- * 请确保归还的内存块属于该内存池！以及请勿重复归还内存块！
- * 归还内存块后，不应再读写该内存块中的内容！
  */
 void k_mem_pool_free(void *p);
 
