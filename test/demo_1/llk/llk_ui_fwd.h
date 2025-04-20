@@ -25,9 +25,4 @@ struct llk_ui_float {
     float computed_val;
 };
 
-static inline void llk_ui_float_set(struct llk_ui_float *val, float specified_val, enum llk_ui_unit unit) {
-    val->specified_val = specified_val;
-    val->unit = unit;
-}
-
 #endif

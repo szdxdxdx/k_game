@@ -13,7 +13,8 @@ static int llk__ui_elem_set_attr_w(struct llk_ui_elem *elem, const char *val) {
     if (0 != llk__ui_parse_length_val(val, &float_val, &unit))
         return -1;
 
-    llk_ui_float_set(&elem->w, float_val, unit);
+    elem->w.specified_val = float_val;
+    elem->w.unit = unit;
     return 0;
 }
 
@@ -24,7 +25,8 @@ static int llk__ui_elem_set_attr_h(struct llk_ui_elem *elem, const char *val) {
     if (0 != llk__ui_parse_length_val(val, &float_val, &unit))
         return -1;
 
-    llk_ui_float_set(&elem->h, float_val, unit);
+    elem->h.specified_val = float_val;
+    elem->h.unit = unit;
     return 0;
 }
 
@@ -39,7 +41,8 @@ static int llk__ui_elem_set_attr_left(struct llk_ui_elem *elem, const char *val)
     if (0 != llk__ui_parse_length_val(val, &float_val, &unit))
         return -1;
 
-    llk_ui_float_set(&elem->left, float_val, unit);
+    elem->left.specified_val = float_val;
+    elem->left.unit = unit;
     return 0;
 }
 
@@ -50,7 +53,8 @@ static int llk__ui_elem_set_attr_right(struct llk_ui_elem *elem, const char *val
     if (0 != llk__ui_parse_length_val(val, &float_val, &unit))
         return -1;
 
-    llk_ui_float_set(&elem->right, float_val, unit);
+    elem->right.specified_val = float_val;
+    elem->right.unit = unit;
     return 0;
 }
 
@@ -61,7 +65,8 @@ static int llk__ui_elem_set_attr_top(struct llk_ui_elem *elem, const char *val) 
     if (0 != llk__ui_parse_length_val(val, &float_val, &unit))
         return -1;
 
-    llk_ui_float_set(&elem->top, float_val, unit);
+    elem->top.specified_val = float_val;
+    elem->top.unit = unit;
     return 0;
 }
 
@@ -72,7 +77,8 @@ static int llk__ui_elem_set_attr_bottom(struct llk_ui_elem *elem, const char *va
     if (0 != llk__ui_parse_length_val(val, &float_val, &unit))
         return -1;
 
-    llk_ui_float_set(&elem->bottom, float_val, unit);
+    elem->bottom.specified_val = float_val;
+    elem->bottom.unit = unit;
     return 0;
 }
 

@@ -3,7 +3,15 @@
 #include "./llk_ui_elem.h"
 #include "./llk_ui_context.h"
 
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui) {
+static struct llk_ui_elem_v_tbl llk__ui_elem_default_v_tbl = {
+    .type_name    = "",
+    .elem_size    = sizeof(struct llk_ui_elem),
+    .fn_construct = NULL,
+    .fn_destruct  = NULL,
+    .fn_draw      = NULL,
+};
+
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, struct llk_ui_elem_v_tbl *v_tbl) {
 
     elem->ui = ui;
 
@@ -11,13 +19,16 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     k_list_init(&elem->child_list);
     k_list_node_loop(&elem->sibling_link);
 
-    llk_ui_float_set(&elem->w, 1.0f, LLK_UI_UNIT_PERCENT);
-    llk_ui_float_set(&elem->h, 1.0f, LLK_UI_UNIT_PERCENT);
+    elem->w.specified_val = 1.0f;
+    elem->w.unit = LLK_UI_UNIT_PERCENT;
+    elem->h.specified_val = 1.0f;
+    elem->h.unit = LLK_UI_UNIT_PERCENT;
 
-    llk_ui_float_set(&elem->left,   0.0f, LLK_UI_UNIT_NO_VAL);
-    llk_ui_float_set(&elem->top,    0.0f, LLK_UI_UNIT_NO_VAL);
-    llk_ui_float_set(&elem->right,  0.0f, LLK_UI_UNIT_NO_VAL);
-    llk_ui_float_set(&elem->bottom, 0.0f, LLK_UI_UNIT_NO_VAL);
+    elem->left.unit   = LLK_UI_UNIT_NO_VAL;
+    elem->right.unit  = LLK_UI_UNIT_NO_VAL;
+    elem->top.unit    = LLK_UI_UNIT_NO_VAL;
+    elem->bottom.unit = LLK_UI_UNIT_NO_VAL;
+
 
     elem->debug_info = "";
 
@@ -27,7 +38,7 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     elem->background_color = 0x00000000;
     elem->border_color     = 0x00000000;
 
-    elem->fn_draw = NULL;
+    elem->v_tbl = v_tbl;
 
     return elem;
 }
@@ -38,7 +49,7 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui) {
     if (NULL == elem)
         return NULL;
 
-    llk__ui_construct_elem(elem, ui);
+    llk__ui_construct_elem(elem, ui, &llk__ui_elem_default_v_tbl);
 
     return elem;
 }
@@ -220,8 +231,8 @@ void llk__ui_elem_draw(struct llk_ui_elem *elem) {
     k_canvas_set_draw_color_rgba(elem->border_color);
     k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
 
-    if (elem->fn_draw != NULL) {
-        elem->fn_draw(elem);
+    if (elem->v_tbl->fn_draw != NULL) {
+        elem->v_tbl->fn_draw(elem);
     }
 
     struct llk_ui_elem *child;

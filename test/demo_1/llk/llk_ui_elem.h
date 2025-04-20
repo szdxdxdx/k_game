@@ -34,7 +34,7 @@ struct llk_ui_elem {
     struct llk_ui_elem_v_tbl *v_tbl;
 };
 
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui);
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, struct llk_ui_elem_v_tbl *v_tbl);
 
 struct llk_ui_elem *llk__ui_destruct_elem(struct llk_ui_elem *elem);
 
@@ -49,7 +49,6 @@ void llk__ui_elem_measure(struct llk_ui_elem *elem);
 void llk__ui_elem_layout(struct llk_ui_elem *elem);
 
 void llk__ui_elem_draw(struct llk_ui_elem *elem);
-
 
 struct llk_ui_elem_v_tbl {
 

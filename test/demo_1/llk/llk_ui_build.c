@@ -82,6 +82,6 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
     return ui;
 
 err:
-    k_log_error("Failed to build llk UI");
+    k_log_error("Failed to build llk UI from xml file");
     return NULL;
 }
