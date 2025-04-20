@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#include "k_log.h"
+
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_context.h"
@@ -15,8 +17,10 @@ static struct llk_ui_elem llk__ui_window = {
 struct llk_ui_context *llk_ui_create_context(void) {
 
     struct llk_ui_context *ui = malloc(sizeof(struct llk_ui_context));
-    if (NULL == ui)
+    if (NULL == ui) {
+        k_log_error("Failed to create llk UI context, malloc() failed");
         return NULL;
+    }
 
     struct k_mem_pool_config config;
     config.fn_malloc        = malloc;
@@ -26,6 +30,7 @@ struct llk_ui_context *llk_ui_create_context(void) {
     config.alloc_chunk_size = 1024;
     if (NULL == k_mem_pool_construct(&ui->mem_pool, &config)) {
         free(ui);
+        k_log_error("Failed to create llk UI context");
         return NULL;
     }
 
@@ -72,6 +77,7 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 void llk_ui_draw(struct llk_ui_context *ui) {
 
     if (NULL == ui) {
+        k_log_warn("llk UI context is NULL");
         return;
     }
 

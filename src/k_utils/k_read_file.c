@@ -5,14 +5,12 @@
 
 char *k_read_txt_file(const char *file_path, char *buf, size_t buf_size, size_t *get_len) {
 
-    if (NULL == file_path || '\0' == file_path[0])
-        return NULL;
-
     char *txt_buf = buf;
+    FILE *file = NULL;
 
-    FILE *file = fopen(file_path, "r");
+    file = fopen(file_path, "r");
     if (file == NULL)
-        return NULL;
+        goto err;
 
     if (0 != fseek(file, 0, SEEK_END))
         goto err;
@@ -32,25 +30,30 @@ char *k_read_txt_file(const char *file_path, char *buf, size_t buf_size, size_t 
             goto err;
     }
 
+    size_t count;
     if (file_size != 0) {
-        if (0 == fread(txt_buf, 1, file_size, file))
+        count = fread(txt_buf, 1, file_size, file);
+        if (0 == count || file_size < count)
             goto err;
+
+        txt_buf[count] = '\0';
     }
 
     fclose(file);
 
-    txt_buf[file_size] = '\0';
-
-    if (NULL != get_len)
+    if (NULL != get_len) {
         *get_len = file_size;
+    }
 
     return txt_buf;
 
 err:
-    if (txt_buf != buf)
+    if (txt_buf != buf) {
         free(txt_buf);
-
-    fclose(file);
+    }
+    if (NULL != file) {
+        fclose(file);
+    }
 
     return NULL;
 }

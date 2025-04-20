@@ -18,13 +18,7 @@ static int parse_length_val(const char *str, float *get_val, enum llk_ui_unit *g
     if (end == str)
         return -1;
 
-    if (*end == '\0') {
-        *get_val = val;
-        *get_unit = LLK_UI_UNIT_PX;
-        return 0;
-    }
-
-    if (strncmp(end, "px", 2) == 0) {
+    if (*end == '\0' || strncmp(end, "px", 2) == 0) {
         *get_val = val;
         *get_unit = LLK_UI_UNIT_PX;
         return 0;
@@ -187,6 +181,7 @@ struct llk_ui_context *llk__ui_build_from_xml(struct k_xml_node *xml) {
     struct llk_ui_elem *elem = llk__ui_build_elem_from_xml(ui->root, xml);
     if (NULL == elem) {
         llk_ui_destroy_context(ui);
+        k_log_error("Failed to build llk UI from xml");
         return NULL;
     }
 
@@ -197,7 +192,7 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
 
     char *text = k_read_txt_file(file_path, NULL, 0, NULL);
     if (NULL == text) {
-        k_log_error("Failed to read file");
+        k_log_error("Failed to read file `%s`", file_path);
         return NULL;
     }
 
@@ -213,11 +208,6 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
 
     k_xml_free(xml);
     free(text);
-
-    if (NULL == ui) {
-        k_log_error("Failed to create llk UI context");
-        return NULL;
-    }
 
     return ui;
 }

@@ -8,6 +8,9 @@
 
 #include "k_xml.h"
 
+#define k__xml_log_error(fmt, ...) \
+    fprintf("ERROR [k_xml] " fmt "\n", ##__VA_ARGS__)
+
 /* region [struct_def] */
 
 struct k_xml_elem_node;
@@ -648,7 +651,7 @@ static struct k_xml_node *k__xml_parse(char *text) {
             case K_XML_TEXT_NODE: {
                 struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, base);
                 if ( ! text_node->is_blank) {
-                    // goto err;
+                    goto err;
                 }
 
                 k_list_add_tail(&doc->top_node_list, &node->sibling_link);
