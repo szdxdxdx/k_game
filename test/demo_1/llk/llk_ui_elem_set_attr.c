@@ -79,7 +79,7 @@ static int llk__ui_elem_set_attr_bottom(struct llk_ui_elem *elem, const char *va
 
 /* endregion */
 
-/* region [background] */
+/* region [color] */
 
 static int llk__ui_elem_set_attr_background_color(struct llk_ui_elem *elem, const char *val) {
 
@@ -89,6 +89,17 @@ static int llk__ui_elem_set_attr_background_color(struct llk_ui_elem *elem, cons
         return -1;
 
     elem->background_color = u32_val;
+    return 0;
+}
+
+static int llk__ui_elem_set_attr_border_color(struct llk_ui_elem *elem, const char *val) {
+
+    uint32_t u32_val;
+    enum llk_ui_unit unit;
+    if (0 != llk__ui_parse_color_val(val, &u32_val))
+        return -1;
+
+    elem->border_color = u32_val;
     return 0;
 }
 
@@ -115,6 +126,8 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
 
     if (llk__ui_key_match(key, "background-color"))
         return llk__ui_elem_set_attr_background_color(elem, val);
+    if (llk__ui_key_match(key, "border-color"))
+        return llk__ui_elem_set_attr_border_color(elem, val);
 
 #undef llk__ui_key_match
 

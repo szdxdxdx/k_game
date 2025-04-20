@@ -37,6 +37,8 @@ struct llk_ui_elem {
     /* ------------------------------------------------------------------------ */
 
     uint32_t background_color;
+
+    uint32_t border_color;
 };
 
 struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui);
