@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#include "k_str_hash_map.h"
+#include "k_str_intrusive_map.h"
 
 /** \brief 哈希表容器 */
 struct k_str_map {
@@ -18,7 +18,7 @@ struct k_str_map {
     size_t size;
 
     /** \brief [private] 使用侵入式的哈希表作为本容器的底层实现 */
-    struct k_str_hash_map hash_map;
+    struct k_str_intrusive_map imap;
 
     /** \brief [private] 当元素数量达到此阈值时扩容哈希桶 */
     size_t rehash_threshold;

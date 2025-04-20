@@ -6,10 +6,10 @@
 /** \brief 支持动态扩容的数组容器 */
 struct k_array {
 
-    /* [private] */
+    /** \brief [private] 内存分配函数 */
     void *(*fn_malloc)(size_t size);
 
-    /* [private] */
+    /** \brief [private] 内存释放函数 */
     void (*fn_free)(void *p);
 
     /** \brief [read-only] 数组所存储的元素的大小 */

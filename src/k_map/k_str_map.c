@@ -5,7 +5,7 @@
 #include "k_str_map.h"
 
 struct k_str_map_node {
-    struct k_str_hash_map_node hash_map_node;
+    struct k_str_intrusive_map_node imap_node;
 };
 
 static void *get_val(struct k_str_map_node *node) {
@@ -38,7 +38,7 @@ struct k_str_map *k_str_map_create(const struct k_str_map_options *options) {
     map->fn_free   = options->fn_free;
     map->size      = 0;
     map->rehash_threshold = 29;
-    k_str_hash_map_init(&map->hash_map, buckets, buckets_num);
+    k_str_intrusive_map_init(&map->imap, buckets, buckets_num);
 
     return map;
 }
@@ -49,18 +49,18 @@ void k_str_map_destroy(struct k_str_map *map) {
         return;
 
     struct k_str_map_node *map_node;
-    struct k_str_hash_map *hash_map = &map->hash_map;
+    struct k_str_intrusive_map *imap = &map->imap;
     struct k_hash_list *buckets;
-    for (k_str_hash_map_for_each_bucket(hash_map, buckets)) {
+    for (k_str_intrusive_map_for_each_bucket(imap, buckets)) {
         struct k_hash_list_node *iter, *next;
         for (k_hash_list_for_each_s(buckets, iter, next)) {
-            map_node = k_str_hash_map_node_container_of(iter, struct k_str_map_node, hash_map_node);
+            map_node = k_str_intrusive_map_node_container_of(iter, struct k_str_map_node, imap_node);
 
             map->fn_free(map_node);
         }
     }
 
-    map->fn_free(hash_map->buckets);
+    map->fn_free(imap->buckets);
     map->fn_free(map);
 }
 
@@ -82,7 +82,7 @@ struct k_str_map *k_str_map_construct(struct k_str_map *map, const struct k_str_
     map->fn_free   = options->fn_free;
     map->size      = 0;
     map->rehash_threshold = 29;
-    k_str_hash_map_init(&map->hash_map, buckets, buckets_num);
+    k_str_intrusive_map_init(&map->imap, buckets, buckets_num);
 
     return map;
 }
@@ -93,18 +93,18 @@ void k_str_map_destruct(struct k_str_map *map) {
         return;
 
     struct k_str_map_node *map_node;
-    struct k_str_hash_map *hash_map = &map->hash_map;
+    struct k_str_intrusive_map *imap = &map->imap;
     struct k_hash_list *buckets;
-    for (k_str_hash_map_for_each_bucket(hash_map, buckets)) {
+    for (k_str_intrusive_map_for_each_bucket(imap, buckets)) {
         struct k_hash_list_node *iter, *next;
         for (k_hash_list_for_each_s(buckets, iter, next)) {
-            map_node = k_str_hash_map_node_container_of(iter, struct k_str_map_node, hash_map_node);
+            map_node = k_str_intrusive_map_node_container_of(iter, struct k_str_map_node, imap_node);
 
             map->fn_free(map_node);
         }
     }
 
-    map->fn_free(hash_map->buckets);
+    map->fn_free(imap->buckets);
 }
 
 static void rehash(struct k_str_map *map) {
@@ -117,7 +117,7 @@ static void rehash(struct k_str_map *map) {
     };
     const size_t end = sizeof(primes) / sizeof(primes[0]);
 
-    size_t old_buckets_num = map->hash_map.buckets_num;
+    size_t old_buckets_num = map->imap.buckets_num;
 
     size_t left  = 0;
     size_t right = end;
@@ -140,7 +140,7 @@ static void rehash(struct k_str_map *map) {
     if (NULL == new_buckets)
         return;
 
-    struct k_hash_list *old_buckets = k_str_hash_map_rehash(&map->hash_map, new_buckets, new_buckets_num);
+    struct k_hash_list *old_buckets = k_str_intrusive_map_rehash(&map->imap, new_buckets, new_buckets_num);
     map->rehash_threshold = (new_buckets_num / 4) * 3;
 
     map->fn_free(old_buckets);
@@ -155,18 +155,18 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t value_size) {
     if (NULL == map_node)
         return NULL;
 
-    struct k_str_hash_map *hash_map = &map->hash_map;
-    struct k_str_hash_map_node *hash_map_node = k_str_hash_map_get(hash_map, key);
-    if (NULL != hash_map_node) {
-        struct k_str_map_node *old_map_node = container_of(hash_map_node, struct k_str_map_node, hash_map_node);
+    struct k_str_intrusive_map *imap = &map->imap;
+    struct k_str_intrusive_map_node *imap_node = k_str_intrusive_map_get(imap, key);
+    if (NULL != imap_node) {
+        struct k_str_map_node *old_map_node = container_of(imap_node, struct k_str_map_node, imap_node);
 
-        k_str_hash_map_del(&old_map_node->hash_map_node);
+        k_str_intrusive_map_del(&old_map_node->imap_node);
         map->fn_free(old_map_node);
 
-        k_str_hash_map_add_directly(hash_map, key, &map_node->hash_map_node);
+        k_str_intrusive_map_add_directly(imap, key, &map_node->imap_node);
     }
     else {
-        k_str_hash_map_add_directly(hash_map, key, &map_node->hash_map_node);
+        k_str_intrusive_map_add_directly(imap, key, &map_node->imap_node);
         map->size += 1;
 
         if (map->rehash_threshold < map->size) {
@@ -186,12 +186,12 @@ void *k_str_map_add(struct k_str_map *map, const char *key, size_t value_size) {
     if (NULL == map_node)
         return NULL;
 
-    struct k_str_hash_map *hash_map = &map->hash_map;
-    struct k_str_hash_map_node *hash_map_node = k_str_hash_map_get(hash_map, key);
-    if (NULL != hash_map_node)
+    struct k_str_intrusive_map *imap = &map->imap;
+    struct k_str_intrusive_map_node *imap_node = k_str_intrusive_map_get(imap, key);
+    if (NULL != imap_node)
         return NULL;
 
-    k_str_hash_map_add_directly(hash_map, key, &map_node->hash_map_node);
+    k_str_intrusive_map_add_directly(imap, key, &map_node->imap_node);
     map->size += 1;
 
     if (map->rehash_threshold < map->size) {
@@ -205,13 +205,13 @@ void k_str_map_del(struct k_str_map *map, const char *key) {
     assert(NULL != map);
     assert(NULL != key && '\0' != key[0]);
 
-    struct k_str_hash_map_node *hash_map_node = k_str_hash_map_get(&map->hash_map, key);
-    if (NULL == hash_map_node)
+    struct k_str_intrusive_map_node *imap_node = k_str_intrusive_map_get(&map->imap, key);
+    if (NULL == imap_node)
         return;
 
-    struct k_str_map_node *map_node = container_of(hash_map_node, struct k_str_map_node, hash_map_node);
+    struct k_str_map_node *map_node = container_of(imap_node, struct k_str_map_node, imap_node);
 
-    k_str_hash_map_del(&map_node->hash_map_node);
+    k_str_intrusive_map_del(&map_node->imap_node);
     map->fn_free(map_node);
 
     map->size -= 1;
@@ -221,12 +221,12 @@ void *k_str_map_get(struct k_str_map *map, const char *key) {
     assert(NULL != map);
     assert(NULL != key && '\0' != key[0]);
 
-    struct k_str_hash_map_node *hash_map_node = k_str_hash_map_get(&map->hash_map, key);
-    if (NULL == hash_map_node) {
+    struct k_str_intrusive_map_node *imap_node = k_str_intrusive_map_get(&map->imap, key);
+    if (NULL == imap_node) {
         return NULL;
     }
     else {
-        struct k_str_map_node *map_node = container_of(hash_map_node, struct k_str_map_node, hash_map_node);
+        struct k_str_map_node *map_node = container_of(imap_node, struct k_str_map_node, imap_node);
         return get_val(map_node);
     }
 }
@@ -235,12 +235,12 @@ void k_str_map_clear(struct k_str_map *map) {
     assert(NULL != map);
 
     struct k_str_map_node *map_node;
-    struct k_str_hash_map *hash_map = &map->hash_map;
+    struct k_str_intrusive_map *imap = &map->imap;
     struct k_hash_list *buckets;
-    for (k_str_hash_map_for_each_bucket(hash_map, buckets)) {
+    for (k_str_intrusive_map_for_each_bucket(imap, buckets)) {
         struct k_hash_list_node *iter, *next;
         for (k_hash_list_for_each_s(buckets, iter, next)) {
-            map_node = k_str_hash_map_node_container_of(iter, struct k_str_map_node, hash_map_node);
+            map_node = k_str_intrusive_map_node_container_of(iter, struct k_str_map_node, imap_node);
 
             map->fn_free(map_node);
         }

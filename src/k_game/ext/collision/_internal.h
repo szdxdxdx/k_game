@@ -2,7 +2,7 @@
 #define K__COLLISION_INTERNAL_H
 
 #include "k_list.h"
-#include "k_int_hash_map.h"
+#include "k_int_intrusive_map.h"
 
 #include "k_game/core/k_mem_alloc.h"
 #include "k_game/core/k_object.h"
@@ -97,7 +97,7 @@ void k__collision_box_fini(struct k_component *component);
 
 struct k_collision_group {
 
-    struct k_int_hash_map_node group_map_node;
+    struct k_int_intrusive_map_node group_map_node;
 
     struct k_collision_manager *manager;
 
@@ -126,7 +126,7 @@ struct k_collision_manager {
 
     struct k_component_manager *component_manager;
 
-    struct k_int_hash_map group_map;
+    struct k_int_intrusive_map group_map;
 };
 
 int k__collision_manager_init(struct k_component_manager *component_manager, void *params);

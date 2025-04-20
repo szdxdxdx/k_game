@@ -7,7 +7,7 @@ int k__collision_manager_init_group_map(struct k_collision_manager *manager) {
     if (buckets == NULL)
         return -1;
 
-    k_int_hash_map_init(&manager->group_map, buckets, buckets_num);
+    k_int_intrusive_map_init(&manager->group_map, buckets, buckets_num);
     return 0;
 }
 
@@ -18,13 +18,14 @@ void k__collision_manager_fini_group_map(struct k_collision_manager *manager) {
      * 销毁房间时，是先销毁所有对象，再移除管理器。而销毁对象时，碰撞盒组件在随之被销毁了。所以这里每个 group 都应该是空的。
      */
 
-    struct k_collision_group *group;
-    struct k_int_hash_map *group_map = &manager->group_map;
+    struct k_int_intrusive_map *group_map = &manager->group_map;
     struct k_hash_list *bucket;
-    for (k_int_hash_map_for_each_bucket(group_map, bucket)) {
+    for (k_int_intrusive_map_for_each_bucket(group_map, bucket)) {
+
+        struct k_collision_group *group;
         struct k_hash_list_node *iter, *next;
         for (k_hash_list_for_each_s(bucket, iter, next)) {
-            group = k_int_hash_map_node_container_of(iter, struct k_collision_group, group_map_node);
+            group = k_int_intrusive_map_node_container_of(iter, struct k_collision_group, group_map_node);
 
             k__collision_manager_del_group(group);
         }
@@ -35,7 +36,7 @@ void k__collision_manager_fini_group_map(struct k_collision_manager *manager) {
 
 struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collision_manager *manager, int group_id) {
 
-    struct k_int_hash_map_node *map_node = k_int_hash_map_get(&manager->group_map, group_id);
+    struct k_int_intrusive_map_node *map_node = k_int_intrusive_map_get(&manager->group_map, group_id);
     if (NULL != map_node) {
         struct k_collision_group *found_group = container_of(map_node, struct k_collision_group, group_map_node);
         return found_group;
@@ -45,7 +46,7 @@ struct k_collision_group *k__collision_manager_find_or_add_group(struct k_collis
         if (NULL == new_group)
             return NULL;
 
-        k_int_hash_map_add_directly(&manager->group_map, group_id, &new_group->group_map_node);
+        k_int_intrusive_map_add_directly(&manager->group_map, group_id, &new_group->group_map_node);
         k_list_init(&new_group->box_list);
 
         new_group->manager = manager;
@@ -65,7 +66,7 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
 
         k_object_del_component(box->component);
     }
-    k_int_hash_map_del(&group->group_map_node);
+    k_int_intrusive_map_del(&group->group_map_node);
 
     if (NULL != group->cb_debug_draw) {
         k_callback_del(group->cb_debug_draw);
@@ -90,7 +91,7 @@ struct k_collision_group *k__collision_find_group(int group_id) {
     if (NULL == manager)
         return NULL;
 
-    struct k_int_hash_map_node *map_node = k_int_hash_map_get(&manager->group_map, group_id);
+    struct k_int_intrusive_map_node *map_node = k_int_intrusive_map_get(&manager->group_map, group_id);
     if (NULL == map_node)
         return NULL;
 

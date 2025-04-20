@@ -2,14 +2,14 @@
 #define K__CALLBACK_DRAW_H
 
 #include "k_list.h"
-#include "k_int_hash_map.h"
+#include "k_int_intrusive_map.h"
 
 #include "./k_callback_base.h"
 
 struct k_draw_callback_manager {
 
     struct k_list group_list;
-    struct k_int_hash_map group_map;
+    struct k_int_intrusive_map group_map;
 
     struct k_list callback_pending_list;
 };
