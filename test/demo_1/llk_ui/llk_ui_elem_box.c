@@ -1,6 +1,7 @@
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_elem_type_builtin.h"
+#include "llk_ui_elem_type_registry.h"
 
 static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
 
@@ -12,9 +13,9 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
 }
 
 struct llk_ui_elem_type_config llk__ui_elem_box_config = {
-    .type_name    = "box",
-    .elem_size    = sizeof(struct llk_ui_elem),
-    .fn_construct = NULL,
-    .fn_destruct  = NULL,
-    .fn_draw      = llk__ui_elem_box_draw,
+    .type_name = "box",
+    .data_size = sizeof(struct llk_ui_elem),
+    .fn_init   = NULL,
+    .fn_fini   = NULL,
+    .fn_draw   = llk__ui_elem_box_draw,
 };

@@ -4,6 +4,7 @@
 
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
+#include "./llk_ui_elem_type_registry.h"
 
 static int check_config(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config) {
 
@@ -12,7 +13,7 @@ static int check_config(struct llk_ui_context *ui, const struct llk_ui_elem_type
         return -1;
     }
 
-    if (config->elem_size < sizeof(struct llk_ui_elem)) {
+    if (config->data_size < sizeof(struct llk_ui_elem)) {
         k_log_error("invalid `config->elem_size`", config->type_name);
     }
 
@@ -38,11 +39,11 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     char *type_name = (char *)type_info + sizeof(struct llk_ui_elem_type_info);
     strcpy(type_name, config->type_name);
 
-    type_info->elem_size    = config->elem_size;
-    type_info->type_name    = type_name;
-    type_info->fn_construct = config->fn_construct;
-    type_info->fn_destruct  = config->fn_destruct;
-    type_info->fn_draw      = config->fn_draw;
+    type_info->data_size = config->data_size;
+    type_info->type_name = type_name;
+    type_info->fn_init   = config->fn_init;
+    type_info->fn_fini   = config->fn_fini;
+    type_info->fn_draw   = config->fn_draw;
 
     return 0;
 
