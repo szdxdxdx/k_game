@@ -31,7 +31,8 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     for (k_xml_for_each_attr(xml, attr, key, val)) {
 
         if (0 != llk_ui_elem_set_attr(elem, key, val)) {
-            k_log_warn("Illegal attribute when building llk UI element, key: `%s`, value: `%s`", key, val);
+            k_log_warn("Illegal attribute when building llk UI element from xml, "
+                       "key: `%s`, value: `%s`", key, val);
         }
     }
 

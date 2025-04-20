@@ -21,10 +21,8 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     k_list_init(&elem->child_list);
     k_list_node_loop(&elem->sibling_link);
 
-    elem->w.specified_val = 1.0f;
-    elem->w.unit = LLK_UI_UNIT_PERCENT;
-    elem->h.specified_val = 1.0f;
-    elem->h.unit = LLK_UI_UNIT_PERCENT;
+    elem->w.unit = LLK_UI_UNIT_NO_VAL;
+    elem->h.unit = LLK_UI_UNIT_NO_VAL;
 
     elem->left.unit   = LLK_UI_UNIT_NO_VAL;
     elem->right.unit  = LLK_UI_UNIT_NO_VAL;
@@ -76,12 +74,89 @@ int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
 
 void llk__ui_elem_measure(struct llk_ui_elem *elem) {
 
+    struct llk_ui_elem *parent = elem->parent;
+
+    switch (elem->left.unit) {
+        case LLK_UI_UNIT_PX:
+            elem->left.computed_val = elem->left.specified_val;
+            break;
+        case LLK_UI_UNIT_PERCENT:
+            elem->left.computed_val = parent->w.computed_val * elem->left.specified_val;
+            break;
+        case LLK_UI_UNIT_VW:
+            elem->left.computed_val = elem->ui->vw * elem->left.specified_val;
+            break;
+        case LLK_UI_UNIT_VH:
+            elem->left.computed_val = elem->ui->vh * elem->left.specified_val;
+            break;
+        default:
+            elem->left.computed_val = 0.0f;
+            break;
+    }
+
+    switch (elem->right.unit) {
+        case LLK_UI_UNIT_PX:
+            elem->right.computed_val = elem->right.specified_val;
+            break;
+        case LLK_UI_UNIT_PERCENT:
+            elem->right.computed_val = parent->w.computed_val * elem->right.specified_val;
+            break;
+        case LLK_UI_UNIT_VW:
+            elem->right.computed_val = elem->ui->vw * elem->right.specified_val;
+            break;
+        case LLK_UI_UNIT_VH:
+            elem->right.computed_val = elem->ui->vh * elem->right.specified_val;
+            break;
+        default:
+            elem->right.computed_val = 0.0f;
+            break;
+    }
+
+    switch (elem->top.unit) {
+        case LLK_UI_UNIT_PX:
+            elem->top.computed_val = elem->top.specified_val;
+            break;
+        case LLK_UI_UNIT_PERCENT:
+            elem->top.computed_val = parent->h.computed_val * elem->top.specified_val;
+            break;
+        case LLK_UI_UNIT_VW:
+            elem->top.computed_val = elem->ui->vw * elem->top.specified_val;
+            break;
+        case LLK_UI_UNIT_VH:
+            elem->top.computed_val = elem->ui->vh * elem->top.specified_val;
+            break;
+        default:
+            elem->top.computed_val = 0.0f;
+            break;
+    }
+
+    switch (elem->bottom.unit) {
+        case LLK_UI_UNIT_PX:
+            elem->bottom.computed_val = elem->bottom.specified_val;
+            break;
+        case LLK_UI_UNIT_PERCENT:
+            elem->bottom.computed_val = parent->h.computed_val * elem->bottom.specified_val;
+            break;
+        case LLK_UI_UNIT_VW:
+            elem->bottom.computed_val = elem->ui->vw * elem->bottom.specified_val;
+            break;
+        case LLK_UI_UNIT_VH:
+            elem->bottom.computed_val = elem->ui->vh * elem->bottom.specified_val;
+            break;
+        default:
+            elem->bottom.computed_val = 0.0f;
+            break;
+    }
+
     switch (elem->w.unit) {
+        case LLK_UI_UNIT_NO_VAL:
+            elem->w.computed_val = parent->w.computed_val - elem->left.computed_val - elem->right.computed_val;
+            break;
         case LLK_UI_UNIT_PX:
             elem->w.computed_val = elem->w.specified_val;
             break;
         case LLK_UI_UNIT_PERCENT:
-            elem->w.computed_val = elem->parent->w.computed_val * elem->w.specified_val;
+            elem->w.computed_val = parent->w.computed_val * elem->w.specified_val;
             break;
         case LLK_UI_UNIT_VW:
             elem->w.computed_val = elem->ui->vw;
@@ -95,11 +170,14 @@ void llk__ui_elem_measure(struct llk_ui_elem *elem) {
     }
 
     switch (elem->h.unit) {
+        case LLK_UI_UNIT_NO_VAL:
+            elem->h.computed_val = parent->h.computed_val - elem->top.computed_val - elem->bottom.computed_val;
+            break;
         case LLK_UI_UNIT_PX:
             elem->h.computed_val = elem->h.specified_val;
             break;
         case LLK_UI_UNIT_PERCENT:
-            elem->h.computed_val = elem->parent->h.computed_val * elem->h.specified_val;
+            elem->h.computed_val = parent->h.computed_val * elem->h.specified_val;
             break;
         case LLK_UI_UNIT_VW:
             elem->h.computed_val = elem->ui->vw;
@@ -127,45 +205,9 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
     struct llk_ui_elem *parent = elem->parent;
 
     if (elem->left.unit != LLK_UI_UNIT_NO_VAL) {
-        switch (elem->left.unit) {
-            case LLK_UI_UNIT_PX:
-                elem->left.computed_val = elem->left.specified_val;
-                break;
-            case LLK_UI_UNIT_PERCENT:
-                elem->left.computed_val = parent->w.computed_val * elem->left.specified_val;
-                break;
-            case LLK_UI_UNIT_VW:
-                elem->left.computed_val = elem->ui->vw * elem->left.specified_val;
-                break;
-            case LLK_UI_UNIT_VH:
-                elem->left.computed_val = elem->ui->vh * elem->left.specified_val;
-                break;
-            default:
-                elem->left.computed_val = 0.0f;
-                break;
-        }
-
         elem->x = parent->x + elem->left.computed_val;
     }
     else if (elem->right.unit != LLK_UI_UNIT_NO_VAL) {
-        switch (elem->right.unit) {
-            case LLK_UI_UNIT_PX:
-                elem->right.computed_val = elem->right.specified_val;
-                break;
-            case LLK_UI_UNIT_PERCENT:
-                elem->right.computed_val = parent->w.computed_val * elem->right.specified_val;
-                break;
-            case LLK_UI_UNIT_VW:
-                elem->right.computed_val = elem->ui->vw * elem->right.specified_val;
-                break;
-            case LLK_UI_UNIT_VH:
-                elem->right.computed_val = elem->ui->vh * elem->right.specified_val;
-                break;
-            default:
-                elem->right.computed_val = 0.0f;
-                break;
-        }
-
         elem->x = parent->x + parent->w.computed_val - elem->w.computed_val - elem->right.computed_val;
     }
     else {
@@ -173,45 +215,9 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
     }
 
     if (elem->top.unit != LLK_UI_UNIT_NO_VAL) {
-        switch (elem->top.unit) {
-            case LLK_UI_UNIT_PX:
-                elem->top.computed_val = elem->top.specified_val;
-                break;
-            case LLK_UI_UNIT_PERCENT:
-                elem->top.computed_val = parent->h.computed_val * elem->top.specified_val;
-                break;
-            case LLK_UI_UNIT_VW:
-                elem->top.computed_val = elem->ui->vw * elem->top.specified_val;
-                break;
-            case LLK_UI_UNIT_VH:
-                elem->top.computed_val = elem->ui->vh * elem->top.specified_val;
-                break;
-            default:
-                elem->top.computed_val = 0.0f;
-                break;
-        }
-
         elem->y = parent->y + elem->top.computed_val;
     }
     else if (elem->bottom.unit != LLK_UI_UNIT_NO_VAL) {
-        switch (elem->bottom.unit) {
-            case LLK_UI_UNIT_PX:
-                elem->bottom.computed_val = elem->bottom.specified_val;
-                break;
-            case LLK_UI_UNIT_PERCENT:
-                elem->bottom.computed_val = parent->h.computed_val * elem->bottom.specified_val;
-                break;
-            case LLK_UI_UNIT_VW:
-                elem->bottom.computed_val = elem->ui->vw * elem->bottom.specified_val;
-                break;
-            case LLK_UI_UNIT_VH:
-                elem->bottom.computed_val = elem->ui->vh * elem->bottom.specified_val;
-                break;
-            default:
-                elem->bottom.computed_val = 0.0f;
-                break;
-        }
-
         elem->y = parent->y + parent->h.computed_val - elem->h.computed_val - elem->bottom.computed_val;
     }
     else {

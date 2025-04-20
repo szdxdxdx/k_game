@@ -1,7 +1,5 @@
 #include "./llk_ui_elem_root.h"
 
-
-
 static void llk__ui_elem_root_draw(struct llk_ui_elem *elem) {
 
 }

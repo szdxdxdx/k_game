@@ -17,6 +17,16 @@ static struct llk_ui_elem llk__ui_window = {
     .y = 0,
 };
 
+int llk__ui_registry_builtin_elem_types(struct llk_ui_context *ui) {
+
+    if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_root_config))
+        return -1;
+    if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_box_config))
+        return -1;
+
+    return 0;
+}
+
 struct llk_ui_context *llk_ui_create_context(void) {
 
     struct llk_ui_context *ui = NULL;
@@ -41,8 +51,8 @@ struct llk_ui_context *llk_ui_create_context(void) {
     if (NULL == map)
         goto err;
 
-     if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_root_config)) goto err;
-     if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_box_config))  goto err;
+     if (0 != llk__ui_registry_builtin_elem_types(ui))
+         goto err;
 
     float vw = k_canvas_ui_get_vw();
     float vh = k_canvas_ui_get_vh();
