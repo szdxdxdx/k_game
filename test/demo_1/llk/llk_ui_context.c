@@ -18,6 +18,17 @@ struct llk_ui_context *llk_ui_create_context(void) {
     if (NULL == ui)
         return NULL;
 
+    struct k_mem_pool_config config;
+    config.fn_malloc        = malloc;
+    config.fn_free          = free;
+    config.alloc_size_align = 16;
+    config.block_size_max   = sizeof(struct llk_ui_elem) * 2;
+    config.alloc_chunk_size = 1024;
+    if (NULL == k_mem_pool_construct(&ui->mem_pool, &config)) {
+        free(ui);
+        return NULL;
+    }
+
     float vw = k_canvas_ui_get_vw();
     float vh = k_canvas_ui_get_vh();
 
@@ -39,6 +50,19 @@ struct llk_ui_context *llk_ui_create_context(void) {
     ui->vh = vh;
 
     return ui;
+}
+
+void llk_ui_destroy_context(struct llk_ui_context *ui) {
+    k_mem_pool_destruct(&ui->mem_pool);
+    free(ui);
+}
+
+void *llk__ui_mem_alloc(struct llk_ui_context *ui, size_t size) {
+    return k_mem_pool_alloc(&ui->mem_pool, size);
+}
+
+void llk__ui_mem_free(void *p) {
+    return k_mem_pool_free(p);
 }
 
 struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {

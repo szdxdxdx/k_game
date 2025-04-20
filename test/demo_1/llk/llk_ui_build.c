@@ -142,6 +142,7 @@ int llk__ui_build_elem_attr_from_xml(struct llk_ui_elem *elem, const char *attr_
         }
     }
 
+    k_log_error("Failed to parse elem attr, key: `%s`, val: `%s`", attr_key, attr_val);
     return -1;
 }
 
@@ -154,7 +155,9 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     struct k_xml_node *xml_child;
     for (k_xml_for_each_child(xml, xml_child)) {
         if (K_XML_ELEM_NODE == k_xml_get_type(xml_child)) {
-            llk__ui_build_elem_from_xml(elem, xml_child);
+
+            if (NULL == llk__ui_build_elem_from_xml(elem, xml_child))
+                goto err;
         }
     }
 
@@ -162,12 +165,18 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     const char *key;
     const char *val;
     for (k_xml_for_each_attr(xml, attr, key, val)) {
-        llk__ui_build_elem_attr_from_xml(elem, key, val);
+        if (0 != llk__ui_build_elem_attr_from_xml(elem, key, val)) {
+            return NULL;
+        }
     }
 
     llk_ui_append_child(parent, elem);
 
     return elem;
+
+err:
+    k_log_error("Failed to build elem from xml node, node tag: `%s`", k_xml_get_tag(xml));
+    return NULL;
 }
 
 struct llk_ui_context *llk__ui_build_from_xml(struct k_xml_node *xml) {
@@ -178,7 +187,7 @@ struct llk_ui_context *llk__ui_build_from_xml(struct k_xml_node *xml) {
 
     struct llk_ui_elem *elem = llk__ui_build_elem_from_xml(ui->root, xml);
     if (NULL == elem) {
-        /* TODO free ui */
+        llk_ui_destroy_context(ui);
         return NULL;
     }
 

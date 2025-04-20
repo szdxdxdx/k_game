@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_elem.h"
@@ -33,7 +31,7 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
 
 struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui) {
 
-    struct llk_ui_elem *elem = malloc(sizeof(struct llk_ui_elem));
+    struct llk_ui_elem *elem = llk__ui_mem_alloc(ui, sizeof(struct llk_ui_elem));
     if (NULL == elem)
         return NULL;
 
