@@ -7,6 +7,9 @@
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
 
+#include "./llk_ui_elem_root.h"
+#include "./llk_ui_elem_box.h"
+
 static struct llk_ui_elem llk__ui_window = {
     .parent = NULL,
     .ui = NULL,
@@ -37,6 +40,9 @@ struct llk_ui_context *llk_ui_create_context(void) {
     map = k_str_map_construct(&ui->elem_type_map, NULL);
     if (NULL == map)
         goto err;
+
+     if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_root_config)) goto err;
+     if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_box_config))  goto err;
 
     float vw = k_canvas_ui_get_vw();
     float vh = k_canvas_ui_get_vh();

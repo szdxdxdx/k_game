@@ -553,8 +553,6 @@ static struct k_xml_elem_node *k__xml_parse_elem_node(struct k_xml_parser *parse
         p = val_end + 1;
     }
 
-    *tag_end = '\0';
-
     while (1) {
         if ('<' == *p && '/' == *(p + 1)) {
             char *close_tag = p;
@@ -584,6 +582,7 @@ static struct k_xml_elem_node *k__xml_parse_elem_node(struct k_xml_parser *parse
 
 done:
     *elem_begin= '\0';
+    *tag_end = '\0';
     parser->p = p;
     return elem;
 

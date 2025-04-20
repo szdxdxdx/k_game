@@ -21,16 +21,6 @@ static int check_config(struct llk_ui_context *ui, const struct llk_ui_elem_type
         return -1;
     }
 
-    if (NULL == config->fn_construct) {
-        k_log_error("invalid `config->fn_construct`");
-        return -1;
-    }
-
-    if (NULL == config->fn_destruct) {
-        k_log_error("invalid `config->fn_destruct`");
-        return -1;
-    }
-
     return 0;
 }
 
