@@ -10,14 +10,12 @@
 
 /* region [struct_def] */
 
-struct k_xml_elem_node;
-
 struct k_xml_doc {
 
     /* 用链表串联所有的顶层节点（可能包含注释节点） */
     struct k_list top_node_list;
 
-    /* 指向根节点 */
+    /* 指向根节点（元素节点） */
     struct k_xml_node *root;
 
     struct k_mem_pool mem_pool;
@@ -35,7 +33,7 @@ struct k_xml_node {
 };
 
 struct k_xml_elem_node {
-    struct k_xml_node base;
+    struct k_xml_node super;
 
     const char *tag;
 
@@ -60,7 +58,7 @@ struct k_xml_attr {
 };
 
 struct k_xml_text_node {
-    struct k_xml_node base;
+    struct k_xml_node super;
 
     /* 文本内容 */
     const char *text;
@@ -70,7 +68,7 @@ struct k_xml_text_node {
 };
 
 struct k_xml_comment_node {
-    struct k_xml_node base;
+    struct k_xml_node super;
 
     /* 注释的文本内容 */
     const char *comment;
@@ -143,10 +141,10 @@ static struct k_xml_elem_node *k__xml_create_elem_node(struct k_xml_doc *doc, co
     if (NULL == node)
         return NULL;
 
-    k_list_node_loop(&node->base.sibling_link);
-    node->base.doc    = doc;
-    node->base.type   = K_XML_ELEM_NODE;
-    node->base.parent = NULL;
+    k_list_node_loop(&node->super.sibling_link);
+    node->super.doc    = doc;
+    node->super.type   = K_XML_ELEM_NODE;
+    node->super.parent = NULL;
 
     node->tag = tag;
     k_list_init(&node->attr_list);
@@ -157,7 +155,7 @@ static struct k_xml_elem_node *k__xml_create_elem_node(struct k_xml_doc *doc, co
 
 static int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *key, const char *val) {
 
-    struct k_xml_attr *attr = k__xml_mem_alloc(node->base.doc, sizeof(struct k_xml_attr));
+    struct k_xml_attr *attr = k__xml_mem_alloc(node->super.doc, sizeof(struct k_xml_attr));
     if (NULL == attr)
         return -1;
 
@@ -169,13 +167,13 @@ static int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *k
 }
 
 static void k__xml_elem_node_add_child(struct k_xml_elem_node *node, struct k_xml_node *child) {
-    child->parent = &node->base;
+    child->parent = &node->super;
     k_list_add_tail(&node->child_list, &child->sibling_link);
 }
 
 static void k__xml_destroy_elem_node(struct k_xml_elem_node *node) {
 
-    struct k_xml_doc *doc = node->base.doc;
+    struct k_xml_doc *doc = node->super.doc;
 
     struct k_xml_attr *attr;
     struct k_list *attr_list = &node->attr_list;
@@ -195,7 +193,7 @@ static void k__xml_destroy_elem_node(struct k_xml_elem_node *node) {
         k__xml_destroy_node(child);
     }
 
-    k_list_del(&node->base.sibling_link);
+    k_list_del(&node->super.sibling_link);
     k__xml_mem_free(doc, node);
 }
 
@@ -209,10 +207,10 @@ static struct k_xml_text_node *k__xml_create_text_node(struct k_xml_doc *doc) {
     if (NULL == node)
         return NULL;
 
-    k_list_node_loop(&node->base.sibling_link);
-    node->base.doc    = doc;
-    node->base.type   = K_XML_TEXT_NODE;
-    node->base.parent = NULL;
+    k_list_node_loop(&node->super.sibling_link);
+    node->super.doc    = doc;
+    node->super.type   = K_XML_TEXT_NODE;
+    node->super.parent = NULL;
 
     node->text = "";
     node->is_blank = 1;
@@ -221,8 +219,8 @@ static struct k_xml_text_node *k__xml_create_text_node(struct k_xml_doc *doc) {
 }
 
 static void k__xml_destroy_text_node(struct k_xml_text_node *node) {
-    k_list_del(&node->base.sibling_link);
-    k__xml_mem_free(node->base.doc, node);
+    k_list_del(&node->super.sibling_link);
+    k__xml_mem_free(node->super.doc, node);
 }
 
 /* endregion */
@@ -235,10 +233,10 @@ static struct k_xml_comment_node *k__xml_create_comment_node(struct k_xml_doc *d
     if (NULL == node)
         return NULL;
 
-    k_list_node_loop(&node->base.sibling_link);
-    node->base.doc    = doc;
-    node->base.type   = K_XML_COMMENT_NODE;
-    node->base.parent = NULL;
+    k_list_node_loop(&node->super.sibling_link);
+    node->super.doc    = doc;
+    node->super.type   = K_XML_COMMENT_NODE;
+    node->super.parent = NULL;
 
     node->comment = comment;
 
@@ -246,8 +244,8 @@ static struct k_xml_comment_node *k__xml_create_comment_node(struct k_xml_doc *d
 }
 
 static void k__xml_destroy_comment_node(struct k_xml_comment_node *node) {
-    k_list_del(&node->base.sibling_link);
-    k__xml_mem_free(node->base.doc, node);
+    k_list_del(&node->super.sibling_link);
+    k__xml_mem_free(node->super.doc, node);
 }
 
 /* endregion */
@@ -256,17 +254,17 @@ static void k__xml_destroy_node(struct k_xml_node *node) {
 
     switch (node->type) {
         case K_XML_ELEM_NODE: {
-            struct k_xml_elem_node *elem_node = container_of(node, struct k_xml_elem_node, base);
+            struct k_xml_elem_node *elem_node = container_of(node, struct k_xml_elem_node, super);
             k__xml_destroy_elem_node(elem_node);
             break;
         }
         case K_XML_TEXT_NODE: {
-            struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, base);
+            struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, super);
             k__xml_destroy_text_node(text_node);
             break;
         }
         case K_XML_COMMENT_NODE: {
-            struct k_xml_comment_node *comment_node = container_of(node, struct k_xml_comment_node, base);
+            struct k_xml_comment_node *comment_node = container_of(node, struct k_xml_comment_node, super);
             k__xml_destroy_comment_node(comment_node);
             break;
         }
@@ -285,20 +283,37 @@ struct k_xml_parser {
 };
 
 static char *skip_space(char *p) {
-    while (*p && isspace((unsigned char)*p)) {
+    while ('\0' != *p && isspace((unsigned char)*p)) {
         p++;
     }
     return p;
 }
 
-static char *extract_ident(char *text) {
+static char *extract_tag(char *text) {
     char *p = text;
 
     if (! isalpha((unsigned char)*p) && '_' != *p)
         goto err;
 
     p++;
-    while (isalnum((unsigned char)*p) || '_' == *p || '-' == *p) {
+    while (isalnum((unsigned char)*p) || '_' == *p || '-' == *p || '.' == *p) {
+        p++;
+    }
+
+    return p;
+
+err:
+    return text;
+}
+
+static char *extract_attr_key(char *text) {
+    char *p = text;
+
+    if (! isalpha((unsigned char)*p) && '_' != *p)
+        goto err;
+
+    p++;
+    while (isalnum((unsigned char)*p) || '_' == *p || '-' == *p || '.' == *p) {
         p++;
     }
 
@@ -358,7 +373,7 @@ err:
     return -1;
 }
 
-static char *extract_string(char *text) {
+static char *extract_attr_val(char *text) {
 
     char *p = text;
 
@@ -500,7 +515,7 @@ static struct k_xml_elem_node *k__xml_parse_elem_node(struct k_xml_parser *parse
     char *elem_begin = p;
 
     char *tag = p + 1;
-    char *tag_end = extract_ident(tag);
+    char *tag_end = extract_tag(tag);
     if (tag == tag_end)
         return NULL;
 
@@ -528,7 +543,7 @@ static struct k_xml_elem_node *k__xml_parse_elem_node(struct k_xml_parser *parse
         }
 
         char *key = p;
-        char *key_end = extract_ident(key);
+        char *key_end = extract_attr_key(key);
         if (key == key_end)
             goto err;
 
@@ -539,7 +554,7 @@ static struct k_xml_elem_node *k__xml_parse_elem_node(struct k_xml_parser *parse
         *key_end = '\0';
 
         char *val = skip_space(p + 1);
-        char *val_end = extract_string(val);
+        char *val_end = extract_attr_val(val);
         if (val == val_end)
             goto err;
 
@@ -602,13 +617,13 @@ static struct k_xml_node *k__xml_parse_node(struct k_xml_parser *parser) {
             if (NULL == comment)
                 goto err;
             else
-                return &comment->base;
+                return &comment->super;
         } else {
             struct k_xml_elem_node *elem= k__xml_parse_elem_node(parser);
             if (NULL == elem)
                 goto err;
             else
-                return &elem->base;
+                return &elem->super;
         }
     }
     else {
@@ -616,7 +631,7 @@ static struct k_xml_node *k__xml_parse_node(struct k_xml_parser *parser) {
         if (NULL == text)
             goto err;
         else
-            return &text->base;
+            return &text->super;
     }
 
 err:
@@ -663,7 +678,7 @@ static struct k_xml_node *k__xml_parse(char *text, int in_place) {
                 break;
             }
             case K_XML_TEXT_NODE: {
-                struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, base);
+                struct k_xml_text_node *text_node = container_of(node, struct k_xml_text_node, super);
                 if ( ! text_node->is_blank) {
                     goto err;
                 }
@@ -718,7 +733,7 @@ struct k_xml_node *k_xml_get_first_child(struct k_xml_node *elem_node) {
         return NULL;
 
     if (K_XML_ELEM_NODE == elem_node->type) {
-        struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
+        struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, super);
 
         struct k_list *child_list = &elem->child_list;
         if (k_list_is_empty(child_list))
@@ -746,7 +761,7 @@ struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node) {
         if (next == k_list_tail(&node->doc->top_node_list))
             return NULL;
     } else {
-        struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, base);
+        struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, super);
         if (next == k_list_tail(&elem->child_list))
             return NULL;
     }
@@ -767,7 +782,7 @@ struct k_xml_node *k_xml_get_prev_sibling(struct k_xml_node *node) {
         if (prev == k_list_head(&node->doc->top_node_list))
             return NULL;
     } else {
-        struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, base);
+        struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, super);
         if (prev == k_list_head(&elem->child_list))
             return NULL;
     }
@@ -789,7 +804,7 @@ struct k_xml_node *k_xml_find_child_by_tag(struct k_xml_node *node, const char *
     if (NULL == tag || '\0' == *tag)
         return NULL;
 
-    struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, base);
+    struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, super);
 
     struct k_list *child_list = &elem->child_list;
     if (k_list_is_empty(child_list))
@@ -800,7 +815,7 @@ struct k_xml_node *k_xml_find_child_by_tag(struct k_xml_node *node, const char *
         struct k_xml_node *child = container_of(iter, struct k_xml_node, sibling_link);
 
         if (K_XML_ELEM_NODE == child->type) {
-            struct k_xml_elem_node *child_elem = container_of(child, struct k_xml_elem_node, base);
+            struct k_xml_elem_node *child_elem = container_of(child, struct k_xml_elem_node, super);
 
             if (0 == strcmp(child_elem->tag, tag))
                 return child;
@@ -821,7 +836,7 @@ struct k_xml_node *k_xml_find_next_by_tag(struct k_xml_node *node, const char *t
     if (NULL == parent)
         return NULL;
 
-    struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, base);
+    struct k_xml_elem_node *elem = container_of(parent, struct k_xml_elem_node, super);
 
     struct k_xml_node *sibling;
     struct k_list *parent_child_list = &elem->child_list;
@@ -830,7 +845,7 @@ struct k_xml_node *k_xml_find_next_by_tag(struct k_xml_node *node, const char *t
         sibling = container_of(iter, struct k_xml_node, sibling_link);
 
         if (K_XML_ELEM_NODE == sibling->type) {
-            struct k_xml_elem_node *sibling_elem = container_of(sibling, struct k_xml_elem_node, base);
+            struct k_xml_elem_node *sibling_elem = container_of(sibling, struct k_xml_elem_node, super);
 
             if (0 == strcmp(sibling_elem->tag, tag))
                 return sibling;
@@ -847,7 +862,7 @@ const char *k_xml_get_tag(struct k_xml_node *elem_node) {
     if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
 
-    struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
+    struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, super);
     return elem->tag;
 }
 
@@ -860,7 +875,7 @@ const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr_key) {
     if (NULL == attr_key || '\0' == *attr_key)
         return NULL;
 
-    struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
+    struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, super);
 
     struct k_xml_attr *attr;
     struct k_list *attr_list = &elem->attr_list;
@@ -882,7 +897,7 @@ struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char
     if (K_XML_ELEM_NODE != elem_node->type)
         return NULL;
 
-    struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, base);
+    struct k_xml_elem_node *elem = container_of(elem_node, struct k_xml_elem_node, super);
 
     struct k_list *attr_list = &elem->attr_list;
     if (k_list_is_empty(attr_list))
@@ -917,11 +932,11 @@ const char *k_xml_get_text(struct k_xml_node *node) {
         return NULL;
 
     if (K_XML_TEXT_NODE == node->type) {
-        struct k_xml_text_node *text = container_of(node, struct k_xml_text_node, base);
+        struct k_xml_text_node *text = container_of(node, struct k_xml_text_node, super);
         return text->text;
     }
     else if (K_XML_ELEM_NODE == node->type) {
-        struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, base);
+        struct k_xml_elem_node *elem = container_of(node, struct k_xml_elem_node, super);
 
         struct k_list *child_list = &elem->child_list;
         if (k_list_is_empty(child_list))
@@ -933,7 +948,7 @@ const char *k_xml_get_text(struct k_xml_node *node) {
             child = container_of(iter, struct k_xml_node, sibling_link);
 
             if (K_XML_TEXT_NODE == child->type) {
-                struct k_xml_text_node *text = container_of(child, struct k_xml_text_node, base);
+                struct k_xml_text_node *text = container_of(child, struct k_xml_text_node, super);
                 return text->text;
             }
         }
@@ -941,7 +956,7 @@ const char *k_xml_get_text(struct k_xml_node *node) {
         return "";
     }
     else if (K_XML_COMMENT_NODE == node->type) {
-        struct k_xml_comment_node *comment = container_of(node, struct k_xml_comment_node, base);
+        struct k_xml_comment_node *comment = container_of(node, struct k_xml_comment_node, super);
         return comment->comment;
     }
     else {
