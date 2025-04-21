@@ -102,11 +102,19 @@ static struct k_xml_doc *k__xml_create_doc(void) {
     if (NULL == doc)
         return NULL;
 
+    size_t max_size = sizeof(union {
+        struct k_xml_node         node;
+        struct k_xml_elem_node    elem;
+        struct k_xml_text_node    text;
+        struct k_xml_comment_node comment;
+        struct k_xml_attr         attr;
+    });
+
     struct k_mem_pool_config config;
     config.fn_malloc        = malloc;
     config.fn_free          = free;
     config.alloc_size_align = 8;
-    config.block_size_max   = 80;
+    config.block_size_max   = max_size;
     config.alloc_chunk_size = 2048;
 
     if (NULL == k_mem_pool_construct(&doc->mem_pool, &config))
@@ -615,15 +623,30 @@ err:
     return NULL;
 }
 
-static struct k_xml_node *k__xml_parse(char *text) {
+static struct k_xml_node *k__xml_parse(char *text, int in_place) {
+
+    if (NULL == text || '\0' == *text)
+        return NULL;
 
     struct k_xml_doc *doc = k__xml_create_doc();
     if (NULL == doc)
         return NULL;
 
+    char *text_;
+
+    if (in_place) {
+        text_ = text;
+    } else {
+        text_ = k__xml_mem_alloc(doc, strlen(text) + 1);
+        if (NULL == text_)
+            goto err;
+
+        strcpy(text_, text);
+    }
+
     struct k_xml_parser parser;
     parser.doc = doc;
-    parser.p = text;
+    parser.p = text_;
 
     while ('\0' != *(parser.p)) {
         struct k_xml_node *node = k__xml_parse_node(&parser);
@@ -669,12 +692,12 @@ err:
 
 /* region [k_xml] */
 
+struct k_xml_node *k_xml_parse_in_place(char *text) {
+    return k__xml_parse(text, 1);
+}
+
 struct k_xml_node *k_xml_parse(char *text) {
-
-    if (NULL == text || '\0' == *text)
-        return NULL;
-
-    return k__xml_parse(text);
+    return k__xml_parse(text, 0);
 }
 
 void k_xml_free(struct k_xml_node *node) {

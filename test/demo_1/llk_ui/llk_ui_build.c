@@ -69,10 +69,9 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
         goto err;
     }
 
-    struct k_xml_node *xml = k_xml_parse(text);
+    struct k_xml_node *xml = k_xml_parse_in_place(text);
 
     if (NULL == xml) {
-        free(text);
         k_log_error("Failed to parse xml");
         goto err;
     }

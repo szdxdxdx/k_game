@@ -111,7 +111,7 @@ struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config);
 /**
  * \brief 销毁内存池
  *
- * 销毁内存池，并释放分配出的所有内存块。
+ * 销毁内存池。所有通过该内存池分配出的内存块将被一并回收，无需逐一归还。
  *
  * 若 `pool` 为 `NULL`，则函数立即返回。
  */
@@ -130,7 +130,7 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
  * \brief 析构内存池
  *
  * 原地析构 `pool` 所指向的内存段上的内存池，
- * 并释放分配出的所有内存块。
+ * 所有通过该内存池分配出的内存块将被一并回收，无需逐一归还。
  *
  * 若 `pool` 为 `NULL`，则函数立即返回。
  */
