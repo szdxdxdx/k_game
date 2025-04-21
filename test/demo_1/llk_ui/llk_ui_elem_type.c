@@ -43,11 +43,12 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
         goto err;
     }
 
-    type->data_size = config->data_size;
-    type->type_name = type_name;
-    type->fn_init   = config->fn_init;
-    type->fn_fini   = config->fn_fini;
-    type->fn_draw   = config->fn_draw;
+    type->data_size   = config->data_size;
+    type->type_name   = type_name;
+    type->fn_init     = config->fn_init;
+    type->fn_fini     = config->fn_fini;
+    type->fn_set_attr = config->fn_set_attr;
+    type->fn_draw     = config->fn_draw;
 
     return 0;
 

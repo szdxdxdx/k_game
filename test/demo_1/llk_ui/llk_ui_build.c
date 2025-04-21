@@ -30,10 +30,7 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     const char *val;
     for (k_xml_for_each_attr(xml, attr, key, val)) {
 
-        if (0 != llk_ui_elem_set_attr(elem, key, val)) {
-            k_log_warn("Illegal attribute when building llk UI element from xml, "
-                       "key: `%s`, value: `%s`", key, val);
-        }
+        llk_ui_elem_set_attr(elem, key, val);
     }
 
     llk_ui_append_child(parent, elem);
@@ -41,7 +38,7 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     return elem;
 
 err:
-    k_log_error("Failed to build llk UI element from xml node, node tag: `%s`", k_xml_get_tag(xml));
+    k_log_error("llk UI: failed to build element from xml node, node tag: `%s`", k_xml_get_tag(xml));
     return NULL;
 }
 
@@ -54,7 +51,7 @@ struct llk_ui_context *llk__ui_build_from_xml(struct k_xml_node *xml) {
     struct llk_ui_elem *elem = llk__ui_build_elem_from_xml(ui->root, xml);
     if (NULL == elem) {
         llk_ui_destroy_context(ui);
-        k_log_error("Failed to build llk UI from xml");
+        k_log_error("llk UI: failed to build UI from xml");
         return NULL;
     }
 
@@ -65,14 +62,14 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
 
     char *text = k_read_txt_file(file_path, NULL, 0, NULL);
     if (NULL == text) {
-        k_log_error("Failed to read file `%s`", file_path);
+        k_log_error("llk UI: failed to read file `%s`", file_path);
         goto err;
     }
 
     struct k_xml_node *xml = k_xml_parse_in_place(text);
 
     if (NULL == xml) {
-        k_log_error("Failed to parse xml");
+        k_log_error("llk UI: failed to parse xml");
         goto err;
     }
 
@@ -84,6 +81,6 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
     return ui;
 
 err:
-    k_log_error("Failed to build llk UI from xml file");
+    k_log_error("llk UI: failed to build UI from xml file");
     return NULL;
 }

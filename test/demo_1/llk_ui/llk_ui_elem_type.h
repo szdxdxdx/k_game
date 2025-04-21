@@ -15,7 +15,7 @@ struct llk_ui_elem_type_config {
 
     void (*fn_fini)(struct llk_ui_elem *elem);
 
-    void (*fn_set_attr)(struct llk_ui_elem *elem, const char *key, const char *val);
+    int (*fn_set_attr)(struct llk_ui_elem *elem, const char *key, const char *val);
 
     void (*fn_draw)(struct llk_ui_elem *elem);
 };
