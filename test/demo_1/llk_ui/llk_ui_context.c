@@ -9,6 +9,8 @@
 #include "./llk_ui_elem_type_builtin.h"
 #include "./llk_ui_elem_type.h"
 
+/* region [create] */
+
 static struct llk_ui_elem llk__ui_window = {
     .parent = NULL,
     .ui     = NULL,
@@ -100,7 +102,42 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
     return ui->root;
 }
 
+/* endregion */
+
+/* region [layout] */
+
+void llk_ui_mark_layout_dirty(struct llk_ui_context *ui) {
+    ui->layout_dirty = 1;
+}
+
+void llk__ui_layout(struct llk_ui_context *ui) {
+
+    struct llk_ui_elem *child;
+    struct k_list *child_list = &ui->root->child_list;
+    struct k_list_node *iter;
+
+    for (k_list_for_each(child_list, iter)) {
+        child = container_of(iter, struct llk_ui_elem, sibling_link);
+        llk__ui_elem_measure(child);
+    }
+
+    for (k_list_for_each(child_list, iter)) {
+        child = container_of(iter, struct llk_ui_elem, sibling_link);
+        llk__ui_elem_layout(child);
+    }
+
+    ui->layout_dirty = 0;
+}
+
+/* endregion */
+
+/* region [draw] */
+
 void llk_ui_draw(struct llk_ui_context *ui) {
+
+    if (ui->layout_dirty) {
+        llk__ui_layout(ui);
+    }
 
     struct llk_ui_elem *child;
     struct k_list *child_list = &ui->root->child_list;
@@ -121,3 +158,5 @@ void llk_ui_draw(struct llk_ui_context *ui) {
         llk__ui_elem_draw(child);
     }
 }
+
+/* endregion */
