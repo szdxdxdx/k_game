@@ -42,6 +42,9 @@ struct llk_ui_context *llk_ui_build_context_from_xml_file(const char *file_path)
 
 /* region [draw] */
 
+/** \brief 更新 UI 状态，处理输入事件，计算元素尺寸，定位元素位置 */
+void llk_ui_update(struct llk_ui_context *ui);
+
 /** \brief 绘制 UI 界面 */
 void llk_ui_draw(struct llk_ui_context *ui);
 

@@ -7,6 +7,6 @@
 
 int llk__ui_parse_length_val(const char *str, float *get_val, enum llk_ui_unit *get_unit);
 
-int llk__ui_parse_color_val(const char *str, uint32_t *get_val);
+int llk__ui_parse_color_val(const char *str, uint32_t *get_val, enum llk_ui_unit *get_unit);
 
 #endif

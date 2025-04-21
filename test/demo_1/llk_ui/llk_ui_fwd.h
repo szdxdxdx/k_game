@@ -2,6 +2,7 @@
 #define LLK_UI_FWD_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 struct llk_ui_context;
 
@@ -17,6 +18,8 @@ enum llk_ui_unit {
 
     LLK_UI_UNIT_VW,
     LLK_UI_UNIT_VH,
+
+    LLK_UI_UNIT_RGBA,
 };
 
 struct llk_ui_float {
@@ -25,6 +28,14 @@ struct llk_ui_float {
     enum llk_ui_unit unit;
 
     float computed_val;
+};
+
+struct llk_ui_u32 {
+
+    uint32_t specified_val;
+    enum llk_ui_unit unit;
+
+    uint32_t computed_val;
 };
 
 #endif
