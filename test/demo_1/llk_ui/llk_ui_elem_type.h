@@ -18,6 +18,8 @@ struct llk_ui_elem_type_config {
     int (*fn_set_attr)(struct llk_ui_elem *elem, const char *key, const char *val);
 
     void (*fn_draw)(struct llk_ui_elem *elem);
+
+    void (*fn_dispatch_event)(struct llk_ui_elem *elem);
 };
 
 int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config);
@@ -35,6 +37,8 @@ struct llk_ui_elem_type {
     int (*fn_set_attr)(struct llk_ui_elem *elem, const char *key, const char *val);
 
     void (*fn_draw)(struct llk_ui_elem *elem);
+
+    void (*fn_dispatch_event)(struct llk_ui_elem *elem);
 };
 
 #endif

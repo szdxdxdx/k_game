@@ -113,8 +113,15 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 /* region [event] */
 
 void llk__ui_get_input(struct llk_ui_context *ui) {
+
     ui->mouse_x = k_mouse_window_x();
     ui->mouse_y = k_mouse_window_y();
+
+    if (k_mouse_button_pressed(K_BUTTON_LEFT)) {
+        ui->mouse_clicked = 1;
+    } else {
+        ui->mouse_clicked = 0;
+    }
 }
 
 /* endregion */
@@ -127,19 +134,8 @@ void llk__ui_mark_layout_dirty(struct llk_ui_context *ui) {
 
 void llk__ui_layout(struct llk_ui_context *ui) {
 
-    struct llk_ui_elem *child;
-    struct k_list *child_list = &ui->root->child_list;
-    struct k_list_node *iter;
-
-    for (k_list_for_each(child_list, iter)) {
-        child = container_of(iter, struct llk_ui_elem, sibling_link);
-        llk__ui_elem_measure(child);
-    }
-
-    for (k_list_for_each(child_list, iter)) {
-        child = container_of(iter, struct llk_ui_elem, sibling_link);
-        llk__ui_elem_layout(child);
-    }
+    llk__ui_elem_measure(ui->root);
+    llk__ui_elem_layout(ui->root);
 
     ui->layout_dirty = 0;
 }
@@ -176,10 +172,31 @@ void llk__ui_hit_test(struct llk_ui_elem *elem) {
 
 /* endregion */
 
+/* region [dispatch_event] */
+
+void llk__ui_dispatch_event(struct llk_ui_elem *elem) {
+
+    struct llk_ui_elem *child;
+    struct k_list *child_list = &elem->child_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(child_list, iter)) {
+        child = container_of(iter, struct llk_ui_elem, sibling_link);
+
+        llk__ui_dispatch_event(child);
+    }
+
+    if (elem->type->fn_dispatch_event != NULL) {
+        elem->type->fn_dispatch_event(elem);
+    }
+}
+
+/* endregion */
+
 void llk_ui_update(struct llk_ui_context *ui) {
     llk__ui_get_input(ui);
     llk__ui_layout(ui);
     llk__ui_hit_test(ui->root);
+    llk__ui_dispatch_event(ui->root);
 }
 
 /* endregion */

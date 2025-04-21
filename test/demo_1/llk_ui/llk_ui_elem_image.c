@@ -57,10 +57,11 @@ static void llk__ui_elem_image_draw(struct llk_ui_elem *elem) {
 }
 
 struct llk_ui_elem_type_config llk__ui_elem_image_config = {
-    .type_name   = "image",
-    .data_size   = sizeof(struct llk_ui_elem_image),
-    .fn_init     = llk__ui_elem_image_init,
-    .fn_fini     = NULL,
-    .fn_set_attr = llk__ui_elem_image_set_attr,
-    .fn_draw     = llk__ui_elem_image_draw,
+    .type_name         = "image",
+    .data_size         = sizeof(struct llk_ui_elem_image),
+    .fn_init           = llk__ui_elem_image_init,
+    .fn_fini           = NULL,
+    .fn_set_attr       = llk__ui_elem_image_set_attr,
+    .fn_draw           = llk__ui_elem_image_draw,
+    .fn_dispatch_event = NULL,
 };

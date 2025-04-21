@@ -1,5 +1,7 @@
+#include <stdio.h>
 #include "k_game/core/k_canvas.h"
 
+#include "./llk_ui_context.h"
 #include "./llk_ui_elem_type_builtin.h"
 #include "./llk_ui_elem_type.h"
 #include "./llk_ui_val_parser.h"
@@ -9,6 +11,8 @@ struct llk_ui_elem_box {
     struct llk_ui_u32 background_color;
     struct llk_ui_u32 background_color_hovered;
     struct llk_ui_u32 border_color;
+
+    void (*fn_on_click)(void);
 };
 
 static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
@@ -104,11 +108,19 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
 }
 
+static void llk__ui_elem_box_dispatch_event(struct llk_ui_elem *elem) {
+
+    if (elem->is_hovered && elem->ui->mouse_clicked) {
+        printf("clicked\n");
+    }
+}
+
 struct llk_ui_elem_type_config llk__ui_elem_box_config = {
-    .type_name   = "box",
-    .data_size   = sizeof(struct llk_ui_elem_box),
-    .fn_init     = llk__ui_elem_box_init,
-    .fn_fini     = NULL,
-    .fn_set_attr = llk__ui_elem_box_set_attr,
-    .fn_draw     = llk__ui_elem_box_draw,
+    .type_name         = "box",
+    .data_size         = sizeof(struct llk_ui_elem_box),
+    .fn_init           = llk__ui_elem_box_init,
+    .fn_fini           = NULL,
+    .fn_set_attr       = llk__ui_elem_box_set_attr,
+    .fn_draw           = llk__ui_elem_box_draw,
+    .fn_dispatch_event = llk__ui_elem_box_dispatch_event,
 };
