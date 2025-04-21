@@ -132,7 +132,7 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
     }
 
     if (0 != result) {
-        k_log_warn("llk UI element `%s`: Unsupported attribute or invalid value, key: `%s` value: `%s`", elem->type->type_name, key, val);
+        k_log_warn("llk UI elem `%s`: unsupported attribute or invalid value, key: `%s` value: `%s`", elem->type->type_name, key, val);
         return -1;
     }
 

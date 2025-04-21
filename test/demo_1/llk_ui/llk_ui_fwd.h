@@ -1,6 +1,8 @@
 #ifndef LLK_UI_FWD_H
 #define LLK_UI_FWD_H
 
+#include <stddef.h>
+
 struct llk_ui_context;
 
 struct llk_ui_elem;

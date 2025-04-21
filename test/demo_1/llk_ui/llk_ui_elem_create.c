@@ -3,6 +3,7 @@
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
 #include "./llk_ui_elem_type.h"
+#include "./llk_ui_mem_alloc.h"
 
 struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type) {
 
@@ -37,7 +38,7 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
 
     struct llk_ui_elem_type *type = k_str_map_get(&ui->elem_type_map, type_name);
     if (NULL == type) {
-        k_log_error("llk UI element: type `%s` not registered", type_name);
+        k_log_error("llk UI elem: type `%s` not registered", type_name);
         return NULL;
     }
 

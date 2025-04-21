@@ -42,7 +42,7 @@ static void room_draw_ui(void) {
 
 static void room_draw_background() {
 
-    k_canvas_set_draw_color_rgba(0x1e1e1eff);
+    k_canvas_set_draw_color_rgba(0x1e1e1e33);
     k_canvas_room_clear();
 
     float view_x;

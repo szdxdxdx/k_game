@@ -10,7 +10,7 @@ struct llk_ui_elem_box {
     uint32_t border_color;
 };
 
-static int box_init(struct llk_ui_elem *elem) {
+static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = elem->data;
 
     box->background_color = 0x00000000;
@@ -19,7 +19,7 @@ static int box_init(struct llk_ui_elem *elem) {
     return 0;
 }
 
-static int box_set_attr_background_color(struct llk_ui_elem *elem, const char *val) {
+static int llk__ui_elem_box_set_attr_background_color(struct llk_ui_elem *elem, const char *val) {
     struct llk_ui_elem_box *box = elem->data;
 
     uint32_t u32_val;
@@ -30,7 +30,7 @@ static int box_set_attr_background_color(struct llk_ui_elem *elem, const char *v
     return 0;
 }
 
-static int box_set_attr_border_color(struct llk_ui_elem *elem, const char *val) {
+static int llk__ui_elem_box_set_attr_border_color(struct llk_ui_elem *elem, const char *val) {
     struct llk_ui_elem_box *box = elem->data;
 
     uint32_t u32_val;
@@ -41,17 +41,17 @@ static int box_set_attr_border_color(struct llk_ui_elem *elem, const char *val) 
     return 0;
 }
 
-static int box_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
+static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
 
     if (llk__ui_key_match(key, "background-color"))
-        return box_set_attr_background_color(elem, val);
+        return llk__ui_elem_box_set_attr_background_color(elem, val);
     if (llk__ui_key_match(key, "border-color"))
-        return box_set_attr_border_color(elem, val);
+        return llk__ui_elem_box_set_attr_border_color(elem, val);
 
     return llk__ui_elem_set_attr_default(elem, key, val);
 }
 
-static void box_draw(struct llk_ui_elem *elem) {
+static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = elem->data;
 
     k_canvas_set_draw_color_rgba(box->background_color);
@@ -64,8 +64,8 @@ static void box_draw(struct llk_ui_elem *elem) {
 struct llk_ui_elem_type_config llk__ui_elem_box_config = {
     .type_name   = "box",
     .data_size   = sizeof(struct llk_ui_elem_box),
-    .fn_init     = box_init,
+    .fn_init     = llk__ui_elem_box_init,
     .fn_fini     = NULL,
-    .fn_set_attr = box_set_attr,
-    .fn_draw     = box_draw,
+    .fn_set_attr = llk__ui_elem_box_set_attr,
+    .fn_draw     = llk__ui_elem_box_draw,
 };
