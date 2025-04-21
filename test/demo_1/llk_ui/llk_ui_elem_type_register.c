@@ -13,8 +13,14 @@ static int check_config(struct llk_ui_context *ui, const struct llk_ui_elem_type
         return -1;
     }
 
+    if (NULL == config->type_name || '\0' == config->type_name[0]) {
+        k_log_error("invalid `config->type_name`");
+        return -1;
+    }
+
     if (config->data_size < sizeof(struct llk_ui_elem)) {
         k_log_error("invalid `config->elem_size`", config->type_name);
+        return -1;
     }
 
     if (NULL != k_str_map_get(&ui->elem_type_map, config->type_name)) {

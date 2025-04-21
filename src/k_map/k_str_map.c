@@ -146,12 +146,15 @@ static void k__str_map_rehash(struct k_str_map *map) {
     map->fn_free(old_buckets);
 }
 
-void *k_str_map_put(struct k_str_map *map, const char *key, size_t value_size) {
+void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size) {
     assert(NULL != map);
-    assert(NULL != key && '\0' != key[0]);
-    assert(0 < value_size && value_size < SIZE_MAX - sizeof(struct k_str_map_node));
 
-    struct k_str_map_node *map_node = map->fn_malloc(sizeof(struct k_str_map_node) + value_size);
+    if (NULL == key || '\0' == key[0])
+        return NULL;
+    if (0 == val_size || SIZE_MAX - sizeof(struct k_str_map_node) <= val_size)
+        return NULL;
+
+    struct k_str_map_node *map_node = map->fn_malloc(sizeof(struct k_str_map_node) + val_size);
     if (NULL == map_node)
         return NULL;
 
@@ -177,12 +180,15 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t value_size) {
     return k__str_map_node_get_val(map_node);
 }
 
-void *k_str_map_add(struct k_str_map *map, const char *key, size_t value_size) {
+void *k_str_map_add(struct k_str_map *map, const char *key, size_t val_size) {
     assert(NULL != map);
-    assert(NULL != key && '\0' != key[0]);
-    assert(0 < value_size && value_size < SIZE_MAX - sizeof(struct k_str_map_node));
 
-    struct k_str_map_node *map_node = map->fn_malloc(sizeof(struct k_str_map_node) + value_size);
+    if (NULL == key || '\0' == key[0])
+        return NULL;
+    if (0 == val_size || SIZE_MAX - sizeof(struct k_str_map_node) <= val_size)
+        return NULL;
+
+    struct k_str_map_node *map_node = map->fn_malloc(sizeof(struct k_str_map_node) + val_size);
     if (NULL == map_node)
         return NULL;
 
@@ -203,7 +209,9 @@ void *k_str_map_add(struct k_str_map *map, const char *key, size_t value_size) {
 
 void k_str_map_del(struct k_str_map *map, const char *key) {
     assert(NULL != map);
-    assert(NULL != key && '\0' != key[0]);
+
+    if (NULL == key || '\0' == key[0])
+        return;
 
     struct k_str_intrusive_map_node *imap_node = k_str_intrusive_map_get(&map->imap, key);
     if (NULL == imap_node)
@@ -219,7 +227,9 @@ void k_str_map_del(struct k_str_map *map, const char *key) {
 
 void *k_str_map_get(struct k_str_map *map, const char *key) {
     assert(NULL != map);
-    assert(NULL != key && '\0' != key[0]);
+
+    if (NULL == key || '\0' == key[0])
+        return NULL;
 
     struct k_str_intrusive_map_node *imap_node = k_str_intrusive_map_get(&map->imap, key);
     if (NULL == imap_node) {
