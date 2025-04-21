@@ -108,6 +108,8 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 
 /* endregion */
 
+/* region [update] */
+
 /* region [event] */
 
 void llk__ui_get_input(struct llk_ui_context *ui) {
@@ -170,6 +172,14 @@ void llk__ui_hit_test(struct llk_ui_elem *elem) {
 
         llk__ui_hit_test(child);
     }
+}
+
+/* endregion */
+
+void llk_ui_update(struct llk_ui_context *ui) {
+    llk__ui_get_input(ui);
+    llk__ui_layout(ui);
+    llk__ui_hit_test(ui->root);
 }
 
 /* endregion */

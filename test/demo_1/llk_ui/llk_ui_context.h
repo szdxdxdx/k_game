@@ -43,4 +43,6 @@ void llk__ui_update(struct llk_ui_context *ui);
 
 void llk_ui_draw(struct llk_ui_context *ui);
 
+void llk_ui_update(struct llk_ui_context *ui);
+
 #endif

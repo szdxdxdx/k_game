@@ -35,10 +35,14 @@ static void room_build_ui(void) {
     llk_ui_append_child(llk_ui_get_root(ui), xml);
 }
 
-static void room_draw_ui(void) {
+static void room_update_ui(void *unused) {
+    llk_ui_update(ui);
+}
 
+static void room_draw_ui(void *unused) {
     k_canvas_set_draw_color_rgba(0x00000000);
     k_canvas_ui_clear();
+
     llk_ui_draw(ui);
 }
 
@@ -46,7 +50,7 @@ static void room_draw_ui(void) {
 
 /* region [room_background] */
 
-static void room_draw_background() {
+static void room_draw_background(void *unused) {
 
     k_canvas_set_draw_color_rgba(0x1e1e1eff);
     k_canvas_room_clear();
@@ -83,12 +87,6 @@ static void room_draw_background() {
 
 /* region [room_draw] */
 
-static void room_draw(void *unused) {
-
-    room_draw_background();
-    room_draw_ui();
-}
-
 /* endregion */
 
 static void set_debug(void *data) {
@@ -117,7 +115,11 @@ static int init_arena_room(void *params) {
     struct yx_room_arena *room_arena = k_room_get_data();
 
     k_room_add_step_callback(NULL, set_debug);
-    k_room_add_draw_callback(NULL, room_draw, INT_MIN, 0);
+
+    k_room_add_draw_callback(NULL, room_update_ui, INT_MIN, 0);
+    k_room_add_draw_callback(NULL, room_draw_ui, INT_MIN, 0);
+
+    k_room_add_draw_callback(NULL, room_draw_background, INT_MIN, 0);
 
     k_room_add_camera();
     k_room_add_collision_manager();

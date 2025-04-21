@@ -69,10 +69,10 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = elem->data;
 
     if (elem->is_hovered) {
-        k_canvas_set_draw_color_rgba(box->background_color);
+        k_canvas_set_draw_color_rgba(box->background_color_hovered);
         k_canvas_ui_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
     } else {
-        k_canvas_set_draw_color_rgba(box->background_color_hovered);
+        k_canvas_set_draw_color_rgba(box->background_color);
         k_canvas_ui_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
     }
 
