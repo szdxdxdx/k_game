@@ -3,7 +3,7 @@
 #include "k_game/core/k_callback.h"
 
 #include "./k_camera_internal.h"
-#include "./k_camera_typedef.h"
+#include "./k_camera_type_registry.h"
 
 int k_camera_init(struct k_component_manager *manager, void *params) {
     (void)params;
@@ -34,7 +34,7 @@ int k_camera_init(struct k_component_manager *manager, void *params) {
 
 struct k_component_type *k__camera_component_type;
 
-int k__camera_component_define(void) {
+int k__component_type_register_camera(void) {
 
     struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
     entity_config.data_size = sizeof(struct k_camera_target);
@@ -45,7 +45,7 @@ int k__camera_component_define(void) {
     manager_config.data_size = sizeof(struct k_camera);
     manager_config.fn_init = k_camera_init;
 
-    struct k_component_type *type = k_component_define(&manager_config, &entity_config);
+    struct k_component_type *type = k_component_type_register(&manager_config, &entity_config);
     if (NULL == type)
         return -1;
 

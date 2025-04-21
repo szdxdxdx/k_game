@@ -1,4 +1,4 @@
-#include "./k_wasd_typedef.h"
+#include "./k_wasd_type_register.h"
 
 #include "k_game/core/k_time.h"
 #include "k_game/core/k_keyboard.h"
@@ -56,13 +56,13 @@ static int WASD_init(struct k_component *component, void *params) {
 
 static struct k_component_type *k__WASD_component_type = NULL;
 
-int k__WASD_component_define(void) {
+int k__component_type_register_WASD(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_WASD);
     config.fn_init = WASD_init;
 
-    struct k_component_type *type = k_component_define(NULL, &config);
+    struct k_component_type *type = k_component_type_register(NULL, &config);
     if (NULL == type)
         return -1;
 

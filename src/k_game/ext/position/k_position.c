@@ -3,7 +3,7 @@
 #include "k_game/core/k_component.h"
 
 #include "k_game/ext/k_position.h"
-#include "./k_position_typedef.h"
+#include "./k_position_type_register.h"
 
 struct k_position {
 
@@ -142,18 +142,18 @@ void position_fini(struct k_component *component) {
 
 /* endregion */
 
-/* region [component_define] */
+/* region [component_type_register] */
 
 static struct k_component_type *k__position_component_type = NULL;
 
-int k__position_component_define(void) {
+int k__component_type_register_position(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_position);
     config.fn_init = position_init;
     config.fn_fini = position_fini;
 
-    struct k_component_type *type = k_component_define(NULL, &config);
+    struct k_component_type *type = k_component_type_register(NULL, &config);
     if (NULL == type)
         return -1;
 

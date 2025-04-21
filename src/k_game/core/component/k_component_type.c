@@ -25,7 +25,7 @@ static int check_config(const struct k_component_manager_config *manager_config,
 
 static int id_counter = 0;
 
-struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
+struct k_component_type *k_component_type_register(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
 
     if (0 != check_config(manager_config, entity_config))
         goto err;
@@ -69,7 +69,7 @@ err:
     return NULL;
 }
 
-void k__component_undef(struct k_component_type *component_type) {
+void k__component_type_unregister(struct k_component_type *component_type) {
 
     k__component_type_registry_del(component_type);
     k__mem_free(component_type);

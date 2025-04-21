@@ -35,6 +35,6 @@ struct k_component_type {
     struct k_component_manager_type *manager_type;
 };
 
-void k__component_undef(struct k_component_type *component_type);
+void k__component_type_unregister(struct k_component_type *component_type);
 
 #endif

@@ -5,7 +5,7 @@
 
 #include "./k_game_fwd.h"
 
-/* region [component_define] */
+/* region [component_type_register] */
 
 struct k_component_entity_config {
 
@@ -41,7 +41,7 @@ struct k_component_manager_config {
     .fn_fini   = NULL  \
 }
 
-struct k_component_type *k_component_define(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config);
+struct k_component_type *k_component_type_register(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config);
 
 /* endregion */
 

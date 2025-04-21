@@ -4,18 +4,6 @@
 
 /* region [renderer_init] */
 
-void k__sprite_renderer_reset(struct k_sprite_renderer *renderer) {
-
-    renderer->loop_count = INT_MAX;
-    renderer->fn_loop_callback = NULL;
-
-    renderer->frame_idx = 0;
-    renderer->timer = 0.0f;
-    renderer->speed = 1.0f;
-
-    k_sprite_renderer_reset_transforms(renderer);
-}
-
 static int k__sprite_renderer_init(struct k_component *component, void *params) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
     const struct k_sprite_renderer_config *config = params;
@@ -44,19 +32,31 @@ static int k__sprite_renderer_init(struct k_component *component, void *params) 
     return 0;
 }
 
+void k__sprite_renderer_reset(struct k_sprite_renderer *renderer) {
+
+    renderer->loop_count = INT_MAX;
+    renderer->fn_loop_callback = NULL;
+
+    renderer->frame_idx = 0;
+    renderer->timer = 0.0f;
+    renderer->speed = 1.0f;
+
+    k_sprite_renderer_reset_transforms(renderer);
+}
+
 /* endregion */
 
-/* region [component_define] */
+/* region [component_type_register] */
 
 static struct k_component_type *k__component_type_sprite_renderer = NULL;
 
-int k__sprite_renderer_component_define(void) {
+int k__component_type_register_sprite_renderer(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_sprite_renderer);
     config.fn_init = k__sprite_renderer_init;
 
-    struct k_component_type *type = k_component_define(NULL, &config);
+    struct k_component_type *type = k_component_type_register(NULL, &config);
     if (NULL == type)
         return -1;
 

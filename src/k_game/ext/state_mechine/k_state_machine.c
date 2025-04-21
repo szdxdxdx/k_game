@@ -2,7 +2,7 @@
 #include "k_game/core/k_callback.h"
 
 #include "k_game/ext/k_state_machine.h"
-#include "./k_state_machine_typedef.h"
+#include "./k_state_machine_register.h"
 
 struct k_state_machine {
 
@@ -71,18 +71,18 @@ static void k__state_machine_fini(struct k_component *component) {
 
 /* endregion */
 
-/* region [component_define] */
+/* region [component_type_register] */
 
 static struct k_component_type *k__state_machine_component_type;
 
-int k__state_machine_component_define(void) {
+int k__component_type_register_state_machine(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_state_machine);
     config.fn_init = k__state_machine_init;
     config.fn_fini = k__state_machine_fini;
 
-    struct k_component_type *type = k_component_define(NULL, &config);
+    struct k_component_type *type = k_component_type_register(NULL, &config);
     if (NULL == type)
         return -1;
 

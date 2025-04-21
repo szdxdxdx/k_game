@@ -15,12 +15,12 @@
 #include "../component/k_component_type_registry.h"
 #include "../component/k_component_manager_map.h"
 
-#include "../../ext/wasd/k_wasd_typedef.h"
-#include "../../ext/sprite_renderer/k_sprite_renderer_typedef.h"
-#include "../../ext/collision/k_collision_typedef.h"
-#include "../../ext/position/k_position_typedef.h"
-#include "../../ext/state_mechine/k_state_machine_typedef.h"
-#include "../../ext/camera/k_camera_typedef.h"
+#include "../../ext/wasd/k_wasd_type_register.h"
+#include "../../ext/sprite_renderer/k_sprite_renderer_type_register.h"
+#include "../../ext/collision/k_collision_type_register.h"
+#include "../../ext/position/k_position_type_register.h"
+#include "../../ext/state_mechine/k_state_machine_register.h"
+#include "../../ext/camera/k_camera_type_registry.h"
 
 /* region [steps] */
 
@@ -97,12 +97,12 @@ static void step_free_component_manager_map(void *unused) {
 static int step_define_components(void *unused) {
     (void)unused;
 
-    return k__WASD_component_define()
-        || k__sprite_renderer_component_define()
-        || k__collision_box_component_define()
-        || k__position_component_define()
-        || k__state_machine_component_define()
-        || k__camera_component_define()
+    return k__component_type_register_WASD()
+        || k__component_type_register_sprite_renderer()
+        || k__component_type_register_collision_box()
+        || k__component_type_register_position()
+        || k__component_type_register_state_machine()
+        || k__component_type_register_camera()
      ? -1 : 0;
 }
 

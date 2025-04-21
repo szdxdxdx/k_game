@@ -10,7 +10,7 @@ int k__component_type_registry_init(void) {
 
 static void release_asset(struct k_asset_registry_node *registry_node) {
     struct k_component_type *component_type = container_of(registry_node, struct k_component_type, registry_node);
-    k__component_undef(component_type);
+    k__component_type_unregister(component_type);
 }
 
 void k__component_type_registry_cleanup(void) {
