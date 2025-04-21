@@ -8,11 +8,11 @@
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
 
-struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, struct k_xml_node *xml) {
+struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_context *ui, struct k_xml_node *xml) {
 
     const char *tag = k_xml_get_tag(xml);
 
-    struct llk_ui_elem *elem = llk_ui_create_elem(parent->ui, tag);
+    struct llk_ui_elem *elem = llk_ui_create_elem(ui, tag);
     if (NULL == elem)
         return NULL;
 
@@ -20,8 +20,12 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
     for (k_xml_for_each_child(xml, xml_child)) {
         if (K_XML_ELEM_NODE == k_xml_get_type(xml_child)) {
 
-            if (NULL == llk__ui_build_elem_from_xml(elem, xml_child))
+            struct llk_ui_elem *child = llk__ui_build_elem_from_xml(ui, xml_child);
+
+            if (NULL == child)
                 goto err;
+
+            llk_ui_append_child(elem, child);
         }
     }
 
@@ -33,12 +37,11 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_elem *parent, stru
         llk_ui_elem_set_attr(elem, key, val);
     }
 
-    llk_ui_append_child(parent, elem);
-
     return elem;
 
 err:
-    k_log_error("llk UI: failed to build element from xml node, node tag: `%s`", k_xml_get_tag(xml));
+    k_log_error("llk UI: failed to build element from xml node, node tag: `%s`", tag);
+    /* TODO if build failed, destroy elem */
     return NULL;
 }
 
@@ -48,13 +51,14 @@ struct llk_ui_context *llk__ui_build_from_xml(struct k_xml_node *xml) {
     if (NULL == ui)
         return NULL;
 
-    struct llk_ui_elem *elem = llk__ui_build_elem_from_xml(ui->root, xml);
+    struct llk_ui_elem *elem = llk__ui_build_elem_from_xml(ui, xml);
     if (NULL == elem) {
         llk_ui_destroy_context(ui);
         k_log_error("llk UI: failed to build UI from xml");
         return NULL;
     }
 
+    llk_ui_append_child(llk_ui_get_root(ui), elem);
     return ui;
 }
 
@@ -79,6 +83,33 @@ struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
     free(text);
 
     return ui;
+
+err:
+    k_log_error("llk UI: failed to build UI from xml file");
+    return NULL;
+}
+
+struct llk_ui_elem *llk_ui_build_elem_from_xml_file(struct llk_ui_context *ui, const char *file_path) {
+
+    char *text = k_read_txt_file(file_path, NULL, 0, NULL);
+    if (NULL == text) {
+        k_log_error("llk UI: failed to read file `%s`", file_path);
+        goto err;
+    }
+
+    struct k_xml_node *xml = k_xml_parse_in_place(text);
+
+    if (NULL == xml) {
+        k_log_error("llk UI: failed to parse xml");
+        goto err;
+    }
+
+    struct llk_ui_elem *elem = llk__ui_build_elem_from_xml(ui, xml);
+
+    k_xml_free(xml);
+    free(text);
+
+    return elem;
 
 err:
     k_log_error("llk UI: failed to build UI from xml file");

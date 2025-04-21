@@ -13,17 +13,17 @@
 static int llk__ui_register_elem_type_check_config(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config) {
 
     if (NULL == config) {
-        k_log_error("llk UI elem: invalid `config`");
+        k_log_error("llk UI: invalid `config`");
         return -1;
     }
 
     if (NULL == config->type_name || '\0' == config->type_name[0]) {
-        k_log_error("llk UI elem: invalid `config->type_name`");
+        k_log_error("llk UI: invalid `config->type_name`");
         return -1;
     }
 
     if (NULL != k_str_map_get(&ui->elem_type_map, config->type_name)) {
-        k_log_error("llk UI elem: type `%s` already registered", config->type_name);
+        k_log_error("llk UI: type `%s` already registered", config->type_name);
         return -1;
     }
 
@@ -44,7 +44,7 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     struct llk_ui_elem_type *type = k_str_map_add(&ui->elem_type_map, type_name, sizeof(struct llk_ui_elem_type));
     if (NULL == type) {
         llk__ui_mem_free(type_name);
-        k_log_error("llk UI elem: Failed to add type name to registry name map");
+        k_log_error("llk UI: Failed to add type name to registry name map");
         goto err;
     }
 
@@ -58,7 +58,7 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     return 0;
 
 err:
-    k_log_error("llk UI elem: Failed to register element type");
+    k_log_error("llk UI: Failed to register element type");
     return -1;
 }
 
@@ -99,7 +99,7 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
 
     struct llk_ui_elem_type *type = k_str_map_get(&ui->elem_type_map, type_name);
     if (NULL == type) {
-        k_log_error("llk UI elem: type `%s` not registered", type_name);
+        k_log_error("llk UI: elem type `%s` not registered", type_name);
         return NULL;
     }
 
@@ -155,8 +155,10 @@ int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
         return -1;
 
     k_list_add_tail(&parent->child_list, &child->sibling_link);
-
     child->parent = parent;
+
+    llk_ui_mark_layout_dirty(parent->ui);
+
     return 0;
 }
 
@@ -285,7 +287,7 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
     }
 
     if (0 != result) {
-        k_log_warn("llk UI elem `%s`: unsupported attribute or invalid value, key: `%s` value: `%s`", elem->type->type_name, key, val);
+        k_log_warn("llk UI: elem `%s` unsupported attribute or invalid value, key: `%s` value: `%s`", elem->type->type_name, key, val);
         return -1;
     }
 

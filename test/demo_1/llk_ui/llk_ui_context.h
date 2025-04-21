@@ -12,6 +12,9 @@ struct llk_ui_context {
     float vw;
     float vh;
 
+    float mouse_x;
+    float mouse_y;
+
     struct llk_ui_elem *root;
 
     struct k_mem_pool mem_pool;
@@ -32,7 +35,11 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui);
 /* 标记 UI 结构或布局发生了变更，需要重新布局 */
 void llk_ui_mark_layout_dirty(struct llk_ui_context *ui);
 
+/* 布局元素，计算所有元素的尺寸和位置 */
 void llk__ui_layout(struct llk_ui_context *ui);
+
+/* 布局元素，计算所有元素的尺寸和位置 */
+void llk__ui_update(struct llk_ui_context *ui);
 
 void llk_ui_draw(struct llk_ui_context *ui);
 

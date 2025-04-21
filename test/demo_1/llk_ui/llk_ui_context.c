@@ -72,9 +72,12 @@ struct llk_ui_context *llk_ui_create_context(void) {
     root->h.computed_val  = vh;
     root->parent = &llk__ui_window;
 
-    ui->root = root;
     ui->vw = vw;
     ui->vh = vh;
+    ui->mouse_x = 0.0f;
+    ui->mouse_y = 0.0f;
+    ui->root = root;
+    ui->layout_dirty = 1;
 
     return ui;
 

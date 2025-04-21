@@ -7,30 +7,27 @@
 #include "./llk_ui_elem_type.h"
 
 struct llk_ui_elem_image {
-    const char *src;
 
-    struct k_image *image;
+    struct k_image *src;
 };
 
 static int llk__ui_elem_image_init(struct llk_ui_elem *elem) {
     struct llk_ui_elem_image *image = elem->data;
 
-    image->src = "";
-    image->image = NULL;
-
+    image->src = NULL;
     return 0;
 }
 
 static int llk__ui_elem_image_set_attr_src(struct llk_ui_elem *elem, const char *val) {
     struct llk_ui_elem_image *image = elem->data;
 
-    struct k_image *new_src_image = k_image_find(val);
-    if (NULL == new_src_image) {
+    struct k_image *src = k_image_find(val);
+    if (NULL == src) {
         k_log_warn("llk ui elem: image not found, src: `%s`", val);
         return -1;
     }
 
-    image->image = new_src_image;
+    image->src = src;
     return 0;
 }
 
@@ -45,7 +42,7 @@ static int llk__ui_elem_image_set_attr(struct llk_ui_elem *elem, const char *key
 static void llk__ui_elem_image_draw(struct llk_ui_elem *elem) {
     struct llk_ui_elem_image *image = elem->data;
 
-    if (NULL == image->image)
+    if (NULL == image->src)
         return;
 
     struct k_canvas_draw_image_options options;
@@ -56,7 +53,7 @@ static void llk__ui_elem_image_draw(struct llk_ui_elem *elem) {
     options.pivot_y  = 0.0f;
     options.flip_x   = 0;
     options.flip_y   = 0;
-    k_canvas_ui_draw_image(image->image, NULL, elem->x, elem->y, &options);
+    k_canvas_ui_draw_image(image->src, NULL, elem->x, elem->y, &options);
 }
 
 struct llk_ui_elem_type_config llk__ui_elem_image_config = {
