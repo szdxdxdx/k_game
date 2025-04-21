@@ -27,8 +27,13 @@ static void create_room(void) {
 }
 
 static int fn_init_game(void) {
+
     load_sprite();
     load_sound();
+
+    struct k_image *szdxdxdx = k_image_load("./demo_1/image/szdxdxdx.jpg");
+    k_image_set_name(szdxdxdx, "szdxdxdx");
+
     create_room();
     return 0;
 }

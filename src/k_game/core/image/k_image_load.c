@@ -14,7 +14,7 @@ struct k_image *k_image_load(const char *filepath) {
 
     SDL_Texture *texture = IMG_LoadTexture(k__window.renderer, filepath);
     if (NULL == texture) {
-        k_log_error("Failed to load image, SDL error: %s", IMG_GetError());
+        k_log_error("SDL error: %s", IMG_GetError());
         return NULL;
     }
 

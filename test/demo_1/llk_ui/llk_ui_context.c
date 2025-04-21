@@ -16,11 +16,13 @@ static struct llk_ui_elem llk__ui_window = {
     .y      = 0.0f,
 };
 
-int llk__ui_registry_builtin_elem_types(struct llk_ui_context *ui) {
+static int llk__ui_registry_builtin_elem_types(struct llk_ui_context *ui) {
 
     if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_root_config))
         return -1;
     if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_box_config))
+        return -1;
+    if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_image_config))
         return -1;
 
     return 0;

@@ -25,9 +25,9 @@ static int llk__ui_elem_image_init(struct llk_ui_elem *elem) {
 static int llk__ui_elem_image_set_attr_src(struct llk_ui_elem *elem, const char *val) {
     struct llk_ui_elem_image *image = elem->data;
 
-    struct k_image *new_src_image = k_image_find(image->src);
+    struct k_image *new_src_image = k_image_find(val);
     if (NULL == new_src_image) {
-        k_log_warn("llk ui elem: image not found, src: `%s`", image->src);
+        k_log_warn("llk ui elem: image not found, src: `%s`", val);
         return -1;
     }
 
