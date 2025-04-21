@@ -109,7 +109,7 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 
 /* region [layout] */
 
-void llk_ui_mark_layout_dirty(struct llk_ui_context *ui) {
+void llk__ui_mark_layout_dirty(struct llk_ui_context *ui) {
     ui->layout_dirty = 1;
 }
 

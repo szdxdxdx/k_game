@@ -62,7 +62,7 @@ struct llk_ui_context *llk__ui_build_from_xml(struct k_xml_node *xml) {
     return ui;
 }
 
-struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path) {
+struct llk_ui_context *llk_ui_build_context_from_xml_file(const char *file_path) {
 
     char *text = k_read_txt_file(file_path, NULL, 0, NULL);
     if (NULL == text) {

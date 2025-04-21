@@ -36,7 +36,14 @@ int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
 /* region [build_ui_from_xml] */
 
 /** \brief 解析 xml 文件，生成对应的 UI 上下文 */
-struct llk_ui_context *llk_ui_build_from_xml_file(const char *file_path);
+struct llk_ui_context *llk_ui_build_context_from_xml_file(const char *file_path);
+
+/* endregion */
+
+/* region [draw] */
+
+/** \brief 绘制 UI 界面 */
+void llk_ui_draw(struct llk_ui_context *ui);
 
 /* endregion */
 

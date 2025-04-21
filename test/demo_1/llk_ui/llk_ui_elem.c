@@ -157,7 +157,7 @@ int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
     k_list_add_tail(&parent->child_list, &child->sibling_link);
     child->parent = parent;
 
-    llk_ui_mark_layout_dirty(parent->ui);
+    llk__ui_mark_layout_dirty(parent->ui);
 
     return 0;
 }

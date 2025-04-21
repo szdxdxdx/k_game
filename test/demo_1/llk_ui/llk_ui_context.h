@@ -33,7 +33,7 @@ void llk_ui_destroy_context(struct llk_ui_context *ui);
 struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui);
 
 /* 标记 UI 结构或布局发生了变更，需要重新布局 */
-void llk_ui_mark_layout_dirty(struct llk_ui_context *ui);
+void llk__ui_mark_layout_dirty(struct llk_ui_context *ui);
 
 /* 布局元素，计算所有元素的尺寸和位置 */
 void llk__ui_layout(struct llk_ui_context *ui);
