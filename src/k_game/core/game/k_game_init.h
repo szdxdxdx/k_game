@@ -3,8 +3,8 @@
 
 struct k_game_config;
 
-int k__init_game(const struct k_game_config *config);
+int k__game_init(const struct k_game_config *config);
 
-void k__deinit_game(const struct k_game_config *config);
+void k__game_deinit(const struct k_game_config *config);
 
 #endif

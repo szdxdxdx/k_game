@@ -170,8 +170,9 @@ static int step_create_canvas(void *config_) {
     int window_w = config->window_w;
     int window_h = config->window_h;
 
-    int room_viewport_w = window_w + window_w / 4; /* tmp */
-    int room_viewport_h = window_h + window_h / 4; /* tmp */
+    /* TODO 之后可以自定义画布的房间视口的大小，现在先默认是 1.25x 的窗口尺寸 */
+    int room_viewport_w = window_w + window_w / 4;
+    int room_viewport_h = window_h + window_h / 4;
 
     int ui_viewport_x = room_viewport_w + 1;
     int ui_viewport_y = 0;

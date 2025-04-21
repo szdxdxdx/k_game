@@ -119,16 +119,6 @@ static struct k_xml_doc *k__xml_create_doc(void) {
 }
 
 static void k__xml_destroy_doc(struct k_xml_doc *doc) {
-
-    struct k_xml_node *xml_node;
-    struct k_list *list = &doc->top_node_list;
-    struct k_list_node *iter, *next;
-    for (k_list_for_each_s(list, iter, next)) {
-        xml_node = container_of(iter, struct k_xml_node, sibling_link);
-
-        k__xml_destroy_node(xml_node);
-    }
-
     k_mem_pool_destruct(&doc->mem_pool);
     free(doc);
 }

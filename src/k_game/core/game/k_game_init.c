@@ -167,7 +167,7 @@ static const struct k_seq_step steps[] = {
 
 /* endregion */
 
-int k__init_game(const struct k_game_config *config) {
+int k__game_init(const struct k_game_config *config) {
 
     if (NULL == config) {
         k_log_error("`config` is NULL");
@@ -181,6 +181,6 @@ int k__init_game(const struct k_game_config *config) {
     return 0;
 }
 
-void k__deinit_game(const struct k_game_config *config) {
+void k__game_deinit(const struct k_game_config *config) {
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), (void *)config);
 }

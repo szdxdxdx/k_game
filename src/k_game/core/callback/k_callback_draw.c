@@ -41,7 +41,7 @@ static struct k_draw_callback_group *find_or_create_group(struct k_draw_callback
 
     k_list_init(&new_group->layer_list);
 
-    size_t layer_map_buckets_num = 16;
+    size_t layer_map_buckets_num = 128;
     struct k_hash_list *buckets = k__mem_alloc(sizeof(struct k_hash_list) * layer_map_buckets_num);
     if (NULL == buckets) {
         k__mem_free(new_group);
@@ -281,7 +281,7 @@ void k__draw_callback_manager_del_callback(struct k_callback *callback) {
 
 int k__draw_callback_manager_init(struct k_draw_callback_manager *manager) {
 
-    size_t buckets_num = 16;
+    size_t buckets_num = 64;
     struct k_hash_list *buckets = k__mem_alloc(sizeof(struct k_hash_list) * buckets_num);
     if (NULL == buckets) {
         return -1;

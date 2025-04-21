@@ -64,7 +64,7 @@ struct k_xml_node;
  * 解析途中会修改 `text` 字符串，写入 `\0` 字符分割内容。
  * 请确保 `text` 是可修改的缓冲区，而非字符串常量。
  *
- * 若解析成功，函数返回 xml 树根节点指针，否则返回 `NULL`。
+ * 若解析成功，函数返回 xml 树根节点（元素节点）的指针，否则返回 `NULL`。
  */
 struct k_xml_node *k_xml_parse(char *text);
 
@@ -107,38 +107,43 @@ struct k_xml_node *k_xml_get_first_child(struct k_xml_node *elem_node);
 struct k_xml_node *k_xml_get_next_sibling(struct k_xml_node *node);
 
 /**
+ * \brief 获取 xml 节点的前一个兄弟节点
+ *
+ * 函数返回 `node` 的前一个兄弟节点，若没有前一个节点则返回 `NULL`。
+ */
+struct k_xml_node *k_xml_get_prev_sibling(struct k_xml_node *node);
+
+/**
  * \brief 遍历 xml 元素节点的子节点
  *
- * 示例，统计 xml 元素节点的子节点个数，以及子元素节点的个数：
+ * 示例：
  * ```C
  * struct k_xml_node *elem_node = ...;
  *
- * int elem_child_count = 0;
  * int child_count = 0;
+ * int elem_child_count = 0;
+ * int text_child_count = 0;
  *
  * struct k_xml_node *child_node;
- * for ( k_xml_for_each_child(elem_node, child_node) ) {
+ * for (k_xml_for_each_child(elem_node, child_node)) {
  *
  *     child_count++;
  *
  *     if (K_XML_ELEM_NODE == k_xml_get_type(child_node))
- *          child_count++;
+ *          elem_child_count++;
+ *     if (K_XML_TEXT_NODE == k_xml_get_type(child_node))
+ *          text_child_count++;
  * }
  *
- * printf("child_count = %d, elem_count = %d", child_count, elem_child_count);
+ * printf("child_count = %d, ", child_count);
+ * printf("elem_child_count = %d, ", elem_child_count);
+ * printf("text_child_count = %d. ", text_child_count);
  * ```
  */
 #define k_xml_for_each_child(elem_node, child_node) \
     child_node = k_xml_get_first_child(elem_node); \
     NULL != child_node; \
     child_node = k_xml_get_next_sibling(child_node)
-
-/**
- * \brief 获取 xml 节点的前一个兄弟节点
- *
- * 函数返回 `node` 的前一个兄弟节点，若没有前一个节点则返回 `NULL`。
- */
-struct k_xml_node *k_xml_get_prev_sibling(struct k_xml_node *node);
 
 /**
  * \brief 获取 xml 节点的父节点
@@ -184,7 +189,7 @@ struct k_xml_attr;
 /**
  * \brief 获取 xml 元素节点的第一个属性
  *
- * 函数返回元素节点 `elem_node` 的第一个属性，用于遍历属性列表。
+ * 函数返回元素节点 `elem_node` 的第一个属性，用于遍历元素节点的属性列表。
  * 出参 `get_key` 和 `get_val` 分别返回属性的键和值。
  * 若节点没有属性，或者不是元素节点，则函数返回 `NULL`。
  */
@@ -193,7 +198,7 @@ struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char
 /**
  * \brief 获取 xml 元素节点的下一个属性
  *
- * 函数返回 `attr` 的下一个属性，用于继续遍历属性列表。
+ * 函数返回 `attr` 的下一个属性，用于继续元素节点的遍历属性列表。
  * 出参 `get_key` 和 `get_val` 分别返回该属性的键和值。
  * 若 `attr` 已是最后一个属性，则函数返回 `NULL`。
  */
@@ -209,7 +214,7 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
  * struct k_xml_attr *attr;
  * const char *key;
  * const char *val;
- * for ( k_xml_for_each_attr(elem_node, attr, key, val) ) {
+ * for (k_xml_for_each_attr(elem_node, attr, key, val)) {
  *
  *     printf("key: %s, val: %s", key, val);
  * }

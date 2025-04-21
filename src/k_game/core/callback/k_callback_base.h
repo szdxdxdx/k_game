@@ -41,9 +41,9 @@ enum k_callback_state {
 };
 
 struct k_callback {
-    uint8_t context : 8;
-    uint8_t event   : 8;
-    uint8_t state   : 8;
+    uint8_t context;
+    uint8_t event;
+    uint8_t state;
 
     struct k_list_node context_callback_list_node;
 };

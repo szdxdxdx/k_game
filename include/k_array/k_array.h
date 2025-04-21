@@ -53,7 +53,7 @@ struct k_array_options {
 /**
  * \brief 创建数组
  *
- * `elem_size` 指定数组所存储的元素的大小，
+ * `elem_size` 指定数组所存储的元素的大小，单位：字节。
  * `options` 为可选的配置参数，若为 `NULL` 则使用默认配置。
  *
  * 若创建成功，函数返回数组容器的指针，否则返回 `NULL`。

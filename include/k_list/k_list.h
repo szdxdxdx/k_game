@@ -86,12 +86,12 @@ static inline struct k_list_node *k_list_head(struct k_list *list) {
 
 #define k_list_for_each(list_, iter_) \
     iter_ = (list_)->head.next; \
-    iter_ != &((list_)->head); \
+    iter_ != &((list_)->head);  \
     iter_ = iter_->next
 
 #define k_list_reversed_for_each(list_, iter_) \
     iter_ = (list_)->head.prev; \
-    iter_ != &((list_)->head); \
+    iter_ != &((list_)->head);  \
     iter_ = iter_->prev
 
 #define k_list_for_each_s(list_, iter_, next_) \

@@ -21,13 +21,13 @@ static void run_game() {
 
 int k_game_run(const struct k_game_config *config) {
 
-    if (0 != k__init_game(config)) {
+    if (0 != k__game_init(config)) {
         k_log_error("Failed to init game");
         return -1;
     }
 
     run_game();
 
-    k__deinit_game(config);
+    k__game_deinit(config);
     return 0;
 }
