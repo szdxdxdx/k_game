@@ -2,6 +2,7 @@
 
 #include "k_log.h"
 
+#include "k_game/core/k_mouse.h"
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_context.h"
@@ -107,6 +108,15 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 
 /* endregion */
 
+/* region [event] */
+
+void llk__ui_get_input(struct llk_ui_context *ui) {
+    ui->mouse_x = k_mouse_window_x();
+    ui->mouse_y = k_mouse_window_y();
+}
+
+/* endregion */
+
 /* region [layout] */
 
 void llk__ui_mark_layout_dirty(struct llk_ui_context *ui) {
@@ -130,6 +140,36 @@ void llk__ui_layout(struct llk_ui_context *ui) {
     }
 
     ui->layout_dirty = 0;
+}
+
+/* endregion */
+
+/* region [hit_test] */
+
+void llk__ui_hit_test(struct llk_ui_elem *elem) {
+
+    struct llk_ui_context *ui = elem->ui;
+
+    float x = elem->x;
+    float y = elem->y;
+    float w = elem->w.computed_val;
+    float h = elem->h.computed_val;
+    float mouse_x = ui->mouse_x;
+    float mouse_y = ui->mouse_y;
+    if (x <= mouse_x && mouse_x <= x + w && y <= mouse_y && mouse_y <= y + h) {
+        elem->is_hovered = 1;
+    } else {
+        elem->is_hovered = 0;
+    }
+
+    struct llk_ui_elem *child;
+    struct k_list *child_list = &elem->child_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(child_list, iter)) {
+        child = container_of(iter, struct llk_ui_elem, sibling_link);
+
+        llk__ui_hit_test(child);
+    }
 }
 
 /* endregion */

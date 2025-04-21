@@ -27,6 +27,8 @@ struct llk_ui_elem {
     float x;
     float y;
 
+    unsigned int is_hovered;
+
     const struct llk_ui_elem_type *type;
 
     void *data;
@@ -41,6 +43,8 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
 int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *val);
 
 int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
+
+void llk_ui_elem_remove(struct llk_ui_elem *elem);
 
 void llk__ui_elem_measure(struct llk_ui_elem *elem);
 

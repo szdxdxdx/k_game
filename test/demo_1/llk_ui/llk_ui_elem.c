@@ -147,6 +147,10 @@ void llk__ui_destruct_elem(struct llk_ui_elem *elem) {
 
 int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
 
+    /* TODO
+     * 添加元素可能发生在事件派发过程，所以这里应只做标记，等事件派发完毕之后再统一添加
+     */
+
     if (NULL == parent || NULL == child)
         return -1;
     if (NULL != child->parent)
@@ -160,6 +164,12 @@ int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
     llk__ui_mark_layout_dirty(parent->ui);
 
     return 0;
+}
+
+void llk_ui_elem_remove(struct llk_ui_elem *elem) {
+    /* TODO
+     * 删除元素可能发生再事件派发过程，所以这里只做标记，等事件派发完毕之后再统一删除
+     */
 }
 
 /* endregion */

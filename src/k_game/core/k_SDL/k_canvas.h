@@ -50,9 +50,9 @@ struct k_canvas {
      * 该矩形区域的宽高应该与游戏窗口宽高保持一致。
      */
     int ui_viewport_x;
-    int ui_viewport_y;
-    int ui_viewport_w;
-    int ui_viewport_h;
+    int ui_viewport_y; // = 0.0f
+    int ui_viewport_w; // = window_w
+    int ui_viewport_h; // = window_h
 
     /* 当前的视口区域 */
     enum k_canvas_viewport current_viewport;

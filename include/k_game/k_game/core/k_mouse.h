@@ -5,6 +5,10 @@ float k_mouse_x(void);
 
 float k_mouse_y(void);
 
+float k_mouse_window_x(void);
+
+float k_mouse_window_y(void);
+
 enum k_mouse_button {
     K_BUTTON_LEFT   = 0,
     K_BUTTON_MIDDLE = 1,

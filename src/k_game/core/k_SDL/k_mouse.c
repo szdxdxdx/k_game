@@ -7,21 +7,7 @@
 
 struct k_mouse_context k__mouse;
 
-static void refresh_button_state(enum k_mouse_button button) {
-
-    switch (k__mouse.button_state[button] & 0b11) {
-        case 0b00: k__mouse.button_state[button] &= 0b100; break;
-        case 0b01: k__mouse.button_state[button]  = 0b000; break;
-        case 0b10: k__mouse.button_state[button]  = 0b100; break;
-        case 0b11: k__mouse.button_state[button]  = 0b000; break;
-    }
-}
-
-void k__mouse_refresh_state(void) {
-    refresh_button_state(K_BUTTON_LEFT);
-    refresh_button_state(K_BUTTON_MIDDLE);
-    refresh_button_state(K_BUTTON_RIGHT);
-}
+/* region [handle_SDL_event] */
 
 void k__SDL_handle_event_mouse_button_down(SDL_MouseButtonEvent *event) {
 
@@ -68,12 +54,44 @@ void k__SDL_handle_event_mouse_motion(struct SDL_MouseMotionEvent *event) {
     k__mouse.room_y   = k__mouse.view_y + k__view.view_y;
 }
 
+/* endregion */
+
+/* region [position] */
+
 float k_mouse_x(void) {
     return k__mouse.room_x;
 }
 
 float k_mouse_y(void) {
     return k__mouse.room_y;
+}
+
+float k_mouse_window_x(void) {
+    return k__mouse.window_x;
+}
+
+float k_mouse_window_y(void) {
+    return k__mouse.window_y;
+}
+
+/* endregion */
+
+/* region [button_state] */
+
+static void refresh_button_state(enum k_mouse_button button) {
+
+    switch (k__mouse.button_state[button] & 0b11) {
+        case 0b00: k__mouse.button_state[button] &= 0b100; break;
+        case 0b01: k__mouse.button_state[button]  = 0b000; break;
+        case 0b10: k__mouse.button_state[button]  = 0b100; break;
+        case 0b11: k__mouse.button_state[button]  = 0b000; break;
+    }
+}
+
+void k__mouse_refresh_state(void) {
+    refresh_button_state(K_BUTTON_LEFT);
+    refresh_button_state(K_BUTTON_MIDDLE);
+    refresh_button_state(K_BUTTON_RIGHT);
 }
 
 int k_mouse_button_pressed(enum k_mouse_button button) {
@@ -101,3 +119,5 @@ int k_mouse_button_up(enum k_mouse_button button) {
     return 0b010 != (k__mouse.button_state[button] & 0b110)
         && 0b100 != (k__mouse.button_state[button] & 0b101);
 }
+
+/* endregion */
