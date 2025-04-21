@@ -4,7 +4,7 @@
 
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
-#include "./llk_ui_elem_type_registry.h"
+#include "./llk_ui_elem_type_register.h"
 
 static int check_config(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config) {
 
@@ -30,13 +30,13 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     if (0 != check_config(ui, config))
         goto err;
 
-    size_t val_size = sizeof(struct llk_ui_elem_type_info) + strlen(config->type_name) + 1;
+    size_t val_size = sizeof(struct llk_ui_elem_type) + strlen(config->type_name) + 1;
 
-    struct llk_ui_elem_type_info *type_info = k_str_map_add(&ui->elem_type_map, config->type_name, val_size);
+    struct llk_ui_elem_type *type_info = k_str_map_add(&ui->elem_type_map, config->type_name, val_size);
     if (NULL == type_info)
         goto err;
 
-    char *type_name = (char *)type_info + sizeof(struct llk_ui_elem_type_info);
+    char *type_name = (char *)type_info + sizeof(struct llk_ui_elem_type);
     strcpy(type_name, config->type_name);
 
     type_info->data_size = config->data_size;

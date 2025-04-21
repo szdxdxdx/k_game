@@ -29,12 +29,12 @@ struct llk_ui_elem {
     uint32_t background_color;
     uint32_t border_color;
 
-    const struct llk_ui_elem_type_info *type;
+    const struct llk_ui_elem_type *type;
 
     void *data;
 };
 
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type_info *type_info);
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type_info);
 
 void llk__ui_destruct_elem(struct llk_ui_elem *elem);
 

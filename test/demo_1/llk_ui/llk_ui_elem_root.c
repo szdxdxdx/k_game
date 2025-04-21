@@ -1,5 +1,5 @@
 #include "./llk_ui_elem_type_builtin.h"
-#include "llk_ui_elem_type_registry.h"
+#include "llk_ui_elem_type_register.h"
 
 struct llk_ui_elem_type_config llk__ui_elem_root_config = {
     .type_name = "root",

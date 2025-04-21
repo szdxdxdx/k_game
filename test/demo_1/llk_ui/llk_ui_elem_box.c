@@ -1,7 +1,7 @@
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_elem_type_builtin.h"
-#include "llk_ui_elem_type_registry.h"
+#include "llk_ui_elem_type_register.h"
 
 static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
 

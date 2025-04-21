@@ -1,5 +1,5 @@
-#ifndef LLK_UI_ELEM_TYPE_REGISTRY_H
-#define LLK_UI_ELEM_TYPE_REGISTRY_H
+#ifndef LLK_UI_ELEM_TYPE_REGISTER_H
+#define LLK_UI_ELEM_TYPE_REGISTER_H
 
 #include <stddef.h>
 
@@ -20,7 +20,7 @@ struct llk_ui_elem_type_config {
 
 int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config);
 
-struct llk_ui_elem_type_info {
+struct llk_ui_elem_type {
 
     const char *type_name;
 

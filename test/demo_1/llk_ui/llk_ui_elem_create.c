@@ -2,9 +2,9 @@
 
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
-#include "./llk_ui_elem_type_registry.h"
+#include "./llk_ui_elem_type_register.h"
 
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type_info *type_info) {
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type_info) {
 
     elem->ui = ui;
 
@@ -38,13 +38,13 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
 
 struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *type_name) {
 
-    struct llk_ui_elem_type_info *type_info = k_str_map_get(&ui->elem_type_map, type_name);
-    if (NULL == type_info) {
+    struct llk_ui_elem_type *type = k_str_map_get(&ui->elem_type_map, type_name);
+    if (NULL == type) {
         k_log_error("llk UI element type `%s` not registered", type_name);
         return NULL;
     }
 
-    size_t alloc_size = type_info->data_size + sizeof(struct llk_ui_elem);
+    size_t alloc_size = type->data_size + sizeof(struct llk_ui_elem);
 
     struct llk_ui_elem *elem = llk__ui_mem_alloc(ui, alloc_size);
     if (NULL == elem)
@@ -52,7 +52,7 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
 
     elem->data = (void *)((char *)elem + sizeof(struct llk_ui_elem));
 
-    if (NULL == llk__ui_construct_elem(elem, ui, type_info)) {
+    if (NULL == llk__ui_construct_elem(elem, ui, type)) {
         llk__ui_mem_free(elem);
         return NULL;
     }

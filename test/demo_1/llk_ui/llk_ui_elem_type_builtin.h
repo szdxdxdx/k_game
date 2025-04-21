@@ -4,7 +4,6 @@
 #include "./llk_ui_elem.h"
 
 extern struct llk_ui_elem_type_config llk__ui_elem_root_config;
-
 extern struct llk_ui_elem_type_config llk__ui_elem_box_config;
 
 #endif
