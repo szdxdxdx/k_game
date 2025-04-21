@@ -14,7 +14,8 @@ struct llk_ui_context {
 
     float mouse_x;
     float mouse_y;
-    unsigned int mouse_clicked;
+    unsigned int mouse_button_pressed;
+    unsigned int mouse_button_down;
 
     struct llk_ui_elem *root;
 
