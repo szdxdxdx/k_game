@@ -5,6 +5,7 @@
 #include "./llk_ui_elem_type_builtin.h"
 #include "./llk_ui_elem_type.h"
 #include "./llk_ui_val_parser.h"
+#include "k_log.h"
 
 struct llk_ui_elem_box {
 
@@ -26,6 +27,8 @@ static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
 
     box->border_color.unit = LLK_UI_UNIT_NO_VAL;
     box->border_color.computed_val = 0x00000000;
+
+    box->fn_on_click = NULL;
 
     return 0;
 }
@@ -81,6 +84,24 @@ static int llk__ui_elem_box_set_attr_border_color(struct llk_ui_elem *elem, cons
     return 0;
 }
 
+static int llk__ui_elem_box_set_attr_on_click(struct llk_ui_elem *elem, const char *val) {
+    struct llk_ui_elem_box *box = elem->data;
+
+    if (val == NULL || 0 == strcmp(val, "null")) {
+        box->fn_on_click = NULL;
+        return 0;
+    }
+
+    void *fn = k_str_map_get(&elem->ui->callback_fn_map, val);
+    if (NULL == fn) {
+        k_log_warn("llk UI: callback function `%s` not registered", val);
+        return -1;
+    }
+
+    box->fn_on_click = *(void (**)(void))fn;
+    return 0;
+}
+
 static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
 
     if (0 == strcmp(key, "background-color"))
@@ -89,6 +110,8 @@ static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, 
         return llk__ui_elem_box_set_attr_background_color_hovered(elem, val);
     if (0 == strcmp(key, "border-color"))
         return llk__ui_elem_box_set_attr_border_color(elem, val);
+    if (0 == strcmp(key, "on_click"))
+        return llk__ui_elem_box_set_attr_on_click(elem, val);
 
     return llk__ui_elem_set_attr_default(elem, key, val);
 }
@@ -109,9 +132,13 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
 }
 
 static void llk__ui_elem_box_dispatch_event(struct llk_ui_elem *elem) {
+    struct llk_ui_elem_box *box = elem->data;
 
     if (elem->is_hovered && elem->ui->mouse_clicked) {
-        printf("clicked\n");
+
+        if (NULL != box->fn_on_click) {
+            box->fn_on_click();
+        }
     }
 }
 

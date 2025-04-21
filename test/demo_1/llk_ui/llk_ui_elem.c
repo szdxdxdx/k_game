@@ -10,32 +10,22 @@
 
 /* region [register_type] */
 
-static int llk__ui_register_elem_type_check_config(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config) {
+int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config) {
+
+    char *type_name = NULL;
 
     if (NULL == config) {
         k_log_error("llk UI: invalid `config`");
-        return -1;
-    }
-
-    if (NULL == config->type_name || '\0' == config->type_name[0]) {
-        k_log_error("llk UI: invalid `config->type_name`");
-        return -1;
-    }
-
-    if (NULL != k_str_map_get(&ui->elem_type_map, config->type_name)) {
-        k_log_error("llk UI: type `%s` already registered", config->type_name);
-        return -1;
-    }
-
-    return 0;
-}
-
-int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config) {
-
-    if (0 != llk__ui_register_elem_type_check_config(ui, config))
         goto err;
+    } else if (NULL == config->type_name || '\0' == config->type_name[0]) {
+        k_log_error("llk UI: invalid `config->type_name`");
+        goto err;
+    } else if (NULL != k_str_map_get(&ui->elem_type_map, config->type_name)) {
+        k_log_error("llk UI: type `%s` already registered", config->type_name);
+        goto err;
+    }
 
-    char *type_name = llk__ui_mem_alloc(ui, strlen(config->type_name) + 1);
+    type_name = llk__ui_mem_alloc(ui, strlen(config->type_name) + 1);
     if (NULL == type_name)
         goto err;
 
@@ -43,8 +33,7 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
 
     struct llk_ui_elem_type *type = k_str_map_add(&ui->elem_type_map, type_name, sizeof(struct llk_ui_elem_type));
     if (NULL == type) {
-        llk__ui_mem_free(type_name);
-        k_log_error("llk UI: Failed to add type name to registry name map");
+        k_log_error("llk UI: failed to add type name to registry name map");
         goto err;
     }
 
@@ -59,7 +48,12 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     return 0;
 
 err:
-    k_log_error("llk UI: Failed to register element type");
+    k_log_error("llk UI: failed to register element type");
+
+    if (NULL != type_name) {
+        llk__ui_mem_free(type_name);
+    }
+
     return -1;
 }
 
@@ -307,6 +301,8 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
 
 /* endregion */
 
+/* region [update && draw] */
+
 /* region [measure] */
 
 static void llk__ui_elem_compute_edge_offset(struct llk_ui_elem *elem) {
@@ -503,6 +499,56 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
 
 /* endregion */
 
+/* region [hit_test] */
+
+void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {
+
+    struct llk_ui_context *ui = elem->ui;
+
+    float x = elem->x;
+    float y = elem->y;
+    float w = elem->w.computed_val;
+    float h = elem->h.computed_val;
+    float mouse_x = ui->mouse_x;
+    float mouse_y = ui->mouse_y;
+    if (x <= mouse_x && mouse_x <= x + w && y <= mouse_y && mouse_y <= y + h) {
+        elem->is_hovered = 1;
+    } else {
+        elem->is_hovered = 0;
+    }
+
+    struct llk_ui_elem *child;
+    struct k_list *child_list = &elem->child_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(child_list, iter)) {
+        child = container_of(iter, struct llk_ui_elem, sibling_link);
+
+        llk__ui_elem_hit_test(child);
+    }
+}
+
+/* endregion */
+
+/* region [dispatch_event] */
+
+void llk__ui_elem_dispatch_event(struct llk_ui_elem *elem) {
+
+    struct llk_ui_elem *child;
+    struct k_list *child_list = &elem->child_list;
+    struct k_list_node *iter;
+    for (k_list_for_each(child_list, iter)) {
+        child = container_of(iter, struct llk_ui_elem, sibling_link);
+
+        llk__ui_elem_dispatch_event(child);
+    }
+
+    if (elem->type->fn_dispatch_event != NULL) {
+        elem->type->fn_dispatch_event(elem);
+    }
+}
+
+/* endregion */
+
 /* region [draw] */
 
 void llk__ui_elem_draw(struct llk_ui_elem *elem) {
@@ -520,5 +566,7 @@ void llk__ui_elem_draw(struct llk_ui_elem *elem) {
         llk__ui_elem_draw(child);
     }
 }
+
+/* endregion */
 
 /* endregion */

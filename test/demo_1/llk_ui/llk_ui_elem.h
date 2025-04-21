@@ -42,16 +42,24 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
 
 int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *val);
 
+int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, const char *val);
+
 int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
 
 void llk_ui_elem_remove(struct llk_ui_elem *elem);
+
+/* region [update && draw] */
 
 void llk__ui_elem_measure(struct llk_ui_elem *elem);
 
 void llk__ui_elem_layout(struct llk_ui_elem *elem);
 
+void llk__ui_elem_hit_test(struct llk_ui_elem *elem);
+
+void llk__ui_elem_dispatch_event(struct llk_ui_elem *elem);
+
 void llk__ui_elem_draw(struct llk_ui_elem *elem);
 
-int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, const char *val);
+/* endregion */
 
 #endif

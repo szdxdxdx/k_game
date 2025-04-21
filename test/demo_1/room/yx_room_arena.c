@@ -1,5 +1,6 @@
 #include <limits.h>
 #include <math.h>
+#include <stdio.h>
 
 #include "./yx_room_arena.h"
 
@@ -12,6 +13,10 @@
 
 /* region [ui] */
 
+static void on_click(void) {
+    printf("clicked\n");
+}
+
 static struct llk_ui_context *ui = NULL;
 
 static void room_build_ui(void) {
@@ -21,6 +26,7 @@ static void room_build_ui(void) {
     }
 
     ui = llk_ui_create_context();
+    llk_ui_register_callback(ui, "click", on_click);
 
     struct llk_ui_elem *box = llk_ui_create_elem(ui, "box");
 

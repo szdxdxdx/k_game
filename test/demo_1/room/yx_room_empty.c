@@ -4,9 +4,7 @@
 
 #include "./yx_room_empty.h"
 
-#include "../llk_ui/llk_ui_context.h"
 #include "../llk_ui/llk_ui_elem.h"
-#include "../llk_ui/llk_ui_build.h"
 
 static void draw_background(void *unused) {
     (void)unused;

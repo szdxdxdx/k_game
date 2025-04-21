@@ -23,6 +23,9 @@ struct llk_ui_context {
     /* 记录已注册的元素类型 */
     struct k_str_map elem_type_map;
 
+    /* 记录已注册的函数 */
+    struct k_str_map callback_fn_map;
+
     /* 布局脏标记。若为非 0，则重新计算所有元素的尺寸和位置 */
     int layout_dirty;
 };
@@ -45,5 +48,7 @@ void llk__ui_update(struct llk_ui_context *ui);
 void llk_ui_draw(struct llk_ui_context *ui);
 
 void llk_ui_update(struct llk_ui_context *ui);
+
+int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, void (*fn_callback)(void));
 
 #endif

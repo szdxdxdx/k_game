@@ -35,7 +35,8 @@ struct llk_ui_context *llk_ui_create_context(void) {
 
     struct llk_ui_context *ui = NULL;
     struct k_mem_pool *mem_pool = NULL;
-    struct k_str_map *map = NULL;
+    struct k_str_map *elem_type_map = NULL;
+    struct k_str_map *callback_fn_map = NULL;
 
     ui = malloc(sizeof(struct llk_ui_context));
     if (NULL == ui)
@@ -51,12 +52,16 @@ struct llk_ui_context *llk_ui_create_context(void) {
     if (NULL == mem_pool)
         goto err;
 
-    map = k_str_map_construct(&ui->elem_type_map, NULL);
-    if (NULL == map)
+    elem_type_map = k_str_map_construct(&ui->elem_type_map, NULL);
+    if (NULL == elem_type_map)
         goto err;
 
-     if (0 != llk__ui_registry_builtin_elem_types(ui))
-         goto err;
+    callback_fn_map = k_str_map_construct(&ui->callback_fn_map, NULL);
+    if (NULL == callback_fn_map)
+        goto err;
+
+    if (0 != llk__ui_registry_builtin_elem_types(ui))
+        goto err;
 
     float vw = k_canvas_ui_get_vw();
     float vh = k_canvas_ui_get_vh();
@@ -83,8 +88,11 @@ struct llk_ui_context *llk_ui_create_context(void) {
     return ui;
 
 err:
-    if (NULL != map)
-        k_str_map_destruct(map);
+    if (NULL != callback_fn_map)
+        k_str_map_destruct(callback_fn_map);
+
+    if (NULL != elem_type_map)
+        k_str_map_destruct(elem_type_map);
 
     if (NULL != mem_pool)
         k_mem_pool_destruct(mem_pool);
@@ -110,8 +118,6 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 
 /* region [update] */
 
-/* region [event] */
-
 void llk__ui_get_input(struct llk_ui_context *ui) {
 
     ui->mouse_x = k_mouse_window_x();
@@ -124,79 +130,21 @@ void llk__ui_get_input(struct llk_ui_context *ui) {
     }
 }
 
-/* endregion */
-
-/* region [layout] */
-
 void llk__ui_mark_layout_dirty(struct llk_ui_context *ui) {
     ui->layout_dirty = 1;
 }
 
-void llk__ui_layout(struct llk_ui_context *ui) {
+void llk_ui_update(struct llk_ui_context *ui) {
+
+    llk__ui_get_input(ui);
 
     llk__ui_elem_measure(ui->root);
     llk__ui_elem_layout(ui->root);
-
     ui->layout_dirty = 0;
-}
 
-/* endregion */
+    llk__ui_elem_hit_test(ui->root);
 
-/* region [hit_test] */
-
-void llk__ui_hit_test(struct llk_ui_elem *elem) {
-
-    struct llk_ui_context *ui = elem->ui;
-
-    float x = elem->x;
-    float y = elem->y;
-    float w = elem->w.computed_val;
-    float h = elem->h.computed_val;
-    float mouse_x = ui->mouse_x;
-    float mouse_y = ui->mouse_y;
-    if (x <= mouse_x && mouse_x <= x + w && y <= mouse_y && mouse_y <= y + h) {
-        elem->is_hovered = 1;
-    } else {
-        elem->is_hovered = 0;
-    }
-
-    struct llk_ui_elem *child;
-    struct k_list *child_list = &elem->child_list;
-    struct k_list_node *iter;
-    for (k_list_for_each(child_list, iter)) {
-        child = container_of(iter, struct llk_ui_elem, sibling_link);
-
-        llk__ui_hit_test(child);
-    }
-}
-
-/* endregion */
-
-/* region [dispatch_event] */
-
-void llk__ui_dispatch_event(struct llk_ui_elem *elem) {
-
-    struct llk_ui_elem *child;
-    struct k_list *child_list = &elem->child_list;
-    struct k_list_node *iter;
-    for (k_list_for_each(child_list, iter)) {
-        child = container_of(iter, struct llk_ui_elem, sibling_link);
-
-        llk__ui_dispatch_event(child);
-    }
-
-    if (elem->type->fn_dispatch_event != NULL) {
-        elem->type->fn_dispatch_event(elem);
-    }
-}
-
-/* endregion */
-
-void llk_ui_update(struct llk_ui_context *ui) {
-    llk__ui_get_input(ui);
-    llk__ui_layout(ui);
-    llk__ui_hit_test(ui->root);
-    llk__ui_dispatch_event(ui->root);
+    llk__ui_elem_dispatch_event(ui->root);
 }
 
 /* endregion */
@@ -206,7 +154,9 @@ void llk_ui_update(struct llk_ui_context *ui) {
 void llk_ui_draw(struct llk_ui_context *ui) {
 
     if (ui->layout_dirty) {
-        llk__ui_layout(ui);
+        llk__ui_elem_measure(ui->root);
+        llk__ui_elem_layout(ui->root);
+        ui->layout_dirty = 0;
     }
 
     struct llk_ui_elem *child;
@@ -227,6 +177,28 @@ void llk_ui_draw(struct llk_ui_context *ui) {
         child = container_of(iter, struct llk_ui_elem, sibling_link);
         llk__ui_elem_draw(child);
     }
+}
+
+/* endregion */
+
+/* region [callback] */
+
+int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, void (*fn_callback)(void)) {
+
+    if (NULL != k_str_map_get(&ui->callback_fn_map, key)) {
+        k_log_error("llk UI: callback function `%s` already registered", key);
+        return -1;
+    }
+
+    void *val = k_str_map_add(&ui->callback_fn_map, key, sizeof(void *));
+    if (NULL == val) {
+        k_log_error("llk UI: failed to register callback function `%s`", key);
+        return -1;
+    }
+
+    *(void (**)(void))val = fn_callback;
+
+    return 0;
 }
 
 /* endregion */
