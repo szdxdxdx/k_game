@@ -5,7 +5,6 @@
 
 #include "./llk_ui_elem.h"
 #include "./llk_ui_elem_type.h"
-#include "./llk_ui_elem_set_attr.h"
 
 struct llk_ui_elem_image {
     const char *src;

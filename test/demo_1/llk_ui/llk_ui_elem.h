@@ -2,6 +2,7 @@
 #define LLK_UI_ELEM_H
 
 #include <stdint.h>
+#include <string.h>
 
 #include "k_list.h"
 
@@ -46,5 +47,10 @@ void llk__ui_elem_measure(struct llk_ui_elem *elem);
 void llk__ui_elem_layout(struct llk_ui_elem *elem);
 
 void llk__ui_elem_draw(struct llk_ui_elem *elem);
+
+#define llk__ui_key_match(key, str) \
+    (0 == strncmp((key), "" str "", sizeof(str) - 1))
+
+int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, const char *val);
 
 #endif
