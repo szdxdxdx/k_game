@@ -2,10 +2,12 @@
 
 #include "./llk_ui_elem_type_builtin.h"
 #include "./llk_ui_elem_type.h"
+#include "./llk_ui_val_parser.h"
 
 struct llk_ui_elem_box {
 
     uint32_t background_color;
+    uint32_t background_color_hovered;
     uint32_t border_color;
 };
 
@@ -29,6 +31,17 @@ static int llk__ui_elem_box_set_attr_background_color(struct llk_ui_elem *elem, 
     return 0;
 }
 
+static int llk__ui_elem_box_set_attr_background_color_hovered(struct llk_ui_elem *elem, const char *val) {
+    struct llk_ui_elem_box *box = elem->data;
+
+    uint32_t u32_val;
+    if (0 != llk__ui_parse_color_val(val, &u32_val))
+        return -1;
+
+    box->background_color_hovered = u32_val;
+    return 0;
+}
+
 static int llk__ui_elem_box_set_attr_border_color(struct llk_ui_elem *elem, const char *val) {
     struct llk_ui_elem_box *box = elem->data;
 
@@ -42,9 +55,11 @@ static int llk__ui_elem_box_set_attr_border_color(struct llk_ui_elem *elem, cons
 
 static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
 
-    if (llk__ui_key_match(key, "background-color"))
+    if (0 == strcmp(key, "background-color"))
         return llk__ui_elem_box_set_attr_background_color(elem, val);
-    if (llk__ui_key_match(key, "border-color"))
+    if (0 == strcmp(key, "background-color.hover"))
+        return llk__ui_elem_box_set_attr_background_color_hovered(elem, val);
+    if (0 == strcmp(key, "border-color"))
         return llk__ui_elem_box_set_attr_border_color(elem, val);
 
     return llk__ui_elem_set_attr_default(elem, key, val);
@@ -53,8 +68,13 @@ static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, 
 static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = elem->data;
 
-    k_canvas_set_draw_color_rgba(box->background_color);
-    k_canvas_ui_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
+    if (elem->is_hovered) {
+        k_canvas_set_draw_color_rgba(box->background_color);
+        k_canvas_ui_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
+    } else {
+        k_canvas_set_draw_color_rgba(box->background_color_hovered);
+        k_canvas_ui_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
+    }
 
     k_canvas_set_draw_color_rgba(box->border_color);
     k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);

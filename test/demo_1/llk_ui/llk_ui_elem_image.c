@@ -33,7 +33,7 @@ static int llk__ui_elem_image_set_attr_src(struct llk_ui_elem *elem, const char 
 
 static int llk__ui_elem_image_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
 
-    if (llk__ui_key_match(key, "src"))
+    if (0 == strcmp(key, "src"))
         return llk__ui_elem_image_set_attr_src(elem, val);
 
     return llk__ui_elem_set_attr_default(elem, key, val);

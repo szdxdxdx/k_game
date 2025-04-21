@@ -270,18 +270,18 @@ static int llk__ui_elem_set_attr_bottom(struct llk_ui_elem *elem, const char *va
 
 int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, const char *val) {
 
-    if (llk__ui_key_match(key, "w"))
+    if (0 == strcmp(key, "w"))
         return llk__ui_elem_set_attr_w(elem, val);
-    if (llk__ui_key_match(key, "h"))
+    if (0 == strcmp(key, "h"))
         return llk__ui_elem_set_attr_h(elem, val);
 
-    if (llk__ui_key_match(key, "left"))
+    if (0 == strcmp(key, "left"))
         return llk__ui_elem_set_attr_left(elem, val);
-    if (llk__ui_key_match(key, "right"))
+    if (0 == strcmp(key, "right"))
         return llk__ui_elem_set_attr_right(elem, val);
-    if (llk__ui_key_match(key, "top"))
+    if (0 == strcmp(key, "top"))
         return llk__ui_elem_set_attr_top(elem, val);
-    if (llk__ui_key_match(key, "bottom"))
+    if (0 == strcmp(key, "bottom"))
         return llk__ui_elem_set_attr_bottom(elem, val);
 
     return -1;
