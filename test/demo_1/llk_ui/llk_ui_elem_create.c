@@ -4,7 +4,7 @@
 #include "./llk_ui_elem.h"
 #include "./llk_ui_elem_type_register.h"
 
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type_info) {
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type) {
 
     elem->ui = ui;
 
@@ -26,10 +26,10 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     elem->background_color = 0x00000000;
     elem->border_color     = 0x00000000;
 
-    elem->type = type_info;
+    elem->type = type;
 
-    if (NULL != type_info->fn_init) {
-        if (0 != type_info->fn_init(elem))
+    if (NULL != type->fn_init) {
+        if (0 != type->fn_init(elem))
             return NULL;
     }
 
@@ -44,15 +44,21 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
         return NULL;
     }
 
-    size_t alloc_size = type->data_size + sizeof(struct llk_ui_elem);
-
-    struct llk_ui_elem *elem = llk__ui_mem_alloc(ui, alloc_size);
+    struct llk_ui_elem *elem = llk__ui_mem_alloc(ui, sizeof(struct llk_ui_elem));
     if (NULL == elem)
         return NULL;
 
-    elem->data = (void *)((char *)elem + sizeof(struct llk_ui_elem));
+    if (0 == type->data_size) {
+        elem->data = NULL;
+    } else {
+        elem->data = llk__ui_mem_alloc(ui, type->data_size);
+        if (NULL == elem->data) {
+            llk__ui_mem_free(elem);
+        }
+    }
 
     if (NULL == llk__ui_construct_elem(elem, ui, type)) {
+        llk__ui_mem_free(elem->data);
         llk__ui_mem_free(elem);
         return NULL;
     }
@@ -62,6 +68,10 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
 
 void llk__ui_destruct_elem(struct llk_ui_elem *elem) {
 
+    if (elem->type->fn_fini != NULL) {
+        elem->type->fn_fini(elem);
+    }
+
     struct llk_ui_elem *child;
     struct k_list *child_list = &elem->child_list;
     struct k_list_node *iter;
@@ -69,10 +79,6 @@ void llk__ui_destruct_elem(struct llk_ui_elem *elem) {
         child = container_of(iter, struct llk_ui_elem, sibling_link);
 
         llk__ui_destruct_elem(child);
-    }
-
-    if (elem->type->fn_fini != NULL) {
-        elem->type->fn_fini(elem);
     }
 }
 

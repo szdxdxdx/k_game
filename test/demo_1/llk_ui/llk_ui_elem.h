@@ -34,7 +34,7 @@ struct llk_ui_elem {
     void *data;
 };
 
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type_info);
+struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type);
 
 void llk__ui_destruct_elem(struct llk_ui_elem *elem);
 

@@ -152,7 +152,7 @@ static int init_arena_room(void *params) {
 }
 
 static void enter_arena_room(void) {
-    k_window_set_always_on_top(1);
+    // k_window_set_always_on_top(1);
 }
 
 struct k_room *yx_create_arena_room(void) {
