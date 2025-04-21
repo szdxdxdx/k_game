@@ -18,6 +18,15 @@ static struct llk_ui_context *ui;
 
 static void room_build_ui(void) {
     ui = llk_ui_build_from_xml_file("demo_1/ui/ui.xml");
+
+    struct llk_ui_elem *box = llk_ui_create_elem(ui, "box");
+
+    llk_ui_elem_set_attr(box, "background-color", "#ffffffaa");
+    llk_ui_elem_set_attr(box, "w", "60");
+    llk_ui_elem_set_attr(box, "h", "10");
+    llk_ui_elem_set_attr(box, "top", "10");
+    llk_ui_elem_set_attr(box, "right", "10");
+    llk_ui_append_child(llk_ui_get_root(ui), box);
 }
 
 static void room_draw_ui(void) {

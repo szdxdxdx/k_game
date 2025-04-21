@@ -1,5 +1,5 @@
-#ifndef LLK_UI_ELEM_TYPE_REGISTER_H
-#define LLK_UI_ELEM_TYPE_REGISTER_H
+#ifndef LLK_UI_ELEM_TYPE_H
+#define LLK_UI_ELEM_TYPE_H
 
 #include <stddef.h>
 
@@ -15,6 +15,8 @@ struct llk_ui_elem_type_config {
 
     void (*fn_fini)(struct llk_ui_elem *elem);
 
+    void (*fn_set_attr)(struct llk_ui_elem *elem, const char *key, const char *val);
+
     void (*fn_draw)(struct llk_ui_elem *elem);
 };
 
@@ -29,6 +31,8 @@ struct llk_ui_elem_type {
     int (*fn_init)(struct llk_ui_elem *elem);
 
     void (*fn_fini)(struct llk_ui_elem *elem);
+
+    int (*fn_set_attr)(struct llk_ui_elem *elem, const char *key, const char *val);
 
     void (*fn_draw)(struct llk_ui_elem *elem);
 };

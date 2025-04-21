@@ -2,7 +2,7 @@
 
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
-#include "./llk_ui_elem_type_register.h"
+#include "./llk_ui_elem_type.h"
 
 struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type) {
 

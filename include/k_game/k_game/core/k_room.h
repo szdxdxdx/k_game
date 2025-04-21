@@ -152,8 +152,6 @@ float k_room_get_width(void);
 /** \brief 获取当前房间的高 */
 float k_room_get_height(void);
 
-float k_room_get_w(void);
-
 /* endregion */
 
 #endif

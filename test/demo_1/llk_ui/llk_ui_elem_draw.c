@@ -1,5 +1,5 @@
 #include "./llk_ui_elem.h"
-#include "./llk_ui_elem_type_register.h"
+#include "./llk_ui_elem_type.h"
 
 void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 

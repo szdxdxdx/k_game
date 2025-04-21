@@ -5,6 +5,7 @@
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
 #include "./llk_ui_val_parser.h"
+#include "./llk_ui_elem_type.h"
 
 /* region [size] */
 
@@ -154,9 +155,7 @@ err:
     return -1;
 }
 
-/* endregion */
-
-int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
+int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, const char *val) {
 
 #define llk__ui_key_match(key, str) \
     (0 == strncmp((key), "" str "", sizeof(str) - 1))
@@ -183,4 +182,17 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
 #undef llk__ui_key_match
 
     return -1;
+}
+
+/* endregion */
+
+int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
+
+    if (NULL == elem->type->fn_set_attr)
+        return llk__ui_elem_set_attr_default(elem, key, val);
+
+    if (0 != elem->type->fn_set_attr(elem, key, val))
+        return -1;
+
+    return 0;
 }

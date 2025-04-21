@@ -4,7 +4,7 @@
 
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
-#include "./llk_ui_elem_type_register.h"
+#include "./llk_ui_elem_type.h"
 
 static int check_config(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config) {
 

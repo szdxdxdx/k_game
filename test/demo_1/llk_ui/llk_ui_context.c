@@ -7,7 +7,7 @@
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem.h"
 #include "./llk_ui_elem_type_builtin.h"
-#include "./llk_ui_elem_type_register.h"
+#include "./llk_ui_elem_type.h"
 
 static struct llk_ui_elem llk__ui_window = {
     .parent = NULL,
