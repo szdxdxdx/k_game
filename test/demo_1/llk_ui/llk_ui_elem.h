@@ -26,9 +26,6 @@ struct llk_ui_elem {
     float x;
     float y;
 
-    uint32_t background_color;
-    uint32_t border_color;
-
     const struct llk_ui_elem_type *type;
 
     void *data;

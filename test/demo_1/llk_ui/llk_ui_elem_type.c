@@ -9,17 +9,17 @@
 static int check_config(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config) {
 
     if (NULL == config) {
-        k_log_error("invalid `config`");
+        k_log_error("llk UI element: invalid `config`");
         return -1;
     }
 
     if (NULL == config->type_name || '\0' == config->type_name[0]) {
-        k_log_error("invalid `config->type_name`");
+        k_log_error("llk UI element: invalid `config->type_name`");
         return -1;
     }
 
     if (NULL != k_str_map_get(&ui->elem_type_map, config->type_name)) {
-        k_log_error("type `%s` already registered", config->type_name);
+        k_log_error("llk UI element: type `%s` already registered", config->type_name);
         return -1;
     }
 
@@ -40,6 +40,7 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     struct llk_ui_elem_type *type = k_str_map_add(&ui->elem_type_map, type_name, sizeof(struct llk_ui_elem_type));
     if (NULL == type) {
         llk__ui_mem_free(type_name);
+        k_log_error("llk UI element: Failed to add element type name to registry name map");
         goto err;
     }
 
@@ -53,6 +54,6 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     return 0;
 
 err:
-    k_log_error("Failed to register llk UI element type");
+    k_log_error("llk UI element: Failed to register element type");
     return -1;
 }

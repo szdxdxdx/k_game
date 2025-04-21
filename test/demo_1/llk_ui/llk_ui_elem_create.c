@@ -23,9 +23,6 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     elem->x = 0.0f;
     elem->y = 0.0f;
 
-    elem->background_color = 0x00000000;
-    elem->border_color     = 0x00000000;
-
     elem->type = type;
 
     if (NULL != type->fn_init) {
@@ -40,7 +37,7 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
 
     struct llk_ui_elem_type *type = k_str_map_get(&ui->elem_type_map, type_name);
     if (NULL == type) {
-        k_log_error("llk UI element type `%s` not registered", type_name);
+        k_log_error("llk UI element: type `%s` not registered", type_name);
         return NULL;
     }
 

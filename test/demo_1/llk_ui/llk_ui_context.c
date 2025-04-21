@@ -95,7 +95,13 @@ void llk_ui_destroy_context(struct llk_ui_context *ui) {
 }
 
 void *llk__ui_mem_alloc(struct llk_ui_context *ui, size_t size) {
-    return k_mem_pool_alloc(&ui->mem_pool, size);
+
+    void *p = k_mem_pool_alloc(&ui->mem_pool, size);
+    if (NULL == p) {
+        k_log_error("llk UI: Failed to allocate memory");
+    }
+
+    return p;
 }
 
 void llk__ui_mem_free(void *p) {
