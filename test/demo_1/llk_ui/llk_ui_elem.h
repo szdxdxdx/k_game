@@ -16,6 +16,8 @@ struct llk_ui_elem {
     struct k_list child_list;
     struct k_list_node sibling_link;
 
+    struct k_str_intrusive_map_node id_map_node;
+
     struct llk_ui_float w;
     struct llk_ui_float h;
 

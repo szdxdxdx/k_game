@@ -1,7 +1,6 @@
-#include "k_math.h"
-
 #include "./yx_obj.h"
 
+#include "../utils/yx_math.h"
 #include "../sprite/yx_spr.h"
 
 /* region [bullet] */
@@ -54,7 +53,7 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 
     float cos_angle;
     float sin_angle;
-    k_calc_vector_direction(weapon_x, weapon_y, mouse_x, mouse_y, &cos_angle, &sin_angle);
+    yx_calc_vector_direction(weapon_x, weapon_y, mouse_x, mouse_y, &cos_angle, &sin_angle);
 
     float speed = 300.0f;
 

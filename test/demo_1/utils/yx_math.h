@@ -1,5 +1,5 @@
-#ifndef K_MATH_H
-#define K_MATH_H
+#ifndef YX_MATH_H
+#define YX_MATH_H
 
 #include <math.h>
 
@@ -10,7 +10,7 @@
  * 出参 `get_cos` 和 `get_sin` 返回向量余弦值和正弦值。
  * 零向量的方向定义为 x 轴正方向。
  */
-static inline void k_calc_vector_direction(float ox, float oy, float x, float y, float *get_cos, float *get_sin) {
+static inline void yx_calc_vector_direction(float ox, float oy, float x, float y, float *get_cos, float *get_sin) {
 
     if (ox == x) {
         if (oy < y) {

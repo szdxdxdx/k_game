@@ -37,6 +37,7 @@ struct llk_ui_context *llk_ui_create_context(void) {
     struct llk_ui_context *ui = NULL;
     struct k_mem_pool *mem_pool = NULL;
     struct k_str_map *elem_type_map = NULL;
+    struct k_str_intrusive_map *elem_id_map = NULL;
     struct k_str_map *callback_fn_map = NULL;
 
     ui = malloc(sizeof(struct llk_ui_context));
@@ -56,6 +57,14 @@ struct llk_ui_context *llk_ui_create_context(void) {
     elem_type_map = k_str_map_construct(&ui->elem_type_map, NULL);
     if (NULL == elem_type_map)
         goto err;
+
+    size_t buckets_num = 16;
+    struct k_hash_list *buckets = k_mem_pool_alloc(&ui->mem_pool, sizeof(struct k_hash_list) * buckets_num);
+    if (NULL == buckets) {
+        goto err;
+    } else {
+        k_str_intrusive_map_init(&ui->elem_id_map, buckets, buckets_num);
+    }
 
     callback_fn_map = k_str_map_construct(&ui->callback_fn_map, NULL);
     if (NULL == callback_fn_map)
@@ -106,7 +115,11 @@ err:
 }
 
 void llk_ui_destroy_context(struct llk_ui_context *ui) {
+
+    /* TODO 销毁所有 UI 元素 */
+
     k_str_map_destruct(&ui->elem_type_map);
+
     k_mem_pool_destruct(&ui->mem_pool);
     free(ui);
 }
