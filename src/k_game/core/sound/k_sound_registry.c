@@ -12,13 +12,13 @@ int k__sound_bgm_registry_init(void) {
     return k__asset_registry_init(&bgm_registry);
 }
 
-static void release_bgm_asset(struct k_asset_registry_node *registry_node) {
+static void k__sound_bgm_registry_release(struct k_asset_registry_node *registry_node) {
     struct k_sound_bgm *sound = container_of(registry_node, struct k_sound_bgm, registry_node);
     k_sound_bgm_release(sound);
 }
 
 void k__sound_bgm_registry_cleanup(void) {
-    k__asset_registry_cleanup(&bgm_registry, release_bgm_asset);
+    k__asset_registry_cleanup(&bgm_registry, k__sound_bgm_registry_release);
 }
 
 void k__sound_bgm_registry_add(struct k_sound_bgm *bgm) {
@@ -52,13 +52,13 @@ int k__sound_sfx_registry_init(void) {
     return k__asset_registry_init(&sfx_registry);
 }
 
-static void release_sfx_asset(struct k_asset_registry_node *registry_node) {
+static void k__sound_sfx_registry_release(struct k_asset_registry_node *registry_node) {
     struct k_sound_sfx *sound = container_of(registry_node, struct k_sound_sfx, registry_node);
     k_sound_sfx_release(sound);
 }
 
 void k__sound_sfx_registry_cleanup(void) {
-    k__asset_registry_cleanup(&sfx_registry, release_sfx_asset);
+    k__asset_registry_cleanup(&sfx_registry, k__sound_sfx_registry_release);
 }
 
 void k__sound_sfx_registry_add(struct k_sound_sfx *sfx) {

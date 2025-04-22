@@ -7,6 +7,12 @@
  */
 struct k_image;
 
+struct k_font;
+
+struct k_sound_bgm;
+
+struct k_sound_sfx;
+
 /**
  * \brief 精灵
  *
@@ -14,10 +20,6 @@ struct k_image;
  * 用来表示游戏中的各种可见元素，例如：角色、敌人、道具等。
  */
 struct k_sprite;
-
-struct k_sound_bgm;
-
-struct k_sound_sfx;
 
 /**
  * \brief 房间

@@ -274,4 +274,12 @@ struct k_canvas_draw_sprite_options {
 
 /* endregion */
 
+/* ------------------------------------------------------------------------ */
+
+/* region [tmp] */
+
+void k_canvas_room_draw_text(const char *text, float x, float y);
+
+/* endregion */
+
 #endif

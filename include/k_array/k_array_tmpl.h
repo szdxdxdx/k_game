@@ -10,7 +10,10 @@
  * - k_tmpl_array_pass_elem_by_ptr 若定义此宏，则操作单个元素（例如：插入单个元素）时传递指针，否则传值
  * - k_tmpl_array_static_fn        若定义此宏，则用 static 修饰函数
  */
-#if defined(k_tmpl_array_struct_name) && defined(k_tmpl_array_elem_type)
+
+#if ! defined(k_tmpl_array_struct_name) || ! defined(k_tmpl_array_elem_type)
+#error "Must define `k_tmpl_array_struct_name` and `k_tmpl_array_elem_type` before including k_array_tmpl.h"
+#else
 
 #include <assert.h>
 #include <limits.h>
@@ -22,7 +25,7 @@
 #define k__tmpl_array_fn_free   k_tmpl_array_fn_free
 #elif defined(k_tmpl_array_fn_malloc) || defined(k_tmpl_array_fn_free)
 /* 必须同时指明内存分配函数和释放函数 */
-#error "Must set both `fn_malloc` and `fn_free`"
+#error "Must set define `k_tmpl_array_fn_malloc` and `k_tmpl_array_fn_free`"
 #else
 #include <stdlib.h>
 #define k__tmpl_array_fn_malloc malloc

@@ -1,5 +1,6 @@
 #include "SDL_image.h"
 
+#define K_LOG_TAG "k_game:image"
 #include "k_log.h"
 
 #include "k_game/core/k_image.h"
@@ -9,8 +10,10 @@
 
 struct k_image *k_image_load(const char *file_path) {
 
-    //if (NULL == file_path || '\0' == file_path[0])
-    //    return NULL;
+    if (NULL == file_path || '\0' == file_path[0]) {
+        k_log_error("`file_path` is NULL or empty");
+        return NULL;
+    }
 
     SDL_Texture *texture = IMG_LoadTexture(k__window.renderer, file_path);
     if (NULL == texture) {

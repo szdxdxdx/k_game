@@ -800,3 +800,22 @@ void k__canvas_present(void) {
 }
 
 /* endregion */
+
+/* ------------------------------------------------------------------------ */
+
+int k_canvas_draw_text(enum k_canvas_viewport viewport, const char *text, float x, float y) {
+
+    if (NULL == text || '\0' == text[0])
+        return 0;
+
+    if (0 != k__canvas_set_viewport(viewport))
+        return -1;
+
+    k__canvas_convert_to_viewport_xy(&x, &y);
+
+    return 0;
+}
+
+void k_canvas_room_draw_text(const char *text, float x, float y) {
+    k_canvas_draw_text(K__CANVAS_VIEWPORT_ROOM, text, x, y);
+}

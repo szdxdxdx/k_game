@@ -4,13 +4,13 @@
 #include "k_list.h"
 #include "k_str_intrusive_map.h"
 
-struct k_asset_registry_node;
-
 struct k_asset_registry {
 
-    struct k_str_intrusive_map name_map;
-
+    /* 用链表存储注册表中的所有资产 */
     struct k_list asset_list;
+
+    /* 有名字的资产用哈希表建立映射 */
+    struct k_str_intrusive_map name_map;
 };
 
 struct k_asset_registry_node {
@@ -22,7 +22,7 @@ struct k_asset_registry_node {
 
 int k__asset_registry_init(struct k_asset_registry *registry);
 
-void k__asset_registry_cleanup(struct k_asset_registry *registry, void (*fn_release_asset)(struct k_asset_registry_node *registry_node));
+void k__asset_registry_cleanup(struct k_asset_registry *registry, void (*fn_release)(struct k_asset_registry_node *registry_node));
 
 void k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node);
 

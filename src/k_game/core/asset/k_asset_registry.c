@@ -14,16 +14,17 @@ int k__asset_registry_init(struct k_asset_registry *registry) {
     return 0;
 }
 
-void k__asset_registry_cleanup(struct k_asset_registry *registry, void (*fn_release_asset)(struct k_asset_registry_node *registry_node)) {
+void k__asset_registry_cleanup(struct k_asset_registry *registry, void (*fn_release)(struct k_asset_registry_node *registry_node)) {
 
-    struct k_asset_registry_node *registry_node;
-    struct k_list *asset_list = &registry->asset_list;
-    struct k_list_node *iter, *next;
-    for(k_list_for_each_s(asset_list, iter, next)) {
-        registry_node = container_of(iter, struct k_asset_registry_node, iter_node);
+    if (NULL != registry) {
+        struct k_asset_registry_node *registry_node;
+        struct k_list *asset_list = &registry->asset_list;
+        struct k_list_node *iter, *next;
+        for (k_list_for_each_s(asset_list, iter, next)) {
+            registry_node = container_of(iter, struct k_asset_registry_node, iter_node);
 
-        k__asset_registry_del(registry_node);
-        fn_release_asset(registry_node);
+            fn_release(registry_node);
+        }
     }
 
     k__mem_free(registry->name_map.buckets);
