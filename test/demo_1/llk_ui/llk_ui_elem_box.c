@@ -26,6 +26,9 @@ static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
     box->background_color_hovered.unit = LLK_UI_UNIT_NO_VAL;
     box->background_color_hovered.computed_val = 0x00000000;
 
+    box->background_color_activated.unit = LLK_UI_UNIT_NO_VAL;
+    box->background_color_activated.computed_val = 0x00000000;
+
     box->border_color.unit = LLK_UI_UNIT_NO_VAL;
     box->border_color.computed_val = 0x00000000;
 
@@ -130,7 +133,7 @@ static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, 
         return llk__ui_elem_box_set_attr_background_color_activated(elem, val);
     if (0 == strcmp(key, "border-color"))
         return llk__ui_elem_box_set_attr_border_color(elem, val);
-    if (0 == strcmp(key, "on_click"))
+    if (0 == strcmp(key, "on-click"))
         return llk__ui_elem_box_set_attr_on_click(elem, val);
 
     return llk__ui_elem_set_attr_default(elem, key, val);
@@ -149,6 +152,9 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     }
 
     k_canvas_set_draw_color_rgba(background_color);
+    k_canvas_ui_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
+
+    k_canvas_set_draw_color_rgba(box->border_color.computed_val);
     k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
 }
 
