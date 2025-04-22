@@ -220,7 +220,7 @@ static void printf_callback_c_std_spec_n(struct k_printf_buf *buf, const struct 
 /* 处理 C printf 中除了 `%n` 一族以外所有的格式说明符 */
 static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
 
-    char fmt_buf[80];
+    char fmt_buf[96];
     char *fmt = fmt_buf;
 
     int len = (int)(spec->end - spec->start);

@@ -805,45 +805,7 @@ void k__canvas_present(void) {
 
 /* ------------------------------------------------------------------------ */
 
-int k_canvas_draw_text(enum k_canvas_viewport viewport, struct k_font *font, float x, float y, const char *text) {
-
-    if (NULL == text || '\0' == text[0])
-        return 0;
-
-    if (0 != k__canvas_set_viewport(viewport))
-        return -1;
-
-    k__canvas_convert_to_viewport_xy(&x, &y);
-
-    SDL_Color color;
-    SDL_GetRenderDrawColor(k__window.renderer, &color.r, &color.g, &color.b, &color.a);
-
-    SDL_Surface *surface = TTF_RenderUTF8_Blended(font->font, text, color);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(k__window.renderer, surface);
-    SDL_FreeSurface(surface);
-
-    int w;
-    int h;
-    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-    SDL_FRect dst;
-    dst.x = x;
-    dst.y = y;
-    dst.w = (float)w;
-    dst.h = (float)h;
-    SDL_RenderCopyF(k__window.renderer, texture, NULL, &dst);
-
-    SDL_DestroyTexture(texture);
-
-    return 0;
-}
-
-void k_canvas_room_draw_text(struct k_font *font, float x, float y, const char *text) {
-    k_canvas_draw_text(K__CANVAS_VIEWPORT_ROOM, font, x, y, text);
-}
-
-void k_canvas_ui_draw_text(struct k_font *font, float x, float y, const char *text) {
-    k_canvas_draw_text(K__CANVAS_VIEWPORT_UI, font, x, y, text);
-}
+/* region [printf] */
 
 int k_canvas_printf(enum k_canvas_viewport viewport, struct k_font *font, float x, float y, const char *fmt, va_list args) {
 
@@ -852,22 +814,36 @@ int k_canvas_printf(enum k_canvas_viewport viewport, struct k_font *font, float 
     if (NULL == fmt || '\0' == fmt[0])
         return -1;
 
-    char default_buf[128];
+    char default_buf[256];
     char *text = default_buf;
 
-    int r = k_vasprintf(NULL, &text, fmt, args);
-    if (r <= 0) {
-        if (0 == r) {
-            free(text);
-            return 0;
-        } else {
-            return -1;
+    va_list args_copy;
+    va_copy(args_copy, args);
+    int str_len = vsnprintf(default_buf, sizeof(default_buf), fmt, args_copy);
+    va_end(args_copy);
+
+    if (0 < str_len) {
+        if (sizeof(default_buf) < str_len + 1) {
+            text = malloc(str_len + 1);
+            if (NULL == text)
+                return -1;
+
+            if (str_len != vsnprintf(text, str_len + 1, fmt, args)) {
+                free(text);
+                return -1;
+            }
         }
+    } else if (str_len == 0) {
+        return 0;
+    } else {
+        return -1;
     }
 
+    int return_val = 0;
+
     if (0 != k__canvas_set_viewport(viewport)) {
-        free(text);
-        return -1;
+        return_val = -1;
+        goto cleanup;
     }
 
     k__canvas_convert_to_viewport_xy(&x, &y);
@@ -875,26 +851,53 @@ int k_canvas_printf(enum k_canvas_viewport viewport, struct k_font *font, float 
     SDL_Color color;
     SDL_GetRenderDrawColor(k__window.renderer, &color.r, &color.g, &color.b, &color.a);
 
+    float line_height = (float)TTF_FontHeight(font->font);
+
     char *s = text;
     char *p;
     while (1) {
-        int end = 0;
-        p = s + 1;
+
+        p = s;
         while ('\0' != *p && '\n' != *p) {
             p++;
         }
+
+        int end = 0;
         if (*p == '\0') {
-            end = 1;
+            if (p == s) {
+                break;
+            } else {
+                end = 1;
+            }
         } else {
-            *p = '\0';
+            if (p == s) {
+                s = p + 1;
+                goto next_line;
+            } else {
+                *p = '\0';
+            }
         }
 
         SDL_Surface *surface = TTF_RenderUTF8_Blended(font->font, s, color);
+        if (NULL == surface) {
+            k_log_error("SDL error: %s", SDL_GetError());
+            return_val = -1;
+            break;
+        }
+
         SDL_Texture *texture = SDL_CreateTextureFromSurface(k__window.renderer, surface);
         SDL_FreeSurface(surface);
+
+        if (NULL == texture) {
+            k_log_error("SDL error: %s", SDL_GetError());
+            return_val = -1;
+            break;
+        }
+
         int w;
         int h;
         SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+
         SDL_FRect dst;
         dst.x = x;
         dst.y = y;
@@ -908,12 +911,17 @@ int k_canvas_printf(enum k_canvas_viewport viewport, struct k_font *font, float 
             break;
 
         s = p + 1;
-        y += (float)h;
+
+    next_line:
+        y += line_height;
     }
 
-    free(text);
+cleanup:
+    if (text != default_buf) {
+        free(text);
+    }
 
-    return 0;
+    return return_val;
 }
 
 void k_canvas_room_printf(struct k_font *font, float x, float y, const char *fmt, ...) {
@@ -929,3 +937,5 @@ void k_canvas_ui_printf(struct k_font *font, float x, float y, const char *fmt, 
     k_canvas_printf(K__CANVAS_VIEWPORT_UI, font, x, y, fmt, args);
     va_end(args);
 }
+
+/* endregion */
