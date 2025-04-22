@@ -1,5 +1,3 @@
-#include "k_log.h"
-
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_context.h"
@@ -114,10 +112,8 @@ static int llk__ui_elem_box_set_attr_on_click(struct llk_ui_elem *elem, const ch
     }
 
     llk_ui_callback_fn fn = llk__ui_get_callback(elem->ui, val);
-    if (NULL == fn) {
-        k_log_warn("llk UI: callback function `%s` not registered", val);
+    if (NULL == fn)
         return -1;
-    }
 
     box->fn_on_click = fn;
     return 0;

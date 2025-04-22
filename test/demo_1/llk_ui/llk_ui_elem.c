@@ -1,5 +1,6 @@
 #include <string.h>
 
+#define K_LOG_TAG "llk UI"
 #include "k_log.h"
 
 #include "./llk_ui_context.h"
@@ -15,13 +16,13 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     char *type_name = NULL;
 
     if (NULL == config) {
-        k_log_error("llk UI: invalid `config`");
+        k_log_error("Invalid `config`");
         goto err;
     } else if (NULL == config->type_name || '\0' == config->type_name[0]) {
-        k_log_error("llk UI: invalid `config->type_name`");
+        k_log_error("Invalid `config->type_name`");
         goto err;
     } else if (NULL != k_str_map_get(&ui->elem_type_map, config->type_name)) {
-        k_log_error("llk UI: type `%s` already registered", config->type_name);
+        k_log_error("UI elem type `%s` already registered", config->type_name);
         goto err;
     }
 
@@ -33,7 +34,7 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
 
     struct llk_ui_elem_type *type = k_str_map_add(&ui->elem_type_map, type_name, sizeof(struct llk_ui_elem_type));
     if (NULL == type) {
-        k_log_error("llk UI: failed to add type name to registry name map");
+        k_log_error("Failed to add type name to registry name map");
         goto err;
     }
 
@@ -48,7 +49,7 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
     return 0;
 
 err:
-    k_log_error("llk UI: failed to register element type");
+    k_log_error("Failed to register element type");
 
     if (NULL != type_name) {
         llk__ui_mem_free(type_name);
@@ -94,7 +95,7 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
 
     struct llk_ui_elem_type *type = k_str_map_get(&ui->elem_type_map, type_name);
     if (NULL == type) {
-        k_log_error("llk UI: elem type `%s` not registered", type_name);
+        k_log_error("UI elem type `%s` not registered", type_name);
         return NULL;
     }
 
@@ -292,7 +293,7 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
     }
 
     if (0 != result) {
-        k_log_warn("llk UI: elem `%s` unsupported attribute or invalid value, key: `%s` value: `%s`", elem->type->type_name, key, val);
+        k_log_warn("Elem `%s` unsupported attribute or invalid value, key: `%s` value: `%s`", elem->type->type_name, key, val);
         return -1;
     }
 

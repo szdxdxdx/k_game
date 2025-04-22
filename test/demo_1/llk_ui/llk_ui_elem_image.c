@@ -1,3 +1,4 @@
+#define K_LOG_TAG "llk UI"
 #include "k_log.h"
 
 #include "k_game/core/k_canvas.h"
@@ -23,7 +24,7 @@ static int llk__ui_elem_image_set_attr_src(struct llk_ui_elem *elem, const char 
 
     struct k_image *src = k_image_find(val);
     if (NULL == src) {
-        k_log_warn("llk ui elem: image not found, src: `%s`", val);
+        k_log_warn("Image not found, src: `%s`", val);
         return -1;
     }
 

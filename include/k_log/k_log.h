@@ -21,14 +21,20 @@
 #define K_LOG_COLOR 1
 #endif
 
+#ifndef K_LOG_TAG
+#define K__LOG_TAG ""
+#else
+#define K__LOG_TAG "[" K_LOG_TAG "] "
+#endif
+
 void k__log(int level, const char *file, int line, const char *fn, const char *fmt, ...);
 
-#define k_log_trace(fmt, ...) k__log(K_LOG_LEVEL_TRACE, K__FILE_PATH, __LINE__, __func__, fmt, ##__VA_ARGS__)
-#define k_log_debug(fmt, ...) k__log(K_LOG_LEVEL_DEBUG, K__FILE_PATH, __LINE__, __func__, fmt, ##__VA_ARGS__)
-#define k_log_info(fmt, ...)  k__log(K_LOG_LEVEL_INFO , K__FILE_PATH, __LINE__, __func__, fmt, ##__VA_ARGS__)
-#define k_log_warn(fmt, ...)  k__log(K_LOG_LEVEL_WARN , K__FILE_PATH, __LINE__, __func__, fmt, ##__VA_ARGS__)
-#define k_log_error(fmt, ...) k__log(K_LOG_LEVEL_ERROR, K__FILE_PATH, __LINE__, __func__, fmt, ##__VA_ARGS__)
-#define k_log_fatal(fmt, ...) k__log(K_LOG_LEVEL_FATAL, K__FILE_PATH, __LINE__, __func__, fmt, ##__VA_ARGS__)
+#define k_log_trace(fmt, ...) k__log(K_LOG_LEVEL_TRACE, K__FILE_PATH, __LINE__, __func__, K__LOG_TAG fmt, ##__VA_ARGS__)
+#define k_log_debug(fmt, ...) k__log(K_LOG_LEVEL_DEBUG, K__FILE_PATH, __LINE__, __func__, K__LOG_TAG fmt, ##__VA_ARGS__)
+#define k_log_info(fmt, ...)  k__log(K_LOG_LEVEL_INFO , K__FILE_PATH, __LINE__, __func__, K__LOG_TAG fmt, ##__VA_ARGS__)
+#define k_log_warn(fmt, ...)  k__log(K_LOG_LEVEL_WARN , K__FILE_PATH, __LINE__, __func__, K__LOG_TAG fmt, ##__VA_ARGS__)
+#define k_log_error(fmt, ...) k__log(K_LOG_LEVEL_ERROR, K__FILE_PATH, __LINE__, __func__, K__LOG_TAG fmt, ##__VA_ARGS__)
+#define k_log_fatal(fmt, ...) k__log(K_LOG_LEVEL_FATAL, K__FILE_PATH, __LINE__, __func__, K__LOG_TAG fmt, ##__VA_ARGS__)
 
 #if K_LOG_LEVEL > K_LOG_LEVEL_TRACE
 #undef  k_log_trace

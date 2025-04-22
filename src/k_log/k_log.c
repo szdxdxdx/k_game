@@ -36,18 +36,12 @@ static inline const char *level_str(int level) {
     }
 }
 
-/* region [v1] */
-
 void log_v1(int level, const char *fmt, va_list args) {
 
     char buf[512];
     snprintf(buf, sizeof(buf), "%s %s\n", level_str(level), fmt);
     vfprintf(stdout, buf, args);
 }
-
-/* endregion */
-
-/* region [v2] */
 
 void log_v2(int level, const char *file, int line, const char *fn, const char *fmt, va_list args) {
 
@@ -56,13 +50,19 @@ void log_v2(int level, const char *file, int line, const char *fn, const char *f
     vfprintf(stdout, buf, args);
 }
 
-/* endregion */
+void log_v3(int level, const char *fn, const char *file, int line, const char *fmt, va_list args) {
+
+    char buf[800];
+    snprintf(buf, sizeof(buf), "%s " C_MAGENTA" %s() %s:%d\n" C_RESET "%s\n" , level_str(level), fn, file, line, fmt);
+    vfprintf(stdout, buf, args);
+}
 
 void k__log(int level, const char *file, int line, const char *fn, const char *fmt, ...) {
 
     va_list args;
     va_start(args, fmt);
-    //log_v1(level, fmt, args);
-    log_v2(level, file, line, fn, fmt, args);
+    // log_v1(level, fmt, args);
+    // log_v2(level, file, line, fn, fmt, args);
+    log_v3(level, fn, file, line, fmt, args);
     va_end(args);
 }

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#define K_LOG_TAG "llk UI"
 #include "k_log.h"
 
 #include "k_game/core/k_mouse.h"
@@ -100,7 +101,7 @@ err:
     if (NULL != ui)
         free(ui);
 
-    k_log_error("Failed to create llk UI context");
+    k_log_error("Failed to create UI context");
     return NULL;
 }
 
@@ -192,13 +193,13 @@ void llk_ui_draw(struct llk_ui_context *ui) {
 int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, void (*fn_callback)(void)) {
 
     if (NULL != k_str_map_get(&ui->callback_fn_map, key)) {
-        k_log_error("llk UI: callback function `%s` already registered", key);
+        k_log_error("Callback function `%s` already registered", key);
         return -1;
     }
 
     void *val = k_str_map_add(&ui->callback_fn_map, key, sizeof(void *));
     if (NULL == val) {
-        k_log_error("llk UI: failed to register callback function `%s`", key);
+        k_log_error("Failed to register callback function `%s`", key);
         return -1;
     }
 
@@ -210,8 +211,10 @@ int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, void (*
 llk_ui_callback_fn llk__ui_get_callback(struct llk_ui_context *ui, const char *key) {
 
     void *val = k_str_map_get(&ui->callback_fn_map, key);
-    if (NULL == val)
+    if (NULL == val) {
+        k_log_warn("Callback function `%s` not registered", val);
         return NULL;
+    }
 
     return *(llk_ui_callback_fn *)val;
 }
