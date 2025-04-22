@@ -34,7 +34,7 @@ struct k_mem_pool {
     /** \brief [read-only] 大内存块 chunk 已使用的大小 */
     size_t chunk_used;
 
-    /** \brief [private] 当前可用的 chunk，该 chunk 用单链串起前一个的已用尽的 chunk */
+    /** \brief [private] 指向当前可用的 chunk，同时用单链串起之前的已用尽的 chunk */
     void *chunk;
 
     /** \brief [read-only] 对齐倍数 */

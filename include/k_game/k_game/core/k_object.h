@@ -19,10 +19,4 @@ void *k_object_get_data(struct k_object *object);
 
 /* endregion */
 
-/* region [experimental api] */
-
-void k_object_set_destroy_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
-
-/* endregion */
-
 #endif

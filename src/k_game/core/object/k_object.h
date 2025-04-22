@@ -14,8 +14,6 @@ struct k_object {
     struct k_list component_list;
 
     void *data;
-
-    void (*fn_destroy_callback)(struct k_object *object);
 };
 
 #endif

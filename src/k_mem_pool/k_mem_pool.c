@@ -6,12 +6,12 @@
 /* 向系统申请分配的 chunk 的头部 */
 struct k_mem_chunk {
 
-    /* 链向下一个 chunk
+    /* 指向之前一个已用尽的 chunk
      *
      * pool 所指向的第一个 chunk 是仍有剩余空间的 chunk，
      * 此后链上的 chunk 都是已用尽的 chunk。
      */
-    struct k_mem_chunk *next;
+    struct k_mem_chunk *prev_used_up;
 };
 
 /* 分配给用户使用的内存块的头部 */
@@ -153,9 +153,9 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
 static void k__mem_pool_free_all_chunks(struct k_mem_pool *pool) {
     struct k_mem_chunk *chunk = pool->chunk;
     while (NULL != chunk) {
-        struct k_mem_chunk *next = chunk->next;
+        struct k_mem_chunk *prev = chunk->prev_used_up;
         pool->fn_free(chunk);
-        chunk = next;
+        chunk = prev;
     }
 }
 
@@ -226,7 +226,7 @@ static void *k__mem_pool_alloc_from_pool(struct k_mem_pool *pool, size_t size) {
             }
         }
 
-        new_chunk->next = pool->chunk;
+        new_chunk->prev_used_up = pool->chunk;
         pool->chunk = new_chunk;
         pool->chunk_used = 0;
     }
