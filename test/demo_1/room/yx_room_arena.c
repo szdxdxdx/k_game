@@ -93,7 +93,7 @@ static void room_draw_text(void *unused) {
 
     struct k_font *font = k_font_find("font");
     k_canvas_room_draw_text(font, 100, 100, "Hello World!\n这波是真寄啦！");
-    k_canvas_ui_draw_text(font, 100, 100, "Hello World!\n这波是真寄啦！");
+    k_canvas_ui_printf(font, 100, 100, "Hello World!\n这波是真寄啦！");
 }
 
 static void set_debug(void *data) {

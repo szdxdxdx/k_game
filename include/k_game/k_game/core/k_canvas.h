@@ -282,6 +282,10 @@ void k_canvas_room_draw_text(struct k_font *font, float x, float y, const char *
 
 void k_canvas_ui_draw_text(struct k_font *font, float x, float y, const char *text);
 
+void k_canvas_room_printf(struct k_font *font, float x, float y, const char *fmt, ...);
+
+void k_canvas_ui_printf(struct k_font *font, float x, float y, const char *fmt, ...);
+
 /* endregion */
 
 #endif

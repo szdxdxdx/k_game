@@ -6,6 +6,7 @@
 
 #define K_LOG_TAG "k_game:canvas"
 #include "k_log.h"
+#include "k_printf.h"
 
 #include "k_game/core/k_canvas.h"
 #include "./k_canvas.h"
@@ -842,4 +843,89 @@ void k_canvas_room_draw_text(struct k_font *font, float x, float y, const char *
 
 void k_canvas_ui_draw_text(struct k_font *font, float x, float y, const char *text) {
     k_canvas_draw_text(K__CANVAS_VIEWPORT_UI, font, x, y, text);
+}
+
+int k_canvas_printf(enum k_canvas_viewport viewport, struct k_font *font, float x, float y, const char *fmt, va_list args) {
+
+    if (NULL == font)
+        return -1;
+    if (NULL == fmt || '\0' == fmt[0])
+        return -1;
+
+    char default_buf[128];
+    char *text = default_buf;
+
+    int r = k_vasprintf(NULL, &text, fmt, args);
+    if (r <= 0) {
+        if (0 == r) {
+            free(text);
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+
+    if (0 != k__canvas_set_viewport(viewport)) {
+        free(text);
+        return -1;
+    }
+
+    k__canvas_convert_to_viewport_xy(&x, &y);
+
+    SDL_Color color;
+    SDL_GetRenderDrawColor(k__window.renderer, &color.r, &color.g, &color.b, &color.a);
+
+    char *s = text;
+    char *p;
+    while (1) {
+        int end = 0;
+        p = s + 1;
+        while ('\0' != *p && '\n' != *p) {
+            p++;
+        }
+        if (*p == '\0') {
+            end = 1;
+        } else {
+            *p = '\0';
+        }
+
+        SDL_Surface *surface = TTF_RenderUTF8_Blended(font->font, s, color);
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(k__window.renderer, surface);
+        SDL_FreeSurface(surface);
+        int w;
+        int h;
+        SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+        SDL_FRect dst;
+        dst.x = x;
+        dst.y = y;
+        dst.w = (float)w;
+        dst.h = (float)h;
+        SDL_RenderCopyF(k__window.renderer, texture, NULL, &dst);
+
+        SDL_DestroyTexture(texture);
+
+        if (end)
+            break;
+
+        s = p + 1;
+        y += (float)h;
+    }
+
+    free(text);
+
+    return 0;
+}
+
+void k_canvas_room_printf(struct k_font *font, float x, float y, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    k_canvas_printf(K__CANVAS_VIEWPORT_ROOM, font, x, y, fmt, args);
+    va_end(args);
+}
+
+void k_canvas_ui_printf(struct k_font *font, float x, float y, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    k_canvas_printf(K__CANVAS_VIEWPORT_UI, font, x, y, fmt, args);
+    va_end(args);
 }
