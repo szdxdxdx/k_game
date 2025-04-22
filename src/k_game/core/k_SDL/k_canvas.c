@@ -764,51 +764,9 @@ void k_canvas_ui_draw_sprite(struct k_sprite *sprite, size_t frame_idx, float x,
 
 /* endregion */
 
-/* endregion */
-
-/* region [present] */
-
-void k__canvas_present(void) {
-
-    if (0 != SDL_SetRenderTarget(k__window.renderer, NULL)) {
-        k_log_error("SDL error: %s", SDL_GetError());
-        assert(0);
-    }
-
-    k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
-
-    SDL_Rect room_view;
-    room_view.x = 0;
-    room_view.y = 0;
-    room_view.w = (int)(k__view.view_w);
-    room_view.h = (int)(k__view.view_h);
-
-    if (0 != SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &room_view, NULL)) {
-        k_log_error("SDL error: %s", SDL_GetError());
-        assert(0);
-    }
-
-    SDL_Rect ui;
-    ui.x = k__canvas.ui_viewport_x;
-    ui.y = k__canvas.ui_viewport_y;
-    ui.w = k__canvas.ui_viewport_w;
-    ui.h = k__canvas.ui_viewport_h;
-
-    if (0 != SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &ui, NULL)) {
-        k_log_error("SDL error: %s", SDL_GetError());
-        assert(0);
-    }
-
-    SDL_RenderPresent(k__window.renderer);
-}
-
-/* endregion */
-
-/* ------------------------------------------------------------------------ */
-
 /* region [printf] */
 
-int k_canvas_printf(enum k_canvas_viewport viewport, struct k_font *font, float x, float y, const char *fmt, va_list args) {
+static int k__canvas_printf(enum k_canvas_viewport viewport, struct k_font *font, float x, float y, const char *fmt, va_list args) {
 
     if (NULL == fmt || '\0' == fmt[0])
         return -1;
@@ -906,9 +864,14 @@ int k_canvas_printf(enum k_canvas_viewport viewport, struct k_font *font, float 
         dst.y = y;
         dst.w = (float)w;
         dst.h = (float)h;
-        SDL_RenderCopyF(k__window.renderer, texture, NULL, &dst);
-
+        int copy_result = SDL_RenderCopyF(k__window.renderer, texture, NULL, &dst);
         SDL_DestroyTexture(texture);
+
+        if (0 != copy_result) {
+            k_log_error("SDL error: %s", SDL_GetError());
+            return_val = -1;
+            break;
+        }
 
         if (end)
             break;
@@ -930,15 +893,55 @@ cleanup:
 void k_canvas_room_printf(struct k_font *font, float x, float y, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    k_canvas_printf(K__CANVAS_VIEWPORT_ROOM, font, x, y, fmt, args);
+    k__canvas_printf(K__CANVAS_VIEWPORT_ROOM, font, x, y, fmt, args);
     va_end(args);
 }
 
 void k_canvas_ui_printf(struct k_font *font, float x, float y, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    k_canvas_printf(K__CANVAS_VIEWPORT_UI, font, x, y, fmt, args);
+    k__canvas_printf(K__CANVAS_VIEWPORT_UI, font, x, y, fmt, args);
     va_end(args);
+}
+
+/* endregion */
+
+/* endregion */
+
+/* region [present] */
+
+void k__canvas_present(void) {
+
+    if (0 != SDL_SetRenderTarget(k__window.renderer, NULL)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+    }
+
+    k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
+
+    SDL_Rect room_view;
+    room_view.x = 0;
+    room_view.y = 0;
+    room_view.w = (int)(k__view.view_w);
+    room_view.h = (int)(k__view.view_h);
+
+    if (0 != SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &room_view, NULL)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+    }
+
+    SDL_Rect ui;
+    ui.x = k__canvas.ui_viewport_x;
+    ui.y = k__canvas.ui_viewport_y;
+    ui.w = k__canvas.ui_viewport_w;
+    ui.h = k__canvas.ui_viewport_h;
+
+    if (0 != SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &ui, NULL)) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        assert(0);
+    }
+
+    SDL_RenderPresent(k__window.renderer);
 }
 
 /* endregion */

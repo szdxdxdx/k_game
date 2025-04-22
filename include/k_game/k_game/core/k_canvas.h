@@ -265,29 +265,26 @@ struct k_canvas_draw_sprite_options {
     int flip_y;
 };
 
+/**
+ * \brief 在房间中绘制一段文本，格式化输出字符串
+ *
+ * `font` 指定字体，若为 `NULL` 则使用内置的默认字体。`(x, y)` 为文本左上角的绘制坐标。
+ *  格式化字符串 `fmt` 语法同 `printf()`，可使用 C 标准的格式占位符。不定长参数列表与 `fmt` 搭配使用。
+ *
+ * 注意：函数效率不高，不建议频繁调用，仅适合用于调试时的文本显示。
+ * 本函数每次调用都渲染文本内容生成纹理，绘制后又立即将纹理销毁，未做缓存处理。
+ */
+void k_canvas_room_printf(struct k_font *font, float x, float y, const char *fmt, ...);
+
+/** \brief 在 UI 界面中绘制一段文本，格式化输出字符串 */
+void k_canvas_ui_printf(struct k_font *font, float x, float y, const char *fmt, ...);
+
 /* endregion */
 
 /* region [debug_z_index] */
 
 #define K_DEBUG_Z_GROUP 666666
 #define K_DEBUG_Z_LAYER 0
-
-/* endregion */
-
-/* ------------------------------------------------------------------------ */
-
-/* region [tmp] */
-
-/**
- * \brief 在房间中格式化打印一段文字
- *
- * `font` 指定字体，若为 `NULL` 则使用内置的默认字体。`(x, y)` 为文本左上角的绘制坐标。
- * `fmt` 为格式化字符串，语法同 `printf()`，可使用 C 标准的格式占位符。
- */
-void k_canvas_room_printf(struct k_font *font, float x, float y, const char *fmt, ...);
-
-/** \brief 在 UI 界面中格式化打印一段文字 */
-void k_canvas_ui_printf(struct k_font *font, float x, float y, const char *fmt, ...);
 
 /* endregion */
 
