@@ -10,10 +10,8 @@
 
 struct k_image *k_image_load(const char *file_path) {
 
-    if (NULL == file_path || '\0' == file_path[0]) {
-        k_log_error("`file_path` is NULL or empty");
+    if (NULL == file_path || '\0' == file_path[0])
         return NULL;
-    }
 
     SDL_Texture *texture = IMG_LoadTexture(k__window.renderer, file_path);
     if (NULL == texture) {

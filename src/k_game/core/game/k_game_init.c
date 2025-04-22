@@ -13,10 +13,10 @@
 #include "../sound/k_sound_registry.h"
 #include "../font/k_font_registry.h"
 #include "../sprite/k_sprite_registry.h"
-#include "../room/k_room_registry.h"
-#include "../room/k_room_stack.h"
 #include "../component/k_component_type_registry.h"
 #include "../component/k_component_manager_map.h"
+#include "../room/k_room_registry.h"
+#include "../room/k_room_stack.h"
 
 #include "../../ext/wasd/k_wasd_type_register.h"
 #include "../../ext/sprite_renderer/k_sprite_renderer_type_register.h"

@@ -6,18 +6,6 @@
 #include "./sprite/yx_spr.h"
 #include "./room/yx_room.h"
 
-static void load_sprite(void) {
-    yx_load_spr_ynx();
-    yx_load_spr_liliko();
-    yx_load_spr_bubble();
-    yx_load_spr_iris();
-}
-
-static void load_sound(void) {
-    struct k_sound_bgm *bgm = k_sound_bgm_load("./demo_1/sound/bgm.wav");
-    k_sound_bgm_loop(bgm, INT_MAX);
-}
-
 static void create_room(void) {
 
     struct k_room *room = yx_create_arena_room();
@@ -28,13 +16,21 @@ static void create_room(void) {
 
 static int fn_init_game(void) {
 
-    load_sprite();
-    load_sound();
-
     struct k_image *szdxdxdx = k_image_load("./demo_1/image/szdxdxdx.jpg");
     k_image_set_name(szdxdxdx, "szdxdxdx");
 
+    yx_load_spr_ynx();
+    yx_load_spr_liliko();
+    yx_load_spr_bubble();
+    yx_load_spr_iris();
+
+    struct k_sound_bgm *bgm = k_sound_bgm_load("./demo_1/sound/bgm.wav");
+    k_sound_bgm_loop(bgm, INT_MAX);
+
+    struct k_font *font = k_font_load("./demo_1/font/font.ttf", 32);
+
     create_room();
+
     return 0;
 }
 
