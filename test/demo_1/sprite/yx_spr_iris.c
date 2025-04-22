@@ -7,9 +7,9 @@ struct k_sprite *yx_spr_iris_bullet = NULL;
 
 int yx_load_spr_iris(void) {
 
-    struct yx_sprite_sheet_config config = YX_SPRITE_SHEET_CONFIG_INIT;
-    config.image_filepath  = "./demo_1/sprite/iris.png";
-    config.config_filepath = "./demo_1/sprite/iris.json";
+    struct yx_sprite_sheet_config config;
+    config.image_file_path  = "./demo_1/sprite/iris.png";
+    config.config_file_path = "./demo_1/sprite/iris.json";
     config.scale = 2.0f;
     config.sprites = (struct yx_sprite_sheet_sprite_config[]){
         { &yx_spr_iris_gun,    "gun",    15, 23 },

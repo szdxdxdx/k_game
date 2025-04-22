@@ -45,17 +45,18 @@ struct yx_sprite_sheet_sprite_config {
 struct yx_sprite_sheet_config {
 
     /** \brief 精灵表图片 .png 文件的路径 */
-    const char *image_filepath;
+    const char *image_file_path;
 
     /** \brief 精灵表数据 .json 文件的路径 */
-    const char *config_filepath;
+    const char *config_file_path;
 
     /**
      * \brief 对精灵表的缩放倍率
      *
-     * 该参数可以放大或缩小整张精灵表图片的尺寸，
-     * 载入的精灵也会随着放大或缩小，
-     * 精灵原点的位置会也自动按比例缩放。
+     * 原精灵表图片的尺寸可能过小，该参数可以放大或缩小整张精灵表图片的尺寸，
+     * 载入的精灵图和精灵原点的位置会也自动按比例缩放。
+     *
+     * 若不需要缩放，则设为 1.0f。
      */
     float scale;
 
@@ -67,14 +68,5 @@ struct yx_sprite_sheet_config {
      */
     struct yx_sprite_sheet_sprite_config *sprites;
 };
-
-/** \brief 用于加载 aseprite 导出的精灵表的配置默认值 */
-#define YX_SPRITE_SHEET_CONFIG_INIT \
-{ \
-    .image_filepath  = NULL, \
-    .config_filepath = NULL, \
-    .scale           = 1.0f, \
-    .sprites         = NULL, \
-}
 
 #endif

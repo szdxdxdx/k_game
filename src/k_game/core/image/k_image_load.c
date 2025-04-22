@@ -7,12 +7,12 @@
 
 #include "../k_SDL/k_window.h"
 
-struct k_image *k_image_load(const char *filepath) {
+struct k_image *k_image_load(const char *file_path) {
 
-    //if (NULL == filepath || '\0' == filepath[0])
+    //if (NULL == file_path || '\0' == file_path[0])
     //    return NULL;
 
-    SDL_Texture *texture = IMG_LoadTexture(k__window.renderer, filepath);
+    SDL_Texture *texture = IMG_LoadTexture(k__window.renderer, file_path);
     if (NULL == texture) {
         k_log_error("SDL error: %s", IMG_GetError());
         return NULL;

@@ -5,7 +5,7 @@
 
 #include "./k_game_fwd.h"
 
-struct k_image *k_image_load(const char *filepath);
+struct k_image *k_image_load(const char *file_path);
 
 /**
  * \brief 释放图片资源

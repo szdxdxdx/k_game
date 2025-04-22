@@ -3,12 +3,12 @@
 
 #include "k_read_file.h"
 #include "k_json.h"
+#include "k_log.h"
 
 #include "k_game/core/k_sprite.h"
 #include "k_game/core/k_image.h"
 
 #include "./yx_sprite_sheet.h"
-#include "k_log.h"
 
 struct yx_sprite_sheet {
     struct k_image *image;
@@ -104,16 +104,16 @@ static int check_config(const struct yx_sprite_sheet_config *config) {
         k_log_error("`config` is NULL");
         goto err;
     }
-    if (NULL == config->image_filepath || '\0' == config->image_filepath[0]) {
-        k_log_error("Invalided  `image_filepath`");
+    if (NULL == config->image_file_path || '\0' == config->image_file_path[0]) {
+        k_log_error("Invalid `image_file_path`");
         goto err;
     }
-    if (NULL == config->config_filepath || '\0' == config->config_filepath[0]) {
-        k_log_error("Invalided  `config_filepath`");
+    if (NULL == config->config_file_path || '\0' == config->config_file_path[0]) {
+        k_log_error("Invalid `config_file_path`");
         goto err;
     }
     if (config->scale <= 0.0f) {
-        k_log_error("Invalided `scale`");
+        k_log_error("Invalid `scale`");
         goto err;
     }
     if (NULL == config->sprites) {
@@ -142,7 +142,7 @@ static int sprite_sheet_load(struct yx_sprite_sheet *sheet, const struct yx_spri
     char *buf = NULL;
     struct k_json *j_config = NULL;
 
-    image = k_image_load(config->image_filepath);
+    image = k_image_load(config->image_file_path);
     if (NULL == image) {
         k_log_error("Failed to load image");
         goto err;
@@ -160,7 +160,7 @@ static int sprite_sheet_load(struct yx_sprite_sheet *sheet, const struct yx_spri
         }
     }
 
-    buf = k_read_txt_file(config->config_filepath, NULL, 0, NULL);
+    buf = k_read_txt_file(config->config_file_path, NULL, 0, NULL);
     if (NULL == buf) {
         k_log_error("Failed to read config (.json) file");
         goto err;
@@ -172,8 +172,8 @@ static int sprite_sheet_load(struct yx_sprite_sheet *sheet, const struct yx_spri
         goto err;
     }
 
-    sheet->image    = image;
-    sheet->scale    = config->scale;
+    sheet->image = image;
+    sheet->scale = config->scale;
     sheet->j_config = j_config;
 
     return 0;
