@@ -1,11 +1,11 @@
-#include <stdio.h>
+#include "k_log.h"
+
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_context.h"
 #include "./llk_ui_elem_type_builtin.h"
 #include "./llk_ui_elem_type.h"
 #include "./llk_ui_val_parser.h"
-#include "k_log.h"
 
 struct llk_ui_elem_box {
 
@@ -14,7 +14,7 @@ struct llk_ui_elem_box {
     struct llk_ui_u32 background_color_activated;
     struct llk_ui_u32 border_color;
 
-    void (*fn_on_click)(void);
+    llk_ui_callback_fn fn_on_click;
 };
 
 static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
@@ -113,13 +113,13 @@ static int llk__ui_elem_box_set_attr_on_click(struct llk_ui_elem *elem, const ch
         return 0;
     }
 
-    void *fn = k_str_map_get(&elem->ui->callback_fn_map, val);
+    llk_ui_callback_fn fn = llk__ui_get_callback(elem->ui, val);
     if (NULL == fn) {
         k_log_warn("llk UI: callback function `%s` not registered", val);
         return -1;
     }
 
-    box->fn_on_click = *(void (**)(void))fn;
+    box->fn_on_click = fn;
     return 0;
 }
 

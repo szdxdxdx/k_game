@@ -20,12 +20,14 @@ enum llk_ui_unit {
     LLK_UI_UNIT_VH,
 
     LLK_UI_UNIT_RGBA,
+
+    LLK_UI_UNIT_CUSTOM,
 };
 
 struct llk_ui_float {
 
     float specified_val;
-    enum llk_ui_unit unit;
+    int unit;
 
     float computed_val;
 };
@@ -33,7 +35,7 @@ struct llk_ui_float {
 struct llk_ui_u32 {
 
     uint32_t specified_val;
-    enum llk_ui_unit unit;
+    int unit;
 
     uint32_t computed_val;
 };

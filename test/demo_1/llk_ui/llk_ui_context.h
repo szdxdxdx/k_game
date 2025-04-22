@@ -50,6 +50,10 @@ void llk_ui_draw(struct llk_ui_context *ui);
 
 void llk_ui_update(struct llk_ui_context *ui);
 
-int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, void (*fn_callback)(void));
+typedef void (*llk_ui_callback_fn)(void);
+
+int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, llk_ui_callback_fn fn_callback);
+
+llk_ui_callback_fn llk__ui_get_callback(struct llk_ui_context *ui, const char *key);
 
 #endif

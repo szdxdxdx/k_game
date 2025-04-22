@@ -202,9 +202,18 @@ int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, void (*
         return -1;
     }
 
-    *(void (**)(void))val = fn_callback;
+    *(llk_ui_callback_fn *)val = fn_callback;
 
     return 0;
+}
+
+llk_ui_callback_fn llk__ui_get_callback(struct llk_ui_context *ui, const char *key) {
+
+    void *val = k_str_map_get(&ui->callback_fn_map, key);
+    if (NULL == val)
+        return NULL;
+
+    return *(llk_ui_callback_fn *)val;
 }
 
 /* endregion */
