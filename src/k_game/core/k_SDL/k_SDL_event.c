@@ -1,4 +1,5 @@
 #include <assert.h>
+
 #include "SDL_timer.h"
 
 #include "./k_SDL_event.h"

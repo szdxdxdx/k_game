@@ -3,7 +3,9 @@
 #include "SDL_mixer.h"
 #include "SDL_ttf.h"
 
+#define K_LOG_TAG "k_game:SDL"
 #include "k_log.h"
+
 #include "k_seq_step.h"
 
 #include "./k_SDL_init.h"

@@ -1,3 +1,5 @@
+
+#define K_LOG_TAG "k_game:component"
 #include "k_log.h"
 
 #include "k_game/core/k_mem_alloc.h"

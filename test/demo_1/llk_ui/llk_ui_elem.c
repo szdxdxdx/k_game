@@ -1,6 +1,6 @@
 #include <string.h>
 
-#define K_LOG_TAG "llk UI"
+#define K_LOG_TAG "llk:UI"
 #include "k_log.h"
 
 #include "./llk_ui_context.h"

@@ -1,4 +1,7 @@
+
+#define K_LOG_TAG "k_game:room"
 #include "k_log.h"
+
 #include "k_seq_step.h"
 
 #include "k_game/core/k_room.h"

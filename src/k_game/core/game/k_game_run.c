@@ -1,5 +1,6 @@
 #include <stddef.h>
 
+#define K_LOG_TAG "k_game"
 #include "k_log.h"
 
 #include "k_game/core/k_game_run.h"

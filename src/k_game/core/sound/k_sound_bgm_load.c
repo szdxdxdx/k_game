@@ -1,3 +1,4 @@
+#define K_LOG_TAG "k_game:sound"
 #include "k_log.h"
 
 #include "k_game/core/k_mem_alloc.h"
@@ -17,7 +18,7 @@ struct k_sound_bgm *k_sound_bgm_load(const char *file_path) {
 
     Mix_Music *music = Mix_LoadMUS(file_path);
     if (NULL == music) {
-        k_log_error("Mix_LoadMUS(): %s", Mix_GetError());
+        k_log_error("SDL error: %s", Mix_GetError());
         k__mem_free(sound);
         return NULL;
     }

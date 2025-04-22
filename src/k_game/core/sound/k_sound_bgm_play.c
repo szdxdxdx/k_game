@@ -1,3 +1,4 @@
+#define K_LOG_TAG "k_game:sound"
 #include "k_log.h"
 
 #include "k_game/core/k_sound.h"
@@ -6,14 +7,16 @@
 
 int k_sound_bgm_loop(struct k_sound_bgm *sound, int loops) {
 
-    if (NULL == sound)
+    if (NULL == sound) {
+        k_log_error("`sound` is NULL");
         return -1;
+    }
 
     if (loops <= 0)
         return 0;
 
     if (0 != Mix_PlayMusic(sound->music, loops)) {
-        k_log_error("Mix_PlayMusic(): %s", Mix_GetError());
+        k_log_error("SDL error: %s", Mix_GetError());
         return -1;
     }
 

@@ -3,7 +3,7 @@
 #include "k_read_file.h"
 #include "k_xml.h"
 
-#define K_LOG_TAG "llk UI"
+#define K_LOG_TAG "llk:UI"
 #include "k_log.h"
 
 #include "./llk_ui_build.h"

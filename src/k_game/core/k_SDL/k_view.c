@@ -1,5 +1,6 @@
 #include <math.h>
 
+#define K_LOG_TAG "k_game:view"
 #include "k_log.h"
 
 #include "k_game/core/k_view.h"
@@ -16,7 +17,7 @@ struct k_view k__view;
 int k_view_fit_rect(float w, float h) {
 
     if (w <= 0 || isnan(w) || isinf(w) || h <= 0 || isnan(h) || isinf(h)){
-        k_log_error("invalid parameters `w`=%f, `h`=%f", w, h);
+        k_log_error("Invalid parameters, `w`=%f, `h`=%f", w, h);
         return -1;
     }
 
@@ -73,7 +74,7 @@ int k_view_fit_rect(float w, float h) {
 int k_view_set_position(float cx, float cy) {
 
     if (isnan(cx) || isinf(cx) || isnan(cy) || isinf(cy)) {
-        k_log_error("invalid parameters `cx`=%f, `cy`=%f", cx, cy);
+        k_log_error("Invalid parameters, `cx`=%f, `cy`=%f", cx, cy);
         return -1;
     }
 

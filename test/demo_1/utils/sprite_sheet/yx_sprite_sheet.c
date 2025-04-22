@@ -3,6 +3,8 @@
 
 #include "k_read_file.h"
 #include "k_json.h"
+
+#define K_LOG_TAG "yx:sprite_sheet"
 #include "k_log.h"
 
 #include "k_game/core/k_sprite.h"

@@ -3,6 +3,7 @@
 #include "SDL_syswm.h"
 #endif
 
+#define K_LOG_TAG "k_game:window"
 #include "k_log.h"
 
 #include "./k_window.h"

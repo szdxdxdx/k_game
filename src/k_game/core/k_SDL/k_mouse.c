@@ -2,7 +2,6 @@
 
 #include "k_game/core/k_mouse.h"
 #include "./k_mouse.h"
-#include "./k_window.h"
 #include "./k_view.h"
 
 struct k_mouse_context k__mouse;

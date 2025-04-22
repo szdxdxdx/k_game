@@ -1,6 +1,8 @@
 #include <stddef.h>
 
+#define K_LOG_TAG "k_game:init"
 #include "k_log.h"
+
 #include "k_seq_step.h"
 
 #include "k_game/core/k_game_run.h"

@@ -1,3 +1,4 @@
+#define K_LOG_TAG "k_game:image"
 #include "k_log.h"
 
 #include "./k_image.h"

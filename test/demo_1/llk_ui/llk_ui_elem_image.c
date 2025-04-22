@@ -1,4 +1,4 @@
-#define K_LOG_TAG "llk UI"
+#define K_LOG_TAG "llk:UI"
 #include "k_log.h"
 
 #include "k_game/core/k_canvas.h"

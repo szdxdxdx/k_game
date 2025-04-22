@@ -20,7 +20,6 @@ struct k_WASD {
     float speed;
 };
 
-
 static void WASD_step(struct k_component *component) {
     struct k_WASD *WASD = k_component_get_data(component);
 

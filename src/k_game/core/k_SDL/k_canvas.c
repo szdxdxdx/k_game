@@ -1,6 +1,7 @@
 #include <math.h>
 #include <assert.h>
 
+#define K_LOG_TAG "k_game:canvas"
 #include "k_log.h"
 
 #include "SDL_render.h"
