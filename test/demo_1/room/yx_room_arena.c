@@ -39,6 +39,9 @@ static void room_build_ui(void) {
 
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, "demo_1/ui/ui.xml");
     llk_ui_append_child(llk_ui_get_root(ui), xml);
+
+    struct llk_ui_elem *hp = llk_ui_get_elem_by_id(ui, "hp");
+    llk_ui_elem_set_attr(hp, "background-color", "#ffffff");
 }
 
 static void room_update_ui(void *unused) {

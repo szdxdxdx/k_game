@@ -26,11 +26,9 @@ int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_ele
         goto err;
     }
 
-    type_name = llk__ui_mem_alloc(ui, strlen(config->type_name) + 1);
+    type_name = llk__ui_strdup(ui, config->type_name, strlen(config->type_name));
     if (NULL == type_name)
         goto err;
-
-    strcpy(type_name, config->type_name);
 
     struct llk_ui_elem_type *type = k_str_map_add(&ui->elem_type_map, type_name, sizeof(struct llk_ui_elem_type));
     if (NULL == type) {
@@ -69,6 +67,8 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     elem->parent = NULL;
     k_list_init(&elem->child_list);
     k_list_node_loop(&elem->sibling_link);
+
+    elem->id_map_node.key = "";
 
     elem->w.unit = LLK_UI_UNIT_NO_VAL;
     elem->h.unit = LLK_UI_UNIT_NO_VAL;
@@ -172,6 +172,24 @@ void llk_ui_elem_remove(struct llk_ui_elem *elem) {
 
 /* region [set_attr] */
 
+static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val) {
+
+    if (NULL == val || '\0' == val[0])
+        return -1;
+
+    if (NULL != k_str_intrusive_map_get(&elem->ui->elem_id_map, val)) {
+        k_log_error("UI elem id `%s` already registered", val);
+        return -1;
+    }
+
+    char *id = llk__ui_strdup(elem->ui, val, strlen(val));
+    if (NULL == id)
+        return -1;
+
+    k_str_intrusive_map_add_directly(&elem->ui->elem_id_map, id, &elem->id_map_node);
+    return 0;
+}
+
 /* region [set_size] */
 
 static int llk__ui_elem_set_attr_w(struct llk_ui_elem *elem, const char *val) {
@@ -265,6 +283,9 @@ static int llk__ui_elem_set_attr_bottom(struct llk_ui_elem *elem, const char *va
 /* endregion */
 
 int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, const char *val) {
+
+    if (0 == strcmp(key, "id"))
+        return llk__ui_elem_set_id(elem, val);
 
     if (0 == strcmp(key, "w"))
         return llk__ui_elem_set_attr_w(elem, val);

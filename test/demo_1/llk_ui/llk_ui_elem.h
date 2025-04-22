@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "k_list.h"
+#include "k_str_intrusive_map.h"
 
 #include "./llk_ui_fwd.h"
 

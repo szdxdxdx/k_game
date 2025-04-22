@@ -45,6 +45,8 @@ void llk_ui_destroy_context(struct llk_ui_context *ui);
 
 struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui);
 
+struct llk_ui_elem *llk_ui_get_elem_by_id(struct llk_ui_context *ui, const char *id);
+
 /* 标记 UI 结构或布局发生了变更，需要重新布局 */
 void llk__ui_mark_layout_dirty(struct llk_ui_context *ui);
 

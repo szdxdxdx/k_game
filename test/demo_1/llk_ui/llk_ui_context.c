@@ -124,8 +124,22 @@ void llk_ui_destroy_context(struct llk_ui_context *ui) {
     free(ui);
 }
 
+/* endregion */
+
+/* region [get_elem] */
+
 struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
     return ui->root;
+}
+
+struct llk_ui_elem *llk_ui_get_elem_by_id(struct llk_ui_context *ui, const char *id) {
+
+    struct k_str_intrusive_map_node *node = k_str_intrusive_map_get(&ui->elem_id_map, id);
+    if (NULL == node)
+        return NULL;
+
+    struct llk_ui_elem *elem = container_of(node, struct llk_ui_elem, id_map_node);
+    return elem;
 }
 
 /* endregion */
