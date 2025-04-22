@@ -160,12 +160,21 @@ static void player_touch_bubble(struct k_object *object) {
 #endif
 }
 
+static void player_draw_position(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    k_canvas_set_draw_color_rgba(0xffffffff);
+    k_canvas_ui_printf(k_font_find("font"), 8, 56, "救命(%.2f, %.2f)", player->x, player->y);
+}
+
 struct k_object *yx_create_player(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
     k_object_add_step_callback(object, player_touch_bubble);
     k_object_add_step_callback(object, player_step);
+
+    k_object_add_draw_callback(object, player_draw_position, 0, 0);
 
     struct yx_obj_player *player = k_object_get_data(object);
 

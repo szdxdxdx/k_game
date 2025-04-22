@@ -89,13 +89,6 @@ static void room_draw_background(void *unused) {
 
 static void room_draw_text(void *unused) {
 
-    k_canvas_set_draw_color_rgba(0xffffffff);
-
-    struct k_font *font = k_font_find("font");
-    k_canvas_room_printf(font, 100, 100, "Hello World!\n这波是真寄啦！");
-    k_canvas_room_printf(font, 200, 200, "5%s5", "");
-    k_canvas_room_printf(font, 300, 300, "4%s\n4", "");
-    k_canvas_room_printf(font, 400, 400, "3\n%s3", "\n");
 }
 
 static void set_debug(void *data) {
