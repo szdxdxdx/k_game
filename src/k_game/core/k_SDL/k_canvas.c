@@ -16,6 +16,7 @@
 #include "../image/k_image.h"
 #include "../sprite/k_sprite.h"
 #include "../font/k_font.h"
+#include "../font/k_font_builtin.h"
 
 struct k_canvas k__canvas;
 
@@ -809,10 +810,12 @@ void k__canvas_present(void) {
 
 int k_canvas_printf(enum k_canvas_viewport viewport, struct k_font *font, float x, float y, const char *fmt, va_list args) {
 
-    if (NULL == font)
-        return -1;
     if (NULL == fmt || '\0' == fmt[0])
         return -1;
+
+    if (NULL == font) {
+        font = k__font_builtin;
+    }
 
     char default_buf[256];
     char *text = default_buf;

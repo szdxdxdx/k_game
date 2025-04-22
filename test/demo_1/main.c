@@ -27,9 +27,6 @@ static int fn_init_game(void) {
     struct k_sound_bgm *bgm = k_sound_bgm_load("./demo_1/sound/bgm.wav");
     k_sound_bgm_loop(bgm, INT_MAX);
 
-    struct k_font *font = k_font_load("./demo_1/font/ProggyVector-Regular.ttf", 32);
-    k_font_set_name(font, "font");
-
     create_room();
 
     return 0;

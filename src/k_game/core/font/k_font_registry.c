@@ -1,7 +1,11 @@
 
+#include "k_game/core/k_mem_alloc.h"
+
 #include "k_game/core/k_font.h"
 #include "./k_font.h"
 #include "./k_font_registry.h"
+
+#include "k_font_builtin_ttf.h"
 
 static struct k_asset_registry k__font_registry;
 

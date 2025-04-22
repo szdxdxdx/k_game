@@ -12,6 +12,7 @@
 #include "../image/k_image_registry.h"
 #include "../sound/k_sound_registry.h"
 #include "../font/k_font_registry.h"
+#include "../font/k_font_builtin.h"
 #include "../sprite/k_sprite_registry.h"
 #include "../component/k_component_type_registry.h"
 #include "../component/k_component_manager_map.h"
@@ -75,6 +76,10 @@ static int step_init_font_registry(void *unused) {
 static void step_cleanup_font_registry(void *unused) {
     (void)unused;
     k__font_registry_cleanup();
+}
+
+static int step_load_builtin_font(void *unused) {
+    return k__font_load_builtin();
 }
 
 static int step_init_sprite_registry(void *unused) {
@@ -170,6 +175,7 @@ static const struct k_seq_step steps[] = {
     { step_init_image_registry,        step_cleanup_image_registry     },
     { step_init_sound_registry,        step_cleanup_sound_registry     },
     { step_init_font_registry,         step_cleanup_font_registry      },
+    { step_load_builtin_font,          NULL                            },
     { step_init_sprite_registry,       step_cleanup_sprite_registry    },
     { step_init_component_registry,    step_cleanup_component_registry },
     { step_init_component_manager_map, step_free_component_manager_map },
