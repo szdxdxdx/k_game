@@ -1,7 +1,9 @@
 
-/* k_game 的内建字体：ProggyVector-Regular.ttf
+/*
+ * k_game 的内置的默认字体：ProggyVector-Regular.ttf
+ * 下载地址：https://github.com/bluescan/proggyfonts
  *
- * https://github.com/bluescan/proggyfonts
+ * 将二进制形式的字体文件转为 C 代码的数组，内嵌在程序中。
  */
 static unsigned char k__font_builtin_ttf[] = {
   0x00, 0x01, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x80, 0x00, 0x03, 0x00, 0x40,

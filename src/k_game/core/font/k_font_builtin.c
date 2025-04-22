@@ -2,6 +2,7 @@
 #include "k_log.h"
 
 #include "k_game/core/k_mem_alloc.h"
+#include "k_game/core/k_font.h"
 
 #include "./k_font.h"
 #include "./k_font_registry.h"
@@ -23,7 +24,7 @@ int k__font_load_builtin(void) {
         return -1;
     }
 
-    TTF_Font *sdl_font = TTF_OpenFontRW(rw, 1, 16);
+    TTF_Font *sdl_font = TTF_OpenFontRW(rw, 1, 32);
     if (!font) {
         k__mem_free(font);
         k_log_error("SDL error: %s", SDL_GetError());
@@ -36,4 +37,8 @@ int k__font_load_builtin(void) {
 
     k__font_builtin = font;
     return 0;
+}
+
+struct k_font *k_font_get_builtin(void) {
+    return k__font_builtin;
 }
