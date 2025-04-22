@@ -27,6 +27,8 @@ struct k_font *k_font_load(const char *file_path, int font_size) {
         return NULL;
     }
 
+    font->font = sdl_font;
+
     k__font_registry_add(font);
     return font;
 }

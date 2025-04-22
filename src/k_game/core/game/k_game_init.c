@@ -169,6 +169,7 @@ static const struct k_seq_step steps[] = {
     { step_init_SDL,                   step_quit_SDL                   },
     { step_init_image_registry,        step_cleanup_image_registry     },
     { step_init_sound_registry,        step_cleanup_sound_registry     },
+    { step_init_font_registry,         step_cleanup_font_registry      },
     { step_init_sprite_registry,       step_cleanup_sprite_registry    },
     { step_init_component_registry,    step_cleanup_component_registry },
     { step_init_component_manager_map, step_free_component_manager_map },

@@ -54,8 +54,6 @@ static void room_draw_ui(void *unused) {
 
 /* endregion */
 
-/* region [room_background] */
-
 static void room_draw_background(void *unused) {
 
     k_canvas_set_draw_color_rgba(0x1e1e1eff);
@@ -89,11 +87,14 @@ static void room_draw_background(void *unused) {
     }
 }
 
-/* endregion */
+static void room_draw_text(void *unused) {
 
-/* region [room_draw] */
+    k_canvas_set_draw_color_rgba(0xffffffff);
 
-/* endregion */
+    struct k_font *font = k_font_find("font");
+    k_canvas_room_draw_text(font, 100, 100, "Hello World!\n这波是真寄啦！");
+    k_canvas_ui_draw_text(font, 100, 100, "Hello World!\n这波是真寄啦！");
+}
 
 static void set_debug(void *data) {
 
@@ -126,6 +127,7 @@ static int init_arena_room(void *params) {
     k_room_add_draw_callback(NULL, room_draw_ui, INT_MIN, 0);
 
     k_room_add_draw_callback(NULL, room_draw_background, INT_MIN, 0);
+    k_room_add_draw_callback(NULL, room_draw_text, INT_MIN, 1);
 
     k_room_add_camera();
     k_room_add_collision_manager();

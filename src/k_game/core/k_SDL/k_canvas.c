@@ -1,19 +1,20 @@
 #include <math.h>
 #include <assert.h>
 
+#include "SDL_render.h"
+#include "SDL_ttf.h"
+
 #define K_LOG_TAG "k_game:canvas"
 #include "k_log.h"
 
-#include "SDL_render.h"
-
 #include "k_game/core/k_canvas.h"
-
 #include "./k_canvas.h"
 #include "./k_window.h"
 #include "./k_view.h"
 
 #include "../image/k_image.h"
 #include "../sprite/k_sprite.h"
+#include "../font/k_font.h"
 
 struct k_canvas k__canvas;
 
@@ -803,7 +804,7 @@ void k__canvas_present(void) {
 
 /* ------------------------------------------------------------------------ */
 
-int k_canvas_draw_text(enum k_canvas_viewport viewport, const char *text, float x, float y) {
+int k_canvas_draw_text(enum k_canvas_viewport viewport, struct k_font *font, float x, float y, const char *text) {
 
     if (NULL == text || '\0' == text[0])
         return 0;
@@ -813,9 +814,32 @@ int k_canvas_draw_text(enum k_canvas_viewport viewport, const char *text, float 
 
     k__canvas_convert_to_viewport_xy(&x, &y);
 
+    SDL_Color color;
+    SDL_GetRenderDrawColor(k__window.renderer, &color.r, &color.g, &color.b, &color.a);
+
+    SDL_Surface *surface = TTF_RenderUTF8_Blended(font->font, text, color);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(k__window.renderer, surface);
+    SDL_FreeSurface(surface);
+
+    int w;
+    int h;
+    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+    SDL_FRect dst;
+    dst.x = x;
+    dst.y = y;
+    dst.w = (float)w;
+    dst.h = (float)h;
+    SDL_RenderCopyF(k__window.renderer, texture, NULL, &dst);
+
+    SDL_DestroyTexture(texture);
+
     return 0;
 }
 
-void k_canvas_room_draw_text(const char *text, float x, float y) {
-    k_canvas_draw_text(K__CANVAS_VIEWPORT_ROOM, text, x, y);
+void k_canvas_room_draw_text(struct k_font *font, float x, float y, const char *text) {
+    k_canvas_draw_text(K__CANVAS_VIEWPORT_ROOM, font, x, y, text);
+}
+
+void k_canvas_ui_draw_text(struct k_font *font, float x, float y, const char *text) {
+    k_canvas_draw_text(K__CANVAS_VIEWPORT_UI, font, x, y, text);
 }

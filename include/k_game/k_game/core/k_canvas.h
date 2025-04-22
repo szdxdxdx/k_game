@@ -278,7 +278,9 @@ struct k_canvas_draw_sprite_options {
 
 /* region [tmp] */
 
-void k_canvas_room_draw_text(const char *text, float x, float y);
+void k_canvas_room_draw_text(struct k_font *font, float x, float y, const char *text);
+
+void k_canvas_ui_draw_text(struct k_font *font, float x, float y, const char *text);
 
 /* endregion */
 

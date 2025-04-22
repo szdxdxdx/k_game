@@ -28,6 +28,7 @@ static int fn_init_game(void) {
     k_sound_bgm_loop(bgm, INT_MAX);
 
     struct k_font *font = k_font_load("./demo_1/font/font.ttf", 32);
+    k_font_set_name(font, "font");
 
     create_room();
 
