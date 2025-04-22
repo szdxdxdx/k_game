@@ -800,94 +800,55 @@ static int k__canvas_printf(enum k_canvas_viewport viewport, struct k_font *font
         return -1;
     }
 
-    int return_val = 0;
-
-    if (0 != k__canvas_set_viewport(viewport)) {
-        return_val = -1;
-        goto cleanup;
-    }
-
-    k__canvas_convert_to_viewport_xy(&x, &y);
-
     SDL_Color color;
     SDL_GetRenderDrawColor(k__window.renderer, &color.r, &color.g, &color.b, &color.a);
 
-    float line_height = (float)TTF_FontHeight(font->font);
+    SDL_Surface *surface = TTF_RenderUTF8_Blended_Wrapped(font->font, text, color, 0);
 
-    char *s = text;
-    char *p;
-    while (1) {
-
-        p = s;
-        while ('\0' != *p && '\n' != *p) {
-            p++;
-        }
-
-        int end = 0;
-        if (*p == '\0') {
-            if (p == s) {
-                break;
-            } else {
-                end = 1;
-            }
-        } else {
-            if (p == s) {
-                s = p + 1;
-                goto next_line;
-            } else {
-                *p = '\0';
-            }
-        }
-
-        SDL_Surface *surface = TTF_RenderUTF8_Blended(font->font, s, color);
-        if (NULL == surface) {
-            k_log_error("SDL error: %s", SDL_GetError());
-            return_val = -1;
-            break;
-        }
-
-        SDL_Texture *texture = SDL_CreateTextureFromSurface(k__window.renderer, surface);
-        SDL_FreeSurface(surface);
-
-        if (NULL == texture) {
-            k_log_error("SDL error: %s", SDL_GetError());
-            return_val = -1;
-            break;
-        }
-
-        int w;
-        int h;
-        SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-
-        SDL_FRect dst;
-        dst.x = x;
-        dst.y = y;
-        dst.w = (float)w;
-        dst.h = (float)h;
-        int copy_result = SDL_RenderCopyF(k__window.renderer, texture, NULL, &dst);
-        SDL_DestroyTexture(texture);
-
-        if (0 != copy_result) {
-            k_log_error("SDL error: %s", SDL_GetError());
-            return_val = -1;
-            break;
-        }
-
-        if (end)
-            break;
-
-        s = p + 1;
-
-    next_line:
-        y += line_height;
-    }
-
-cleanup:
     if (text != default_buf) {
         free(text);
     }
 
-    return return_val;
+    if (NULL == surface) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        return -1;
+    }
+
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(k__window.renderer, surface);
+
+    SDL_FreeSurface(surface);
+
+    if (NULL == texture) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        return -1;
+    }
+
+    if (0 != k__canvas_set_viewport(viewport)) {
+        SDL_DestroyTexture(texture);
+        return -1;
+    }
+
+    k__canvas_convert_to_viewport_xy(&x, &y);
+
+    int w;
+    int h;
+    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+
+    SDL_FRect dst;
+    dst.x = x;
+    dst.y = y;
+    dst.w = (float)w;
+    dst.h = (float)h;
+    int copy_result = SDL_RenderCopyF(k__window.renderer, texture, NULL, &dst);
+
+    SDL_DestroyTexture(texture);
+
+    if (0 != copy_result) {
+        k_log_error("SDL error: %s", SDL_GetError());
+        return -1;
+    }
+
+    return 0;
 }
 
 void k_canvas_room_printf(struct k_font *font, float x, float y, const char *fmt, ...) {

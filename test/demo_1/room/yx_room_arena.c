@@ -90,6 +90,7 @@ static void room_draw_background(void *unused) {
 static void room_draw_text(void *unused) {
 
     k_canvas_set_draw_color_rgba(0xffffffff);
+
     k_canvas_ui_printf(NULL, 8, 100,
         "The quick brown fox jumps over the lazy dog.\n"
         "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.\n"
