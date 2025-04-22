@@ -11,6 +11,7 @@
 #include "../k_SDL/k_SDL_init.h"
 #include "../image/k_image_registry.h"
 #include "../sound/k_sound_registry.h"
+#include "../font/k_font_registry.h"
 #include "../sprite/k_sprite_registry.h"
 #include "../room/k_room_registry.h"
 #include "../room/k_room_stack.h"
@@ -64,6 +65,16 @@ static void step_cleanup_sound_registry(void *unused) {
     (void)unused;
     k__sound_bgm_registry_cleanup();
     k__sound_sfx_registry_cleanup();
+}
+
+static int step_init_font_registry(void *unused) {
+    (void)unused;
+    return k__font_registry_init();
+}
+
+static void step_cleanup_font_registry(void *unused) {
+    (void)unused;
+    k__font_registry_cleanup();
 }
 
 static int step_init_sprite_registry(void *unused) {
