@@ -594,3 +594,11 @@ void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 /* endregion */
 
 /* endregion */
+
+int llk_ui_elem_is_hovered(struct llk_ui_elem *elem) {
+    return 0 != elem->is_hovered;
+}
+
+int llk_ui_elem_is_pressed(struct llk_ui_elem *elem) {
+    return 0 != elem->is_hovered && 0 != elem->ui->mouse_button_pressed;
+}

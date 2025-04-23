@@ -270,13 +270,13 @@ llk_ui_callback_fn llk__ui_get_callback(struct llk_ui_context *ui, const char *k
 
 /* region [mem_alloc] */
 
-/* 申请内存分配 */
+/* 从 UI 上下文中的内存池中分配内存 */
 void *llk__ui_mem_alloc(struct llk_ui_context *ui, size_t size);
 
-/* 是否内存 */
+/* 释放由 `llk__ui_mem_alloc()` 分配的内存 */
 void llk__ui_mem_free(void *p);
 
-/* 拷贝复制指定长度的字符串 */
+/* 复制一份指定长度的字符串，存放在 UI 上下文中的内存池中 */
 char *llk__ui_strdup(struct llk_ui_context *ui, const char *s, size_t len);
 
 /* endregion */
@@ -286,7 +286,7 @@ char *llk__ui_strdup(struct llk_ui_context *ui, const char *s, size_t len);
 /* 将字符串解析成带单位的长度值
  *
  * 支持的单位 `px`、`%`、`vw`、`vh`，没有单位则默认单位为 `px`。
- * 不负责判断解析后的数字的取值范围是否合理（为负值，或超出范围）。
+ * 函数不判断解析后的数字的取值范围是否合理（为负值，或超出范围）。
  *
  * 若解析成功，函数返回 0，否则返回非 0。
  */
@@ -295,7 +295,6 @@ int llk__ui_parse_length_val(const char *str, float *get_val, enum llk_ui_unit *
 /* 将字符串解析成带单位的颜色
  *
  * 支持的颜色格式：`#RRGGBB` 和 `#RRGGBBAA`，不区分字母大小写。
- *
  * 若解析成功函数返回 0，否则返回非 0。
  */
 int llk__ui_parse_color_val(const char *str, uint32_t *get_val, enum llk_ui_unit *get_unit);

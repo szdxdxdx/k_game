@@ -38,8 +38,10 @@ void llk_ui_elem_remove(struct llk_ui_elem *elem);
 
 /* region [UI elem] */
 
+/** \brief 检查鼠标指针是否悬浮在 UI 元素上 */
 int llk_ui_elem_is_hovered(struct llk_ui_elem *elem);
 
+/** \brief 检查鼠标是按在 UI 元素上 */
 int llk_ui_elem_is_pressed(struct llk_ui_elem *elem);
 
 /* endregion */
