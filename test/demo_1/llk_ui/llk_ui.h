@@ -36,6 +36,14 @@ void llk_ui_elem_remove(struct llk_ui_elem *elem);
 
 /* endregion */
 
+/* region [UI elem] */
+
+int llk_ui_elem_is_hovered(struct llk_ui_elem *elem);
+
+int llk_ui_elem_is_pressed(struct llk_ui_elem *elem);
+
+/* endregion */
+
 /* region [find_elem] */
 
 /** \brief 获取指定 id 的 UI 元素 */

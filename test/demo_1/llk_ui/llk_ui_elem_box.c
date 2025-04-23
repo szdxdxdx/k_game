@@ -7,7 +7,7 @@ struct llk_ui_elem_box {
 
     struct llk_ui_u32 background_color;
     struct llk_ui_u32 background_color_hovered;
-    struct llk_ui_u32 background_color_activated;
+    struct llk_ui_u32 background_color_pressed;
     struct llk_ui_u32 border_color;
 
     llk_ui_callback_fn fn_on_click;
@@ -22,8 +22,8 @@ static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
     box->background_color_hovered.unit = LLK_UI_UNIT_NO_VAL;
     box->background_color_hovered.computed_val = 0x00000000;
 
-    box->background_color_activated.unit = LLK_UI_UNIT_NO_VAL;
-    box->background_color_activated.computed_val = 0x00000000;
+    box->background_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
+    box->background_color_pressed.computed_val = 0x00000000;
 
     box->border_color.unit = LLK_UI_UNIT_NO_VAL;
     box->border_color.computed_val = 0x00000000;
@@ -67,7 +67,7 @@ static int llk__ui_elem_box_set_attr_background_color_hovered(struct llk_ui_elem
     return 0;
 }
 
-static int llk__ui_elem_box_set_attr_background_color_activated(struct llk_ui_elem *elem, const char *val) {
+static int llk__ui_elem_box_set_attr_background_color_pressed(struct llk_ui_elem *elem, const char *val) {
     struct llk_ui_elem_box *box = elem->data;
 
     uint32_t u32_val;
@@ -78,9 +78,9 @@ static int llk__ui_elem_box_set_attr_background_color_activated(struct llk_ui_el
     if (LLK_UI_UNIT_RGBA != unit)
         return -1;
 
-    box->background_color_activated.specified_val = u32_val;
-    box->background_color_activated.unit = unit;
-    box->background_color_activated.computed_val = u32_val;
+    box->background_color_pressed.specified_val = u32_val;
+    box->background_color_pressed.unit = unit;
+    box->background_color_pressed.computed_val = u32_val;
     return 0;
 }
 
@@ -121,10 +121,10 @@ static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, 
 
     if (0 == strcmp(key, "background-color"))
         return llk__ui_elem_box_set_attr_background_color(elem, val);
-    if (0 == strcmp(key, "background-color.hover"))
+    if (0 == strcmp(key, "background-color.hovered"))
         return llk__ui_elem_box_set_attr_background_color_hovered(elem, val);
-    if (0 == strcmp(key, "background-color.active"))
-        return llk__ui_elem_box_set_attr_background_color_activated(elem, val);
+    if (0 == strcmp(key, "background-color.pressed"))
+        return llk__ui_elem_box_set_attr_background_color_pressed(elem, val);
     if (0 == strcmp(key, "border-color"))
         return llk__ui_elem_box_set_attr_border_color(elem, val);
     if (0 == strcmp(key, "on-click"))
@@ -139,14 +139,14 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     uint32_t background_color;
 
     if (elem->is_hovered && LLK_UI_UNIT_NO_VAL != box->background_color_hovered.unit) {
-        if (elem->ui->mouse_button_down && LLK_UI_UNIT_NO_VAL != box->background_color_activated.unit) {
-            background_color = box->background_color_activated.computed_val;
+        if (elem->ui->mouse_button_down && LLK_UI_UNIT_NO_VAL != box->background_color_pressed.unit) {
+            background_color = box->background_color_pressed.computed_val;
         } else {
             background_color = box->background_color_hovered.computed_val;
         }
-    } else if (elem->ui->mouse_button_down && LLK_UI_UNIT_NO_VAL != box->background_color_activated.unit) {
+    } else if (elem->ui->mouse_button_down && LLK_UI_UNIT_NO_VAL != box->background_color_pressed.unit) {
         if (elem->is_hovered) {
-            background_color = box->background_color_activated.computed_val;
+            background_color = box->background_color_pressed.computed_val;
         } else {
             background_color = box->background_color.computed_val;
         }
