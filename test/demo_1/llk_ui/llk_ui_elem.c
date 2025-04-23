@@ -1,4 +1,5 @@
 #include <string.h>
+#include <assert.h>
 
 #define K_LOG_TAG "llk:UI"
 #include "k_log.h"
@@ -58,7 +59,7 @@ err:
 
 /* region [create] */
 
-struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *type_name) {
+struct llk_ui_elem *llk_ui_elem_create(struct llk_ui_context *ui, const char *type_name) {
 
     struct llk_ui_elem *elem = NULL;
     void *data = NULL;
@@ -104,7 +105,7 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
     elem->x = 0.0f;
     elem->y = 0.0f;
 
-    k_list_node_loop(&elem->pending_destroy_list_node);
+    elem->flag_destroy = 0;
 
     if (NULL != type->fn_init) {
         if (0 != type->fn_init(elem))
@@ -124,7 +125,8 @@ err:
     return NULL;
 }
 
-void llk_ui_destroy_elem(struct llk_ui_elem *elem) {
+void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
+    assert(NULL == elem->parent || elem->flag_destroy);
 
     if (elem->type->fn_fini != NULL) {
         elem->type->fn_fini(elem);
@@ -138,11 +140,7 @@ void llk_ui_destroy_elem(struct llk_ui_elem *elem) {
     for (k_list_for_each(child_list, iter)) {
         child = container_of(iter, struct llk_ui_elem, sibling_link);
 
-        llk_ui_destroy_elem(child);
-    }
-
-    if ('\0' != elem->id_map_node.key[0]) {
-        llk__ui_mem_free((void *)elem->id_map_node.key);
+        llk__ui_elem_destroy(child);
     }
 
     k_list_del(&elem->sibling_link);
@@ -158,11 +156,24 @@ void llk_ui_destroy_elem(struct llk_ui_elem *elem) {
     llk__ui_mark_layout_dirty(ui);
 }
 
+void llk_ui_elem_destroy(struct llk_ui_elem *elem) {
+
+    if (NULL == elem)
+        return;
+
+    if (NULL == elem->parent) {
+        llk_ui_elem_destroy(elem);
+        return;
+    }
+
+    elem->flag_destroy = 1;
+}
+
 /* endregion */
 
 /* region [add_child] */
 
-int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
+int llk_ui_elem_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
 
     /* TODO
      * 添加元素可能发生在事件派发过程，所以这里应只做标记，等事件派发完毕之后再统一添加
@@ -493,6 +504,11 @@ static void llk__ui_elem_compute_size(struct llk_ui_elem *elem) {
 }
 
 void llk__ui_elem_measure(struct llk_ui_elem *elem) {
+
+    if (elem->flag_destroy) {
+        llk__ui_elem_destroy(elem);
+        return;
+    }
 
     llk__ui_elem_compute_edge_offset(elem);
 

@@ -132,8 +132,6 @@ struct llk_ui_context {
 
     /* 布局脏标记。若为非 0，则重新计算所有元素的尺寸和位置 */
     int layout_dirty;
-
-    struct k_list pending_destroy_list;
 };
 
 /* 标记 UI 结构或布局发生了变更，需要重新布局 */
@@ -153,7 +151,7 @@ struct llk_ui_elem_type;
 
 /* 注册自定义的 UI 元素类型
  *
- * 只有注册类型成功后，才能通过 `llk_ui_create_elem()` 创建该类型的 UI 元素实例。
+ * 只有注册类型成功后，才能通过 `llk_ui_elem_create()` 创建该类型的 UI 元素实例。
  * 函数会复制一份 `type` 的值。
  *
  * 若注册成功，函数返回 0，否则返回非 0。
@@ -260,8 +258,8 @@ struct llk_ui_elem {
     /* 标记该元素（及其子元素）是否显示 */
     unsigned int is_hidden;
 
-    /* 销毁元素时，将它加入 UI 上下文的 `pending_destroy_list` 中，延迟销毁 */
-    struct k_list_node pending_destroy_list_node;
+    /* 销毁元素时将它标记为逻辑删除，延迟销毁 */
+    unsigned int flag_destroy;
 };
 
 /* 设置 UI 元素的属性的默认实现 */

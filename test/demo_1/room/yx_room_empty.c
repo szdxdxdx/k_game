@@ -21,7 +21,7 @@ static void yx__empty_room_ui_build(void) {
         goto err;
 
     struct llk_ui_elem *root = llk_ui_get_root(ui);
-    if (0 != llk_ui_append_child(root, xml))
+    if (0 != llk_ui_elem_append_child(root, xml))
         goto err;
 
     return;

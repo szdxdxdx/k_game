@@ -12,7 +12,7 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_context *ui, struc
 
     const char *tag = k_xml_get_tag(xml);
 
-    struct llk_ui_elem *elem = llk_ui_create_elem(ui, tag);
+    struct llk_ui_elem *elem = llk_ui_elem_create(ui, tag);
     if (NULL == elem)
         return NULL;
 
@@ -25,7 +25,7 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_context *ui, struc
             if (NULL == child)
                 goto err;
 
-            llk_ui_append_child(elem, child);
+            llk_ui_elem_append_child(elem, child);
         }
     }
 
@@ -41,7 +41,7 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_context *ui, struc
 
 err:
     k_log_error("Failed to build element from xml node, node tag: `%s`", tag);
-    llk_ui_destroy_elem(elem);
+    llk_ui_elem_destroy(elem);
     return NULL;
 }
 

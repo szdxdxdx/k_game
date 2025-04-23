@@ -52,7 +52,7 @@ int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, llk_ui_
 struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui);
 
 /** \brief 添加 UI 子元素 */
-int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
+int llk_ui_elem_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
 
 /** \brief 解析 xml 文件，构建对应的 UI 元素 */
 struct llk_ui_elem *llk_ui_build_elem_from_xml_file(struct llk_ui_context *ui, const char *file_path);
@@ -73,10 +73,10 @@ struct llk_ui_elem *llk_ui_get_elem_by_id(struct llk_ui_context *ui, const char 
 /* region [create] */
 
 /** \brief 创建一个 UI 元素 */
-struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *type_name);
+struct llk_ui_elem *llk_ui_elem_create(struct llk_ui_context *ui, const char *type_name);
 
 /* TODO */
-void llk_ui_destroy_elem(struct llk_ui_elem *elem);
+void llk_ui_elem_destroy(struct llk_ui_elem *elem);
 
 /* endregion */
 

@@ -71,12 +71,10 @@ struct llk_ui_context *llk_ui_create_context(void) {
     if (0 != llk__ui_registry_builtin_elem_types(ui))
         goto err;
 
-    k_list_init(&ui->pending_destroy_list);
-
     float vw = k_canvas_ui_get_vw();
     float vh = k_canvas_ui_get_vh();
 
-    struct llk_ui_elem *root = llk_ui_create_elem(ui, "root");
+    struct llk_ui_elem *root = llk_ui_elem_create(ui, "root");
     if (NULL == root)
         goto err;
 
@@ -120,7 +118,7 @@ void llk_ui_destroy_context(struct llk_ui_context *ui) {
         return;
 
     /* TODO 销毁所有 UI 元素（包括哪些已创建出来但是没有添加到树上的元素） */
-    llk_ui_destroy_elem(ui->root);
+    llk_ui_elem_destroy(ui->root);
 
     k_str_map_destruct(&ui->elem_type_map);
 

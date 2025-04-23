@@ -22,7 +22,7 @@ static void on_click(struct llk_ui_elem *elem) {
     printf("clicked\n");
 
 
-   // llk_ui_destroy_elem(llk_ui_get_elem_by_id(ui, "hp"));
+   llk_ui_elem_destroy(llk_ui_get_elem_by_id(ui, "hp"));
 }
 
 static void room_build_ui(void) {
@@ -34,7 +34,7 @@ static void room_build_ui(void) {
     ui = llk_ui_create_context();
     llk_ui_register_callback(ui, "click", on_click);
 
-    struct llk_ui_elem *box = llk_ui_create_elem(ui, "box");
+    struct llk_ui_elem *box = llk_ui_elem_create(ui, "box");
     if (NULL == box)
         goto err;
 
@@ -43,14 +43,14 @@ static void room_build_ui(void) {
     llk_ui_elem_set_attr(box, "h", "10");
     llk_ui_elem_set_attr(box, "top", "10");
     llk_ui_elem_set_attr(box, "right", "10");
-    llk_ui_append_child(llk_ui_get_root(ui), box);
+    llk_ui_elem_append_child(llk_ui_get_root(ui), box);
 
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, ui_xml_file_path);
     if (NULL == xml) {
         k_log_error("failed to build ui from xml file");
     }
 
-    llk_ui_append_child(llk_ui_get_root(ui), xml);
+    llk_ui_elem_append_child(llk_ui_get_root(ui), xml);
 
     return;
 
