@@ -45,26 +45,43 @@ struct llk_ui_u32 {
 /* 值的单位 */
 enum llk_ui_unit {
 
-    /* 标识 `specified_val` 没有被赋值 */
+    /* 表示 `specified_val` 没有被赋值
+     *
+     * 此时 `computed_val` 的值无意义
+     */
     LLK_UI_UNIT_NO_VAL,
 
-    /* 像素，例如：`50px`
-     * 若指定的值不带有单位，则默认单位为：像素。
+    /* 像素
+     *
+     * 例如：`50px`、`100px`
+     *
+     * 若指定的值不带有单位，则默认单位为像素。
      */
     LLK_UI_UNIT_PX,
 
-    /* 相对于父元素的宽高比，例如：`50.0%`、`100%`
+    /* 相对于父元素的宽高比
+     *
+     * 例如：`50.0%`、`100%`
+     *
      * 字符串值的取值的 `100%，对应解析后的值为 1.0f。
      */
     LLK_UI_UNIT_PERCENT,
 
-    /* 相对于视窗的宽高比，例如 `50vw`、`100vh`
+    /* 相对于视窗的宽高比
+     *
+     * 例如： `50vw`、`100vh`
+     *
      * 字符串值的取值的 `100%，对应解析后的值为 1.0f。
      */
     LLK_UI_UNIT_VW,
     LLK_UI_UNIT_VH,
 
-    /* 十六进制颜色值，例如：不带透明度 RGB `#ff6600`、带透明度 RGBA `#ee000066`
+    /* 十六进制颜色值
+     *
+     * 例如：
+     * - 不带透明度 RGB `#ff6600`
+     * - 带透明度 RGBA `#ee000066`
+     *
      * 对应解析后的值为 uint32_t 的 0xRRGGBBAA 十六进制颜色值
      */
     LLK_UI_UNIT_RGBA,
@@ -72,6 +89,10 @@ enum llk_ui_unit {
     /* 用于自定义单位 */
     LLK_UI_UNIT_CUSTOM,
 };
+
+/* 检查 `llk_ui_float` 或 `llk_ui_u32` 类型的值是否已被指定 */
+#define llk__ui_is_val_specified(val) \
+    ((val).unit != LLK_UI_UNIT_NO_VAL)
 
 /* endregion */
 

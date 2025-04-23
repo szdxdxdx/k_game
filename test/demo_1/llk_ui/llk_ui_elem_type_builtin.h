@@ -22,11 +22,11 @@ extern struct llk_ui_elem_type llk__ui_elem_root;
  * 
  * - `background-color`         背景颜色（默认）
  * - `background-color.hovered` 背景颜色（鼠标悬浮时）
- * - `background-color.pressed` 背景颜色（鼠标按下时）
+ * - `background-color.pressed` 背景颜色（鼠标按住时）
  *
  * - `border-color`         边框颜色（默认）
  * - `border-color.hovered` 边框颜色（鼠标悬浮时）
- * - `border-color.pressed` 边框颜色（鼠标按下时）
+ * - `border-color.pressed` 边框颜色（鼠标按住时）
  *
  * - `on_click` 点击事件，鼠标点击元素时执行事件回调
  */

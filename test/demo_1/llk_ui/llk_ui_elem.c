@@ -171,8 +171,13 @@ void llk_ui_elem_remove(struct llk_ui_elem *elem) {
 
 static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val) {
 
-    if (NULL == val || '\0' == val[0])
-        return -1;
+    if (NULL == val || '\0' == val[0]) {
+        elem->id_map_node.key = "";
+        return 0;
+    }
+
+    if (0 == strcmp(val, elem->id_map_node.key))
+        return 0;
 
     if (NULL != k_str_intrusive_map_get(&elem->ui->elem_id_map, val)) {
         k_log_error("UI elem id `%s` already registered", val);
@@ -182,6 +187,10 @@ static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val) {
     char *id = llk__ui_strdup(elem->ui, val, strlen(val));
     if (NULL == id)
         return -1;
+
+    if ('\0' != elem->id_map_node.key[0]) {
+        llk__ui_mem_free((void *)elem->id_map_node.key);
+    }
 
     k_str_intrusive_map_add_directly(&elem->ui->elem_id_map, id, &elem->id_map_node);
     return 0;
@@ -599,6 +608,10 @@ int llk_ui_elem_is_hovered(struct llk_ui_elem *elem) {
     return 0 != elem->is_hovered;
 }
 
+int llk_ui_elem_is_clicked(struct llk_ui_elem *elem) {
+    return elem->is_hovered && elem->ui->mouse_button_pressed;
+}
+
 int llk_ui_elem_is_pressed(struct llk_ui_elem *elem) {
-    return 0 != elem->is_hovered && 0 != elem->ui->mouse_button_pressed;
+    return elem->is_hovered && elem->ui->mouse_button_down;
 }
