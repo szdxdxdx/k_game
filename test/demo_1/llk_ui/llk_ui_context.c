@@ -147,7 +147,7 @@ struct llk_ui_elem *llk_ui_get_elem_by_id(struct llk_ui_context *ui, const char 
 
 /* region [update] */
 
-void llk__ui_get_input(struct llk_ui_context *ui) {
+static void llk__ui_get_input(struct llk_ui_context *ui) {
 
     ui->mouse_x = k_mouse_window_x();
     ui->mouse_y = k_mouse_window_y();
@@ -169,16 +169,25 @@ void llk__ui_mark_layout_dirty(struct llk_ui_context *ui) {
     ui->layout_dirty = 1;
 }
 
-void llk_ui_update(struct llk_ui_context *ui) {
-
-    llk__ui_get_input(ui);
+void llk__ui_refresh(struct llk_ui_context *ui) {
 
     llk__ui_elem_measure(ui->root);
     llk__ui_elem_layout(ui->root);
     ui->layout_dirty = 0;
 
     llk__ui_elem_hit_test(ui->root);
+}
 
+void llk__ui_refresh_if_layout_dirty(struct llk_ui_context *ui) {
+    if (0 == ui->layout_dirty)
+        return;
+
+    llk__ui_refresh(ui);
+}
+
+void llk_ui_update(struct llk_ui_context *ui) {
+    llk__ui_get_input(ui);
+    llk__ui_refresh_if_layout_dirty(ui);
     llk__ui_elem_dispatch_event(ui->root);
 }
 

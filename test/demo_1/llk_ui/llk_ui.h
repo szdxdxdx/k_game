@@ -44,6 +44,9 @@ int llk_ui_elem_is_hovered(struct llk_ui_elem *elem);
 /** \brief 检查鼠标是按在 UI 元素上 */
 int llk_ui_elem_is_pressed(struct llk_ui_elem *elem);
 
+/** \brief 获取 UI 元素矩形左上角的在 UI 界面中的坐标以及矩形的宽高 */
+void llk_ui_elem_get_rect(struct llk_ui_elem *elem, float *get_x, float *get_y, float *get_w, float *get_h);
+
 /* endregion */
 
 /* region [find_elem] */
@@ -62,7 +65,7 @@ struct llk_ui_elem *llk_ui_build_elem_from_xml_file(struct llk_ui_context *ui, c
 
 /* region [draw] */
 
-/** \brief 更新 UI 状态，处理输入事件，计算元素尺寸，定位元素位置 */
+/** \brief 更新 UI 状态，计算元素尺寸，定位元素位置，触发事件回调 */
 void llk_ui_update(struct llk_ui_context *ui);
 
 /** \brief 绘制 UI 界面 */

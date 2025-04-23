@@ -196,8 +196,6 @@ static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val) {
     return 0;
 }
 
-/* region [set_size] */
-
 static int llk__ui_elem_set_attr_w(struct llk_ui_elem *elem, const char *val) {
 
     float float_val;
@@ -229,10 +227,6 @@ static int llk__ui_elem_set_attr_h(struct llk_ui_elem *elem, const char *val) {
 
     return 0;
 }
-
-/* endregion */
-
-/* region [set_position] */
 
 static int llk__ui_elem_set_attr_left(struct llk_ui_elem *elem, const char *val) {
 
@@ -286,8 +280,6 @@ static int llk__ui_elem_set_attr_bottom(struct llk_ui_elem *elem, const char *va
     return 0;
 }
 
-/* endregion */
-
 int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, const char *val) {
 
     if (0 == strcmp(key, "id"))
@@ -335,8 +327,6 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
 /* endregion */
 
 /* region [update && draw] */
-
-/* region [measure] */
 
 static void llk__ui_elem_compute_edge_offset(struct llk_ui_elem *elem) {
 
@@ -492,10 +482,6 @@ void llk__ui_elem_measure(struct llk_ui_elem *elem) {
     }
 }
 
-/* endregion */
-
-/* region [layout] */
-
 void llk__ui_elem_layout(struct llk_ui_elem *elem) {
 
     struct llk_ui_elem *parent = elem->parent;
@@ -530,10 +516,6 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
     }
 }
 
-/* endregion */
-
-/* region [hit_test] */
-
 void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {
 
     struct llk_ui_context *ui = elem->ui;
@@ -560,10 +542,6 @@ void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {
     }
 }
 
-/* endregion */
-
-/* region [dispatch_event] */
-
 void llk__ui_elem_dispatch_event(struct llk_ui_elem *elem) {
 
     struct llk_ui_elem *child;
@@ -579,10 +557,6 @@ void llk__ui_elem_dispatch_event(struct llk_ui_elem *elem) {
         elem->type->fn_dispatch_event(elem);
     }
 }
-
-/* endregion */
-
-/* region [draw] */
 
 void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 
@@ -602,16 +576,29 @@ void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 
 /* endregion */
 
-/* endregion */
+/* region [get] */
 
 int llk_ui_elem_is_hovered(struct llk_ui_elem *elem) {
+    llk__ui_refresh_if_layout_dirty(elem->ui);
     return 0 != elem->is_hovered;
 }
 
 int llk_ui_elem_is_clicked(struct llk_ui_elem *elem) {
+    llk__ui_refresh_if_layout_dirty(elem->ui);
     return elem->is_hovered && elem->ui->mouse_button_pressed;
 }
 
 int llk_ui_elem_is_pressed(struct llk_ui_elem *elem) {
+    llk__ui_refresh_if_layout_dirty(elem->ui);
     return elem->is_hovered && elem->ui->mouse_button_down;
 }
+
+void llk_ui_elem_get_rect(struct llk_ui_elem *elem, float *get_x, float *get_y, float *get_w, float *get_h) {
+    llk__ui_refresh_if_layout_dirty(elem->ui);
+    if (NULL != get_x) { *get_x = elem->x; }
+    if (NULL != get_y) { *get_y = elem->y; }
+    if (NULL != get_w) { *get_w = elem->w.computed_val; }
+    if (NULL != get_h) { *get_h = elem->h.computed_val; }
+}
+
+/* endregion */
