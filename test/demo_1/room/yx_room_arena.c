@@ -19,10 +19,11 @@ static const char *ui_xml_file_path = "./demo_1/ui/ui.xml";
 static struct llk_ui_context *ui = NULL;
 
 static void on_click(struct llk_ui_elem *elem) {
-    printf("clicked\n");
 
-
-   llk_ui_elem_destroy(llk_ui_get_elem_by_id(ui, "hp"));
+    static int hidden = 0;
+    hidden = !hidden;
+    struct llk_ui_elem *panel = llk_ui_get_elem_by_id(ui, "state-panel");
+    llk_ui_elem_set_attr(panel, "hidden", hidden ? "false" : "true");
 }
 
 static void room_build_ui(void) {
@@ -32,6 +33,9 @@ static void room_build_ui(void) {
     }
 
     ui = llk_ui_create_context();
+
+    struct llk_ui_elem *root = llk_ui_get_root(ui);
+
     llk_ui_register_callback(ui, "click", on_click);
 
     struct llk_ui_elem *box = llk_ui_elem_create(ui, "box");
@@ -39,18 +43,19 @@ static void room_build_ui(void) {
         goto err;
 
     llk_ui_elem_set_attr(box, "background-color", "#ffffffaa");
-    llk_ui_elem_set_attr(box, "w", "60");
-    llk_ui_elem_set_attr(box, "h", "10");
+    llk_ui_elem_set_attr(box, "w", "160");
+    llk_ui_elem_set_attr(box, "h", "60");
     llk_ui_elem_set_attr(box, "top", "10");
     llk_ui_elem_set_attr(box, "right", "10");
-    llk_ui_elem_append_child(llk_ui_get_root(ui), box);
+    llk_ui_elem_set_attr(box, "on-click", "click");
+    llk_ui_elem_append_child(root, box);
 
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, ui_xml_file_path);
     if (NULL == xml) {
         k_log_error("failed to build ui from xml file");
     }
 
-    llk_ui_elem_append_child(llk_ui_get_root(ui), xml);
+    llk_ui_elem_append_child(root, xml);
 
     return;
 
