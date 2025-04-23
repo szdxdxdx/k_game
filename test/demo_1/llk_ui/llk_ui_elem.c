@@ -164,7 +164,8 @@ int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child) {
 
 void llk_ui_elem_remove(struct llk_ui_elem *elem) {
     /* TODO
-     * 删除元素可能发生再事件派发过程，所以这里只做标记，等事件派发完毕之后再统一删除
+     * - 删除元素可能发生再事件派发过程，所以这里只做标记，等事件派发完毕之后再统一删除
+     * - 根元素只能在销毁 UI 上下文的时候被删除
      */
 }
 

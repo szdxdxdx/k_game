@@ -41,6 +41,7 @@ struct llk_ui_context {
 
 struct llk_ui_context *llk_ui_create_context(void);
 
+/** \brief 销毁 UI 上下文。若 `ui` 为 `NULL` 则函数立即返回 */
 void llk_ui_destroy_context(struct llk_ui_context *ui);
 
 struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui);

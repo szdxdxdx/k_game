@@ -176,7 +176,7 @@ static int step_create_canvas(void *config_) {
     int room_viewport_w = window_w + window_w / 4;
     int room_viewport_h = window_h + window_h / 4;
 
-    int ui_viewport_x = room_viewport_w + 1;
+    int ui_viewport_x = room_viewport_w;
     int ui_viewport_y = 0;
     int ui_viewport_w = window_w;
     int ui_viewport_h = window_h;

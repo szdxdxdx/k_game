@@ -25,7 +25,7 @@ int k__font_load_builtin(void) {
     }
 
     TTF_Font *sdl_font = TTF_OpenFontRW(rw, 1, 18);
-    if (!font) {
+    if (NULL == sdl_font) {
         k__mem_free(font);
         k_log_error("SDL error: %s", SDL_GetError());
         return -1;

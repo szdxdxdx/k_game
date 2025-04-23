@@ -39,18 +39,18 @@ struct k_canvas {
      * 房间的绘制被限定在该矩形区域。
      * 实际使用的区域可能不会占满整个矩形，这取决于房间视野的范围。
      */
-    int room_viewport_x;
-    int room_viewport_y;
-    int room_viewport_w;
-    int room_viewport_h;
+    int room_viewport_x; // = 0
+    int room_viewport_y; // = 0
+    int room_viewport_w; // = view_w_max
+    int room_viewport_h; // = view_h_max
 
     /* 画布的 UI 视口
      *
      * UI 内容的绘制被限定在该矩形区域。
      * 该矩形区域的宽高应该与游戏窗口宽高保持一致。
      */
-    int ui_viewport_x;
-    int ui_viewport_y; // = 0.0f
+    int ui_viewport_x; // = 0 + room_viewport_w
+    int ui_viewport_y; // = 0
     int ui_viewport_w; // = window_w
     int ui_viewport_h; // = window_h
 

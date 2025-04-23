@@ -116,6 +116,9 @@ err:
 
 void llk_ui_destroy_context(struct llk_ui_context *ui) {
 
+    if (NULL == ui)
+        return;
+
     /* TODO 销毁所有 UI 元素 */
 
     k_str_map_destruct(&ui->elem_type_map);

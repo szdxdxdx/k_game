@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
     config.window_title = "demo 1";
     config.fn_init = fn_init_game;
 
-    return k_game_run(&config);
+    k_game_run(&config);
 }
 
 #endif

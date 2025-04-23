@@ -13,6 +13,8 @@
 
 /* region [ui] */
 
+static const char *ui_xml_file_path = "./demo_1/ui/ui.xml";
+
 static void on_click(void) {
     printf("clicked\n");
 }
@@ -29,6 +31,8 @@ static void room_build_ui(void) {
     llk_ui_register_callback(ui, "click", on_click);
 
     struct llk_ui_elem *box = llk_ui_create_elem(ui, "box");
+    if (NULL == box)
+        goto err;
 
     llk_ui_elem_set_attr(box, "background-color", "#ffffffaa");
     llk_ui_elem_set_attr(box, "w", "60");
@@ -37,11 +41,16 @@ static void room_build_ui(void) {
     llk_ui_elem_set_attr(box, "right", "10");
     llk_ui_append_child(llk_ui_get_root(ui), box);
 
-    struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, "demo_1/ui/ui.xml");
+    struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, ui_xml_file_path);
+    if (NULL == xml)
+        goto err;
     llk_ui_append_child(llk_ui_get_root(ui), xml);
 
     struct llk_ui_elem *hp = llk_ui_get_elem_by_id(ui, "hp");
     llk_ui_elem_set_attr(hp, "background-color", "#ffffff");
+
+err:
+    llk_ui_destroy_context(ui);
 }
 
 static void room_update_ui(void *unused) {
@@ -49,6 +58,10 @@ static void room_update_ui(void *unused) {
 }
 
 static void room_draw_ui(void *unused) {
+
+    if (NULL == ui)
+        return;
+
     k_canvas_set_draw_color_rgba(0x00000000);
     k_canvas_ui_clear();
 
