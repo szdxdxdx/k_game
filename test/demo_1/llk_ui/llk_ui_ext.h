@@ -132,6 +132,8 @@ struct llk_ui_context {
 
     /* 布局脏标记。若为非 0，则重新计算所有元素的尺寸和位置 */
     int layout_dirty;
+
+    struct k_list pending_destroy_list;
 };
 
 /* 标记 UI 结构或布局发生了变更，需要重新布局 */
@@ -142,6 +144,8 @@ void llk__ui_refresh(struct llk_ui_context *ui);
 
 /* 若布局脏标记为非 0，则刷新布局 */
 void llk__ui_refresh_if_layout_dirty(struct llk_ui_context *ui);
+
+void llk__ui_clear_pending_destroy_list(struct llk_ui_context *ui);
 
 /* endregion */
 
@@ -257,6 +261,9 @@ struct llk_ui_elem {
 
     /* 标记该元素（及其子元素）是否显示 */
     unsigned int is_hidden;
+
+    /* 销毁元素时，将它加入 UI 上下文的 `pending_destroy_list` 中，延迟销毁 */
+    struct k_list_node pending_destroy_list_node;
 };
 
 /* 设置 UI 元素的属性的默认实现 */

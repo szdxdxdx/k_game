@@ -2,6 +2,9 @@
 #include <math.h>
 #include <stdio.h>
 
+#define K_LOG_TAG "yx:room:arena"
+#include "k_log.h"
+
 #include "./yx_room_arena.h"
 
 #include "../sprite/yx_spr.h"
@@ -40,8 +43,9 @@ static void room_build_ui(void) {
     llk_ui_append_child(llk_ui_get_root(ui), box);
 
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, ui_xml_file_path);
-    if (NULL == xml)
-        goto err;
+    if (NULL == xml) {
+        k_log_error("failed to build ui from xml file");
+    }
 
     llk_ui_append_child(llk_ui_get_root(ui), xml);
 

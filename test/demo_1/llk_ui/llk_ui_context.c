@@ -71,6 +71,8 @@ struct llk_ui_context *llk_ui_create_context(void) {
     if (0 != llk__ui_registry_builtin_elem_types(ui))
         goto err;
 
+    k_list_init(&ui->pending_destroy_list);
+
     float vw = k_canvas_ui_get_vw();
     float vh = k_canvas_ui_get_vh();
 
@@ -170,6 +172,8 @@ void llk__ui_mark_layout_dirty(struct llk_ui_context *ui) {
 }
 
 void llk__ui_refresh(struct llk_ui_context *ui) {
+
+    llk__ui_clear_pending_destroy_list(ui);
 
     llk__ui_elem_measure(ui->root);
     llk__ui_elem_layout(ui->root);

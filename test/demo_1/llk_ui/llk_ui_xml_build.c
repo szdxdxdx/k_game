@@ -41,25 +41,8 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_context *ui, struc
 
 err:
     k_log_error("Failed to build element from xml node, node tag: `%s`", tag);
-    /* TODO if build failed, destroy elem */
+    llk_ui_destroy_elem(elem);
     return NULL;
-}
-
-struct llk_ui_context *llk__ui_build_from_xml(struct k_xml_node *xml) {
-
-    struct llk_ui_context *ui = llk_ui_create_context();
-    if (NULL == ui)
-        return NULL;
-
-    struct llk_ui_elem *elem = llk__ui_build_elem_from_xml(ui, xml);
-    if (NULL == elem) {
-        llk_ui_destroy_context(ui);
-        k_log_error("Failed to build UI from xml");
-        return NULL;
-    }
-
-    llk_ui_append_child(llk_ui_get_root(ui), elem);
-    return ui;
 }
 
 struct llk_ui_elem *llk_ui_build_elem_from_xml_file(struct llk_ui_context *ui, const char *file_path) {
