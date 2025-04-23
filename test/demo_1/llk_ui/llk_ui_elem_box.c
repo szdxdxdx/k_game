@@ -14,6 +14,7 @@ struct llk_ui_elem_box {
     struct llk_ui_u32 border_color_pressed;
 
     llk_ui_callback_fn fn_on_click;
+    llk_ui_callback_fn fn_on_draw;
 };
 
 static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
@@ -28,11 +29,12 @@ static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
     box->border_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
 
     box->fn_on_click = NULL;
+    box->fn_on_draw  = NULL;
 
     return 0;
 }
 
-static int llk__ui_elem_box_set_color(struct llk_ui_u32 *elem_val, const char *val) {
+static int llk__ui_elem_box_set_color(struct llk_ui_u32 *set_color, const char *val) {
 
     uint32_t u32_val;
     enum llk_ui_unit unit;
@@ -42,25 +44,24 @@ static int llk__ui_elem_box_set_color(struct llk_ui_u32 *elem_val, const char *v
     if (LLK_UI_UNIT_RGBA != unit)
         return -1;
 
-    elem_val->specified_val = u32_val;
-    elem_val->unit = unit;
-    elem_val->computed_val = u32_val;
+    set_color->specified_val = u32_val;
+    set_color->unit = unit;
+    set_color->computed_val = u32_val;
     return 0;
 }
 
-static int llk__ui_elem_box_set_attr_on_click(struct llk_ui_elem *elem, const char *val) {
-    struct llk_ui_elem_box *box = elem->data;
+static int llk__ui_elem_box_set_attr_fn_callback(struct llk_ui_context *ui, llk_ui_callback_fn *set_fn, const char *val) {
 
     if (val == NULL || 0 == strcmp(val, "null")) {
-        box->fn_on_click = NULL;
+        *set_fn = NULL;
         return 0;
     }
 
-    llk_ui_callback_fn fn = llk__ui_get_callback(elem->ui, val);
+    llk_ui_callback_fn fn = llk__ui_get_callback(ui, val);
     if (NULL == fn)
         return -1;
 
-    box->fn_on_click = fn;
+    *set_fn = fn;
     return 0;
 }
 
@@ -82,7 +83,9 @@ static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, 
         return llk__ui_elem_box_set_color(&box->background_color_pressed, val);
 
     if (0 == strcmp(key, "on-click"))
-        return llk__ui_elem_box_set_attr_on_click(elem, val);
+        return llk__ui_elem_box_set_attr_fn_callback(elem->ui, &box->fn_on_click, val);
+    if (0 == strcmp(key, "on-draw"))
+        return llk__ui_elem_box_set_attr_fn_callback(elem->ui, &box->fn_on_draw, val);
 
     return llk__ui_elem_set_attr_default(elem, key, val);
 }
@@ -121,6 +124,10 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     if (0x00000000 != border_color) {
         k_canvas_set_draw_color_rgba(border_color);
         k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
+    }
+
+    if (NULL != box->fn_on_draw) {
+        box->fn_on_draw(elem);
     }
 }
 

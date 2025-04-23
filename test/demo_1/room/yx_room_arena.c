@@ -18,12 +18,26 @@ static const char *ui_xml_file_path = "./demo_1/ui/ui.xml";
 
 static struct llk_ui_context *ui = NULL;
 
-static void on_click(struct llk_ui_elem *elem) {
+static void btn_on_click(struct llk_ui_elem *elem) {
 
     static int hidden = 0;
     hidden = !hidden;
     struct llk_ui_elem *panel = llk_ui_get_elem_by_id(ui, "state-panel");
     llk_ui_elem_set_attr(panel, "hidden", hidden ? "false" : "true");
+}
+
+static void btn_on_draw(struct llk_ui_elem *elem) {
+
+    float x, y, w, h;
+    llk_ui_elem_get_rect(elem, &x, &y, &w, &h);
+
+    if (llk_ui_elem_is_pressed(elem)) {
+        k_canvas_set_draw_color_rgba(0x000000ff);
+    } else {
+        k_canvas_set_draw_color_rgba(0xffffffff);
+    }
+
+    k_canvas_ui_printf(NULL, x, y, "click me!");
 }
 
 static void room_build_ui(void) {
@@ -36,7 +50,8 @@ static void room_build_ui(void) {
 
     struct llk_ui_elem *root = llk_ui_get_root(ui);
 
-    llk_ui_register_callback(ui, "click", on_click);
+    llk_ui_register_callback(ui, "click", btn_on_click);
+    llk_ui_register_callback(ui, "draw", btn_on_draw);
 
     struct llk_ui_elem *box = llk_ui_elem_create(ui, "box");
     if (NULL == box)
@@ -48,6 +63,7 @@ static void room_build_ui(void) {
     llk_ui_elem_set_attr(box, "top", "10");
     llk_ui_elem_set_attr(box, "right", "10");
     llk_ui_elem_set_attr(box, "on-click", "click");
+    llk_ui_elem_set_attr(box, "on-draw", "draw");
     llk_ui_elem_append_child(root, box);
 
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, ui_xml_file_path);
