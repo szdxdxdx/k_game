@@ -126,7 +126,7 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
 
 static void llk__ui_elem_box_dispatch_event(struct llk_ui_elem *elem) {
 
-    if (llk_ui_elem_is_hovered(elem)) {
+    if (llk_ui_elem_is_clicked(elem)) {
 
         struct llk_ui_elem_box *box = elem->data;
         if (NULL != box->fn_on_click) {

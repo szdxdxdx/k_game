@@ -139,10 +139,10 @@ struct llk_ui_context {
 /* 标记 UI 结构或布局发生了变更，需要重新布局 */
 void llk__ui_mark_layout_dirty(struct llk_ui_context *ui);
 
-/* 刷新布局：计算所有元素的尺寸，定位元素的位置，并判断鼠标指针落在哪个元素上 */
+/* 刷新 UI 状态：计算所有元素的尺寸，定位元素的位置，并判断鼠标指针落在哪个元素上 */
 void llk__ui_refresh(struct llk_ui_context *ui);
 
-/* 若布局脏标记为非 0，则刷新布局 */
+/* 刷新 UI 状态：若布局脏标记为非 0 则重新布局，否则只判断鼠标指针落在哪个元素上 */
 void llk__ui_refresh_if_layout_dirty(struct llk_ui_context *ui);
 
 /* endregion */

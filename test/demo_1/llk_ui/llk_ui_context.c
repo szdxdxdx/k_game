@@ -182,10 +182,12 @@ void llk__ui_refresh(struct llk_ui_context *ui) {
 }
 
 void llk__ui_refresh_if_layout_dirty(struct llk_ui_context *ui) {
-    if (0 == ui->layout_dirty)
-        return;
 
-    llk__ui_refresh(ui);
+    if (ui->layout_dirty) {
+        llk__ui_refresh(ui);
+    } else {
+        llk__ui_elem_hit_test(ui->root);
+    }
 }
 
 void llk_ui_update(struct llk_ui_context *ui) {

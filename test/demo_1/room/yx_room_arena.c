@@ -22,7 +22,7 @@ static void on_click(struct llk_ui_elem *elem) {
     printf("clicked\n");
 
 
-    llk_ui_destroy_elem(llk_ui_get_elem_by_id(ui, "hp"));
+   // llk_ui_destroy_elem(llk_ui_get_elem_by_id(ui, "hp"));
 }
 
 static void room_build_ui(void) {
