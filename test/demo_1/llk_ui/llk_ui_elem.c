@@ -124,7 +124,7 @@ err:
     return NULL;
 }
 
-void llk__ui_destruct_elem(struct llk_ui_elem *elem) {
+void llk_ui_destroy_elem(struct llk_ui_elem *elem) {
 
     if (elem->type->fn_fini != NULL) {
         elem->type->fn_fini(elem);
@@ -136,7 +136,7 @@ void llk__ui_destruct_elem(struct llk_ui_elem *elem) {
     for (k_list_for_each(child_list, iter)) {
         child = container_of(iter, struct llk_ui_elem, sibling_link);
 
-        llk__ui_destruct_elem(child);
+        llk_ui_destroy_elem(child);
     }
 
     if ('\0' != elem->id_map_node.key[0]) {
@@ -152,36 +152,7 @@ void llk__ui_destruct_elem(struct llk_ui_elem *elem) {
         llk__ui_mem_free(elem->data);
     }
 
-    k_log_trace("destruct UI elem `%s`", elem->type->type_name);
-
     llk__ui_mem_free(elem);
-}
-
-void llk_ui_destroy_elem(struct llk_ui_elem *elem) {
-
-    if (NULL == elem)
-        return;
-
-    if (k_list_node_is_loop(&elem->pending_destroy_list_node)) {
-        llk__ui_destruct_elem(elem);
-        return;
-    }
-
-    k_list_add_tail(&elem->ui->pending_destroy_list, &elem->pending_destroy_list_node);
-}
-
-void llk__ui_clear_pending_destroy_list(struct llk_ui_context *ui) {
-
-    struct llk_ui_elem *elem;
-    struct k_list *pending_destroy_list = &ui->pending_destroy_list;
-    struct k_list_node *iter;
-    for (k_list_for_each(pending_destroy_list, iter)) {
-        elem = container_of(iter, struct llk_ui_elem, pending_destroy_list_node);
-
-        llk__ui_destruct_elem(elem);
-    }
-
-    k_list_init(&ui->pending_destroy_list);
 }
 
 /* endregion */

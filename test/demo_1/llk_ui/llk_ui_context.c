@@ -119,7 +119,8 @@ void llk_ui_destroy_context(struct llk_ui_context *ui) {
     if (NULL == ui)
         return;
 
-    /* TODO 销毁所有 UI 元素 */
+    /* TODO 销毁所有 UI 元素（包括哪些已创建出来但是没有添加到树上的元素） */
+    llk_ui_destroy_elem(ui->root);
 
     k_str_map_destruct(&ui->elem_type_map);
 
@@ -172,8 +173,6 @@ void llk__ui_mark_layout_dirty(struct llk_ui_context *ui) {
 }
 
 void llk__ui_refresh(struct llk_ui_context *ui) {
-
-    llk__ui_clear_pending_destroy_list(ui);
 
     llk__ui_elem_measure(ui->root);
     llk__ui_elem_layout(ui->root);
