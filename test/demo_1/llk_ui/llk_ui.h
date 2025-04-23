@@ -86,10 +86,28 @@ void llk_ui_elem_destroy(struct llk_ui_elem *elem);
  * \brief 设置 UI 元素的属性
  *
  * 所有元素都支持的属性：
+ *
  * - `id`
+ *   元素的唯一标识符。元素默认没有 id，你可以为元素指定唯一的 id，用来方便查找元素。
+ *   设置 id 时，若已有其他元素使用相同的 id，将设置失败。
+ *
  * - `w, h`
+ *   用于指定元素的宽和高。可选的单位有：`px`、`%`、`vw`、`vh`：
+ *   - `px` 像素
+ *   - `%`  相对父元素的百分比
+ *   - `vw` 视口宽度的百分比
+ *   - `vh` 视口高度的百分比
+ *   - 若没有指定单位，则默认单位是 `px`
+ *
  * - `left, right, top, bottom`
- * - `display`
+ *   用于指定元素的边相对于父元素的偏移。
+ *   可选的单位有：`px`、`%`、`vw`、`vh`，若没有带单位，则默认单位为像素。
+ *   若元素的 `w` 已被指定，且同时指定 `left` 和 `right`，则 `right` 的值将被忽略，
+ *   若元素的 `w` 未指定，且同时指定 `left` 和 `right`，则拉伸宽度以适应偏移。高度同理。
+ *
+ * - `hidden`
+ *   控制元素是否被隐藏。可选取值只有 `true` 和 `false`。
+ *   若为 `true`，则该元素及其子元素不可见，不参与布局、事件处理和绘制。
  */
 int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *val);
 

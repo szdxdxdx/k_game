@@ -225,7 +225,7 @@ static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val) {
         return 0;
 
     if (NULL != k_str_intrusive_map_get(&elem->ui->elem_id_map, val)) {
-        k_log_error("UI elem id `%s` already registered", val);
+        k_log_error("UI elem with the same id `%s` already exists", val);
         return -1;
     }
 
