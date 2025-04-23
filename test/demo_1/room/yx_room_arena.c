@@ -16,11 +16,14 @@
 
 static const char *ui_xml_file_path = "./demo_1/ui/ui.xml";
 
+static struct llk_ui_context *ui = NULL;
+
 static void on_click(struct llk_ui_elem *elem) {
     printf("clicked\n");
-}
 
-static struct llk_ui_context *ui = NULL;
+
+    llk_ui_destroy_elem(llk_ui_get_elem_by_id(ui, "hp"));
+}
 
 static void room_build_ui(void) {
 

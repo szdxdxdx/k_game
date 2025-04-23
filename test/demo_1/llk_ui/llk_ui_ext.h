@@ -145,8 +145,6 @@ void llk__ui_refresh(struct llk_ui_context *ui);
 /* 若布局脏标记为非 0，则刷新布局 */
 void llk__ui_refresh_if_layout_dirty(struct llk_ui_context *ui);
 
-void llk__ui_clear_pending_destroy_list(struct llk_ui_context *ui);
-
 /* endregion */
 
 /* region [UI_elem_type] */

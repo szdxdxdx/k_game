@@ -130,6 +130,8 @@ void llk_ui_destroy_elem(struct llk_ui_elem *elem) {
         elem->type->fn_fini(elem);
     }
 
+    struct llk_ui_context *ui = elem->ui;
+
     struct llk_ui_elem *child;
     struct k_list *child_list = &elem->child_list;
     struct k_list_node *iter;
@@ -144,7 +146,6 @@ void llk_ui_destroy_elem(struct llk_ui_elem *elem) {
     }
 
     k_list_del(&elem->sibling_link);
-    k_list_del(&elem->pending_destroy_list_node);
 
     llk__ui_elem_set_id(elem, NULL);
 
@@ -153,6 +154,8 @@ void llk_ui_destroy_elem(struct llk_ui_elem *elem) {
     }
 
     llk__ui_mem_free(elem);
+
+    llk__ui_mark_layout_dirty(ui);
 }
 
 /* endregion */
@@ -608,12 +611,12 @@ int llk_ui_elem_is_hovered(struct llk_ui_elem *elem) {
 
 int llk_ui_elem_is_clicked(struct llk_ui_elem *elem) {
     llk__ui_refresh_if_layout_dirty(elem->ui);
-    return elem->is_hovered && elem->ui->mouse_button_pressed;
+    return elem->is_hovered && elem->ui->mouse_button_down;
 }
 
 int llk_ui_elem_is_pressed(struct llk_ui_elem *elem) {
     llk__ui_refresh_if_layout_dirty(elem->ui);
-    return elem->is_hovered && elem->ui->mouse_button_down;
+    return elem->is_hovered && elem->ui->mouse_button_pressed;
 }
 
 void llk_ui_elem_get_rect(struct llk_ui_elem *elem, float *get_x, float *get_y, float *get_w, float *get_h) {

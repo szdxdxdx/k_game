@@ -156,15 +156,15 @@ static void llk__ui_get_input(struct llk_ui_context *ui) {
     ui->mouse_y = k_mouse_window_y();
 
     if (k_mouse_button_down(K_BUTTON_LEFT)) {
-        ui->mouse_button_pressed = 1;
-    } else {
-        ui->mouse_button_pressed = 0;
-    }
-
-    if (k_mouse_button_down_or_held(K_BUTTON_LEFT)) {
         ui->mouse_button_down = 1;
     } else {
         ui->mouse_button_down = 0;
+    }
+
+    if (k_mouse_button_down_or_held(K_BUTTON_LEFT)) {
+        ui->mouse_button_pressed = 1;
+    } else {
+        ui->mouse_button_pressed = 0;
     }
 }
 
