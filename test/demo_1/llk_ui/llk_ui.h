@@ -72,10 +72,10 @@ struct llk_ui_elem *llk_ui_get_elem_by_id(struct llk_ui_context *ui, const char 
 
 /* region [create] */
 
-/** \brief 创建一个 UI 元素 */
+/** \brief 创建 UI 元素 */
 struct llk_ui_elem *llk_ui_elem_create(struct llk_ui_context *ui, const char *type_name);
 
-/* TODO */
+/** \brief 销毁 UI 元素，将其从 UI 树中摘除 */
 void llk_ui_elem_destroy(struct llk_ui_elem *elem);
 
 /* endregion */

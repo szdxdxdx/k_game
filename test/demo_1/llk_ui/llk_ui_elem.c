@@ -125,7 +125,7 @@ err:
     return NULL;
 }
 
-void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
+static void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
     assert(NULL == elem->parent || elem->flag_destroy);
 
     if (elem->type->fn_fini != NULL) {
@@ -167,6 +167,12 @@ void llk_ui_elem_destroy(struct llk_ui_elem *elem) {
     }
 
     elem->flag_destroy = 1;
+}
+
+static void llk__ui_elem_destroy_if_flag(struct llk_ui_elem *elem) {
+    if (elem->flag_destroy) {
+        llk__ui_elem_destroy(elem);
+    }
 }
 
 /* endregion */
@@ -504,11 +510,7 @@ static void llk__ui_elem_compute_size(struct llk_ui_elem *elem) {
 }
 
 void llk__ui_elem_measure(struct llk_ui_elem *elem) {
-
-    if (elem->flag_destroy) {
-        llk__ui_elem_destroy(elem);
-        return;
-    }
+    llk__ui_elem_destroy_if_flag(elem);
 
     llk__ui_elem_compute_edge_offset(elem);
 
@@ -525,6 +527,7 @@ void llk__ui_elem_measure(struct llk_ui_elem *elem) {
 }
 
 void llk__ui_elem_layout(struct llk_ui_elem *elem) {
+    llk__ui_elem_destroy_if_flag(elem);
 
     struct llk_ui_elem *parent = elem->parent;
 
@@ -559,6 +562,7 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
 }
 
 void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {
+    llk__ui_elem_destroy_if_flag(elem);
 
     struct llk_ui_context *ui = elem->ui;
 
@@ -585,6 +589,7 @@ void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {
 }
 
 void llk__ui_elem_dispatch_event(struct llk_ui_elem *elem) {
+    llk__ui_elem_destroy_if_flag(elem);
 
     struct llk_ui_elem *child;
     struct k_list *child_list = &elem->child_list;
@@ -601,6 +606,7 @@ void llk__ui_elem_dispatch_event(struct llk_ui_elem *elem) {
 }
 
 void llk__ui_elem_draw(struct llk_ui_elem *elem) {
+    llk__ui_elem_destroy_if_flag(elem);
 
     if (elem->type->fn_draw != NULL) {
         elem->type->fn_draw(elem);
