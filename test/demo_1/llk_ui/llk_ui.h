@@ -38,6 +38,7 @@ void llk_ui_elem_remove(struct llk_ui_elem *elem);
 
 /* region [find_elem] */
 
+/** \brief 获取指定 id 的 UI 元素 */
 struct llk_ui_elem *llk_ui_get_elem_by_id(struct llk_ui_context *ui, const char *id);
 
 /* endregion */
@@ -61,11 +62,18 @@ void llk_ui_draw(struct llk_ui_context *ui);
 
 /* region [register_callback] */
 
-typedef void (*llk_ui_callback_fn)(void);
+/** \brief 事件回调函数 */
+typedef void (*llk_ui_callback_fn)(struct llk_ui_elem *elem);
 
+/**
+ * \brief 注册事件回调函数
+ *
+ * UI 元素通过 `key` 名字来绑定回调，而不是函数指针
+ *
+ * 注册回调函数，需要提交函数指针，以及唯一的 `key` 作为它的名字，
+ * 若注册成功，函数返回 0，否则返回非 0。
+ */
 int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, llk_ui_callback_fn fn_callback);
-
-llk_ui_callback_fn llk__ui_get_callback(struct llk_ui_context *ui, const char *key);
 
 /* endregion */
 

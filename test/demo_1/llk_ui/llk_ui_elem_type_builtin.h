@@ -3,7 +3,12 @@
 
 #include "./llk_ui_ext.h"
 
-/* llk UI 内建的 UI 元素 */
+/* llk UI 内置的元素类型
+ *
+ * 它们会在创建 UI 上下文的时候被注册。
+ */
+
+/* ------------------------------------------------------------------------ */
 
 /* 根元素，类型名为 `root`
  *
@@ -11,11 +16,19 @@
  */
 extern struct llk_ui_elem_type llk__ui_elem_root;
 
-/* 普通的布局盒子，类型名为 `box`
+/* 普普通通的布局盒子，类型名为 `box`
  *
  * 支持的属性：
- * - `background-color` 背景颜色
- * - `border-color` 边框颜色
+ * 
+ * - `background-color`        背景颜色（默认）
+ * - `background-color.hover`  背景颜色（鼠标悬浮时）
+ * - `background-color.active` 背景颜色（鼠标按下时）
+ *
+ * - `border-color`        边框颜色（默认）
+ * - `border-color.hover`  边框颜色（鼠标悬浮时）
+ * - `border-color.active` 边框颜色（鼠标按下时）
+ *
+ * - `on_click` 点击事件，鼠标点击元素时执行事件回调
  */
 extern struct llk_ui_elem_type llk__ui_elem_box;
 

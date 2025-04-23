@@ -218,7 +218,7 @@ void llk_ui_draw(struct llk_ui_context *ui) {
 
 /* region [callback] */
 
-int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, void (*fn_callback)(void)) {
+int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, llk_ui_callback_fn fn_callback) {
 
     if (NULL != k_str_map_get(&ui->callback_fn_map, key)) {
         k_log_error("Callback function `%s` already registered", key);

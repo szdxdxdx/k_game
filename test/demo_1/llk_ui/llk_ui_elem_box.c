@@ -136,13 +136,22 @@ static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, 
 static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = elem->data;
 
-    uint32_t background_color = box->background_color.computed_val;
+    uint32_t background_color;
 
     if (elem->is_hovered && LLK_UI_UNIT_NO_VAL != box->background_color_hovered.unit) {
-        background_color = box->background_color_hovered.computed_val;
-
-        if (elem->ui->mouse_button_down && LLK_UI_UNIT_NO_VAL != box->background_color_activated.unit)
+        if (elem->ui->mouse_button_down && LLK_UI_UNIT_NO_VAL != box->background_color_activated.unit) {
             background_color = box->background_color_activated.computed_val;
+        } else {
+            background_color = box->background_color_hovered.computed_val;
+        }
+    } else if (elem->ui->mouse_button_down && LLK_UI_UNIT_NO_VAL != box->background_color_activated.unit) {
+        if (elem->is_hovered) {
+            background_color = box->background_color_activated.computed_val;
+        } else {
+            background_color = box->background_color.computed_val;
+        }
+    } else {
+        background_color = box->background_color.computed_val;
     }
 
     k_canvas_set_draw_color_rgba(background_color);
@@ -158,7 +167,7 @@ static void llk__ui_elem_box_dispatch_event(struct llk_ui_elem *elem) {
     if (elem->is_hovered && elem->ui->mouse_button_pressed) {
 
         if (NULL != box->fn_on_click) {
-            box->fn_on_click();
+            box->fn_on_click(elem);
         }
     }
 }

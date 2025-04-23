@@ -261,6 +261,13 @@ void llk__ui_elem_draw(struct llk_ui_elem *elem);
 
 /* endregion */
 
+/* region [callback] */
+
+/* 根据 `key` 名字获取已注册的回调函数，获取不到则返回 `NULL` */
+llk_ui_callback_fn llk__ui_get_callback(struct llk_ui_context *ui, const char *key);
+
+/* endregion */
+
 /* region [mem_alloc] */
 
 /* 申请内存分配 */

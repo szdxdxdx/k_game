@@ -91,7 +91,7 @@ struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *ty
 
     struct llk_ui_elem_type *type = k_str_map_get(&ui->elem_type_map, type_name);
     if (NULL == type) {
-        k_log_error("UI elem type `%s` not registered", type_name);
+        k_log_error("Unknown UI elem type `%s`", type_name);
         return NULL;
     }
 

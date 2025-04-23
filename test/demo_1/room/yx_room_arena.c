@@ -13,7 +13,7 @@
 
 static const char *ui_xml_file_path = "./demo_1/ui/ui.xml";
 
-static void on_click(void) {
+static void on_click(struct llk_ui_elem *elem) {
     printf("clicked\n");
 }
 
