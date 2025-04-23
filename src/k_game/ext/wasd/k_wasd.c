@@ -25,13 +25,13 @@ static void WASD_step(struct k_component *component) {
 
     float delta_time = k_get_step_delta();
 
-    if (k_key_down_or_pressed(WASD->key_up))
+    if (k_key_down_or_held(WASD->key_up))
         *(WASD->y) -= WASD->speed * delta_time;
-    if (k_key_down_or_pressed(WASD->key_down))
+    if (k_key_down_or_held(WASD->key_down))
         *(WASD->y) += WASD->speed * delta_time;
-    if (k_key_down_or_pressed(WASD->key_left))
+    if (k_key_down_or_held(WASD->key_left))
         *(WASD->x) -= WASD->speed * delta_time;
-    if (k_key_down_or_pressed(WASD->key_right))
+    if (k_key_down_or_held(WASD->key_right))
         *(WASD->x) += WASD->speed * delta_time;
 }
 

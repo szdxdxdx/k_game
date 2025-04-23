@@ -82,7 +82,7 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 
 static void shoot(struct k_object *object) {
 
-    if (k_mouse_button_down(K_BUTTON_LEFT) || k_mouse_button_pressed(K_BUTTON_RIGHT)) {
+    if (k_mouse_button_down_or_held(K_BUTTON_LEFT) || k_mouse_button_down(K_BUTTON_RIGHT)) {
         struct yx_obj_weapon *weapon = k_object_get_data(object);
         bullet_create(weapon);
     }
@@ -112,7 +112,7 @@ static void draw_weapon(struct k_object *object) {
 void mouse_drag(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
-    if (k_key_down_or_pressed(K_KEY_LEFT_SHIFT)) {
+    if (k_key_down_or_held(K_KEY_LEFT_SHIFT)) {
         float x = k_mouse_x();
         float y = k_mouse_y();
         k_position_set_world_position(weapon->position, x, y);

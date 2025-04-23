@@ -15,22 +15,19 @@ enum k_mouse_button {
     K_BUTTON_RIGHT  = 2,
 };
 
-/* 按下按键 */
-int k_mouse_button_pressed(enum k_mouse_button button);
-
-/* 松开按键 */
-int k_mouse_button_released(enum k_mouse_button button);
-
-/* 按住按键 */
-int k_mouse_button_held(enum k_mouse_button button);
-
-/* 按键空闲 */
-int k_mouse_button_idle(enum k_mouse_button button);
-
-/* 按下或按住 */
+/** \brief 检测鼠标按键是否在当前帧内被按下 */
 int k_mouse_button_down(enum k_mouse_button button);
 
-/* 没有按下，也没有按住 */
+/** \brief 检测鼠标按键是否持续被按住 */
+int k_mouse_button_held(enum k_mouse_button button);
+
+/** \brief 检测鼠标按键是否在当前帧被按下或按住 */
+int k_mouse_button_down_or_held(enum k_mouse_button button);
+
+/** \brief 松开鼠标按键是否在当前帧内被松开 */
 int k_mouse_button_up(enum k_mouse_button button);
+
+/** \brief 检测鼠标按键是否处于空闲状态 */
+int k_mouse_button_idle(enum k_mouse_button button);
 
 #endif

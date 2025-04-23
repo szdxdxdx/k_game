@@ -41,7 +41,7 @@ static void yx__empty_room_ui_update(void *unused) {
 static void yx__empty_room_ui_rebuild(void *unused) {
     (void)unused;
 
-    if (k_key_down_or_pressed(K_KEY_LEFT_CTRL) && k_key_pressed(K_KEY_R)) {
+    if (k_key_down_or_held(K_KEY_LEFT_CTRL) && k_key_down(K_KEY_R)) {
         yx__empty_room_ui_build();
     }
 }
@@ -60,7 +60,7 @@ static void draw_background(void *unused) {
 }
 
 static void set_window_top(void *unused) {
-    if (k_key_down_or_pressed(K_KEY_LEFT_CTRL) && k_key_pressed(K_KEY_T)) {
+    if (k_key_down_or_held(K_KEY_LEFT_CTRL) && k_key_down(K_KEY_T)) {
         static int enabled = 1;
         k_window_set_always_on_top(enabled);
         enabled = !enabled;

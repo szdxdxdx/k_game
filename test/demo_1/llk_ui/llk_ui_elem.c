@@ -5,6 +5,8 @@
 
 #include "./llk_ui_ext.h"
 
+static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val);
+
 /* region [register_type] */
 
 int llk__ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_elem_type *type) {
@@ -56,13 +58,38 @@ err:
 
 /* region [create] */
 
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type) {
+struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *type_name) {
+
+    struct llk_ui_elem *elem = NULL;
+    void *data = NULL;
+
+    struct llk_ui_elem_type *type = k_str_map_get(&ui->elem_type_map, type_name);
+    if (NULL == type) {
+        k_log_error("Unknown UI elem type `%s`", type_name);
+        goto err;
+    }
+
+    elem = llk__ui_mem_alloc(ui, sizeof(struct llk_ui_elem));
+    if (NULL == elem)
+        goto err;
 
     elem->ui = ui;
 
     elem->parent = NULL;
     k_list_init(&elem->child_list);
     k_list_node_loop(&elem->sibling_link);
+
+    elem->type = type;
+
+    if (0 == type->data_size) {
+        elem->data = NULL;
+    } else {
+        data = llk__ui_mem_alloc(ui, type->data_size);
+        if (NULL == data)
+            goto err;
+
+        elem->data = data;
+    }
 
     elem->id_map_node.key = "";
 
@@ -77,44 +104,22 @@ struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_
     elem->x = 0.0f;
     elem->y = 0.0f;
 
-    elem->type = type;
-
     if (NULL != type->fn_init) {
         if (0 != type->fn_init(elem))
-            return NULL;
+            goto err;
     }
 
     return elem;
-}
 
-struct llk_ui_elem *llk_ui_create_elem(struct llk_ui_context *ui, const char *type_name) {
-
-    struct llk_ui_elem_type *type = k_str_map_get(&ui->elem_type_map, type_name);
-    if (NULL == type) {
-        k_log_error("Unknown UI elem type `%s`", type_name);
-        return NULL;
+err:
+    k_log_error("Failed to create UI elem `%s`", type_name);
+    if (NULL != data) {
+        llk__ui_mem_free(data);
     }
-
-    struct llk_ui_elem *elem = llk__ui_mem_alloc(ui, sizeof(struct llk_ui_elem));
-    if (NULL == elem)
-        return NULL;
-
-    if (0 == type->data_size) {
-        elem->data = NULL;
-    } else {
-        elem->data = llk__ui_mem_alloc(ui, type->data_size);
-        if (NULL == elem->data) {
-            llk__ui_mem_free(elem);
-        }
-    }
-
-    if (NULL == llk__ui_construct_elem(elem, ui, type)) {
-        llk__ui_mem_free(elem->data);
+    if (NULL != elem) {
         llk__ui_mem_free(elem);
-        return NULL;
     }
-
-    return elem;
+    return NULL;
 }
 
 void llk__ui_destruct_elem(struct llk_ui_elem *elem) {
@@ -131,6 +136,19 @@ void llk__ui_destruct_elem(struct llk_ui_elem *elem) {
 
         llk__ui_destruct_elem(child);
     }
+
+    if ('\0' != elem->id_map_node.key[0]) {
+        llk__ui_mem_free((void *)elem->id_map_node.key);
+    }
+
+    k_list_del(&elem->sibling_link);
+
+    llk__ui_elem_set_id(elem, NULL);
+
+    if (NULL != elem->data) {
+        llk__ui_mem_free(elem->data);
+    }
+    llk__ui_mem_free(elem);
 }
 
 /* endregion */
@@ -172,7 +190,13 @@ void llk_ui_elem_remove(struct llk_ui_elem *elem) {
 static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val) {
 
     if (NULL == val || '\0' == val[0]) {
-        elem->id_map_node.key = "";
+
+        if ('\0' != elem->id_map_node.key[0]) {
+            k_str_intrusive_map_del(&elem->id_map_node);
+
+            llk__ui_mem_free((void *)elem->id_map_node.key);
+            elem->id_map_node.key = "";
+        }
         return 0;
     }
 
@@ -189,6 +213,8 @@ static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val) {
         return -1;
 
     if ('\0' != elem->id_map_node.key[0]) {
+        k_str_intrusive_map_del(&elem->id_map_node);
+
         llk__ui_mem_free((void *)elem->id_map_node.key);
     }
 

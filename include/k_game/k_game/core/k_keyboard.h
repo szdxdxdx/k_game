@@ -153,22 +153,19 @@ enum k_keyboard_key {
     K_KEY_ENUM_END       = K_KEY_F12,
 };
 
-/* 按下按键 */
-int k_key_pressed(enum k_keyboard_key key);
+/** \brief 检测键盘按键是否在当前帧内被按下 */
+int k_key_down(enum k_keyboard_key key);
 
-/* 松开按键 */
-int k_key_released(enum k_keyboard_key key);
-
-/* 按住按键 */
+/** \brief 检测键盘按键是否持续被按住 */
 int k_key_held(enum k_keyboard_key key);
 
-/* 按键空闲 */
+/** \brief 检测键盘按键是否在当前帧被按下或按住 */
+int k_key_down_or_held(enum k_keyboard_key key);
+
+/** \brief 松开键盘按键是否在当前帧内被松开 */
+int k_key_up(enum k_keyboard_key key);
+
+/** \brief 检测键盘按键是否处于空闲状态 */
 int k_key_idle(enum k_keyboard_key key);
-
-/* 按下或按住 */
-int k_key_down_or_pressed(enum k_keyboard_key key);
-
-/* 没有按下，也没有按住 */
-int k_key_up_or_idle(enum k_keyboard_key key);
 
 #endif

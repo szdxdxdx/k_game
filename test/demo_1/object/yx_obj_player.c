@@ -86,48 +86,48 @@ static void player_step(struct k_object *object) {
     float delta = k_get_step_delta();
 
     /* 旋转 */
-    if (k_key_down_or_pressed('R'))
+    if (k_key_down_or_held('R'))
         k_sprite_renderer_rotate(player->spr_rdr, 180.0f * delta + k_sprite_renderer_get_rotation(player->spr_rdr));
 
     /* 翻转 */
-    if (k_key_down_or_pressed('F')) {
-        if (k_key_pressed('X'))
+    if (k_key_down_or_held('F')) {
+        if (k_key_down('X'))
             k_sprite_renderer_flip_x(player->spr_rdr, 1);
-        if (k_key_pressed('Y'))
+        if (k_key_down('Y'))
             k_sprite_renderer_flip_y(player->spr_rdr, 1);
-        if (k_key_pressed('C'))
+        if (k_key_down('C'))
             k_sprite_renderer_flip_y(player->spr_rdr, 0);
     }
 
     /* 放缩 */
-    if (k_key_down_or_pressed('Z')) {
-        if (k_key_down_or_pressed('X'))
+    if (k_key_down_or_held('Z')) {
+        if (k_key_down_or_held('X'))
             k_sprite_renderer_set_w(player->spr_rdr, 6 + k_sprite_renderer_get_w(player->spr_rdr));
-        if (k_key_down_or_pressed('Y'))
+        if (k_key_down_or_held('Y'))
             k_sprite_renderer_set_h(player->spr_rdr, 6 + k_sprite_renderer_get_h(player->spr_rdr));
     }
 
     /* 加速减速 */
-    if (k_key_down_or_pressed('='))
+    if (k_key_down_or_held('='))
         k_sprite_renderer_set_speed(player->spr_rdr, 1.0f * delta + k_sprite_renderer_get_speed(player->spr_rdr));
-    if (k_key_down_or_pressed('-'))
+    if (k_key_down_or_held('-'))
         k_sprite_renderer_set_speed(player->spr_rdr, -0.5f * delta + k_sprite_renderer_get_speed(player->spr_rdr));
 
-    if (k_key_pressed('B')) {
+    if (k_key_down('B')) {
         if (k_key_held(K_KEY_LEFT_SHIFT))
             k_sprite_renderer_set_debug(player->spr_rdr, 0);
         else
             k_sprite_renderer_set_debug(player->spr_rdr, 1);
     }
 
-    if (k_key_pressed('H')) {
+    if (k_key_down('H')) {
         k_sprite_renderer_set_sprite(player->spr_rdr, NULL);
     }
-    if (k_key_pressed('G')) {
+    if (k_key_down('G')) {
         k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_run);
     }
 
-    if (k_key_pressed('V')) {
+    if (k_key_down('V')) {
         k_view_set_position(player->x + 2.0f, player->y + 2.0f);
     }
 }

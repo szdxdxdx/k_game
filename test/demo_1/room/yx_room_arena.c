@@ -108,9 +108,9 @@ static void room_draw_text(void *unused) {
 
 static void set_debug(void *data) {
 
-    if (k_key_pressed('B')) {
+    if (k_key_down('B')) {
 
-        if (k_key_down_or_pressed(K_KEY_LEFT_SHIFT)) {
+        if (k_key_down_or_held(K_KEY_LEFT_SHIFT)) {
             k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 0);
             k_camera_set_debug(0);
         }
@@ -118,7 +118,7 @@ static void set_debug(void *data) {
             k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 1);
             k_camera_set_debug(1);
         }
-        if (k_key_down_or_pressed(K_KEY_LEFT_CTRL)) {
+        if (k_key_down_or_held(K_KEY_LEFT_CTRL)) {
             room_build_ui();
         }
     }

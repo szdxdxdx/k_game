@@ -231,6 +231,10 @@ struct llk_ui_elem {
     /* 指向相邻兄弟节点的指针域 */
     struct k_list_node sibling_link;
 
+    /* 该元素的类型信息，以及该类型的自定义数据 */
+    const struct llk_ui_elem_type *type;
+    void *data;
+
     /* 侵入的哈希表节点，属于 `llk_ui_context->elem_id_map` */
     struct k_str_intrusive_map_node id_map_node;
 
@@ -244,23 +248,16 @@ struct llk_ui_elem {
     struct llk_ui_float top;
     struct llk_ui_float bottom;
 
-    /* 布局计算得出的，元素左上角在 UI 界面中的坐标 */
+    /* 元素左上角在 UI 界面中的坐标（计算布局后得出） */
     float x;
     float y;
 
     /* 标记鼠标指针是否悬浮在该元素上 */
     unsigned int is_hovered;
 
-    /* 该元素的类型信息，以及该类型的自定义数据 */
-    const struct llk_ui_elem_type *type;
-    void *data;
+    /* 标记该元素（及其子元素）是否显示 */
+    unsigned int is_hidden;
 };
-
-/* 构造 UI 元素的基类实例 */
-struct llk_ui_elem *llk__ui_construct_elem(struct llk_ui_elem *elem, struct llk_ui_context *ui, const struct llk_ui_elem_type *type);
-
-/* 析构 UI 元素的基类实例 */
-void llk__ui_destruct_elem(struct llk_ui_elem *elem);
 
 /* 设置 UI 元素的属性的默认实现 */
 int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, const char *val);
