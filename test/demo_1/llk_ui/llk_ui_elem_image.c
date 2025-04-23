@@ -4,8 +4,8 @@
 #include "k_game/core/k_canvas.h"
 #include "k_game/core/k_image.h"
 
-#include "./llk_ui_elem.h"
-#include "./llk_ui_elem_type.h"
+#include "./llk_ui_ext.h"
+#include "./llk_ui_elem_type_builtin.h"
 
 struct llk_ui_elem_image {
 
@@ -57,7 +57,7 @@ static void llk__ui_elem_image_draw(struct llk_ui_elem *elem) {
     k_canvas_ui_draw_image(image->src, NULL, elem->x, elem->y, &options);
 }
 
-struct llk_ui_elem_type_config llk__ui_elem_image_config = {
+struct llk_ui_elem_type llk__ui_elem_image = {
     .type_name         = "image",
     .data_size         = sizeof(struct llk_ui_elem_image),
     .fn_init           = llk__ui_elem_image_init,

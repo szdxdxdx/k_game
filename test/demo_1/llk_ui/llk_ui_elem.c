@@ -3,51 +3,47 @@
 #define K_LOG_TAG "llk:UI"
 #include "k_log.h"
 
-#include "./llk_ui_context.h"
-#include "./llk_ui_elem.h"
-#include "./llk_ui_elem_type.h"
-#include "./llk_ui_mem_alloc.h"
-#include "./llk_ui_val_parser.h"
+#include "./llk_ui_ext.h"
 
 /* region [register_type] */
 
-int llk_ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_elem_type_config *config) {
+int llk__ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_elem_type *type) {
 
     char *type_name = NULL;
 
-    if (NULL == config) {
-        k_log_error("Invalid `config`");
+    if (NULL == type) {
+        k_log_error("`type` is null");
         goto err;
-    } else if (NULL == config->type_name || '\0' == config->type_name[0]) {
+    } else if (NULL == type->type_name || '\0' == type->type_name[0]) {
         k_log_error("Invalid `config->type_name`");
         goto err;
-    } else if (NULL != k_str_map_get(&ui->elem_type_map, config->type_name)) {
-        k_log_error("UI elem type `%s` already registered", config->type_name);
+    } else if (NULL != k_str_map_get(&ui->elem_type_map, type->type_name)) {
+        k_log_error("Elem type `%s` already registered", type->type_name);
         goto err;
     }
 
-    type_name = llk__ui_strdup(ui, config->type_name, strlen(config->type_name));
+    type_name = llk__ui_strdup(ui, type->type_name, strlen(type->type_name));
     if (NULL == type_name)
         goto err;
 
-    struct llk_ui_elem_type *type = k_str_map_add(&ui->elem_type_map, type_name, sizeof(struct llk_ui_elem_type));
-    if (NULL == type) {
+    struct llk_ui_elem_type *copy = k_str_map_add(&ui->elem_type_map, type_name, sizeof(struct llk_ui_elem_type));
+    if (NULL == copy) {
         k_log_error("Failed to add type name to registry name map");
         goto err;
     }
 
-    type->data_size         = config->data_size;
-    type->type_name         = type_name;
-    type->fn_init           = config->fn_init;
-    type->fn_fini           = config->fn_fini;
-    type->fn_set_attr       = config->fn_set_attr;
-    type->fn_draw           = config->fn_draw;
-    type->fn_dispatch_event = config->fn_dispatch_event;
+    copy->data_size         = type->data_size;
+    copy->type_name         = type_name;
+    copy->fn_init           = type->fn_init;
+    copy->fn_fini           = type->fn_fini;
+    copy->fn_set_attr       = type->fn_set_attr;
+    copy->fn_draw           = type->fn_draw;
+    copy->fn_dispatch_event = type->fn_dispatch_event;
 
     return 0;
 
 err:
-    k_log_error("Failed to register element type");
+    k_log_error("Failed to register elem type");
 
     if (NULL != type_name) {
         llk__ui_mem_free(type_name);

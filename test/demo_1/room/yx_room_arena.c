@@ -7,9 +7,7 @@
 #include "../sprite/yx_spr.h"
 #include "../object/yx_obj.h"
 
-#include "../llk_ui/llk_ui_context.h"
-#include "../llk_ui/llk_ui_elem.h"
-#include "../llk_ui/llk_ui_build.h"
+#include "../llk_ui/llk_ui.h"
 
 /* region [ui] */
 

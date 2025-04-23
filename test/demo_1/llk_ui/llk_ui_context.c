@@ -6,10 +6,8 @@
 #include "k_game/core/k_mouse.h"
 #include "k_game/core/k_canvas.h"
 
-#include "./llk_ui_context.h"
-#include "./llk_ui_elem.h"
+#include "./llk_ui_ext.h"
 #include "./llk_ui_elem_type_builtin.h"
-#include "./llk_ui_elem_type.h"
 
 /* region [create] */
 
@@ -22,11 +20,11 @@ static struct llk_ui_elem llk__ui_window = {
 
 static int llk__ui_registry_builtin_elem_types(struct llk_ui_context *ui) {
 
-    if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_root_config))
+    if (0 != llk__ui_register_elem_type(ui, &llk__ui_elem_root))
         return -1;
-    if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_box_config))
+    if (0 != llk__ui_register_elem_type(ui, &llk__ui_elem_box))
         return -1;
-    if (0 != llk_ui_register_elem_type(ui, &llk__ui_elem_image_config))
+    if (0 != llk__ui_register_elem_type(ui, &llk__ui_elem_image))
         return -1;
 
     return 0;

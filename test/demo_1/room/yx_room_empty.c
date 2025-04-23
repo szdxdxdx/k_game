@@ -4,9 +4,7 @@
 
 #include "./yx_room_empty.h"
 
-#include "../llk_ui/llk_ui_elem.h"
-#include "../llk_ui/llk_ui_context.h"
-#include "../llk_ui/llk_ui_build.h"
+#include "../llk_ui/llk_ui.h"
 #include "k_game/core/k_window.h"
 
 static struct llk_ui_context *ui;

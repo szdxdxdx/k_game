@@ -7,12 +7,12 @@ struct llk_ui_context;
 /** \brief UI 元素 */
 struct llk_ui_elem;
 
-/* region [create_context] */
+/* region [UI context] */
 
 /** \brief 创建 UI 上下文 */
 struct llk_ui_context *llk_ui_create_context(void);
 
-/** \brief 销毁 UI 上下文 */
+/** \brief 销毁 UI 上下文。若 `ui` 为 `NULL` 则函数立即返回 */
 void llk_ui_destroy_context(struct llk_ui_context *ui);
 
 /* endregion */
@@ -31,12 +31,21 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
 /** \brief 添加 UI 子元素 */
 int llk_ui_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
 
+/* TODO */
+void llk_ui_elem_remove(struct llk_ui_elem *elem);
+
 /* endregion */
 
-/* region [build_ui_from_xml] */
+/* region [find_elem] */
 
-/** \brief 解析 xml 文件，生成对应的 UI 上下文 */
-struct llk_ui_context *llk_ui_build_context_from_xml_file(const char *file_path);
+struct llk_ui_elem *llk_ui_get_elem_by_id(struct llk_ui_context *ui, const char *id);
+
+/* endregion */
+
+/* region [parse_from_xml] */
+
+/** \brief 解析 xml 文件，生成对应的 UI 元素 */
+struct llk_ui_elem *llk_ui_build_elem_from_xml_file(struct llk_ui_context *ui, const char *file_path);
 
 /* endregion */
 
@@ -47,6 +56,16 @@ void llk_ui_update(struct llk_ui_context *ui);
 
 /** \brief 绘制 UI 界面 */
 void llk_ui_draw(struct llk_ui_context *ui);
+
+/* endregion */
+
+/* region [register_callback] */
+
+typedef void (*llk_ui_callback_fn)(void);
+
+int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, llk_ui_callback_fn fn_callback);
+
+llk_ui_callback_fn llk__ui_get_callback(struct llk_ui_context *ui, const char *key);
 
 /* endregion */
 
