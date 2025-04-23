@@ -307,6 +307,11 @@ int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, con
 
 int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
 
+    if (NULL == elem) {
+        k_log_warn("elem is null");
+        return -1;
+    }
+
     int result;
     if (NULL == elem->type->fn_set_attr) {
         result = llk__ui_elem_set_attr_default(elem, key, val);
