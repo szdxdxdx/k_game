@@ -166,9 +166,9 @@ int k_key_held(enum k_keyboard_key key);
 int k_key_idle(enum k_keyboard_key key);
 
 /* 按下或按住 */
-int k_key_down(enum k_keyboard_key key);
+int k_key_down_or_pressed(enum k_keyboard_key key);
 
 /* 没有按下，也没有按住 */
-int k_key_up(enum k_keyboard_key key);
+int k_key_up_or_idle(enum k_keyboard_key key);
 
 #endif

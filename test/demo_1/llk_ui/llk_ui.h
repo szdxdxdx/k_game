@@ -38,10 +38,13 @@ void llk_ui_elem_remove(struct llk_ui_elem *elem);
 
 /* region [UI elem] */
 
-/** \brief 检查鼠标指针是否悬浮在 UI 元素上 */
+/** \brief 检查鼠标指针是否悬浮在该 UI 元素上，若是，函数返回非 0，否则返回 0*/
 int llk_ui_elem_is_hovered(struct llk_ui_elem *elem);
 
-/** \brief 检查鼠标是按在 UI 元素上 */
+/** \brief 检查鼠标点击了该 UI 元素，若是，函数返回非 0，否则返回 0 */
+int llk_ui_elem_is_clicked(struct llk_ui_elem *elem);
+
+/** \brief 检查鼠标是否按在该 UI 元素上，若是，函数返回非 0，否则返回 0 */
 int llk_ui_elem_is_pressed(struct llk_ui_elem *elem);
 
 /** \brief 获取 UI 元素矩形左上角的在 UI 界面中的坐标以及矩形的宽高 */
@@ -51,7 +54,7 @@ void llk_ui_elem_get_rect(struct llk_ui_elem *elem, float *get_x, float *get_y, 
 
 /* region [find_elem] */
 
-/** \brief 获取指定 id 的 UI 元素 */
+/** \brief 根据 id 查找 UI 元素，找不到则返回 `NULL` */
 struct llk_ui_elem *llk_ui_get_elem_by_id(struct llk_ui_context *ui, const char *id);
 
 /* endregion */

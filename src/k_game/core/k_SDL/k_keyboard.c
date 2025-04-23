@@ -187,12 +187,12 @@ int k_key_idle(enum k_keyboard_key key) {
     return 0b000 == k__keyboard.key_state[key];
 }
 
-int k_key_down(enum k_keyboard_key key) {
+int k_key_down_or_pressed(enum k_keyboard_key key) {
     return 0b010 == (k__keyboard.key_state[key] & 0b110)
         || 0b100 == (k__keyboard.key_state[key] & 0b101);
 }
 
-int k_key_up(enum k_keyboard_key key) {
+int k_key_up_or_idle(enum k_keyboard_key key) {
     return 0b010 != (k__keyboard.key_state[key] & 0b110)
         && 0b100 != (k__keyboard.key_state[key] & 0b101);
 }

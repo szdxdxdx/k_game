@@ -112,7 +112,7 @@ static void draw_weapon(struct k_object *object) {
 void mouse_drag(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
-    if (k_key_down(K_KEY_LEFT_SHIFT)) {
+    if (k_key_down_or_pressed(K_KEY_LEFT_SHIFT)) {
         float x = k_mouse_x();
         float y = k_mouse_y();
         k_position_set_world_position(weapon->position, x, y);

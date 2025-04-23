@@ -86,11 +86,11 @@ static void player_step(struct k_object *object) {
     float delta = k_get_step_delta();
 
     /* 旋转 */
-    if (k_key_down('R'))
+    if (k_key_down_or_pressed('R'))
         k_sprite_renderer_rotate(player->spr_rdr, 180.0f * delta + k_sprite_renderer_get_rotation(player->spr_rdr));
 
     /* 翻转 */
-    if (k_key_down('F')) {
+    if (k_key_down_or_pressed('F')) {
         if (k_key_pressed('X'))
             k_sprite_renderer_flip_x(player->spr_rdr, 1);
         if (k_key_pressed('Y'))
@@ -100,17 +100,17 @@ static void player_step(struct k_object *object) {
     }
 
     /* 放缩 */
-    if (k_key_down('Z')) {
-        if (k_key_down('X'))
+    if (k_key_down_or_pressed('Z')) {
+        if (k_key_down_or_pressed('X'))
             k_sprite_renderer_set_w(player->spr_rdr, 6 + k_sprite_renderer_get_w(player->spr_rdr));
-        if (k_key_down('Y'))
+        if (k_key_down_or_pressed('Y'))
             k_sprite_renderer_set_h(player->spr_rdr, 6 + k_sprite_renderer_get_h(player->spr_rdr));
     }
 
     /* 加速减速 */
-    if (k_key_down('='))
+    if (k_key_down_or_pressed('='))
         k_sprite_renderer_set_speed(player->spr_rdr, 1.0f * delta + k_sprite_renderer_get_speed(player->spr_rdr));
-    if (k_key_down('-'))
+    if (k_key_down_or_pressed('-'))
         k_sprite_renderer_set_speed(player->spr_rdr, -0.5f * delta + k_sprite_renderer_get_speed(player->spr_rdr));
 
     if (k_key_pressed('B')) {
