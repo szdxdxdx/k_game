@@ -23,6 +23,8 @@ struct llk_ui_context {
     /* 根元素节点，elem type 固定是 `root` */
     struct llk_ui_elem *root;
 
+    /* TODO 记录由该上下文创建出的，但还没有添加到树中的（没有父元素）的节点 */
+
     /* 内存池 */
     struct k_mem_pool mem_pool;
 
