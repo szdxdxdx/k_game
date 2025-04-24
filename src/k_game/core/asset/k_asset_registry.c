@@ -58,11 +58,15 @@ int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry
         }
     }
     else {
-        if ('\0' != map_node->key[0])
-            k_str_intrusive_map_del(map_node);
-
-        if (0 != k_str_intrusive_map_add_if_absent(&registry->name_map, asset_name, map_node)) {
+        if (NULL != k_str_intrusive_map_get(&registry->name_map, asset_name)) {
             return -1; /* TODO log("同名资源已存在") */
+        }
+
+        if ('\0' != map_node->key[0]) {
+            k_str_intrusive_map_del(map_node);
+        }
+        else {
+            k_str_intrusive_map_add_directly(&registry->name_map, asset_name, map_node);
         }
     }
 

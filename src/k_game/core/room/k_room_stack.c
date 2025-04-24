@@ -63,13 +63,14 @@ struct k_room *k__room_stack_get_top(void) {
 int k_room_goto(struct k_room *room) {
 
     if (NULL == room) {
-        k_log_error("Failed to goto room. Room is NULL");
+        k_log_error("Failed to goto room. Room is null");
         return -1;
     }
 
-    if (room_stack_is_full())
-        /* TODO log("Room stack is full") */
+    if (room_stack_is_full()) {
+        k_log_error("Room stack is full");
         return -1;
+    }
 
     room_stack_push(room);
 
