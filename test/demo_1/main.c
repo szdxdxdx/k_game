@@ -5,6 +5,7 @@
 
 #include "./sprite/yx_spr.h"
 #include "./room/yx_room.h"
+#include "webui.h"
 
 static void create_room(void) {
 
@@ -39,11 +40,18 @@ int main(int argc, char **argv) {
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);
 
+    size_t my_window = webui_new_window();
+    webui_show(my_window, "<html><head><script src=\"webui.js\"></script></head> Hello World ! </html>");
+
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_title = "demo 1";
     config.fn_init = fn_init_game;
 
     k_game_run(&config);
+
+    webui_close(my_window);
+
+    return 0;
 }
 
 #endif

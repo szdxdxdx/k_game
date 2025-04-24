@@ -90,9 +90,10 @@ struct k_component *k_object_add_component(struct k_object *object, struct k_com
 
 void k_object_del_component(struct k_component *component) {
 
-    if (NULL != component) {
-        k__component_destroy(component);
-    }
+    if (NULL == component)
+        return;
+
+    k__component_destroy(component);
 }
 
 void k__object_del_all_components(struct k_object *object) {

@@ -154,8 +154,6 @@ void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
         llk__ui_mem_free(elem->data);
     }
 
-    k_log_trace("Destroyed elem `%s`", elem->type->type_name);
-
     llk__ui_mem_free(elem);
 
     llk__ui_mark_layout_dirty(ui);
