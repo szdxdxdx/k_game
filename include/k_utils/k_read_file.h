@@ -21,6 +21,4 @@
  */
 char *k_read_txt_file(const char *file_path, char *buf, size_t buf_size, size_t *get_len);
 
-char *k_read_txt_file(const char *file_path, char *buf, size_t buf_size, size_t *get_len);
-
 #endif

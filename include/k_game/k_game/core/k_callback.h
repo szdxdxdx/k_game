@@ -6,6 +6,9 @@
 /**
  * \brief 删除事件回调
  *
+ * 销毁房间、对象、组件、组件管理器时，
+ * 其挂载的事件回调也会被一并移除，无需手动调用本函数。
+ *
  * 若 `callback` 为 `NULL`，则函数立即返回。
  */
 void k_callback_del(struct k_callback *callback);

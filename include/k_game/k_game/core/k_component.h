@@ -14,11 +14,8 @@ struct k_component_entity_config {
      * \brief 关联数据的结构体大小
      *
      * 指定组件的自定义关联数据的结构体大小，单位：字节。
-     * 创建组件实例时，k_game 会为关联数据分配内存，
-     * 通过 `k_component_get_data()` 可以访问该内存。
-     *
-     * 关联数据的内存由 k_game 管理，其生命周期与组件相同。
-     * 销毁组件时 k_game 会释放该内存。
+     * 关联数据的内存由 k_game 负责分配和释放，其生命周期与组件一致。
+     * 可通过 `k_component_get_data()` 访问该内存。
      *
      * 若不需要关联数据，可将该值设为 0，
      * 之后 `k_component_get_data()` 将返回 `NULL`。
@@ -72,11 +69,9 @@ struct k_component_manager_config {
      * \brief 关联数据的结构体大小
      *
      * 指定组件管理器的自定义关联数据的结构体大小，单位：字节。
-     * 创建组件管理器时，k_game 会为关联数据分配内存，
-     * 通过 `k_component_manager_get_data()` 可以访问该内存。
+     * 关联数据的内存由 k_game 负责分配和释放，其生命周期与组件管理器一致。
+     * 可通过 `k_component_manager_get_data()` 访问该内存。
      *
-     * 关联数据的内存由 k_game 管理，其生命周期与组件相同。
-     * 销毁组件管理器时 k_game 会释放该内存。
      *
      * 若不需要关联数据，可将该值设为 0，
      * 之后 `k_component_manager_get_data()` 将返回 `NULL`。
@@ -177,7 +172,10 @@ struct k_component_type *k_component_type_find(const char *type_name);
 struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
 
 /**
- * \brief 移除对象上挂载的组件
+ * \brief 从对象上移除组件
+ *
+ * 函数将组件从其所属对象上移除并销毁。
+ * 销毁对象时，其挂载的所有组件会被一并移除，无需手动调用本函数。
  *
  * 若 `component` 为 `NULL` 则函数立即返回。
  */
@@ -220,8 +218,8 @@ void *k_component_get_object_data(struct k_component *component);
  * 创建组件实例时，组件会与房间中的组件管理器关联（若管理器存在）。
  * 函数返回该组件关联的管理器。
  *
- * 若注册组件类型时没有定义管理器，则函数返回 `NULL`。
- * 若创建该组件时，房间还没有添加管理器，则函数返回 `NULL`。
+ * 若注册该组件的类型时，没有配置管理器，则函数返回 `NULL`。
+ * 若创建该组件时，房间尚未添加管理器，则函数返回 `NULL`。
  */
 struct k_component_manager *k_component_get_manager(struct k_component *component);
 

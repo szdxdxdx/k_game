@@ -5,6 +5,8 @@
 
 #include "./k_game_fwd.h"
 
+struct k_sprite;
+
 /** \brief 用于创建精灵帧的配置 */
 struct k_sprite_frame_config {
 
