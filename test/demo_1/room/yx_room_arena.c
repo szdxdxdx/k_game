@@ -214,6 +214,11 @@ static int init_arena_room(void *params) {
     return 0;
 }
 
+static void fini_arena_room(void) {
+
+    llk_ui_destroy_context(ui);
+}
+
 static void enter_arena_room(void) {
     // k_window_set_always_on_top(1);
 }
@@ -225,6 +230,7 @@ struct k_room *yx_create_arena_room(void) {
     config.room_h    = 1080 * 1.5f;
     config.data_size = sizeof(struct yx_room_arena);
     config.fn_init   = init_arena_room;
+    config.fn_fini   = fini_arena_room;
     config.fn_enter  = enter_arena_room;
 
     return k_room_create(&config, NULL);

@@ -137,11 +137,8 @@ struct llk_ui_context {
 /* 标记 UI 结构或布局发生了变更，需要重新布局 */
 void llk__ui_mark_layout_dirty(struct llk_ui_context *ui);
 
-/* 刷新 UI 状态：计算所有元素的尺寸，定位元素的位置，并判断鼠标指针落在哪个元素上 */
-void llk__ui_refresh(struct llk_ui_context *ui);
-
-/* 刷新 UI 状态：若布局脏标记为非 0 则重新布局，否则只判断鼠标指针落在哪个元素上 */
-void llk__ui_refresh_if_layout_dirty(struct llk_ui_context *ui);
+/* 若布局脏标记为非 0，则重新布局 */
+void llk__ui_layout_if_dirty(struct llk_ui_context *ui);
 
 /* endregion */
 
@@ -216,19 +213,19 @@ struct llk_ui_elem_type {
 
 /* region [UI_elem] */
 
-/* UI 元素节点 */
+/* UI 元素 */
 struct llk_ui_elem {
 
-    /* 所属的上下文 */
+    /* UI 元素所属的上下文 */
     struct llk_ui_context *ui;
 
-    /* 父节点 */
+    /* 父元素 */
     struct llk_ui_elem *parent;
 
-    /* 子节点列表 */
+    /* 子元素 */
     struct k_list child_list;
 
-    /* 指向相邻兄弟节点的指针域 */
+    /* 指向相邻兄弟元素的指针域 */
     struct k_list_node sibling_link;
 
     /* 该元素的类型信息，以及该类型的自定义数据 */
@@ -252,7 +249,7 @@ struct llk_ui_elem {
     float x;
     float y;
 
-    /* 标记鼠标指针是否悬浮在该元素上 */
+    /* 标记鼠标指针是否悬浮在该元素上（计算布局后得出） */
     unsigned int is_hovered;
 
     /* 标记该元素（及其子元素）是否显示 */
@@ -261,6 +258,9 @@ struct llk_ui_elem {
     /* 销毁元素时将它标记为逻辑删除，延迟销毁 */
     unsigned int flag_destroy;
 };
+
+/* 销毁 UI 元素 */
+void llk__ui_elem_destroy(struct llk_ui_elem *elem);
 
 /* 设置 UI 元素的属性的默认实现 */
 int llk__ui_elem_set_attr_default(struct llk_ui_elem *elem, const char *key, const char *val);

@@ -115,13 +115,13 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
 
 /* region [get] */
 
-/** \brief 检查鼠标指针是否悬浮在该 UI 元素上，若是，函数返回非 0，否则返回 0*/
+/** \brief 若当前帧内鼠标指针是否悬浮在该 UI 元素上，则函数返回非 0，否则返回 0*/
 int llk_ui_elem_is_hovered(struct llk_ui_elem *elem);
 
-/** \brief 检查鼠标点击了该 UI 元素，若是，函数返回非 0，否则返回 0 */
+/** \brief 若当前帧内鼠标点击了该 UI 元素，则函数返回非 0，否则返回 0 */
 int llk_ui_elem_is_clicked(struct llk_ui_elem *elem);
 
-/** \brief 检查鼠标是否按在该 UI 元素上，若是，函数返回非 0，否则返回 0 */
+/** \brief 若当前帧内鼠标是否按在该 UI 元素上，则函数返回非 0，否则返回 0 */
 int llk_ui_elem_is_pressed(struct llk_ui_elem *elem);
 
 /** \brief 获取 UI 元素矩形左上角的在 UI 界面中的坐标以及矩形的宽高 */

@@ -129,8 +129,7 @@ err:
     return NULL;
 }
 
-static void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
-    assert(NULL == elem->parent || elem->flag_destroy);
+void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
 
     if (elem->type->fn_fini != NULL) {
         elem->type->fn_fini(elem);
@@ -155,6 +154,8 @@ static void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
         llk__ui_mem_free(elem->data);
     }
 
+    k_log_trace("Destroyed elem `%s`", elem->type->type_name);
+
     llk__ui_mem_free(elem);
 
     llk__ui_mark_layout_dirty(ui);
@@ -173,7 +174,7 @@ void llk_ui_elem_destroy(struct llk_ui_elem *elem) {
     elem->flag_destroy = 1;
 }
 
-static void llk__ui_elem_destroy_if_flag(struct llk_ui_elem *elem) {
+static void llk__ui_elem_destroy_if_marked(struct llk_ui_elem *elem) {
     if (elem->flag_destroy) {
         llk__ui_elem_destroy(elem);
     }
@@ -532,7 +533,7 @@ static void llk__ui_elem_compute_size(struct llk_ui_elem *elem) {
 
 void llk__ui_elem_measure(struct llk_ui_elem *elem) {
 
-    llk__ui_elem_destroy_if_flag(elem);
+    llk__ui_elem_destroy_if_marked(elem);
 
     if (elem->is_hidden)
         return;
@@ -553,7 +554,7 @@ void llk__ui_elem_measure(struct llk_ui_elem *elem) {
 
 void llk__ui_elem_layout(struct llk_ui_elem *elem) {
 
-    llk__ui_elem_destroy_if_flag(elem);
+    llk__ui_elem_destroy_if_marked(elem);
 
     if (elem->is_hidden)
         return;
@@ -592,7 +593,7 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
 
 void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {
 
-    llk__ui_elem_destroy_if_flag(elem);
+    llk__ui_elem_destroy_if_marked(elem);
 
     if (elem->is_hidden)
         return;
@@ -623,7 +624,7 @@ void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {
 
 void llk__ui_elem_dispatch_event(struct llk_ui_elem *elem) {
 
-    llk__ui_elem_destroy_if_flag(elem);
+    llk__ui_elem_destroy_if_marked(elem);
 
     if (elem->is_hidden)
         return;
@@ -644,7 +645,7 @@ void llk__ui_elem_dispatch_event(struct llk_ui_elem *elem) {
 
 void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 
-    llk__ui_elem_destroy_if_flag(elem);
+    llk__ui_elem_destroy_if_marked(elem);
 
     if (elem->is_hidden)
         return;
@@ -668,22 +669,22 @@ void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 /* region [get] */
 
 int llk_ui_elem_is_hovered(struct llk_ui_elem *elem) {
-    llk__ui_refresh_if_layout_dirty(elem->ui);
+    llk__ui_layout_if_dirty(elem->ui);
     return 0 != elem->is_hovered;
 }
 
 int llk_ui_elem_is_clicked(struct llk_ui_elem *elem) {
-    llk__ui_refresh_if_layout_dirty(elem->ui);
+    llk__ui_layout_if_dirty(elem->ui);
     return elem->is_hovered && elem->ui->mouse_button_down;
 }
 
 int llk_ui_elem_is_pressed(struct llk_ui_elem *elem) {
-    llk__ui_refresh_if_layout_dirty(elem->ui);
+    llk__ui_layout_if_dirty(elem->ui);
     return elem->is_hovered && elem->ui->mouse_button_pressed;
 }
 
 void llk_ui_elem_get_rect(struct llk_ui_elem *elem, float *get_x, float *get_y, float *get_w, float *get_h) {
-    llk__ui_refresh_if_layout_dirty(elem->ui);
+    llk__ui_layout_if_dirty(elem->ui);
     if (NULL != get_x) { *get_x = elem->x; }
     if (NULL != get_y) { *get_y = elem->y; }
     if (NULL != get_w) { *get_w = elem->w.computed_val; }

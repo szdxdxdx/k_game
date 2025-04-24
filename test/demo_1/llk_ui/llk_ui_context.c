@@ -118,7 +118,8 @@ void llk_ui_destroy_context(struct llk_ui_context *ui) {
         return;
 
     /* TODO 销毁所有 UI 元素（包括哪些已创建出来但是没有添加到树上的元素） */
-    llk_ui_elem_destroy(ui->root);
+    ui->root->parent = NULL;
+    llk__ui_elem_destroy(ui->root);
 
     k_str_map_destruct(&ui->elem_type_map);
 
@@ -170,27 +171,29 @@ void llk__ui_mark_layout_dirty(struct llk_ui_context *ui) {
     ui->layout_dirty = 1;
 }
 
-void llk__ui_refresh(struct llk_ui_context *ui) {
-
-    llk__ui_elem_measure(ui->root);
-    llk__ui_elem_layout(ui->root);
-    ui->layout_dirty = 0;
-
-    llk__ui_elem_hit_test(ui->root);
-}
-
-void llk__ui_refresh_if_layout_dirty(struct llk_ui_context *ui) {
+void llk__ui_layout_if_dirty(struct llk_ui_context *ui) {
 
     if (ui->layout_dirty) {
-        llk__ui_refresh(ui);
-    } else {
+        llk__ui_elem_measure(ui->root);
+        llk__ui_elem_layout(ui->root);
+        ui->layout_dirty = 0;
         llk__ui_elem_hit_test(ui->root);
     }
 }
 
 void llk_ui_update(struct llk_ui_context *ui) {
+
     llk__ui_get_input(ui);
-    llk__ui_refresh_if_layout_dirty(ui);
+
+    if (ui->layout_dirty) {
+        llk__ui_elem_measure(ui->root);
+        llk__ui_elem_layout(ui->root);
+
+        ui->layout_dirty = 0;
+    }
+
+    llk__ui_elem_hit_test(ui->root);
+
     llk__ui_elem_dispatch_event(ui->root);
 }
 
