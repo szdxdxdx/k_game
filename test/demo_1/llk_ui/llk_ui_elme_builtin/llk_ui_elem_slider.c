@@ -39,7 +39,7 @@ struct llk_ui_elem_slider {
     unsigned int is_changed;
 
     /* 值发生变化后执行的回调 */
-    void (*fn_on_change)(struct llk_ui_elem *elem);
+    void (*fn_on_change)(struct llk_ui_elem *elem, float old_val, float new_val);
 };
 
 /* 滑块最大宽 12 像素 */
@@ -63,11 +63,11 @@ static int llk__ui_elem_slider_init(struct llk_ui_elem *elem) {
     slider->thumb_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
 
     slider->border_color.unit = LLK_UI_UNIT_RGBA;
-    slider->border_color.specified_val = 0xffffffff;
-    slider->border_color.computed_val  = 0xffffffff;
+    slider->border_color.specified_val = 0xff6600ff;
+    slider->border_color.computed_val  = 0xff6600ff;
     slider->border_color_hovered.unit = LLK_UI_UNIT_RGBA;
-    slider->border_color_hovered.specified_val = 0xff6600ff;
-    slider->border_color_hovered.computed_val  = 0xff6600ff;
+    slider->border_color_hovered.specified_val = 0xffffffff;
+    slider->border_color_hovered.computed_val  = 0xffffffff;
     slider->border_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
 
     slider->min     = 0.0f;
@@ -101,10 +101,10 @@ static int llk__ui_elem_slider_set_color(struct llk_ui_u32 *set_color, const cha
     return 0;
 }
 
-static int llk__ui_elem_slider_set_attr_fn_callback(struct llk_ui_context *ui, void **set_fn, const char *val) {
+static int llk__ui_elem_slider_set_attr_fn_callback(struct llk_ui_context *ui, void *set_fn, const char *val) {
 
     if (val == NULL || 0 == strcmp(val, "null")) {
-        *set_fn = NULL;
+        *(void **)set_fn = NULL;
         return 0;
     }
 
@@ -112,7 +112,7 @@ static int llk__ui_elem_slider_set_attr_fn_callback(struct llk_ui_context *ui, v
     if (NULL == fn)
         return -1;
 
-    *set_fn = fn;
+    *(void **)set_fn = fn;
     return 0;
 }
 
@@ -220,6 +220,9 @@ static int llk__ui_elem_slider_set_attr(struct llk_ui_elem *elem, const char *ke
     if (0 == strcmp(key, "step"))
         return llk__ui_elem_slider_set_attr_step(elem, val);
 
+    if (0 == strcmp(key, "on-change"))
+        return llk__ui_elem_slider_set_attr_fn_callback(elem->ui, &slider->fn_on_change, val);
+
     return llk__ui_elem_set_attr_default(elem, key, val);
 }
 
@@ -244,8 +247,6 @@ static void llk__ui_elem_slider_hit_test(struct llk_ui_elem *elem) {
         }
     }
 
-
-
     float thumb_w = fminf(elem->w.computed_val, SLIDER_THUMB_MAX_W);
     float thumb_x = clamp(elem->x, ui->mouse_x - thumb_w / 2, elem->x + elem->w.computed_val - thumb_w);
 
@@ -264,7 +265,7 @@ static void llk__ui_elem_slider_dispatch_event(struct llk_ui_elem *elem) {
         slider->is_changed = 0;
 
         if (NULL != slider->fn_on_change) {
-            slider->fn_on_change(elem);
+            slider->fn_on_change(elem, slider->old_val, slider->val);
         }
     }
 }
@@ -312,7 +313,10 @@ static void llk__ui_elem_slider_draw(struct llk_ui_elem *elem) {
     float track_y = elem->y;
 
     float thumb_w = fminf(elem->w.computed_val, SLIDER_THUMB_MAX_W);
-    float thumb_x = elem->x + slider->val * (elem->w.computed_val - thumb_w) / (slider->max - slider->min);
+    float thumb_x = elem->x + (slider->val - slider->min) * (elem->w.computed_val - thumb_w) / (slider->max - slider->min);
+    if (thumb_x > elem->x + elem->w.computed_val - thumb_w) {
+        thumb_x = elem->x + elem->w.computed_val - thumb_w;
+    }
 
     float track_left_x  = elem->x;
     float track_left_w  = thumb_x - track_left_x;
@@ -346,7 +350,3 @@ struct llk_ui_elem_type llk__ui_elem_slider = {
     .fn_dispatch_event = llk__ui_elem_slider_dispatch_event,
     .fn_draw           = llk__ui_elem_slider_draw,
 };
-
-struct llk_ui_elem_slider *llk_ui_elem_slider_create(struct llk_ui_context *ui) {
-    return (struct llk_ui_elem_slider *)llk_ui_elem_create(ui, "slider");
-}

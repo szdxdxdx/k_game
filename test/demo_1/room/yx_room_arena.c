@@ -40,6 +40,10 @@ static void btn_on_draw(struct llk_ui_elem *elem) {
     k_canvas_ui_printf(NULL, x, y, "click me!");
 }
 
+static void slider_on_change(struct llk_ui_elem *elem, float old_val, float new_val) {
+    printf("slider changed: %f -> %f\n", old_val, new_val);
+}
+
 static void room_build_ui(void) {
 
     if (NULL != ui) {
@@ -52,6 +56,7 @@ static void room_build_ui(void) {
 
     llk_ui_register_callback(ui, "click", btn_on_click);
     llk_ui_register_callback(ui, "draw", btn_on_draw);
+    llk_ui_register_callback(ui, "on_change", slider_on_change);
 
     struct llk_ui_elem *box = llk_ui_elem_create(ui, "box");
     if (NULL == box)

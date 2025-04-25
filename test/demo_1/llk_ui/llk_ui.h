@@ -135,17 +135,14 @@ void llk_ui_elem_get_rect(struct llk_ui_elem *elem, float *get_x, float *get_y, 
 
 /* region [builtin_elem] */
 
-/* region [box] */
-
 /**
- *
  * \brief 普普通通的布局盒子
  *
  * 元素类型名为 `box`。
  *
  * # `llk_ui_elem_set()` 支持的属性：
  *
- * ## 背景颜色
+ * ## 背景颜色 `background-color`
  * - `background-color`         默认
  * - `background-color.hovered` 鼠标悬浮时
  * - `background-color.pressed` 鼠标按住时
@@ -155,12 +152,12 @@ void llk_ui_elem_get_rect(struct llk_ui_elem *elem, float *get_x, float *get_y, 
  * llk_ui_elem_set(elem, "background-color.hovered", "#ee0000")
  * ```
  *
- * ## 边框颜色
+ * ## 边框颜色 `border-color`
  * - `border-color`         默认
  * - `border-color.hovered` 鼠标悬浮时
  * - `border-color.pressed` 鼠标按住时
  *
- * ## 点击事件
+ * ## 点击事件 `on-click`
  * - `on-click` 鼠标点击元素时执行该事件回调
  * 示例
  * ```C
@@ -177,8 +174,9 @@ void llk_ui_elem_get_rect(struct llk_ui_elem *elem, float *get_x, float *get_y, 
  * llk_ui_elem_set(elem, "on-click", "my_click_fn")
  * ```
  *
- * ## 绘制
- * - `fn-draw` 完全交由你来绘制元素，你可以自由绘制任何内容，绘制到你认为合适的地方。
+ * ## 绘制 `on-draw`
+ * 元素绘制完自身后，交由你来补充绘制内容，
+ * 你可以自由绘制任何内容，绘制到你认为合适的地方。
  * 示例：
  * ```C
  * void on_draw(struct llk_ui_elem *elem) {
@@ -191,19 +189,6 @@ void llk_ui_elem_get_rect(struct llk_ui_elem *elem, float *get_x, float *get_y, 
  */
 struct llk_ui_elem_box;
 
-/** \brief 创建一个 box 元素 */
-struct llk_ui_elem_box *llk_ui_elem_box_create(struct llk_ui_context *ui);
-
-/** \brief 设置 box 元素的点击事件，鼠标点击元素时执行该事件回调。设置成功则函数返回 0，否则返回非 0 */
-int llk_ui_elem_box_set_on_click(struct llk_ui_elem_box *elem, void (*fn_on_click)(struct llk_ui_elem *elem));
-
-/** \brief 设置 box 元素的绘制函数，完全交由你来绘制元素。设置成功则函数返回 0，否则返回非 0 */
-int llk_ui_elem_box_set_on_draw(struct llk_ui_elem_box *elem, void (*fn_on_click)(struct llk_ui_elem *elem));
-
-/* endregion */
-
-/* region [slider] */
-
 /**
  * \brief 滑动条
  *
@@ -211,23 +196,23 @@ int llk_ui_elem_box_set_on_draw(struct llk_ui_elem_box *elem, void (*fn_on_click
  *
  * # `llk_ui_elem_set()` 支持的属性：
  *
- * ## 滑槽颜色
+ * ## 滑槽颜色 `track-color`
  * - `track-color`         默认
  * - `track-color.hovered` 鼠标悬浮时
  * - `track-color.pressed` 鼠标按住时
  *
- * ## 滑块颜色
+ * ## 滑块颜色 `thumb-color`
  * - `thumb-color`         默认
  * - `thumb-color.hovered` 鼠标悬浮时
  * - `thumb-color.pressed` 鼠标按住时
  *
- * ## 边框颜色
+ * ## 边框颜色 `border-color`
  * - `border-color`         默认
  * - `border-color.hovered` 鼠标悬浮时
  * - `border-color.pressed` 鼠标按住时
  *
- * ## 输入事件
- * - `on-change` 滑动条的值发生变化时要执行的回调
+ * ## 输入事件 `on-change`
+ * 滑动条的值发生变化时要执行的回调。
  * 示例
  * ```C
  * void on_change(struct llk_ui_elem *elem, float old_val, float new_val) {
@@ -238,26 +223,12 @@ int llk_ui_elem_box_set_on_draw(struct llk_ui_elem_box *elem, void (*fn_on_click
  */
 struct llk_ui_elem_slider;
 
-/** \brief 创建一个 slider 元素 */
-struct llk_ui_elem_slider *llk_ui_elem_slider_create(struct llk_ui_context *ui);
-
-/** \brief 设置滑动条的值发生变化时要执行的回调。设置成功则函数返回 0，否则返回非 0 */
-int llk_ui_elem_slider_set_on_change(struct llk_ui_elem_slider *elem, void (*fn_on_change)(struct llk_ui_elem *elem, float old_val, float new_val));
-
-/* endregion */
-
-/* region [image] */
-
 /* 图片，类型名为 `image`
  *
  * 支持的属性：
  * - `src` 用于指定要绘制的图片的名字，该名字由 `k_image_set_name()` 指定
  */
 struct llk_ui_elem_image;
-
-struct llk_ui_elem_image *llk_ui_elem_image_create(struct llk_ui_context *ui);
-
-/* endregion */
 
 /* endregion */
 
