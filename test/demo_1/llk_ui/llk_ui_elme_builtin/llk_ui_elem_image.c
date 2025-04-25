@@ -7,19 +7,20 @@
 #include "../llk_ui_ext.h"
 
 struct llk_ui_elem_image {
+    struct llk_ui_elem super;
 
     struct k_image *src;
 };
 
 static int llk__ui_elem_image_init(struct llk_ui_elem *elem) {
-    struct llk_ui_elem_image *image = elem->data;
+    struct llk_ui_elem_image *image = (struct llk_ui_elem_image *)elem;
 
     image->src = NULL;
     return 0;
 }
 
 static int llk__ui_elem_image_set_attr_src(struct llk_ui_elem *elem, const char *val) {
-    struct llk_ui_elem_image *image = elem->data;
+    struct llk_ui_elem_image *image = (struct llk_ui_elem_image *)elem;
 
     struct k_image *src = k_image_find(val);
     if (NULL == src) {
@@ -40,7 +41,7 @@ static int llk__ui_elem_image_set_attr(struct llk_ui_elem *elem, const char *key
 }
 
 static void llk__ui_elem_image_draw(struct llk_ui_elem *elem) {
-    struct llk_ui_elem_image *image = elem->data;
+    struct llk_ui_elem_image *image = (struct llk_ui_elem_image *)elem;
 
     if (NULL == image->src)
         return;
@@ -58,7 +59,7 @@ static void llk__ui_elem_image_draw(struct llk_ui_elem *elem) {
 
 struct llk_ui_elem_type llk__ui_elem_image = {
     .type_name         = "image",
-    .data_size         = sizeof(struct llk_ui_elem_image),
+    .elem_struct_size         = sizeof(struct llk_ui_elem_image),
     .fn_init           = llk__ui_elem_image_init,
     .fn_fini           = NULL,
     .fn_set_attr       = llk__ui_elem_image_set_attr,

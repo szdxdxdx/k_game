@@ -166,7 +166,7 @@ struct llk_ui_elem_type {
      * 创建实例时，根据该字段分配 `llk_ui_elem` 的 `data` 的内存。
      * 若为 0，则表示该类型的元素没有自定义数据。
      */
-    size_t data_size;
+    size_t elem_struct_size;
 
     /* 初始化函数，在创建实例时调用
      *
@@ -244,9 +244,8 @@ struct llk_ui_elem {
     /* 指向相邻兄弟元素的指针域 */
     struct k_list_node sibling_link;
 
-    /* 该元素的类型信息，以及该类型的自定义数据 */
+    /* 该元素的类型信息 */
     const struct llk_ui_elem_type *type;
-    void *data;
 
     /* 侵入的哈希表节点，属于 `llk_ui_context->elem_id_map` */
     struct k_str_intrusive_map_node id_map_node;

@@ -35,7 +35,7 @@ int llk__ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_el
         goto err;
     }
 
-    copy->data_size         = type->data_size;
+    copy->elem_struct_size         = type->elem_struct_size;
     copy->type_name         = type_name;
     copy->fn_init           = type->fn_init;
     copy->fn_fini           = type->fn_fini;
@@ -64,7 +64,6 @@ err:
 struct llk_ui_elem *llk_ui_elem_create(struct llk_ui_context *ui, const char *type_name) {
 
     struct llk_ui_elem *elem = NULL;
-    void *data = NULL;
 
     struct llk_ui_elem_type *type = k_str_map_get(&ui->elem_type_map, type_name);
     if (NULL == type) {
@@ -72,7 +71,7 @@ struct llk_ui_elem *llk_ui_elem_create(struct llk_ui_context *ui, const char *ty
         goto err;
     }
 
-    elem = llk__ui_mem_alloc(ui, sizeof(struct llk_ui_elem));
+    elem = llk__ui_mem_alloc(ui, type->elem_struct_size);
     if (NULL == elem)
         goto err;
 
@@ -83,16 +82,6 @@ struct llk_ui_elem *llk_ui_elem_create(struct llk_ui_context *ui, const char *ty
     k_list_node_loop(&elem->sibling_link);
 
     elem->type = type;
-
-    if (0 == type->data_size) {
-        elem->data = NULL;
-    } else {
-        data = llk__ui_mem_alloc(ui, type->data_size);
-        if (NULL == data)
-            goto err;
-
-        elem->data = data;
-    }
 
     elem->id_map_node.key = "";
 
@@ -122,9 +111,6 @@ struct llk_ui_elem *llk_ui_elem_create(struct llk_ui_context *ui, const char *ty
 
 err:
     k_log_error("Failed to create UI elem `%s`", type_name);
-    if (NULL != data) {
-        llk__ui_mem_free(data);
-    }
     if (NULL != elem) {
         llk__ui_mem_free(elem);
     }
@@ -151,10 +137,6 @@ void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
     k_list_del(&elem->sibling_link);
 
     llk__ui_elem_set_id(elem, NULL);
-
-    if (NULL != elem->data) {
-        llk__ui_mem_free(elem->data);
-    }
 
     llk__ui_mem_free(elem);
 
