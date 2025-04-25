@@ -1,12 +1,9 @@
-#ifndef LLK_UI_ELEM_TYPE_BUILTIN_H
-#define LLK_UI_ELEM_TYPE_BUILTIN_H
+#ifndef LLK_UI_ELEM_BUILTIN_H
+#define LLK_UI_ELEM_BUILTIN_H
 
 #include "./llk_ui_ext.h"
 
-/* llk UI 内置的元素类型
- *
- * 它们会在创建 UI 上下文的时候被注册。
- */
+/* llk UI 内置的元素类型，它们会在创建 UI 上下文的时候被注册 */
 
 /* ------------------------------------------------------------------------ */
 
@@ -41,5 +38,7 @@ extern struct llk_ui_elem_type llk__ui_elem_box;
  * - `src` 用于指定要绘制的图片的名字，该名字由 `k_image_set_name()` 指定
  */
 extern struct llk_ui_elem_type llk__ui_elem_image;
+
+extern struct llk_ui_elem_type llk__ui_elem_slider;
 
 #endif

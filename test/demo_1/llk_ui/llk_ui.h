@@ -115,7 +115,7 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
 
 /* region [get] */
 
-/** \brief 若当前帧内鼠标指针是否悬浮在该 UI 元素上，则函数返回非 0，否则返回 0*/
+/** \brief 若当前帧内鼠标指针是否悬浮在该 UI 元素上，则函数返回非 0，否则返回 0 */
 int llk_ui_elem_is_hovered(struct llk_ui_elem *elem);
 
 /** \brief 若当前帧内鼠标点击了该 UI 元素，则函数返回非 0，否则返回 0 */

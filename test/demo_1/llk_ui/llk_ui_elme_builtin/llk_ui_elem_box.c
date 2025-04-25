@@ -1,7 +1,6 @@
 #include "k_game/core/k_canvas.h"
 
-#include "./llk_ui_ext.h"
-#include "./llk_ui_elem_type_builtin.h"
+#include "../llk_ui_ext.h"
 
 struct llk_ui_elem_box {
 
@@ -20,11 +19,15 @@ struct llk_ui_elem_box {
 static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = elem->data;
 
-    box->background_color.unit= LLK_UI_UNIT_NO_VAL;
+    box->background_color.unit= LLK_UI_UNIT_RGBA;
+    box->background_color.specified_val = 0xffffff99;
+    box->background_color.computed_val = 0xffffff99;
     box->background_color_hovered.unit = LLK_UI_UNIT_NO_VAL;
     box->background_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
 
-    box->border_color.unit = LLK_UI_UNIT_NO_VAL;
+    box->border_color.unit = LLK_UI_UNIT_RGBA;
+    box->border_color.specified_val = 0x00000099;
+    box->border_color.computed_val = 0x00000099;
     box->border_color_hovered.unit = LLK_UI_UNIT_NO_VAL;
     box->border_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
 
@@ -90,6 +93,17 @@ static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, 
     return llk__ui_elem_set_attr_default(elem, key, val);
 }
 
+static void llk__ui_elem_box_dispatch_event(struct llk_ui_elem *elem) {
+
+    if (llk_ui_elem_is_clicked(elem)) {
+
+        struct llk_ui_elem_box *box = elem->data;
+        if (NULL != box->fn_on_click) {
+            box->fn_on_click(elem);
+        }
+    }
+}
+
 static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = elem->data;
 
@@ -131,23 +145,14 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     }
 }
 
-static void llk__ui_elem_box_dispatch_event(struct llk_ui_elem *elem) {
-
-    if (llk_ui_elem_is_clicked(elem)) {
-
-        struct llk_ui_elem_box *box = elem->data;
-        if (NULL != box->fn_on_click) {
-            box->fn_on_click(elem);
-        }
-    }
-}
-
 struct llk_ui_elem_type llk__ui_elem_box = {
     .type_name         = "box",
     .data_size         = sizeof(struct llk_ui_elem_box),
     .fn_init           = llk__ui_elem_box_init,
     .fn_fini           = NULL,
     .fn_set_attr       = llk__ui_elem_box_set_attr,
-    .fn_draw           = llk__ui_elem_box_draw,
+    .fn_after_layout   = NULL,
+    .fn_hit_test       = NULL,
     .fn_dispatch_event = llk__ui_elem_box_dispatch_event,
+    .fn_draw           = llk__ui_elem_box_draw,
 };

@@ -105,7 +105,7 @@ struct llk_ui_context {
     float vw;
     float vh;
 
-    /* 鼠标在视口的坐标 */
+    /* 鼠标在 UI 界面中的坐标 */
     float mouse_x;
     float mouse_y;
 
@@ -186,27 +186,43 @@ struct llk_ui_elem_type {
      */
     int (*fn_set_attr)(struct llk_ui_elem *elem, const char *key, const char *val);
 
-    /* 绘制函数，在需要绘制该元素时被调用
+    /* 完成该元素的布局后执行的回调
      *
-     * 交由你来绘制元素，请绘制在合理的地方。
+     * llk UI 将从根节点开始，逐层向下计算 UI 元素的宽高尺寸（measure），
+     * 然后定位坐标位置（layout），在完成元素（及其子元素）的布局后会执行该回调。
+     * 此时你可以获取计算后的元素的坐标 `elem->x, elem->y`
+     * 以及宽高 `elem->w.computed_val, elem->h.computed_val`。
+     */
+    void (*fn_after_layout)(struct llk_ui_elem *elem);
+
+    /* 完成该元素的命中测试后执行的回调
+     *
+     * llk UI 将从根节点开始，逐层向下判断鼠标是否名字该元素，
+     * 也就是鼠标的指针是否悬浮在该元素上，判断完成后执行此回调。
+     * 你可以通过 `elem->is_hovered` 判断是否命中，
+     * 并结合 `elem->ui->mouse_button_down` 判断是否点击了该元素。
+     */
+    void (*fn_hit_test)(struct llk_ui_elem *elem);
+
+    /* 事件分发阶段要执行的回调
+     *
+     * 此时元素的布局和命中测试也已完成，你可以在这个阶段触发你定义的事件回调。
+     * 你需要设计该类型的元素支持什么样的回调，然后在事件分发阶段触发它们。
+     *
+     * 事件分发的顺序是，先触发子元素的事件回调，再轮到父元素。
+     * 你不需要主动通知父元素触发事件回调。
+     */
+    void (*fn_dispatch_event)(struct llk_ui_elem *elem);
+
+    /* 绘制阶段执行的回调
+     *
+     * 完全交由你来绘制元素，请将元素绘制在合理的地方。
      * 若设为 `NULL` 则忽略绘制，表明该元素仅用于定位布局。
      *
      * 绘制的顺序是，先绘制父元素，再绘制子元素。
      * 你不需要主动通知子元素执行绘制。
      */
     void (*fn_draw)(struct llk_ui_elem *elem);
-
-    /* 事件分发函数，在分发事件时调用
-     *
-     * 交由你来处理事件分发事件。
-     * 交由你来设计该类型的元素支持什么样的回调，并由你来发起调用。
-     *
-     * 你不需要手动通知子元素的绘制函数。
-     *
-     * 事件分发的顺序是，先出发子元素的事件回调，再轮到父元素。
-     * 你不需要主动通知父元素执行事件回调。
-     */
-    void (*fn_dispatch_event)(struct llk_ui_elem *elem);
 };
 
 /* endregion */

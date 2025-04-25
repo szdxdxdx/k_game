@@ -7,7 +7,7 @@
 #include "k_game/core/k_canvas.h"
 
 #include "./llk_ui_ext.h"
-#include "./llk_ui_elem_type_builtin.h"
+#include "./llk_ui_elem_builtin.h"
 
 /* region [create] */
 
@@ -25,6 +25,8 @@ static int llk__ui_registry_builtin_elem_types(struct llk_ui_context *ui) {
     if (0 != llk__ui_register_elem_type(ui, &llk__ui_elem_box))
         return -1;
     if (0 != llk__ui_register_elem_type(ui, &llk__ui_elem_image))
+        return -1;
+    if (0 != llk__ui_register_elem_type(ui, &llk__ui_elem_slider))
         return -1;
 
     return 0;

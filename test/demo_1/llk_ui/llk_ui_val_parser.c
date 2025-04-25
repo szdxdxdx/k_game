@@ -37,6 +37,12 @@ int llk__ui_parse_length_val(const char *str, float *get_val, enum llk_ui_unit *
 
 int llk__ui_parse_color_val(const char *str, uint32_t *get_val, enum llk_ui_unit *get_unit) {
 
+    if (*str == '\0') {
+        *get_unit = LLK_UI_UNIT_RGBA;
+        *get_val = 0x00000000;
+        return 0;
+    }
+
     if (*str != '#')
         return -1;
 

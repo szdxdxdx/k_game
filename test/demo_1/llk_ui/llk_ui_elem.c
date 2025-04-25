@@ -40,8 +40,10 @@ int llk__ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_el
     copy->fn_init           = type->fn_init;
     copy->fn_fini           = type->fn_fini;
     copy->fn_set_attr       = type->fn_set_attr;
-    copy->fn_draw           = type->fn_draw;
+    copy->fn_after_layout   = type->fn_after_layout;
+    copy->fn_hit_test       = type->fn_hit_test;
     copy->fn_dispatch_event = type->fn_dispatch_event;
+    copy->fn_draw           = type->fn_draw;
 
     return 0;
 
@@ -587,6 +589,10 @@ void llk__ui_elem_layout(struct llk_ui_elem *elem) {
 
         llk__ui_elem_layout(child);
     }
+
+    if (NULL != elem->type->fn_after_layout) {
+        elem->type->fn_after_layout(elem);
+    }
 }
 
 void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {
@@ -617,6 +623,10 @@ void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {
         child = container_of(iter, struct llk_ui_elem, sibling_link);
 
         llk__ui_elem_hit_test(child);
+    }
+
+    if (elem->type->fn_hit_test != NULL) {
+        elem->type->fn_hit_test(elem);
     }
 }
 
@@ -667,17 +677,14 @@ void llk__ui_elem_draw(struct llk_ui_elem *elem) {
 /* region [get] */
 
 int llk_ui_elem_is_hovered(struct llk_ui_elem *elem) {
-    llk__ui_layout_if_dirty(elem->ui);
     return 0 != elem->is_hovered;
 }
 
 int llk_ui_elem_is_clicked(struct llk_ui_elem *elem) {
-    llk__ui_layout_if_dirty(elem->ui);
     return elem->is_hovered && elem->ui->mouse_button_down;
 }
 
 int llk_ui_elem_is_pressed(struct llk_ui_elem *elem) {
-    llk__ui_layout_if_dirty(elem->ui);
     return elem->is_hovered && elem->ui->mouse_button_pressed;
 }
 
