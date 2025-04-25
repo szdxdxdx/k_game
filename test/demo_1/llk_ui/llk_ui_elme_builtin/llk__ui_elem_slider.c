@@ -7,26 +7,32 @@
 
 struct llk_ui_elem_slider {
 
-    struct llk_ui_u32 background_color;
-    struct llk_ui_u32 background_color_hovered;
-    struct llk_ui_u32 background_color_pressed;
+    /* 滑槽颜色 */
+    struct llk_ui_u32 track_color;
+    struct llk_ui_u32 track_color_hovered;
+    struct llk_ui_u32 track_color_pressed;
 
-    struct llk_ui_u32 foreground_color;
-    struct llk_ui_u32 foreground_color_hovered;
-    struct llk_ui_u32 foreground_color_pressed;
+    /* 滑块颜色 */
+    struct llk_ui_u32 thumb_color;
+    struct llk_ui_u32 thumb_color_hovered;
+    struct llk_ui_u32 thumb_color_pressed;
 
+    /* 边框颜色 */
     struct llk_ui_u32 border_color;
     struct llk_ui_u32 border_color_hovered;
     struct llk_ui_u32 border_color_pressed;
 
+    /* 滑动条的取值范围、步长 */
     float min;
     float max;
-    float val;
-    float new_val;
     float step;
 
-    unsigned int is_active;
+    /* 当前值、新值 */
+    float val;
+    float new_val;
 
+    /* 当前鼠标是否在移动滑块 */
+    unsigned int is_active;
 };
 
 /* 滑块最大宽 12 像素 */
@@ -35,22 +41,26 @@ struct llk_ui_elem_slider {
 static int llk__ui_elem_slider_init(struct llk_ui_elem *elem) {
     struct llk_ui_elem_slider *slider = elem->data;
 
-    slider->background_color.unit= LLK_UI_UNIT_RGBA;
-    slider->background_color.specified_val= 0xee000099;
-    slider->background_color.computed_val= 0xee000099;
-    slider->background_color_hovered.unit = LLK_UI_UNIT_NO_VAL;
-    slider->background_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
+    slider->track_color.unit= LLK_UI_UNIT_RGBA;
+    slider->track_color.specified_val= 0xee000099;
+    slider->track_color.computed_val= 0xee000099;
+    slider->track_color_hovered.unit = LLK_UI_UNIT_NO_VAL;
+    slider->track_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
 
-    slider->foreground_color.unit= LLK_UI_UNIT_RGBA;
-    slider->foreground_color.specified_val= 0xff6600dd;
-    slider->foreground_color.computed_val= 0xff6600dd;
-    slider->foreground_color_hovered.unit = LLK_UI_UNIT_NO_VAL;
-    slider->foreground_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
+    slider->thumb_color.unit= LLK_UI_UNIT_RGBA;
+    slider->thumb_color.specified_val= 0xff6600dd;
+    slider->thumb_color.computed_val = 0xff6600dd;
+    slider->thumb_color_hovered.unit = LLK_UI_UNIT_RGBA;
+    slider->thumb_color_hovered.specified_val = 0xff6600ff;
+    slider->thumb_color_hovered.computed_val  = 0xff6600ff;
+    slider->thumb_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
 
     slider->border_color.unit = LLK_UI_UNIT_RGBA;
     slider->border_color.specified_val = 0xffffffff;
-    slider->border_color.computed_val = 0xffffffff;
-    slider->border_color_hovered.unit = LLK_UI_UNIT_NO_VAL;
+    slider->border_color.computed_val  = 0xffffffff;
+    slider->border_color_hovered.unit = LLK_UI_UNIT_RGBA;
+    slider->border_color_hovered.specified_val = 0xff6600ff;
+    slider->border_color_hovered.computed_val  = 0xff6600ff;
     slider->border_color_pressed.unit = LLK_UI_UNIT_NO_VAL;
 
     slider->min     = 0.0f;
@@ -58,6 +68,8 @@ static int llk__ui_elem_slider_init(struct llk_ui_elem *elem) {
     slider->val     = 0.0f;
     slider->new_val = 0.0f;
     slider->step    = 0.01f;
+
+    slider->is_active = 0;
 
     return 0;
 }
@@ -156,6 +168,9 @@ static int llk__ui_elem_slider_set_attr_step(struct llk_ui_elem *elem, const cha
     if (end == val || '\0' != *end)
         return -1;
 
+    if (step <= 0.0f)
+        return -1;
+
     slider->step = step;
 
     return 0;
@@ -164,19 +179,26 @@ static int llk__ui_elem_slider_set_attr_step(struct llk_ui_elem *elem, const cha
 static int llk__ui_elem_slider_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
     struct llk_ui_elem_slider *slider = elem->data;
 
-    if (0 == strcmp(key, "background-color"))
-        return llk__ui_elem_slider_set_color(&slider->background_color, val);
-    if (0 == strcmp(key, "background-color.hovered"))
-        return llk__ui_elem_slider_set_color(&slider->background_color_hovered, val);
-    if (0 == strcmp(key, "background-color.pressed"))
-        return llk__ui_elem_slider_set_color(&slider->background_color_pressed, val);
+    if (0 == strcmp(key, "track-color"))
+        return llk__ui_elem_slider_set_color(&slider->track_color, val);
+    if (0 == strcmp(key, "track-color.hovered"))
+        return llk__ui_elem_slider_set_color(&slider->track_color_hovered, val);
+    if (0 == strcmp(key, "track-color.pressed"))
+        return llk__ui_elem_slider_set_color(&slider->track_color_pressed, val);
 
     if (0 == strcmp(key, "border-color"))
         return llk__ui_elem_slider_set_color(&slider->border_color, val);
     if (0 == strcmp(key, "border-color.hovered"))
         return llk__ui_elem_slider_set_color(&slider->border_color_hovered, val);
     if (0 == strcmp(key, "border-color.pressed"))
-        return llk__ui_elem_slider_set_color(&slider->background_color_pressed, val);
+        return llk__ui_elem_slider_set_color(&slider->border_color_pressed, val);
+
+    if (0 == strcmp(key, "thumb-color"))
+        return llk__ui_elem_slider_set_color(&slider->thumb_color, val);
+    if (0 == strcmp(key, "thumb-color.hovered"))
+        return llk__ui_elem_slider_set_color(&slider->thumb_color_hovered, val);
+    if (0 == strcmp(key, "thumb-color.pressed"))
+        return llk__ui_elem_slider_set_color(&slider->thumb_color_pressed, val);
 
     if (0 == strcmp(key, "min"))
         return llk__ui_elem_slider_set_attr_min(elem, val);
@@ -214,8 +236,7 @@ static void llk__ui_elem_slider_hit_test(struct llk_ui_elem *elem) {
     float thumb_w = fminf(elem->w.computed_val, SLIDER_THUMB_MAX_W);
     float thumb_x = clamp(elem->x, ui->mouse_x - thumb_w / 2, elem->x + elem->w.computed_val - thumb_w);
 
-    float ratio = (thumb_x - elem->x) / (elem->w.computed_val - thumb_w);
-    slider->new_val = slider->min + (slider->max - slider->min) * ratio;
+    slider->new_val = slider->min + roundf((slider->max - slider->min) * (thumb_x - elem->x) / (elem->w.computed_val - thumb_w) / slider->step) * slider->step;
 }
 
 static void llk__ui_elem_slider_dispatch_event(struct llk_ui_elem *elem) {
@@ -232,26 +253,26 @@ static void llk__ui_elem_slider_draw(struct llk_ui_elem *elem) {
     int pressed = llk_ui_elem_is_pressed(elem);
     int hovered = llk_ui_elem_is_hovered(elem);
 
-    uint32_t background_color = 0x00000000;
-    if (pressed && llk__ui_is_val_specified(slider->background_color_pressed)) {
-        background_color = slider->background_color_pressed.computed_val;
+    uint32_t track_color = 0x00000000;
+    if (pressed && llk__ui_is_val_specified(slider->track_color_pressed)) {
+        track_color = slider->track_color_pressed.computed_val;
     }
-    else if (hovered && llk__ui_is_val_specified(slider->background_color_hovered)) {
-        background_color = slider->background_color_hovered.computed_val;
+    else if (hovered && llk__ui_is_val_specified(slider->track_color_hovered)) {
+        track_color = slider->track_color_hovered.computed_val;
     }
-    else if (llk__ui_is_val_specified(slider->background_color)) {
-        background_color = slider->background_color.computed_val;
+    else if (llk__ui_is_val_specified(slider->track_color)) {
+        track_color = slider->track_color.computed_val;
     }
 
-    uint32_t foreground_color = 0x00000000;
-    if (pressed && llk__ui_is_val_specified(slider->foreground_color_pressed)) {
-        foreground_color = slider->foreground_color_pressed.computed_val;
+    uint32_t thumb_color = 0x00000000;
+    if (pressed && llk__ui_is_val_specified(slider->thumb_color_pressed)) {
+        thumb_color = slider->thumb_color_pressed.computed_val;
     }
-    else if (hovered && llk__ui_is_val_specified(slider->foreground_color_hovered)) {
-        foreground_color = slider->foreground_color_hovered.computed_val;
+    else if (hovered && llk__ui_is_val_specified(slider->thumb_color_hovered)) {
+        thumb_color = slider->thumb_color_hovered.computed_val;
     }
-    else if (llk__ui_is_val_specified(slider->foreground_color)) {
-        foreground_color = slider->foreground_color.computed_val;
+    else if (llk__ui_is_val_specified(slider->thumb_color)) {
+        thumb_color = slider->thumb_color.computed_val;
     }
 
     uint32_t border_color = 0x00000000;
@@ -276,13 +297,13 @@ static void llk__ui_elem_slider_draw(struct llk_ui_elem *elem) {
     float track_right_x = thumb_x + thumb_w;
     float track_right_w = elem->w.computed_val - track_left_w - thumb_w;
 
-    if (0x00000000 != background_color) {
-        k_canvas_set_draw_color_rgba(background_color);
+    if (0x00000000 != track_color) {
+        k_canvas_set_draw_color_rgba(track_color);
         k_canvas_ui_fill_rect(track_left_x, track_y, track_left_w, track_h);
         k_canvas_ui_fill_rect(track_right_x, track_y, track_right_w, track_h);
     }
-    if (0x00000000 != foreground_color) {
-        k_canvas_set_draw_color_rgba(foreground_color);
+    if (0x00000000 != thumb_color) {
+        k_canvas_set_draw_color_rgba(thumb_color);
         k_canvas_ui_fill_rect(thumb_x, track_y, thumb_w, track_h);
     }
     if (0x00000000 != border_color) {

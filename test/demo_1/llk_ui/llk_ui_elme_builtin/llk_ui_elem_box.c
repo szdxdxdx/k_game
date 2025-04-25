@@ -83,7 +83,7 @@ static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, 
     if (0 == strcmp(key, "border-color.hovered"))
         return llk__ui_elem_box_set_color(&box->border_color_hovered, val);
     if (0 == strcmp(key, "border-color.pressed"))
-        return llk__ui_elem_box_set_color(&box->background_color_pressed, val);
+        return llk__ui_elem_box_set_color(&box->border_color_pressed, val);
 
     if (0 == strcmp(key, "on-click"))
         return llk__ui_elem_box_set_attr_fn_callback(elem->ui, &box->fn_on_click, val);
