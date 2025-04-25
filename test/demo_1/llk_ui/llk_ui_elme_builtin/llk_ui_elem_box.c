@@ -13,8 +13,8 @@ struct llk_ui_elem_box {
     struct llk_ui_u32 border_color_hovered;
     struct llk_ui_u32 border_color_pressed;
 
-    llk_ui_callback_fn fn_on_click;
-    llk_ui_callback_fn fn_on_draw;
+    void (*fn_on_click)(struct llk_ui_elem *elem);
+    void (*fn_on_draw)(struct llk_ui_elem *elem);
 };
 
 static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
@@ -54,18 +54,18 @@ static int llk__ui_elem_box_set_color(struct llk_ui_u32 *set_color, const char *
     return 0;
 }
 
-static int llk__ui_elem_box_set_attr_fn_callback(struct llk_ui_context *ui, llk_ui_callback_fn *set_fn, const char *val) {
+static int llk__ui_elem_box_set_attr_fn_callback(struct llk_ui_context *ui, void *set_fn, const char *val) {
 
     if (val == NULL || 0 == strcmp(val, "null")) {
-        *set_fn = NULL;
+        *(void **)set_fn = NULL;
         return 0;
     }
 
-    llk_ui_callback_fn fn = llk__ui_get_callback(ui, val);
+    void *fn = llk__ui_get_callback(ui, val);
     if (NULL == fn)
         return -1;
 
-    *set_fn = fn;
+    *(void **)set_fn = fn;
     return 0;
 }
 
@@ -108,6 +108,11 @@ static void llk__ui_elem_box_dispatch_event(struct llk_ui_elem *elem) {
 static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = (struct llk_ui_elem_box *)elem;
 
+    if (NULL != box->fn_on_draw) {
+        box->fn_on_draw(elem);
+        return;
+    }
+
     int pressed = llk_ui_elem_is_pressed(elem);
     int hovered = llk_ui_elem_is_hovered(elem);
 
@@ -140,10 +145,6 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
         k_canvas_set_draw_color_rgba(border_color);
         k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
     }
-
-    if (NULL != box->fn_on_draw) {
-        box->fn_on_draw(elem);
-    }
 }
 
 struct llk_ui_elem_type llk__ui_elem_box = {
@@ -157,3 +158,7 @@ struct llk_ui_elem_type llk__ui_elem_box = {
     .fn_dispatch_event = llk__ui_elem_box_dispatch_event,
     .fn_draw           = llk__ui_elem_box_draw,
 };
+
+struct llk_ui_elem_box *llk_ui_elem_box_create(struct llk_ui_context *ui) {
+    return (struct llk_ui_elem_box *)llk_ui_elem_create(ui, llk__ui_elem_box.type_name);
+}

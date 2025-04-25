@@ -59,7 +59,7 @@ static void llk__ui_elem_image_draw(struct llk_ui_elem *elem) {
 
 struct llk_ui_elem_type llk__ui_elem_image = {
     .type_name         = "image",
-    .elem_struct_size         = sizeof(struct llk_ui_elem_image),
+    .elem_struct_size  = sizeof(struct llk_ui_elem_image),
     .fn_init           = llk__ui_elem_image_init,
     .fn_fini           = NULL,
     .fn_set_attr       = llk__ui_elem_image_set_attr,
@@ -68,3 +68,7 @@ struct llk_ui_elem_type llk__ui_elem_image = {
     .fn_dispatch_event = NULL,
     .fn_draw           = llk__ui_elem_image_draw,
 };
+
+struct llk_ui_elem_image *llk_ui_elem_image_create(struct llk_ui_context *ui) {
+    return (struct llk_ui_elem_image *)llk_ui_elem_create(ui, llk__ui_elem_image.type_name);
+}

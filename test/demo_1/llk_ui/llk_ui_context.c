@@ -11,12 +11,17 @@
 
 /* region [create] */
 
+/* 所有根的父元素，表示整个视口。只有 `x` 和 `y` 是有用的 */
 static struct llk_ui_elem llk__ui_window = {
-    .parent = NULL,
-    .ui     = NULL,
-    .x      = 0.0f,
-    .y      = 0.0f,
+    .x = 0.0f,
+    .y = 0.0f,
 };
+
+/* llk UI 的内建元素 */
+extern struct llk_ui_elem_type llk__ui_elem_root;
+extern struct llk_ui_elem_type llk__ui_elem_box;
+extern struct llk_ui_elem_type llk__ui_elem_slider;
+extern struct llk_ui_elem_type llk__ui_elem_image;
 
 static int llk__ui_registry_builtin_elem_types(struct llk_ui_context *ui) {
 
@@ -235,7 +240,7 @@ void llk_ui_draw(struct llk_ui_context *ui) {
 
 /* region [callback] */
 
-int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, llk_ui_callback_fn fn_callback) {
+int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, void *fn_callback) {
 
     if (NULL != k_str_map_get(&ui->callback_fn_map, key)) {
         k_log_error("Callback function `%s` already registered", key);
@@ -248,12 +253,12 @@ int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, llk_ui_
         return -1;
     }
 
-    *(llk_ui_callback_fn *)val = fn_callback;
+    *(void **)val = fn_callback;
 
     return 0;
 }
 
-llk_ui_callback_fn llk__ui_get_callback(struct llk_ui_context *ui, const char *key) {
+void *llk__ui_get_callback(struct llk_ui_context *ui, const char *key) {
 
     void *val = k_str_map_get(&ui->callback_fn_map, key);
     if (NULL == val) {
@@ -261,7 +266,7 @@ llk_ui_callback_fn llk__ui_get_callback(struct llk_ui_context *ui, const char *k
         return NULL;
     }
 
-    return *(llk_ui_callback_fn *)val;
+    return *(void **)val;
 }
 
 /* endregion */

@@ -6,7 +6,6 @@
 #include "../llk_ui_ext.h"
 
 struct llk_ui_elem_slider {
-
     struct llk_ui_elem super;
 
     /* 滑槽颜色 */
@@ -40,7 +39,7 @@ struct llk_ui_elem_slider {
     unsigned int is_changed;
 
     /* 值发生变化后执行的回调 */
-    llk_ui_callback_fn fn_on_change;
+    void (*fn_on_change)(struct llk_ui_elem *elem);
 };
 
 /* 滑块最大宽 12 像素 */
@@ -102,14 +101,14 @@ static int llk__ui_elem_slider_set_color(struct llk_ui_u32 *set_color, const cha
     return 0;
 }
 
-static int llk__ui_elem_slider_set_attr_fn_callback(struct llk_ui_context *ui, llk_ui_callback_fn *set_fn, const char *val) {
+static int llk__ui_elem_slider_set_attr_fn_callback(struct llk_ui_context *ui, void **set_fn, const char *val) {
 
     if (val == NULL || 0 == strcmp(val, "null")) {
         *set_fn = NULL;
         return 0;
     }
 
-    llk_ui_callback_fn fn = llk__ui_get_callback(ui, val);
+    void *fn = llk__ui_get_callback(ui, val);
     if (NULL == fn)
         return -1;
 
@@ -347,3 +346,7 @@ struct llk_ui_elem_type llk__ui_elem_slider = {
     .fn_dispatch_event = llk__ui_elem_slider_dispatch_event,
     .fn_draw           = llk__ui_elem_slider_draw,
 };
+
+struct llk_ui_elem_slider *llk_ui_elem_slider_create(struct llk_ui_context *ui) {
+    return (struct llk_ui_elem_slider *)llk_ui_elem_create(ui, "slider");
+}
