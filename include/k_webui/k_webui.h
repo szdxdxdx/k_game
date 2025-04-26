@@ -7,13 +7,13 @@ int k_webui_init(void);
 
 void k_webui_fini(void);
 
-struct k_webui_binding {
+struct k_webui_bind_config {
 
     void *data;
 
     size_t data_size;
 
-    int (*fn_init)(void *data);
+    int (*fn_init)(void *data, void *params);
 
     int (*fn_fini)(void *data);
 
