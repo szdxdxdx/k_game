@@ -12,8 +12,8 @@ struct k_webui_context {
 
 extern struct k_webui_context k__webui;
 
-void k__webui_exec_js(const char *js);
+int k__webui_exec_js(const char *js);
 
-void k__webui_exec_js_fmt(const char *js, ...);
+int k__webui_exec_js_fmt(const char *js, ...);
 
 #endif

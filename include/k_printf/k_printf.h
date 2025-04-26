@@ -1,6 +1,7 @@
 #ifndef K_PRINTF_H
 #define K_PRINTF_H
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stddef.h>
 

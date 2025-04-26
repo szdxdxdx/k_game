@@ -42,6 +42,9 @@ int main(int argc, char **argv) {
 
     k_webui_init();
 
+    k_webui_puts("hello");
+    k_webui_printf("%.2f", 1.23456f);
+
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_title = "demo 1";
     config.fn_init = fn_init_game;

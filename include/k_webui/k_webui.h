@@ -22,8 +22,8 @@ struct k_webui_bind_config {
     int (*fn_get)(void *data, const char *val);
 };
 
-void k_webui_puts(const char *s);
+int k_webui_puts(const char *s);
 
-void k_webui_printf(const char *fmt, ...);
+int k_webui_printf(const char *fmt, ...);
 
 #endif

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#define K_LOG_TAG "k_game"
+#define K_LOG_TAG "k_game:malloc"
 #include "k_log.h"
 
 #include "k_game/core/k_mem_alloc.h"
