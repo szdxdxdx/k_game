@@ -6,6 +6,7 @@
 #include <ctype.h>
 
 #include "k_mem_pool.h"
+#include "k_str_intrusive_map.h"
 #include "k_str_map.h"
 #include "k_list.h"
 

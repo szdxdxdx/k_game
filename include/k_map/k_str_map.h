@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#include "k_str_intrusive_map.h"
+#include "k_hash_list.h"
 
 /** \brief 哈希表容器 */
 struct k_str_map {
@@ -17,8 +17,11 @@ struct k_str_map {
     /** \brief [read-only] 容器持有的元素的数量 */
     size_t size;
 
-    /** \brief [private] 使用侵入式的哈希表作为本容器的底层实现 */
-    struct k_str_intrusive_map imap;
+    /** \brief [private] 哈希桶数组 */
+    struct k_hash_list *buckets;
+
+    /** \brief [private] 哈希桶的数量 */
+    size_t buckets_num;
 
     /** \brief [private] 当元素数量达到此阈值时扩容哈希桶 */
     size_t rehash_threshold;
@@ -39,7 +42,7 @@ struct k_str_map_options {
  *
  * `options` 是可选的配置，若为 `NULL` 则使用默认配置。
  *
- * 若创建成功，函数返回哈希表容器的指针，否则返回 `NULL`。
+ * 若创建成功，函数返回哈希表的指针，否则返回 `NULL`。
  */
 struct k_str_map *k_str_map_create(const struct k_str_map_options *options);
 
@@ -74,9 +77,9 @@ void k_str_map_destruct(struct k_str_map *map);
  * 若键不存在，则添加新键值对。
  * 若键已存在，则释放旧值的内存，然后分配新内存来存储新值。
  *
- * `key` 是要添加或更新的键，确保传入有效的非空字符串的指针。
+ * `key` 是要添加或更新的键，要求传入有效的字符串指针，且字符串非空。
  * 哈希表仅保存 `key` 指针，不复制字符串，
- * 请确保字符串内容不被修改，且生命周期要大于哈希表。
+ * 请确保该字符串的生命周期要大于哈希表，且内容不被修改。
  *
  * `val_size` 指定要添加或更新的值的大小，单位：字节。
  * 要求 `val_size` 大于 0。
@@ -91,9 +94,9 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size);
  *
  * 若键不存在，则添加新键值对。若键已存在，则添加失败。
  *
- * `key` 是要添加的键，确保传入有效的非空字符串的指针。
- * 哈希表仅保存 `key` 指针，不复制字符串，
- * 请确保字符串内容不被修改，且生命周期要大于哈希表。
+ * `key` 是要添加的键，要求传入有效的字符串指针，且字符串非空。
+ * 哈希表仅保存 `key` 指针，不复制字符串。
+ * 请确保该字符串的生命周期要大于哈希表，且内容不被修改。
  *
  * `val_size` 指定要添加的值的大小，单位：字节。
  * 要求 `val_size` 大于 0。
