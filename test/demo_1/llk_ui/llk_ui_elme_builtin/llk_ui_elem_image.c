@@ -6,12 +6,6 @@
 
 #include "../llk_ui_ext.h"
 
-struct llk_ui_elem_image {
-    struct llk_ui_elem super;
-
-    struct k_image *src;
-};
-
 static int llk__ui_elem_image_init(struct llk_ui_elem *elem) {
     struct llk_ui_elem_image *image = (struct llk_ui_elem_image *)elem;
 

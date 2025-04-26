@@ -73,7 +73,7 @@ static void room_build_ui(void) {
 
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, ui_xml_file_path);
     if (NULL == xml) {
-        k_log_error("failed to build ui from xml file");
+        k_log_error("Failed to build ui from xml file");
     }
 
     llk_ui_elem_append_child(root, xml);

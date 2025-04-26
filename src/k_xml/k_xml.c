@@ -12,7 +12,7 @@
 
 struct k_xml_doc {
 
-    /* 用链表串联所有的顶层节点（可能包含注释节点） */
+    /* 用链表串联所有的顶层节点（可能包含注释节点，或空白的文本节点） */
     struct k_list top_node_list;
 
     /* 指向根节点（元素节点） */
@@ -21,6 +21,7 @@ struct k_xml_doc {
     struct k_mem_pool mem_pool;
 };
 
+/* 节点的基类 */
 struct k_xml_node {
 
     struct k_list_node sibling_link;
@@ -32,6 +33,7 @@ struct k_xml_node {
     enum k_xml_node_type type;
 };
 
+/* 元素节点 */
 struct k_xml_elem_node {
     struct k_xml_node super;
 
@@ -44,6 +46,7 @@ struct k_xml_elem_node {
     struct k_list child_list;
 };
 
+/* 元素节点的属性 */
 struct k_xml_attr {
 
     /* 属性链表节点的指针域 */
@@ -57,6 +60,7 @@ struct k_xml_attr {
     const char *val;
 };
 
+/* 文本节点 */
 struct k_xml_text_node {
     struct k_xml_node super;
 
@@ -64,9 +68,10 @@ struct k_xml_text_node {
     const char *text;
 
     /* 标记文本内容是否全是空白字符 */
-    int is_blank;
+    unsigned int is_blank;
 };
 
+/* 注释节点 */
 struct k_xml_comment_node {
     struct k_xml_node super;
 
@@ -90,7 +95,7 @@ static void *k__xml_mem_alloc(struct k_xml_doc *doc, size_t size) {
     return k_mem_pool_alloc(&doc->mem_pool, size);
 }
 
-static void k__xml_mem_free(struct k_xml_doc *doc, void *p) {
+static void k__xml_mem_free(void *p) {
     k_mem_pool_free(p);
 }
 
@@ -173,15 +178,13 @@ static void k__xml_elem_node_add_child(struct k_xml_elem_node *node, struct k_xm
 
 static void k__xml_destroy_elem_node(struct k_xml_elem_node *node) {
 
-    struct k_xml_doc *doc = node->super.doc;
-
     struct k_xml_attr *attr;
     struct k_list *attr_list = &node->attr_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(attr_list, iter, next)) {
         attr = container_of(iter, struct k_xml_attr, list_node);
 
-        k__xml_mem_free(doc, attr);
+        k__xml_mem_free(attr);
     }
 
     struct k_xml_node *child;
@@ -194,7 +197,7 @@ static void k__xml_destroy_elem_node(struct k_xml_elem_node *node) {
     }
 
     k_list_del(&node->super.sibling_link);
-    k__xml_mem_free(doc, node);
+    k__xml_mem_free(node);
 }
 
 /* endregion */
@@ -220,7 +223,7 @@ static struct k_xml_text_node *k__xml_create_text_node(struct k_xml_doc *doc) {
 
 static void k__xml_destroy_text_node(struct k_xml_text_node *node) {
     k_list_del(&node->super.sibling_link);
-    k__xml_mem_free(node->super.doc, node);
+    k__xml_mem_free(node);
 }
 
 /* endregion */
@@ -245,7 +248,7 @@ static struct k_xml_comment_node *k__xml_create_comment_node(struct k_xml_doc *d
 
 static void k__xml_destroy_comment_node(struct k_xml_comment_node *node) {
     k_list_del(&node->super.sibling_link);
-    k__xml_mem_free(node->super.doc, node);
+    k__xml_mem_free(node);
 }
 
 /* endregion */
@@ -323,9 +326,9 @@ err:
     return text;
 }
 
-static int decode_entities(char *begin, const char *end, size_t *get_len) {
+static int decode_entities(char *begin, char *end, size_t *get_decoded_str_len) {
 
-    char *p1 = NULL;
+    char *p1 = end;
     char *p2 = begin;
 
     while (p2 < end) {
@@ -334,16 +337,14 @@ static int decode_entities(char *begin, const char *end, size_t *get_len) {
         } else {
             p1 = p2;
             p2++;
-            if (0 == strncmp(p2, "amp;",  4)) { *p1 = '&';  p2 += 4; break; }
-            if (0 == strncmp(p2, "lt;",   3)) { *p1 = '<';  p2 += 3; break; }
-            if (0 == strncmp(p2, "gt;",   3)) { *p1 = '>';  p2 += 3; break; }
-            if (0 == strncmp(p2, "quot;", 5)) { *p1 = '\"'; p2 += 5; break; }
-            if (0 == strncmp(p2, "apos;", 5)) { *p1 = '\''; p2 += 5; break; }
+            if (0 == strncmp(p2, "amp;",  4)) { *p1 = '&';  p1 += 1; p2 += 4; break; }
+            if (0 == strncmp(p2, "lt;",   3)) { *p1 = '<';  p1 += 1; p2 += 3; break; }
+            if (0 == strncmp(p2, "gt;",   3)) { *p1 = '>';  p1 += 1; p2 += 3; break; }
+            if (0 == strncmp(p2, "quot;", 5)) { *p1 = '\"'; p1 += 1; p2 += 5; break; }
+            if (0 == strncmp(p2, "apos;", 5)) { *p1 = '\''; p1 += 1; p2 += 5; break; }
             goto err;
         }
     }
-
-    p1++;
 
     while (p2 < end) {
         if ('&' != *p2) {
@@ -363,8 +364,8 @@ static int decode_entities(char *begin, const char *end, size_t *get_len) {
 
     *p1 = '\0';
 
-    if (NULL != get_len) {
-        *get_len = p1 - begin;
+    if (NULL != get_decoded_str_len) {
+        *get_decoded_str_len = p1 - begin;
     }
 
     return 0;
@@ -382,7 +383,7 @@ static char *extract_attr_val(char *text) {
 
     char *quote = p;
     p++;
-    int has_entities = 0;
+    int need_decode = 0;
     while (1) {
         if (*quote == *p) {
             break;
@@ -390,13 +391,13 @@ static char *extract_attr_val(char *text) {
             goto err;
         } else if ('&' == *p) {
             p++;
-            has_entities = 1;
+            need_decode = 1;
         } else {
             p++;
         }
     }
 
-    if (has_entities) {
+    if (need_decode) {
         if (0 != decode_entities(quote, p, NULL))
             goto err;
     } else {
@@ -420,7 +421,7 @@ static struct k_xml_text_node *k__xml_parse_text_node(struct k_xml_parser *parse
 
     char *text_begin = p;
 
-    int has_entities = 0;
+    int need_decode = 0;
     int is_blank = 1;
     while ('<' != *p && '\0' != *p) {
 
@@ -428,7 +429,7 @@ static struct k_xml_text_node *k__xml_parse_text_node(struct k_xml_parser *parse
             is_blank = 0;
 
             if ('&' == *p) {
-                has_entities = 1;
+                need_decode = 1;
             }
         }
 
@@ -437,7 +438,7 @@ static struct k_xml_text_node *k__xml_parse_text_node(struct k_xml_parser *parse
 
     size_t text_len;
 
-    if (has_entities) {
+    if (need_decode) {
         if (0 != decode_entities(text_begin, p, &text_len))
             goto err;
     }

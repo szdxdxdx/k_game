@@ -5,43 +5,6 @@
 
 #include "../llk_ui_ext.h"
 
-struct llk_ui_elem_slider {
-    struct llk_ui_elem super;
-
-    /* 滑槽颜色 */
-    struct llk_ui_u32 track_color;
-    struct llk_ui_u32 track_color_hovered;
-    struct llk_ui_u32 track_color_pressed;
-
-    /* 滑块颜色 */
-    struct llk_ui_u32 thumb_color;
-    struct llk_ui_u32 thumb_color_hovered;
-    struct llk_ui_u32 thumb_color_pressed;
-
-    /* 边框颜色 */
-    struct llk_ui_u32 border_color;
-    struct llk_ui_u32 border_color_hovered;
-    struct llk_ui_u32 border_color_pressed;
-
-    /* 滑动条的取值范围、步长 */
-    float min;
-    float max;
-    float step;
-
-    /* 当前值、旧值 */
-    float val;
-    float old_val;
-
-    /* 当前鼠标是否在移动滑块 */
-    unsigned int is_active;
-
-    /* 值是否改变 */
-    unsigned int is_changed;
-
-    /* 值发生变化后执行的回调 */
-    void (*fn_on_change)(struct llk_ui_elem *elem, float old_val, float new_val);
-};
-
 /* 滑块最大宽 12 像素 */
 #define SLIDER_THUMB_MAX_W 12
 

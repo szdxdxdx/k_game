@@ -61,17 +61,15 @@ enum llk_ui_unit {
 
     /* 相对于父元素的宽高比
      *
-     * 例如：`50.0%`、`100%`
-     *
-     * 字符串值的取值的 `100%，对应解析后的值为 1.0f。
+     * 例如：`50.0%`、`100%`。字符串值的取值为 `100%` 时，
+     * 对应解析后的指定的值为 1.0f，计算后的值的单位为：像素。
      */
     LLK_UI_UNIT_PERCENT,
 
     /* 相对于视窗的宽高比
      *
-     * 例如： `50vw`、`100vh`
-     *
-     * 字符串值的取值的 `100%，对应解析后的值为 1.0f。
+     * 例如： `50vw`、`100vh`。字符串值的取值为 `100vw` 或 `100vh` 时，
+     * 对应解析后的指定的值为 1.0f，计算后的值的单位为：像素。
      */
     LLK_UI_UNIT_VW,
     LLK_UI_UNIT_VH,
@@ -82,7 +80,7 @@ enum llk_ui_unit {
      * - 不带透明度 RGB `#ff6600`
      * - 带透明度 RGBA `#ee000066`
      *
-     * 对应解析后的值为 uint32_t 的 0xRRGGBBAA 十六进制颜色值
+     * 计算后的值为 uint32_t 类型的 0xRRGGBBAA 十六进制颜色值。
      */
     LLK_UI_UNIT_RGBA,
 
@@ -334,6 +332,157 @@ int llk__ui_parse_length_val(const char *str, float *get_val, enum llk_ui_unit *
  * 若解析成功函数返回 0，否则返回非 0。
  */
 int llk__ui_parse_color_val(const char *str, uint32_t *get_val, enum llk_ui_unit *get_unit);
+
+/* endregion */
+
+/* region [UI_elem_builtin] */
+
+/**
+ * \brief 普普通通的布局盒子
+ *
+ * 元素类型名为 `box`。
+ *
+ * # `llk_ui_elem_set()` 支持的属性：
+ *
+ * ## 背景颜色 `background-color`
+ * - `background-color`         默认
+ * - `background-color.hovered` 鼠标悬浮时
+ * - `background-color.pressed` 鼠标按住时
+ * 示例：
+ * ```C
+ * llk_ui_elem_set(elem, "background-color", "#ee0000dd")
+ * llk_ui_elem_set(elem, "background-color.hovered", "#ee0000")
+ * ```
+ *
+ * ## 边框颜色 `border-color`
+ * - `border-color`         默认
+ * - `border-color.hovered` 鼠标悬浮时
+ * - `border-color.pressed` 鼠标按住时
+ *
+ * ## 点击事件 `on-click`
+ * - `on-click` 鼠标点击元素时执行该事件回调
+ * 示例
+ * ```C
+ * void on_click(struct llk_ui_elem *elem) {
+ *     struct llk_ui_elem_box *box = (struct llk_ui_elem_box *)elem;
+ *     // ...
+ *     puts("clicked");
+ * }
+ *
+ * // 注册回调
+ * llk_ui_register_callback(ui, "my_click_fn", (void *)on_click);
+ **
+ * // 绑定回调
+ * llk_ui_elem_set(elem, "on-click", "my_click_fn")
+ * ```
+ *
+ * ## 绘制 `on-draw`
+ * 元素绘制完自身后，交由你来补充绘制内容，
+ * 你可以自由绘制任何内容，绘制到你认为合适的地方。
+ * 示例：
+ * ```C
+ * void on_draw(struct llk_ui_elem *elem) {
+ *     float x, y, w, h;
+ *     llk_ui_elem_get_rect(elem, &x, &y, &w, &h);
+ *     k_canvas_set_draw_color_rgba(0xff6600ff)
+ *     k_canvas_ui_fill_rect(x, y, w, h);
+ * }
+ * ```
+ */
+struct llk_ui_elem_box {
+    struct llk_ui_elem super;
+
+    struct llk_ui_u32 background_color;
+    struct llk_ui_u32 background_color_hovered;
+    struct llk_ui_u32 background_color_pressed;
+
+    struct llk_ui_u32 border_color;
+    struct llk_ui_u32 border_color_hovered;
+    struct llk_ui_u32 border_color_pressed;
+
+    void (*fn_on_click)(struct llk_ui_elem *elem);
+    void (*fn_on_draw)(struct llk_ui_elem *elem);
+};
+
+/**
+ * \brief 滑动条
+ *
+ * 元素类型名为 `slider`。
+ *
+ * # `llk_ui_elem_set()` 支持的属性：
+ *
+ * ## 滑槽颜色 `track-color`
+ * - `track-color`         默认
+ * - `track-color.hovered` 鼠标悬浮时
+ * - `track-color.pressed` 鼠标按住时
+ *
+ * ## 滑块颜色 `thumb-color`
+ * - `thumb-color`         默认
+ * - `thumb-color.hovered` 鼠标悬浮时
+ * - `thumb-color.pressed` 鼠标按住时
+ *
+ * ## 边框颜色 `border-color`
+ * - `border-color`         默认
+ * - `border-color.hovered` 鼠标悬浮时
+ * - `border-color.pressed` 鼠标按住时
+ *
+ * ## 输入事件 `on-change`
+ * 滑动条的值发生变化时要执行的回调。
+ * 示例
+ * ```C
+ * void on_change(struct llk_ui_elem *elem, float old_val, float new_val) {
+ *     struct llk_ui_elem_slider *slider = (struct llk_ui_elem_slider *)elem;
+ *     // ...
+ *     printf("old_val: %.2f, new_val: %.2f", old_val, new_val);
+ * }
+ */
+struct llk_ui_elem_slider {
+    struct llk_ui_elem super;
+
+    /* 滑槽颜色 */
+    struct llk_ui_u32 track_color;
+    struct llk_ui_u32 track_color_hovered;
+    struct llk_ui_u32 track_color_pressed;
+
+    /* 滑块颜色 */
+    struct llk_ui_u32 thumb_color;
+    struct llk_ui_u32 thumb_color_hovered;
+    struct llk_ui_u32 thumb_color_pressed;
+
+    /* 边框颜色 */
+    struct llk_ui_u32 border_color;
+    struct llk_ui_u32 border_color_hovered;
+    struct llk_ui_u32 border_color_pressed;
+
+    /* 滑动条的取值范围、步长 */
+    float min;
+    float max;
+    float step;
+
+    /* 当前值、旧值 */
+    float val;
+    float old_val;
+
+    /* 当前鼠标是否在移动滑块 */
+    unsigned int is_active;
+
+    /* 值是否改变 */
+    unsigned int is_changed;
+
+    /* 值发生变化后执行的回调 */
+    void (*fn_on_change)(struct llk_ui_elem *elem, float old_val, float new_val);
+};
+
+/* 图片，类型名为 `image`
+ *
+ * 支持的属性：
+ * - `src` 用于指定要绘制的图片的名字，该名字由 `k_image_set_name()` 指定
+ */
+struct llk_ui_elem_image {
+    struct llk_ui_elem super;
+
+    struct k_image *src;
+};
 
 /* endregion */
 

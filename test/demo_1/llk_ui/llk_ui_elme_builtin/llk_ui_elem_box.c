@@ -2,21 +2,6 @@
 
 #include "../llk_ui_ext.h"
 
-struct llk_ui_elem_box {
-    struct llk_ui_elem super;
-
-    struct llk_ui_u32 background_color;
-    struct llk_ui_u32 background_color_hovered;
-    struct llk_ui_u32 background_color_pressed;
-
-    struct llk_ui_u32 border_color;
-    struct llk_ui_u32 border_color_hovered;
-    struct llk_ui_u32 border_color_pressed;
-
-    void (*fn_on_click)(struct llk_ui_elem *elem);
-    void (*fn_on_draw)(struct llk_ui_elem *elem);
-};
-
 static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = (struct llk_ui_elem_box *)elem;
 
