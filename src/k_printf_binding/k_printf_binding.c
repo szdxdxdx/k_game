@@ -37,6 +37,6 @@ done:
     return fn_callback;
 }
 
-extern struct k_printf_config *k_fmt = &(struct k_printf_config) {
+struct k_printf_config *k_fmt = &(struct k_printf_config) {
     .fn_match_spec = match_spec
 };
