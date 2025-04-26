@@ -50,7 +50,7 @@ struct k_xml_elem_node {
 struct k_xml_attr {
 
     /* 属性链表节点的指针域 */
-    struct k_list_node list_node;
+    struct k_list_node node_link;
 
     /* 该属性所属的元素节点 */
     struct k_xml_elem_node *elem;
@@ -164,7 +164,7 @@ static int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *k
     if (NULL == attr)
         return -1;
 
-    k_list_add_tail(&node->attr_list, &attr->list_node);
+    k_list_add_tail(&node->attr_list, &attr->node_link);
     attr->elem = node;
     attr->key  = key;
     attr->val  = val;
@@ -182,7 +182,7 @@ static void k__xml_destroy_elem_node(struct k_xml_elem_node *node) {
     struct k_list *attr_list = &node->attr_list;
     struct k_list_node *iter, *next;
     for (k_list_for_each_s(attr_list, iter, next)) {
-        attr = container_of(iter, struct k_xml_attr, list_node);
+        attr = container_of(iter, struct k_xml_attr, node_link);
 
         k__xml_mem_free(attr);
     }
@@ -882,7 +882,7 @@ const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr_key) {
     struct k_list *attr_list = &elem->attr_list;
     struct k_list_node *iter;
     for (k_list_for_each(attr_list, iter)) {
-        attr = container_of(iter, struct k_xml_attr, list_node);
+        attr = container_of(iter, struct k_xml_attr, node_link);
 
         if (0 == strcmp(attr->key, attr_key))
             return attr->val;
@@ -905,7 +905,7 @@ struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char
         return NULL;
 
     struct k_list_node *first = k_list_get_first(attr_list);
-    struct k_xml_attr *attr = container_of(first, struct k_xml_attr, list_node);
+    struct k_xml_attr *attr = container_of(first, struct k_xml_attr, node_link);
 
     if (NULL != get_key) { *get_key = attr->key; }
     if (NULL != get_val) { *get_val = attr->val; }
@@ -917,11 +917,11 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
     if (NULL == attr)
         return NULL;
 
-    struct k_list_node *next = attr->list_node.next;
+    struct k_list_node *next = attr->node_link.next;
     if (next == k_list_tail(&attr->elem->attr_list))
         return NULL;
 
-    struct k_xml_attr *next_attr = container_of(next, struct k_xml_attr, list_node);
+    struct k_xml_attr *next_attr = container_of(next, struct k_xml_attr, node_link);
     if (NULL != get_key) { *get_key = next_attr->key; }
     if (NULL != get_val) { *get_val = next_attr->val; }
     return next_attr;

@@ -23,7 +23,7 @@ struct k_str_map {
     /** \brief [private] 哈希桶的数量 */
     size_t buckets_num;
 
-    /** \brief [private] 当元素数量达到此阈值时扩容哈希桶 */
+    /** \brief [private] 扩容阈值，当元素数量超过阈值时扩容哈希桶 */
     size_t rehash_threshold;
 };
 
@@ -91,11 +91,11 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size);
 /**
  * \brief 往哈希表中添加或更新一个键值对
  *
- * 同 `k_str_map_put()`，但是哈希表仅保存 `key` 指针，不复制字符串，
- * 请确保该字符串的生命周期要大于哈希表，且内容不被修改，
- * 避免出现哈希表内部指针悬空，或是哈希不一致等错误。
+ * 与 `k_str_map_put()` 类似，但哈希表仅保存 `key` 指针，不复制字符串。
+ * 请保证 `key` 字符串的生命周期大于哈希表，且内容不被修改，
+ * 否则可能导致哈希表内部的指针悬空，或是查找时哈希不一致等问题。
  */
-void *k_str_map_put_no_copy(struct k_str_map *map, const char *key, size_t val_size);
+void *k_str_map_put_ref(struct k_str_map *map, const char *key, size_t val_size);
 
 /**
  * \brief 往哈希表中添加一个新的键值对
@@ -112,6 +112,15 @@ void *k_str_map_put_no_copy(struct k_str_map *map, const char *key, size_t val_s
  * 你需要显式类型转换该指针，然后写入新值。若添加失败，函数返回 `NULL`。
  */
 void *k_str_map_add(struct k_str_map *map, const char *key, size_t val_size);
+
+/**
+ * \brief 往哈希表中添加或更新一个键值对
+ *
+ * 与 `k_str_map_add()` 类似，但哈希表仅保存 `key` 指针，不复制字符串。
+ * 请保证 `key` 字符串的生命周期大于哈希表，且内容不被修改，
+ * 否则可能导致哈希表内部的指针悬空，或是查找时哈希不一致等问题。
+ */
+void *k_str_map_add_ref(struct k_str_map *map, const char *key, size_t val_size);
 
 /**
  * \brief 删除哈希表中的一个键值对
