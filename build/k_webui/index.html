@@ -2,11 +2,48 @@
 <html lang="zh">
 <head>
   <title>k_webui</title>
+  <meta charset="UTF-8">
   <script src="/webui.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
   <div id="app">
-    k_webui
+
+
+    <!-- 日志面板 -->
+    <div id="log-panel">
+      <table>
+        <tr v-for="(item, index) in log" :key="index">
+          <td>{{ item.level }}</td>
+          <td>{{ item.msg }}</td>
+        </tr>
+      </table>
+    </div>
+
+
   </div>
+
+<script>
+  const { createApp } = Vue;
+
+  const kWebui = createApp({
+    data() {
+      return {
+
+        log: [
+          // { level: 'INFO', msg: 'info' },
+        ]
+      };
+    },
+    methods: {
+      logInfo(msg) { this.log.push({ level: 'INFO', msg }); }
+    }
+  }).mount('#app');
+</script>
+
+<script>
+  kWebui.logInfo("这是一条日志")
+</script>
+
 </body>
 </html>

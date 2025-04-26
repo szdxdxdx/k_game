@@ -55,7 +55,7 @@ static void print_xml_node(struct k_printf_buf *buf, struct k_xml_node *node) {
     }
 }
 
-void k__printf_spec_k_xml(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+void k__printf_k_xml(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
     (void)spec;
 
     struct k_xml_node *node = (struct k_xml_node *)va_arg(*args, void *);

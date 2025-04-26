@@ -17,7 +17,7 @@ static k_printf_callback_fn match_spec(const char **str) {
             if ('s' == *p) p++; else return NULL;
             if ('o' == *p) p++; else return NULL;
             if ('n' == *p) p++; else return NULL;
-            fn_callback = k__printf_spec_k_json;
+            fn_callback = k__printf_k_json;
             goto done;
         }
 
@@ -25,7 +25,7 @@ static k_printf_callback_fn match_spec(const char **str) {
             p++;
             if ('m' == *p) p++; else return NULL;
             if ('l' == *p) p++; else return NULL;
-            fn_callback = k__printf_spec_k_xml;
+            fn_callback = k__printf_k_xml;
             goto done;
         }
         default:
