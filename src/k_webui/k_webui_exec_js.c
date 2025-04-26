@@ -1,5 +1,10 @@
+
+#define K_LOG_TAG "k_webui:exec_js"
+#include "k_log.h"
+
 #include "./k_webui_mem_alloc.h"
 #include "./k_webui_context.h"
+#include "./k_webui_exec_js.h"
 #include "./k_webui_k_printf.h"
 
 int k__webui_exec_js(const char *js) {
@@ -11,32 +16,31 @@ int k__webui_exec_js(const char *js) {
 
 int k__webui_exec_js_fmt(const char *fmt, ...) {
 
-    char buf[512];
-    char *js = buf;
+    char default_buf[512];
 
     va_list args;
     va_start(args, fmt);
-    int str_len = k__webui_vsnprintf(js, sizeof(buf), fmt, args);
+    int str_len = k__webui_vsnprintf(default_buf, sizeof(default_buf), fmt, args);
     va_end(args);
 
     if (-1 == str_len)
         return -1;
 
-    if (str_len < sizeof(buf)) {
-        return k__webui_exec_js(js);
+    if (str_len < sizeof(default_buf)) {
+        return k__webui_exec_js(default_buf);
     }
 
-    js = k__webui_mem_alloc(str_len + 1);
-    if (NULL == js)
+    char *alloc_buf = k__webui_mem_alloc(str_len + 1);
+    if (NULL == alloc_buf)
         return -1;
 
     va_start(args, fmt);
-    k__webui_vsprintf(js, fmt, args);
+    k__webui_vsprintf(alloc_buf, fmt, args);
     va_end(args);
 
-    int result = k__webui_exec_js(js);
+    int result = k__webui_exec_js(alloc_buf);
 
-    k__webui_mem_free(js);
+    k__webui_mem_free(alloc_buf);
 
     return result;
 }

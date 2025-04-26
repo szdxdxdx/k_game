@@ -1,6 +1,7 @@
 #include "k_webui.h"
 #include "./k_webui_mem_alloc.h"
 #include "./k_webui_context.h"
+#include "./k_webui_exec_js.h"
 
 int k_webui_puts(const char *s) {
 

@@ -1,6 +1,7 @@
 #ifndef K__WEBUI_K_PRINTF_H
 #define K__WEBUI_K_PRINTF_H
 
+#include <stdarg.h>
 #include <stddef.h>
 
 int k__webui_sprintf(char *buf, const char *fmt, ...);

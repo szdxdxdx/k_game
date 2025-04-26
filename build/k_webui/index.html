@@ -5,45 +5,72 @@
   <meta charset="UTF-8">
   <script src="/webui.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    
+    /* region [log-panel] */
+
+    #log-panel {
+
+    }
+
+    /* endregion */
+    
+  </style>
+
 </head>
 <body>
   <div id="app">
 
+    <!-- [log-panel] --><!-- region -->
 
-    <!-- 日志面板 -->
     <div id="log-panel">
       <table>
         <tr v-for="(item, index) in log" :key="index">
-          <td>{{ item.level }}</td>
-          <td>{{ item.msg }}</td>
+          <td>
+            <span>{{ item.level }}</span>
+          </td>
+          <td>
+            <pre>{{ item.msg }}</pre>
+          </td>
         </tr>
       </table>
     </div>
 
+    <!-- endregion -->
 
   </div>
 
-<script>
-  const { createApp } = Vue;
+  <script>
+    const { createApp } = Vue;
 
-  const kWebui = createApp({
-    data() {
-      return {
+    const kWebui = createApp({
+      data() {
+        return {
 
-        log: [
-          // { level: 'INFO', msg: 'info' },
-        ]
-      };
-    },
-    methods: {
-      logInfo(msg) { this.log.push({ level: 'INFO', msg }); }
-    }
-  }).mount('#app');
-</script>
+          /* region [log-panel] */
 
-<script>
-  kWebui.logInfo("这是一条日志")
-</script>
+          log: [ /* { level: 'INFO|WARN|ERROR', msg } */ ],
 
+          /* endregion */
+        };
+      },
+      methods: {
+        /* region [log-panel] */
+
+        logInfo(msg) {
+          this.log.push({ level: 'INFO', msg });
+        },
+        logWarn(msg) {
+          this.log.push({ level: 'WARN', msg });
+        },
+        logError(msg) {
+          this.log.push({ level: 'ERROR', msg });
+        }
+
+        /* endregion */
+      }
+    }).mount('#app');
+  </script>
 </body>
 </html>

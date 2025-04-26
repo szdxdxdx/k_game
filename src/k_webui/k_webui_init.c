@@ -3,7 +3,10 @@
 
 #include "./k_webui_context.h"
 
-struct k_webui_context k__webui;
+struct k_webui_context k__webui = {
+    .window = WEBUI_MAX_IDS,
+    .is_inited = 0
+};
 
 void k__webui_event_handler(webui_event_t *event) {
 
@@ -11,6 +14,10 @@ void k__webui_event_handler(webui_event_t *event) {
 }
 
 int k_webui_init(void) {
+
+    if (k__webui.is_inited) {
+        return -1;
+    }
 
     k__webui.window = webui_new_window();
 
@@ -21,8 +28,22 @@ int k_webui_init(void) {
     webui_show(k__webui.window, "./index.html");
 
     webui_bind(k__webui.window, "k_webui_C_fn_event_handler", k__webui_event_handler);
+
+    k__webui.is_inited = 1;
 }
 
-void k_webui_fini(void) {
+int k__webui_is_running(void) {
+    return webui_is_shown(k__webui.window);
+}
 
+void k_webui_close(void) {
+
+    if ( ! k__webui.is_inited)
+        return;
+
+    webui_close(k__webui.window);
+    webui_clean();
+
+    k__webui.window = WEBUI_MAX_IDS;
+    k__webui.is_inited = 0;
 }

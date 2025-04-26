@@ -8,12 +8,12 @@
 struct k_webui_context {
 
     size_t window;
+
+    unsigned int is_inited;
 };
 
 extern struct k_webui_context k__webui;
 
-int k__webui_exec_js(const char *js);
-
-int k__webui_exec_js_fmt(const char *js, ...);
+int k__webui_is_running(void);
 
 #endif

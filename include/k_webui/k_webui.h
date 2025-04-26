@@ -5,7 +5,7 @@
 
 int k_webui_init(void);
 
-void k_webui_fini(void);
+void k_webui_close(void);
 
 struct k_webui_bind_config {
 
@@ -25,5 +25,11 @@ struct k_webui_bind_config {
 int k_webui_puts(const char *s);
 
 int k_webui_printf(const char *fmt, ...);
+
+void k_webui_log_info(const char *fmt, ...);
+
+void k_webui_log_warn(const char *fmt, ...);
+
+void k_webui_log_error(const char *fmt, ...);
 
 #endif
