@@ -9,24 +9,14 @@ struct k_str_map_node {
 
     struct k_hash_list_node node_link;
 
-    const char *key;
+    char *key;
 
     size_t key_hash;
+
+    void *val;
 };
 
-static void *k__str_map_node_get_val(struct k_str_map_node *node) {
-    return (void *)((char *)node + sizeof(struct k_str_map_node));
-}
-
-static char *k__str_map_copy_key(struct k_str_map *map, const char *key) {
-
-    char *copy = map->fn_malloc(strlen(key) + 1);
-    if (NULL == copy)
-        return NULL;
-
-    strcpy(copy, key);
-    return copy;
-}
+#define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
 static const struct k_str_map_options default_options = {
     .fn_malloc = malloc,
@@ -187,11 +177,17 @@ static void k__str_map_rehash(struct k_str_map *map) {
     map->fn_free(old_buckets);
 }
 
-static size_t k__str_map_key_hash(const char *key) {
+static size_t k__str_map_key_hash(const char *key, size_t *get_len) {
 
     size_t hash = 5381;
-    for (; '\0' != *key; key++) {
-        hash = hash * 33 + *key;
+
+    const char *p = key;
+    for (; '\0' != *p; p++) {
+        hash = hash * 33 + *p;
+    }
+
+    if (NULL != get_len) {
+        *get_len = p - key;
     }
 
     return hash;
@@ -217,18 +213,6 @@ static struct k_str_map_node *k__str_map_bucket_find(struct k_hash_list *bucket,
     return NULL;
 }
 
-static struct k_str_map_node *k__str_map_find(struct k_str_map *map, const char *key) {
-
-    size_t key_hash = k__str_map_key_hash(key);
-    struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
-
-    struct k_str_map_node *map_node = k__str_map_bucket_find(bucket, key, key_hash);
-    if (NULL == map_node)
-        return NULL;
-
-    return map_node;
-}
-
 void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size) {
     assert(NULL != map);
 
@@ -237,15 +221,21 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size) {
     if (0 == val_size || SIZE_MAX - sizeof(struct k_str_map_node) <= val_size)
         return NULL;
 
-    size_t key_hash = k__str_map_key_hash(key);
+    size_t get_key_len;
+    size_t key_hash = k__str_map_key_hash(key, &get_key_len);
     struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
 
-    struct k_str_map_node *new_node = map->fn_malloc(sizeof(struct k_str_map_node) + val_size);
+    size_t key_size = get_key_len + 1;
+
+    struct k_str_map_node *new_node = map->fn_malloc(sizeof(struct k_str_map_node) + key_size + val_size);
     if (NULL == new_node)
         return NULL;
 
-    new_node->key = key;
     new_node->key_hash = key_hash;
+    new_node->key = ptr_offset(new_node, sizeof(struct k_str_map_node));
+    strcpy(new_node->key, key);
+
+    new_node->val = ptr_offset(new_node, sizeof(struct k_str_map_node) + key_size);
 
     struct k_str_map_node *old_node = k__str_map_bucket_find(bucket, key, key_hash);
     if (NULL != old_node) {
@@ -264,7 +254,7 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size) {
         }
     }
 
-    return k__str_map_node_get_val(new_node);
+    return new_node->val;
 }
 
 void *k_str_map_add(struct k_str_map *map, const char *key, size_t val_size) {
@@ -275,19 +265,25 @@ void *k_str_map_add(struct k_str_map *map, const char *key, size_t val_size) {
     if (0 == val_size || SIZE_MAX - sizeof(struct k_str_map_node) <= val_size)
         return NULL;
 
-    size_t key_hash = k__str_map_key_hash(key);
+    size_t get_key_len;
+    size_t key_hash = k__str_map_key_hash(key, &get_key_len);
     struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
 
     struct k_str_map_node *old_node = k__str_map_bucket_find(bucket, key, key_hash);
     if (NULL != old_node)
         return NULL;
 
-    struct k_str_map_node *new_node = map->fn_malloc(sizeof(struct k_str_map_node) + val_size);
+    size_t key_size = get_key_len + 1;
+
+    struct k_str_map_node *new_node = map->fn_malloc(sizeof(struct k_str_map_node) + key_size + val_size);
     if (NULL == new_node)
         return NULL;
 
-    new_node->key = key;
     new_node->key_hash = key_hash;
+    new_node->key = ptr_offset(new_node, sizeof(struct k_str_map_node));
+    strcpy(new_node->key, key);
+
+    new_node->val = ptr_offset(new_node, sizeof(struct k_str_map_node) + key_size);
 
     k_hash_list_add(bucket, &new_node->node_link);
     map->size += 1;
@@ -296,7 +292,7 @@ void *k_str_map_add(struct k_str_map *map, const char *key, size_t val_size) {
         k__str_map_rehash(map);
     }
 
-    return k__str_map_node_get_val(new_node);
+    return new_node->val;
 }
 
 void k_str_map_del(struct k_str_map *map, const char *key) {
@@ -305,7 +301,10 @@ void k_str_map_del(struct k_str_map *map, const char *key) {
     if (NULL == key || '\0' == key[0])
         return;
 
-    struct k_str_map_node *map_node = k__str_map_find(map, key);
+    size_t key_hash = k__str_map_key_hash(key, NULL);
+    struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
+
+    struct k_str_map_node *map_node = k__str_map_bucket_find(bucket, key, key_hash);
     if (NULL == map_node)
         return;
 
@@ -321,14 +320,14 @@ void *k_str_map_get(struct k_str_map *map, const char *key) {
     if (NULL == key || '\0' == key[0])
         return NULL;
 
-    size_t key_hash = k__str_map_key_hash(key);
+    size_t key_hash = k__str_map_key_hash(key, NULL);
     struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
 
     struct k_str_map_node *map_node = k__str_map_bucket_find(bucket, key, key_hash);
     if (NULL == map_node)
         return NULL;
 
-    return k__str_map_node_get_val(map_node);
+    return map_node->val;
 }
 
 void k_str_map_clear(struct k_str_map *map) {

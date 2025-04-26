@@ -50,7 +50,7 @@ void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
 
     if ('\0' != registry_node->name_map_node.key[0]) {
         k_str_intrusive_map_del(&registry_node->name_map_node);
-        k_hash_list_node_loop(&registry_node->name_map_node.list_node);
+        k_hash_list_node_loop(&registry_node->name_map_node.node_link);
     }
 
     k_list_del(&registry_node->iter_node);

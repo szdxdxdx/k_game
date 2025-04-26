@@ -18,7 +18,7 @@ static inline struct k_str_intrusive_map_node *find(struct k_hash_list *list, co
     struct k_str_intrusive_map_node *map_node;
     struct k_hash_list_node *iter;
     for (k_hash_list_for_each(list, iter)) {
-        map_node = container_of(iter, struct k_str_intrusive_map_node, list_node);
+        map_node = container_of(iter, struct k_str_intrusive_map_node, node_link);
 
         if (map_node->hash == hash) {
             if (strcmp(map_node->key, key) == 0)
@@ -53,7 +53,7 @@ int k_str_intrusive_map_add_if_absent(struct k_str_intrusive_map *map, const cha
 
     node->key = key;
     node->hash = hash;
-    k_hash_list_add(list, &node->list_node);
+    k_hash_list_add(list, &node->node_link);
 
     return 0;
 }
@@ -68,7 +68,7 @@ void k_str_intrusive_map_add_directly(struct k_str_intrusive_map *map, const cha
 
     node->key = key;
     node->hash = hash;
-    k_hash_list_add(list, &node->list_node);
+    k_hash_list_add(list, &node->node_link);
 }
 
 struct k_str_intrusive_map_node *k_str_intrusive_map_get(struct k_str_intrusive_map *map, const char *key) {
@@ -82,7 +82,7 @@ struct k_str_intrusive_map_node *k_str_intrusive_map_get(struct k_str_intrusive_
 
 void k_str_intrusive_map_del(struct k_str_intrusive_map_node *node) {
     assert(NULL != node);
-    k_hash_list_del(&node->list_node);
+    k_hash_list_del(&node->node_link);
 }
 
 struct k_hash_list *k_str_intrusive_map_rehash(struct k_str_intrusive_map *map, struct k_hash_list *new_buckets, size_t new_buckets_num) {
@@ -101,10 +101,10 @@ struct k_hash_list *k_str_intrusive_map_rehash(struct k_str_intrusive_map *map, 
         struct k_str_intrusive_map_node *map_node;
         struct k_hash_list_node *iter, *next;
         for (k_hash_list_for_each_s(old_list, iter, next)) {
-            map_node = container_of(iter, struct k_str_intrusive_map_node, list_node);
+            map_node = container_of(iter, struct k_str_intrusive_map_node, node_link);
 
             struct k_hash_list *new_list = &(new_buckets[map_node->hash % new_buckets_num]);
-            k_hash_list_add(new_list, &map_node->list_node);
+            k_hash_list_add(new_list, &map_node->node_link);
         }
     }
 

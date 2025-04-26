@@ -14,7 +14,7 @@ struct k_str_intrusive_map {
 
 struct k_str_intrusive_map_node {
 
-    struct k_hash_list_node list_node;
+    struct k_hash_list_node node_link;
 
     const char *key;
 
@@ -39,6 +39,6 @@ struct k_hash_list *k_str_intrusive_map_rehash(struct k_str_intrusive_map *map, 
     bucket++
 
 #define k_str_intrusive_map_node_container_of(hash_list_iter, type, member) \
-    container_of(container_of((hash_list_iter), struct k_str_intrusive_map_node, list_node), type, member)
+    container_of(container_of((hash_list_iter), struct k_str_intrusive_map_node, node_link), type, member)
 
 #endif
