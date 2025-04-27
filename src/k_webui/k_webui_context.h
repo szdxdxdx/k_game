@@ -61,13 +61,6 @@ int k__webui_exec_js(const char *js, ...);
 
 /* region [binding] */
 
-struct k_webui_binding {
-
-    void *data;
-
-    void (*fn_unbind)(void *data);
-};
-
 int k__webui_binding_init(void);
 
 void k__webui_binding_fini(void);

@@ -8,6 +8,14 @@
 
 static int int_val;
 
+static void show_int_val(void *unused) {
+    k_canvas_set_draw_color_rgba(0x000000ff);
+    k_canvas_ui_clear();
+
+    k_canvas_set_draw_color_rgba(0xffffffff);
+    k_canvas_ui_printf(NULL, 0, 0, "%d", int_val);
+}
+
 static int init(void *data, void *params) {
     *((int **)data) = (int *)params;
     return 0;
@@ -24,17 +32,12 @@ static int webui_set(void *data, const char *val) {
 
 static void enter_room(void) {
 
-    struct k_webui_binding_config config;
-    config.data_size = sizeof(int *);
-    config.fn_init   = init;
-    config.fn_unbind = NULL;
-    config.fn_webui_set = webui_set;
-
+    k_room_add_draw_callback(NULL, show_int_val, INT_MIN, INT_MIN);
 
     k_webui_log_info("测试 - %s", "输出一条日志");
 
 
-    k_webui_bind("tmp", &config, &int_val);
+    k_webui_bind_int("tmp", &int_val, NULL);
 
 
     //k_webui_bind_int("test:a", &int_val);

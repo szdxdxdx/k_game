@@ -14,6 +14,12 @@
 
     }
 
+    #binding-panel label {
+      border: 1px solid #f60;
+      margin: 8px;
+      padding: 8px;
+    }
+
     /* endregion */
     
     /* region [log-panel] */
@@ -36,28 +42,24 @@
 
       <div v-for="[label, binding] in bindings" :key="label">
 
-        <p>{{ binding }}</p>
-
         <label v-if="binding.input_type === 'range'">
           <span>{{ binding.label }}</span>
-          <input type="range" @change="binding_range_set_val($event, binding.label)"/>
+          <input type="range" @input="binding_range_set_C_val($event, binding.label)"/>
         </label>
 
         <label v-else-if="binding.input_type === 'checkbox'">
           <span>{{ binding.label }}</span>
-          <input type="checkbox"/>
+          <input type="checkbox" @change="binding_checkbox_set_C_val($event, binding.label)"/>
         </label>
 
-      </div>
-
-      <div>
-        <label>
+        <label v-else-if="binding.input_type === 'select'">
           <select>
             <option>1</option>
             <option>2</option>
             <option>3</option>
           </select>
         </label>
+
       </div>
 
     </div>
@@ -91,18 +93,8 @@
     const k__webui = createApp({
       data() {
         return {
-
-          /* region [binding] */
-
           bindings: reactive(new Map()),
-
-          /* endregion */
-
-          /* region [log-panel] */
-
           log_list: [ /* { level: 'INFO|WARN|ERROR', msg } */ ],
-
-          /* endregion */
         };
       },
       methods: {
@@ -110,20 +102,18 @@
         /* region [binding-panel] */
 
         bind: function(config) {
-          let binding = reactive({
-            label: config.label,
-            input_type: config.input_type,
-          });
-
+          let binding = reactive(config);
           this.bindings.set(binding.label, binding);
         },
 
-        unbind: function(label) {
-          console.log(label);
+        binding_range_set_C_val($event, label) {
+          let new_val = $event.target.value;
+          k__webui_set_binding_C_val(label, `${new_val}`);
         },
 
-        binding_range_set_val($event, label) {
-          k__webui_set_binding_C_val(label, `${$event.target.value}`);
+        binding_checkbox_set_C_val($event, label) {
+          let checked = $event.target.checked;
+          k__webui_set_binding_C_val(label, `${checked}`);
         },
 
         /* endregion */
