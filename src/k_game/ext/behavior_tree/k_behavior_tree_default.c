@@ -1,4 +1,4 @@
-#include "./_internal.h"
+#include "./k_behavior_tree_internal.h"
 
 static enum k_behavior_tree_status success_tick(struct k_behavior_tree_node *node) {
     (void)node;

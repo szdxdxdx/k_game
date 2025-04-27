@@ -1,4 +1,4 @@
-#include "./_internal.h"
+#include "./k_collision_internal.h"
 
 int k__collision_manager_init_group_map(struct k_collision_manager *manager) {
 

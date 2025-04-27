@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "./_internal.h"
+#include "./k_behavior_tree_internal.h"
 
 struct k_behavior_tree_force_failure_node {
 

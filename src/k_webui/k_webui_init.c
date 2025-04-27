@@ -25,9 +25,11 @@ int k_webui_init(void) {
     webui_set_position(k__webui.window, 10, 10);
     webui_set_root_folder(k__webui.window, "./k_webui");
 
-    webui_show(k__webui.window, "./index.html");
-
     webui_bind(k__webui.window, "k_webui_C_fn_event_handler", k__webui_event_handler);
+
+    k__webui_binding_init();
+
+    webui_show(k__webui.window, "./index.html");
 
     k__webui.is_inited = 1;
 }

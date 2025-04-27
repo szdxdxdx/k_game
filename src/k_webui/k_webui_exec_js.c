@@ -2,10 +2,7 @@
 #define K_LOG_TAG "k_webui:exec_js"
 #include "k_log.h"
 
-#include "./k_webui_mem_alloc.h"
 #include "./k_webui_context.h"
-#include "./k_webui_exec_js.h"
-#include "./k_webui_k_printf.h"
 
 int k__webui_exec_js(const char *js) {
     assert(NULL != js && '\0' != *js);

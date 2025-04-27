@@ -3,7 +3,7 @@
 
 #include "k_game.h"
 
-#include "./_internal.h"
+#include "./k_behavior_tree_internal.h"
 
 struct k_behavior_tree_delay_node {
 

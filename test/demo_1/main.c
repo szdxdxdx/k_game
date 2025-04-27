@@ -42,6 +42,16 @@ int main(int argc, char **argv) {
 
     k_webui_init();
 
+    k_webui_add_binding(
+        &(struct k_webui_binding_config) {
+            .binding_key = "1:k_webui_puts",
+            .fn_init = NULL,
+            .fn_fini = NULL,
+            .fn_webui_set = NULL,
+        },
+        NULL
+    );
+
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_title = "demo 1";
     config.fn_init = fn_init_game;

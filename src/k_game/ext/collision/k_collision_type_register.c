@@ -1,4 +1,4 @@
-#include "./_internal.h"
+#include "./k_collision_internal.h"
 
 /* region [component_type_register] */
 

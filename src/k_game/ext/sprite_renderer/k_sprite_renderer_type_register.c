@@ -1,6 +1,6 @@
 #include <limits.h>
 
-#include "./_internal.h"
+#include "./k_sprite_renderer_internal.h"
 
 /* region [renderer_init] */
 

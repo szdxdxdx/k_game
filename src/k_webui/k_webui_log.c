@@ -1,8 +1,6 @@
 #include <stdio.h>
 
-#include "./k_webui_mem_alloc.h"
-#include "./k_webui_exec_js.h"
-#include "./k_webui_k_printf.h"
+#include "./k_webui_context.h"
 
 enum k_webui_log_level {
     K__WEBUI_LOG_INFO,
@@ -17,9 +15,9 @@ static int k__webui_log(enum k_webui_log_level level, const char *fmt, va_list a
 
     const char *js_fn;
     switch (level) {
-        case K__WEBUI_LOG_INFO:  js_fn = "kWebui.logInfo(%s)";  break;
-        case K__WEBUI_LOG_WARN:  js_fn = "kWebui.logWarn(%s)";  break;
-        case K__WEBUI_LOG_ERROR: js_fn = "kWebui.logError(%s)"; break;
+        case K__WEBUI_LOG_INFO:  js_fn = "kWebui.logInfo(%'s)";  break;
+        case K__WEBUI_LOG_WARN:  js_fn = "kWebui.logWarn(%'s)";  break;
+        case K__WEBUI_LOG_ERROR: js_fn = "kWebui.logError(%'s)"; break;
     }
 
     char default_buf[512];

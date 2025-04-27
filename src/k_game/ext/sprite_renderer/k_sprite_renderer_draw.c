@@ -3,7 +3,7 @@
 #include "k_game/core/k_time.h"
 #include "k_game/core/k_canvas.h"
 
-#include "./_internal.h"
+#include "./k_sprite_renderer_internal.h"
 
 /* region [draw_sprite] */
 

@@ -1,4 +1,4 @@
-#include "./_internal.h"
+#include "./k_collision_internal.h"
 
 int k__collision_manager_init(struct k_component_manager *component_manager, void *params) {
     (void)params;

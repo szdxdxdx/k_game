@@ -1,5 +1,7 @@
 #include "k_printf.h"
 
+#include "./k_webui_context.h"
+
 static void k__webui_k_printf_s(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
     (void)spec;
 
@@ -52,8 +54,8 @@ static void k__webui_k_printf_s(struct k_printf_buf *buf, const struct k_printf_
 static k_printf_callback_fn k__webui_k_printf_match_spec(const char **str) {
 
     const char *ch = *str;
-    if (ch[0] == 's') {
-        *str += 1;
+    if (ch[0] == '\'' && ch[1] == 's') {
+        *str += 2;
         return k__webui_k_printf_s;
     }
 

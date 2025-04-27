@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "./_internal.h"
+#include "./k_behavior_tree_internal.h"
 
 static int root_set_child(struct k_behavior_tree_node *node, struct k_behavior_tree_node *child_node) {
     struct k_behavior_tree_root_node *root = container_of(node, struct k_behavior_tree_root_node, super);

@@ -2,7 +2,7 @@
 
 #include "k_game/core/k_canvas.h"
 
-#include "./_internal.h"
+#include "./k_sprite_renderer_internal.h"
 
 static void k__sprite_renderer_debug_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);

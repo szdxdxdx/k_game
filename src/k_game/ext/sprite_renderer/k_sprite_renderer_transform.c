@@ -1,4 +1,4 @@
-#include "./_internal.h"
+#include "./k_sprite_renderer_internal.h"
 
 /* region [scale_x] */
 

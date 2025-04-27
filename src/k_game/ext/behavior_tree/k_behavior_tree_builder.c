@@ -2,7 +2,7 @@
 
 #include "k_array.h"
 
-#include "./_internal.h"
+#include "./k_behavior_tree_internal.h"
 
 struct k_behavior_tree_builder {
 

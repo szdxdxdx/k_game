@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "./_internal.h"
+#include "./k_collision_internal.h"
 
 #include "k_game/core/k_canvas.h"
 
