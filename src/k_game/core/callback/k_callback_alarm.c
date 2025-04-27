@@ -56,12 +56,12 @@ struct k_callback *k__alarm_callback_manager_add_room_callback(struct k_alarm_ca
 
     callback->timeout = timeout;
     callback->manager = manager;
-    k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
+    k_list_insert_tail(&manager->pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_room_callback = fn_callback;
     callback->data = data;
-    k_list_add_tail(&room->callback_list, &callback->base.context_callback_list_node);
+    k_list_insert_tail(&room->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -81,12 +81,12 @@ struct k_callback *k__alarm_callback_manager_add_object_callback(struct k_alarm_
 
     callback->timeout = timeout;
     callback->manager = manager;
-    k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
+    k_list_insert_tail(&manager->pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_object_callback = fn_callback;
     callback->object = object;
-    k_list_add_tail(&object->callback_list, &callback->base.context_callback_list_node);
+    k_list_insert_tail(&object->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -106,12 +106,12 @@ struct k_callback *k__alarm_callback_manager_add_component_callback(struct k_ala
 
     callback->timeout = timeout;
     callback->manager = manager;
-    k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
+    k_list_insert_tail(&manager->pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_component_callback = fn_callback;
     callback->component = component;
-    k_list_add_tail(&component->callback_list, &callback->base.context_callback_list_node);
+    k_list_insert_tail(&component->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -131,12 +131,12 @@ struct k_callback *k__alarm_callback_manager_add_component_manager_callback(stru
 
     callback->timeout = timeout;
     callback->manager = manager;
-    k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
+    k_list_insert_tail(&manager->pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_component_manager_callback = fn_callback;
     callback->data = data;
-    k_list_add_tail(&component_manager->callback_list, &callback->base.context_callback_list_node);
+    k_list_insert_tail(&component_manager->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -157,7 +157,7 @@ void k__alarm_callback_manager_del_callback(struct k_callback *callback) {
             callback->state = K__CALLBACK_DELETED;
             break;
         case K__CALLBACK_ACTIVE:
-            k_list_add_tail(&alarm_callback->manager->pending_list, &alarm_callback->pending_list_node);
+            k_list_insert_tail(&alarm_callback->manager->pending_list, &alarm_callback->pending_list_node);
             callback->state = K__CALLBACK_DELETED;
             break;
         case K__CALLBACK_EXECUTED:
@@ -256,7 +256,7 @@ void k__alarm_callback_manager_exec(struct k_alarm_callback_manager *manager) {
 
         int timeout_diff = (int)(current_ms - callback->timeout);
 
-        k_list_add_tail(&manager->pending_list, &callback->pending_list_node);
+        k_list_insert_tail(&manager->pending_list, &callback->pending_list_node);
         callback->base.state = K__CALLBACK_EXECUTED;
 
         switch (callback->base.context) {

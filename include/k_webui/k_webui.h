@@ -22,14 +22,12 @@ struct k_webui_bind_config {
     int (*fn_get)(void *data, const char *val);
 };
 
-int k_webui_puts(const char *s);
-
-int k_webui_printf(const char *fmt, ...);
-
 void k_webui_log_info(const char *fmt, ...);
 
 void k_webui_log_warn(const char *fmt, ...);
 
 void k_webui_log_error(const char *fmt, ...);
+
+void k_webui_bind_int(const char *label, int *val);
 
 #endif

@@ -28,7 +28,7 @@ struct k_object *k__object_pool_acquire(struct k_object_pool *pool) {
     if (NULL == object)
         return NULL;
 
-    k_list_add_tail(&pool->object_list, &object->pool_node);
+    k_list_insert_tail(&pool->object_list, &object->pool_node);
     return object;
 }
 

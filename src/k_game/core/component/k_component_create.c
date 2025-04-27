@@ -38,7 +38,7 @@ static struct k_component *k__component_create(struct k_component_type *componen
     k_list_init(&component->callback_list);
 
     component->object = object;
-    k_list_add_tail(&object->component_list, &component->list_node);
+    k_list_insert_tail(&object->component_list, &component->list_node);
 
     if (NULL != entity_type->fn_init) {
         /* TODO 应该允许在 `fn_init()` 回调中删除自身吗？ */

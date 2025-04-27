@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 
     size_t i = 0;
     for (; i < 10; i++) {
-        k_list_add_head(&list, &nums[i].node);
+        k_list_insert_head(&list, &nums[i].node);
     }
 
     /* list = [ 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 ] */

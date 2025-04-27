@@ -164,12 +164,12 @@ struct k_callback *k__draw_callback_manager_add_room_callback(struct k_draw_call
     callback->base.state   = K__CALLBACK_INACTIVE;
 
     callback->layer = layer;
-    k_list_add_tail(&manager->callback_pending_list, &callback->pending_list_node);
+    k_list_insert_tail(&manager->callback_pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_room_callback = fn_callback;
     callback->data = data;
-    k_list_add_tail(&room->callback_list, &callback->base.context_callback_list_node);
+    k_list_insert_tail(&room->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -189,12 +189,12 @@ struct k_callback *k__draw_callback_manager_add_object_callback(struct k_draw_ca
     callback->base.state   = K__CALLBACK_INACTIVE;
 
     callback->layer = layer;
-    k_list_add_tail(&manager->callback_pending_list, &callback->pending_list_node);
+    k_list_insert_tail(&manager->callback_pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_object_callback = fn_callback;
     callback->object = object;
-    k_list_add_tail(&object->callback_list, &callback->base.context_callback_list_node);
+    k_list_insert_tail(&object->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -214,12 +214,12 @@ struct k_callback *k__draw_callback_manager_add_component_callback(struct k_draw
     callback->base.state   = K__CALLBACK_INACTIVE;
 
     callback->layer = layer;
-    k_list_add_tail(&manager->callback_pending_list, &callback->pending_list_node);
+    k_list_insert_tail(&manager->callback_pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_component_callback = fn_callback;
     callback->component = component;
-    k_list_add_tail(&component->callback_list, &callback->base.context_callback_list_node);
+    k_list_insert_tail(&component->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -239,12 +239,12 @@ struct k_callback *k__draw_callback_manager_add_component_manager_callback(struc
     callback->base.state   = K__CALLBACK_INACTIVE;
 
     callback->layer = layer;
-    k_list_add_tail(&manager->callback_pending_list, &callback->pending_list_node);
+    k_list_insert_tail(&manager->callback_pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
     callback->fn_component_manager_callback = fn_callback;
     callback->data = data;
-    k_list_add_tail(&component_manager->callback_list, &callback->base.context_callback_list_node);
+    k_list_insert_tail(&component_manager->callback_list, &callback->base.context_callback_list_node);
 
     return &callback->base;
 }
@@ -265,7 +265,7 @@ void k__draw_callback_manager_del_callback(struct k_callback *callback) {
             callback->state = K__CALLBACK_DELETED;
             break;
         case K__CALLBACK_ACTIVE:
-            k_list_add_tail(&draw_callback->layer->group->manager->callback_pending_list, &draw_callback->pending_list_node);
+            k_list_insert_tail(&draw_callback->layer->group->manager->callback_pending_list, &draw_callback->pending_list_node);
             callback->state = K__CALLBACK_DELETED;
             break;
         default:
@@ -338,7 +338,7 @@ void k__draw_callback_manager_flush(struct k_draw_callback_manager *manager) {
             case K__CALLBACK_INACTIVE:
                 k_list_del(&callback->pending_list_node);
                 k_list_node_loop(&callback->pending_list_node);
-                k_list_add_tail(&callback->layer->callback_list, &callback->callback_list_node);
+                k_list_insert_tail(&callback->layer->callback_list, &callback->callback_list_node);
                 callback->base.state = K__CALLBACK_ACTIVE;
                 break;
             case K__CALLBACK_DELETED:

@@ -51,11 +51,11 @@ static inline void k_list_insert_before(struct k_list_node *next, struct k_list_
     node->next = next;
 }
 
-static inline void k_list_add_head(struct k_list *list, struct k_list_node *node) {
+static inline void k_list_insert_head(struct k_list *list, struct k_list_node *node) {
     k_list_insert_after(&list->head, node);
 }
 
-static inline void k_list_add_tail(struct k_list *list, struct k_list_node *node) {
+static inline void k_list_insert_tail(struct k_list *list, struct k_list_node *node) {
     k_list_insert_before(&list->head, node);
 }
 

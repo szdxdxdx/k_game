@@ -41,7 +41,7 @@ void k_webui_close(void) {
     if ( ! k__webui.is_inited)
         return;
 
-    webui_close(k__webui.window);
+    webui_exit();
     webui_clean();
 
     k__webui.window = WEBUI_MAX_IDS;

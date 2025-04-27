@@ -107,7 +107,7 @@ int position_init(struct k_component *component, void *params) {
         parent = &world;
 
     position->parent = parent;
-    k_list_add_tail(&parent->child_list, &position->sibling_link);
+    k_list_insert_tail(&parent->child_list, &position->sibling_link);
 
     k_list_init(&position->child_list);
 
@@ -133,7 +133,7 @@ void position_fini(struct k_component *component) {
     for (k_list_for_each_s(list, iter, next)) {
         child = container_of(iter, struct k_position, sibling_link);
 
-        k_list_add_tail(&parent->child_list, &child->sibling_link);
+        k_list_insert_tail(&parent->child_list, &child->sibling_link);
         child->parent = parent;
         child->local_x += position->local_x;
         child->local_y += position->local_y;

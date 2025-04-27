@@ -164,7 +164,7 @@ static int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *k
     if (NULL == attr)
         return -1;
 
-    k_list_add_tail(&node->attr_list, &attr->node_link);
+    k_list_insert_tail(&node->attr_list, &attr->node_link);
     attr->elem = node;
     attr->key  = key;
     attr->val  = val;
@@ -173,7 +173,7 @@ static int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *k
 
 static void k__xml_elem_node_add_child(struct k_xml_elem_node *node, struct k_xml_node *child) {
     child->parent = &node->super;
-    k_list_add_tail(&node->child_list, &child->sibling_link);
+    k_list_insert_tail(&node->child_list, &child->sibling_link);
 }
 
 static void k__xml_destroy_elem_node(struct k_xml_elem_node *node) {
@@ -675,7 +675,7 @@ static struct k_xml_node *k__xml_parse(char *text, int in_place) {
                     goto err;
 
                 doc->root = node;
-                k_list_add_tail(&doc->top_node_list, &node->sibling_link);
+                k_list_insert_tail(&doc->top_node_list, &node->sibling_link);
                 break;
             }
             case K_XML_TEXT_NODE: {
@@ -684,11 +684,11 @@ static struct k_xml_node *k__xml_parse(char *text, int in_place) {
                     goto err;
                 }
 
-                k_list_add_tail(&doc->top_node_list, &node->sibling_link);
+                k_list_insert_tail(&doc->top_node_list, &node->sibling_link);
                 break;
             }
             case K_XML_COMMENT_NODE: {
-                k_list_add_tail(&doc->top_node_list, &node->sibling_link);
+                k_list_insert_tail(&doc->top_node_list, &node->sibling_link);
                 break;
             }
         }

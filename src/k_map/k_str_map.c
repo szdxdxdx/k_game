@@ -9,6 +9,8 @@ struct k_str_map_node {
 
     struct k_hash_list_node node_link;
 
+    // TODO struct k_list iter_link ?
+
     char *key;
 
     size_t key_hash;

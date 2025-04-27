@@ -70,7 +70,7 @@ int k__collision_box_init(struct k_component *component, void *params) {
     if (NULL == group) {
         return -1;
     } else {
-        k_list_add_tail(&group->box_list, &box->box_list_node);
+        k_list_insert_tail(&group->box_list, &box->box_list_node);
     }
 
     return 0;

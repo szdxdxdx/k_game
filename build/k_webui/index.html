@@ -21,6 +21,36 @@
 </head>
 <body>
   <div id="app">
+    
+    <!-- [widget-panel] --><!-- region -->
+
+    <div id="widget-panel">
+
+      <div>
+        <label>
+          <input type="range"/>
+        </label>
+      </div>
+
+      <div>
+        <label>
+          <input type="checkbox"/>
+        </label>
+      </div>
+
+      <div>
+        <label>
+          <select>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+          </select>
+        </label>
+      </div>
+
+    </div>
+    
+    <!-- endregion -->
 
     <!-- [log-panel] --><!-- region -->
 
@@ -71,6 +101,12 @@
         /* endregion */
       }
     }).mount('#app');
+  </script>
+
+  <script>
+    kWebui.logInfo('hello\nworld');
+    kWebui.logWarn('hello\nworld');
+    kWebui.logError('hello\nworld');
   </script>
 </body>
 </html>

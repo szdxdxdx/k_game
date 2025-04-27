@@ -179,7 +179,7 @@ int llk_ui_elem_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *chi
     if (child->ui != parent->ui)
         return -1;
 
-    k_list_add_tail(&parent->child_list, &child->sibling_link);
+    k_list_insert_tail(&parent->child_list, &child->sibling_link);
     child->parent = parent;
 
     llk__ui_mark_layout_dirty(parent->ui);

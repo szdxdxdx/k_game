@@ -43,7 +43,7 @@ void k__asset_registry_cleanup(struct k_asset_registry *registry, void (*fn_rele
 
 void k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node) {
     registry_node->name_map_node.key = "";
-    k_list_add_tail(&registry->asset_list, &registry_node->iter_node);
+    k_list_insert_tail(&registry->asset_list, &registry_node->iter_node);
 }
 
 void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
