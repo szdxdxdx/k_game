@@ -55,9 +55,7 @@ int k__webui_is_running(void);
 
 /* region [exec_js] */
 
-int k__webui_exec_js(const char *js);
-
-int k__webui_exec_js_fmt(const char *js, ...);
+int k__webui_exec_js(const char *js, ...);
 
 /* endregion */
 

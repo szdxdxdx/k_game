@@ -13,36 +13,35 @@ static int k__webui_log(enum k_webui_log_level level, const char *fmt, va_list a
     if (NULL == fmt || '\0' == fmt[0])
         return -1;
 
-    const char *js_fn;
-    switch (level) {
-        case K__WEBUI_LOG_INFO:  js_fn = "kWebui.logInfo(%'s)";  break;
-        case K__WEBUI_LOG_WARN:  js_fn = "kWebui.logWarn(%'s)";  break;
-        case K__WEBUI_LOG_ERROR: js_fn = "kWebui.logError(%'s)"; break;
-    }
-
     char default_buf[512];
-    char *msg = default_buf;
+    char *log_msg = default_buf;
 
     va_list args_copy;
     va_copy(args_copy, args);
-    int str_len = vsnprintf(msg, sizeof(default_buf), fmt, args_copy);
+    int str_len = vsnprintf(log_msg, sizeof(default_buf), fmt, args_copy);
     va_end(args_copy);
 
     if (str_len < 0)
         return -1;
 
     if (sizeof(default_buf) <= str_len) {
-        msg = k__webui_mem_alloc(str_len + 1);
-        if (NULL == msg)
+        log_msg = k__webui_mem_alloc(str_len + 1);
+        if (NULL == log_msg)
             return -1;
 
-        vsprintf(msg, fmt, args);
+        vsprintf(log_msg, fmt, args);
     }
 
-    int r = k__webui_exec_js_fmt(js_fn, msg);
+    const char *js_fn;
+    switch (level) {
+        case K__WEBUI_LOG_INFO:  js_fn = "k__webui.log_info(%'s)";  break;
+        case K__WEBUI_LOG_WARN:  js_fn = "k__webui.log_warn(%'s)";  break;
+        case K__WEBUI_LOG_ERROR: js_fn = "k__webui.log_error(%'s)"; break;
+    }
+    int r = k__webui_exec_js(js_fn, log_msg);
 
-    if (msg != default_buf) {
-        k__webui_mem_free(msg);
+    if (log_msg != default_buf) {
+        k__webui_mem_free(log_msg);
     }
 
     return r;

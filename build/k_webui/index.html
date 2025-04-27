@@ -7,6 +7,14 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
   <style>
+
+    /* region [binding-panel] */
+
+    #binding-panel {
+
+    }
+
+    /* endregion */
     
     /* region [log-panel] */
 
@@ -24,18 +32,22 @@
     
     <!-- [widget-panel] --><!-- region -->
 
-    <div id="widget-panel">
+    <div id="binding-panel">
 
-      <div>
-        <label>
-          <input type="range"/>
+      <div v-for="[label, binding] in bindings" :key="label">
+
+        <p>{{ binding }}</p>
+
+        <label v-if="binding.input_type === 'range'">
+          <span>{{ binding.label }}</span>
+          <input type="range" @change="binding_range_set_val($event, binding.label)"/>
         </label>
-      </div>
 
-      <div>
-        <label>
+        <label v-else-if="binding.input_type === 'checkbox'">
+          <span>{{ binding.label }}</span>
           <input type="checkbox"/>
         </label>
+
       </div>
 
       <div>
@@ -52,16 +64,18 @@
     
     <!-- endregion -->
 
+    <hr>
+
     <!-- [log-panel] --><!-- region -->
 
     <div id="log-panel">
       <table>
-        <tr v-for="(item, index) in log" :key="index">
+        <tr v-for="(log, idx) in log_list" :key="idx">
           <td>
-            <span>{{ item.level }}</span>
+            <span>{{ log.level }}</span>
           </td>
           <td>
-            <pre>{{ item.msg }}</pre>
+            <pre>{{ log.msg }}</pre>
           </td>
         </tr>
       </table>
@@ -72,30 +86,58 @@
   </div>
 
   <script>
-    const { createApp } = Vue;
+    const { createApp, reactive } = Vue;
 
-    const kWebui = createApp({
+    const k__webui = createApp({
       data() {
         return {
 
+          /* region [binding] */
+
+          bindings: reactive(new Map()),
+
+          /* endregion */
+
           /* region [log-panel] */
 
-          log: [ /* { level: 'INFO|WARN|ERROR', msg } */ ],
+          log_list: [ /* { level: 'INFO|WARN|ERROR', msg } */ ],
 
           /* endregion */
         };
       },
       methods: {
+
+        /* region [binding-panel] */
+
+        bind: function(config) {
+          let binding = reactive({
+            label: config.label,
+            input_type: config.input_type,
+          });
+
+          this.bindings.set(binding.label, binding);
+        },
+
+        unbind: function(label) {
+          console.log(label);
+        },
+
+        binding_range_set_val($event, label) {
+          k__webui_set_binding_C_val(label, `${$event.target.value}`);
+        },
+
+        /* endregion */
+
         /* region [log-panel] */
 
-        logInfo(msg) {
-          this.log.push({ level: 'INFO', msg });
+        log_info(msg) {
+          this.log_list.push({ level: 'INFO', msg });
         },
-        logWarn(msg) {
-          this.log.push({ level: 'WARN', msg });
+        log_warn(msg) {
+          this.log_list.push({ level: 'WARN', msg });
         },
-        logError(msg) {
-          this.log.push({ level: 'ERROR', msg });
+        log_error(msg) {
+          this.log_list.push({ level: 'ERROR', msg });
         }
 
         /* endregion */
@@ -104,9 +146,6 @@
   </script>
 
   <script>
-    kWebui.logInfo('hello\nworld');
-    kWebui.logWarn('hello\nworld');
-    kWebui.logError('hello\nworld');
   </script>
 </body>
 </html>

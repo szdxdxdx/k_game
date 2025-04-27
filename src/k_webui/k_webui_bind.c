@@ -3,17 +3,17 @@
 
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
+static void k__webui_set_binding_C_val(webui_event_t *e);
+
 int k__webui_binding_init(void) {
 
     struct k_str_map_options options;
     options.fn_malloc = k__webui_mem_alloc;
     options.fn_free   = k__webui_mem_free;
-
-    struct k_str_map *groups = k_str_map_construct(&k__webui.bindings, &options);
-    if (NULL == groups)
+    if (NULL == k_str_map_construct(&k__webui.bindings, &options))
         return -1;
 
-    /* ... */
+    size_t bind_id = webui_bind(k__webui.window, "k__webui_set_binding_C_val", k__webui_set_binding_C_val);
 
     return 0;
 }
@@ -46,6 +46,8 @@ int k_webui_bind(const char *label, const struct k_webui_binding_config *config,
         return -1;
     }
 
+    k__webui_exec_js("k__webui.bind({label:%'s,input_type:%'s})", label, "range");
+
     return 0;
 }
 
@@ -60,4 +62,12 @@ void k_webui_unbind(const char *label) {
     }
 
     k_str_map_remove(&k__webui.bindings, label);
+}
+
+static void k__webui_set_binding_C_val(webui_event_t *e) {
+
+    const char *label = webui_get_string_at(e, 0);
+    const char *val   = webui_get_string_at(e, 1);
+
+    printf("%s, %s\n", label, val);
 }

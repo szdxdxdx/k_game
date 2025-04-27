@@ -31,6 +31,9 @@ static void enter_room(void) {
     config.fn_webui_set = webui_set;
 
 
+    k_webui_log_info("测试 - %s", "输出一条日志");
+
+
     k_webui_bind("tmp", &config, &int_val);
 
 
