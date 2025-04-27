@@ -43,8 +43,7 @@ struct k_webui_context {
     /* webui 窗口 */
     size_t window;
 
-    /* 绑定的控件组 */
-    struct k_str_map binding_groups;
+    struct k_str_map bindings;
 };
 
 extern struct k_webui_context k__webui;
@@ -62,15 +61,7 @@ int k__webui_exec_js_fmt(const char *js, ...);
 
 /* endregion */
 
-/* region [bindings] */
-
-struct k_webui_binding_group;
-struct k_webui_binding;
-
-struct k_webui_binding_group {
-
-    struct k_str_map bindings;
-};
+/* region [binding] */
 
 struct k_webui_binding {
 

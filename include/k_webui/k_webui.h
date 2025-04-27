@@ -25,15 +25,13 @@ void k_webui_log_error(const char *fmt, ...);
 
 void k_webui_bind_int(const char *label, int *val);
 
-void k_webui_unbind(const char *binding_key);
+void k_webui_unbind(const char *label);
 
 struct k_webui_binding_config;
 
-int k_webui_bind(const struct k_webui_binding_config *config, void *params);
+int k_webui_bind(const char *label, const struct k_webui_binding_config *config, void *params);
 
 struct k_webui_binding_config {
-
-    const char *binding_key;
 
     size_t data_size;
 

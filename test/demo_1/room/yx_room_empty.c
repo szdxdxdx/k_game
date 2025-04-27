@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "k_game.h"
 #include "k_webui.h"
 
@@ -5,7 +8,31 @@
 
 static int int_val;
 
+static int init(void *data, void *params) {
+    *((int **)data) = (int *)params;
+    return 0;
+}
+
+static int webui_set(void *data, const char *val) {
+    int *p = *(int **)data;
+
+    printf("%s", val);
+
+    *p = atoi(val);
+    return 0;
+}
+
 static void enter_room(void) {
+
+    struct k_webui_binding_config config;
+    config.data_size = sizeof(int *);
+    config.fn_init   = init;
+    config.fn_unbind = NULL;
+    config.fn_webui_set = webui_set;
+
+
+    k_webui_bind("tmp", &config, &int_val);
+
 
     //k_webui_bind_int("test:a", &int_val);
 

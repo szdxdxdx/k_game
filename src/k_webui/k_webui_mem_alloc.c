@@ -9,7 +9,7 @@ void *k__webui_mem_alloc(size_t size) {
 
     void *p = malloc(size);
     if (NULL == p) {
-        k_log_error("malloc() failed");
+        k_log_error("malloc( %zu ) failed", size);
     }
 
     return p;
