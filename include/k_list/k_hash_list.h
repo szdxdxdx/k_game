@@ -48,7 +48,7 @@ static inline int k_hash_list_node_is_loop(struct k_hash_list_node *node) {
     return node->next == node && node->pprev == &node->next;
 }
 
-static inline void k_hash_list_del(struct k_hash_list_node *node) {
+static inline void k_hash_list_remove(struct k_hash_list_node *node) {
 
     if (NULL != node->next) {
         node->next->pprev = node->pprev;

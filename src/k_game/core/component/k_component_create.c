@@ -49,7 +49,7 @@ static struct k_component *k__component_create(struct k_component_type *componen
     return component;
 
 fn_create_failed:
-    k_list_del(&component->list_node);
+    k_list_remove(&component->list_node);
     k__component_del_all_callbacks(component);
     k__mem_free(component->data);
 
@@ -69,7 +69,7 @@ static void k__component_destroy(struct k_component *component) {
         entity_type->fn_fini(component);
     }
 
-    k_list_del(&component->list_node);
+    k_list_remove(&component->list_node);
     k__component_del_all_callbacks(component);
 
     k__mem_free(component->data);

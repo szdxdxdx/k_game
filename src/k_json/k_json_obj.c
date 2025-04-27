@@ -112,7 +112,7 @@ void k__json_obj_del(struct k__json_obj *json_obj, const char *key) {
     if (NULL == pair)
         return;
 
-    k_hash_list_del(&pair->link);
+    k_hash_list_remove(&pair->link);
     k__destroy_json(pair->val);
     k__json_mem_free(pair->key);
     k__json_mem_free(pair);

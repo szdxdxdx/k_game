@@ -3,9 +3,6 @@
 
 #include <stddef.h>
 
-#include "k_list.h"
-#include "k_hash_list.h"
-
 /** \brief 哈希表容器 */
 struct k_str_map {
 
@@ -19,16 +16,13 @@ struct k_str_map {
     size_t size;
 
     /** \brief [private] 哈希桶数组 */
-    struct k_hash_list *buckets;
+    void *buckets;
 
     /** \brief [private] 哈希桶的数量 */
     size_t buckets_num;
 
     /** \brief [private] 扩容阈值，当元素数量超过阈值时扩容哈希桶 */
     size_t rehash_threshold;
-
-    /** \brief [private] 迭代链表 */
-    struct k_list iter_list;
 };
 
 /** \brief 用于构造哈希表的可选配置参数 */
@@ -131,7 +125,7 @@ void *k_str_map_add_ref(struct k_str_map *map, const char *key, size_t val_size)
  *
  * 若 `key` 不存在，则函数立即返回。
  */
-void k_str_map_del(struct k_str_map *map, const char *key);
+void k_str_map_remove(struct k_str_map *map, const char *key);
 
 /**
  * \brief 获取哈希表中指定键对应的值
@@ -147,12 +141,24 @@ void *k_str_map_get(struct k_str_map *map, const char *key);
  */
 void k_str_map_clear(struct k_str_map *map);
 
-struct k_str_map_node;
+struct k_str_map_iter {
 
-struct k_str_map_node *k_str_map_get_first(struct k_str_map *map);
+    struct k_str_map *map;
 
-int k_str_map_node_get(struct k_str_map_node *node, const char **get_key, void **get_val);
+    void *bucket;
 
-struct k_str_map_node *k_str_map_get_next(struct k_str_map_node *node);
+    void *node;
+};
+
+void k_str_map_iter_init(struct k_str_map_iter *iter, struct k_str_map *map);
+
+int k_str_map_iter_get(struct k_str_map_iter *iter, const char **get_key, void *get_val);
+
+void k_str_map_iter_next(struct k_str_map_iter *iter);
+
+#define k_str_map_for_each(map, iter, key, val) \
+    k_str_map_iter_init(iter, map); \
+    k_str_map_iter_get(iter, key, val); \
+    k_str_map_iter_next(iter)
 
 #endif

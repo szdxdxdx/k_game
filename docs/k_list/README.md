@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
         if (data->data % 3 != 0) {
             /* 【删除】节点 */
-            k_list_del(iter);
+            k_list_remove(iter);
 
             /* 对已删除的节点设置【自环】 */
             k_list_node_loop(iter);

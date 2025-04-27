@@ -167,7 +167,7 @@ void k__alarm_callback_manager_del_callback(struct k_callback *callback) {
             assert(0);
     }
 
-    k_list_del(&alarm_callback->base.context_callback_list_node);
+    k_list_remove(&alarm_callback->base.context_callback_list_node);
 }
 
 /* endregion */
@@ -203,7 +203,7 @@ void k__alarm_callback_manager_flush(struct k_alarm_callback_manager *manager) {
 
         switch (callback->base.state) {
             case K__CALLBACK_INACTIVE:
-                k_list_del(&callback->pending_list_node);
+                k_list_remove(&callback->pending_list_node);
                 k_list_node_loop(&callback->pending_list_node);
 
                 /* TODO 改用优先队列后，修改这个代码块 */
@@ -227,8 +227,8 @@ void k__alarm_callback_manager_flush(struct k_alarm_callback_manager *manager) {
                 break;
             case K__CALLBACK_EXECUTED:
             case K__CALLBACK_DELETED:
-                k_list_del(&callback->callback_list_node);
-                k_list_del(&callback->pending_list_node);
+                k_list_remove(&callback->callback_list_node);
+                k_list_remove(&callback->pending_list_node);
                 k__mem_free(callback);
                 break;
             default:

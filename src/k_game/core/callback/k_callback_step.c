@@ -147,7 +147,7 @@ void k__step_callback_manager_del_callback(struct k_callback *callback) {
             assert(0);
     }
 
-    k_list_del(&step_callback->base.context_callback_list_node);
+    k_list_remove(&step_callback->base.context_callback_list_node);
 }
 
 /* endregion */
@@ -185,14 +185,14 @@ void k__step_callback_manager_flush(struct k_step_callback_manager *manager) {
 
         switch (callback->base.state) {
             case K__CALLBACK_INACTIVE:
-                k_list_del(&callback->pending_list_node);
+                k_list_remove(&callback->pending_list_node);
                 k_list_node_loop(&callback->pending_list_node);
                 k_list_insert_tail(callback_list, &callback->callback_list_node);
                 callback->base.state = K__CALLBACK_ACTIVE;
                 break;
             case K__CALLBACK_DELETED:
-                k_list_del(&callback->callback_list_node);
-                k_list_del(&callback->pending_list_node);
+                k_list_remove(&callback->callback_list_node);
+                k_list_remove(&callback->pending_list_node);
                 k__mem_free(callback);
                 break;
             default:

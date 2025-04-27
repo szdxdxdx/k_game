@@ -59,7 +59,7 @@ static inline void k_list_insert_tail(struct k_list *list, struct k_list_node *n
     k_list_insert_before(&list->head, node);
 }
 
-static inline void k_list_del(struct k_list_node *node) {
+static inline void k_list_remove(struct k_list_node *node) {
     node->prev->next = node->next;
     node->next->prev = node->prev;
 }

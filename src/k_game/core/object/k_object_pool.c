@@ -33,6 +33,6 @@ struct k_object *k__object_pool_acquire(struct k_object_pool *pool) {
 }
 
 void k__object_pool_release(struct k_object *object) {
-    k_list_del(&object->pool_node);
+    k_list_remove(&object->pool_node);
     k__mem_free(object); /* TODO pool_free */
 }

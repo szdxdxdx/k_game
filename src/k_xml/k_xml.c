@@ -196,7 +196,7 @@ static void k__xml_destroy_elem_node(struct k_xml_elem_node *node) {
         k__xml_destroy_node(child);
     }
 
-    k_list_del(&node->super.sibling_link);
+    k_list_remove(&node->super.sibling_link);
     k__xml_mem_free(node);
 }
 
@@ -222,7 +222,7 @@ static struct k_xml_text_node *k__xml_create_text_node(struct k_xml_doc *doc) {
 }
 
 static void k__xml_destroy_text_node(struct k_xml_text_node *node) {
-    k_list_del(&node->super.sibling_link);
+    k_list_remove(&node->super.sibling_link);
     k__xml_mem_free(node);
 }
 
@@ -247,7 +247,7 @@ static struct k_xml_comment_node *k__xml_create_comment_node(struct k_xml_doc *d
 }
 
 static void k__xml_destroy_comment_node(struct k_xml_comment_node *node) {
-    k_list_del(&node->super.sibling_link);
+    k_list_remove(&node->super.sibling_link);
     k__xml_mem_free(node);
 }
 

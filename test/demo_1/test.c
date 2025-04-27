@@ -17,8 +17,22 @@ static void test(void) {
 
         int *val3 = k_str_map_put(map, "key3", sizeof(int));
         *val3 = 3;
+
+        int *val4 = k_str_map_put(map, "key4", sizeof(int));
+        *val4 = 4;
+
+        int *val5 = k_str_map_put(map, "key5", sizeof(int));
+        *val5 = 5;
     }
 
+
+    struct k_str_map_iter iter;
+    const char *key;
+    int *val;
+    for (k_str_map_for_each(map, &iter, &key, &val)) {
+
+        printf("%s: %d\n", key, *val);
+    }
 }
 
 #if 1

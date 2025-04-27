@@ -65,7 +65,7 @@ struct k_int_intrusive_map_node *k_int_intrusive_map_get(struct k_int_intrusive_
 
 void k_int_intrusive_map_del(struct k_int_intrusive_map_node *node) {
     assert(NULL != node);
-    k_hash_list_del(&node->node_link);
+    k_hash_list_remove(&node->node_link);
 }
 
 struct k_hash_list *k_int_intrusive_map_rehash(struct k_int_intrusive_map *map, struct k_hash_list *new_buckets, size_t new_buckets_num) {

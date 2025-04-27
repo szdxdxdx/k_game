@@ -134,7 +134,7 @@ void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
         llk__ui_elem_destroy(child);
     }
 
-    k_list_del(&elem->sibling_link);
+    k_list_remove(&elem->sibling_link);
 
     llk__ui_elem_set_id(elem, NULL);
 

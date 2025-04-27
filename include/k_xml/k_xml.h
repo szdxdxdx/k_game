@@ -239,7 +239,7 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
  *     printf("%s: %s, ", key, val);
  * }
  * ```
- */
+ */ // TODO FIXME 宏展开 key val 不要取址，否则无法设为 NULL
 #define k_xml_for_each_attr(elem_node, attr, key, val) \
     attr = k_xml_get_first_attr(elem_node, &key, &val); \
     NULL != attr; \
