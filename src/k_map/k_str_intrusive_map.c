@@ -42,7 +42,7 @@ void k_str_intrusive_map_init(struct k_str_intrusive_map *map, struct k_hash_lis
 
 int k_str_intrusive_map_add_if_absent(struct k_str_intrusive_map *map, const char *key, struct k_str_intrusive_map_node *node) {
     assert(NULL != map);
-    assert(NULL != key && '\0' != key[0]);
+    assert(NULL != key);
     assert(NULL != node);
 
     size_t hash = str_hash(key);
@@ -60,7 +60,7 @@ int k_str_intrusive_map_add_if_absent(struct k_str_intrusive_map *map, const cha
 
 void k_str_intrusive_map_add_directly(struct k_str_intrusive_map *map, const char *key, struct k_str_intrusive_map_node *node) {
     assert(NULL != map);
-    assert(NULL != key && '\0' != key[0]);
+    assert(NULL != key);
     assert(NULL != node);
 
     size_t hash = str_hash(key);
@@ -73,7 +73,7 @@ void k_str_intrusive_map_add_directly(struct k_str_intrusive_map *map, const cha
 
 struct k_str_intrusive_map_node *k_str_intrusive_map_get(struct k_str_intrusive_map *map, const char *key) {
     assert(NULL != map);
-    assert(NULL != key && '\0' != key[0]);
+    assert(NULL != key);
 
     size_t hash = str_hash(key);
     struct k_hash_list *list = &(map->buckets[hash % map->buckets_num]);

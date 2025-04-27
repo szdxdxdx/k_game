@@ -18,3 +18,15 @@ void *k__webui_mem_alloc(size_t size) {
 void k__webui_mem_free(void *p) {
     free(p);
 }
+
+char *k__webui_strdup(const char *str, size_t len) {
+
+    char *copy = k__webui_mem_alloc(len + 1);
+    if (NULL == copy)
+        return NULL;
+
+    strncpy(copy, str, len);
+    copy[len] = '\0';
+
+    return copy;
+}

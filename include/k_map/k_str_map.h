@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
+#include "k_list.h"
 #include "k_hash_list.h"
 
 /** \brief 哈希表容器 */
@@ -25,6 +26,9 @@ struct k_str_map {
 
     /** \brief [private] 扩容阈值，当元素数量超过阈值时扩容哈希桶 */
     size_t rehash_threshold;
+
+    /** \brief [private] 迭代链表 */
+    struct k_list iter_list;
 };
 
 /** \brief 用于构造哈希表的可选配置参数 */
@@ -77,7 +81,7 @@ void k_str_map_destruct(struct k_str_map *map);
  * 若键不存在，则添加新键值对。
  * 若键已存在，则释放旧值的内存，然后分配新内存来存储新值。
  *
- * `key` 是要添加或更新的键，要求传入有效的字符串指针，且字符串非空，
+ * `key` 是要添加或更新的键，要求传入有效的字符串指针，
  * 哈希表会复制保存 `key` 字符串。
  *
  * `val_size` 指定要添加或更新的值的大小，单位：字节。
@@ -102,7 +106,7 @@ void *k_str_map_put_ref(struct k_str_map *map, const char *key, size_t val_size)
  *
  * 若键不存在，则添加新键值对。若键已存在，则添加失败。
  *
- * `key` 是要添加的键，要求传入有效的字符串指针，且字符串非空，
+ * `key` 是要添加的键，要求传入有效的字符串指针，
  * 哈希表会复制保存 `key` 字符串。
  *
  * `val_size` 指定要添加的值的大小，单位：字节。
@@ -142,5 +146,13 @@ void *k_str_map_get(struct k_str_map *map, const char *key);
  * 删除哈希表中所有的键值对，并保留哈希桶数组的当前容量。
  */
 void k_str_map_clear(struct k_str_map *map);
+
+struct k_str_map_node;
+
+struct k_str_map_node *k_str_map_get_first(struct k_str_map *map);
+
+int k_str_map_node_get(struct k_str_map_node *node, const char **get_key, void **get_val);
+
+struct k_str_map_node *k_str_map_get_next(struct k_str_map_node *node);
 
 #endif

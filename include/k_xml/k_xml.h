@@ -134,6 +134,8 @@ struct k_xml_node *k_xml_get_prev_sibling(struct k_xml_node *node);
  * ```C
  * struct k_xml_node *elem_node = ...;
  *
+ * // 统计子节点、元素子节点、文本子节点的个数
+ *
  * int child_count = 0;
  * int elem_child_count = 0;
  * int text_child_count = 0;
@@ -145,6 +147,7 @@ struct k_xml_node *k_xml_get_prev_sibling(struct k_xml_node *node);
  *
  *     if (K_XML_ELEM_NODE == k_xml_get_type(child_node))
  *          elem_child_count++;
+ *
  *     if (K_XML_TEXT_NODE == k_xml_get_type(child_node))
  *          text_child_count++;
  * }
@@ -209,6 +212,9 @@ struct k_xml_attr;
  */
 struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char **get_key, const char **get_val);
 
+// TODO
+int k_xml_attr_get(struct k_xml_attr *attr, const char **get_key, const char **get_val);
+
 /**
  * \brief 获取 xml 元素节点的下一个属性
  *
@@ -230,7 +236,7 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
  * const char *val;
  * for (k_xml_for_each_attr(elem_node, attr, key, val)) {
  *
- *     printf("key: %s, val: %s", key, val);
+ *     printf("%s: %s, ", key, val);
  * }
  * ```
  */
