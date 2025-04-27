@@ -9,7 +9,7 @@
 
 static void create_room(void) {
 
-   // struct k_room *room = yx_create_arena_room();
+    // struct k_room *room = yx_create_arena_room();
     struct k_room *room = yx_create_empty_room();
 
     k_room_goto(room);
@@ -33,7 +33,7 @@ static int fn_init_game(void) {
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");

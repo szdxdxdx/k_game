@@ -8,23 +8,6 @@ static void test(void) {
 
     struct k_str_map *map = k_str_map_create(NULL);
 
-    {
-        int *val1 = k_str_map_put(map, "key1", sizeof(int));
-        *val1 = 1;
-
-        int *val2 = k_str_map_put(map, "key2", sizeof(int));
-        *val2 = 2;
-
-        int *val3 = k_str_map_put(map, "key3", sizeof(int));
-        *val3 = 3;
-
-        int *val4 = k_str_map_put(map, "key4", sizeof(int));
-        *val4 = 4;
-
-        int *val5 = k_str_map_put(map, "key5", sizeof(int));
-        *val5 = 5;
-    }
-
 
     struct k_str_map_iter iter;
     const char *key;
@@ -35,7 +18,7 @@ static void test(void) {
     }
 }
 
-#if 1
+#if 0
 
 int main(int argc, char **argv) {
     system("chcp 65001");

@@ -32,6 +32,8 @@
  *
  * ---
  *
+ * 解析得到的树结构是【只读】的
+ *
  * 目前支持的功能：
  * - 解析【元素节点】，例如： <book></book>
  * - 解析【闭合】的元素节点： <book id="1" available="true" />
@@ -39,7 +41,6 @@
  * - 解析【文本节点】，例如： <price>39.99</price>
  * - 解析【注释节点】，例如： <!-- 注释 -->
  * - 五个基本的【实体引用】： &lt; &gt; &amp; &apos; &quot;
- * - 解析 xml 格式的文本得到的树结构是【只读】的
  *
  * ---
  *
@@ -207,12 +208,16 @@ struct k_xml_attr;
  * \brief 获取 xml 元素节点的第一个属性
  *
  * 函数返回元素节点 `elem_node` 的第一个属性，用于遍历元素节点的属性列表。
- * 出参 `get_key` 和 `get_val` 分别返回属性的键和值。
  * 若节点没有属性，或者不是元素节点，则函数返回 `NULL`。
  */
-struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char **get_key, const char **get_val);
+struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node);
 
-// TODO
+/**
+ * \brief 获取 xml 元素节点属性的键和值
+ *
+ * 若 `attr` 为 `NULL`，则函数立即返回 0。
+ * 否则函数返回 1，出参 `get_key` 和 `get_val` 分别返回属性的键和值。
+ */
 int k_xml_attr_get(struct k_xml_attr *attr, const char **get_key, const char **get_val);
 
 /**
@@ -222,7 +227,7 @@ int k_xml_attr_get(struct k_xml_attr *attr, const char **get_key, const char **g
  * 出参 `get_key` 和 `get_val` 分别返回该属性的键和值。
  * 若 `attr` 已是最后一个属性，则函数返回 `NULL`。
  */
-struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get_key, const char **get_val);
+struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr);
 
 /**
  * \brief 遍历 xml 元素节点的属性
@@ -234,16 +239,16 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
  * struct k_xml_attr *attr;
  * const char *key;
  * const char *val;
- * for (k_xml_for_each_attr(elem_node, attr, key, val)) {
+ * for (k_xml_for_each_attr(elem_node, attr, &key, &val)) {
  *
  *     printf("%s: %s, ", key, val);
  * }
  * ```
- */ // TODO FIXME 宏展开 key val 不要取址，否则无法设为 NULL
+ */
 #define k_xml_for_each_attr(elem_node, attr, key, val) \
-    attr = k_xml_get_first_attr(elem_node, &key, &val); \
-    NULL != attr; \
-    attr = k_xml_get_next_attr(attr, &key, &val)
+    attr = k_xml_get_first_attr(elem_node); \
+    k_xml_attr_get(attr, key, val); \
+    attr = k_xml_get_next_attr(attr)
 
 /**
  * \brief 获取 xml 节点的文本内容

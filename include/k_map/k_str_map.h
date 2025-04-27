@@ -137,25 +137,71 @@ void *k_str_map_get(struct k_str_map *map, const char *key);
 /**
  * \brief 清空哈希表
  *
- * 删除哈希表中所有的键值对，并保留哈希桶数组的当前容量。
+ * 删除哈希表中的所有元素，并保留哈希桶数组的当前容量。
+ *
+ * 若哈希表中的元素持有外部资源，可提供回调 `fn_callback` 来在删除元素前处理这些资源，
+ * 如果不需要处理，可以将 `fn_callback` 设为 `NULL`。
  */
-void k_str_map_clear(struct k_str_map *map);
+void k_str_map_clear(struct k_str_map *map, void (*fn_callback)(const char *key, void *val));
 
+/** \brief 用于遍历哈希表的迭代器 */
 struct k_str_map_iter {
 
+    /** \brief [private] 要遍历的哈希表 */
     struct k_str_map *map;
 
+    /** \brief [private] 当前正在遍历的哈希桶 */
     void *bucket;
 
+    /** \brief [private] 指向哈希表中的内部节点 */
     void *node;
 };
 
+/**
+ * \brief 初始化哈希表迭代器
+ *
+ * 初始化迭代器 `iter`，定位到 `map` 中的第一个元素。
+ */
 void k_str_map_iter_init(struct k_str_map_iter *iter, struct k_str_map *map);
 
+/**
+ * \brief 获取迭代器指向的元素的键和值
+ *
+ * 若迭代器已到达末尾，此时迭代器不指向任何一个元素，函数立即返回 0，
+ * 否则函数返回 1，出参 `get_key` 和 `get_val` 返回迭代器指向的元素的键和值。
+ */
 int k_str_map_iter_get(struct k_str_map_iter *iter, const char **get_key, void *get_val);
 
+/**
+ * \brief 迭代器向后移动到下一个元素
+ *
+ * 若迭代器已到达末尾，则保持则函数立即返回，否则迭代器向后移动到下一个元素。
+ */
 void k_str_map_iter_next(struct k_str_map_iter *iter);
 
+/**
+ * \brief 遍历哈希表
+ *
+ * 注意：遍历过程中不要对哈希表增删元素。
+ *
+ * 示例：
+ * ```C
+ * struct k_str_map *map = ...;
+ *
+ * // 假设哈希表中的元素结构如下：
+ * struct my_data {
+ *     int data;
+ * }
+ *
+ * struct k_str_map_iter iter;
+ * const char *key;
+ * struct my_data *val;
+ * for (k_str_map_for_each(map, &iter, key, val)) {
+ *
+ *     printf("%s: %d, ", key, val->data);
+ * }
+ * ```
+ */
 #define k_str_map_for_each(map, iter, key, val) \
     k_str_map_iter_init(iter, map); \
     k_str_map_iter_get(iter, key, val); \

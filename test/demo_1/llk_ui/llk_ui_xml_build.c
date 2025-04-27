@@ -32,7 +32,7 @@ struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_context *ui, struc
     struct k_xml_attr *attr;
     const char *key;
     const char *val;
-    for (k_xml_for_each_attr(xml, attr, key, val)) {
+    for (k_xml_for_each_attr(xml, attr, &key, &val)) {
 
         llk_ui_elem_set_attr(elem, key, val);
     }

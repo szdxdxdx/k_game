@@ -19,10 +19,10 @@ static void print_xml_node(struct k_printf_buf *buf, struct k_xml_node *node) {
             const char *tag = k_xml_get_tag(node);
             k_printf_buf_printf(buf, CYAN "<%s", tag);
 
+            struct k_xml_attr *attr;
             const char *key;
             const char *val;
-            struct k_xml_attr *attr = k_xml_get_first_attr(node, &key, &val);
-            for (; NULL != attr; attr = k_xml_get_next_attr(attr, &key, &val)) {
+            for (k_xml_for_each_attr(node, attr, &key, &val)) {
                 k_printf_buf_printf(buf, " " YELLOW "%s" CYAN "=\"" GREEN "%s" CYAN "\"", key, val);
             }
 

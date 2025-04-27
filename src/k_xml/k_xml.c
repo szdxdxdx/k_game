@@ -891,7 +891,7 @@ const char *k_xml_get_attr(struct k_xml_node *elem_node, const char *attr_key) {
     return NULL;
 }
 
-struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char **get_key, const char **get_val) {
+struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node) {
 
     if (NULL == elem_node)
         return NULL;
@@ -907,12 +907,20 @@ struct k_xml_attr *k_xml_get_first_attr(struct k_xml_node *elem_node, const char
     struct k_list_node *first = k_list_get_first(attr_list);
     struct k_xml_attr *attr = container_of(first, struct k_xml_attr, node_link);
 
-    if (NULL != get_key) { *get_key = attr->key; }
-    if (NULL != get_val) { *get_val = attr->val; }
     return attr;
 }
 
-struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get_key, const char **get_val) {
+int k_xml_attr_get(struct k_xml_attr *attr, const char **get_key, const char **get_val) {
+
+    if (NULL == attr)
+        return 0;
+
+    if (NULL != *get_key) { *get_key = attr->key; }
+    if (NULL != *get_val) { *get_val = attr->val; }
+    return 1;
+}
+
+struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr) {
 
     if (NULL == attr)
         return NULL;
@@ -922,8 +930,6 @@ struct k_xml_attr *k_xml_get_next_attr(struct k_xml_attr *attr, const char **get
         return NULL;
 
     struct k_xml_attr *next_attr = container_of(next, struct k_xml_attr, node_link);
-    if (NULL != get_key) { *get_key = next_attr->key; }
-    if (NULL != get_val) { *get_val = next_attr->val; }
     return next_attr;
 }
 
