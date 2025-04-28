@@ -1,6 +1,6 @@
 #include "k_printf_binding.h"
 
-static k_printf_callback_fn match_spec(const char **str) {
+k_printf_spec_print_fn k_fmt(const char **str) {
 
     const char *p = *str;
     const char *s = *str;
@@ -8,7 +8,7 @@ static k_printf_callback_fn match_spec(const char **str) {
     if ('k' == *p) p++; else return NULL;
     if ('_' == *p) p++; else return NULL;
 
-    k_printf_callback_fn fn_callback;
+    k_printf_spec_print_fn fn_callback;
 
     switch (*p) {
 
@@ -36,7 +36,3 @@ done:
     *str += (p - s);
     return fn_callback;
 }
-
-struct k_printf_config *k_fmt = &(struct k_printf_config) {
-    .fn_match_spec = match_spec
-};

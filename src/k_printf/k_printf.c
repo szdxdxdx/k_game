@@ -198,7 +198,7 @@ int k_printf_buf_get_n(struct k_printf_buf *buf) {
 /* region [c_std_spec] */
 
 /* 处理 C printf 中 `%n` 一族的格式说明符 */
-static void printf_callback_c_std_spec_n(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+static void k__printf_c_spec_get_n(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
 
     const char c1 = spec->type[0];
     const char c2 = spec->type[1];
@@ -229,7 +229,7 @@ static void printf_callback_c_std_spec_n(struct k_printf_buf *buf, const struct 
 }
 
 /* 处理 C printf 中除了 `%n` 一族以外所有的格式说明符 */
-static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+static void k__printf_c_spec_print(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
 
     char fmt_buf[96];
     char *fmt = fmt_buf;
@@ -320,7 +320,7 @@ static void printf_callback_c_std_spec(struct k_printf_buf *buf, const struct k_
 }
 
 /* 匹配 C printf 格式说明符，若匹配成功则移动字符串指针，并返回对应的回调 */
-static k_printf_callback_fn match_c_std_spec(const char **str) {
+static k_printf_spec_print_fn match_c_std_spec(const char **str) {
 
     switch ((*str)[0]) {
         case 'a': case 'A': case 'c': case 'd':
@@ -329,11 +329,11 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
         case 'p': case 's': case 'u': case 'x':
         case 'X':
             *str += 1;
-            return printf_callback_c_std_spec;
+            return k__printf_c_spec_print;
 
         case 'n':
             *str += 1;
-            return printf_callback_c_std_spec_n;
+            return k__printf_c_spec_get_n;
 
         case 'h': {
             switch ((*str)[1]) {
@@ -341,20 +341,20 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                 case 'o': case 'u':
                 case 'x': case 'X':
                     *str += 2;
-                    return printf_callback_c_std_spec;
+                    return k__printf_c_spec_print;
                 case 'n':
                     *str += 2;
-                    return printf_callback_c_std_spec_n;
+                    return k__printf_c_spec_get_n;
                 case 'h': {
                     switch ((*str)[2]) {
                         case 'd': case 'i':
                         case 'o': case 'u':
                         case 'x': case 'X':
                             *str += 3;
-                            return printf_callback_c_std_spec;
+                            return k__printf_c_spec_print;
                         case 'n':
                             *str += 3;
-                            return printf_callback_c_std_spec_n;
+                            return k__printf_c_spec_get_n;
                     }
                     break;
                 }
@@ -369,20 +369,20 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                 case 'g': case 'G': case 'i': case 'o':
                 case 's': case 'u': case 'x': case 'X':
                     *str += 2;
-                    return printf_callback_c_std_spec;
+                    return k__printf_c_spec_print;
                 case 'n':
                     *str += 2;
-                    return printf_callback_c_std_spec_n;
+                    return k__printf_c_spec_get_n;
                 case 'l': {
                     switch ((*str)[2]) {
                         case 'd': case 'i':
                         case 'o': case 'u':
                         case 'x': case 'X':
                             *str += 3;
-                            return printf_callback_c_std_spec;
+                            return k__printf_c_spec_print;
                         case 'n':
                             *str += 3;
-                            return printf_callback_c_std_spec_n;
+                            return k__printf_c_spec_get_n;
                     }
                     break;
                 }
@@ -395,7 +395,7 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                 case 'a': case 'A': case 'e': case 'E':
                 case 'f': case 'F': case 'g': case 'G':
                     *str += 2;
-                    return printf_callback_c_std_spec;
+                    return k__printf_c_spec_print;
             }
             break;
         }
@@ -406,10 +406,10 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
                 case 'o': case 'u':
                 case 'x': case 'X':
                     *str += 2;
-                    return printf_callback_c_std_spec;
+                    return k__printf_c_spec_print;
                 case 'n':
                     *str += 2;
-                    return printf_callback_c_std_spec_n;
+                    return k__printf_c_spec_get_n;
             }
             break;
         }
@@ -422,26 +422,29 @@ static k_printf_callback_fn match_c_std_spec(const char **str) {
 
 /* region [user_spec] */
 
-k_printf_callback_fn k_printf_match_spec_helper(const struct k_printf_spec_callback_tuple *tuples, const char **str) {
+k_printf_spec_print_fn k_printf_spec_match_helper(const struct k_printf_spec_print_pair *pairs, const char **str) {
 
-    const struct k_printf_spec_callback_tuple *tuple = tuples;
-    while (NULL != tuple->spec_type) {
+    const struct k_printf_spec_print_pair *pair = pairs;
+    while (NULL != pair->spec_type) {
 
-        const char *p = *str;
-        const char *spec = tuple->spec_type;
-        for (; '\0' != *spec; ++p, ++spec) {
+        const char *p1 = *str;
+        const char *p2 = pair->spec_type;
+        for (; '\0' != *p2; p1++, p2++) {
 
-            if (*p != *spec)
+            if (*p1 != *p2)
                 goto next_spec;
         }
 
-        *str += spec - tuple->spec_type;
-        return tuple->fn_callback;
+        *str += p2 - pair->spec_type;
+
+        assert(NULL != pair->fn_print);
+        return pair->fn_print;
 
     next_spec:
-        tuple++;
+        pair++;
     }
 
+    assert(NULL == pair->fn_print);
     return NULL;
 }
 
@@ -472,7 +475,7 @@ static int extract_non_negative_int(const char **str) {
 }
 
 /* 提取格式说明符，若提取成功则移动字符串指针，并返回对应的回调 */
-static k_printf_callback_fn extract_spec(const struct k_printf_config *config, const char **str, struct k_printf_spec *get_spec) {
+static k_printf_spec_print_fn extract_spec(k_printf_spec_match_fn fn_match, const char **str, struct k_printf_spec *get_spec) {
 
     /* assert( '%' == **str ) */
     const char *ch = *str + 1;
@@ -527,10 +530,13 @@ static k_printf_callback_fn extract_spec(const struct k_printf_config *config, c
 
     spec.type = ch;
 
-    k_printf_callback_fn fn_callback;
-    if (NULL == (fn_callback = config->fn_match_spec(&ch)) &&
-        NULL == (fn_callback = match_c_std_spec(&ch)))
-        return NULL;
+    k_printf_spec_print_fn fn_callback = fn_match(&ch);
+    if (NULL == fn_callback) {
+
+        fn_callback = match_c_std_spec(&ch);
+        if (NULL == fn_callback)
+            return NULL;
+    }
 
     spec.end = ch;
 
@@ -543,7 +549,7 @@ static k_printf_callback_fn extract_spec(const struct k_printf_config *config, c
  *
  * 本函数是 k_printf 家族所有函数的核心实现。
  */
-static int k__printf(const struct k_printf_config *config, struct k_printf_buf *buf, const char *fmt, va_list args) {
+static int k__printf(k_printf_spec_match_fn fn_match, struct k_printf_buf *buf, const char *fmt, va_list args) {
 
     const char *s = fmt;
     const char *p = s;
@@ -568,7 +574,7 @@ static int k__printf(const struct k_printf_config *config, struct k_printf_buf *
         s = p;
 
         struct k_printf_spec spec;
-        k_printf_callback_fn fn_callback = extract_spec(config, &s, &spec);
+        k_printf_spec_print_fn fn_callback = extract_spec(fn_match, &s, &spec);
         if (NULL != fn_callback) {
             fn_callback(buf, &spec, &args);
             p = s;
@@ -584,87 +590,87 @@ static int k__printf(const struct k_printf_config *config, struct k_printf_buf *
 
 /* region [k_printf] */
 
-int k_printf(const struct k_printf_config *config, const char *fmt, ...) {
+int k_printf(k_printf_spec_match_fn fn_match, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int r = k_vfprintf(config, stdout, fmt, args);
+    int r = k_vfprintf(fn_match, stdout, fmt, args);
     va_end(args);
 
     return r;
 }
 
-int k_fprintf(const struct k_printf_config *config, FILE *file, const char *fmt, ...) {
+int k_fprintf(k_printf_spec_match_fn fn_match, FILE *file, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int r = k_vfprintf(config, file, fmt, args);
+    int r = k_vfprintf(fn_match, file, fmt, args);
     va_end(args);
 
     return r;
 }
 
-int k_vfprintf(const struct k_printf_config *config, FILE *file, const char *fmt, va_list args) {
+int k_vfprintf(k_printf_spec_match_fn fn_match, FILE *file, const char *fmt, va_list args) {
     assert(NULL != file);
     assert(NULL != fmt);
 
-    if (NULL == config)
+    if (NULL == fn_match)
         return vfprintf(file, fmt, args);
 
     struct k_printf_file_buf file_buf;
     file_buf_init(&file_buf, file);
 
-    return k__printf(config, &file_buf.printf_buf, fmt, args);
+    return k__printf(fn_match, &file_buf.printf_buf, fmt, args);
 }
 
-int k_sprintf(const struct k_printf_config *config, char *buf, const char *fmt, ...) {
+int k_sprintf(k_printf_spec_match_fn fn_match, char *buf, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int r = k_vsprintf(config, buf, fmt, args);
+    int r = k_vsprintf(fn_match, buf, fmt, args);
     va_end(args);
 
     return r;
 }
 
-int k_vsprintf(const struct k_printf_config *config, char *buf, const char *fmt, va_list args) {
-    return k_vsnprintf(config, buf, INT_MAX, fmt, args);
+int k_vsprintf(k_printf_spec_match_fn fn_match, char *buf, const char *fmt, va_list args) {
+    return k_vsnprintf(fn_match, buf, INT_MAX, fmt, args);
 }
 
-int k_snprintf(const struct k_printf_config *config, char *buf, size_t n, const char *fmt, ...) {
+int k_snprintf(k_printf_spec_match_fn fn_match, char *buf, size_t n, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int r = k_vsnprintf(config, buf, n, fmt, args);
+    int r = k_vsnprintf(fn_match, buf, n, fmt, args);
     va_end(args);
 
     return r;
 }
 
-int k_vsnprintf(const struct k_printf_config *config, char *buf, size_t n, const char *fmt, va_list args) {
+int k_vsnprintf(k_printf_spec_match_fn fn_match, char *buf, size_t n, const char *fmt, va_list args) {
     assert(NULL != fmt);
 
-    if (NULL == config)
+    if (NULL == fn_match)
         return vsnprintf(buf, n, fmt, args);
 
     struct k_printf_str_buf str_buf;
     str_buf_init(&str_buf, buf, n);
 
-    return k__printf(config, &str_buf.printf_buf, fmt, args);
+    return k__printf(fn_match, &str_buf.printf_buf, fmt, args);
 }
 
-int k_asprintf(const struct k_printf_config *config, char **get_s, const char *fmt, ...) {
+int k_asprintf(k_printf_spec_match_fn fn_match, char **get_s, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int r = k_vasprintf(config, get_s, fmt, args);
+    int r = k_vasprintf(fn_match, get_s, fmt, args);
     va_end(args);
 
     return r;
 }
 
-int k_vasprintf(const struct k_printf_config *config, char **get_s, const char *fmt, va_list args) {
+int k_vasprintf(k_printf_spec_match_fn fn_match, char **get_s, const char *fmt, va_list args) {
     assert(NULL != get_s);
     assert(NULL != fmt);
 
     va_list args_copy;
     va_copy(args_copy, args);
-    int str_len = k_vsnprintf(config, NULL, 0, fmt, args_copy);
+    int str_len = k_vsnprintf(fn_match, NULL, 0, fmt, args_copy);
     va_end(args_copy);
 
     if (str_len <= 0 || str_len == INT_MAX)
@@ -674,7 +680,7 @@ int k_vasprintf(const struct k_printf_config *config, char **get_s, const char *
     if (NULL == buf)
         return -1;
 
-    if (str_len != k_vsnprintf(config, buf, str_len + 1, fmt, args)) {
+    if (str_len != k_vsnprintf(fn_match, buf, str_len + 1, fmt, args)) {
         free(buf);
         return -1;
     }

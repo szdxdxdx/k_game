@@ -61,9 +61,10 @@ void k__printf_k_xml(struct k_printf_buf *buf, const struct k_printf_spec *spec,
     struct k_xml_node *node = (struct k_xml_node *)va_arg(*args, void *);
 
     if (NULL == node) {
-        k_printf_buf_printf(buf, "(null)");
+        k_printf_buf_puts_n(buf, "(null)", 6);
     } else {
         print_xml_node(buf, node);
         k_printf_buf_printf(buf, RESET);
+        k_printf_buf_puts_n(buf, "\n", 1);
     }
 }

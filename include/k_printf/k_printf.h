@@ -5,64 +5,15 @@
 #include <stdio.h>
 #include <stddef.h>
 
-/* region [k_printf] */
-
-struct k_printf_config;
-
-/**
- * `k_printf()` 将字符串格式化写入到标准输出流 `stdout`。
- *
- * `k_fprintf()` 和 `k_vfprintf()` 将字符串格式化写入到文件流 `FILE *`。
- *
- * `k_sprintf()` 和 `k_vsprintf()` 将字符串格式化写入到 `char []` 缓冲区。
- * 保证结果字符串以 `\0` 结尾。
- *
- * `k_snprintf()` 和 `k_vsnprintf()` 将字符串格式化写入到 `char []` 缓冲区，
- * 是 `k_sprintf()` 和 `k_vsprintf()` 的更安全版本，因为有 `n` 来指定缓冲区的大小。
- * 使用 `k_sprintf()` 等同于在使用 `k_snprintf()` 且指定 `n` 为 `INT_MAX`。
- * 若缓冲区不足以容纳完整的结果字符串，则用 `\0` 将其截断。
- *
- * `k_asprintf()` 和 `k_vasprintf()` 使用 `malloc()` 分配 `char []` 缓冲区
- * 来存储结果字符串，通过 `get_s` 返回该字符串指针。该字符串的内存由用户负责释放。
- *
- * k_printf 无全局状态，每次调用时需传入配置，用于定义格式说明符的匹配规则和转换行为。
- *
- * \param config 本次输出使用的配置（若为 `NULL` 则仅支持 C printf 的格式说明符）
- * \param file   将字符串格式化写入 `FILE *`
- * \param buf    将字符串格式化写入 `char []`
- * \param n      `char []` 缓冲区的长度（只有 `n > 0` 时，才会往缓冲区写入内容）
- * \param get_s  返回动态分配的字符串的指针
- * \param fmt    格式字符串
- * \param ...    不定参数，根据格式字符串中的说明符，匹配要输出的值
- * \param args   含要打印的变量的参数列表
- * \return 若成功，函数返回结果字符串长度（忽略缓冲区实际大小）；若失败，函数返回负值。
- *
- * @{
- */
-
-int k_printf   (const struct k_printf_config *config, const char *fmt, ...);
-int k_fprintf  (const struct k_printf_config *config, FILE *file, const char *fmt, ...);
-int k_vfprintf (const struct k_printf_config *config, FILE *file, const char *fmt, va_list args);
-int k_sprintf  (const struct k_printf_config *config, char *buf, const char *fmt, ...);
-int k_vsprintf (const struct k_printf_config *config, char *buf, const char *fmt, va_list args);
-int k_snprintf (const struct k_printf_config *config, char *buf, size_t n, const char *fmt, ...);
-int k_vsnprintf(const struct k_printf_config *config, char *buf, size_t n, const char *fmt, va_list args);
-int k_asprintf (const struct k_printf_config *config, char **get_s, const char *fmt, ...);
-int k_vasprintf(const struct k_printf_config *config, char **get_s, const char *fmt, va_list args);
-
-/** @} */
-
-/* endregion */
-
-/* region [k_printf_config] */
-
 /* region [k_printf_callback] */
 
 struct k_printf_buf;
 struct k_printf_spec;
 
 /**
- * \brief 自定义格式说明符的回调函数
+ * \brief 用于打印自定义格式说明符的内容
+ *
+ * 当 k_printf 识别到自定义的格式说明符时，会执行该回调，交由你来输出内容。
  *
  * 在回调中，k_printf 提供给你一个抽象的缓冲区接口 `k_printf_buf`，
  * 你需要使用 `k_printf_buf_XXX()` 系列的函数往缓冲区中写入内容，
@@ -85,7 +36,76 @@ struct k_printf_spec;
  * 你应按需消耗实参。不要残留下应该由你来处理的实参，不要多消耗不属于你的实参，
  * 否则后续的格式说明符会匹配到错误的实参，可能导致程序崩溃。
  */
-typedef void (*k_printf_callback_fn)(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args);
+typedef void (*k_printf_spec_print_fn)(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args);
+
+/**
+ * \brief 用于匹配自定义格式说明符
+ *
+ * 当 k_printf 遇到 `%` 符号时，会先提取格式说明符的修饰部分，再交由你来匹配格式说明符。
+ * 若匹配到了你自定义的格式说明符，你需要移动字符串指针，并返回用于打印该格式说明符的回调。
+ *
+ * 例如：若你定义了格式说明符 `%k`，函数 `fn_k()` 分别用于打印它的内容，
+ * 则你需要在本回调中匹配字符串的开头是否为 `k`，若不是，则直接返回 `NULL`。
+ * 若是，则函数应返回函数指针 `fn_k`，并移动字符串指针 +1 越过该格式说明符。
+ *
+ * C printf 的格式说明符格式为 `%[标志][最小宽度][.精度][长度修饰符]转换说明符`。
+ * k_printf 把 `[长度修饰符]转换说明符` 整体称作格式说明符的 `类型`，
+ * 例如，在 k_printf 看来，C printf 的 `%d` 和 `%lld` 是两个不同的类型。
+ * 若你只自定义了格式说明符为 `%k`，对 k_printf 而言 `%llk` 仍是未知的格式说明符。
+ *
+ * 在本回调中，你只需要匹配格式说明符的类型名。例如，当 k_printf 遇到 `%+.3kiss` 时，
+ * k_printf 会识别 `%+.3` 的部分，交由你来匹配类型名 `k` 并将字符串指针移到 `iss`。
+ *
+ * 类型名可以使用除了字母和数字以外的字符，但开头不能是数字、空格或 `%+-#*` 中的任一个字符。
+ * 你可以重载 C printf 的格式说明符，但会失去左右对齐、零填充、精度等修饰符的默认行为，
+ * 若需要，你得在 `k_printf_spec_print_fn` 中再实现它们。
+ *
+ * 你可以使用 `k_printf_match_spec_helper()` 帮助你完成字符串匹配工作。
+ */
+typedef k_printf_spec_print_fn (*k_printf_spec_match_fn)(const char **str);
+
+/* endregion */
+
+/**
+ * `k_printf()` 将字符串格式化写入到标准输出流 `stdout`。
+ *
+ * `k_fprintf()` 和 `k_vfprintf()` 将字符串格式化写入到文件流 `FILE *`。
+ *
+ * `k_sprintf()` 和 `k_vsprintf()` 将字符串格式化写入到 `char []` 缓冲区。
+ * 保证结果字符串以 `\0` 结尾。
+ *
+ * `k_snprintf()` 和 `k_vsnprintf()` 将字符串格式化写入到 `char []` 缓冲区，
+ * 是 `k_sprintf()` 和 `k_vsprintf()` 的更安全版本，因为有 `n` 来指定缓冲区的大小。
+ * 使用 `k_sprintf()` 等同于在使用 `k_snprintf()` 且指定 `n` 为 `INT_MAX`。
+ * 若缓冲区不足以容纳完整的结果字符串，则用 `\0` 将其截断。
+ *
+ * `k_asprintf()` 和 `k_vasprintf()` 使用 `malloc()` 分配 `char []` 缓冲区
+ * 来存储结果字符串，通过 `get_s` 返回该字符串指针。该字符串的内存由用户负责释放。
+ *
+ * \param fn_match 用于匹配自定义格式说明符的回调（若为 `NULL` 则仅匹配 C printf 的格式说明符）
+ * \param file     将字符串格式化写入 `FILE *`
+ * \param buf      将字符串格式化写入 `char []`
+ * \param n        `char []` 缓冲区的长度（只有 `n > 0` 时，才会往缓冲区写入内容）
+ * \param get_s    返回动态分配的字符串的指针
+ * \param fmt      格式字符串
+ * \param ...      不定参数，根据格式字符串中的说明符，匹配要输出的值
+ * \param args     含要打印的变量的参数列表
+ * \return 若成功，函数返回结果字符串长度（忽略缓冲区实际大小）；若失败，函数返回负值。
+ *
+ * @{
+ */
+
+int k_printf   (k_printf_spec_match_fn fn_match, const char *fmt, ...);
+int k_fprintf  (k_printf_spec_match_fn fn_match, FILE *file, const char *fmt, ...);
+int k_vfprintf (k_printf_spec_match_fn fn_match, FILE *file, const char *fmt, va_list args);
+int k_sprintf  (k_printf_spec_match_fn fn_match, char *buf, const char *fmt, ...);
+int k_vsprintf (k_printf_spec_match_fn fn_match, char *buf, const char *fmt, va_list args);
+int k_snprintf (k_printf_spec_match_fn fn_match, char *buf, size_t n, const char *fmt, ...);
+int k_vsnprintf(k_printf_spec_match_fn fn_match, char *buf, size_t n, const char *fmt, va_list args);
+int k_asprintf (k_printf_spec_match_fn fn_match, char **get_s, const char *fmt, ...);
+int k_vasprintf(k_printf_spec_match_fn fn_match, char **get_s, const char *fmt, va_list args);
+
+/** @} */
 
 /* region [k_printf_buf] */
 
@@ -194,76 +214,34 @@ struct k_printf_spec {
 
 /* endregion */
 
-/* endregion */
-
-/**
- * \brief k_printf 的行为配置
- *
- * C printf 的格式说明符格式为 `%[标志][最小宽度][.精度][长度修饰符]转换说明符`。
- *
- * k_printf 把 `[长度修饰符]转换说明符` 视为一个整体，称作格式说明符的 `类型`。
- * 假定自定义的格式说明符为 `%k`，则它的类型名是 `k`（不含 `%`）。
- * 若你只定义了 `%k`，对 k_printf 而言 `%llk` 仍是未知的格式说明符。
- *
- * 自定义格式说明符的类型名不能以 `%+-#0*` 中的任一个字符或是空格开头。
- * 类型名不限定只能使用字母和数字，例如：你可以自定义格式说明符为 `%{k}`。
- *
- * 你可以重载 C printf 的格式说明符，但会失去所有修饰符的默认行为，
- * 不再支持左右对齐、零填充、精度等。若需要，你得自己再实现它们。
- */
-struct k_printf_config {
-
-    /**
-     * \brief 匹配字符串开头的格式说明符，若匹配成功则移动字符串指针，并返回对应的回调
-     *
-     * 你将通过此配置项来告知 k_printf 要匹配哪些格式说明符。
-     * k_printf 遇到 `%` 符号时，会先提取格式说明符的修饰部分，再执行 `fn_match_spec()`。
-     *
-     * 假定你有一组自定义的格式说明符 `%k` 和 `%k22`，对应的回调分别为 `fn_k()` 和 `fn_k22()`。
-     * 你需要在 `fn_match_spec()` 中匹配字符串的开头是否为 `k` 或是 `k22`，
-     * 若是，你需要返回对应的回调，并移动字符串指针。若都不是，你需要返回 `NULL`，且不要移动字符串指针。
-     *
-     * 例如，遇到 `%+.3k22ss` 时，k_printf 会识别 `%+.3` 的部分，再交由你来识别 `k22ss` 的部分。
-     * 你应该识别出 `k22`，并正确移动字符串指针 +3 越过 `k22`，且返回其回调 `fn_k22()` 的指针。
-     *
-     * 你可以使用 `k_printf_match_spec_helper()` 帮助你完成字符串匹配工作。
-     *
-     * 若匹配成功，函数应移动字符串指针跳过该说明符，并返回对应回调，
-     * 否则函数应返回 `NULL`，且不移动字符串指针。
-     */
-    k_printf_callback_fn (*fn_match_spec)(const char **str);
-};
-
 /* region [k_printf_match_spec_helper] */
 
 /** \brief 用于定义一对格式说明符与回调，仅用于 `k_printf_match_spec_helper` */
-struct k_printf_spec_callback_tuple {
+struct k_printf_spec_print_pair {
 
     /** \brief 格式说明符类型 */
     const char *spec_type;
 
     /** \brief 对应的回调函数 */
-    k_printf_callback_fn fn_callback;
+    k_printf_spec_print_fn fn_print;
 };
 
 /**
  * \brief 匹配格式说明符，若匹配成功则移动字符串指针，并返回对应的回调
  *
- * 本函数可以帮助你完成 `k_printf_config->fn_match_spec` 的实现。
+ * 本函数可以帮助你完成 `k_printf_spec_match_fn` 的实现。
  *
  * 函数顺序遍历一组格式说明符配置项，将每个说明符与字符串开头进行匹配。
  * 若匹配成功，则移动字符串指针跳过该说明符，函数返回相应的回调；
  * 若匹配失败，函数返回 `NULL`，且不移动字符串指针。
  *
- * 传递的 `tuples` 应是一个 `k_printf_spec_callback_tuple` 数组，
+ * 传递的 `pairs` 应是一个 `k_printf_spec_print_pair` 数组，
  * 且要求数组最后一项是哨兵值 `{ NULL, NULL }`。建议将该数组定义为静态常量。
  *
  * 若你的格式说明符有前缀包含关系，请把长的格式说明符写在前面。
  * 假定 `%k` 和 `%kk` 都是你自定义的格式说明符，请把 `%kk` 放在 `%k` 前面。
  */
-k_printf_callback_fn k_printf_match_spec_helper(const struct k_printf_spec_callback_tuple *tuples, const char **str);
-
-/* endregion */
+k_printf_spec_print_fn k_printf_spec_match_helper(const struct k_printf_spec_print_pair *pairs, const char **str);
 
 /* endregion */
 

@@ -5,7 +5,7 @@
 
 #include "k_printf.h"
 
-extern struct k_printf_config *k_fmt;
+k_printf_spec_print_fn k_fmt(const char **str);
 
 /**
  * \brief 打印 json

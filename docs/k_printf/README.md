@@ -5,27 +5,55 @@
 ## 简单示例
 
 ```C
-/* 第一步，编写自定义格式说明符 `%arr` 的回调函数，用于打印 int 数组 */
+/* 以下为完整的示例代码 */
 
-void my_spec_arr(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+#include <stdarg.h>
+#include <stddef.h>
+#include <string.h>
 
-    /* 在回调中使用 `k_printf_buf_XXX()` 系列的函数往缓冲区 `buf `中写入内容，
-     * 不需要考虑缓冲区类型是 `char []` 还是 `FILE *`。
-     */
+#include "k_printf.h"
+
+/* 第一步，编写自定义格式说明符 `%arr` 的打印函数，用于打印 int 数组 */
+
+static void my_spec_arr_print(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+
+    int *arr = va_arg(*args, int *);
+    int  len = va_arg(*args, int);
+
+    int i = 0;
+    for (; i < len; i++) {
+        k_printf_buf_printf(buf, "%d, ", arr[i]);
+    }
 }
 
-/* 第二步，编写 k_printf 的配置，注册自定义格式说明符 `%arr` */
+/* 第二步，编写 k_printf 自定义格式说明符的匹配函数 */
 
-struct k_printf_config config = { ... };
+static k_printf_spec_print_fn my_spec_match(const char **str) {
+
+    if (0 == strncmp(*str, "arr", 3)) {
+        *str += 3;
+        return my_spec_arr_print;
+    } else {
+        return NULL;
+    }
+}
 
 /* 第三步，使用 k_printf */
 
-int arr[] = { 1, 2, 3, 4, 5 };
+int main(int argc, char **argv) {
 
-k_printf(config, "arr[] = %arr", arr, 5);
+    k_printf_spec_match_fn my_fmt = my_spec_match;
+
+    int arr[] = {  1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    int len = 10;
+
+    k_printf(my_fmt, "%arr", arr, len);
+
+    return 0;
+}
 ```
 
-## 完整示例
+## 详细示例
 
 ```C
 /* 以下为完整的示例代码 */
@@ -49,7 +77,7 @@ k_printf(config, "arr[] = %arr", arr, 5);
  * `%arr` 支持 `.*` 修饰，表示将每行打印的元素个数。
  * 例如：`%.3arr` 表示将数组内容换行打印，每行 3 个元素。
  */
-static void my_spec_arr(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+static void my_spec_arr_print(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
 
     /* 第一步，按需消耗变长参数列表中的实参 */
 
@@ -117,7 +145,7 @@ static void my_spec_arr(struct k_printf_buf *buf, const struct k_printf_spec *sp
  * 这里重新定义最小宽度修饰 `*`，改为重复输出的字符个数。
  * 例如：`%5c` 表示重复输出 5 次该字符。
  */
-static void my_spec_c(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+static void my_spec_c_print(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
 
     /* 第一步，按需消耗变长参数列表中的实参 */
 
@@ -162,7 +190,7 @@ static void my_spec_c(struct k_printf_buf *buf, const struct k_printf_spec *spec
 }
 
 /* 匹配自定义格式说明符 */
-static k_printf_callback_fn my_match_spec_1(const char **str) {
+static k_printf_spec_print_fn my_spec_match_v1(const char **str) {
 
     const char *s = *str;
 
@@ -170,11 +198,11 @@ static k_printf_callback_fn my_match_spec_1(const char **str) {
 
     if (s[0] == 'c') {
         *str += 1; /* 若匹配成功，则移动字符串指针，并返回对应的回调 */
-        return my_spec_c;
+        return my_spec_c_print;
     }
     else if (s[0] == 'a' && s[1] == 'r' && s[2] == 'r') {
         *str += 3;
-        return my_spec_arr;
+        return my_spec_arr_print;
     }
     else {
         return NULL; /* 若匹配失败则返回 NULL，不要移动字符串指针 */
@@ -182,27 +210,24 @@ static k_printf_callback_fn my_match_spec_1(const char **str) {
 }
 
 /* 匹配自定义格式说明符 */
-static k_printf_callback_fn my_match_spec_2(const char **str) {
+static k_printf_spec_print_fn my_spec_match_v2(const char **str) {
 
-    /* 若你的格式说明符比较少，或你想图方便，你可以使用 `k_printf_match_spec_helper` */
+    /* 若你的格式说明符比较少，或你想图方便，你可以使用 `k_printf_spec_match_helper` */
 
-    static struct k_printf_spec_callback_tuple tuples[] = {
-        { "arr", my_spec_arr },
-        { "c"  , my_spec_c   },
+    static struct k_printf_spec_print_pair pairs[] = {
+        { "arr", my_spec_arr_print },
+        { "c"  , my_spec_c_print   },
         { NULL , NULL }
     };
 
-    return k_printf_match_spec_helper(tuples, str);
+    return k_printf_spec_match_helper(pairs, str);
 }
 
 #if 1
 
 int main(int argc, char **argv) {
 
-    static struct k_printf_config config = {
-        .fn_match_spec = my_match_spec_1,
-                 /* 或者 `my_match_spec_2` */
-    };
+    k_printf_spec_match_fn my_fmt = my_spec_match_v1; /* 或者 my_spec_match_v2 */
 
     int arr[] = {  1,  2,  3,  4,  5,
                    6,  7,  8,  9, 10,
@@ -222,15 +247,15 @@ int main(int argc, char **argv) {
         puts("2.");
         /* 本次输出使用指定配置，重载 `%c` 用于重复打印字符
          * 依然支持 C printf 的格式说明符 */
-        k_printf(&config, "%s, %c,%n %4c, %*c\n", "hello", 'a', &n, 'b', 3, 'c');
-        k_printf(&config, "%s, %d, %5.2f, %5lld\n\n", "hello", n, 3.14, (long long)123);
+        k_printf(my_fmt, "%s, %c,%n %4c, %*c\n", "hello", 'a', &n, 'b', 3, 'c');
+        k_printf(my_fmt, "%s, %d, %5.2f, %5lld\n\n", "hello", n, 3.14, (long long)123);
     }
 
     /* 使用 `k_fprintf()` */
     {
         puts("3.");
         /* 使用自定义格式说明符 `%arr`，打印数组的前 8 个元素 */
-        k_fprintf(&config, stdout, "%arr\n\n", arr, 8);
+        k_fprintf(my_fmt, stdout, "%arr\n\n", arr, 8);
     }
 
     /* 使用 `k_asprintf()` */
@@ -239,7 +264,7 @@ int main(int argc, char **argv) {
 
         puts("4.");
         /* 打印数组的前 20 个元素，每行打印 7 个元素 */
-        k_asprintf(&config, &get_s, "%.7arr\n", arr, 20);
+        k_asprintf(my_fmt, &get_s, "%.7arr\n", arr, 20);
         if (NULL != get_s) {
             puts(get_s);
             free(get_s);
@@ -254,7 +279,7 @@ int main(int argc, char **argv) {
 
         puts("5.");
         /* 打印数组的前 13 个元素，每行打印 5 个元素，每个元素最少占 3 个字符宽度 */
-        k_sprintf(&config, buf, "%3.5arr\n", arr, 13);
+        k_sprintf(my_fmt, buf, "%3.5arr\n", arr, 13);
         puts(buf);
     }
 
@@ -265,7 +290,7 @@ int main(int argc, char **argv) {
         puts("6.");
         /* 打印数组的前 20 个元素，每行打印 5 个元素，每个元素最少占 3 个字符宽度
          * 指定缓冲区大小为 96，超出部分会被截断 */
-        k_snprintf(&config, buf, 96, "%*.*arr\n", 3, 5, arr, 20);
+        k_snprintf(my_fmt, buf, 96, "%*.*arr\n", 3, 5, arr, 20);
         puts(buf);
         puts("");
     }

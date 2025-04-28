@@ -51,7 +51,7 @@ static void k__webui_k_printf_s(struct k_printf_buf *buf, const struct k_printf_
     k_printf_buf_puts_n(buf, tmp_buf, p - tmp_buf);
 }
 
-static k_printf_callback_fn k__webui_k_printf_match_spec(const char **str) {
+static k_printf_spec_print_fn k__webui_fmt(const char **str) {
 
     const char *ch = *str;
     if (ch[0] == '\'' && ch[1] == 's') {
@@ -62,32 +62,28 @@ static k_printf_callback_fn k__webui_k_printf_match_spec(const char **str) {
     return NULL;
 }
 
-static struct k_printf_config k__webui_k_printf_config = {
-    .fn_match_spec = k__webui_k_printf_match_spec
-};
-
 int k__webui_sprintf(char *buf, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int r = k_sprintf(&k__webui_k_printf_config, buf, fmt, args);
+    int r = k_sprintf(k__webui_fmt, buf, fmt, args);
     va_end(args);
 
     return r;
 }
 
 int k__webui_vsprintf(char *buf, const char *fmt, va_list args) {
-    return k_vsprintf(&k__webui_k_printf_config, buf, fmt, args);
+    return k_vsprintf(k__webui_fmt, buf, fmt, args);
 }
 
 int k__webui_snprintf(char *buf, size_t n, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int r = k_snprintf(&k__webui_k_printf_config, buf, n, fmt, args);
+    int r = k_snprintf(k__webui_fmt, buf, n, fmt, args);
     va_end(args);
 
     return r;
 }
 
 int k__webui_vsnprintf(char *buf, size_t n, const char *fmt, va_list args) {
-    return k_vsnprintf(&k__webui_k_printf_config, buf, n, fmt, args);
+    return k_vsnprintf(k__webui_fmt, buf, n, fmt, args);
 }
