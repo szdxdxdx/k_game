@@ -1,7 +1,7 @@
 #define K_LOG_TAG "k_webui"
 #include "k_log.h"
 
-#include "./k_webui_context.h"
+#include "./k_webui_internal.h"
 
 struct k_webui_context k__webui = {
     .window = WEBUI_MAX_IDS,

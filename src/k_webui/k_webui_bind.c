@@ -1,8 +1,9 @@
+#include "k_str_buf.h"
 
 #define K_LOG_TAG "k_webui:bind"
 #include "k_log.h"
 
-#include "./k_webui_context.h"
+#include "./k_webui_internal.h"
 
 #define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
 
@@ -54,7 +55,20 @@ static int k__webui_bind(const char *label, const struct k_webui_binding_config 
         return -1;
     }
 
-    k__webui_exec_js("k__webui.bind({label:%'s,input_type:%'s})", label, "range");
+    char buf[512];
+    struct k_str_buf str_buf;
+    k_str_buf_init(&str_buf, buf, sizeof(buf));
+
+    k_str_buf_puts(&str_buf, "k__webui.bind({");
+    k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
+    k_str_buf_k_printf(&str_buf, k__webui_fmt, "input_type:%'s,", "range");
+    k_str_buf_puts(&str_buf, "})");
+
+    char *js = k_str_buf_get(&str_buf);
+    k__webui_exec_js(js);
+
+    k_str_buf_free(&str_buf);
+
 
     return 0;
 }
@@ -116,10 +130,10 @@ struct k_webui_int_binding {
     /* 指向绑定的 int 类型变量的指针 */
     int *p_int;
 
-    enum k_webui_bind_input_type input_type;
+    enum k_webui_input_type input_type;
     union {
-        struct k_webui_bind_int_range    range;
-        struct k_webui_bind_int_checkbox checkbox;
+        struct k_webui_int_range range;
+        struct k_webui_checkbox  checkbox;
     };
 };
 
@@ -140,7 +154,7 @@ static void k__webui_set_int(void *data, const char *val) {
     *int_binding->p_int = new_val;
 }
 
-void k_webui_bind_int(const char *label, int *p_int, const struct k_webui_bind_int_options *options) {
+void k_webui_bind_int(const char *label, int *p_int, const struct k_webui_int_options *options) {
 
     struct k_webui_binding_config config;
     config.data_size    = sizeof(struct k_webui_int_binding);

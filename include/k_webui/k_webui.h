@@ -23,36 +23,54 @@ void k_webui_log_error(const char *fmt, ...);
 
 /* region [bind] */
 
-struct k_webui_bind_int_options;
-struct k_webui_bind_float_options;
+struct k_webui_int_options;
+struct k_webui_float_options;
 
-void k_webui_bind_int(const char *label, int *p_int, const struct k_webui_bind_int_options *options);
+void k_webui_bind_int(const char *label, int *p_int, const struct k_webui_int_options *options);
 
-void k_webui_bind_float(const char *label, float *p_float, const struct k_webui_bind_float_options *options);
+void k_webui_bind_float(const char *label, float *p_float, const struct k_webui_float_options *options);
 
 void k_webui_unbind(const char *label);
 
-enum k_webui_bind_input_type {
-    K_WEBUI_RANGE,
+enum k_webui_input_type {
+    K_WEBUI_INT_RANGE,
+    K_WEBUI_FLOAT_RANGE,
     K_WEBUI_CHECKBOX,
     K_WEBUI_BUTTON,
 };
 
-struct k_webui_bind_int_range {
+struct k_webui_int_range {
     int min;
     int max;
     int step;
 };
 
-struct k_webui_bind_int_checkbox {
+struct k_webui_float_range {
+    float min;
+    float max;
+    float step;
+};
+
+struct k_webui_checkbox {
     void *_;
 };
 
-struct k_webui_bind_int_options {
-    enum k_webui_bind_input_type input_type;
+struct k_webui_button {
+    void *_;
+};
+
+struct k_webui_int_options {
+    enum k_webui_input_type input_type;
     union {
-        struct k_webui_bind_int_range    range;
-        struct k_webui_bind_int_checkbox checkbox;
+        struct k_webui_int_range range;
+        struct k_webui_checkbox  checkbox;
+    };
+};
+
+struct k_webui_float_options {
+    enum k_webui_input_type input_type;
+    union {
+        struct k_webui_float_range range;
     };
 };
 

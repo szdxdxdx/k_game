@@ -3,7 +3,7 @@
 #define K_LOG_TAG "k_webui/malloc"
 #include "k_log.h"
 
-#include "./k_webui_context.h"
+#include "./k_webui_internal.h"
 
 void *k__webui_mem_alloc(size_t size) {
 

@@ -1,39 +1,45 @@
 
-#include "./k_webui_context.h"
+#include "./k_webui_internal.h"
 
-static int exec_js(const char *js) {
+int k__webui_exec_js(const char *js) {
+    assert(NULL != js);
+
     webui_run(k__webui.window, js);
     return 0;
 }
 
-int k__webui_exec_js(const char *fmt, ...) {
-    assert(NULL != fmt && '\0' != fmt[0]);
+int k__webui_exec_js_fmt(const char *fmt, ...) {
+    assert(NULL != fmt);
 
     char default_buf[512];
 
+    char *buf = default_buf;
+    size_t buf_capacity = sizeof(default_buf);
+
     va_list args;
     va_start(args, fmt);
-    int str_len = k__webui_vsnprintf(default_buf, sizeof(default_buf), fmt, args);
+    int str_len = k_vsnprintf(k__webui_fmt, buf, buf_capacity, fmt, args);
     va_end(args);
 
     if (-1 == str_len)
         return -1;
 
-    if (str_len < sizeof(default_buf)) {
-        return exec_js(default_buf);
+    if (str_len < buf_capacity) {
+        return k__webui_exec_js(buf);
     }
 
-    char *alloc_buf = k__webui_mem_alloc(str_len + 1);
-    if (NULL == alloc_buf)
+    buf_capacity = str_len + 1;
+    buf = k__webui_mem_alloc(buf_capacity);
+    if (NULL == buf)
         return -1;
 
     va_start(args, fmt);
-    k__webui_vsprintf(alloc_buf, fmt, args);
+    k_vsnprintf(k__webui_fmt, buf, buf_capacity, fmt, args);
     va_end(args);
 
-    int result = exec_js(alloc_buf);
+    int result = k__webui_exec_js(buf);
 
-    k__webui_mem_free(alloc_buf);
+    k__webui_mem_free(buf);
 
     return result;
 }

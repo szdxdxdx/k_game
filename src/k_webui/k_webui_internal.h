@@ -3,10 +3,12 @@
 
 #include "webui.h"
 
+#include "k_printf.h"
+
 #include "k_webui.h"
 #include "k_str_map.h"
 
-/* region [printf] */
+/* region [k_printf] */
 
 /* 自定义格式说明符：
  *
@@ -14,10 +16,7 @@
  *   将 C 字符串转换输出为 js 字符串字面量，输出的字符串会被双引号包裹，
  *   且在所有需要转义的字符前（引号、回车等）添加反斜杠。
  */
-int k__webui_sprintf  (char *buf, const char *fmt, ...);
-int k__webui_vsprintf (char *buf, const char *fmt, va_list args);
-int k__webui_snprintf (char *buf, size_t n, const char *fmt, ...);
-int k__webui_vsnprintf(char *buf, size_t n, const char *fmt, va_list args);
+k_printf_spec_print_fn k__webui_fmt(const char **str);
 
 /* endregion */
 
@@ -55,7 +54,9 @@ int k__webui_is_running(void);
 
 /* region [exec_js] */
 
-int k__webui_exec_js(const char *js, ...);
+int k__webui_exec_js(const char *js);
+
+int k__webui_exec_js_fmt(const char *js, ...);
 
 /* endregion */
 
