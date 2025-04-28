@@ -46,11 +46,11 @@ struct k_room_config {
      * 若成功，回调函数应返回 0，否则应返回非 0。
      * 房间初始化失败，也意味着房间创建失败。
      *
-     * 入参 `params` 由 `k_room_create()` 传入。
+     * 入参 `param` 由 `k_room_create()` 传入。
      *
      * 此回调是可选的，设为 `NULL` 则不执行回调。
      */
-    int (*fn_init)(void *params);
+    int (*fn_init)(void *param);
 
     /**
      * \brief 销毁房间前执行的回调
@@ -86,11 +86,11 @@ struct k_room_config {
 /**
  * \brief 创建房间
  *
- * 函数将入参 `params` 转交给房间的初始化回调 `fn_init()`。
+ * 函数将入参 `param` 转交给房间的初始化回调 `fn_init()`。
  *
  * 若创建成功，函数返回房间指针，否则返回 `NULL`。
  */
-struct k_room *k_room_create(const struct k_room_config *config, void *params);
+struct k_room *k_room_create(const struct k_room_config *config, void *param);
 
 /* endregion */
 

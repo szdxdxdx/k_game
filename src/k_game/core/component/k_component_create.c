@@ -11,7 +11,7 @@
 
 /* region [component_create] */
 
-static struct k_component *k__component_create(struct k_component_type *component_type, struct k_object *object, void *params) {
+static struct k_component *k__component_create(struct k_component_type *component_type, struct k_object *object, void *param) {
     struct k_component_entity_type *entity_type   = &component_type->entity_type;
     struct k_component_manager_type *manager_type =  component_type->manager_type;
 
@@ -42,7 +42,7 @@ static struct k_component *k__component_create(struct k_component_type *componen
 
     if (NULL != entity_type->fn_init) {
         /* TODO 应该允许在 `fn_init()` 回调中删除自身吗？ */
-        if (0 != entity_type->fn_init(component, params))
+        if (0 != entity_type->fn_init(component, param))
             goto fn_create_failed;
     }
 
@@ -80,12 +80,12 @@ static void k__component_destroy(struct k_component *component) {
 
 /* region [object_add_component] */
 
-struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params) {
+struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *param) {
 
     if (NULL == object || NULL == component_type)
         return NULL;
     else
-        return k__component_create(component_type, object, params);
+        return k__component_create(component_type, object, param);
 }
 
 void k_object_del_component(struct k_component *component) {

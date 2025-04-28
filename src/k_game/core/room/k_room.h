@@ -25,7 +25,7 @@ struct k_room {
 
     struct k_list callback_list;
 
-    int  (*fn_init)(void *params);
+    int  (*fn_init)(void *param);
     void (*fn_fini)(void);
     void (*fn_enter)(void);
     void (*fn_leave)(void);

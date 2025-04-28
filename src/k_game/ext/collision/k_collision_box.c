@@ -4,8 +4,8 @@
 
 /* region [collision_box_init] */
 
-int k__collision_box_init(struct k_component *component, void *params) {
-    struct k_collision_box_config *box_config = params;
+int k__collision_box_init(struct k_component *component, void *param) {
+    struct k_collision_box_config *box_config = param;
 
     struct k_collision_manager *manager = k_component_get_manager_data(component);
     if (NULL == manager)

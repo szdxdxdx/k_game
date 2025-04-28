@@ -98,9 +98,9 @@ void k_position_set_world_position(struct k_position *position, float world_x, f
 
 /* region [position_init] */
 
-int position_init(struct k_component *component, void *params) {
+int position_init(struct k_component *component, void *param) {
     struct k_position *position = k_component_get_data(component);
-    const struct k_position_config *config = params;
+    const struct k_position_config *config = param;
 
     struct k_position *parent = config->parent;
     if (NULL == parent)

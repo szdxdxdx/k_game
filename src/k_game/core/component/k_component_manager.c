@@ -10,7 +10,7 @@
 
 /* region [component_manager_create] */
 
-static int k__component_manager_create(struct k_room *room, struct k_component_type *component_type, void *params) {
+static int k__component_manager_create(struct k_room *room, struct k_component_type *component_type, void *param) {
 
     struct k_component_manager_type *manager_type = component_type->manager_type;
     if (NULL == manager_type)
@@ -37,7 +37,7 @@ static int k__component_manager_create(struct k_room *room, struct k_component_t
     k_list_init(&manager->callback_list);
 
     if (NULL != manager_type->fn_init) {
-        if (0 != manager_type->fn_init(manager, params))
+        if (0 != manager_type->fn_init(manager, param))
             goto fn_init_failed;
     }
 
@@ -70,12 +70,12 @@ void k__component_manager_destroy(struct k_component_manager *manager) {
 
 /* region [room_add_component_manager] */
 
-int k_room_add_component_manager(struct k_component_type *component_type, void *params) {
+int k_room_add_component_manager(struct k_component_type *component_type, void *param) {
 
     if (NULL == component_type)
         return -1;
 
-    return k__component_manager_create(k__current_room, component_type, params);
+    return k__component_manager_create(k__current_room, component_type, param);
 }
 
 void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {

@@ -157,8 +157,8 @@ static void set_debug(void *data) {
     }
 }
 
-static int init_arena_room(void *params) {
-    (void)params;
+static int init_arena_room(void *param) {
+    (void)param;
 
     room_build_ui();
 

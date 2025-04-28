@@ -4,9 +4,9 @@
 
 /* region [renderer_init] */
 
-static int k__sprite_renderer_init(struct k_component *component, void *params) {
+static int k__sprite_renderer_init(struct k_component *component, void *param) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
-    const struct k_sprite_renderer_config *config = params;
+    const struct k_sprite_renderer_config *config = param;
 
     renderer->component = component;
 

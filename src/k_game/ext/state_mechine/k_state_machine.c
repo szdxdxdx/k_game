@@ -46,8 +46,8 @@ static void k__state_machine_step(struct k_component *component) {
 
 /* region [machine_init] */
 
-static int k__state_machine_init(struct k_component *component, void *params) {
-    (void *)params;
+static int k__state_machine_init(struct k_component *component, void *param) {
+    (void *)param;
 
     struct k_callback *callback = k_component_add_step_callback(component, k__state_machine_step);
     if (NULL == callback)

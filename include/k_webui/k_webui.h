@@ -36,11 +36,11 @@ struct k_webui_bind_int_range {
     int min;
     int max;
     int step;
-    void (*fn_set)(int *binding, int new_val);
+    void (*fn_set)(int *binding, int val);
 };
 
 struct k_webui_bind_int_checkbox {
-    void (*fn_set)(int *binding, int new_val);
+    void (*fn_set)(int *binding, int val);
 };
 
 struct k_webui_bind_int_options {

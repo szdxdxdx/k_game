@@ -1,7 +1,7 @@
 #include "./k_camera_internal.h"
 
-int k__camera_target_init(struct k_component *component, void *params) {
-    float **xy = (float **)params;
+int k__camera_target_init(struct k_component *component, void *param) {
+    float **xy = (float **)param;
 
     struct k_camera *camera = k_component_get_manager_data(component);
     if (NULL == camera)

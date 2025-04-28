@@ -126,7 +126,7 @@ struct k_webui_int_binding {
 static int k__webui_int_binding_init(void *data, void *param_1, void *param_2) {
     struct k_webui_int_binding *int_binding = data;
     int *p_int = param_1;
-    (void)param_2;
+    const struct k_webui_bind_int_options *options = param_2;
 
     int_binding->p_int = p_int;
 
@@ -148,7 +148,7 @@ void k_webui_bind_int(const char *label, int *p_int, const struct k_webui_bind_i
     config.fn_unbind    = NULL;
     config.fn_webui_set = k__webui_set_int;
 
-    k__webui_bind(label, &config, p_int, NULL);
+    k__webui_bind(label, &config, p_int, (void *)options);
 }
 
 /* endregion */

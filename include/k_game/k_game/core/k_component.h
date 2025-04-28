@@ -28,7 +28,7 @@ struct k_component_entity_config {
      * 必须指定该回调，用于在组件创建后执行必要的初始化工作。
      * k_game 在创建组件实例，并将其挂载到对象上后，会执行此回调。
      *
-     * 入参 `params` 由 `k_object_add_component()` 传入。
+     * 入参 `param` 由 `k_object_add_component()` 传入。
      *
      * 在此回调中，你需要执行组件的初始化工作，例如：
      * - 初始化自定义关联数据的内存
@@ -38,7 +38,7 @@ struct k_component_entity_config {
      * 函数返回 0 表示初始化成功，非 0 表示初始化失败。
      * 若初始化失败，k_game 将卸载并销毁该组件。
      */
-    int (*fn_init)(struct k_component *component, void *params);
+    int (*fn_init)(struct k_component *component, void *param);
 
     /**
      * \brief 销毁组件实例前执行的回调
@@ -83,7 +83,7 @@ struct k_component_manager_config {
      *
      * k_game 在创建组件管理器，并将其添加到房间后，会执行此回调。
      *
-     * 入参 `params` 由 `k_room_add_component_manager()` 传入。
+     * 入参 `param` 由 `k_room_add_component_manager()` 传入。
      *
      * 在此回调中，你需要执行组件管理器的初始化工作，例如：
      * - 初始化自定义关联数据的内存
@@ -95,7 +95,7 @@ struct k_component_manager_config {
      *
      * 此回调是可选的，若不需要，可将该值设为 `NULL`。
      */
-    int (*fn_init)(struct k_component_manager *manager, void *params);
+    int (*fn_init)(struct k_component_manager *manager, void *param);
 
     /**
      * \brief 销毁组件管理器前执行的回调
@@ -165,11 +165,11 @@ struct k_component_type *k_component_type_find(const char *type_name);
  * \brief 往对象上挂载组件
  *
  * 函数创建组件实例，并将其挂载到指定对象上。
- * 入参 `params` 被转交给组件的初始化回调 `fn_init()`。
+ * 入参 `param` 被转交给组件的初始化回调 `fn_init()`。
  *
  * 若挂载成功，函数返回组件的指针，否则返回 `NULL`。
  */
-struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *params);
+struct k_component *k_object_add_component(struct k_object *object, struct k_component_type *component_type, void *param);
 
 /**
  * \brief 从对象上移除组件
@@ -189,11 +189,11 @@ void k_object_del_component(struct k_component *component);
  * \brief 往当前房间添加组件管理器
  *
  * 函数创建组件管理器实例，并将其添加到当前房间中。
- * 入参 `params` 被转交给组件管理器的初始化回调 `fn_init()`。
+ * 入参 `param` 被转交给组件管理器的初始化回调 `fn_init()`。
  *
  * 若添加成功，函数返回组件管理器的指针，否则返回 `NULL`。
  */
-int k_room_add_component_manager(struct k_component_type *component_type, void *params);
+int k_room_add_component_manager(struct k_component_type *component_type, void *param);
 
 /* endregion */
 

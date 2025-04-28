@@ -87,7 +87,7 @@ struct k_collision_box {
     };
 };
 
-int k__collision_box_init(struct k_component *component, void *params);
+int k__collision_box_init(struct k_component *component, void *param);
 
 void k__collision_box_fini(struct k_component *component);
 
@@ -129,7 +129,7 @@ struct k_collision_manager {
     struct k_int_intrusive_map group_map;
 };
 
-int k__collision_manager_init(struct k_component_manager *component_manager, void *params);
+int k__collision_manager_init(struct k_component_manager *component_manager, void *param);
 
 void k__collision_manager_fini(struct k_component_manager *component_manager);
 

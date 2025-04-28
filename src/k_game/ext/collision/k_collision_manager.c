@@ -1,7 +1,7 @@
 #include "./k_collision_internal.h"
 
-int k__collision_manager_init(struct k_component_manager *component_manager, void *params) {
-    (void)params;
+int k__collision_manager_init(struct k_component_manager *component_manager, void *param) {
+    (void)param;
 
     struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
 

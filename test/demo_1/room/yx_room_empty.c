@@ -16,8 +16,8 @@ static void show_int_val(void *unused) {
     k_canvas_ui_printf(NULL, 0, 0, "%d", int_val);
 }
 
-static int init(void *data, void *params) {
-    *((int **)data) = (int *)params;
+static int init(void *data, void *param) {
+    *((int **)data) = (int *)param;
     return 0;
 }
 

@@ -17,7 +17,7 @@
 
 struct step_context {
     const struct k_room_config *config;
-    void *params;
+    void *param;
     struct k_room *room;
 };
 
@@ -174,12 +174,12 @@ static int step_call_fn_init(void *context) {
     if (NULL == room->fn_init)
         return 0;
 
-    void *params = ctx->params;
+    void *param = ctx->param;
 
     struct k_room *tmp = k__current_room;
     k__current_room = room;
 
-    int result = room->fn_init(params);
+    int result = room->fn_init(param);
 
     /* [?] fn_init() 可能销毁了 tmp 指向的房间 */
     k__current_room = tmp;
@@ -221,7 +221,7 @@ static const struct k_seq_step steps[] = {
 
 /* endregion */
 
-struct k_room *k_room_create(const struct k_room_config *config, void *params) {
+struct k_room *k_room_create(const struct k_room_config *config, void *param) {
 
     if (NULL == config) {
         k_log_error("Room config is NULL");
@@ -230,7 +230,7 @@ struct k_room *k_room_create(const struct k_room_config *config, void *params) {
 
     struct step_context ctx;
     ctx.config = config;
-    ctx.params = params;
+    ctx.param  = param;
     ctx.room   = NULL;
     if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx))
         goto err;
@@ -249,7 +249,7 @@ void k__room_destroy(struct k_room *room) {
 
     struct step_context ctx;
     ctx.config = NULL;
-    ctx.params = NULL;
+    ctx.param  = NULL;
     ctx.room   = room;
 
     k_seq_step_exec_backward(steps, k_seq_step_array_len(steps), &ctx);
