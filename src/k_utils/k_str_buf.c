@@ -25,28 +25,27 @@ void k_str_buf_init(struct k_str_buf *buf, char *default_buf, size_t capacity) {
     }
 }
 
-int k_str_buf_is_err(struct k_str_buf *buf) {
+int k_str_buf_failed(struct k_str_buf *buf) {
     assert(NULL != buf);
-    return buf_ == buf->buf;
+    return NULL == buf->buf;
 }
 
-static void k__str_buf_set_err(struct k_str_buf *buf) {
-    assert( ! k_str_buf_is_err(buf));
+static void k__str_buf_mark_failed(struct k_str_buf *buf) {
+    assert( ! k_str_buf_failed(buf));
 
     if (buf->buf != buf->default_buf) {
         free(buf->buf);
     }
 
-    buf->default_buf = NULL;
-    buf->buf         = buf_;
-    buf->str_len     = 0;
-    buf->capacity    = 0;
+    buf->buf      = NULL;
+    buf->str_len  = 0;
+    buf->capacity = 0;
 }
 
 void k_str_buf_free(struct k_str_buf *buf) {
     assert(NULL != buf);
 
-    if (k_str_buf_is_err(buf))
+    if (k_str_buf_failed(buf))
         return;
 
     if (buf->buf != buf->default_buf) {
@@ -65,7 +64,7 @@ size_t k_str_buf_get_len(struct k_str_buf *buf) {
 }
 
 static int k__str_buf_ensure_capacity(struct k_str_buf *buf, size_t add_len) {
-    assert(NULL != buf->buf);
+    assert( ! k_str_buf_failed(buf));
 
     size_t required_capacity = buf->str_len + add_len + 1;
     if (required_capacity < add_len)
@@ -100,13 +99,13 @@ static int k__str_buf_ensure_capacity(struct k_str_buf *buf, size_t add_len) {
         free(buf->buf);
     }
 
-    buf->buf      = new_buf;
+    buf->buf = new_buf;
     buf->capacity = new_capacity;
 
     return 0;
 
 err:
-    k__str_buf_set_err(buf);
+    k__str_buf_mark_failed(buf);
     return -1;
 }
 
@@ -118,7 +117,7 @@ int k_str_buf_puts_n(struct k_str_buf *buf, const char *str, size_t len) {
     assert(NULL != buf);
     assert(NULL != str);
 
-    if (k_str_buf_is_err(buf))
+    if (k_str_buf_failed(buf))
         return -1;
 
     if (0 != k__str_buf_ensure_capacity(buf, len))
@@ -144,7 +143,7 @@ int k_str_buf_vprintf(struct k_str_buf *buf, const char *fmt, va_list args) {
     assert(NULL != buf);
     assert(NULL != fmt);
 
-    if (k_str_buf_is_err(buf))
+    if (k_str_buf_failed(buf))
         return -1;
 
     size_t avail = buf->capacity - buf->str_len;
@@ -155,7 +154,7 @@ int k_str_buf_vprintf(struct k_str_buf *buf, const char *fmt, va_list args) {
     va_end(args_copy);
 
     if (r < 0) {
-        k__str_buf_set_err(buf);
+        k__str_buf_mark_failed(buf);
         return -1;
     }
 
@@ -174,7 +173,7 @@ int k_str_buf_vprintf(struct k_str_buf *buf, const char *fmt, va_list args) {
     r = vsnprintf(&buf->buf[buf->str_len], avail, fmt, args);
 
     if (r != add_len) {
-        k__str_buf_set_err(buf);
+        k__str_buf_mark_failed(buf);
         return -1;
     }
 
@@ -195,7 +194,7 @@ int k_str_buf_k_vprintf(struct k_str_buf *buf, k_printf_spec_match_fn fn_match, 
     assert(NULL != buf);
     assert(NULL != fmt);
 
-    if (k_str_buf_is_err(buf))
+    if (k_str_buf_failed(buf))
         return -1;
 
     size_t avail = buf->capacity - buf->str_len;
@@ -206,7 +205,7 @@ int k_str_buf_k_vprintf(struct k_str_buf *buf, k_printf_spec_match_fn fn_match, 
     va_end(args_copy);
 
     if (r < 0) {
-        k__str_buf_set_err(buf);
+        k__str_buf_mark_failed(buf);
         return -1;
     }
 
@@ -225,7 +224,7 @@ int k_str_buf_k_vprintf(struct k_str_buf *buf, k_printf_spec_match_fn fn_match, 
     r = k_vsnprintf(fn_match, &buf->buf[buf->str_len], avail, fmt, args);
 
     if (r != add_len) {
-        k__str_buf_set_err(buf);
+        k__str_buf_mark_failed(buf);
         return -1;
     }
 

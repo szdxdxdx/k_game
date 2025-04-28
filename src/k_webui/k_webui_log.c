@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "k_str_buf.h"
 
 #include "./k_webui_internal.h"
 

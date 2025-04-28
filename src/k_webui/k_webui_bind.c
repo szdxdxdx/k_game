@@ -45,38 +45,38 @@ struct k_webui_widget_config {
 static void k__webui_exec_js_add_widget(const char *label, const struct k_webui_widget_config *widget) {
 
     struct k_str_buf str_buf;
-    char buf[512];
-    k_str_buf_init(&str_buf, buf, sizeof(buf));
+    char buf[1024];
+    k_str_buf_init(&str_buf, NULL, sizeof(buf));
 
     k_str_buf_puts(&str_buf, "k__webui.bind({");
-
-    k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
-
-    k_str_buf_puts(&str_buf, "input:{");
     {
-        switch (widget->input_type) {
-            case K_WEBUI_INT_RANGE:
-                k_str_buf_printf(&str_buf, "type:'%s',", "range");
-                k_str_buf_printf(&str_buf, "min:%d,",  widget->int_range.min);
-                k_str_buf_printf(&str_buf, "max:%d,",  widget->int_range.max);
-                k_str_buf_printf(&str_buf, "step:%d,", widget->int_range.step);
-                break;
-            case K_WEBUI_FLOAT_RANGE:
-                k_str_buf_printf(&str_buf, "type:'%s',", "range");
-                k_str_buf_printf(&str_buf, "min:%.3f,",  widget->float_range.min);
-                k_str_buf_printf(&str_buf, "max:%.3f,",  widget->float_range.max);
-                k_str_buf_printf(&str_buf, "step:%.3f,", widget->float_range.step);
-                break;
-            case K_WEBUI_CHECKBOX:
-                k_str_buf_printf(&str_buf, "type:'%s',", "checkbox");
-                break;
-            case K_WEBUI_BUTTON:
-                k_str_buf_printf(&str_buf, "type:'%s',", "button");
-                break;
-        }
-    }
-    k_str_buf_puts(&str_buf, "},");
+        k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
 
+        k_str_buf_puts(&str_buf, "input:{");
+        {
+            switch (widget->input_type) {
+                case K_WEBUI_INT_RANGE:
+                    k_str_buf_printf(&str_buf, "type:'%s',", "range");
+                    k_str_buf_printf(&str_buf, "min:%d,",  widget->int_range.min);
+                    k_str_buf_printf(&str_buf, "max:%d,",  widget->int_range.max);
+                    k_str_buf_printf(&str_buf, "step:%d,", widget->int_range.step);
+                    break;
+                case K_WEBUI_FLOAT_RANGE:
+                    k_str_buf_printf(&str_buf, "type:'%s',", "range");
+                    k_str_buf_printf(&str_buf, "min:%.3f,",  widget->float_range.min);
+                    k_str_buf_printf(&str_buf, "max:%.3f,",  widget->float_range.max);
+                    k_str_buf_printf(&str_buf, "step:%.3f,", widget->float_range.step);
+                    break;
+                case K_WEBUI_CHECKBOX:
+                    k_str_buf_printf(&str_buf, "type:'%s',", "checkbox");
+                    break;
+                case K_WEBUI_BUTTON:
+                    k_str_buf_printf(&str_buf, "type:'%s',", "button");
+                    break;
+            }
+        }
+        k_str_buf_puts(&str_buf, "},");
+    }
     k_str_buf_puts(&str_buf, "})");
 
     char *js = k_str_buf_get(&str_buf);
@@ -87,7 +87,7 @@ static void k__webui_exec_js_add_widget(const char *label, const struct k_webui_
 
 /* endregion */
 
-/* region [binding_base_struct] */
+/* region [binding_base] */
 
 struct k_webui_binding {
 
@@ -99,14 +99,29 @@ struct k_webui_binding {
 static void *k__webui_binding_add(const char *label, size_t binding_struct_size) {
 
     void *binding = k_str_map_get(&k__webui.bindings, label);
-    if (NULL != binding)
+    if (NULL != binding) {
+        k_log_error("label `%s` already exists", label);
         return NULL;
+    }
 
     binding = k_str_map_add(&k__webui.bindings, label, binding_struct_size);
     if (NULL == binding)
         return NULL;
 
     return binding;
+}
+
+static void k__webui_binding_remove(const char *label) {
+
+    struct k_webui_binding *binding = k_str_map_get(&k__webui.bindings, label);
+    if (NULL == binding)
+        return;
+
+    if (binding->fn_unbind != NULL) {
+        binding->fn_unbind(binding);
+    }
+
+    k_str_map_remove(&k__webui.bindings, label);
 }
 
 static void k__webui_js_set_C_val(webui_event_t *e) {
@@ -279,15 +294,6 @@ int k_webui_bind_float(const char *label, float *p_float, const struct k_webui_f
 
 void k_webui_unbind(const char *label) {
 
-    struct k_webui_binding *binding = k_str_map_get(&k__webui.bindings, label);
-    if (NULL == binding)
-        return;
-
-    if (binding->fn_unbind != NULL) {
-        binding->fn_unbind(binding);
-    }
-
-    k_str_map_remove(&k__webui.bindings, label);
 }
 
 /* endregion */

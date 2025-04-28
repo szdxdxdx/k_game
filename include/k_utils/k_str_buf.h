@@ -10,9 +10,6 @@ struct k_str_buf {
     /** \brief [private] */
     char *default_buf;
 
-    /** \brief [private] */
-    char *alloc_buf;
-
     /** \brief [read-only] */
     char *buf;
 
@@ -27,7 +24,7 @@ void k_str_buf_init(struct k_str_buf *buf, char *default_buf, size_t capacity);
 
 void k_str_buf_free(struct k_str_buf *buf);
 
-int k_str_buf_is_err(struct k_str_buf *buf);
+int k_str_buf_failed(struct k_str_buf *buf);
 
 char *k_str_buf_get(struct k_str_buf *buf);
 
