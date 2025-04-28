@@ -205,6 +205,9 @@ static int k__webui_int_binding_js_set_val(void *binding_, const char *val_) {
         case K_WEBUI_CHECKBOX:
             new_val = (0 == strcmp(val_, "true")) ? 1 : 0;
             break;
+        case K_WEBUI_BUTTON:
+            new_val = *binding->p_int;
+            break;
         default:
             assert(0);
             return -1;
@@ -218,10 +221,10 @@ static int k__webui_int_binding_js_set_val(void *binding_, const char *val_) {
     return binding->fn_webui_set(binding->p_int, new_val);
 }
 
-int k_webui_bind_int(const char *label, int *p_int, const struct k_webui_int_options *options) {
+int k_webui_bind_int(const char *label, int *p_int, const struct k_webui_bind_int_options *options) {
 
     if (NULL == options) {
-        static struct k_webui_int_options default_options = {
+        static struct k_webui_bind_int_options default_options = {
             .input_type = K_WEBUI_INT_RANGE,
             .range.min  = -100,
             .range.max  = 100,
@@ -251,10 +254,12 @@ int k_webui_bind_int(const char *label, int *p_int, const struct k_webui_int_opt
         case K_WEBUI_CHECKBOX:
             widget.input_type = K_WEBUI_CHECKBOX;
             break;
-        default: {
+        case K_WEBUI_BUTTON:
+            widget.input_type = K_WEBUI_BUTTON;
+            break;
+        default:
             k_log_error("unsupported input type");
             return -1;
-        }
     }
     binding->input_type = widget.input_type;
 
@@ -299,10 +304,10 @@ static int k__webui_float_binding_js_set_val(void *binding_, const char *val) {
     return binding->fn_webui_set(binding->p_float, new_val);
 }
 
-int k_webui_bind_float(const char *label, float *p_float, const struct k_webui_float_options *options) {
+int k_webui_bind_float(const char *label, float *p_float, const struct k_webui_bind_float_options *options) {
 
     if (NULL == options) {
-        static struct k_webui_float_options default_options = {
+        static struct k_webui_bind_float_options default_options = {
             .input_type = K_WEBUI_FLOAT_RANGE,
             .range.min  = 0.0f,
             .range.max  = 1.0f,
@@ -323,17 +328,15 @@ int k_webui_bind_float(const char *label, float *p_float, const struct k_webui_f
 
     struct k_webui_widget_config widget;
     switch (options->input_type) {
-        case K_WEBUI_FLOAT_RANGE: {
+        case K_WEBUI_FLOAT_RANGE:
             widget.input_type = K_WEBUI_FLOAT_RANGE;
             widget.float_range.min  = options->range.min;
             widget.float_range.max  = options->range.max;
             widget.float_range.step = options->range.step;
             break;
-        }
-        default: {
+        default:
             k_log_error("unsupported input type");
             return -1;
-        }
     }
     binding->input_type = widget.input_type;
 

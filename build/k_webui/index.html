@@ -61,6 +61,14 @@
           />
         </label>
 
+        <label v-else-if="binding.input.type === 'button'">
+          <span>{{ binding.label }}</span>
+          <input
+            type="button"
+            @click="binding_button_set_C_val($event, binding.label)"
+          />
+        </label>
+
         <label v-else-if="binding.input.type === 'select'">
           <select>
             <option>1</option>
@@ -119,6 +127,10 @@
         binding_checkbox_set_C_val($event, label) {
           let checked = $event.target.checked;
           k__webui_js_set_C_val(label, `${checked}`);
+        },
+
+        binding_button_set_C_val($event, label) {
+          k__webui_js_set_C_val(label, ``);
         },
 
         /* endregion */
