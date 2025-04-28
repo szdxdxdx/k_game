@@ -41,18 +41,27 @@
     <div id="binding-panel">
 
       <div v-for="[label, binding] in bindings" :key="label">
+        <p>{{ binding }}</p>
 
-        <label v-if="binding.input_type === 'range'">
+        <label v-if="binding.input.type === 'range'">
           <span>{{ binding.label }}</span>
-          <input type="range" @input="binding_range_set_C_val($event, binding.label)"/>
+
+          <input
+              type="range"
+              :min="binding.input.min"
+              :max="binding.input.max"
+              :step="binding.input.step"
+              @input="binding_range_set_C_val($event, binding.label)"
+          />
+
         </label>
 
-        <label v-else-if="binding.input_type === 'checkbox'">
+        <label v-else-if="binding.input.type === 'checkbox'">
           <span>{{ binding.label }}</span>
           <input type="checkbox" @change="binding_checkbox_set_C_val($event, binding.label)"/>
         </label>
 
-        <label v-else-if="binding.input_type === 'select'">
+        <label v-else-if="binding.input.type === 'select'">
           <select>
             <option>1</option>
             <option>2</option>
@@ -103,6 +112,7 @@
 
         bind: function(config) {
           let binding = reactive(config);
+          console.log(binding);
           this.bindings.set(binding.label, binding);
         },
 
