@@ -118,12 +118,12 @@
 
         binding_range_set_C_val($event, label) {
           let new_val = $event.target.value;
-          k__webui_set_binding_C_val(label, `${new_val}`);
+          k__webui_js_set_C_val(label, `${new_val}`);
         },
 
         binding_checkbox_set_C_val($event, label) {
           let checked = $event.target.checked;
-          k__webui_set_binding_C_val(label, `${checked}`);
+          k__webui_js_set_C_val(label, `${checked}`);
         },
 
         /* endregion */
