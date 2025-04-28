@@ -37,7 +37,6 @@
   <div id="app">
     
     <!-- [widget-panel] --><!-- region -->
-
     <div id="binding-panel">
 
       <div v-for="[label, binding] in bindings" :key="label">
@@ -45,7 +44,6 @@
 
         <label v-if="binding.input.type === 'range'">
           <span>{{ binding.label }}</span>
-
           <input
               type="range"
               :min="binding.input.min"
@@ -53,12 +51,14 @@
               :step="binding.input.step"
               @input="binding_range_set_C_val($event, binding.label)"
           />
-
         </label>
 
         <label v-else-if="binding.input.type === 'checkbox'">
           <span>{{ binding.label }}</span>
-          <input type="checkbox" @change="binding_checkbox_set_C_val($event, binding.label)"/>
+          <input
+              type="checkbox"
+              @change="binding_checkbox_set_C_val($event, binding.label)"
+          />
         </label>
 
         <label v-else-if="binding.input.type === 'select'">
@@ -72,13 +72,9 @@
       </div>
 
     </div>
-    
     <!-- endregion -->
 
-    <hr>
-
     <!-- [log-panel] --><!-- region -->
-
     <div id="log-panel">
       <table>
         <tr v-for="(log, idx) in log_list" :key="idx">
@@ -91,7 +87,6 @@
         </tr>
       </table>
     </div>
-
     <!-- endregion -->
 
   </div>

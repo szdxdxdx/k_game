@@ -56,6 +56,7 @@ struct k_webui_int_options {
         struct k_webui_int_range range;
         struct k_webui_checkbox  checkbox;
     };
+    int (*fn_webui_set)(int *p_int, int val);
 };
 
 struct k_webui_float_options {
@@ -63,6 +64,7 @@ struct k_webui_float_options {
     union {
         struct k_webui_float_range range;
     };
+    int (*fn_webui_set)(float *p_float, float val);
 };
 
 int k_webui_bind_int(const char *label, int *p_int, const struct k_webui_int_options *options);

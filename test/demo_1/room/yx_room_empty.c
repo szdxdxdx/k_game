@@ -22,20 +22,6 @@ static void show_int_val(void *unused) {
     k_canvas_ui_printf(NULL, 8, 32 * 4, "%f", float_val);
 }
 
-static int init(void *data, void *param) {
-    *((int **)data) = (int *)param;
-    return 0;
-}
-
-static int webui_set(void *data, const char *val) {
-    int *p = *(int **)data;
-
-    printf("%s", val);
-
-    *p = atoi(val);
-    return 0;
-}
-
 static void enter_room(void) {
 
     k_room_add_draw_callback(NULL, show_int_val, INT_MIN, INT_MIN);
@@ -48,16 +34,17 @@ static void enter_room(void) {
     {
         struct k_webui_int_options options;
         options.input_type = K_WEBUI_INT_RANGE;
-        options.range.max = 100;
-        options.range.min = 0;
+        options.range.max  = 100;
+        options.range.min  = 0;
         options.range.step = 3;
+        options.fn_webui_set = NULL;
         k_webui_bind_int("int range", &int_val2, &options);
     }
 
     {
         struct k_webui_int_options options;
         options.input_type = K_WEBUI_CHECKBOX;
-        options.checkbox._ = NULL;
+        options.fn_webui_set = NULL;
         k_webui_bind_int("check box", &int_val3, &options);
     }
 
@@ -67,6 +54,7 @@ static void enter_room(void) {
         options.range.max  = 2.0f;
         options.range.min  = 1.0f;
         options.range.step = 0.02f;
+        options.fn_webui_set = NULL;
         k_webui_bind_float("float range", &float_val, &options);
     }
 
