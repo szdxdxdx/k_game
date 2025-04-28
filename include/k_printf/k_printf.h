@@ -92,6 +92,9 @@ typedef void (*k_printf_callback_fn)(struct k_printf_buf *buf, const struct k_pr
 /** \brief 缓冲区接口，对 `char []` 和 `FILE *` 两类缓冲区统一的操作接口 */
 struct k_printf_buf;
 
+/** \brief 往缓冲区中写入字符串 */
+void k_printf_buf_puts(struct k_printf_buf *buf, const char *str);
+
 /** \brief 往缓冲区中写入指定长度的字符串 */
 void k_printf_buf_puts_n(struct k_printf_buf *buf, const char *str, size_t len);
 
@@ -102,7 +105,7 @@ void k_printf_buf_printf(struct k_printf_buf *buf, const char *fmt, ...);
 void k_printf_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list args);
 
 /**
- * \brief 获取截至目前应打印出的字符的数量
+ * \brief 获取截至目前应打印出的字符的数量（忽略缓冲区的实际大小）
  *
  * 函数将忽略缓冲区的实际大小，返回到目前为止应该要打印出的字符的数量。
  * 若输出途中出现错误，则函数返回负值。

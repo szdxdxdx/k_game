@@ -17,6 +17,8 @@ static void create_room(void) {
 
 static int fn_init_game(void) {
 
+    /*
+
     struct k_image *szdxdxdx = k_image_load("./demo_1/image/szdxdxdx.jpg");
     k_image_set_name(szdxdxdx, "szdxdxdx");
 
@@ -28,12 +30,14 @@ static int fn_init_game(void) {
     struct k_sound_bgm *bgm = k_sound_bgm_load("./demo_1/sound/bgm.wav");
     k_sound_bgm_loop(bgm, INT_MAX);
 
+    */
+
     create_room();
 
     return 0;
 }
 
-#if 1
+#if 0
 
 int main(int argc, char **argv) {
     system("chcp 65001");

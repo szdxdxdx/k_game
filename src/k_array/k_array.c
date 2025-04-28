@@ -101,8 +101,10 @@ int k_array_reserve(struct k_array *arr, size_t n) {
         }
     }
 
-    memcpy(new_storage, arr->storage, arr->size * arr->elem_size);
-    arr->fn_free(arr->storage);
+    if (NULL != arr->storage) {
+        memcpy(new_storage, arr->storage, arr->size * arr->elem_size);
+        arr->fn_free(arr->storage);
+    }
 
     arr->capacity = new_capacity;
     arr->storage  = new_storage;
@@ -177,8 +179,8 @@ int k_array_insert_all(struct k_array *arr, size_t idx, const void *elems, size_
     /* 要添加的元素不能来自容器内部，即 `elems` 所指向的内存段不能和数组的 `storage` 所指向的内存段有交集。
      * 若有交集，在执行插入操作时，数组会腾挪元素或动态扩容，导致 `elems` 所指向内存段的数据会发生变化或失效。
      *
-     * 或者，我可以先判断 `elems` 是否在容器内，若是则分配内存复制一份元素，再执行插入操作。
-     * 但操作结束后， `elems` 指向的内存段的数据可能发生了改变，与 const 的语义不符。
+     * 当然，可以先判断 `elems` 是否在容器内，若是，则分配内存复制元素后再执行插入操作，
+     * 但这会导致 `elems` 指向的内存段的数据发生改变，与 const 的语义不符。
      */
     assert( ! (arr->storage <= elems && elems < ptr_offset(arr->storage, arr->capacity * arr->elem_size)));
 

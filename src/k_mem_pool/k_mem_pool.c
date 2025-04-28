@@ -206,16 +206,16 @@ static void *k__mem_pool_alloc_from_pool(struct k_mem_pool *pool, size_t size) {
         return ptr_offset(block, sizeof(struct k_mem_block));
     }
 
-    size_t remaining_size = pool->chunk_capacity - pool->chunk_used;
+    size_t available_size = pool->chunk_capacity - pool->chunk_used;
     size_t required_size  = sizeof(struct k_mem_block) + block_size;
-    if (remaining_size < required_size) {
+    if (available_size < required_size) {
 
         struct k_mem_chunk *new_chunk = pool->fn_malloc(sizeof(struct k_mem_chunk) + pool->chunk_capacity);
         if (NULL == new_chunk)
             return NULL;
 
-        if (sizeof(struct k_mem_block) < remaining_size) {
-            size_t free_block_size = align_down(remaining_size - sizeof(struct k_mem_block), pool->alloc_size_align);
+        if (sizeof(struct k_mem_block) < available_size) {
+            size_t free_block_size = align_down(available_size - sizeof(struct k_mem_block), pool->alloc_size_align);
             if (pool->alloc_size_align <= free_block_size) {
 
                 struct k_mem_block **free_list = k__mem_pool_select_free_list(pool, free_block_size);

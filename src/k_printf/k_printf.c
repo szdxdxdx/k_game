@@ -10,8 +10,12 @@
 /* region [printf_buf] */
 
 struct k_printf_buf {
+
     void (*fn_puts_n)(struct k_printf_buf *buf, const char *str, size_t len);
+
     void (*fn_vprintf)(struct k_printf_buf *buf, const char *fmt, va_list args);
+
+    /* 截至目前应打印出的字符的数量（忽略缓冲区的实际大小） */
     int n;
 };
 
@@ -21,8 +25,12 @@ struct k_printf_str_buf {
 
     struct k_printf_buf printf_buf;
 
-    char *buffer;
+    char *buf;
+
+    /* 当前缓冲区中字符串的长度 */
     int str_len;
+
+    /* 能容纳的最长字符串的长度，等于缓冲区容量减 1，因为要容纳结尾的 `\0` */
     int max_len;
 };
 
@@ -33,23 +41,23 @@ static void str_buf_puts_n(struct k_printf_buf *printf_buf, const char *str, siz
 
     struct k_printf_str_buf *str_buf = (struct k_printf_str_buf *)printf_buf;
 
-    int remain_capacity = str_buf->max_len - str_buf->str_len;
+    int available = str_buf->max_len - str_buf->str_len;
 
-    if (len <= remain_capacity) {
-        memcpy(&str_buf->buffer[str_buf->str_len], str, len * sizeof(char));
+    if (len <= available) {
+        memcpy(&str_buf->buf[str_buf->str_len], str, len);
         str_buf->str_len += (int)len;
-        str_buf->buffer[str_buf->str_len] = '\0';
+        str_buf->buf[str_buf->str_len] = '\0';
 
         printf_buf->n += (int)len;
         return;
     }
 
-    if (0 < remain_capacity) {
-        memcpy(&str_buf->buffer[str_buf->str_len], str, remain_capacity * sizeof(char));
+    if (0 < available) {
+        memcpy(&str_buf->buf[str_buf->str_len], str, available);
         str_buf->str_len = str_buf->max_len;
     }
 
-    str_buf->buffer[str_buf->str_len] = '\0';
+    str_buf->buf[str_buf->str_len] = '\0';
 
     if (len <= INT_MAX) {
         printf_buf->n += (int)len;
@@ -67,14 +75,14 @@ static void str_buf_vprintf(struct k_printf_buf *printf_buf, const char *fmt, va
 
     struct k_printf_str_buf *str_buf = (struct k_printf_str_buf *)printf_buf;
 
-    int remain_len = str_buf->max_len - str_buf->str_len;
-    int r = vsnprintf(&str_buf->buffer[str_buf->str_len], remain_len + 1, fmt, args);
+    int available = str_buf->max_len - str_buf->str_len;
+    int r = vsnprintf(&str_buf->buf[str_buf->str_len], available + 1, fmt, args);
     if (r < 0) {
         printf_buf->n = -1;
         return;
     }
 
-    if (r <= remain_len) {
+    if (r <= available) {
         str_buf->str_len += r;
         printf_buf->n += r;
     } else {
@@ -87,23 +95,22 @@ static void str_buf_vprintf(struct k_printf_buf *printf_buf, const char *fmt, va
 
 static void str_buf_init(struct k_printf_str_buf *str_buf, char *buf, size_t capacity) {
 
-    static char buf_[1] = { '\0' };
-
     str_buf->printf_buf.fn_puts_n  = str_buf_puts_n,
     str_buf->printf_buf.fn_vprintf = str_buf_vprintf,
     str_buf->printf_buf.n          = 0;
 
     if (1 < capacity && capacity <= INT_MAX) {
-        str_buf->buffer  = buf;
+        str_buf->buf     = buf;
         str_buf->str_len = 0;
         str_buf->max_len = (int)capacity - 1;
     } else {
-        str_buf->buffer  = buf_;
+        static char buf_[1] = { '\0' };
+        str_buf->buf     = buf_;
         str_buf->str_len = 0;
         str_buf->max_len = 0;
     }
 
-    str_buf->buffer[0] = '\0';
+    str_buf->buf[0] = '\0';
 }
 
 /* endregion */
@@ -162,6 +169,10 @@ static void file_buf_init(struct k_printf_file_buf *printf_buf, FILE *file) {
 }
 
 /* endregion */
+
+void k_printf_buf_puts(struct k_printf_buf *buf, const char *str) {
+    buf->fn_puts_n(buf, str, strlen(str));
+}
 
 void k_printf_buf_puts_n(struct k_printf_buf *buf, const char *str, size_t len) {
     buf->fn_puts_n(buf, str, len);
