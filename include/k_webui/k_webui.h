@@ -23,6 +23,12 @@ void k_webui_log_error(const char *fmt, ...);
 
 /* region [bind] */
 
+struct k_webui_widget_config;
+
+int k_webui_bind(const char *label, void *data, const struct k_webui_widget_config *widget);
+
+void k_webui_unbind(const char *label);
+
 enum k_webui_input_type {
     K_WEBUI_INT_RANGE,
     K_WEBUI_FLOAT_RANGE,
@@ -35,20 +41,22 @@ struct k_webui_int_range {
     int min;
     int max;
     int step;
+    int (*on_input)(void *data, int val);
 };
 
 struct k_webui_float_range {
     float min;
     float max;
     float step;
+    int (*on_input)(void *data, float val);
 };
 
 struct k_webui_checkbox {
-    void *_;
+    int (*on_change)(void *data, int val);
 };
 
 struct k_webui_button {
-    void *_;
+    void (*on_click)(void *data);
 };
 
 struct k_webui_int_select_option {
@@ -59,32 +67,19 @@ struct k_webui_int_select_option {
 struct k_webui_int_select {
     struct k_webui_int_select_option *options;
     int count;
+    int (*on_change)(void *data, int val);
 };
 
-struct k_webui_bind_int_options {
+struct k_webui_widget_config {
     enum k_webui_input_type input_type;
     union {
-        struct k_webui_int_range  range;
-        struct k_webui_checkbox   checkbox;
-        struct k_webui_button     button;
-        struct k_webui_int_select select;
+        struct k_webui_int_range   as_int_range;
+        struct k_webui_float_range as_float_range;
+        struct k_webui_checkbox    as_checkbox;
+        struct k_webui_button      as_button;
+        struct k_webui_int_select  as_int_select;
     };
-    int (*fn_webui_set)(int *p_int, int val);
 };
-
-struct k_webui_bind_float_options {
-    enum k_webui_input_type input_type;
-    union {
-        struct k_webui_float_range range;
-    };
-    int (*fn_webui_set)(float *p_float, float val);
-};
-
-int k_webui_bind_int(const char *label, int *p_int, const struct k_webui_bind_int_options *options);
-
-int k_webui_bind_float(const char *label, float *p_float, const struct k_webui_bind_float_options *options);
-
-void k_webui_unbind(const char *label);
 
 /* endregion */
 

@@ -5,81 +5,11 @@
 
 #include "./k_webui_internal.h"
 
-/* region [utils] */
+/* region [bind] */
 
-static int parse_int(const char *str, int *get_val) {
+/* region [exec_js_add_ui_widget] */
 
-    errno = 0;
-    char *end;
-    long val = strtol(str, &end, 10);
-
-    if (errno == ERANGE)
-        return -1;
-    if (val > INT_MAX || val < INT_MIN)
-        return -1;
-    if (end == str)
-        return -1;
-
-    *get_val = (int)val;
-    return 0;
-}
-
-static int parse_float(const char *str, float *get_val) {
-
-    errno = 0;
-    char *end;
-    float val = strtof(str, &end);
-
-    if (str == end)
-        return -1;
-    if (errno == ERANGE)
-        return -1;
-
-    *get_val = val;
-    return 0;
-}
-
-/* endregion */
-
-#define ptr_offset(p, offset) ((void *)((char *)(p) + (offset)))
-
-/* region [init] */
-
-static void k__webui_js_set_C_val(webui_event_t *e);
-
-int k__webui_binding_init(void) {
-
-    struct k_str_map_options options;
-    options.fn_malloc = k__webui_mem_alloc;
-    options.fn_free   = k__webui_mem_free;
-    if (NULL == k_str_map_construct(&k__webui.bindings, &options))
-        return -1;
-
-    webui_bind(k__webui.window, "k__webui_js_set_C_val", k__webui_js_set_C_val);
-
-    return 0;
-}
-
-void k__webui_binding_fini(void) {
-    /* TODO */
-}
-
-/* endregion */
-
-/* region [UI_widget] */
-
-struct k_webui_widget_config {
-    enum k_webui_input_type input_type;
-    union {
-        struct k_webui_int_range   int_range;
-        struct k_webui_checkbox    checkbox;
-        struct k_webui_float_range float_range;
-        struct k_webui_button      button;
-        struct k_webui_int_select  int_select;
-    };
-};
-
-static void k__webui_exec_js_add_widget(const char *label, const struct k_webui_widget_config *widget) {
+static void k__webui_exec_js_add_ui_widget(const char *label, const struct k_webui_widget_config *widget) {
 
     struct k_str_buf str_buf;
     char buf[1024];
@@ -92,15 +22,15 @@ static void k__webui_exec_js_add_widget(const char *label, const struct k_webui_
             switch (widget->input_type) {
                 case K_WEBUI_INT_RANGE:
                     k_str_buf_puts(&str_buf, "type:'range',");
-                    k_str_buf_printf(&str_buf, "min:%d,",  widget->int_range.min);
-                    k_str_buf_printf(&str_buf, "max:%d,",  widget->int_range.max);
-                    k_str_buf_printf(&str_buf, "step:%d,", widget->int_range.step);
+                    k_str_buf_printf(&str_buf, "min:%d,",  widget->as_int_range.min);
+                    k_str_buf_printf(&str_buf, "max:%d,",  widget->as_int_range.max);
+                    k_str_buf_printf(&str_buf, "step:%d,", widget->as_int_range.step);
                     break;
                 case K_WEBUI_FLOAT_RANGE:
                     k_str_buf_puts(&str_buf, "type:'range',");
-                    k_str_buf_printf(&str_buf, "min:%.3f,",  widget->float_range.min);
-                    k_str_buf_printf(&str_buf, "max:%.3f,",  widget->float_range.max);
-                    k_str_buf_printf(&str_buf, "step:%.3f,", widget->float_range.step);
+                    k_str_buf_printf(&str_buf, "min:%.3f,",  widget->as_float_range.min);
+                    k_str_buf_printf(&str_buf, "max:%.3f,",  widget->as_float_range.max);
+                    k_str_buf_printf(&str_buf, "step:%.3f,", widget->as_float_range.step);
                     break;
                 case K_WEBUI_CHECKBOX:
                     k_str_buf_puts(&str_buf, "type:'checkbox',");
@@ -113,10 +43,10 @@ static void k__webui_exec_js_add_widget(const char *label, const struct k_webui_
                     k_str_buf_puts(&str_buf, "options:[");
                     {
                         size_t i = 0;
-                        for (; i < widget->int_select.count; i++) {
+                        for (; i < widget->as_int_select.count; i++) {
                             k_str_buf_puts(&str_buf, "{");
                             {
-                                struct k_webui_int_select_option *opt = &widget->int_select.options[i];
+                                struct k_webui_int_select_option *opt = &widget->as_int_select.options[i];
                                 k_str_buf_k_printf(&str_buf, k__webui_fmt, "text:%'s,", opt->text);
                                 k_str_buf_printf(&str_buf, "val:%d,",   opt->val);
                             }
@@ -145,234 +75,149 @@ static void k__webui_exec_js_add_widget(const char *label, const struct k_webui_
 
 /* endregion */
 
-/* region [binding_base] */
+/* region [default_set_val] */
+
+static int k__webui_set_int_default(void *data, int val) {
+    *(int *)data = val;
+    return 0;
+}
+
+static int k__webui_set_float_default(void *data, float val) {
+    *(float *)data = val;
+    return 0;
+}
+
+/* endregion */
 
 struct k_webui_binding {
 
-    void (*fn_unbind)(void *binding);
+    void *data;
 
-    int (*fn_js_set)(void *binding, const char *val);
+    enum k_webui_input_type input_type;
+
+    union {
+        int  (*fn_set_i)(void *data, int val);
+        int  (*fn_set_f)(void *data, float val);
+        void (*on_click)(void *data);
+    };
 };
 
-static void *k__webui_binding_add(const char *label, size_t binding_struct_size) {
+static int k__webui_binding_init(struct k_webui_binding *binding, void *data, const struct k_webui_widget_config *widget) {
 
-    void *binding = k_str_map_get(&k__webui.bindings, label);
-    if (NULL != binding) {
-        k_log_error("label `%s` already exists", label);
-        return NULL;
+    binding->input_type = widget->input_type;
+    binding->data = data;
+
+    switch (widget->input_type) {
+        case K_WEBUI_INT_RANGE: {
+            if (NULL != widget->as_int_range.on_input) {
+                binding->fn_set_i = widget->as_int_range.on_input;
+            } else {
+                binding->fn_set_i = k__webui_set_int_default;
+            }
+            break;
+        }
+        case K_WEBUI_FLOAT_RANGE: {
+            if (NULL != widget->as_float_range.on_input) {
+                binding->fn_set_f = widget->as_float_range.on_input;
+            } else {
+                binding->fn_set_f = k__webui_set_float_default;
+            }
+            break;
+        }
+        case K_WEBUI_CHECKBOX: {
+            binding->fn_set_i = widget->as_checkbox.on_change;
+            break;
+        }
+        case K_WEBUI_BUTTON: {
+            binding->on_click = widget->as_button.on_click;
+            break;
+        }
+        case K_WEBUI_INT_SELECT: {
+            binding->fn_set_i = widget->as_int_select.on_change;
+            break;
+        }
+        default: {
+            return -1;
+        }
     }
 
-    binding = k_str_map_add(&k__webui.bindings, label, binding_struct_size);
-    if (NULL == binding)
-        return NULL;
-
-    return binding;
+    return 0;
 }
 
-static void k__webui_binding_remove(const char *label) {
+int k_webui_bind(const char *label, void *data, const struct k_webui_widget_config *widget) {
 
-    struct k_webui_binding *binding = k_str_map_get(&k__webui.bindings, label);
+    struct k_webui_binding *binding = k_str_map_add(&k__webui.bindings, label, sizeof(struct k_webui_binding));
     if (NULL == binding)
-        return;
+        return -1;
 
-    if (binding->fn_unbind != NULL) {
-        binding->fn_unbind(binding);
+    if (0 != k__webui_binding_init(binding, data, widget)) {
+        k_str_map_remove(&k__webui.bindings, label);
+        return -1;
     }
 
-    k_str_map_remove(&k__webui.bindings, label);
+    k__webui_exec_js_add_ui_widget(label, widget);
+    return 0;
 }
 
-static void k__webui_js_set_C_val(webui_event_t *e) {
+/* endregion */
+
+/* region [set] */
+
+static int k__webui_binding_on_webui_set(webui_event_t *e) {
 
     const char *label = webui_get_string_at(e, 0);
 
     struct k_webui_binding *binding = k_str_map_get(&k__webui.bindings, label);
     if (NULL == binding) {
-        k_log_warn("binding not found");
         assert(0);
-        return;
+        return -1;
     }
 
-    const char *val = webui_get_string_at(e, 1);
-
-    k_log_trace("[set val] label: %s, val: %s", label, val);
-
-    binding->fn_js_set(binding, val);
-}
-
-/* endregion */
-
-/* region [bind_int] */
-
-struct k_webui_int_binding {
-    struct k_webui_binding base;
-
-    int *p_int;
-
-    enum k_webui_input_type input_type;
-
-    int (*fn_webui_set)(int *p_int, int new_val);
-};
-
-static int k__webui_int_binding_js_set_val(void *binding_, const char *val_) {
-    struct k_webui_int_binding *binding = binding_;
-
-    int new_val;
-
     switch (binding->input_type) {
-        case K_WEBUI_INT_RANGE:
-            if (0 != parse_int(val_, &new_val))
-                return -1;
+        case K_WEBUI_INT_RANGE: {
+            long long int ll = webui_get_int_at(e, 1);
+            int val = (ll < INT_MIN) ? INT_MIN :
+                      (ll > INT_MAX) ? INT_MAX : (int)ll;
+
+            binding->fn_set_i(binding->data, val);
             break;
-        case K_WEBUI_CHECKBOX:
-            new_val = (0 == strcmp(val_, "true")) ? 1 : 0;
+        }
+        case K_WEBUI_FLOAT_RANGE: {
+            double d = webui_get_float_at(e, 1);
+            float val = (float)d;
+
+            binding->fn_set_f(binding->data, val);
             break;
-        case K_WEBUI_BUTTON:
-            new_val = *binding->p_int;
+        }
+        case K_WEBUI_CHECKBOX: {
+            bool b = webui_get_bool_at(e, 1);
+            int val = b ? 1 : 0;
+
+            binding->fn_set_i(binding->data, val);
             break;
-        case K_WEBUI_INT_SELECT:
-            if (0 != parse_int(val_, &new_val))
-                return -1;
+        }
+        case K_WEBUI_BUTTON: {
+            binding->on_click(binding->data);
             break;
+        }
+        case K_WEBUI_INT_SELECT: {
+            long long int ll = webui_get_int_at(e, 1);
+            int val = (ll < INT_MIN) ? INT_MIN :
+                      (ll > INT_MAX) ? INT_MAX : (int)ll;
+
+            binding->fn_set_i(binding->data, val);
+            break;
+        }
         default:
             assert(0);
             return -1;
     }
 
-    if (NULL == binding->fn_webui_set) {
-        *binding->p_int = new_val;
-        return 0;
-    }
-
-    return binding->fn_webui_set(binding->p_int, new_val);
-}
-
-int k_webui_bind_int(const char *label, int *p_int, const struct k_webui_bind_int_options *options) {
-
-    if (NULL == options) {
-        static struct k_webui_bind_int_options default_options = {
-            .input_type = K_WEBUI_INT_RANGE,
-            .range.min  = -100,
-            .range.max  = 100,
-            .range.step = 1,
-        };
-        options = &default_options;
-    }
-
-    struct k_webui_int_binding *binding = k__webui_binding_add(label, sizeof(struct k_webui_int_binding));
-    if (NULL == binding)
-        return -1;
-
-    binding->base.fn_unbind = NULL;
-    binding->base.fn_js_set = k__webui_int_binding_js_set_val;
-
-    binding->p_int = p_int;
-    binding->fn_webui_set = options->fn_webui_set;
-
-    struct k_webui_widget_config widget;
-    switch (options->input_type) {
-        case K_WEBUI_INT_RANGE:
-            widget.input_type = K_WEBUI_INT_RANGE;
-            widget.int_range.min  = options->range.min;
-            widget.int_range.max  = options->range.max;
-            widget.int_range.step = options->range.step;
-            break;
-        case K_WEBUI_CHECKBOX:
-            widget.input_type = K_WEBUI_CHECKBOX;
-            break;
-        case K_WEBUI_BUTTON:
-            widget.input_type = K_WEBUI_BUTTON;
-            break;
-        case K_WEBUI_INT_SELECT:
-            widget.input_type = K_WEBUI_INT_SELECT;
-            widget.int_select.options = options->select.options;
-            widget.int_select.count   = options->select.count;
-            break;
-        default:
-            k_log_error("unsupported input type");
-            return -1;
-    }
-    binding->input_type = widget.input_type;
-
-    k__webui_exec_js_add_widget(label, &widget);
     return 0;
 }
 
-/* endregion */
-
-/* region [bind_float] */
-
-struct k_webui_float_binding {
-    struct k_webui_binding base;
-
-    float *p_float;
-
-    enum k_webui_input_type input_type;
-
-    int (*fn_webui_set)(float *p_float, float new_val);
-};
-
-static int k__webui_float_binding_js_set_val(void *binding_, const char *val) {
-    struct k_webui_float_binding *binding = binding_;
-
-    float new_val;
-
-    switch (binding->input_type) {
-        case K_WEBUI_FLOAT_RANGE:
-            if (0 != parse_float(val, &new_val))
-                return -1;
-            break;
-        default:
-            assert(0);
-            return -1;
-    }
-
-    if (NULL == binding->fn_webui_set) {
-        *binding->p_float = new_val;
-        return 0;
-    }
-
-    return binding->fn_webui_set(binding->p_float, new_val);
-}
-
-int k_webui_bind_float(const char *label, float *p_float, const struct k_webui_bind_float_options *options) {
-
-    if (NULL == options) {
-        static struct k_webui_bind_float_options default_options = {
-            .input_type = K_WEBUI_FLOAT_RANGE,
-            .range.min  = 0.0f,
-            .range.max  = 1.0f,
-            .range.step = 0.01f,
-        };
-        options = &default_options;
-    }
-
-    struct k_webui_float_binding *binding = k__webui_binding_add(label, sizeof(struct k_webui_float_binding));
-    if (NULL == binding)
-        return -1;
-
-    binding->base.fn_unbind = NULL;
-    binding->base.fn_js_set = k__webui_float_binding_js_set_val;
-
-    binding->p_float = p_float;
-    binding->fn_webui_set = options->fn_webui_set;
-
-    struct k_webui_widget_config widget;
-    switch (options->input_type) {
-        case K_WEBUI_FLOAT_RANGE:
-            widget.input_type = K_WEBUI_FLOAT_RANGE;
-            widget.float_range.min  = options->range.min;
-            widget.float_range.max  = options->range.max;
-            widget.float_range.step = options->range.step;
-            break;
-        default:
-            k_log_error("unsupported input type");
-            return -1;
-    }
-    binding->input_type = widget.input_type;
-
-    k__webui_exec_js_add_widget(label, &widget);
-    return 0;
+static void k__webui_js_set_c_val(webui_event_t *e) {
+    k__webui_binding_on_webui_set(e);
 }
 
 /* endregion */
@@ -381,6 +226,27 @@ int k_webui_bind_float(const char *label, float *p_float, const struct k_webui_b
 
 void k_webui_unbind(const char *label) {
 
+}
+
+/* endregion */
+
+/* region [init] */
+
+int k__webui_bindings_map_init(void) {
+
+    struct k_str_map_options options;
+    options.fn_malloc = k__webui_mem_alloc;
+    options.fn_free   = k__webui_mem_free;
+    if (NULL == k_str_map_construct(&k__webui.bindings, &options))
+        return -1;
+
+    webui_bind(k__webui.window, "k__webui_set_c_val", k__webui_js_set_c_val);
+
+    return 0;
+}
+
+void k__webui_bindings_map_clear(void) {
+    /* TODO */
 }
 
 /* endregion */

@@ -45,22 +45,22 @@
       <label v-if="binding.input.type === 'range'">
         <span>{{ binding.label }}</span>
         <input type="range" :min="binding.input.min" :max="binding.input.max" :step="binding.input.step"
-               @input="binding_range_set_C_val($event, binding.label)" />
+               @input="binding_range_set_c_val($event, binding.label)" />
       </label>
       
       <label v-else-if="binding.input.type === 'checkbox'">
         <span>{{ binding.label }}</span>
-        <input type="checkbox" @change="binding_checkbox_set_C_val($event, binding.label)"/>
+        <input type="checkbox" @change="binding_checkbox_set_c_val($event, binding.label)"/>
       </label>
       
       <label v-else-if="binding.input.type === 'button'">
         <span>{{ binding.label }}</span>
-        <input type="button" @click="binding_button_set_C_val($event, binding.label)"/>
+        <input type="button" @click="binding_button_set_c_val($event, binding.label)"/>
       </label>
       
       <label v-else-if="binding.input.type === 'select'">
         <span>{{ binding.label }}</span>
-        <select @change="binding_select_set_C_val($event, binding.label)">
+        <select @change="binding_select_set_c_val($event, binding.label)">
           <option v-for="(option, idx) in binding.input.options" :key="idx" :value="option.val">{{ option.text }}</option>
         </select>
       </label>
@@ -107,23 +107,23 @@
         this.bindings.set(binding.label, binding);
       },
       
-      binding_range_set_C_val($event, label) {
-        let new_val = $event.target.value;
-        k__webui_js_set_C_val(label, `${new_val}`);
+      binding_range_set_c_val($event, label) {
+        let value = $event.target.value;
+        k__webui_set_c_val(label, value);
       },
       
-      binding_checkbox_set_C_val($event, label) {
+      binding_checkbox_set_c_val($event, label) {
         let checked = $event.target.checked;
-        k__webui_js_set_C_val(label, `${checked}`);
+        k__webui_set_c_val(label, checked);
       },
       
-      binding_button_set_C_val($event, label) {
-        k__webui_js_set_C_val(label, ``);
+      binding_button_set_c_val($event, label) {
+        k__webui_set_c_val(label);
       },
       
-      binding_select_set_C_val($event, label) {
+      binding_select_set_c_val($event, label) {
         let selected = $event.target.value;
-        k__webui_js_set_C_val(label, `${selected}`);
+        k__webui_set_c_val(label, selected);
       },
 
       /* endregion */
@@ -145,7 +145,5 @@
   }).mount('#app');
 </script>
 
-<script>
-</script>
 </body>
 </html>

@@ -62,9 +62,9 @@ int k__webui_exec_js_fmt(const char *js, ...);
 
 /* region [binding] */
 
-int k__webui_binding_init(void);
+int k__webui_bindings_map_init(void);
 
-void k__webui_binding_fini(void);
+void k__webui_bindings_map_clear(void);
 
 
 /* endregion */

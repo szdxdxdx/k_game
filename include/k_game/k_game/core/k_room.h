@@ -50,7 +50,7 @@ struct k_room_config {
      *
      * 此回调是可选的，设为 `NULL` 则不执行回调。
      */
-    int (*fn_init)(void *param);
+    int (*fn_init)(void *param); /* TODO: 将前缀 fn_ 改为 on_ */
 
     /**
      * \brief 销毁房间前执行的回调

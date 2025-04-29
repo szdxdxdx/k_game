@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "k_game.h"
@@ -7,19 +6,16 @@
 #include "./yx_room_empty.h"
 
 static int int_val;
-static float float_val;
 
 static void show_int_val(void *unused) {
     k_canvas_set_draw_color_rgba(0x000000ff);
     k_canvas_ui_clear();
-
     k_canvas_set_draw_color_rgba(0xffffffff);
     k_canvas_ui_printf(NULL, 8, 32 * 1, "%d", int_val);
-    k_canvas_ui_printf(NULL, 8, 32 * 4, "%f", float_val);
 }
 
-static int inc(int *p_int, int val) {
-    (*p_int)++;
+static int set_val(void *p, int val) {
+    *(int *)p = val;
     return 0;
 }
 
@@ -27,43 +23,13 @@ static void enter_room(void) {
 
     k_room_add_draw_callback(NULL, show_int_val, INT_MIN, INT_MIN);
 
-    k_webui_log_info("测试 - %s", "输出一条日志");
-
-    k_webui_bind_int("range", &int_val, NULL);
-
-    {
-        struct k_webui_bind_int_options options;
-        options.input_type   = K_WEBUI_BUTTON;
-        options.fn_webui_set = inc;
-        k_webui_bind_int("button", &int_val, &options);
-    }
-
-    {
-        struct k_webui_int_select_option select_opt[] = {
-            { .val=1, .text="一" },
-            { .val=2, .text="二" },
-            { .val=3, .text="三" },
-        };
-        struct k_webui_bind_int_options options;
-        options.input_type     = K_WEBUI_INT_SELECT;
-        options.select.options = select_opt;
-        options.select.count   = 3;
-        options.fn_webui_set   = NULL;
-        k_webui_bind_int("select", &int_val, &options);
-    }
-
-    {
-        struct k_webui_bind_float_options options;
-        options.input_type   = K_WEBUI_FLOAT_RANGE;
-        options.range.max    = 2.0f;
-        options.range.min    = 1.0f;
-        options.range.step   = 0.02f;
-        options.fn_webui_set = NULL;
-        k_webui_bind_float("float range", &float_val, &options);
-    }
-
-    //k_webui_bind_int("test:a", &int_val);
-
+    struct k_webui_widget_config widget;
+    widget.input_type = K_WEBUI_INT_RANGE;
+    widget.as_int_range.min  = 100;
+    widget.as_int_range.max  = 200;
+    widget.as_int_range.step = 2;
+    widget.as_int_range.on_input = NULL;
+    k_webui_bind("range", &int_val, &widget);
 }
 
 struct k_room *yx_create_empty_room(void) {
