@@ -25,11 +25,12 @@ static void enter_room(void) {
 
     {
         struct k_webui_widget_config widget;
-        widget.input_type = K_WEBUI_INT_RANGE;
-        widget.as_int_range.min  = 100;
-        widget.as_int_range.max  = 200;
-        widget.as_int_range.step = 2;
-        widget.as_int_range.on_input = NULL;
+        widget.input_type = K_WEBUI_INT_SLIDER;
+        widget.as_int_slider.min  = 1;
+        widget.as_int_slider.max  = 3;
+        widget.as_int_slider.step = 1;
+        widget.as_int_slider.on_input = NULL;
+        widget.as_int_slider.on_read  = NULL;
         k_webui_bind("range", &int_val, &widget);
     }
 
@@ -44,6 +45,7 @@ static void enter_room(void) {
         widget.as_int_select.count     = 3;
         widget.as_int_select.options   = options;
         widget.as_int_select.on_change = NULL;
+        widget.as_int_slider.on_read   = NULL;
         k_webui_bind("Select", &int_val, &widget);
     }
 }

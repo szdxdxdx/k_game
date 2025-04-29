@@ -49,9 +49,6 @@ struct k_component_entity_config {
      * 此回调是可选的，若不需要，可将该值设为 `NULL`。
      */
     void (*fn_fini)(struct k_component *component);
-
-    /* TODO */
-    int (*fn_interact)(struct k_component *component, char *get_result, size_t n, const char *command);
 };
 
 /** \brief 注册组件类型所需的组件配置的默认值 */
