@@ -23,13 +23,29 @@ static void enter_room(void) {
 
     k_room_add_draw_callback(NULL, show_int_val, INT_MIN, INT_MIN);
 
-    struct k_webui_widget_config widget;
-    widget.input_type = K_WEBUI_INT_RANGE;
-    widget.as_int_range.min  = 100;
-    widget.as_int_range.max  = 200;
-    widget.as_int_range.step = 2;
-    widget.as_int_range.on_input = NULL;
-    k_webui_bind("range", &int_val, &widget);
+    {
+        struct k_webui_widget_config widget;
+        widget.input_type = K_WEBUI_INT_RANGE;
+        widget.as_int_range.min  = 100;
+        widget.as_int_range.max  = 200;
+        widget.as_int_range.step = 2;
+        widget.as_int_range.on_input = NULL;
+        k_webui_bind("range", &int_val, &widget);
+    }
+
+    {
+        struct k_webui_int_select_option options[] = {
+            { .val=1, .text="Option 1" },
+            { .val=2, .text="Option 2" },
+            { .val=3, .text="Option 3" },
+        };
+        struct k_webui_widget_config widget;
+        widget.input_type = K_WEBUI_INT_SELECT;
+        widget.as_int_select.count     = 3;
+        widget.as_int_select.options   = options;
+        widget.as_int_select.on_change = NULL;
+        k_webui_bind("Select", &int_val, &widget);
+    }
 }
 
 struct k_room *yx_create_empty_room(void) {

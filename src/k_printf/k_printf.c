@@ -171,14 +171,23 @@ static void file_buf_init(struct k_printf_file_buf *printf_buf, FILE *file) {
 /* endregion */
 
 void k_printf_buf_puts(struct k_printf_buf *buf, const char *str) {
+    assert(NULL != buf);
+    assert(NULL != str);
+
     buf->fn_puts_n(buf, str, strlen(str));
 }
 
 void k_printf_buf_puts_n(struct k_printf_buf *buf, const char *str, size_t len) {
+    assert(NULL != buf);
+    assert(NULL != str);
+
     buf->fn_puts_n(buf, str, len);
 }
 
 void k_printf_buf_printf(struct k_printf_buf *buf, const char *fmt, ...) {
+    assert(NULL != buf);
+    assert(NULL != fmt);
+
     va_list args;
     va_start(args, fmt);
     buf->fn_vprintf(buf, fmt, args);
@@ -186,10 +195,14 @@ void k_printf_buf_printf(struct k_printf_buf *buf, const char *fmt, ...) {
 }
 
 void k_printf_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list args) {
+    assert(NULL != buf);
+    assert(NULL != fmt);
+
     buf->fn_vprintf(buf, fmt, args);
 }
 
 int k_printf_buf_get_n(struct k_printf_buf *buf) {
+    assert(NULL != buf);
     return buf->n;
 }
 

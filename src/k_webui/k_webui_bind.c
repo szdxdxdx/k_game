@@ -5,6 +5,13 @@
 
 #include "./k_webui_internal.h"
 
+/* region [utils] */
+
+static inline void *first_non_null(void *a, void *b) {
+    return NULL != a ? a : b;
+}
+/* endregion */
+
 /* region [bind] */
 
 /* region [exec_js_add_ui_widget] */
@@ -48,7 +55,7 @@ static void k__webui_exec_js_add_ui_widget(const char *label, const struct k_web
                             {
                                 struct k_webui_int_select_option *opt = &widget->as_int_select.options[i];
                                 k_str_buf_k_printf(&str_buf, k__webui_fmt, "text:%'s,", opt->text);
-                                k_str_buf_printf(&str_buf, "val:%d,",   opt->val);
+                                k_str_buf_printf(&str_buf, "val:%d,", opt->val);
                             }
                             k_str_buf_puts(&str_buf, "},");
                         }
@@ -57,8 +64,6 @@ static void k__webui_exec_js_add_ui_widget(const char *label, const struct k_web
                     break;
                 default:
                     assert(0);
-                    k_str_buf_free(&str_buf);
-                    return;
             }
         }
         k_str_buf_puts(&str_buf, "},");
@@ -108,37 +113,28 @@ static int k__webui_binding_init(struct k_webui_binding *binding, void *data, co
     binding->data = data;
 
     switch (widget->input_type) {
-        case K_WEBUI_INT_RANGE: {
-            if (NULL != widget->as_int_range.on_input) {
-                binding->fn_set_i = widget->as_int_range.on_input;
-            } else {
-                binding->fn_set_i = k__webui_set_int_default;
+        case K_WEBUI_INT_RANGE:
+            binding->fn_set_i = first_non_null(widget->as_int_range.on_input, k__webui_set_int_default);
+            break;
+        case K_WEBUI_FLOAT_RANGE:
+            binding->fn_set_f = first_non_null(widget->as_float_range.on_input, k__webui_set_float_default);
+            break;
+        case K_WEBUI_CHECKBOX:
+            binding->fn_set_i = first_non_null(widget->as_checkbox.on_change, k__webui_set_int_default);
+            break;
+        case K_WEBUI_BUTTON:
+            if (NULL == widget->as_button.on_click) {
+                k_log_error("button widget has no `on_click` callback");
+                return -1;
             }
-            break;
-        }
-        case K_WEBUI_FLOAT_RANGE: {
-            if (NULL != widget->as_float_range.on_input) {
-                binding->fn_set_f = widget->as_float_range.on_input;
-            } else {
-                binding->fn_set_f = k__webui_set_float_default;
-            }
-            break;
-        }
-        case K_WEBUI_CHECKBOX: {
-            binding->fn_set_i = widget->as_checkbox.on_change;
-            break;
-        }
-        case K_WEBUI_BUTTON: {
             binding->on_click = widget->as_button.on_click;
             break;
-        }
-        case K_WEBUI_INT_SELECT: {
-            binding->fn_set_i = widget->as_int_select.on_change;
+        case K_WEBUI_INT_SELECT:
+            binding->fn_set_i = first_non_null(widget->as_int_select.on_change, k__webui_set_int_default);
             break;
-        }
-        default: {
+        default:
+            assert(0);
             return -1;
-        }
     }
 
     return 0;
@@ -146,17 +142,33 @@ static int k__webui_binding_init(struct k_webui_binding *binding, void *data, co
 
 int k_webui_bind(const char *label, void *data, const struct k_webui_widget_config *widget) {
 
+    if (NULL == label || '\0' == label[0])
+        return -1;
+    if (NULL == data)
+        return -1;
+    if (NULL == widget)
+        return -1;
+
+    if (NULL != k_str_map_get(&k__webui.bindings, label)) {
+        k_log_error("label `%s` exists", label);
+        goto err;
+    }
+
     struct k_webui_binding *binding = k_str_map_add(&k__webui.bindings, label, sizeof(struct k_webui_binding));
     if (NULL == binding)
-        return -1;
+        goto err;
 
     if (0 != k__webui_binding_init(binding, data, widget)) {
         k_str_map_remove(&k__webui.bindings, label);
-        return -1;
+        goto err;
     }
 
     k__webui_exec_js_add_ui_widget(label, widget);
     return 0;
+
+err:
+    k_log_error("failed to add binding for label `%s`", label);
+    return -1;
 }
 
 /* endregion */

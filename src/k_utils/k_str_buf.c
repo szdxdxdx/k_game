@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "k_str_buf.h"
 
@@ -110,6 +108,8 @@ err:
 }
 
 int k_str_buf_puts(struct k_str_buf *buf, const char *str) {
+    assert(NULL != buf);
+    assert(NULL != str);
     return k_str_buf_puts_n(buf, str, strlen(str));
 }
 

@@ -23,12 +23,6 @@ void k_webui_log_error(const char *fmt, ...);
 
 /* region [bind] */
 
-struct k_webui_widget_config;
-
-int k_webui_bind(const char *label, void *data, const struct k_webui_widget_config *widget);
-
-void k_webui_unbind(const char *label);
-
 enum k_webui_input_type {
     K_WEBUI_INT_RANGE,
     K_WEBUI_FLOAT_RANGE,
@@ -80,6 +74,10 @@ struct k_webui_widget_config {
         struct k_webui_int_select  as_int_select;
     };
 };
+
+int k_webui_bind(const char *label, void *data, const struct k_webui_widget_config *widget);
+
+void k_webui_unbind(const char *label);
 
 /* endregion */
 
