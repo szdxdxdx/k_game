@@ -2,54 +2,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "k_str_buf.h"
+
 #if 0
 
-static void test_1(void) {
+static void test(void) {
 
-    float f;
+    // 初始化字符串缓冲区，指定默认的缓冲区
+    struct k_str_buf str_buf;
+    char default_buf[20];
+    k_str_buf_init(&str_buf, default_buf, sizeof(default_buf));
 
-    k_webui_bind_float("label", &f, NULL);
+    // 往缓冲区中追加写入字符串
+    k_str_buf_puts(&str_buf, "hello world!");
+    k_str_buf_printf(&str_buf, "%*s", 20, "!");
 
-    while (1) {
-        printf("%f\n", f);
+    // 获取缓冲区中的字符串内容
+    char *str = k_str_buf_get(&str_buf);
+    printf("%s", str);
 
-        if (f > 300.0f)
-            break;
-    }
-
-    k_webui_unbind("label");
-}
-
-static void test_2(void) {
-
-    int i;
-
-    struct k_webui_bind_int_options opt;
-    opt.description = "this is a description";
-    opt.input = K_WEBUI_INPUT_SLIDER;
-    opt.slider.min = 100;
-    opt.slider.max = 350;
-    opt.slider.step = 10;
-    k_webui_bind_int("group:label", &i, opt);
-
-    while (1) {
-        printf("%d\n", i);
-
-        if (i > 300)
-            break;
-    }
-
-    k_webui_unbind("label");
-}
-
-static void test_3(void) {
-
-    struct k_webui_bind_config config;
-    config.ctx = ...;
-    config.fn_set = ...;
-    config.fn_get = ...;
-
-    k_webui_bind(config);
+    // 结束使用字符串缓冲区
+    k_str_buf_free(&str_buf);
 }
 
 int main(int argc, char **argv) {

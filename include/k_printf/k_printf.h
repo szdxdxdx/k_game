@@ -69,28 +69,18 @@ typedef k_printf_spec_print_fn (*k_printf_spec_match_fn)(const char **str);
 /**
  * `k_printf()` 将字符串格式化写入到标准输出流 `stdout`。
  *
- * `k_fprintf()` 和 `k_vfprintf()` 将字符串格式化写入到文件流 `FILE *`。
+ * `fn_match` 用于匹配自定义格式说明符的回调，若为 `NULL` 则仅匹配 C printf 的格式说明符。
  *
- * `k_sprintf()` 和 `k_vsprintf()` 将字符串格式化写入到 `char []` 缓冲区。
- * 保证结果字符串以 `\0` 结尾。
+ * `k_fprintf()` 和 `k_vfprintf()` 将字符串格式化写入到文件流 `file`。
  *
- * `k_snprintf()` 和 `k_vsnprintf()` 将字符串格式化写入到 `char []` 缓冲区，
- * 是 `k_sprintf()` 和 `k_vsprintf()` 的更安全版本，因为有 `n` 来指定缓冲区的大小。
- * 使用 `k_sprintf()` 等同于在使用 `k_snprintf()` 且指定 `n` 为 `INT_MAX`。
- * 若缓冲区不足以容纳完整的结果字符串，则用 `\0` 将其截断。
+ * `k_sprintf()` 和 `k_vsprintf()` 将字符串格式化写入到缓冲区 `buf`，并以 `\0` 结尾。
+ * `k_snprintf()` 和 `k_vsnprintf()` 是更安全的版本，因为有 `n` 来指定缓冲区的大小，
+ * 若缓冲区不足以容纳完整的结果字符串，则在缓冲区末尾处用 `\0` 将字符串截断。
  *
- * `k_asprintf()` 和 `k_vasprintf()` 使用 `malloc()` 分配 `char []` 缓冲区
- * 来存储结果字符串，通过 `get_s` 返回该字符串指针。该字符串的内存由用户负责释放。
+ * `k_asprintf()` 和 `k_vasprintf()` 使用 `malloc()` 分配缓冲区存储结果字符串，
+ * 出参 `get_s` 返回该字符串指针。该字符串的内存由用户负责使用 `free()` 将其释放。
  *
- * \param fn_match 用于匹配自定义格式说明符的回调（若为 `NULL` 则仅匹配 C printf 的格式说明符）
- * \param file     将字符串格式化写入 `FILE *`
- * \param buf      将字符串格式化写入 `char []`
- * \param n        `char []` 缓冲区的长度（只有 `n > 0` 时，才会往缓冲区写入内容）
- * \param get_s    返回动态分配的字符串的指针
- * \param fmt      格式字符串
- * \param ...      不定参数，根据格式字符串中的说明符，匹配要输出的值
- * \param args     含要打印的变量的参数列表
- * \return 若成功，函数返回结果字符串长度（忽略缓冲区实际大小）；若失败，函数返回负值。
+ * 所有函数，若成功，返回格式化字符串的长度（忽略缓冲区实际大小），失败则返回负值。
  *
  * @{
  */
@@ -109,19 +99,19 @@ int k_vasprintf(k_printf_spec_match_fn fn_match, char **get_s, const char *fmt, 
 
 /* region [k_printf_buf] */
 
-/** \brief 缓冲区接口，对 `char []` 和 `FILE *` 两类缓冲区统一的操作接口 */
+/** \brief 缓冲区接口，统一操作 `char []` 和 `FILE *` 两类缓冲区 */
 struct k_printf_buf;
 
-/** \brief 往缓冲区中写入字符串 */
+/** \brief 往缓冲区中追加写入字符串 */
 void k_printf_buf_puts(struct k_printf_buf *buf, const char *str);
 
-/** \brief 往缓冲区中写入指定长度的字符串 */
+/** \brief 往缓冲区中追加写入指定长度的字符串 */
 void k_printf_buf_puts_n(struct k_printf_buf *buf, const char *str, size_t len);
 
-/** \brief 往缓冲区格式化写入格式化字符串（格式说明符同 C printf） */
+/** \brief 格式化字符串并追加写入缓冲区，格式说明符同 C printf */
 void k_printf_buf_printf(struct k_printf_buf *buf, const char *fmt, ...);
 
-/** \brief 往缓冲区格式化写入格式化字符串（格式说明符同 C printf） */
+/** \brief 格式化字符串并追加写入缓冲区，格式说明符同 C printf */
 void k_printf_buf_vprintf(struct k_printf_buf *buf, const char *fmt, va_list args);
 
 /**

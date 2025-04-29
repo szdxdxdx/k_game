@@ -13,13 +13,13 @@ void k_str_buf_init(struct k_str_buf *buf, char *default_buf, size_t capacity) {
 
     if (NULL != default_buf && 0 < capacity) {
         buf->default_buf = default_buf;
-        buf->buf         = default_buf;
+        buf->str         = default_buf;
         buf->str_len     = 0;
         buf->capacity    = capacity;
     }
     else {
         buf->default_buf = buf_;
-        buf->buf         = buf_;
+        buf->str         = buf_;
         buf->str_len     = 0;
         buf->capacity    = 0;
     }
@@ -27,17 +27,17 @@ void k_str_buf_init(struct k_str_buf *buf, char *default_buf, size_t capacity) {
 
 int k_str_buf_failed(struct k_str_buf *buf) {
     assert(NULL != buf);
-    return NULL == buf->buf;
+    return NULL == buf->str;
 }
 
 static void k__str_buf_mark_failed(struct k_str_buf *buf) {
     assert( ! k_str_buf_failed(buf));
 
-    if (buf->buf != buf->default_buf) {
-        free(buf->buf);
+    if (buf->str != buf->default_buf) {
+        free(buf->str);
     }
 
-    buf->buf      = NULL;
+    buf->str      = NULL;
     buf->str_len  = 0;
     buf->capacity = 0;
 }
@@ -48,14 +48,14 @@ void k_str_buf_free(struct k_str_buf *buf) {
     if (k_str_buf_failed(buf))
         return;
 
-    if (buf->buf != buf->default_buf) {
-        free(buf->buf);
+    if (buf->str != buf->default_buf) {
+        free(buf->str);
     }
 }
 
 char *k_str_buf_get(struct k_str_buf *buf) {
     assert(NULL != buf);
-    return buf->buf;
+    return buf->str;
 }
 
 size_t k_str_buf_get_len(struct k_str_buf *buf) {
@@ -92,14 +92,14 @@ static int k__str_buf_ensure_capacity(struct k_str_buf *buf, size_t add_len) {
         }
     }
 
-    memcpy(new_buf, buf->buf, buf->str_len);
+    memcpy(new_buf, buf->str, buf->str_len);
     new_buf[buf->str_len] = '\0';
 
-    if (buf->buf != buf->default_buf) {
-        free(buf->buf);
+    if (buf->str != buf->default_buf) {
+        free(buf->str);
     }
 
-    buf->buf = new_buf;
+    buf->str = new_buf;
     buf->capacity = new_capacity;
 
     return 0;
@@ -123,9 +123,9 @@ int k_str_buf_puts_n(struct k_str_buf *buf, const char *str, size_t len) {
     if (0 != k__str_buf_ensure_capacity(buf, len))
         return -1;
 
-    memcpy(&buf->buf[buf->str_len], str, len);
+    memcpy(&buf->str[buf->str_len], str, len);
     buf->str_len += len;
-    buf->buf[buf->str_len] = '\0';
+    buf->str[buf->str_len] = '\0';
 
     return 0;
 }
@@ -150,7 +150,7 @@ int k_str_buf_vprintf(struct k_str_buf *buf, const char *fmt, va_list args) {
 
     va_list args_copy;
     va_copy(args_copy, args);
-    int r = vsnprintf(&buf->buf[buf->str_len], avail, fmt, args);
+    int r = vsnprintf(&buf->str[buf->str_len], avail, fmt, args);
     va_end(args_copy);
 
     if (r < 0) {
@@ -170,7 +170,7 @@ int k_str_buf_vprintf(struct k_str_buf *buf, const char *fmt, va_list args) {
 
     avail = buf->capacity - buf->str_len;
 
-    r = vsnprintf(&buf->buf[buf->str_len], avail, fmt, args);
+    r = vsnprintf(&buf->str[buf->str_len], avail, fmt, args);
 
     if (r != add_len) {
         k__str_buf_mark_failed(buf);
@@ -201,7 +201,7 @@ int k_str_buf_k_vprintf(struct k_str_buf *buf, k_printf_spec_match_fn fn_match, 
 
     va_list args_copy;
     va_copy(args_copy, args);
-    int r = k_vsnprintf(fn_match, &buf->buf[buf->str_len], avail, fmt, args);
+    int r = k_vsnprintf(fn_match, &buf->str[buf->str_len], avail, fmt, args);
     va_end(args_copy);
 
     if (r < 0) {
@@ -221,7 +221,7 @@ int k_str_buf_k_vprintf(struct k_str_buf *buf, k_printf_spec_match_fn fn_match, 
 
     avail = buf->capacity - buf->str_len;
 
-    r = k_vsnprintf(fn_match, &buf->buf[buf->str_len], avail, fmt, args);
+    r = k_vsnprintf(fn_match, &buf->str[buf->str_len], avail, fmt, args);
 
     if (r != add_len) {
         k__str_buf_mark_failed(buf);
