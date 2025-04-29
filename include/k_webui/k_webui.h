@@ -28,6 +28,7 @@ enum k_webui_input_type {
     K_WEBUI_FLOAT_RANGE,
     K_WEBUI_CHECKBOX,
     K_WEBUI_BUTTON,
+    K_WEBUI_INT_SELECT,
 };
 
 struct k_webui_int_range {
@@ -50,12 +51,23 @@ struct k_webui_button {
     void *_;
 };
 
+struct k_webui_int_select_option {
+    int val;
+    const char *text;
+};
+
+struct k_webui_int_select {
+    struct k_webui_int_select_option *options;
+    int count;
+};
+
 struct k_webui_bind_int_options {
     enum k_webui_input_type input_type;
     union {
-        struct k_webui_int_range range;
-        struct k_webui_checkbox  checkbox;
-        struct k_webui_button    button;
+        struct k_webui_int_range  range;
+        struct k_webui_checkbox   checkbox;
+        struct k_webui_button     button;
+        struct k_webui_int_select select;
     };
     int (*fn_webui_set)(int *p_int, int val);
 };

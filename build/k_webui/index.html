@@ -5,154 +5,147 @@
   <meta charset="UTF-8">
   <script src="/webui.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
+  
   <style>
-
+    
     /* region [binding-panel] */
-
+    
     #binding-panel {
-
+    
     }
-
+    
     #binding-panel label {
       border: 1px solid #f60;
       margin: 8px;
       padding: 8px;
     }
-
+    
     /* endregion */
     
     /* region [log-panel] */
-
-    #log-panel {
-
-    }
-
-    /* endregion */
     
+    #log-panel {
+    
+    }
+    
+    /* endregion */
+  
   </style>
 
 </head>
 <body>
-  <div id="app">
+<div id="app">
+  
+  <!-- [widget-panel] --><!-- region -->
+  <div id="binding-panel">
     
-    <!-- [widget-panel] --><!-- region -->
-    <div id="binding-panel">
-
-      <div v-for="[label, binding] in bindings" :key="label">
-        <p>{{ binding }}</p>
-
-        <label v-if="binding.input.type === 'range'">
-          <span>{{ binding.label }}</span>
-          <input
-              type="range"
-              :min="binding.input.min"
-              :max="binding.input.max"
-              :step="binding.input.step"
-              @input="binding_range_set_C_val($event, binding.label)"
-          />
-        </label>
-
-        <label v-else-if="binding.input.type === 'checkbox'">
-          <span>{{ binding.label }}</span>
-          <input
-              type="checkbox"
-              @change="binding_checkbox_set_C_val($event, binding.label)"
-          />
-        </label>
-
-        <label v-else-if="binding.input.type === 'button'">
-          <span>{{ binding.label }}</span>
-          <input
-            type="button"
-            @click="binding_button_set_C_val($event, binding.label)"
-          />
-        </label>
-
-        <label v-else-if="binding.input.type === 'select'">
-          <select>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-          </select>
-        </label>
-
-      </div>
-
+    <div v-for="[label, binding] in bindings" :key="label">
+      <p>{{ binding }}</p>
+      
+      <label v-if="binding.input.type === 'range'">
+        <span>{{ binding.label }}</span>
+        <input type="range" :min="binding.input.min" :max="binding.input.max" :step="binding.input.step"
+               @input="binding_range_set_C_val($event, binding.label)" />
+      </label>
+      
+      <label v-else-if="binding.input.type === 'checkbox'">
+        <span>{{ binding.label }}</span>
+        <input type="checkbox" @change="binding_checkbox_set_C_val($event, binding.label)"/>
+      </label>
+      
+      <label v-else-if="binding.input.type === 'button'">
+        <span>{{ binding.label }}</span>
+        <input type="button" @click="binding_button_set_C_val($event, binding.label)"/>
+      </label>
+      
+      <label v-else-if="binding.input.type === 'select'">
+        <span>{{ binding.label }}</span>
+        <select @change="binding_select_set_C_val($event, binding.label)">
+          <option v-for="(option, idx) in binding.input.options" :key="idx" :value="option.val">{{ option.text }}</option>
+        </select>
+      </label>
+    
     </div>
-    <!-- endregion -->
-
-    <!-- [log-panel] --><!-- region -->
-    <div id="log-panel">
-      <table>
-        <tr v-for="(log, idx) in log_list" :key="idx">
-          <td>
-            <span>{{ log.level }}</span>
-          </td>
-          <td>
-            <pre>{{ log.msg }}</pre>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <!-- endregion -->
-
+  
   </div>
+  <!-- endregion -->
+  
+  <!-- [log-panel] --><!-- region -->
+  <div id="log-panel">
+    <table>
+      <tr v-for="(log, idx) in log_list" :key="idx">
+        <td>
+          <span>{{ log.level }}</span>
+        </td>
+        <td>
+          <pre>{{ log.msg }}</pre>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <!-- endregion -->
 
-  <script>
-    const { createApp, reactive } = Vue;
+</div>
 
-    const k__webui = createApp({
-      data() {
-        return {
-          bindings: reactive(new Map()),
-          log_list: [ /* { level: 'INFO|WARN|ERROR', msg } */ ],
-        };
+<script>
+  const {createApp, reactive} = Vue;
+  
+  const k__webui = createApp({
+    data() {
+      return {
+        bindings: reactive(new Map()),
+        log_list: [ /* { level: 'INFO|WARN|ERROR', msg } */],
+      };
+    },
+    methods: {
+      
+      /* region [binding-panel] */
+      
+      bind: function (config) {
+        let binding = reactive(config);
+        console.log(config);
+        this.bindings.set(binding.label, binding);
       },
-      methods: {
+      
+      binding_range_set_C_val($event, label) {
+        let new_val = $event.target.value;
+        k__webui_js_set_C_val(label, `${new_val}`);
+      },
+      
+      binding_checkbox_set_C_val($event, label) {
+        let checked = $event.target.checked;
+        k__webui_js_set_C_val(label, `${checked}`);
+      },
+      
+      binding_button_set_C_val($event, label) {
+        k__webui_js_set_C_val(label, ``);
+      },
+      
+      binding_select_set_C_val($event, label) {
+        let selected = $event.target.value;
+        k__webui_js_set_C_val(label, `${selected}`);
+      },
 
-        /* region [binding-panel] */
-
-        bind: function(config) {
-          let binding = reactive(config);
-          console.log(binding);
-          this.bindings.set(binding.label, binding);
-        },
-
-        binding_range_set_C_val($event, label) {
-          let new_val = $event.target.value;
-          k__webui_js_set_C_val(label, `${new_val}`);
-        },
-
-        binding_checkbox_set_C_val($event, label) {
-          let checked = $event.target.checked;
-          k__webui_js_set_C_val(label, `${checked}`);
-        },
-
-        binding_button_set_C_val($event, label) {
-          k__webui_js_set_C_val(label, ``);
-        },
-
-        /* endregion */
-
-        /* region [log-panel] */
-
-        log_info(msg) {
-          this.log_list.push({ level: 'INFO', msg });
-        },
-        log_warn(msg) {
-          this.log_list.push({ level: 'WARN', msg });
-        },
-        log_error(msg) {
-          this.log_list.push({ level: 'ERROR', msg });
-        }
-
-        /* endregion */
+      /* endregion */
+      
+      /* region [log-panel] */
+      
+      log_info(msg) {
+        this.log_list.push({level: 'INFO', msg});
+      },
+      log_warn(msg) {
+        this.log_list.push({level: 'WARN', msg});
+      },
+      log_error(msg) {
+        this.log_list.push({level: 'ERROR', msg});
       }
-    }).mount('#app');
-  </script>
+      
+      /* endregion */
+    }
+  }).mount('#app');
+</script>
 
-  <script>
-  </script>
+<script>
+</script>
 </body>
 </html>

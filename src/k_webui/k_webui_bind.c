@@ -75,6 +75,7 @@ struct k_webui_widget_config {
         struct k_webui_checkbox    checkbox;
         struct k_webui_float_range float_range;
         struct k_webui_button      button;
+        struct k_webui_int_select  int_select;
     };
 };
 
@@ -86,32 +87,53 @@ static void k__webui_exec_js_add_widget(const char *label, const struct k_webui_
 
     k_str_buf_puts(&str_buf, "k__webui.bind({");
     {
-        k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
-
         k_str_buf_puts(&str_buf, "input:{");
         {
             switch (widget->input_type) {
                 case K_WEBUI_INT_RANGE:
-                    k_str_buf_printf(&str_buf, "type:'%s',", "range");
+                    k_str_buf_puts(&str_buf, "type:'range',");
                     k_str_buf_printf(&str_buf, "min:%d,",  widget->int_range.min);
                     k_str_buf_printf(&str_buf, "max:%d,",  widget->int_range.max);
                     k_str_buf_printf(&str_buf, "step:%d,", widget->int_range.step);
                     break;
                 case K_WEBUI_FLOAT_RANGE:
-                    k_str_buf_printf(&str_buf, "type:'%s',", "range");
+                    k_str_buf_puts(&str_buf, "type:'range',");
                     k_str_buf_printf(&str_buf, "min:%.3f,",  widget->float_range.min);
                     k_str_buf_printf(&str_buf, "max:%.3f,",  widget->float_range.max);
                     k_str_buf_printf(&str_buf, "step:%.3f,", widget->float_range.step);
                     break;
                 case K_WEBUI_CHECKBOX:
-                    k_str_buf_printf(&str_buf, "type:'%s',", "checkbox");
+                    k_str_buf_puts(&str_buf, "type:'checkbox',");
                     break;
                 case K_WEBUI_BUTTON:
-                    k_str_buf_printf(&str_buf, "type:'%s',", "button");
+                    k_str_buf_puts(&str_buf, "type:'button',");
                     break;
+                case K_WEBUI_INT_SELECT:
+                    k_str_buf_puts(&str_buf, "type:'select',");
+                    k_str_buf_puts(&str_buf, "options:[");
+                    {
+                        size_t i = 0;
+                        for (; i < widget->int_select.count; i++) {
+                            k_str_buf_puts(&str_buf, "{");
+                            {
+                                struct k_webui_int_select_option *opt = &widget->int_select.options[i];
+                                k_str_buf_k_printf(&str_buf, k__webui_fmt, "text:%'s,", opt->text);
+                                k_str_buf_printf(&str_buf, "val:%d,",   opt->val);
+                            }
+                            k_str_buf_puts(&str_buf, "},");
+                        }
+                    }
+                    k_str_buf_puts(&str_buf, "],");
+                    break;
+                default:
+                    assert(0);
+                    k_str_buf_free(&str_buf);
+                    return;
             }
         }
         k_str_buf_puts(&str_buf, "},");
+
+        k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
     }
     k_str_buf_puts(&str_buf, "})");
 
@@ -208,6 +230,10 @@ static int k__webui_int_binding_js_set_val(void *binding_, const char *val_) {
         case K_WEBUI_BUTTON:
             new_val = *binding->p_int;
             break;
+        case K_WEBUI_INT_SELECT:
+            if (0 != parse_int(val_, &new_val))
+                return -1;
+            break;
         default:
             assert(0);
             return -1;
@@ -256,6 +282,11 @@ int k_webui_bind_int(const char *label, int *p_int, const struct k_webui_bind_in
             break;
         case K_WEBUI_BUTTON:
             widget.input_type = K_WEBUI_BUTTON;
+            break;
+        case K_WEBUI_INT_SELECT:
+            widget.input_type = K_WEBUI_INT_SELECT;
+            widget.int_select.options = options->select.options;
+            widget.int_select.count   = options->select.count;
             break;
         default:
             k_log_error("unsupported input type");

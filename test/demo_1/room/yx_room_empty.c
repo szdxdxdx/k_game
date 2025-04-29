@@ -33,17 +33,31 @@ static void enter_room(void) {
 
     {
         struct k_webui_bind_int_options options;
-        options.input_type = K_WEBUI_BUTTON;
+        options.input_type   = K_WEBUI_BUTTON;
         options.fn_webui_set = inc;
         k_webui_bind_int("button", &int_val, &options);
     }
 
     {
+        struct k_webui_int_select_option select_opt[] = {
+            { .val=1, .text="一" },
+            { .val=2, .text="二" },
+            { .val=3, .text="三" },
+        };
+        struct k_webui_bind_int_options options;
+        options.input_type     = K_WEBUI_INT_SELECT;
+        options.select.options = select_opt;
+        options.select.count   = 3;
+        options.fn_webui_set   = NULL;
+        k_webui_bind_int("select", &int_val, &options);
+    }
+
+    {
         struct k_webui_bind_float_options options;
-        options.input_type = K_WEBUI_FLOAT_RANGE;
-        options.range.max  = 2.0f;
-        options.range.min  = 1.0f;
-        options.range.step = 0.02f;
+        options.input_type   = K_WEBUI_FLOAT_RANGE;
+        options.range.max    = 2.0f;
+        options.range.min    = 1.0f;
+        options.range.step   = 0.02f;
         options.fn_webui_set = NULL;
         k_webui_bind_float("float range", &float_val, &options);
     }
