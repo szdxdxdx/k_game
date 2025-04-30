@@ -200,7 +200,7 @@
         for (const [label] of this.bindings) {
           k__webui_get_c_val(label).then((resp) => {
             
-            if (resp === 'null')
+            if (resp === "")
               return;
 
             const binding = this.bindings.get(label);

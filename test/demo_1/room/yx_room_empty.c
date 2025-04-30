@@ -34,12 +34,7 @@ static void enter_room(void) {
 
     {
         struct k_webui_int_slider_config slider = K_WEBUI_INT_SLIDER_INIT;
-        slider.label = "Int Slider";
-        slider.max   = 30;
-        slider.step  = 1;
-        slider.on_input = NULL;
-        slider.on_read  = NULL;
-        k_webui_bind_int_slider(&int_val, &slider);
+        k_webui_bind_int_slider("滑动条", &int_val, &slider);
     }
 
     {
@@ -51,18 +46,16 @@ static void enter_room(void) {
             { .val=6, .text="Option 6" },
         };
         struct k_webui_int_select_config select = K_WEBUI_INT_SELECT_CONFIG_INIT;
-        select.label = "Select";
         select.options = options;
         select.options_num = 5;
-        k_webui_bind_int_select(&int_val, &select);
+        //k_webui_bind_int_select("下拉菜单", &int_val, &select);
     }
 
     {
         struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_INIT;
-        checkbox.label = "Checkbox";
         checkbox.on_change = checkbox_change;
         checkbox.on_read   = checkbox_read;
-        k_webui_bind_checkbox(NULL, &checkbox);
+       //k_webui_bind_checkbox("是奇数", NULL, &checkbox);
     }
 }
 

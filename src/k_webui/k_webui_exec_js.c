@@ -29,7 +29,7 @@ int k__webui_exec_js_fmt(const char *fmt, ...) {
     }
 
     buf_capacity = str_len + 1;
-    buf = k__webui_mem_alloc(buf_capacity);
+    buf = k__webui_malloc(buf_capacity);
     if (NULL == buf)
         return -1;
 
@@ -39,7 +39,7 @@ int k__webui_exec_js_fmt(const char *fmt, ...) {
 
     int result = k__webui_exec_js(buf);
 
-    k__webui_mem_free(buf);
+    k__webui_free(buf);
 
     return result;
 }

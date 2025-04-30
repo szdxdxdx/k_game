@@ -27,7 +27,7 @@ int k_webui_init(void) {
 
     webui_bind(k__webui.window, "k_webui_C_fn_event_handler", k__webui_event_handler);
 
-    k__webui_bindings_map_init();
+    k__webui_binding_init();
 
     webui_show(k__webui.window, "./index.html");
 
@@ -42,6 +42,8 @@ void k_webui_close(void) {
 
     if ( ! k__webui.is_inited)
         return;
+
+    k__webui_binding_fini();
 
     webui_exit();
     webui_clean();

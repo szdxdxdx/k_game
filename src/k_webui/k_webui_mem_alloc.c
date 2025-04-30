@@ -5,7 +5,7 @@
 
 #include "./k_webui_internal.h"
 
-void *k__webui_mem_alloc(size_t size) {
+void *k__webui_malloc(size_t size) {
 
     void *p = malloc(size);
     if (NULL == p) {
@@ -15,13 +15,13 @@ void *k__webui_mem_alloc(size_t size) {
     return p;
 }
 
-void k__webui_mem_free(void *p) {
+void k__webui_free(void *p) {
     free(p);
 }
 
 char *k__webui_strdup(const char *str, size_t len) {
 
-    char *copy = k__webui_mem_alloc(len + 1);
+    char *copy = k__webui_malloc(len + 1);
     if (NULL == copy)
         return NULL;
 

@@ -26,7 +26,6 @@ void k_webui_log_error(const char *fmt, ...);
 /* region [int_slider] */
 
 struct k_webui_int_slider_config {
-    const char *label;
     int min;
     int max;
     int step;
@@ -36,7 +35,6 @@ struct k_webui_int_slider_config {
 
 #define K_WEBUI_INT_SLIDER_INIT \
 { \
-    .label    = "",   \
     .min      = 0,    \
     .max      = 100,  \
     .step     = 1,    \
@@ -44,14 +42,13 @@ struct k_webui_int_slider_config {
     .on_read  = NULL, \
 }
 
-int k_webui_bind_int_slider(void *data, const struct k_webui_int_slider_config *slider);
+int k_webui_bind_int_slider(const char *label, void *data, const struct k_webui_int_slider_config *config);
 
 /* endregion */
 
 /* region [float_slider] */
 
 struct k_webui_float_slider_config {
-    const char *label;
     float min;
     float max;
     float step;
@@ -61,7 +58,6 @@ struct k_webui_float_slider_config {
 
 #define K_WEBUI_FLOAT_SLIDER_INIT \
 { \
-    .label    = "",    \
     .min      = 0.0f,  \
     .max      = 1.0f,  \
     .step     = 0.01f, \
@@ -69,43 +65,39 @@ struct k_webui_float_slider_config {
     .on_read  = NULL,  \
 }
 
-int k_webui_bind_float_slider(void *data, const struct k_webui_float_slider_config *slider);
+int k_webui_bind_float_slider(const char *label, void *data, const struct k_webui_float_slider_config *config);
 
 /* endregion */
 
 /* region [checkbox] */
 
 struct k_webui_checkbox_config {
-    const char *label;
     int (*on_change)(void *data, int val);
     int (*on_read)(void *data);
 };
 
 #define K_WEBUI_CHECKBOX_INIT \
 { \
-    .label    = "",    \
     .on_change = NULL, \
     .on_read   = NULL, \
 }
 
-int k_webui_bind_checkbox(void *data, const struct k_webui_checkbox_config *checkbox);
+int k_webui_bind_checkbox(const char *label, void *data, const struct k_webui_checkbox_config *config);
 
 /* endregion */
 
 /* region [button] */
 
 struct k_webui_button_config {
-    const char *label;
     void (*on_click)(void *data);
 };
 
 #define K_WEBUI_BUTTON_INIT \
 { \
-    .label    = "",   \
     .on_click = NULL, \
 }
 
-int k_webui_bind_button(void *data, const struct k_webui_button_config *button);
+int k_webui_bind_button(const char *label, void *data, const struct k_webui_button_config *config);
 
 /* endregion */
 
@@ -117,7 +109,6 @@ struct k_webui_int_select_option {
 };
 
 struct k_webui_int_select_config {
-    const char *label;
     struct k_webui_int_select_option *options;
     size_t options_num;
     int (*on_change)(void *data, int val);
@@ -126,14 +117,13 @@ struct k_webui_int_select_config {
 
 #define K_WEBUI_INT_SELECT_CONFIG_INIT \
 { \
-    .label       = "",   \
     .options     = NULL, \
     .options_num = 0,    \
     .on_change   = NULL, \
     .on_read     = NULL, \
 }
 
-int k_webui_bind_int_select(void *data, const struct k_webui_int_select_config *select);
+int k_webui_bind_int_select(const char *label, void *data, const struct k_webui_int_select_config *config);
 
 /* endregion */
 

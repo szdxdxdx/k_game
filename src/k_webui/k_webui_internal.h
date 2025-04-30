@@ -22,9 +22,9 @@ k_printf_spec_print_fn k__webui_fmt(const char **str);
 
 /* region [mem_alloc] */
 
-void *k__webui_mem_alloc(size_t size);
+void *k__webui_malloc(size_t size);
 
-void  k__webui_mem_free(void *p);
+void  k__webui_free(void *p);
 
 char *k__webui_strdup(const char *str, size_t len);
 
@@ -41,8 +41,6 @@ struct k_webui_context {
 
     /* webui 窗口 */
     size_t window;
-
-    struct k_str_map bindings;
 };
 
 extern struct k_webui_context k__webui;
@@ -62,9 +60,9 @@ int k__webui_exec_js_fmt(const char *js, ...);
 
 /* region [binding] */
 
-int k__webui_bindings_map_init(void);
+int k__webui_binding_init(void);
 
-void k__webui_bindings_map_clear(void);
+void k__webui_binding_fini(void);
 
 
 /* endregion */

@@ -25,7 +25,7 @@ static int k__webui_log(enum k_webui_log_level level, const char *fmt, va_list a
         return -1;
 
     if (sizeof(default_buf) <= str_len) {
-        log_msg = k__webui_mem_alloc(str_len + 1);
+        log_msg = k__webui_malloc(str_len + 1);
         if (NULL == log_msg)
             return -1;
 
@@ -41,7 +41,7 @@ static int k__webui_log(enum k_webui_log_level level, const char *fmt, va_list a
     int r = k__webui_exec_js_fmt(js_fn, log_msg);
 
     if (log_msg != default_buf) {
-        k__webui_mem_free(log_msg);
+        k__webui_free(log_msg);
     }
 
     return r;
