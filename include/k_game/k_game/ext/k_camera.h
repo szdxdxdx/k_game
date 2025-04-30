@@ -100,6 +100,8 @@ int k_camera_set_acceleration(float acceleration);
 
 int k_camera_set_debug(int debug);
 
+int k_camera_webui(int enable);
+
 /* endregion */
 
 #endif

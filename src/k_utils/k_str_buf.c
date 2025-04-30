@@ -232,3 +232,13 @@ int k_str_buf_k_vprintf(struct k_str_buf *buf, k_printf_spec_match_fn fn_match, 
     buf->str_len += add_len;
     return 0;
 }
+
+void k_str_buf_clear(struct k_str_buf *buf) {
+    assert(NULL != buf);
+
+    if (k_str_buf_failed(buf))
+        return;
+
+    buf->str[0]  = '\0';
+    buf->str_len = 0;
+}

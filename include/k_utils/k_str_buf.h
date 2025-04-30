@@ -74,10 +74,10 @@ void k_str_buf_free(struct k_str_buf *buf);
  */
 int k_str_buf_failed(struct k_str_buf *buf);
 
-/** \brief 获取字符串缓冲区中的字符串，即 `buf->str` */
+/** \brief 获取缓冲区中的字符串，即 `buf->str` */
 char *k_str_buf_get(struct k_str_buf *buf);
 
-/** \brief 获取字符串缓冲区中字符串的长度，即 `buf->str_len` */
+/** \brief 获取缓冲区中字符串的长度，即 `buf->str_len` */
 size_t k_str_buf_get_len(struct k_str_buf *buf);
 
 /** \brief 往缓冲区中追加写入字符串 */
@@ -97,5 +97,8 @@ int k_str_buf_k_printf(struct k_str_buf *buf, k_printf_spec_match_fn fn_match, c
 
 /** \brief 格式化字符串并追加写入缓冲区，使用 k_printf 自定义格式说明符 */
 int k_str_buf_k_vprintf(struct k_str_buf *buf, k_printf_spec_match_fn fn_match, const char *fmt, va_list args);
+
+/** \brief 将缓冲区的内容重置为空字符串，但不会释放或重新分配缓冲区的内存 */
+void k_str_buf_clear(struct k_str_buf *buf);
 
 #endif

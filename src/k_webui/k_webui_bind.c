@@ -151,6 +151,90 @@ static inline const char *k__webui_get_str_at(webui_event_t *e, size_t idx) {
 
 /* endregion */
 
+/* region [text] */
+
+struct k_webui_text {
+    struct k_webui_widget widget;
+
+    void *data;
+
+    int (*on_read)(void *data, struct k_str_buf *buf);
+};
+
+static void k__webui_text_on_unbind(struct k_webui_widget *widget) {
+    struct k_webui_text *text = (struct k_webui_text *)widget;
+    k__webui_free(text);
+}
+
+static int k__webui_text_on_get(struct k_webui_widget *widget, webui_event_t *e) {
+    struct k_webui_text *text = (struct k_webui_text *)widget;
+
+    struct k_str_buf buf;
+    char default_buf[896];
+    k_str_buf_init(&buf, default_buf, sizeof(default_buf));
+
+    if (0 != text->on_read(text->data, &buf)) {
+        return -1;
+    }
+
+    const char *s = k_str_buf_get(&buf);
+    webui_return_string(e, s);
+
+    k_str_buf_free(&buf);
+    return 0;
+}
+
+void k__webui_exec_js_add_text(const char *label, const struct k_webui_text_config *config) {
+
+    struct k_str_buf str_buf;
+    char buf[896];
+    k_str_buf_init(&str_buf, buf, sizeof(buf));
+
+    k_str_buf_puts(&str_buf, "k__webui.bind({");
+    {
+        k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
+        k_str_buf_puts(&str_buf, "type:'text',");
+    }
+    k_str_buf_puts(&str_buf, "})");
+
+    char *js = k_str_buf_get(&str_buf);
+    k__webui_exec_js(js);
+
+    k_str_buf_free(&str_buf);
+}
+
+int k_webui_bind_text(const char *label, void *data, const struct k_webui_text_config *config) {
+
+    if (NULL == label || '\0' == label[0])
+        return -1;
+    if (NULL == config)
+        return -1;
+
+    struct k_webui_text *text = k__webui_malloc(sizeof(struct k_webui_text));
+    if (NULL == text)
+        return -1;
+
+    if (0 != k__webui_bindings_map_add(label, &text->widget)) {
+        k__webui_free(text);
+        return -1;
+    }
+
+    static struct k_webui_widget_v_tbl v_tbl = {
+        .on_unbind    = k__webui_text_on_unbind,
+        .on_webui_set = NULL,
+        .on_webui_get = k__webui_text_on_get,
+    };
+    text->widget.v_tbl = &v_tbl;
+
+    text->data = data;
+    text->on_read = config->on_read;
+
+    k__webui_exec_js_add_text(label, config);
+    return 0;
+}
+
+/* endregion */
+
 /* region [slider] */
 
 struct k_webui_slider {
@@ -275,6 +359,11 @@ void k__webui_exec_js_add_slider(const char *label, const struct k_webui_slider_
 
 static int k__webui_bind_slider(const char *label, void *data, const struct k_webui_slider_config *config) {
 
+    if (NULL == label || '\0' == label[0])
+        return -1;
+    if (NULL == config)
+        return -1;
+
     struct k_webui_slider *slider = k__webui_malloc(sizeof(struct k_webui_slider));
     if (NULL == slider)
         return -1;
@@ -392,6 +481,11 @@ void k__webui_exec_js_add_checkbox(const char *label, const struct k_webui_check
 
 int k_webui_bind_checkbox(const char *label, void *data, const struct k_webui_checkbox_config *config) {
 
+    if (NULL == label || '\0' == label[0])
+        return -1;
+    if (NULL == config)
+        return -1;
+
     struct k_webui_checkbox *checkbox = k__webui_malloc(sizeof(struct k_webui_checkbox));
     if (NULL == checkbox)
         return -1;
@@ -497,6 +591,11 @@ void k__webui_exec_js_add_int_select(const char *label, const struct k_webui_int
 
 int k_webui_bind_int_select(const char *label, void *data, const struct k_webui_int_select_config *config) {
 
+    if (NULL == label || '\0' == label[0])
+        return -1;
+    if (NULL == config)
+        return -1;
+
     struct k_webui_int_select *select = k__webui_malloc(sizeof(struct k_webui_int_select));
     if (NULL == select)
         return -1;
@@ -545,12 +644,6 @@ static int k__webui_button_on_set(struct k_webui_widget *widget, webui_event_t *
     return 0;
 }
 
-static int k__webui_button_on_get(struct k_webui_widget *widget, webui_event_t *e) {
-    (void)widget;
-    (void)e;
-    return 0;
-}
-
 void k__webui_exec_js_add_button(const char *label, const struct k_webui_button_config *config) {
 
     struct k_str_buf str_buf;
@@ -572,6 +665,13 @@ void k__webui_exec_js_add_button(const char *label, const struct k_webui_button_
 
 int k_webui_bind_button(const char *label, void *data, const struct k_webui_button_config *config) {
 
+    if (NULL == label || '\0' == label[0])
+        return -1;
+    if (NULL == config)
+        return -1;
+    if (NULL == config->on_click)
+        return -1;
+
     struct k_webui_button *button = k__webui_malloc(sizeof(struct k_webui_button));
     if (NULL == button)
         return -1;
@@ -584,7 +684,7 @@ int k_webui_bind_button(const char *label, void *data, const struct k_webui_butt
     static struct k_webui_widget_v_tbl v_tbl = {
         .on_unbind    = k__webui_button_on_unbind,
         .on_webui_set = k__webui_button_on_set,
-        .on_webui_get = k__webui_button_on_get,
+        .on_webui_get = NULL,
     };
     button->widget.v_tbl = &v_tbl;
 

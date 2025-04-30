@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include "k_str_buf.h"
+
 /* region [init] */
 
 /** \brief 初始化 webui */
@@ -27,6 +29,22 @@ void k_webui_log_error(const char *fmt, ...);
 /* endregion */
 
 /* region [bind] */
+
+/* region [text] */
+
+struct k_webui_text_config {
+
+    int (*on_read)(void *data, struct k_str_buf *buf);
+};
+
+#define K_WEBUI_TEXT_CONFIG_INIT \
+{ \
+    .on_read = NULL, \
+}
+
+int k_webui_bind_text(const char *label, void *data, const struct k_webui_text_config *config);
+
+/* endregion */
 
 /* region [slider] */
 
@@ -72,7 +90,7 @@ struct k_webui_int_slider_config {
 };
 
 /** \brief 用于初始化滑动条控件配置 */
-#define K_WEBUI_INT_SLIDER_INIT \
+#define K_WEBUI_INT_SLIDER_CONFIG_INIT \
 { \
     .min      = 0,    \
     .max      = 100,  \
@@ -106,7 +124,7 @@ struct k_webui_float_slider_config {
 };
 
 /** \brief 用于初始化滑动条控件配置 */
-#define K_WEBUI_FLOAT_SLIDER_INIT \
+#define K_WEBUI_FLOAT_SLIDER_CONFIG_INIT \
 { \
     .min      = 0.0f,   \
     .max      = 100.0f, \
@@ -154,7 +172,7 @@ struct k_webui_checkbox_config {
 };
 
 /** \brief 用于初始化复选框控件配置 */
-#define K_WEBUI_CHECKBOX_INIT \
+#define K_WEBUI_CHECKBOX_CONFIG_INIT \
 { \
     .on_change = NULL, \
     .on_read   = NULL, \
@@ -181,12 +199,14 @@ struct k_webui_button_config {
      * \brief 在 webui 中点击按钮时触发的回调
      *
      * `data` 是指向用户绑定的数据的指针，由 `k_webui_bind_button()` 指定。
+     *
+     * 必须指定此回调，否则控件将无法使用。
      */
     void (*on_click)(void *data);
 };
 
 /** \brief 用于初始化按钮控件配置 */
-#define K_WEBUI_BUTTON_INIT \
+#define K_WEBUI_BUTTON_CONFIG_INIT \
 { \
     .on_click = NULL, \
 }

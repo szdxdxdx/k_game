@@ -9,15 +9,13 @@
 
 static void create_room(void) {
 
-    struct k_room *room = yx_create_arena_room();
-   //  struct k_room *room = yx_create_empty_room();
+    // struct k_room *room = yx_create_arena_room();
+    struct k_room *room = yx_create_empty_room();
 
     k_room_goto(room);
 }
 
 static int fn_init_game(void) {
-
-    /*
 
     struct k_image *szdxdxdx = k_image_load("./demo_1/image/szdxdxdx.jpg");
     k_image_set_name(szdxdxdx, "szdxdxdx");
@@ -29,8 +27,6 @@ static int fn_init_game(void) {
 
     struct k_sound_bgm *bgm = k_sound_bgm_load("./demo_1/sound/bgm.wav");
     k_sound_bgm_loop(bgm, INT_MAX);
-
-    */
 
     create_room();
 

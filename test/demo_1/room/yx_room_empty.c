@@ -15,6 +15,13 @@ static int checkbox_change(void *data, int val) {
     return 0;
 }
 
+static int text_read(void *data, struct k_str_buf *buf) {
+    k_str_buf_clear(buf);
+
+    k_str_buf_printf(buf, "%d", *(int *)data);
+    return 0;
+}
+
 static void on_click(void *data) {
     k_webui_log_info("clicked");
     k_webui_unbind("下拉菜单");
@@ -40,15 +47,21 @@ static void enter_room(void) {
     k_room_add_draw_callback(NULL, show_int_val, INT_MIN, INT_MIN);
 
     {
-        struct k_webui_int_slider_config slider = K_WEBUI_INT_SLIDER_INIT;
+        struct k_webui_text_config text = K_WEBUI_TEXT_CONFIG_INIT;
+        text.on_read = text_read;
+        k_webui_bind_text("文本框", &int_val, &text);
+    }
+
+    {
+        struct k_webui_int_slider_config slider = K_WEBUI_INT_SLIDER_CONFIG_INIT;
         slider.max = 6;
         slider.on_input = set_int_val;
         k_webui_bind_int_slider("滑动条", &int_val, &slider);
     }
 
     {
-        struct k_webui_float_slider_config slider = K_WEBUI_FLOAT_SLIDER_INIT;
-        k_webui_bind_float_slider("滑动条f", &float_val, &slider);
+        struct k_webui_float_slider_config slider = K_WEBUI_FLOAT_SLIDER_CONFIG_INIT;
+        //k_webui_bind_float_slider("滑动条f", &float_val, &slider);
     }
 
     {
@@ -62,20 +75,20 @@ static void enter_room(void) {
         struct k_webui_int_select_config select = K_WEBUI_INT_SELECT_CONFIG_INIT;
         select.options = options;
         select.options_num = 5;
-        k_webui_bind_int_select("下拉菜单", &int_val, &select);
+        //k_webui_bind_int_select("下拉菜单", &int_val, &select);
     }
 
     {
-        struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_INIT;
+        struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_CONFIG_INIT;
         checkbox.on_change = checkbox_change;
         checkbox.on_read   = checkbox_read;
-        k_webui_bind_checkbox("是奇数", NULL, &checkbox);
+        //k_webui_bind_checkbox("是奇数", NULL, &checkbox);
     }
 
     {
-        struct k_webui_button_config button = K_WEBUI_BUTTON_INIT;
+        struct k_webui_button_config button = K_WEBUI_BUTTON_CONFIG_INIT;
         button.on_click = on_click;
-        k_webui_bind_button("按钮", NULL, &button);
+        //k_webui_bind_button("按钮", NULL, &button);
     }
 }
 
