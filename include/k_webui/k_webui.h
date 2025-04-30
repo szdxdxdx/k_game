@@ -39,6 +39,15 @@ struct k_webui_int_slider {
     int (*on_read)(void *data);
 };
 
+#define K_WEBUI_INT_SLIDER_INIT \
+(struct k_webui_int_slider) { \
+    .min  = 0,        \
+    .max  = 100,      \
+    .step = 1,        \
+    .on_input = NULL, \
+    .on_read  = NULL, \
+}
+
 struct k_webui_float_slider {
     float min;
     float max;
@@ -80,6 +89,10 @@ struct k_webui_widget_config {
 };
 
 int k_webui_bind(const char *label, void *data, const struct k_webui_widget_config *widget);
+
+static inline void k_webui_widget_config_set_input_type(struct k_webui_widget_config *widget, enum k_webui_input_type input_type) {
+
+}
 
 void k_webui_unbind(const char *label);
 

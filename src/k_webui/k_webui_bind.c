@@ -159,8 +159,6 @@ int k_webui_bind(const char *label, void *data, const struct k_webui_widget_conf
 
     if (NULL == label || '\0' == label[0])
         return -1;
-    if (NULL == data)
-        return -1;
     if (NULL == widget)
         return -1;
 
@@ -195,10 +193,8 @@ static int k__webui_js_set_c_val_(webui_event_t *e) {
     const char *label = webui_get_string_at(e, 0);
 
     struct k_webui_binding *binding = k_str_map_get(&k__webui.bindings, label);
-    if (NULL == binding) {
-        assert(0);
+    if (NULL == binding)
         return -1;
-    }
 
     switch (binding->input_type) {
         case K_WEBUI_INT_SLIDER: {
@@ -206,45 +202,41 @@ static int k__webui_js_set_c_val_(webui_event_t *e) {
             int val = (ll < INT_MIN) ? INT_MIN :
                       (ll > INT_MAX) ? INT_MAX : (int)ll;
 
-            binding->fn_set_i(binding->data, val);
-            break;
+            return binding->fn_set_i(binding->data, val);
         }
         case K_WEBUI_FLOAT_SLIDER: {
             double d = webui_get_float_at(e, 1);
             float val = (float)d;
 
-            binding->fn_set_f(binding->data, val);
-            break;
+            return binding->fn_set_f(binding->data, val);
         }
         case K_WEBUI_CHECKBOX: {
-            bool b = webui_get_bool_at(e, 1);
+            int b = webui_get_bool_at(e, 1);
             int val = b ? 1 : 0;
 
-            binding->fn_set_i(binding->data, val);
-            break;
+            return binding->fn_set_i(binding->data, val);
         }
         case K_WEBUI_BUTTON: {
             binding->on_click(binding->data);
-            break;
+            return 0;
         }
         case K_WEBUI_INT_SELECT: {
             long long int ll = webui_get_int_at(e, 1);
             int val = (ll < INT_MIN) ? INT_MIN :
                       (ll > INT_MAX) ? INT_MAX : (int)ll;
 
-            binding->fn_set_i(binding->data, val);
-            break;
+            return binding->fn_set_i(binding->data, val);
         }
         default:
             assert(0);
-            return -1;
     }
 
-    return 0;
+    return -1;
 }
 
 static void k__webui_js_set_c_val(webui_event_t *e) {
-    k__webui_js_set_c_val_(e);
+    int r = k__webui_js_set_c_val_(e);
+    webui_return_int(e, r);
 }
 
 /* endregion */
@@ -256,26 +248,24 @@ static int k__webui_js_get_c_val_(webui_event_t *e) {
     const char *label = webui_get_string_at(e, 0);
 
     struct k_webui_binding *binding = k_str_map_get(&k__webui.bindings, label);
-    if (NULL == binding) {
-        assert(0);
+    if (NULL == binding)
         return -1;
-    }
 
     switch (binding->input_type) {
         case K_WEBUI_INT_SLIDER: {
             int val = binding->fn_get_i(binding->data);
             webui_return_int(e, val);
-            break;
+            return 0;
         }
         case K_WEBUI_FLOAT_SLIDER: {
             float val = binding->fn_get_f(binding->data);
             webui_return_float(e, val);
-            break;
+            return 0;
         }
         case K_WEBUI_CHECKBOX: {
-            bool val = binding->fn_get_i(binding->data);
-            webui_return_bool(e, val);
-            break;
+            int val = binding->fn_get_i(binding->data);
+            webui_return_int(e, val ? 1 : 0);
+            return 0;
         }
         case K_WEBUI_BUTTON: {
             assert(0);
@@ -284,18 +274,20 @@ static int k__webui_js_get_c_val_(webui_event_t *e) {
         case K_WEBUI_INT_SELECT: {
             int val = binding->fn_get_i(binding->data);
             webui_return_int(e, val);
-            break;
+            return 0;
         }
         default:
             assert(0);
             return -1;
     }
 
-    return 0;
+    return -1;
 }
 
 static void k__webui_js_get_c_val(webui_event_t *e) {
-    k__webui_js_get_c_val_(e);
+    if (0 != k__webui_js_get_c_val_(e)) {
+        webui_return_string(e, "null");
+    }
 }
 
 /* endregion */

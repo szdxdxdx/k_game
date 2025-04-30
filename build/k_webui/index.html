@@ -2,11 +2,22 @@
 <html lang="zh">
 <head>
   <title>k_webui</title>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8">d
   <script src="/webui.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   
   <style>
+    
+    body {
+      margin: 0;
+      padding: 0;
+      
+      --primary-color: #ee1b32;
+    }
+    
+    #webui-app {
+    
+    }
     
     /* region [binding-panel] */
     
@@ -15,7 +26,7 @@
     }
     
     #binding-panel label {
-      border: 1px solid #f60;
+      border: 1px solid var(--primary-color);
       margin: 8px;
       padding: 8px;
     }
@@ -34,24 +45,24 @@
 
 </head>
 <body>
-<div id="app">
+<div id="webui-app">
   
   <!-- [widget-panel] --><!-- region -->
   <div id="binding-panel">
     
-    <div v-for="[label, binding] in bindings" :key="label">
+    <div class="widget" v-for="[label, binding] in bindings" :key="label">
       <p>{{ binding }}</p>
 
       <label v-if="binding.type === 'range'">
-        <span>{{ binding.label }}</span>
         <span v-show="binding.out_of_range">out of range</span>
+        <span>{{ binding.label }}</span>
         <input type="range" v-model="binding.val" :min="binding.min" :max="binding.max" :step="binding.step"
-               @input="binding_range_set_c_val($event, binding.label)" />
+            @input="binding_range_set_c_val($event, binding.label)" />
       </label>
 
       <label v-else-if="binding.type === 'checkbox'">
         <span>{{ binding.label }}</span>
-        <input type="checkbox" v-model="binding.val" @change="binding_checkbox_set_c_val($event, binding.label)"/>
+        <input type="checkbox" v-model="binding.checked" @change="binding_checkbox_set_c_val($event, binding.label)"/>
       </label>
       
       <label v-else-if="binding.type === 'button'">
@@ -62,7 +73,7 @@
       <label v-else-if="binding.type === 'select'">
         <span>{{ binding.label }}</span>
         <span v-show="binding.out_of_range">out of range</span>
-        <select v-model="binding.val" @change="binding_select_set_c_val($event, binding.label)">
+        <select v-model="binding.selected" @change="binding_select_set_c_val($event, binding.label)">
           <option v-for="(option, idx) in binding.options" :key="idx" :value="option.val">{{ option.text }}</option>
         </select>
       </label>
@@ -103,7 +114,7 @@
     },
 
     mounted() {
-       this.sync_timer = setInterval(this.sync_from_c, 500);
+       this.sync_timer = setInterval(this.sync_from_c, 777);
     },
 
     methods: {
@@ -125,9 +136,9 @@
             break;
           }
           case 'checkbox': {
-            binding.type  = 'checkbox';
-            binding.label = widget_config.label;
-            binding.val   = null;
+            binding.type    = 'checkbox';
+            binding.label   = widget_config.label;
+            binding.checked = false;
             break;
           }
           case 'button': {
@@ -136,11 +147,11 @@
             break;
           }
           case 'select': {
-            binding.type    = 'select';
-            binding.label   = widget_config.label;
-            binding.options = widget_config.options;
-            binding.val     = null;
-            binding.out_of_range = false;
+            binding.type     = 'select';
+            binding.label    = widget_config.label;
+            binding.options  = widget_config.options;
+            binding.selected = null;
+            binding.out_of_range = true;
             break;
           }
         }
@@ -150,35 +161,51 @@
       
       binding_range_set_c_val($event, label) {
         let value = $event.target.value;
-        k__webui_set_c_val(label, value);
+        this.set_c_val(label, value);
       },
       
       binding_checkbox_set_c_val($event, label) {
         let checked = $event.target.checked;
-        k__webui_set_c_val(label, checked);
+        this.set_c_val(label, checked ? 1 : 0);
       },
 
       binding_button_set_c_val($event, label) {
-        k__webui_set_c_val(label);
+        this.set_c_val(label);
       },
 
       binding_select_set_c_val($event, label) {
         let selected = $event.target.value;
-        k__webui_set_c_val(label, selected);
+        this.set_c_val(label, selected);
+      },
+      
+      set_c_val(label_, val_) {
+        const label = label_;
+        const val   = val_;
+        
+        const result = k__webui_set_c_val(label, val);
+        
+        result.then((resp) => {
+          if (0 !== Number(resp)) {
+            this.log_error(`C 程序拒绝将 \`${label}\` 绑定的变量设置为 \`${val}\``);
+          }
+        });
       },
 
       sync_from_c() {
-
         for (const [label] of this.bindings) {
-          k__webui_get_c_val(label).then((val) => {
-    
+          k__webui_get_c_val(label).then((resp) => {
+            
+            if (resp === 'null')
+              return;
+
             const binding = this.bindings.get(label);
             if ( ! binding) {
               return;
             }
-
+      
             switch (binding.type) {
               case 'range': {
+                const val = Number(resp);
                 if (val < binding.min || val > binding.max) {
                   binding.out_of_range = true;
                 } else {
@@ -188,21 +215,22 @@
                 break;
               }
               case 'checkbox': {
-                binding.val = !!val;
+                const val = Number(resp);
+                binding.checked = val === 1;
+                console.log('checkbox', val, val === 1, binding);
                 break;
               }
               case 'select': {
-                if ( ! binding.options.find(opt => Number(opt.val) === Number(val) )) {
+                const val = Number(resp);
+                if ( ! binding.options.find(opt => Number(opt.val) === val )) {
                   binding.out_of_range = true;
                 } else {
-                  binding.val = val;
+                  binding.selected = val;
                   binding.out_of_range = false;
                 }
                 break;
               }
             }
-            
-            
             
           })
         }
@@ -224,8 +252,20 @@
 
       /* endregion */
     }
-  }).mount('#app');
+  }).mount('#webui-app');
 </script>
+
+
+<!-- tmp
+<script>
+  k__webui.log_info(`info`)
+  k__webui.log_warn(`warn`)
+  k__webui.log_error(`error`)
+  k__webui.bind({label: 'test range', type: 'range'})
+  k__webui.bind({label: 'test checkbox', type: 'checkbox'})
+  k__webui.bind({label: 'test select', type: 'select'})
+  k__webui.bind({label: 'test button', type: 'button'})
+</script>-->
 
 </body>
 </html>
