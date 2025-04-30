@@ -93,15 +93,9 @@ static void k__webui_js_get_c_val(webui_event_t *e) {
 
     struct k_webui_widget *widget = k__webui_bindings_map_get(label);
     if (NULL == widget)
-        goto err;
+        return;
 
-    if (0 != widget->v_tbl->on_webui_get(widget, e))
-        goto err;
-
-    return;
-
-err:
-    webui_return_string(e, "");
+    widget->v_tbl->on_webui_get(widget, e);
 }
 
 int k__webui_binding_init(void) {
@@ -138,68 +132,6 @@ static inline float k__webui_get_float_at(webui_event_t *e, size_t idx) {
 
 static inline const char *k__webui_get_str_at(webui_event_t *e, size_t idx) {
     return webui_get_string_at(e, idx);
-}
-
-/* endregion */
-
-/* region [exec_js_add_ui_widget]
-
-static void k__webui_exec_js_add_ui_widget(const char *label, const struct k_webui_widget_config *widget) {
-
-    struct k_str_buf str_buf;
-    char buf[1024];
-    k_str_buf_init(&str_buf, NULL, sizeof(buf));
-
-    k_str_buf_puts(&str_buf, "k__webui.bind({");
-    {
-        k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
-
-        switch (widget->input_type) {
-            case K_WEBUI_INT_SLIDER:
-                k_str_buf_puts(&str_buf, "type:'range',");
-                k_str_buf_printf(&str_buf, "min:%d,",  widget->as_int_slider->min);
-                k_str_buf_printf(&str_buf, "max:%d,",  widget->as_int_slider->max);
-                k_str_buf_printf(&str_buf, "step:%d,", widget->as_int_slider->step);
-                break;
-            case K_WEBUI_FLOAT_SLIDER:
-                k_str_buf_puts(&str_buf, "type:'range',");
-                k_str_buf_printf(&str_buf, "min:%.3f,",  widget->as_float_slider->min);
-                k_str_buf_printf(&str_buf, "max:%.3f,",  widget->as_float_slider->max);
-                k_str_buf_printf(&str_buf, "step:%.3f,", widget->as_float_slider->step);
-                break;
-            case K__WEBUI_CHECKBOX:
-                k_str_buf_puts(&str_buf, "type:'checkbox',");
-                break;
-            case K__WEBUI_BUTTON:
-                k_str_buf_puts(&str_buf, "type:'button',");
-                break;
-            case K__WEBUI_INT_SELECT:
-                k_str_buf_puts(&str_buf, "type:'select',");
-                k_str_buf_puts(&str_buf, "options:[");
-                {
-                    size_t i = 0;
-                    for (; i < widget->as_int_select->options_num; i++) {
-                        k_str_buf_puts(&str_buf, "{");
-                        {
-                            struct k_webui_int_select_option *opt = &widget->as_int_select->options[i];
-                            k_str_buf_k_printf(&str_buf, k__webui_fmt, "text:%'s,", opt->text);
-                            k_str_buf_printf(&str_buf, "val:%d,", opt->val);
-                        }
-                        k_str_buf_puts(&str_buf, "},");
-                    }
-                }
-                k_str_buf_puts(&str_buf, "],");
-                break;
-            default:
-                assert(0);
-        }
-    }
-    k_str_buf_puts(&str_buf, "})");
-
-    char *js = k_str_buf_get(&str_buf);
-    k__webui_exec_js(js);
-
-    k_str_buf_free(&str_buf);
 }
 
 /* endregion */
@@ -468,6 +400,177 @@ int k_webui_bind_checkbox(const char *label, void *data, const struct k_webui_ch
 /* endregion */
 
 /* region [select] */
+
+struct k_webui_int_select {
+    struct k_webui_widget widget;
+
+    void *data;
+    int (*on_change)(void *data, int val);
+    int (*on_read)(void *data, int *result);
+};
+
+static void k__webui_int_select_on_unbind(struct k_webui_widget *widget) {
+}
+
+static int k__webui_int_select_on_set(struct k_webui_widget *widget, webui_event_t *e) {
+    struct k_webui_int_select *select = (struct k_webui_int_select *)widget;
+
+    int val = k__webui_get_int_at(e, 1);
+    if (NULL == select->on_change) {
+        *(int *)select->data = val;
+        return 0;
+    } else {
+        return select->on_change(select->data, val);
+    }
+}
+
+static int k__webui_int_select_on_get(struct k_webui_widget *widget, webui_event_t *e) {
+    struct k_webui_int_select *select = (struct k_webui_int_select *)widget;
+
+    int result;
+    if (NULL == select->on_read) {
+        result = *(int *)select->data;
+    } else {
+        if (0 != select->on_read(select->data, &result))
+            return -1;
+    }
+
+    webui_return_int(e, result);
+    return 0;
+}
+
+void k__webui_exec_js_add_int_select(const char *label, const struct k_webui_int_select_config *config) {
+
+    struct k_str_buf str_buf;
+    char buf[896];
+    k_str_buf_init(&str_buf, buf, sizeof(buf));
+
+    k_str_buf_puts(&str_buf, "k__webui.bind({");
+    {
+        k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
+        k_str_buf_puts(&str_buf, "type:'select',");
+        {
+            k_str_buf_puts(&str_buf, "options:[");
+            {
+                size_t i = 0;
+                for (; i < config->options_num; i++) {
+                    k_str_buf_puts(&str_buf, "{");
+                    {
+                        struct k_webui_int_select_option *opt = &config->options[i];
+                        k_str_buf_k_printf(&str_buf, k__webui_fmt, "text:%'s,", opt->text);
+                        k_str_buf_printf(&str_buf, "val:%d,", opt->val);
+                    }
+                    k_str_buf_puts(&str_buf, "},");
+                }
+            }
+            k_str_buf_puts(&str_buf, "],");
+        }
+    }
+    k_str_buf_puts(&str_buf, "})");
+
+    char *js = k_str_buf_get(&str_buf);
+    k__webui_exec_js(js);
+
+    k_str_buf_free(&str_buf);
+}
+
+int k_webui_bind_int_select(const char *label, void *data, const struct k_webui_int_select_config *config) {
+
+    struct k_webui_int_select *select = k__webui_malloc(sizeof(struct k_webui_int_select));
+    if (NULL == select)
+        return -1;
+
+    if (0 != k__webui_bindings_map_add(label, &select->widget)) {
+        k__webui_free(select);
+        return -1;
+    }
+
+    static struct k_webui_widget_v_tbl v_tbl = {
+        .on_unbind    = k__webui_int_select_on_unbind,
+        .on_webui_set = k__webui_int_select_on_set,
+        .on_webui_get = k__webui_int_select_on_get,
+    };
+    select->widget.v_tbl = &v_tbl;
+
+    select->data = data;
+    select->on_change = config->on_change;
+    select->on_read   = config->on_read;
+
+    k__webui_exec_js_add_int_select(label, config);
+    return 0;
+}
+
+/* endregion */
+
+/* region [button] */
+
+struct k_webui_button {
+    struct k_webui_widget widget;
+
+    void *data;
+    void (*on_click)(void *data);
+};
+
+static void k__webui_button_on_unbind(struct k_webui_widget *widget) {
+}
+
+static int k__webui_button_on_set(struct k_webui_widget *widget, webui_event_t *e) {
+    (void)e;
+    struct k_webui_button *button = (struct k_webui_button *)widget;
+
+    button->on_click(button->data);
+    return 0;
+}
+
+static int k__webui_button_on_get(struct k_webui_widget *widget, webui_event_t *e) {
+    (void)widget;
+    (void)e;
+    return 0;
+}
+
+void k__webui_exec_js_add_button(const char *label, const struct k_webui_button_config *config) {
+
+    struct k_str_buf str_buf;
+    char buf[896];
+    k_str_buf_init(&str_buf, buf, sizeof(buf));
+
+    k_str_buf_puts(&str_buf, "k__webui.bind({");
+    {
+        k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
+        k_str_buf_puts(&str_buf, "type:'button',");
+    }
+    k_str_buf_puts(&str_buf, "})");
+
+    char *js = k_str_buf_get(&str_buf);
+    k__webui_exec_js(js);
+
+    k_str_buf_free(&str_buf);
+}
+
+int k_webui_bind_button(const char *label, void *data, const struct k_webui_button_config *config) {
+
+    struct k_webui_button *button = k__webui_malloc(sizeof(struct k_webui_button));
+    if (NULL == button)
+        return -1;
+
+    if (0 != k__webui_bindings_map_add(label, &button->widget)) {
+        k__webui_free(button);
+        return -1;
+    }
+
+    static struct k_webui_widget_v_tbl v_tbl = {
+        .on_unbind    = k__webui_button_on_unbind,
+        .on_webui_set = k__webui_button_on_set,
+        .on_webui_get = k__webui_button_on_get,
+    };
+    button->widget.v_tbl = &v_tbl;
+
+    button->data = data;
+    button->on_click = config->on_click;
+
+    k__webui_exec_js_add_button(label, config);
+    return 0;
+}
 
 /* endregion */
 

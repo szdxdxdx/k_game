@@ -175,6 +175,7 @@
       },
 
       binding_button_set_c_val($event, label) {
+        console.log("button clicked");
         this.set_c_val(label);
       },
 
@@ -185,7 +186,7 @@
       
       set_c_val(label_, val_) {
         const label = label_;
-        const val   = val_;
+        const val = val_ || "";
         
         const result = k__webui_set_c_val(label, val);
         
@@ -199,9 +200,11 @@
       sync_from_c() {
         for (const [label] of this.bindings) {
           k__webui_get_c_val(label).then((resp) => {
-            
-            if (resp === "")
+
+            console.log(resp);
+            if (resp === undefined) {
               return;
+            }
 
             const binding = this.bindings.get(label);
             if ( ! binding) {

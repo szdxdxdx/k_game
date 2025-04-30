@@ -117,7 +117,7 @@ struct k_webui_int_select_config {
     struct k_webui_int_select_option *options;
     size_t options_num;
     int (*on_change)(void *data, int val);
-    int (*on_read)(void *data);
+    int (*on_read)(void *data, int *result);
 };
 
 #define K_WEBUI_INT_SELECT_CONFIG_INIT \
