@@ -6,6 +6,7 @@
 #include "./yx_room_empty.h"
 
 static int int_val;
+static float float_val;
 static int odd;
 static void show_int_val(void *unused);
 
@@ -38,6 +39,11 @@ static void enter_room(void) {
     }
 
     {
+        struct k_webui_float_slider_config slider = K_WEBUI_FLOAT_SLIDER_INIT;
+        k_webui_bind_float_slider("滑动条f", &float_val, &slider);
+    }
+
+    {
         struct k_webui_int_select_option options[] = {
             { .val=1, .text="Option 1" },
             { .val=2, .text="Option 2" },
@@ -64,6 +70,7 @@ static void show_int_val(void *unused) {
     k_canvas_ui_clear();
     k_canvas_set_draw_color_rgba(0xffffffff);
     k_canvas_ui_printf(NULL, 8, 32 * 1, "%d", int_val);
+    k_canvas_ui_printf(NULL, 8, 32 * 2, "%f", float_val);
 }
 
 struct k_room *yx_create_empty_room(void) {

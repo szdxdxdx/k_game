@@ -117,11 +117,7 @@ void k__webui_binding_fini(void) {
 
 /* endregion */
 
-/* region [utils] */
-
-static inline void *first_non_null(void *a, void *b) {
-    return NULL != a ? a : b;
-}
+/* region [webui_get] */
 
 static inline int k__webui_get_int_at(webui_event_t *e, size_t idx) {
     long long int ll = webui_get_int_at(e, idx);
@@ -143,6 +139,14 @@ static inline const char *k__webui_get_str_at(webui_event_t *e, size_t idx) {
 
 /* endregion */
 
+/* region [utils] */
+
+static inline void *first_non_null(void *a, void *b) {
+    return NULL != a ? a : b;
+}
+
+/* endregion */
+
 /* region [exec_js_add_ui_widget]
 
 static void k__webui_exec_js_add_ui_widget(const char *label, const struct k_webui_widget_config *widget) {
@@ -156,13 +160,13 @@ static void k__webui_exec_js_add_ui_widget(const char *label, const struct k_web
         k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
 
         switch (widget->input_type) {
-            case K__WEBUI_INT_SLIDER:
+            case K_WEBUI_INT_SLIDER:
                 k_str_buf_puts(&str_buf, "type:'range',");
                 k_str_buf_printf(&str_buf, "min:%d,",  widget->as_int_slider->min);
                 k_str_buf_printf(&str_buf, "max:%d,",  widget->as_int_slider->max);
                 k_str_buf_printf(&str_buf, "step:%d,", widget->as_int_slider->step);
                 break;
-            case K__WEBUI_FLOAT_SLIDER:
+            case K_WEBUI_FLOAT_SLIDER:
                 k_str_buf_puts(&str_buf, "type:'range',");
                 k_str_buf_printf(&str_buf, "min:%.3f,",  widget->as_float_slider->min);
                 k_str_buf_printf(&str_buf, "max:%.3f,",  widget->as_float_slider->max);
@@ -205,46 +209,103 @@ static void k__webui_exec_js_add_ui_widget(const char *label, const struct k_web
 
 /* endregion */
 
-/* region [int_slider] */
+/* region [slider] */
 
-struct k_webui_int_slider {
+struct k_webui_slider {
 
     struct k_webui_widget widget;
 
     void *data;
 
-    int (*on_input)(void *data, int val);
-
-    int (*on_read)(void *data);
+    enum k_webui_slider_type type;
+    union {
+        int (*on_input_i)(void *data, int val);
+        int (*on_input_f)(void *data, float val);
+    };
+    union {
+        int (*on_read_i)(void *data, int *get_val);
+        int (*on_read_f)(void *data, float *get_val);
+    };
 };
 
-void k__webui_int_slider_on_unbind(struct k_webui_widget *widget) {
+static int k__webui_int_slider_default_set(void *data, int val) {
+    *(int *)data = val;
+    return 0;
 }
 
-int k__webui_int_slider_on_webui_set(struct k_webui_widget *widget, webui_event_t *e) {
-    struct k_webui_int_slider *slider = (struct k_webui_int_slider *)widget;
+static int k__webui_int_slider_default_get(void *data) {
+    return *(int *)data;
+}
 
-    int val = k__webui_get_int_at(e, 1);
+static int k__webui_float_slider_default_set(void *data, float val) {
+    *(float *)data = val;
+    return 0;
+}
 
-    if (NULL == slider->on_input) {
-        *(int *)slider->data = val;
-        return 0;
+static float k__webui_float_slider_default_get(void *data) {
+    return *(float *)data;
+}
+
+void k__webui_slider_on_unbind(struct k_webui_widget *widget) {
+}
+
+int k__webui_slider_on_webui_set(struct k_webui_widget *widget, webui_event_t *e) {
+    struct k_webui_slider *slider = (struct k_webui_slider *)widget;
+
+    switch (slider->type) {
+        case K_WEBUI_INT_SLIDER: {
+            int val = k__webui_get_int_at(e, 1);
+            return slider->on_input_i(slider->data, val);
+        }
+        case K_WEBUI_FLOAT_SLIDER: {
+            float val = k__webui_get_float_at(e, 1);
+            return slider->on_input_f(slider->data, val);
+        }
+        default:
+            assert(0);
+            return -1;
     }
-
-    return slider->on_input(slider->data, val);
 }
 
-int k__webui_int_slider_on_webui_get(struct k_webui_widget *widget, webui_event_t *e) {
+int k__webui_slider_on_webui_get(struct k_webui_widget *widget, webui_event_t *e) {
+    struct k_webui_slider *slider = (struct k_webui_slider *)widget;
 
+    switch (slider->type) {
+        case K_WEBUI_INT_SLIDER: {
+            int val;
+            if (0 != slider->on_read_i(slider->data, &val))
+                return -1;
+            webui_return_int(e, val);
+            return 0;
+        }
+        case K_WEBUI_FLOAT_SLIDER: {
+            float val;
+            if (0 != slider->on_read_f(slider->data, &val))
+                return -1;
+            webui_return_float(e, val);
+            return 0;
+        }
+        default:
+            assert(0);
+            return -1;
+    }
 }
 
 static struct k_webui_widget_v_tbl k__webui_int_slider_v_tbl = {
-    .on_unbind    = k__webui_int_slider_on_unbind,
-    .on_webui_set = k__webui_int_slider_on_webui_set,
-    .on_webui_get = k__webui_int_slider_on_webui_get,
+    .on_unbind    = k__webui_slider_on_unbind,
+    .on_webui_set = k__webui_slider_on_webui_set,
+    .on_webui_get = k__webui_slider_on_webui_get,
 };
 
-void k__webui_exec_js_add_int_slider(const char *label, const struct k_webui_int_slider_config *config) {
+struct k_webui_slider_config {
+    enum k_webui_slider_type slider_type;
+    union {
+        const struct k_webui_int_slider_config   *int_slider;
+        const struct k_webui_float_slider_config *float_slider;
+    };
+};
+
+void k__webui_exec_js_add_slider(const char *label, const struct k_webui_slider_config *config) {
 
     struct k_str_buf str_buf;
     char buf[896];
@@ -254,9 +315,18 @@ void k__webui_exec_js_add_int_slider(const char *label, const struct k_webui_int
     {
         k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
         k_str_buf_puts(&str_buf, "type:'range',");
-        k_str_buf_printf(&str_buf, "min:%d,",  config->min);
-        k_str_buf_printf(&str_buf, "max:%d,",  config->max);
-        k_str_buf_printf(&str_buf, "step:%d,", config->step);
+        switch (config->slider_type) {
+            case K_WEBUI_INT_SLIDER:
+                k_str_buf_printf(&str_buf, "min:%d,",  config->int_slider->min);
+                k_str_buf_printf(&str_buf, "max:%d,",  config->int_slider->max);
+                k_str_buf_printf(&str_buf, "step:%d,", config->int_slider->step);
+                break;
+            case K_WEBUI_FLOAT_SLIDER:
+                k_str_buf_printf(&str_buf, "min:%f,",  config->float_slider->min);
+                k_str_buf_printf(&str_buf, "max:%f,",  config->float_slider->max);
+                k_str_buf_printf(&str_buf, "step:%f,", config->float_slider->step);
+                break;
+        }
     }
     k_str_buf_puts(&str_buf, "})");
 
@@ -266,23 +336,51 @@ void k__webui_exec_js_add_int_slider(const char *label, const struct k_webui_int
     k_str_buf_free(&str_buf);
 }
 
-int k_webui_bind_int_slider(const char *label, void *data, const struct k_webui_int_slider_config *config) {
+static int k__webui_bind_slider(const char *label, void *data, const struct k_webui_slider_config *config) {
 
-    struct k_webui_int_slider *slider = NULL;
-
-    slider = k__webui_malloc(sizeof(struct k_webui_int_slider));
+    struct k_webui_slider *slider = k__webui_malloc(sizeof(struct k_webui_slider));
     if (NULL == slider)
         return -1;
 
-    if (0 != k__webui_widget_init(&slider->widget, label, &k__webui_int_slider_v_tbl))
+    if (0 != k__webui_bindings_map_add(label, &slider->widget)) {
+        k__webui_free(slider);
         return -1;
+    }
 
-    slider->data     = data;
-    slider->on_input = config->on_input;
-    slider->on_read  = config->on_read;
+    slider->widget.v_tbl = &k__webui_int_slider_v_tbl;
 
-    k__webui_exec_js_add_int_slider(label, config);
+    slider->data = data;
+
+    slider->type = config->slider_type;
+    switch (config->slider_type) {
+        case K_WEBUI_INT_SLIDER:
+            slider->on_input_i = first_non_null(config->int_slider->on_input, k__webui_int_slider_default_set);
+            slider->on_read_i  = first_non_null(config->int_slider->on_read,  k__webui_int_slider_default_get);
+            break;
+        case K_WEBUI_FLOAT_SLIDER:
+            slider->on_input_f = first_non_null(config->float_slider->on_input, k__webui_float_slider_default_set);
+            slider->on_read_f  = first_non_null(config->float_slider->on_read,  k__webui_float_slider_default_get);
+            break;
+        default:
+            assert(0);
+    }
+
+    k__webui_exec_js_add_slider(label, config);
     return 0;
+}
+
+int k_webui_bind_int_slider(const char *label, void *data, const struct k_webui_int_slider_config *config) {
+    struct k_webui_slider_config config_;
+    config_.slider_type = K_WEBUI_INT_SLIDER;
+    config_.int_slider  = config;
+    return k__webui_bind_slider(label, data, &config_);
+}
+
+int k_webui_bind_float_slider(const char *label, void *data, const struct k_webui_float_slider_config *config) {
+    struct k_webui_slider_config config_;
+    config_.slider_type  = K_WEBUI_FLOAT_SLIDER;
+    config_.float_slider = config;
+    return k__webui_bind_slider(label, data, &config_);
 }
 
 /* endregion */

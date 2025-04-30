@@ -23,14 +23,19 @@ void k_webui_log_error(const char *fmt, ...);
 
 /* region [bind] */
 
-/* region [int_slider] */
+/* region [slider] */
+
+enum k_webui_slider_type {
+    K_WEBUI_INT_SLIDER,
+    K_WEBUI_FLOAT_SLIDER,
+};
 
 struct k_webui_int_slider_config {
     int min;
     int max;
     int step;
     int (*on_input)(void *data, int val);
-    int (*on_read)(void *data);
+    int (*on_read)(void *data, int *val);
 };
 
 #define K_WEBUI_INT_SLIDER_INIT \
@@ -53,16 +58,16 @@ struct k_webui_float_slider_config {
     float max;
     float step;
     int (*on_input)(void *data, float val);
-    float (*on_read)(void *data);
+    int (*on_read)(void *data, float *val);
 };
 
 #define K_WEBUI_FLOAT_SLIDER_INIT \
 { \
-    .min      = 0.0f,  \
-    .max      = 1.0f,  \
-    .step     = 0.01f, \
-    .on_input = NULL,  \
-    .on_read  = NULL,  \
+    .min      = 0.0f,   \
+    .max      = 100.0f, \
+    .step     = 0.01f,  \
+    .on_input = NULL,   \
+    .on_read  = NULL,   \
 }
 
 int k_webui_bind_float_slider(const char *label, void *data, const struct k_webui_float_slider_config *config);
