@@ -191,7 +191,7 @@
         
         result.then((resp) => {
           if (0 !== Number(resp)) {
-            this.log_error(`C 程序拒绝将 \`${label}\` 绑定的变量设置为 \`${val}\``);
+            this.log_error(`拒绝将 \`${label}\` 绑定的值设为 \`${val}\``);
           }
         });
       },

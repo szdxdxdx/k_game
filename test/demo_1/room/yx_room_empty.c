@@ -15,8 +15,9 @@ static int checkbox_change(void *data, int val) {
     return 0;
 }
 
-static int checkbox_read(void *data) {
-    return odd;
+static int checkbox_read(void *data, int *result) {
+    *result = (odd % 2 != 0);
+    return 0;
 }
 
 static int set_int_val(void *data, int val) {
@@ -35,6 +36,7 @@ static void enter_room(void) {
 
     {
         struct k_webui_int_slider_config slider = K_WEBUI_INT_SLIDER_INIT;
+        slider.on_input = set_int_val;
         k_webui_bind_int_slider("滑动条", &int_val, &slider);
     }
 
@@ -61,7 +63,7 @@ static void enter_room(void) {
         struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_INIT;
         checkbox.on_change = checkbox_change;
         checkbox.on_read   = checkbox_read;
-       //k_webui_bind_checkbox("是奇数", NULL, &checkbox);
+        k_webui_bind_checkbox("是奇数", NULL, &checkbox);
     }
 }
 

@@ -35,7 +35,7 @@ struct k_webui_int_slider_config {
     int max;
     int step;
     int (*on_input)(void *data, int val);
-    int (*on_read)(void *data, int *val);
+    int (*on_read)(void *data, int *result);
 };
 
 #define K_WEBUI_INT_SLIDER_INIT \
@@ -58,7 +58,7 @@ struct k_webui_float_slider_config {
     float max;
     float step;
     int (*on_input)(void *data, float val);
-    int (*on_read)(void *data, float *val);
+    int (*on_read)(void *data, float *result);
 };
 
 #define K_WEBUI_FLOAT_SLIDER_INIT \
@@ -77,8 +77,8 @@ int k_webui_bind_float_slider(const char *label, void *data, const struct k_webu
 /* region [checkbox] */
 
 struct k_webui_checkbox_config {
-    int (*on_change)(void *data, int val);
-    int (*on_read)(void *data);
+    int (*on_change)(void *data, int checked);
+    int (*on_read)(void *data, int *result);
 };
 
 #define K_WEBUI_CHECKBOX_INIT \
