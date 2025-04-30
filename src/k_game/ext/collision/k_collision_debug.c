@@ -47,8 +47,8 @@ static void k__collision_draw_box(struct k_collision_box *box) {
     }
 }
 
-static void k__collision_draw_group(void *data) {
-    struct k_collision_group *group = data;
+static void k__collision_group_on_debug_draw(void *group_) {
+    struct k_collision_group *group = group_;
 
     k_canvas_set_draw_color_rgba(0xee0000ff);
 
@@ -91,7 +91,7 @@ int k_collision_set_debug(int group_id, int debug) {
         group->cb_debug_draw = k_component_manager_add_draw_callback(
             group->manager->component_manager,
             group,
-            k__collision_draw_group,
+            k__collision_group_on_debug_draw,
             K_DEBUG_Z_GROUP,
             K_DEBUG_Z_LAYER
         );

@@ -14,6 +14,8 @@ struct k_object {
     struct k_list component_list;
 
     void *data;
+
+    void (*on_destroy)(struct k_object *object);
 };
 
 #endif

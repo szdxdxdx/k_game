@@ -130,20 +130,10 @@ int k_room_goto(struct k_room *room);
 
 /* region [room_get] */
 
-/**
- * \brief 获取当前房间的关联数据
- *
- * 若当前房间的关联数据结构体大小为 0，则函数返回 `NULL`，
- * 否则返回关联数据内存段的指针。
- */
+/** \brief 获取当前房间的关联数据 */
 void *k_room_get_data(void);
 
-/**
- * \brief 获取指定房间的关联数据
- *
- * 若该房间的关联数据结构体大小为 0，则函数返回 `NULL`，
- * 否则返回关联数据内存段的指针。
- */
+/** \brief 获取指定房间的关联数据 */
 void *k_room_get_data_of(struct k_room *room);
 
 /** \brief 获取当前房间的宽 */

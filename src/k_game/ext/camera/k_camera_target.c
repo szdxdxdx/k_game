@@ -68,19 +68,16 @@ void k_camera_del_target(struct k_camera_target *target) {
 
 int k_camera_set_primary_target(struct k_camera_target *target) {
 
-    if (NULL == target)
-        return -1;
-
     struct k_camera *camera = k_room_get_component_manager_data(k__camera_component_type);
     if (NULL == camera)
         return -1;
 
-    /* TODO assert( camera follow this target )
-     *
-     * if (camera != k_component_get_manager_data(target->component)) {
-     *     return -1;
-     * }
-     */
+    if (NULL == target) {
+        camera->primary_target = NULL;
+        return 0;
+    }
+
+    /* TODO assert( camera follow this target ) */
 
     camera->primary_target = target;
     return 0;

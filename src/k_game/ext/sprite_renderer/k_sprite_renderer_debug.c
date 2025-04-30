@@ -4,7 +4,7 @@
 
 #include "./k_sprite_renderer_internal.h"
 
-static void k__sprite_renderer_debug_draw(struct k_component *component) {
+static void k__sprite_renderer_on_debug_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
 
     k_canvas_set_draw_color_rgba(0xff6600ff);
@@ -134,7 +134,7 @@ int k_sprite_renderer_set_debug(struct k_sprite_renderer *renderer, int debug) {
 
         renderer->cb_debug_draw = k_component_add_draw_callback(
             renderer->component,
-            k__sprite_renderer_debug_draw,
+            k__sprite_renderer_on_debug_draw,
             K_DEBUG_Z_GROUP,
             K_DEBUG_Z_LAYER
         );

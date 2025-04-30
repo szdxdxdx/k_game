@@ -10,27 +10,25 @@ static int k__camera_webui_print(void *camera_, struct k_str_buf *buf) {
     struct k_camera *camera = camera_;
     k_str_buf_clear(buf);
 
-    k_str_buf_printf(buf, "加速度: %.2f\n", camera->acceleration);
-    k_str_buf_printf(buf, "最大速度: %.2f\n", camera->max_speed);
-    k_str_buf_printf(buf, "当前速度: %.2f\n", sqrtf(camera->vx * camera->vx + camera->vy * camera->vy), camera->max_speed);
+    k_str_buf_printf(buf, "加速度：%.2f\n", camera->acceleration);
+    k_str_buf_printf(buf, "最大速度：%.2f\n", camera->max_speed);
+    k_str_buf_printf(buf, "当前速度：%.2f\n", sqrtf(camera->vx * camera->vx + camera->vy * camera->vy), camera->max_speed);
 
     float cx;
     float cy;
     k_view_get_position(&cx, &cy);
-    k_str_buf_printf(buf, "当前坐标: (%.2f, %.2f)\n", cx, cy);
-    k_str_buf_printf(buf, "目标位置: (%.2f, %.2f)\n", camera->dst_x, camera->dst_y);
+    k_str_buf_printf(buf, "当前坐标：(%.2f, %.2f)\n", cx, cy);
+    k_str_buf_printf(buf, "目标位置：(%.2f, %.2f)\n", camera->dst_x, camera->dst_y);
 
     switch (camera->state) {
         case K__CAMERA_AUTO_FOLLOW:
-            k_str_buf_puts(buf, "当前状态: 自动跟随\n");
+            k_str_buf_puts(buf, "当前状态：自动跟随\n");
             k_str_buf_printf(buf, "跟随目标个数：%d\n",  camera->targets_num);
             if (NULL == camera->primary_target) {
                 k_str_buf_puts(buf, "主跟随目标：无\n");
             } else {
                 k_str_buf_printf(buf, "主跟随目标位置：(%.2f, %.2f)\n", *(camera->primary_target->x), *(camera->primary_target->y));
             }
-            break;
-        case K__CAMERA_CINEMATIC:
             break;
         default:
             break;
@@ -56,6 +54,8 @@ void k__camera_webui(struct k_camera *camera, int enabled) {
         if ( ! camera->webui_debug_enabled)
             return;
 
+        k_webui_unbind("摄像机控件：");
+        k_webui_unbind("绘制跟随目标线：");
     }
     else {
         if (camera->webui_debug_enabled)
@@ -71,9 +71,8 @@ void k__camera_webui(struct k_camera *camera, int enabled) {
             struct k_webui_checkbox_config checkbox =  K_WEBUI_CHECKBOX_CONFIG_INIT;
             checkbox.on_read   = k__camera_webui_checkbox_debug_draw_on_read;
             checkbox.on_change = k__camera_webui_checkbox_debug_draw_on_change;
-            k_webui_bind_checkbox("绘制跟随目标线", camera, &checkbox);
+            k_webui_bind_checkbox("绘制跟随目标线：", camera, &checkbox);
         }
-
     }
 }
 

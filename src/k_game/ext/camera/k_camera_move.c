@@ -6,6 +6,7 @@
 
 #include "./k_camera_internal.h"
 
+/* 往摄像机的目标位置 `(dst_x, dst_y)` 移动一小步 */
 static void k__camera_move_towards(struct k_camera *camera) {
 
     float curr_x;
@@ -148,7 +149,7 @@ static void k__camera_auto_follow(struct k_camera *camera) {
     k__camera_move_towards(camera);
 }
 
-void k__camera_move(void *camera_) {
+void k__camera_move_on_step_begin(void *camera_) {
     struct k_camera *camera = camera_;
 
     switch (camera->state) {

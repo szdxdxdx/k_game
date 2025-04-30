@@ -5,7 +5,7 @@
 
 #include "./k_camera_internal.h"
 
-static void k__camera_auto_follow_debug_draw(struct k_camera *camera) {
+static void k__camera_debug_draw_auto_follow(struct k_camera *camera) {
 
     float dst_x = camera->dst_x;
     float dst_y = camera->dst_y;
@@ -69,7 +69,7 @@ draw_view_center:
     }
 }
 
-static void k__camera_debug_draw(void *camera_) {
+static void k__camera_on_debug_draw(void *camera_) {
     struct k_camera *camera = camera_;
 
     switch (camera->state) {
@@ -77,7 +77,7 @@ static void k__camera_debug_draw(void *camera_) {
             assert(0);
             break;
         case K__CAMERA_AUTO_FOLLOW:
-            k__camera_auto_follow_debug_draw(camera);
+            k__camera_debug_draw_auto_follow(camera);
             break;
         case K__CAMERA_CINEMATIC:
             assert(0);
@@ -102,7 +102,7 @@ int k__camera_set_debug_draw_enabled(struct k_camera *camera, int enabled) {
         camera->cb_camera_debug = k_component_manager_add_draw_callback(
             camera->component_manager,
             camera,
-            k__camera_debug_draw,
+            k__camera_on_debug_draw,
             K_DEBUG_Z_GROUP,
             K_DEBUG_Z_LAYER
         );

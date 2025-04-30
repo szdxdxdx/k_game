@@ -13,7 +13,7 @@ int k__camera_init(struct k_component_manager *manager, void *params) {
 
     camera->state = K__CAMERA_AUTO_FOLLOW;
 
-    camera->cb_camera_move = k_component_manager_add_step_end_callback(manager, camera, k__camera_move);
+    camera->cb_camera_move = k_component_manager_add_step_end_callback(manager, camera, k__camera_move_on_step_begin);
     if (NULL == camera->cb_camera_move)
         return -1;
 
@@ -37,7 +37,7 @@ int k__camera_init(struct k_component_manager *manager, void *params) {
 
 static void k__camera_fini(struct k_component_manager *manager) {
     struct k_camera *camera = k_component_manager_get_data(manager);
-
+    k__camera_webui(camera, 0);
 }
 
 struct k_component_type *k__camera_component_type;
