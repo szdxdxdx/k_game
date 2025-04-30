@@ -33,14 +33,13 @@ static void enter_room(void) {
     k_room_add_draw_callback(NULL, show_int_val, INT_MIN, INT_MIN);
 
     {
-        struct k_webui_widget_config widget;
-        widget.input_type = K_WEBUI_INT_SLIDER;
-        widget.as_int_slider.min  = 1;
-        widget.as_int_slider.max  = 30;
-        widget.as_int_slider.step = 1;
-        widget.as_int_slider.on_input = NULL;
-        widget.as_int_slider.on_read  = NULL;
-        k_webui_bind("range", &int_val, &widget);
+        struct k_webui_int_slider_config slider = K_WEBUI_INT_SLIDER_INIT;
+        slider.label = "Int Slider";
+        slider.max   = 30;
+        slider.step  = 1;
+        slider.on_input = NULL;
+        slider.on_read  = NULL;
+        k_webui_bind_int_slider(&int_val, &slider);
     }
 
     {
@@ -48,23 +47,22 @@ static void enter_room(void) {
             { .val=1, .text="Option 1" },
             { .val=2, .text="Option 2" },
             { .val=3, .text="Option 3" },
+            { .val=4, .text="Option 4" },
+            { .val=6, .text="Option 6" },
         };
-        struct k_webui_widget_config widget;
-        widget.input_type = K_WEBUI_INT_SELECT;
-        widget.as_int_select.count     = 3;
-        widget.as_int_select.options   = options;
-        widget.as_int_select.on_change = NULL;
-        widget.as_int_slider.on_read   = NULL;
-        k_webui_bind("Select", &int_val, &widget);
+        struct k_webui_int_select_config select = K_WEBUI_INT_SELECT_CONFIG_INIT;
+        select.label = "Select";
+        select.options = options;
+        select.options_num = 5;
+        k_webui_bind_int_select(&int_val, &select);
     }
 
-
     {
-        struct k_webui_widget_config widget;
-        widget.input_type = K_WEBUI_CHECKBOX;
-        widget.as_checkbox.on_change = checkbox_change;
-        widget.as_checkbox.on_read   = checkbox_read;
-        k_webui_bind("要求是奇数", NULL, &widget);
+        struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_INIT;
+        checkbox.label = "Checkbox";
+        checkbox.on_change = checkbox_change;
+        checkbox.on_read   = checkbox_read;
+        k_webui_bind_checkbox(NULL, &checkbox);
     }
 }
 

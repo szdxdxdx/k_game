@@ -5,6 +5,25 @@
 
 #include "./k_webui_internal.h"
 
+enum k_webui_input_type {
+    K__WEBUI_INT_SLIDER,
+    K__WEBUI_FLOAT_SLIDER,
+    K__WEBUI_CHECKBOX,
+    K__WEBUI_BUTTON,
+    K__WEBUI_INT_SELECT,
+};
+
+struct k_webui_widget_config {
+    enum k_webui_input_type input_type;
+    union {
+        const struct k_webui_int_slider_config   *as_int_slider;
+        const struct k_webui_float_slider_config *as_float_slider;
+        const struct k_webui_checkbox_config     *as_checkbox;
+        const struct k_webui_button_config       *as_button;
+        const struct k_webui_int_select_config   *as_int_select;
+    };
+};
+
 /* region [utils] */
 
 static inline void *first_non_null(void *a, void *b) {
@@ -26,33 +45,33 @@ static void k__webui_exec_js_add_ui_widget(const char *label, const struct k_web
         k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
 
         switch (widget->input_type) {
-            case K_WEBUI_INT_SLIDER:
+            case K__WEBUI_INT_SLIDER:
                 k_str_buf_puts(&str_buf, "type:'range',");
-                k_str_buf_printf(&str_buf, "min:%d,",  widget->as_int_slider.min);
-                k_str_buf_printf(&str_buf, "max:%d,",  widget->as_int_slider.max);
-                k_str_buf_printf(&str_buf, "step:%d,", widget->as_int_slider.step);
+                k_str_buf_printf(&str_buf, "min:%d,",  widget->as_int_slider->min);
+                k_str_buf_printf(&str_buf, "max:%d,",  widget->as_int_slider->max);
+                k_str_buf_printf(&str_buf, "step:%d,", widget->as_int_slider->step);
                 break;
-            case K_WEBUI_FLOAT_SLIDER:
+            case K__WEBUI_FLOAT_SLIDER:
                 k_str_buf_puts(&str_buf, "type:'range',");
-                k_str_buf_printf(&str_buf, "min:%.3f,",  widget->as_float_slider.min);
-                k_str_buf_printf(&str_buf, "max:%.3f,",  widget->as_float_slider.max);
-                k_str_buf_printf(&str_buf, "step:%.3f,", widget->as_float_slider.step);
+                k_str_buf_printf(&str_buf, "min:%.3f,",  widget->as_float_slider->min);
+                k_str_buf_printf(&str_buf, "max:%.3f,",  widget->as_float_slider->max);
+                k_str_buf_printf(&str_buf, "step:%.3f,", widget->as_float_slider->step);
                 break;
-            case K_WEBUI_CHECKBOX:
+            case K__WEBUI_CHECKBOX:
                 k_str_buf_puts(&str_buf, "type:'checkbox',");
                 break;
-            case K_WEBUI_BUTTON:
+            case K__WEBUI_BUTTON:
                 k_str_buf_puts(&str_buf, "type:'button',");
                 break;
-            case K_WEBUI_INT_SELECT:
+            case K__WEBUI_INT_SELECT:
                 k_str_buf_puts(&str_buf, "type:'select',");
                 k_str_buf_puts(&str_buf, "options:[");
                 {
                     size_t i = 0;
-                    for (; i < widget->as_int_select.count; i++) {
+                    for (; i < widget->as_int_select->options_num; i++) {
                         k_str_buf_puts(&str_buf, "{");
                         {
-                            struct k_webui_int_select_option *opt = &widget->as_int_select.options[i];
+                            struct k_webui_int_select_option *opt = &widget->as_int_select->options[i];
                             k_str_buf_k_printf(&str_buf, k__webui_fmt, "text:%'s,", opt->text);
                             k_str_buf_printf(&str_buf, "val:%d,", opt->val);
                         }
@@ -123,29 +142,29 @@ static int k__webui_binding_init(struct k_webui_binding *binding, void *data, co
     binding->data = data;
 
     switch (widget->input_type) {
-        case K_WEBUI_INT_SLIDER:
-            binding->fn_set_i = first_non_null(widget->as_int_slider.on_input, k__webui_set_int_default);
-            binding->fn_get_i = first_non_null(widget->as_int_slider.on_read,  k__webui_get_int_default);
+        case K__WEBUI_INT_SLIDER:
+            binding->fn_set_i = first_non_null(widget->as_int_slider->on_input, k__webui_set_int_default);
+            binding->fn_get_i = first_non_null(widget->as_int_slider->on_read,  k__webui_get_int_default);
             break;
-        case K_WEBUI_FLOAT_SLIDER:
-            binding->fn_set_f = first_non_null(widget->as_float_slider.on_input, k__webui_set_float_default);
-            binding->fn_get_f = first_non_null(widget->as_float_slider.on_read,  k__webui_get_float_default);
+        case K__WEBUI_FLOAT_SLIDER:
+            binding->fn_set_f = first_non_null(widget->as_float_slider->on_input, k__webui_set_float_default);
+            binding->fn_get_f = first_non_null(widget->as_float_slider->on_read,  k__webui_get_float_default);
             break;
-        case K_WEBUI_CHECKBOX:
-            binding->fn_set_i = first_non_null(widget->as_checkbox.on_change, k__webui_set_int_default);
-            binding->fn_get_i = first_non_null(widget->as_checkbox.on_read,   k__webui_get_int_default);
+        case K__WEBUI_CHECKBOX:
+            binding->fn_set_i = first_non_null(widget->as_checkbox->on_change, k__webui_set_int_default);
+            binding->fn_get_i = first_non_null(widget->as_checkbox->on_read,   k__webui_get_int_default);
             break;
-        case K_WEBUI_BUTTON:
-            if (NULL == widget->as_button.on_click) {
+        case K__WEBUI_BUTTON:
+            if (NULL == widget->as_button->on_click) {
                 k_log_error("button widget has no `on_click` callback");
                 return -1;
             }
-            binding->on_click = widget->as_button.on_click;
+            binding->on_click = widget->as_button->on_click;
             binding->fn_get_i = NULL;
             break;
-        case K_WEBUI_INT_SELECT:
-            binding->fn_set_i = first_non_null(widget->as_int_select.on_change, k__webui_set_int_default);
-            binding->fn_get_i = first_non_null(widget->as_int_select.on_read,   k__webui_get_int_default);
+        case K__WEBUI_INT_SELECT:
+            binding->fn_set_i = first_non_null(widget->as_int_select->on_change, k__webui_set_int_default);
+            binding->fn_get_i = first_non_null(widget->as_int_select->on_read,   k__webui_get_int_default);
             break;
         default:
             assert(0);
@@ -184,6 +203,41 @@ err:
     return -1;
 }
 
+int k_webui_bind_int_slider(void *data, const struct k_webui_int_slider_config *slider) {
+    struct k_webui_widget_config widget;
+    widget.input_type = K__WEBUI_INT_SLIDER;
+    widget.as_int_slider = slider;
+    return k_webui_bind(slider->label, data, &widget);
+}
+
+int k_webui_bind_float_slider(void *data, const struct k_webui_float_slider_config *slider) {
+    struct k_webui_widget_config widget;
+    widget.input_type = K__WEBUI_FLOAT_SLIDER;
+    widget.as_float_slider = slider;
+    return k_webui_bind(slider->label, data, &widget);
+}
+
+int k_webui_bind_checkbox(void *data, const struct k_webui_checkbox_config *checkbox) {
+    struct k_webui_widget_config widget;
+    widget.input_type = K__WEBUI_CHECKBOX;
+    widget.as_checkbox = checkbox;
+    return k_webui_bind(checkbox->label, data, &widget);
+}
+
+int k_webui_bind_button(void *data, const struct k_webui_button_config *button) {
+    struct k_webui_widget_config widget;
+    widget.input_type = K__WEBUI_BUTTON;
+    widget.as_button = button;
+    return k_webui_bind(button->label, data, &widget);
+}
+
+int k_webui_bind_int_select(void *data, const struct k_webui_int_select_config *select) {
+    struct k_webui_widget_config widget;
+    widget.input_type = K__WEBUI_INT_SELECT;
+    widget.as_int_select = select;
+    return k_webui_bind(select->label, data, &widget);
+}
+
 /* endregion */
 
 /* region [js_set_c_val] */
@@ -197,30 +251,30 @@ static int k__webui_js_set_c_val_(webui_event_t *e) {
         return -1;
 
     switch (binding->input_type) {
-        case K_WEBUI_INT_SLIDER: {
+        case K__WEBUI_INT_SLIDER: {
             long long int ll = webui_get_int_at(e, 1);
             int val = (ll < INT_MIN) ? INT_MIN :
                       (ll > INT_MAX) ? INT_MAX : (int)ll;
 
             return binding->fn_set_i(binding->data, val);
         }
-        case K_WEBUI_FLOAT_SLIDER: {
+        case K__WEBUI_FLOAT_SLIDER: {
             double d = webui_get_float_at(e, 1);
             float val = (float)d;
 
             return binding->fn_set_f(binding->data, val);
         }
-        case K_WEBUI_CHECKBOX: {
+        case K__WEBUI_CHECKBOX: {
             int b = webui_get_bool_at(e, 1);
             int val = b ? 1 : 0;
 
             return binding->fn_set_i(binding->data, val);
         }
-        case K_WEBUI_BUTTON: {
+        case K__WEBUI_BUTTON: {
             binding->on_click(binding->data);
             return 0;
         }
-        case K_WEBUI_INT_SELECT: {
+        case K__WEBUI_INT_SELECT: {
             long long int ll = webui_get_int_at(e, 1);
             int val = (ll < INT_MIN) ? INT_MIN :
                       (ll > INT_MAX) ? INT_MAX : (int)ll;
@@ -252,26 +306,26 @@ static int k__webui_js_get_c_val_(webui_event_t *e) {
         return -1;
 
     switch (binding->input_type) {
-        case K_WEBUI_INT_SLIDER: {
+        case K__WEBUI_INT_SLIDER: {
             int val = binding->fn_get_i(binding->data);
             webui_return_int(e, val);
             return 0;
         }
-        case K_WEBUI_FLOAT_SLIDER: {
+        case K__WEBUI_FLOAT_SLIDER: {
             float val = binding->fn_get_f(binding->data);
             webui_return_float(e, val);
             return 0;
         }
-        case K_WEBUI_CHECKBOX: {
+        case K__WEBUI_CHECKBOX: {
             int val = binding->fn_get_i(binding->data);
             webui_return_int(e, val ? 1 : 0);
             return 0;
         }
-        case K_WEBUI_BUTTON: {
+        case K__WEBUI_BUTTON: {
             assert(0);
             return -1;
         }
-        case K_WEBUI_INT_SELECT: {
+        case K__WEBUI_INT_SELECT: {
             int val = binding->fn_get_i(binding->data);
             webui_return_int(e, val);
             return 0;

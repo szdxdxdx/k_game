@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <title>k_webui</title>
-  <meta charset="UTF-8">d
+  <meta charset="UTF-8">
   <script src="/webui.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   
@@ -56,25 +56,30 @@
       <label v-if="binding.type === 'range'">
         <span v-show="binding.out_of_range">out of range</span>
         <span>{{ binding.label }}</span>
-        <input type="range" v-model="binding.val" :min="binding.min" :max="binding.max" :step="binding.step"
+        <input type="range" v-model.number="binding.val"
+            :min="binding.min" :max="binding.max" :step="binding.step"
             @input="binding_range_set_c_val($event, binding.label)" />
       </label>
 
       <label v-else-if="binding.type === 'checkbox'">
         <span>{{ binding.label }}</span>
-        <input type="checkbox" v-model="binding.checked" @change="binding_checkbox_set_c_val($event, binding.label)"/>
+        <input type="checkbox" v-model="binding.checked"
+            @change="binding_checkbox_set_c_val($event, binding.label)"/>
       </label>
       
       <label v-else-if="binding.type === 'button'">
         <span>{{ binding.label }}</span>
-        <input type="button" @click="binding_button_set_c_val($event, binding.label)"/>
+        <input type="button"
+            @click="binding_button_set_c_val($event, binding.label)"/>
       </label>
 
       <label v-else-if="binding.type === 'select'">
         <span>{{ binding.label }}</span>
         <span v-show="binding.out_of_range">out of range</span>
-        <select v-model="binding.selected" @change="binding_select_set_c_val($event, binding.label)">
-          <option v-for="(option, idx) in binding.options" :key="idx" :value="option.val">{{ option.text }}</option>
+        <select v-model.number="binding.selected"
+              @change="binding_select_set_c_val($event, binding.label)">
+          <option v-for="(option, idx) in binding.options" :key="idx"
+                  :value="option.val">{{ option.text }}</option>
         </select>
       </label>
 
