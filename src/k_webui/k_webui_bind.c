@@ -68,27 +68,26 @@ int k__webui_widget_init(struct k_webui_widget *widget, const char *label, struc
 
 /* endregion */
 
-/* region [init] */
+/* region [js_call_c] */
 
 static void k__webui_js_set_c_val(webui_event_t *e) {
-
     const char *label = webui_get_string_at(e, 0);
-    struct k_webui_widget *widget = k__webui_bindings_map_get(label);
-    if (NULL == widget)
-        goto err;
 
-    if (0 != widget->v_tbl->on_webui_set(widget, e))
-        goto err;
+    struct k_webui_widget *widget = k__webui_bindings_map_get(label);
+    if (NULL == widget) {
+        webui_return_int(e, -1);
+        return;
+    }
+
+    if (0 != widget->v_tbl->on_webui_set(widget, e)) {
+        webui_return_int(e, -2);
+        return;
+    }
 
     webui_return_int(e, 0);
-    return;
-
-err:
-    webui_return_int(e, -1);
 }
 
 static void k__webui_js_get_c_val(webui_event_t *e) {
-
     const char *label = webui_get_string_at(e, 0);
 
     struct k_webui_widget *widget = k__webui_bindings_map_get(label);
@@ -98,6 +97,21 @@ static void k__webui_js_get_c_val(webui_event_t *e) {
     widget->v_tbl->on_webui_get(widget, e);
 }
 
+static void k__webui_js_unbind(webui_event_t *e) {
+    const char *label = webui_get_string_at(e, 0);
+
+    struct k_webui_widget *widget = k__webui_bindings_map_get(label);
+    if (NULL == widget)
+        return;
+
+    k__webui_bindings_map_remove(label);
+    widget->v_tbl->on_unbind(widget);
+}
+
+/* endregion */
+
+/* region [init] */
+
 int k__webui_binding_init(void) {
 
     if (0 != k__webui_bindings_map_init())
@@ -105,6 +119,7 @@ int k__webui_binding_init(void) {
 
     webui_bind(k__webui.window, "k__webui_set_c_val", k__webui_js_set_c_val);
     webui_bind(k__webui.window, "k__webui_get_c_val", k__webui_js_get_c_val);
+    webui_bind(k__webui.window, "k__webui_unbind", k__webui_js_unbind);
     return 0;
 }
 
@@ -114,7 +129,7 @@ void k__webui_binding_fini(void) {
 
 /* endregion */
 
-/* region */
+/* region [get_js_fn_arg] */
 
 static inline int k__webui_get_int_at(webui_event_t *e, size_t idx) {
     long long int ll = webui_get_int_at(e, idx);
@@ -155,6 +170,8 @@ struct k_webui_slider {
 };
 
 static void k__webui_slider_on_unbind(struct k_webui_widget *widget) {
+    struct k_webui_slider *slider = (struct k_webui_slider *)widget;
+    k__webui_free(slider);
 }
 
 static int k__webui_slider_on_set(struct k_webui_widget *widget, webui_event_t *e) {
@@ -321,6 +338,8 @@ struct k_webui_checkbox {
 };
 
 static void k__webui_checkbox_on_unbind(struct k_webui_widget *widget) {
+    struct k_webui_checkbox *checkbox = (struct k_webui_checkbox *)widget;
+    k__webui_free(checkbox);
 }
 
 static int k__webui_checkbox_on_set(struct k_webui_widget *widget, webui_event_t *e) {
@@ -410,6 +429,8 @@ struct k_webui_int_select {
 };
 
 static void k__webui_int_select_on_unbind(struct k_webui_widget *widget) {
+    struct k_webui_int_select *select = (struct k_webui_int_select *)widget;
+    k__webui_free(select);
 }
 
 static int k__webui_int_select_on_set(struct k_webui_widget *widget, webui_event_t *e) {
@@ -512,6 +533,8 @@ struct k_webui_button {
 };
 
 static void k__webui_button_on_unbind(struct k_webui_widget *widget) {
+    struct k_webui_button *button = (struct k_webui_button *)widget;
+    k__webui_free(button);
 }
 
 static int k__webui_button_on_set(struct k_webui_widget *widget, webui_event_t *e) {
@@ -578,6 +601,14 @@ int k_webui_bind_button(const char *label, void *data, const struct k_webui_butt
 
 void k_webui_unbind(const char *label) {
 
+    struct k_webui_widget *widget = k__webui_bindings_map_get(label);
+    if (NULL == widget)
+        return;
+
+    k__webui_bindings_map_remove(label);
+    widget->v_tbl->on_unbind(widget);
+
+    k__webui_exec_js_fmt("k__webui.unbind_by_label(%'s)", label);
 }
 
 /* endregion */

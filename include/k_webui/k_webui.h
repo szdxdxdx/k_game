@@ -272,11 +272,12 @@ int k_webui_bind_int_select(const char *label, void *data, const struct k_webui_
 /* endregion */
 
 /**
- * \brief 删除绑定
+ * \brief 解除绑定
  *
- * 并移除 webui 中 `label` 标识的控件。
+ * 移除 webui 中 `label` 标识的控件，并解除绑定。
+ * 若 `label` 标识的控件不存在，则函数直接返回。
  *
- * webui 无法感知 C 程序的内存状态，ui 控件无法判断绑定的内存段是否还有效。
+ * webui 无法感知 C 程序的内存状态，无法判断内存段是否还有效。
  * 请在内存段失效之前手动解绑，否则 webui 可能访问无效的内存。
  */
 void k_webui_unbind(const char *label);

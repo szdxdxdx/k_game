@@ -576,7 +576,7 @@ void k_canvas_ui_draw_circle(float cx, float cy, float r) {
 static int k__canvas_draw_image(enum k_canvas_viewport viewport, struct k_image *image, const struct k_int_rect *src_rect, float x, float y, struct k_canvas_draw_image_options *options) {
 
     if (NULL == image) {
-        k_log_error("image is NULL");
+        k_log_error("image is null");
         return -1;
     }
 
@@ -663,7 +663,7 @@ void k_canvas_ui_draw_image(struct k_image *image, const struct k_int_rect *src_
 static int k__canvas_draw_sprite(enum k_canvas_viewport viewport, struct k_sprite *sprite, size_t frame_idx, float x, float y, struct k_canvas_draw_sprite_options *options) {
 
     if (NULL == sprite) {
-        k_log_error("sprite is NULL");
+        k_log_error("sprite is null");
         return -1;
     }
 

@@ -17,6 +17,7 @@ static int checkbox_change(void *data, int val) {
 
 static void on_click(void *data) {
     k_webui_log_info("clicked");
+    k_webui_unbind("下拉菜单");
 }
 
 static int checkbox_read(void *data, int *result) {

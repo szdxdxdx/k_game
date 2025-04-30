@@ -23,10 +23,8 @@ static int k__sprite_renderer_init(struct k_component *component, void *param) {
 
     if (NULL == config->sprite) {
         k__sprite_renderer_reset(renderer);
-    }
-    else {
-        if (0 != k_sprite_renderer_set_sprite(renderer, config->sprite))
-            return -1;
+    } else {
+        k_sprite_renderer_set_sprite(renderer, config->sprite);
     }
 
     return 0;

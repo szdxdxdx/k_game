@@ -20,7 +20,7 @@ k_printf_spec_print_fn k__webui_fmt(const char **str);
 
 /* endregion */
 
-/* region [mem_alloc] */
+/* region [malloc] */
 
 void *k__webui_malloc(size_t size);
 

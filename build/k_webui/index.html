@@ -54,31 +54,35 @@
       <p>{{ binding }}</p>
 
       <label v-if="binding.type === 'range'">
+        <button @click="unbind(binding)">删除</button>
         <span v-show="binding.out_of_range">out of range</span>
         <span>{{ binding.label }}</span>
         <input type="button" @click="unbind()" />
         <input type="range" v-model.number="binding.val"
             :min="binding.min" :max="binding.max" :step="binding.step"
-            @input="binding_range_set_c_val($event, binding.label)" />
+            @input="slider_set_c_val($event, binding.label)" />
       </label>
 
       <label v-else-if="binding.type === 'checkbox'">
+        <button @click="unbind(binding)">删除</button>
         <span>{{ binding.label }}</span>
         <input type="checkbox" v-model="binding.checked"
-            @change="binding_checkbox_set_c_val($event, binding.label)"/>
+            @change="checkbox_set_c_val($event, binding.label)"/>
       </label>
       
       <label v-else-if="binding.type === 'button'">
+        <button @click="unbind(binding)">删除</button>
         <span>{{ binding.label }}</span>
         <input type="button"
-            @click="binding_button_set_c_val($event, binding.label)"/>
+            @click="button_set_c_val($event, binding.label)"/>
       </label>
 
       <label v-else-if="binding.type === 'select'">
+        <button @click="unbind(binding)">删除</button>
         <span>{{ binding.label }}</span>
         <span v-show="binding.out_of_range">out of range</span>
         <select v-model.number="binding.selected"
-              @change="binding_select_set_c_val($event, binding.label)">
+              @change="select_set_c_val($event, binding.label)">
           <option v-for="(option, idx) in binding.options" :key="idx"
                   :value="option.val">{{ option.text }}</option>
         </select>
@@ -165,22 +169,22 @@
         this.bindings.set(binding.label, binding);
       },
       
-      binding_range_set_c_val($event, label) {
+      slider_set_c_val($event, label) {
         let value = $event.target.value;
         this.set_c_val(label, value);
       },
 
-      binding_checkbox_set_c_val($event, label) {
+      checkbox_set_c_val($event, label) {
         let checked = $event.target.checked;
         this.set_c_val(label, checked ? 1 : 0);
       },
 
-      binding_button_set_c_val($event, label) {
+      button_set_c_val($event, label) {
         console.log("button clicked");
         this.set_c_val(label);
       },
 
-      binding_select_set_c_val($event, label) {
+      select_set_c_val($event, label) {
         let selected = $event.target.value;
         this.set_c_val(label, selected);
       },
@@ -193,7 +197,7 @@
         
         result.then((resp) => {
           if (0 !== Number(resp)) {
-            this.log_error(`拒绝将 \`${label}\` 绑定的值设为 \`${val}\``);
+            this.log_error(`无法将【${label}】绑定的值设为 \`${val}\``);
           }
         });
       },
@@ -242,6 +246,15 @@
             
           })
         }
+      },
+      
+      unbind(binding) {
+        k__webui_unbind(binding.label);
+        this.bindings.delete(binding.label);
+      },
+
+      unbind_by_label(label) {
+        this.bindings.delete(label);
       },
 
       /* endregion */

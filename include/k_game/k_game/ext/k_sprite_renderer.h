@@ -299,7 +299,7 @@ int k_sprite_renderer_get_loop_count(struct k_sprite_renderer *renderer);
  * 若指定 `fn_callback` 为 `NULL`，则移除当前的回调。
  * 更换渲染器引用的精灵后，渲染器也会移除该回调。
  */
-void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*fn_callback)(struct k_object *object));
+void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, void (*on_loop_end)(struct k_object *object));
 
 /* region [ref_sprite] */
 

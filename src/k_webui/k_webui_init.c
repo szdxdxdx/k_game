@@ -8,11 +8,6 @@ struct k_webui_context k__webui = {
     .is_inited = 0
 };
 
-void k__webui_event_handler(webui_event_t *event) {
-
-    k_log_info("clicked");
-}
-
 int k_webui_init(void) {
 
     if (k__webui.is_inited) {
@@ -24,8 +19,6 @@ int k_webui_init(void) {
     webui_set_size(k__webui.window, 480, 640);
     webui_set_position(k__webui.window, 10, 10);
     webui_set_root_folder(k__webui.window, "./k_webui");
-
-    webui_bind(k__webui.window, "k_webui_C_fn_event_handler", k__webui_event_handler);
 
     k__webui_binding_init();
 
