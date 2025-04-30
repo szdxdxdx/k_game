@@ -7,8 +7,6 @@
 #include "k_log.h"
 
 #include "./llk_ui_ext.h"
-#include "k_printf.h"
-#include "k_printf_binding.h"
 
 struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_context *ui, struct k_xml_node *xml) {
 
@@ -61,8 +59,6 @@ struct llk_ui_elem *llk_ui_build_elem_from_xml_file(struct llk_ui_context *ui, c
         k_log_error("Failed to parse xml");
         goto err;
     }
-
-    k_printf(k_fmt, "%k_xml", xml);
 
     struct llk_ui_elem *elem = llk__ui_build_elem_from_xml(ui, xml);
 

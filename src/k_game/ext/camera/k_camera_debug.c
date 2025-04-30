@@ -85,15 +85,9 @@ static void k__camera_debug_draw(void *camera_) {
     }
 }
 
-int k_camera_set_debug(int debug) {
+int k__camera_set_debug_draw_enabled(struct k_camera *camera, int enabled) {
 
-    struct k_component_manager *manager = k_room_get_component_manager(k__camera_component_type);
-    if (NULL == manager)
-        return -1;
-
-    struct k_camera *camera = k_component_manager_get_data(manager);
-
-    if (0 == debug) {
+    if ( ! enabled) {
         if (NULL == camera->cb_camera_debug)
             return 0;
 
@@ -106,7 +100,7 @@ int k_camera_set_debug(int debug) {
             return 0;
 
         camera->cb_camera_debug = k_component_manager_add_draw_callback(
-            manager,
+            camera->component_manager,
             camera,
             k__camera_debug_draw,
             K_DEBUG_Z_GROUP,
@@ -117,4 +111,13 @@ int k_camera_set_debug(int debug) {
 
         return 0;
     }
+}
+
+int k_camera_set_debug_draw_enabled(int enabled) {
+
+    struct k_camera *camera = k_room_get_component_manager_data(k__camera_component_type);
+    if (NULL == camera)
+        return -1;
+
+    return k__camera_set_debug_draw_enabled(camera, enabled);
 }

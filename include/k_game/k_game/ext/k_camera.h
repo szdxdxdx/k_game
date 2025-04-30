@@ -98,9 +98,9 @@ int k_camera_set_acceleration(float acceleration);
 
 /* region [camera_debug] */
 
-int k_camera_set_debug(int debug);
+int k_camera_set_debug_draw_enabled(int debug);
 
-int k_camera_webui(int enable);
+void k_camera_webui(int enabled);
 
 /* endregion */
 

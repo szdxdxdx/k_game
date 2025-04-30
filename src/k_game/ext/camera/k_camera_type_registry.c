@@ -5,10 +5,11 @@
 #include "./k_camera_internal.h"
 #include "./k_camera_type_registry.h"
 
-int k_camera_init(struct k_component_manager *manager, void *params) {
+int k__camera_init(struct k_component_manager *manager, void *params) {
     (void)params;
 
     struct k_camera *camera = k_component_manager_get_data(manager);
+    camera->component_manager = manager;
 
     camera->state = K__CAMERA_AUTO_FOLLOW;
 
@@ -29,7 +30,14 @@ int k_camera_init(struct k_component_manager *manager, void *params) {
 
     camera->cb_camera_debug = NULL;
 
+    camera->webui_debug_enabled = 0;
+
     return 0;
+}
+
+static void k__camera_fini(struct k_component_manager *manager) {
+    struct k_camera *camera = k_component_manager_get_data(manager);
+
 }
 
 struct k_component_type *k__camera_component_type;
@@ -43,7 +51,8 @@ int k__component_type_register_camera(void) {
 
     struct k_component_manager_config manager_config = K_COMPONENT_MANAGER_CONFIG_INIT;
     manager_config.data_size = sizeof(struct k_camera);
-    manager_config.fn_init = k_camera_init;
+    manager_config.fn_init = k__camera_init;
+    manager_config.fn_fini = k__camera_fini;
 
     struct k_component_type *type = k_component_type_register(&manager_config, &entity_config);
     if (NULL == type)

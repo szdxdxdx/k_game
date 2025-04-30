@@ -50,6 +50,17 @@
   <!-- [widget-panel] --><!-- region -->
   <div id="binding-panel">
     
+    <div style="border: 1px solid #f09; padding: 4px;">
+      <label>
+        <span>启用同步</span>
+        <input type="checkbox" v-model="sync_enabled" @change="change_sync_enabled()"/>
+      </label>
+      <label v-show="sync_enabled">
+        <span>同步更新的时间间隔：{{ sync_timer_interval }} 毫秒</span>
+        <input type="range" min="100" max="3000" step="1" v-model="sync_timer_interval" @change="change_sync_timer_interval()"/>
+      </label>
+    </div>
+    
     <div class="widget" v-for="[label, binding] in bindings" :key="label">
       <p>{{ binding }}</p>
 
@@ -59,6 +70,7 @@
         <label>
           <span>{{ binding.label }}</span>
           <input type="range" v-model.number="binding.val" :min="binding.min" :max="binding.max" :step="binding.step" @input="slider_set_c_val($event, binding.label)" />
+          <span>{{ binding.val }}</span>
         </label>
       </div>
 
@@ -92,7 +104,8 @@
       
       <div v-else-if="binding.type === 'text'">
         <button @click="unbind(binding)">删除</button>
-        <p>{{ binding.text }}</p>
+        <span>{{ binding.label }}</span>
+        <pre>{{ binding.text }}</pre>
       </div>
 
     </div>
@@ -124,6 +137,9 @@
     data() {
       return {
         bindings: reactive(new Map()),
+    
+        sync_enabled: true,
+        sync_timer_interval: 777,
         sync_timer: null,
 
         log_list: [ /* { level: 'INFO|WARN|ERROR', msg } */],
@@ -131,11 +147,33 @@
     },
 
     mounted() {
-       this.sync_timer = setInterval(this.get_c_val, 777);
+       this.sync_timer = setInterval(this.get_c_val, this.sync_timer_interval);
     },
 
     methods: {
       /* region [binding-panel] */
+      
+      /* region [sync_timer] */
+      
+      change_sync_enabled() {
+        if ( ! this.sync_enabled && this.sync_timer) {
+          clearInterval(this.sync_timer);
+          this.sync_timer = null;
+        }
+        else if (this.sync_enabled && ! this.sync_timer) {
+          this.sync_timer = setInterval(this.get_c_val, this.sync_timer_interval);
+        }
+      },
+
+      change_sync_timer_interval() {
+        if (this.sync_timer) {
+            clearInterval(this.sync_timer);
+            this.sync_timer = null;
+        }
+        this.sync_timer = setInterval(this.get_c_val, this.sync_timer_interval);
+      },
+    
+      /* endregion */
       
       /* region [bind] */
       
@@ -208,7 +246,7 @@
 
       checkbox_set_c_val($event, label) {
         let checked = $event.target.checked;
-        this.set_c_val(label, checked ? 1 : 0);
+        this.set_c_val(label, checked);
       },
 
       button_set_c_val($event, label) {
@@ -220,11 +258,14 @@
         this.set_c_val(label, selected);
       },
       
-      set_c_val(label_, val_) {
-        const label = label_;
-        const val = val_ || "";
+      set_c_val(label_, val_=null) {
+        if ( ! this.sync_enabled) {
+          return;
+        }
         
-        const result = k__webui_set_c_val(label, val).then((resp) => {
+        const label = label_;
+        const val = val_;
+        k__webui_set_c_val(label, val).then((resp) => {
           if (0 !== Number(resp)) {
             this.log_error(`无法将【${label}】绑定的值设为 \`${val}\``);
           }

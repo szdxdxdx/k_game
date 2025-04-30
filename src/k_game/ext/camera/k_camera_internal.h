@@ -42,6 +42,7 @@ enum k_camera_state {
 #define K__CAMERA_TARGET_MAX 16
 
 struct k_camera {
+    struct k_component_manager *component_manager;
 
     enum k_camera_state state;
 
@@ -57,10 +58,21 @@ struct k_camera {
     size_t targets_num;
 
     struct k_callback *cb_camera_move;
+
+    /* ------------------------------------------------------------------------ */
+
     struct k_callback *cb_camera_debug;
+
+    /* ------------------------------------------------------------------------ */
+
+    unsigned int webui_debug_enabled;
 };
 
 void k__camera_move(void *camera_);
+
+int k__camera_set_debug_draw_enabled(struct k_camera *camera, int enabled);
+
+void k__camera_webui(struct k_camera *camera, int enabled);
 
 /* endregion */
 

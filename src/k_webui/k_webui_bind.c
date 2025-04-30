@@ -137,8 +137,7 @@ static inline int k__webui_get_int_at(webui_event_t *e, size_t idx) {
 }
 
 static inline int k__webui_get_bool_at(webui_event_t *e, size_t idx) {
-    bool b = webui_get_bool_at(e, idx);
-    return b ? 1 : 0;
+    return webui_get_bool_at(e, idx) ? 1 : 0;
 }
 
 static inline float k__webui_get_float_at(webui_event_t *e, size_t idx) {
@@ -434,8 +433,7 @@ static void k__webui_checkbox_on_unbind(struct k_webui_widget *widget) {
 static int k__webui_checkbox_on_set(struct k_webui_widget *widget, webui_event_t *e) {
     struct k_webui_checkbox *checkbox = (struct k_webui_checkbox *)widget;
 
-    bool b = k__webui_get_bool_at(e, 1);
-    int checked = b ? 1 : 0;
+    int checked = k__webui_get_bool_at(e, 1);
     if (NULL == checkbox->on_change) {
         *(int *)checkbox->data = checked;
         return 0;
