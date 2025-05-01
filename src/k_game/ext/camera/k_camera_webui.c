@@ -54,8 +54,8 @@ void k__camera_webui(struct k_camera *camera, int enabled) {
         if ( ! camera->webui_debug_enabled)
             return;
 
-        k_webui_unbind("摄像机控件：");
-        k_webui_unbind("绘制跟随目标线：");
+        k_webui_unbind_by_label("摄像机控件：");
+        k_webui_unbind_by_label("绘制跟随目标线：");
     }
     else {
         if (camera->webui_debug_enabled)

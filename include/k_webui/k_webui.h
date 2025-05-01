@@ -32,14 +32,14 @@ void k_webui_log_error(const char *fmt, ...);
 
 /* region [text] */
 
-/** \brief 文本框控件 */
+/** \brief 文本块控件 */
 struct k_webui_text_config {
 
     /**
      * \brief webui 定时同步触发的回调
      *
      * webui 定期执行此回调，你需要通过 `buf` 告知 webui 要显示文本内容。
-     * 若函数返回 0，则 webui 会将 `buf` 的内容同步到文本控件上。
+     * 若函数返回 0，则 webui 会将 `buf` 的内容同步到文本块上。
      * 若函数返回非 0，则 webui 不更新文本。
      *
      * 必须指定此回调。
@@ -52,7 +52,15 @@ struct k_webui_text_config {
     .on_read = NULL, \
 }
 
-int k_webui_bind_text(const char *label, void *data, const struct k_webui_text_config *config);
+/**
+ * \brief 绑定一个文本块控件
+ *
+ * 在 webui 中创建一个文本块控件，`data` 为该控件要绑定到数据，
+ * `label` 用于唯一标识该控件，`config` 为控件的配置。
+ *
+ * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
+ */
+size_t k_webui_bind_text(const char *label, void *data, const struct k_webui_text_config *config);
 
 /* endregion */
 
@@ -108,12 +116,12 @@ struct k_webui_int_slider_config {
 /**
  * \brief 绑定一个滑动条控件
  *
- * 在 webui 中创建一个滑动条控件，并将该控件绑定 `data` 所指向的内存。
+ * 在 webui 中创建一个滑动条控件，`data` 为该控件要绑定到数据，
  * `label` 用于唯一标识该控件，`config` 为控件的配置。
  *
- * 若绑定成功，函数返回 0，否则返回非 0。
+ * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
-int k_webui_bind_int_slider(const char *label, void *data, const struct k_webui_int_slider_config *config);
+size_t k_webui_bind_int_slider(const char *label, void *data, const struct k_webui_int_slider_config *config);
 
 /* endregion */
 
@@ -142,7 +150,7 @@ struct k_webui_float_slider_config {
 }
 
 /** \brief 绑定一个滑动条控件 */
-int k_webui_bind_float_slider(const char *label, void *data, const struct k_webui_float_slider_config *config);
+size_t k_webui_bind_float_slider(const char *label, void *data, const struct k_webui_float_slider_config *config);
 
 /* endregion */
 
@@ -186,12 +194,12 @@ struct k_webui_checkbox_config {
 /**
  * \brief 绑定一个复选框
  *
- * 在 webui 中创建一个复选框控件，并将该控件绑定 `data` 所指向的内存。
+ * 在 webui 中创建一个复选框控件，`data` 为该控件要绑定到数据，
  * `label` 用于唯一标识该控件，`config` 为控件的配置。
  *
- * 若绑定成功，函数返回 0，否则返回非 0。
+ * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
-int k_webui_bind_checkbox(const char *label, void *data, const struct k_webui_checkbox_config *config);
+size_t k_webui_bind_checkbox(const char *label, void *data, const struct k_webui_checkbox_config *config);
 
 /* endregion */
 
@@ -217,12 +225,12 @@ struct k_webui_button_config {
 /**
  * \brief 绑定一个按钮
  *
- * 在 webui 中创建一个按钮控件，并将该控件绑定 `data` 所指向的内存。
+ * 在 webui 中创建一个按钮控件，`data` 为该控件要绑定到数据，
  * `label` 用于唯一标识该控件，`config` 为控件的配置。
  *
- * 若绑定成功，函数返回 0，否则返回非 0。
+ * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
-int k_webui_bind_button(const char *label, void *data, const struct k_webui_button_config *config);
+size_t k_webui_bind_button(const char *label, void *data, const struct k_webui_button_config *config);
 
 /* endregion */
 
@@ -281,12 +289,12 @@ struct k_webui_int_select_config {
 /**
  * \brief 绑定一个下拉选择框
  *
- * 在 webui 中创建一个下拉选择框控件，并将该控件绑定 `data` 所指向的内存。
+ * 在 webui 中创建一个下拉选择框控件，`data` 为该控件要绑定到数据，
  * `label` 用于唯一标识该控件，`config` 为控件的配置。
  *
- * 若绑定成功，函数返回 0，否则返回非 0。
+ * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
-int k_webui_bind_int_select(const char *label, void *data, const struct k_webui_int_select_config *config);
+size_t k_webui_bind_int_select(const char *label, void *data, const struct k_webui_int_select_config *config);
 
 /* endregion */
 
@@ -299,7 +307,11 @@ int k_webui_bind_int_select(const char *label, void *data, const struct k_webui_
  * webui 无法感知 C 程序的内存状态，无法判断内存段是否还有效。
  * 请在内存段失效之前手动解绑，否则 webui 可能访问无效的内存。
  */
-void k_webui_unbind(const char *label);
+void k_webui_unbind_by_label(const char *label);
+
+void k_webui_unbind_by_id(size_t id);
+
+void k_webui_unbind_all(void);
 
 /* endregion */
 

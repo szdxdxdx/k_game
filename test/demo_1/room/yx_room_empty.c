@@ -24,7 +24,7 @@ static int text_read(void *data, struct k_str_buf *buf) {
 
 static void on_click(void *data) {
     k_webui_log_info("clicked");
-    k_webui_unbind("下拉菜单");
+    k_webui_unbind_by_label("下拉菜单");
 }
 
 static int checkbox_read(void *data, int *result) {
