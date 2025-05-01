@@ -208,6 +208,8 @@ int k_webui_bind_text(const char *label, void *data, const struct k_webui_text_c
         return -1;
     if (NULL == config)
         return -1;
+    if (NULL == config->on_read)
+        return -1;
 
     struct k_webui_text *text = k__webui_malloc(sizeof(struct k_webui_text));
     if (NULL == text)

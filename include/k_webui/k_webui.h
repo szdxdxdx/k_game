@@ -32,8 +32,18 @@ void k_webui_log_error(const char *fmt, ...);
 
 /* region [text] */
 
+/** \brief 文本框控件 */
 struct k_webui_text_config {
 
+    /**
+     * \brief webui 定时同步触发的回调
+     *
+     * webui 定期执行此回调，你需要通过 `buf` 告知 webui 要显示文本内容。
+     * 若函数返回 0，则 webui 会将 `buf` 的内容同步到文本控件上。
+     * 若函数返回非 0，则 webui 不更新文本。
+     *
+     * 必须指定此回调。
+     */
     int (*on_read)(void *data, struct k_str_buf *buf);
 };
 
@@ -64,8 +74,6 @@ struct k_webui_int_slider_config {
     /**
      * \brief 在 webui 中拖动滑动条时触发的回调
      *
-     * `data` 是指向用户绑定的数据的指针，由 `k_webui_bind_int_slider()` 指定。
-     *
      * `val` 是 webui 中滑动条的新值，你可以将该值写入内存，或用于更新状态等等，
      * 若业务逻辑执行顺利，则函数应返回 0 表示接受该值，否则返回非 0 表示拒绝该值。
      *
@@ -77,11 +85,9 @@ struct k_webui_int_slider_config {
     /**
      * \brief webui 定时同步触发的回调
      *
-     * `data` 是指向用户绑定的数据的指针，由 `k_webui_bind_int_slider()` 指定。
-     *
-     * webui 定期执行此回调以获取当前变量的值，你可以在此回调中读取内存，或查询状态等等，
-     * 若业务逻辑执行顺利，则函数应返回 0，webui 会将出参 `result` 的值同步到滑动条控件上。
-     * 若函数返回非 0，则 webui 不更新滑动条控件。
+     * webui 定期执行此回调，你需要通过出参 `result` 告知 webui 当前绑定变量的值。
+     * 若函数返回 0，则 webui 会将出参 `result` 的值同步到滑动条控件上。
+     * 若函数返回非 0，则 webui 不更新控件。
      *
      * 若 `on_read` 为 `NULL`，则默认将 `data` 视作指向 int 变量的指针，
      * 读取 `data` 指向的内存，并同步滑动条控件的值。
@@ -115,7 +121,9 @@ int k_webui_bind_int_slider(const char *label, void *data, const struct k_webui_
 
 /** \brief 滑动条控件 */
 struct k_webui_float_slider_config {
+
     /* 与 `k_webui_int_slider_config` 类似，但绑定的数据是 float 类型 */
+
     float min;
     float max;
     float step;
@@ -146,8 +154,6 @@ struct k_webui_checkbox_config {
     /**
      * \brief 在 webui 中点击复选框时触发的回调
      *
-     * `data` 是指向用户绑定的数据的指针，由 `k_webui_bind_checkbox()` 指定。
-     *
      * 若勾选了复选框，则 `checked` 为 1，否则为 0。你可以将该值写入内存，或用于更新状态等等，
      * 若业务逻辑执行顺利，则函数应返回 0 表示接受该值，否则返回非 0 表示拒绝该值。
      *
@@ -159,12 +165,10 @@ struct k_webui_checkbox_config {
     /**
      * \brief webui 定时同步触发的回调
      *
-     * `data` 是指向用户绑定的数据的指针，由 `k_webui_bind_checkbox()` 指定。
-     *
-     * webui 定期执行此回调以获取当前变量的值，你可以在此回调中读取内存，或查询状态等等，
-     * 若业务逻辑执行顺利，则函数应返回 0，webui 会将出参 `result` 的值同步到复选框控件上。
+     * webui 定期执行此回调，你需要通过出参 `result` 告知 webui 当前绑定变量的值。
+     * 若函数返回 0，则 webui 会将出参 `result` 的值同步到复选框控件上。
      * 若 `result` 返回非 0，则勾选复选框，否则取消勾选。
-     * 若函数返回非 0，则 webui 不更新复选框。
+     * 若函数返回非 0，则 webui 不更新控件。
      *
      * 若 `on_read` 为 `NULL`，则默认将 `data` 视作指向 int 变量的指针，
      * 读取 `data` 指向的内存，若为非 0 则勾选复选框，否则不勾选。
@@ -199,9 +203,7 @@ struct k_webui_button_config {
     /**
      * \brief 在 webui 中点击按钮时触发的回调
      *
-     * `data` 是指向用户绑定的数据的指针，由 `k_webui_bind_button()` 指定。
-     *
-     * 必须指定此回调，否则控件将无法使用。
+     * 必须指定此回调。
      */
     void (*on_click)(void *data);
 };
@@ -246,8 +248,6 @@ struct k_webui_int_select_config {
     /**
      * \brief 在 webui 中更改滑选择框中的选项时触发的回调
      *
-     * `data` 是指向用户绑定的数据的指针，由 `k_webui_bind_int_select()` 指定。
-     *
      * `val` 是 webui 中选择框的新增，你可以将该值写入内存，或用于更新状态等等，
      * 若业务逻辑执行顺利，则函数应返回 0 表示接受该值，否则返回非 0 表示拒绝该值。
      *
@@ -259,10 +259,8 @@ struct k_webui_int_select_config {
     /**
      * \brief webui 定时同步触发的回调
      *
-     * `data` 是指向用户绑定的数据的指针，由 `k_webui_bind_int_select()` 指定。
-     *
-     * webui 定期执行此回调以获取当前变量的值，你可以在此回调中读取内存，或查询状态等等，
-     * 若业务逻辑执行顺利，则函数应返回 0，webui 会将出参 `result` 的值同步更新下拉选择框当前选中的项。
+     * webui 定期执行此回调，你需要通过出参 `result` 告知 webui 当前绑定变量的值。
+     * 若函数返回 0，则 webui 会将出参 `result` 的值同步更新下拉选择框当前选中的项。
      * 若函数返回非 0，则 webui 不更新控件。
      *
      * 若 `on_read` 为 `NULL`，则默认将 `data` 视作指向 int 变量的指针，
