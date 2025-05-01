@@ -2,15 +2,11 @@
 #include "k_str_intrusive_map.h"
 #include "k_int_intrusive_map.h"
 
-#define K_LOG_TAG "k_webui:bind"
-#include "k_log.h"
-
 #include "./k_webui_internal.h"
 
 /* region [widget] */
 
 struct k_webui_widget {
-    struct k_str_intrusive_map_node label_map_link;
     struct k_int_intrusive_map_node id_map_link;
 
     struct k_webui_widget_v_tbl *v_tbl;
@@ -26,22 +22,14 @@ static inline size_t k__webui_widget_get_id(struct k_webui_widget *widget) {
     return widget->id_map_link.key;
 }
 
-static inline const char *k__webui_widget_get_label(struct k_webui_widget *widget) {
-    return widget->label_map_link.key;
-}
-
 static void k__webui_unbind(struct k_webui_widget *widget, int exec_js) {
 
     if (exec_js) {
-        const char *label = k__webui_widget_get_label(widget);
-        k__webui_exec_js_fmt("k__webui.unbind_by_label(%'s)", label);
+        size_t bind_id = k__webui_widget_get_id(widget);
+        k__webui_exec_js_fmt("k__webui.unbind_by_id(%zu)", bind_id);
     }
 
-    const char *label = k__webui_widget_get_label(widget);
     k_int_intrusive_map_del(&widget->id_map_link);
-    k__webui_free((void *)label);
-
-    k_str_intrusive_map_del(&widget->label_map_link);
 
     widget->v_tbl->on_unbind(widget);
 }
@@ -50,66 +38,34 @@ static void k__webui_unbind(struct k_webui_widget *widget, int exec_js) {
 
 /* region [bindings_map] */
 
-static struct k_str_intrusive_map bindings_label_map;
 static struct k_int_intrusive_map bindings_id_map;
 
 static int k__webui_bindings_map_init(void) {
 
     size_t buckets_num = 32;
 
-    struct k_hash_list *label_map_buckets = k__webui_malloc(sizeof(struct k_hash_list) * buckets_num);
-    if (NULL == label_map_buckets)
-        return -1;
-    k_str_intrusive_map_init(&bindings_label_map, label_map_buckets, buckets_num);
-
     struct k_hash_list *id_map_buckets = k__webui_malloc(sizeof(struct k_hash_list) * buckets_num);
-    if (NULL == id_map_buckets) {
-        k__webui_free(label_map_buckets);
+    if (NULL == id_map_buckets)
         return -1;
-    }
 
     k_int_intrusive_map_init(&bindings_id_map, id_map_buckets, buckets_num);
 
     return 0;
 }
 
-static int k__webui_bindings_map_add(const char *label, struct k_webui_widget *widget, size_t *get_bind_id) {
-    assert(NULL != label && '\0' != label[0]);
-
-    if (NULL != k_str_intrusive_map_get(&bindings_label_map, label)) {
-        k_log_error("label `%s` exists", label);
-        return -1;
-    }
-
-    char *label_copy = k__webui_strdup(label, strlen(label));
-    if (NULL == label_copy)
-        return -1;
-
-    k_str_intrusive_map_add_directly(&bindings_label_map, label_copy, &widget->label_map_link);
+static size_t k__webui_bindings_map_add(struct k_webui_widget *widget) {
 
     static int id_counter = 0;
 
     size_t bind_id = ++id_counter;
-
     k_int_intrusive_map_add_directly(&bindings_id_map, (int)bind_id, &widget->id_map_link);
-    *get_bind_id = id_counter;
 
-    return 0;
+    return id_counter;
 }
 
-static struct k_webui_widget *k__webui_bindings_map_get_by_label(const char *label) {
+static struct k_webui_widget *k__webui_bindings_map_get(size_t bind_id) {
 
-    struct k_str_intrusive_map_node *map_node = k_str_intrusive_map_get(&bindings_label_map, label);
-    if (NULL == map_node)
-        return NULL;
-
-    struct k_webui_widget *widget = k_str_intrusive_map_node_container_of(map_node, struct k_webui_widget, label_map_link);
-    return widget;
-}
-
-static struct k_webui_widget *k__webui_bindings_map_get_by_id(size_t id) {
-
-    struct k_int_intrusive_map_node *map_node = k_int_intrusive_map_get(&bindings_id_map, (int)id);
+    struct k_int_intrusive_map_node *map_node = k_int_intrusive_map_get(&bindings_id_map, (int)bind_id);
     if (NULL == map_node)
         return NULL;
 
@@ -133,102 +89,10 @@ static void k__webui_bindings_map_clear(void) {
 
 static void k__webui_bindings_map_free(void) {
     k__webui_bindings_map_clear();
-    k__webui_free(bindings_label_map.buckets);
     k__webui_free(bindings_id_map.buckets);
 }
 
 /* endregion */
-
-/* region [js_call_c] */
-
-static void k__webui_js_set_c_val(webui_event_t *e) {
-    const char *label = webui_get_string_at(e, 0);
-
-    struct k_webui_widget *widget = k__webui_bindings_map_get_by_label(label);
-    if (NULL == widget) {
-        webui_return_int(e, -1);
-        return;
-    }
-
-    if (0 != widget->v_tbl->on_webui_set(widget, e)) {
-        webui_return_int(e, -2);
-        return;
-    }
-
-    webui_return_int(e, 0);
-}
-
-static void k__webui_js_get_c_val(webui_event_t *e) {
-    const char *label = webui_get_string_at(e, 0);
-
-    struct k_webui_widget *widget = k__webui_bindings_map_get_by_label(label);
-    if (NULL == widget)
-        return;
-
-    widget->v_tbl->on_webui_get(widget, e);
-}
-
-static void k__webui_js_unbind(webui_event_t *e) {
-    const char *label = webui_get_string_at(e, 0);
-
-    struct k_webui_widget *widget = k__webui_bindings_map_get_by_label(label);
-    if (NULL == widget)
-        return;
-
-    k__webui_unbind(widget, 0);
-}
-
-/* endregion */
-
-/* region [init] */
-
-int k__webui_binding_init(void) {
-
-    if (0 != k__webui_bindings_map_init())
-        return -1;
-
-    webui_bind(k__webui.window, "k__webui_set_c_val", k__webui_js_set_c_val);
-    webui_bind(k__webui.window, "k__webui_get_c_val", k__webui_js_get_c_val);
-    webui_bind(k__webui.window, "k__webui_unbind", k__webui_js_unbind);
-    return 0;
-}
-
-void k__webui_binding_fini(void) {
-    k__webui_bindings_map_free();
-}
-
-/* endregion */
-
-/* region [unbind] */
-
-void k_webui_unbind_by_label(const char *label) {
-
-    struct k_webui_widget *widget = k__webui_bindings_map_get_by_label(label);
-    if (NULL == widget)
-        return;
-
-    k__webui_unbind(widget, 1);
-}
-
-void k_webui_unbind_by_id(size_t id) {
-
-    if (SIZE_MAX == id)
-        return;
-
-    struct k_webui_widget *widget = k__webui_bindings_map_get_by_id(id);
-    if (NULL == widget)
-        return;
-
-    k__webui_unbind(widget, 1);
-}
-
-void k_webui_unbind_all(void) {
-    k__webui_bindings_map_clear();
-}
-
-/* endregion */
-
-/* region [bind] */
 
 /* region [get_js_fn_arg] */
 
@@ -250,6 +114,88 @@ static inline const char *k__webui_get_str_at(webui_event_t *e, size_t idx) {
 }
 
 /* endregion */
+
+/* region [js_call_c] */
+
+static void k__webui_js_set_c_val(webui_event_t *e) {
+    int bind_id = k__webui_get_int_at(e, 0);
+
+    struct k_webui_widget *widget = k__webui_bindings_map_get(bind_id);
+    if (NULL == widget) {
+        webui_return_int(e, -1);
+        return;
+    }
+
+    if (0 != widget->v_tbl->on_webui_set(widget, e)) {
+        webui_return_int(e, -2);
+        return;
+    }
+
+    webui_return_int(e, 0);
+}
+
+static void k__webui_js_get_c_val(webui_event_t *e) {
+    int bind_id = k__webui_get_int_at(e, 0);
+
+    struct k_webui_widget *widget = k__webui_bindings_map_get(bind_id);
+    if (NULL == widget)
+        return;
+
+    widget->v_tbl->on_webui_get(widget, e);
+}
+
+static void k__webui_js_unbind(webui_event_t *e) {
+    int bind_id = k__webui_get_int_at(e, 0);
+
+    struct k_webui_widget *widget = k__webui_bindings_map_get(bind_id);
+    if (NULL == widget)
+        return;
+
+    k__webui_unbind(widget, 0);
+}
+
+/* endregion */
+
+/* region [init] */
+
+int k__webui_binding_init(void) {
+
+    if (0 != k__webui_bindings_map_init())
+        return -1;
+
+    webui_bind(k__webui.window, "k__webui_set_c_val", k__webui_js_set_c_val);
+    webui_bind(k__webui.window, "k__webui_get_c_val", k__webui_js_get_c_val);
+    webui_bind(k__webui.window, "k__webui_unbind",    k__webui_js_unbind);
+    return 0;
+}
+
+void k__webui_binding_fini(void) {
+    k__webui_bindings_map_free();
+}
+
+/* endregion */
+
+/* region [unbind] */
+
+void k_webui_unbind(size_t id) {
+
+    if (SIZE_MAX == id)
+        return;
+
+    struct k_webui_widget *widget = k__webui_bindings_map_get(id);
+    if (NULL == widget)
+        return;
+
+    k__webui_unbind(widget, 1);
+}
+
+void k_webui_unbind_all(void) {
+    k__webui_bindings_map_clear();
+}
+
+/* endregion */
+
+/* region [bind] */
 
 /* region [text] */
 
@@ -284,7 +230,7 @@ static int k__webui_text_on_get(struct k_webui_widget *widget, webui_event_t *e)
     return 0;
 }
 
-void k__webui_exec_js_add_text(struct k_webui_text *text, const struct k_webui_text_config *config) {
+void k__webui_exec_js_add_text(struct k_webui_text *text, const char *label, const struct k_webui_text_config *config) {
 
     struct k_str_buf str_buf;
     char buf[896];
@@ -295,7 +241,6 @@ void k__webui_exec_js_add_text(struct k_webui_text *text, const struct k_webui_t
         size_t bind_id = k__webui_widget_get_id(&text->widget);
         k_str_buf_printf(&str_buf, "bind_id:%zu,", bind_id);
 
-        const char *label = k__webui_widget_get_label(&text->widget);
         k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
 
         k_str_buf_puts(&str_buf, "type:'text',");
@@ -310,8 +255,8 @@ void k__webui_exec_js_add_text(struct k_webui_text *text, const struct k_webui_t
 
 size_t k_webui_bind_text(const char *label, void *data, const struct k_webui_text_config *config) {
 
-    if (NULL == label || '\0' == label[0])
-        goto err;
+    if (NULL == label)
+        label = "";
     if (NULL == config)
         goto err;
     if (NULL == config->on_read)
@@ -321,11 +266,7 @@ size_t k_webui_bind_text(const char *label, void *data, const struct k_webui_tex
     if (NULL == text)
         goto err;
 
-    size_t bind_id;
-    if (0 != k__webui_bindings_map_add(label, &text->widget, &bind_id)) {
-        k__webui_free(text);
-        goto err;
-    }
+    size_t bind_id = k__webui_bindings_map_add(&text->widget);
 
     static struct k_webui_widget_v_tbl v_tbl = {
         .on_unbind    = k__webui_text_on_unbind,
@@ -337,7 +278,7 @@ size_t k_webui_bind_text(const char *label, void *data, const struct k_webui_tex
     text->data = data;
     text->on_read = config->on_read;
 
-    k__webui_exec_js_add_text(text, config);
+    k__webui_exec_js_add_text(text, label, config);
 
     return bind_id;
 
@@ -438,7 +379,7 @@ struct k_webui_slider_config {
     };
 };
 
-void k__webui_exec_js_add_slider(struct k_webui_slider *slider, const struct k_webui_slider_config *config) {
+void k__webui_exec_js_add_slider(struct k_webui_slider *slider, const char *label, const struct k_webui_slider_config *config) {
 
     struct k_str_buf str_buf;
     char buf[896];
@@ -449,7 +390,6 @@ void k__webui_exec_js_add_slider(struct k_webui_slider *slider, const struct k_w
         size_t bind_id = k__webui_widget_get_id(&slider->widget);
         k_str_buf_printf(&str_buf, "bind_id:%zu,", bind_id);
 
-        const char *label = k__webui_widget_get_label(&slider->widget);
         k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
 
         k_str_buf_puts(&str_buf, "type:'range',");
@@ -465,6 +405,8 @@ void k__webui_exec_js_add_slider(struct k_webui_slider *slider, const struct k_w
                 k_str_buf_printf(&str_buf, "max:%f,",  config->float_slider->max);
                 k_str_buf_printf(&str_buf, "step:%f,", config->float_slider->step);
                 break;
+            default:
+                assert(0);
         }
     }
     k_str_buf_puts(&str_buf, "})");
@@ -477,8 +419,8 @@ void k__webui_exec_js_add_slider(struct k_webui_slider *slider, const struct k_w
 
 static size_t k__webui_bind_slider(const char *label, void *data, const struct k_webui_slider_config *config) {
 
-    if (NULL == label || '\0' == label[0])
-        goto err;
+    if (NULL == label)
+        label = "";
     if (NULL == config)
         goto err;
 
@@ -486,11 +428,7 @@ static size_t k__webui_bind_slider(const char *label, void *data, const struct k
     if (NULL == slider)
         goto err;
 
-    size_t bind_id;
-    if (0 != k__webui_bindings_map_add(label, &slider->widget, &bind_id)) {
-        k__webui_free(slider);
-        goto err;
-    }
+    size_t bind_id = k__webui_bindings_map_add(&slider->widget);
 
     static struct k_webui_widget_v_tbl v_tbl = {
         .on_unbind    = k__webui_slider_on_unbind,
@@ -515,7 +453,7 @@ static size_t k__webui_bind_slider(const char *label, void *data, const struct k
             assert(0);
     }
 
-    k__webui_exec_js_add_slider(slider, config);
+    k__webui_exec_js_add_slider(slider, label, config);
 
     return bind_id;
 
@@ -582,7 +520,7 @@ static int k__webui_checkbox_on_get(struct k_webui_widget *widget, webui_event_t
     return 0;
 }
 
-void k__webui_exec_js_add_checkbox(struct k_webui_checkbox *checkbox, const struct k_webui_checkbox_config *config) {
+void k__webui_exec_js_add_checkbox(struct k_webui_checkbox *checkbox, const char *label, const struct k_webui_checkbox_config *config) {
 
     struct k_str_buf str_buf;
     char buf[896];
@@ -593,7 +531,6 @@ void k__webui_exec_js_add_checkbox(struct k_webui_checkbox *checkbox, const stru
         size_t bind_id = k__webui_widget_get_id(&checkbox->widget);
         k_str_buf_printf(&str_buf, "bind_id:%zu,", bind_id);
 
-        const char *label = k__webui_widget_get_label(&checkbox->widget);
         k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
 
         k_str_buf_puts(&str_buf, "type:'checkbox',");
@@ -608,8 +545,8 @@ void k__webui_exec_js_add_checkbox(struct k_webui_checkbox *checkbox, const stru
 
 size_t k_webui_bind_checkbox(const char *label, void *data, const struct k_webui_checkbox_config *config) {
 
-    if (NULL == label || '\0' == label[0])
-        goto err;
+    if (NULL == label)
+        label = "";
     if (NULL == config)
         goto err;
 
@@ -617,11 +554,7 @@ size_t k_webui_bind_checkbox(const char *label, void *data, const struct k_webui
     if (NULL == checkbox)
         goto err;
 
-    size_t bind_id;
-    if (0 != k__webui_bindings_map_add(label, &checkbox->widget, &bind_id)) {
-        k__webui_free(checkbox);
-        goto err;
-    }
+    size_t bind_id = k__webui_bindings_map_add(&checkbox->widget);
 
     static struct k_webui_widget_v_tbl v_tbl = {
         .on_unbind    = k__webui_checkbox_on_unbind,
@@ -634,7 +567,7 @@ size_t k_webui_bind_checkbox(const char *label, void *data, const struct k_webui
     checkbox->on_change = config->on_change;
     checkbox->on_read   = config->on_read;
 
-    k__webui_exec_js_add_checkbox(checkbox, config);
+    k__webui_exec_js_add_checkbox(checkbox, label, config);
 
     return bind_id;
 
@@ -686,7 +619,7 @@ static int k__webui_int_select_on_get(struct k_webui_widget *widget, webui_event
     return 0;
 }
 
-void k__webui_exec_js_add_int_select(struct k_webui_int_select *select, const struct k_webui_int_select_config *config) {
+void k__webui_exec_js_add_int_select(struct k_webui_int_select *select, const char *label, const struct k_webui_int_select_config *config) {
 
     struct k_str_buf str_buf;
     char buf[896];
@@ -697,7 +630,6 @@ void k__webui_exec_js_add_int_select(struct k_webui_int_select *select, const st
         size_t bind_id = k__webui_widget_get_id(&select->widget);
         k_str_buf_printf(&str_buf, "bind_id:%zu,", bind_id);
 
-        const char *label = k__webui_widget_get_label(&select->widget);
         k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
 
         k_str_buf_puts(&str_buf, "type:'select',");
@@ -728,8 +660,8 @@ void k__webui_exec_js_add_int_select(struct k_webui_int_select *select, const st
 
 size_t k_webui_bind_int_select(const char *label, void *data, const struct k_webui_int_select_config *config) {
 
-    if (NULL == label || '\0' == label[0])
-        goto err;
+    if (NULL == label)
+        label = "";
     if (NULL == config)
         goto err;
 
@@ -737,11 +669,7 @@ size_t k_webui_bind_int_select(const char *label, void *data, const struct k_web
     if (NULL == select)
         goto err;
 
-    size_t bind_id;
-    if (0 != k__webui_bindings_map_add(label, &select->widget, &bind_id)) {
-        k__webui_free(select);
-        goto err;
-    }
+    size_t bind_id = k__webui_bindings_map_add(&select->widget);
 
     static struct k_webui_widget_v_tbl v_tbl = {
         .on_unbind    = k__webui_int_select_on_unbind,
@@ -754,7 +682,7 @@ size_t k_webui_bind_int_select(const char *label, void *data, const struct k_web
     select->on_change = config->on_change;
     select->on_read   = config->on_read;
 
-    k__webui_exec_js_add_int_select(select, config);
+    k__webui_exec_js_add_int_select(select, label, config);
 
     return bind_id;
 
@@ -786,7 +714,7 @@ static int k__webui_button_on_set(struct k_webui_widget *widget, webui_event_t *
     return 0;
 }
 
-void k__webui_exec_js_add_button(struct k_webui_button *button, const struct k_webui_button_config *config) {
+void k__webui_exec_js_add_button(struct k_webui_button *button, const char *label, const struct k_webui_button_config *config) {
 
     struct k_str_buf str_buf;
     char buf[896];
@@ -797,7 +725,6 @@ void k__webui_exec_js_add_button(struct k_webui_button *button, const struct k_w
         size_t bind_id = k__webui_widget_get_id(&button->widget);
         k_str_buf_printf(&str_buf, "bind_id:%zu,", bind_id);
 
-        const char *label = k__webui_widget_get_label(&button->widget);
         k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
 
         k_str_buf_puts(&str_buf, "type:'button',");
@@ -812,8 +739,8 @@ void k__webui_exec_js_add_button(struct k_webui_button *button, const struct k_w
 
 size_t k_webui_bind_button(const char *label, void *data, const struct k_webui_button_config *config) {
 
-    if (NULL == label || '\0' == label[0])
-        goto err;
+    if (NULL == label)
+        label = "";
     if (NULL == config)
         goto err;
     if (NULL == config->on_click)
@@ -823,11 +750,7 @@ size_t k_webui_bind_button(const char *label, void *data, const struct k_webui_b
     if (NULL == button)
         return SIZE_MAX;
 
-    size_t bind_id;
-    if (0 != k__webui_bindings_map_add(label, &button->widget, &bind_id)) {
-        k__webui_free(button);
-        goto err;
-    }
+    size_t bind_id = k__webui_bindings_map_add(&button->widget);
 
     static struct k_webui_widget_v_tbl v_tbl = {
         .on_unbind    = k__webui_button_on_unbind,
@@ -839,7 +762,7 @@ size_t k_webui_bind_button(const char *label, void *data, const struct k_webui_b
     button->data = data;
     button->on_click = config->on_click;
 
-    k__webui_exec_js_add_button(button, config);
+    k__webui_exec_js_add_button(button, label, config);
 
     return bind_id;
 

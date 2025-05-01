@@ -30,7 +30,7 @@ int k__camera_on_create(struct k_component_manager *manager, void *params) {
 
     camera->cb_camera_debug = NULL;
 
-    camera->webui_debug_enabled = 0;
+    camera->webui = NULL;
 
     return 0;
 }

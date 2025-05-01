@@ -56,7 +56,7 @@ struct k_webui_text_config {
  * \brief 绑定一个文本块控件
  *
  * 在 webui 中创建一个文本块控件，`data` 为该控件要绑定到数据，
- * `label` 用于唯一标识该控件，`config` 为控件的配置。
+ * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
@@ -117,7 +117,7 @@ struct k_webui_int_slider_config {
  * \brief 绑定一个滑动条控件
  *
  * 在 webui 中创建一个滑动条控件，`data` 为该控件要绑定到数据，
- * `label` 用于唯一标识该控件，`config` 为控件的配置。
+ * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
@@ -195,7 +195,7 @@ struct k_webui_checkbox_config {
  * \brief 绑定一个复选框
  *
  * 在 webui 中创建一个复选框控件，`data` 为该控件要绑定到数据，
- * `label` 用于唯一标识该控件，`config` 为控件的配置。
+ * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
@@ -226,7 +226,7 @@ struct k_webui_button_config {
  * \brief 绑定一个按钮
  *
  * 在 webui 中创建一个按钮控件，`data` 为该控件要绑定到数据，
- * `label` 用于唯一标识该控件，`config` 为控件的配置。
+ * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
@@ -290,7 +290,7 @@ struct k_webui_int_select_config {
  * \brief 绑定一个下拉选择框
  *
  * 在 webui 中创建一个下拉选择框控件，`data` 为该控件要绑定到数据，
- * `label` 用于唯一标识该控件，`config` 为控件的配置。
+ * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
@@ -301,16 +301,16 @@ size_t k_webui_bind_int_select(const char *label, void *data, const struct k_web
 /**
  * \brief 解除绑定
  *
- * 移除 webui 中 `label` 标识的控件，并解除绑定。
- * 若 `label` 标识的控件不存在，则函数直接返回。
+ * 通过 `bind_id` 解除绑定关系，并移除 webui 中已绑定的控件。
+ * 若指定的 `bind_id` 不存在，该函数将直接返回。
  *
- * webui 无法感知 C 程序的内存状态，无法判断内存段是否还有效。
- * 请在内存段失效之前手动解绑，否则 webui 可能访问无效的内存。
+ * 由于 webui 无法感知 C 中的内存状态，无法判断内存是否有效，
+ * 所以必须在绑定对象所依赖的内存即将失效前手动解除绑定，
+ * 否则 webui 后续可能会访问无效内存。
  */
-void k_webui_unbind_by_label(const char *label);
+void k_webui_unbind(size_t bind_id);
 
-void k_webui_unbind_by_id(size_t id);
-
+/** \brief 解除所有绑定 */
 void k_webui_unbind_all(void);
 
 /* endregion */

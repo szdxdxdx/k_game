@@ -145,11 +145,11 @@ static void set_debug(void *data) {
 
         if (k_key_down_or_held(K_KEY_LEFT_SHIFT)) {
             k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 0);
-            k_camera_set_debug_draw_enabled(0);
+            k_camera_webui(0);
         }
         else {
             k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 1);
-            k_camera_set_debug_draw_enabled(1);
+            k_camera_webui(1);
         }
         if (k_key_down_or_held(K_KEY_LEFT_CTRL)) {
             room_build_ui();
@@ -173,7 +173,6 @@ static int arena_room_on_create(void *param) {
     k_room_add_draw_callback(NULL, room_draw_text, INT_MIN, 1);
 
     k_room_add_camera();
-    k_camera_webui(1);
 
     k_room_add_collision_manager();
 
