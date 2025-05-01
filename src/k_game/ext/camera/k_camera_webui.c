@@ -79,14 +79,14 @@ void k__camera_webui(struct k_camera *camera, int enabled) {
         {
             struct k_webui_text_config text = K_WEBUI_TEXT_CONFIG_INIT;
             text.on_read = k__camera_webui_print;
-            webui->text = k_webui_bind_text("", camera, &text);
+            webui->text = k_webui_bind_text("摄像机", "详细信息", camera, &text);
         }
 
         {
             struct k_webui_checkbox_config checkbox =  K_WEBUI_CHECKBOX_CONFIG_INIT;
             checkbox.on_read   = k__camera_webui_checkbox_debug_draw_on_read;
             checkbox.on_change = k__camera_webui_checkbox_debug_draw_on_change;
-            webui->checkbox = k_webui_bind_checkbox("绘制摄像机的跟随目标线：", camera, &checkbox);
+            webui->checkbox = k_webui_bind_checkbox("摄像机", "绘制跟随目标线：", camera, &checkbox);
         }
     }
 }

@@ -55,12 +55,12 @@ struct k_webui_text_config {
 /**
  * \brief 绑定一个文本块控件
  *
- * 在 webui 中创建一个文本块控件，`data` 为该控件要绑定到数据，
- * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
+ * 在 webui 中创建一个文本块控件，`config` 为控件的配置，`data` 为该控件要绑定到数据。
+ * `group` 指定的控件的分组，`label` 指定控件前显示的文字标签。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
-size_t k_webui_bind_text(const char *label, void *data, const struct k_webui_text_config *config);
+size_t k_webui_bind_text(const char *group, const char *label, void *data, const struct k_webui_text_config *config);
 
 /* endregion */
 
@@ -116,12 +116,12 @@ struct k_webui_int_slider_config {
 /**
  * \brief 绑定一个滑动条控件
  *
- * 在 webui 中创建一个滑动条控件，`data` 为该控件要绑定到数据，
- * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
+ * 在 webui 中创建一个滑动条控件，`config` 为控件的配置，`data` 为该控件要绑定到数据。
+ * `group` 指定的控件的分组，`label` 指定控件前显示的文字标签。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
-size_t k_webui_bind_int_slider(const char *label, void *data, const struct k_webui_int_slider_config *config);
+size_t k_webui_bind_int_slider(const char *group, const char *label, void *data, const struct k_webui_int_slider_config *config);
 
 /* endregion */
 
@@ -150,7 +150,7 @@ struct k_webui_float_slider_config {
 }
 
 /** \brief 绑定一个滑动条控件 */
-size_t k_webui_bind_float_slider(const char *label, void *data, const struct k_webui_float_slider_config *config);
+size_t k_webui_bind_float_slider(const char *group, const char *label, void *data, const struct k_webui_float_slider_config *config);
 
 /* endregion */
 
@@ -194,12 +194,12 @@ struct k_webui_checkbox_config {
 /**
  * \brief 绑定一个复选框
  *
- * 在 webui 中创建一个复选框控件，`data` 为该控件要绑定到数据，
- * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
+ * 在 webui 中创建一个复选框控件，`config` 为控件的配置，`data` 为该控件要绑定到数据。
+ * `group` 指定的控件的分组，`label` 指定控件前显示的文字标签。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
-size_t k_webui_bind_checkbox(const char *label, void *data, const struct k_webui_checkbox_config *config);
+size_t k_webui_bind_checkbox(const char *group, const char *label, void *data, const struct k_webui_checkbox_config *config);
 
 /* endregion */
 
@@ -207,6 +207,9 @@ size_t k_webui_bind_checkbox(const char *label, void *data, const struct k_webui
 
 /** \brief 按钮控件 */
 struct k_webui_button_config {
+
+    /** \brief 按钮中的文本 */
+    const char *text;
 
     /**
      * \brief 在 webui 中点击按钮时触发的回调
@@ -219,18 +222,19 @@ struct k_webui_button_config {
 /** \brief 用于初始化按钮控件配置 */
 #define K_WEBUI_BUTTON_CONFIG_INIT \
 { \
+    .text     = NULL, \
     .on_click = NULL, \
 }
 
 /**
  * \brief 绑定一个按钮
  *
- * 在 webui 中创建一个按钮控件，`data` 为该控件要绑定到数据，
- * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
+ * 在 webui 中创建一个按钮控件，`config` 为控件的配置，`data` 为该控件要绑定到数据。
+ * `group` 指定的控件的分组，`label` 指定控件前显示的文字标签。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
-size_t k_webui_bind_button(const char *label, void *data, const struct k_webui_button_config *config);
+size_t k_webui_bind_button(const char *group, const char *label, void *data, const struct k_webui_button_config *config);
 
 /* endregion */
 
@@ -289,12 +293,12 @@ struct k_webui_int_select_config {
 /**
  * \brief 绑定一个下拉选择框
  *
- * 在 webui 中创建一个下拉选择框控件，`data` 为该控件要绑定到数据，
- * `label` 用于指定控件前显示的文字标签，`config` 为控件的配置。
+ * 在 webui 中创建一个下拉选择框控件。`config` 为控件的配置，`data` 为该控件要绑定到数据。
+ * `group` 指定的控件的分组，`label` 指定控件前显示的文字标签。
  *
  * 若绑定成功，函数唯一的绑定的 id，否则返回 `SIZE_MAX`。
  */
-size_t k_webui_bind_int_select(const char *label, void *data, const struct k_webui_int_select_config *config);
+size_t k_webui_bind_int_select(const char *group, const char *label, void *data, const struct k_webui_int_select_config *config);
 
 /* endregion */
 

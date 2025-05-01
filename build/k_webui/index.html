@@ -11,8 +11,6 @@
     body {
       margin: 0;
       padding: 0;
-      
-      --primary-color: #ee1b32;
     }
     
     #webui-app {
@@ -23,12 +21,6 @@
     
     #binding-panel {
     
-    }
-    
-    #binding-panel label {
-      border: 1px solid var(--primary-color);
-      margin: 8px;
-      padding: 8px;
     }
     
     /* endregion */
@@ -56,59 +48,67 @@
         <input type="checkbox" v-model="sync_enabled" @change="change_sync_enabled()"/>
       </label>
       <label v-show="sync_enabled">
+        <input type="range" min="50" max="2000" step="50" v-model="sync_timer_interval" @change="change_sync_timer_interval()"/>
         <span>同步更新的时间间隔：{{ sync_timer_interval }} 毫秒</span>
-        <input type="range" min="100" max="3000" step="1" v-model="sync_timer_interval" @change="change_sync_timer_interval()"/>
       </label>
     </div>
-    
-    <div class="widget" v-for="[label, binding] in bindings" :key="label">
-      <p>{{ binding }}</p>
 
-      <div v-if="binding.type === 'range'">
-        <button @click="unbind(binding)">删除</button>
-        <span v-show="binding.out_of_range">out of range</span>
-        <label>
-          <span>{{ binding.label }}</span>
-          <input type="range" v-model.number="binding.val" :min="binding.min" :max="binding.max" :step="binding.step" @input="slider_set_c_val($event, binding)" />
-          <span>{{ binding.val }}</span>
-        </label>
-      </div>
-
-      <div v-else-if="binding.type === 'checkbox'">
-        <button @click="unbind(binding)">删除</button>
-        <label>
-          <span>{{ binding.label }}</span>
-          <input type="checkbox" v-model="binding.checked"
-              @change="checkbox_set_c_val($event, binding)"/>
-        </label>
-      </div>
+    <fieldset v-for="[group_name, binding_group] in binding_groups" :key="group_name">
+      <legend>{{ group_name }}</legend>
       
-      <div v-else-if="binding.type === 'button'">
-        <button @click="unbind(binding)">删除</button>
-        <label>
+      <div v-for="[label, binding] in binding_group" :key="label">
+        
+        <!-- 滑动条 -->
+        <div v-if="binding.type === 'range'">
+          <button @click="unbind(binding)">删除</button>
+          <span v-show="binding.out_of_range">out of range</span>
+          <label>
+            <span>{{ binding.label }}</span>
+            <input type="range" v-model.number="binding.val" :min="binding.min" :max="binding.max" :step="binding.step" @input="slider_set_c_val($event, binding)" />
+            <span>{{ binding.val }}</span>
+          </label>
+        </div>
+        
+        <!-- 复选框 -->
+        <div v-else-if="binding.type === 'checkbox'">
+          <button @click="unbind(binding)">删除</button>
+          <label>
+            <span>{{ binding.label }}</span>
+            <input type="checkbox" v-model="binding.checked"
+                @change="checkbox_set_c_val($event, binding)"/>
+          </label>
+        </div>
+        
+        <!-- 按钮 -->
+        <div v-else-if="binding.type === 'button'">
+          <button @click="unbind(binding)">删除</button>
+          <label>
+            <span>{{ binding.label }}</span>
+            <input type="button" @click="button_set_c_val($event, binding)"/>
+          </label>
+        </div>
+        
+        <!-- 下拉选择框 -->
+        <div v-else-if="binding.type === 'select'">
+          <button @click="unbind(binding)">删除</button>
+          <span v-show="binding.out_of_range">out of range</span>
+          <label>
+            <span>{{ binding.label }}</span>
+            <select v-model.number="binding.selected" @change="select_set_c_val($event, binding)">
+              <option v-for="(option, idx) in binding.options" :key="idx" :value="option.val">{{ option.text }}</option>
+            </select>
+          </label>
+        </div>
+        
+        <!-- 文本框 -->
+        <div v-else-if="binding.type === 'text'">
+          <button @click="unbind(binding)">删除</button>
           <span>{{ binding.label }}</span>
-          <input type="button" @click="button_set_c_val($event, binding)"/>
-        </label>
+          <pre>{{ binding.text }}</pre>
+        </div>
+  
       </div>
-
-      <div v-else-if="binding.type === 'select'">
-        <button @click="unbind(binding)">删除</button>
-        <span v-show="binding.out_of_range">out of range</span>
-        <label>
-          <span>{{ binding.label }}</span>
-          <select v-model.number="binding.selected" @change="select_set_c_val($event, binding)">
-            <option v-for="(option, idx) in binding.options" :key="idx" :value="option.val">{{ option.text }}</option>
-          </select>
-        </label>
-      </div>
-      
-      <div v-else-if="binding.type === 'text'">
-        <button @click="unbind(binding)">删除</button>
-        <span>{{ binding.label }}</span>
-        <pre>{{ binding.text }}</pre>
-      </div>
-
-    </div>
+    </fieldset>
   
   </div>
   <!-- endregion -->
@@ -136,6 +136,10 @@
   const k__webui = createApp({
     data() {
       return {
+        /* map<str(group), map<num(bind_id), obj(binding)>> */
+        binding_groups: reactive(new Map()),
+
+        /* map<num(bind_id), obj(binding)> */
         bindings: reactive(new Map()),
     
         sync_enabled: true,
@@ -185,14 +189,16 @@
           case 'text': {
             binding.type    = 'text';
             binding.bind_id = widget_config.bind_id;
+            binding.group   = widget_config.group;
             binding.label   = widget_config.label;
             binding.text    = '';
             break;
           }
           case 'range': {
             binding.type    = 'range';
-            binding.label   = widget_config.label;
             binding.bind_id = widget_config.bind_id;
+            binding.group   = widget_config.group;
+            binding.label   = widget_config.label;
             binding.min     = widget_config.min;
             binding.max     = widget_config.max;
             binding.step    = widget_config.step;
@@ -203,18 +209,22 @@
           case 'checkbox': {
             binding.type    = 'checkbox';
             binding.bind_id = widget_config.bind_id;
+            binding.group   = widget_config.group;
             binding.label   = widget_config.label;
             binding.checked = false;
             break;
           }
           case 'button': {
-            binding.type = 'button';
-            binding.label = widget_config.label;
+            binding.type    = 'button';
+            binding.bind_id = widget_config.bind_id;
+            binding.group   = widget_config.group;
+            binding.label   = widget_config.label;
             break;
           }
           case 'select': {
             binding.type     = 'select';
             binding.bind_id  = widget_config.bind_id;
+            binding.group    = widget_config.group;
             binding.label    = widget_config.label;
             binding.options  = widget_config.options;
             binding.selected = null;
@@ -227,16 +237,42 @@
           }
         }
 
+        let group;
+        if (this.binding_groups.has(binding.group)) {
+          group = this.binding_groups.get(binding.group);
+        } else {
+          group = reactive(new Map());
+          this.binding_groups.set(binding.group, group);
+        }
+  
+        group.set(binding.bind_id, binding);
+
         this.bindings.set(binding.bind_id, binding);
       },
       
-      unbind(binding) {
-        k__webui_unbind(binding.bind_id);
+      /* endregion */
+      
+      /* region [unbind] */
+      
+      del_binding(binding) {
+        const group = this.binding_groups.get(binding.group);
+        group.delete(binding.bind_id);
+        
+        if (0 === group.size) {
+          this.binding_groups.delete(binding.group);
+        }
+        
         this.bindings.delete(binding.bind_id);
       },
 
-      unbind_by_id(bind_id) {
-        this.bindings.delete(bind_id);
+      unbind(binding) {
+        k__webui_unbind(binding.bind_id);
+        this.del_binding(binding);
+      },
+
+      c_unbind(bind_id) { /* c call js */
+        const binding = this.bindings.get(bind_id);
+        this.del_binding(binding);
       },
       
       /* endregion */
@@ -254,7 +290,7 @@
       },
 
       button_set_c_val($event, binding) {
-        this.set_c_val(binding.bind_id);
+        this.set_c_val(binding.bind_id, "");
       },
 
       select_set_c_val($event, binding) {

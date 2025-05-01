@@ -2,10 +2,15 @@
 
 #include "./k_webui_internal.h"
 
-static void k__webui_k_printf_s(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
+static void k__webui_print_str(struct k_printf_buf *buf, const struct k_printf_spec *spec, va_list *args) {
     (void)spec;
 
     char *c_str = va_arg(*args, char *);
+
+    if (NULL == c_str) {
+        k_printf_buf_puts_n(buf, "\"\"", 2);
+        return;
+    }
 
     char tmp_buf[512];
 
@@ -35,7 +40,7 @@ static void k__webui_k_printf_s(struct k_printf_buf *buf, const struct k_printf_
                 break;
         }
 
-        /* 每轮循环最多可能往 `tmp_buf` 中写入 2 个字符，
+        /* 每轮循环最多往 `tmp_buf` 中写入 2 个字符，
          * 所以当 `tmp_buf` 快满（倒数第 2 位被写入）时，
          * 就要输出给 `k_printf` 了。
          *
@@ -56,7 +61,7 @@ k_printf_spec_print_fn k__webui_fmt(const char **str) {
     const char *ch = *str;
     if (ch[0] == '\'' && ch[1] == 's') {
         *str += 2;
-        return k__webui_k_printf_s;
+        return k__webui_print_str;
     }
 
     return NULL;

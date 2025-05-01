@@ -48,19 +48,19 @@ static int empty_room_on_create(void *param) {
     {
         struct k_webui_text_config text = K_WEBUI_TEXT_CONFIG_INIT;
         text.on_read = text_read;
-        k_webui_bind_text("文本框", &int_val, &text);
+        k_webui_bind_text("group1", "文本框", &int_val, &text);
     }
 
     {
         struct k_webui_int_slider_config slider = K_WEBUI_INT_SLIDER_CONFIG_INIT;
         slider.max = 6;
         slider.on_input = set_int_val;
-        k_webui_bind_int_slider("滑动条", &int_val, &slider);
+        k_webui_bind_int_slider("group1", "滑动条", &int_val, &slider);
     }
 
     {
         struct k_webui_float_slider_config slider = K_WEBUI_FLOAT_SLIDER_CONFIG_INIT;
-        k_webui_bind_float_slider("滑动条", &float_val, &slider);
+        k_webui_bind_float_slider("group2", "滑动条", &float_val, &slider);
     }
 
     {
@@ -74,20 +74,20 @@ static int empty_room_on_create(void *param) {
         struct k_webui_int_select_config select = K_WEBUI_INT_SELECT_CONFIG_INIT;
         select.options = options;
         select.options_num = 5;
-        k_webui_bind_int_select("下拉菜单", &int_val, &select);
+        k_webui_bind_int_select("group1", "下拉菜单", &int_val, &select);
     }
 
     {
         struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_CONFIG_INIT;
         checkbox.on_change = checkbox_change;
         checkbox.on_read   = checkbox_read;
-        k_webui_bind_checkbox("是奇数", NULL, &checkbox);
+        k_webui_bind_checkbox("group1", "是奇数", NULL, &checkbox);
     }
 
     {
         struct k_webui_button_config button = K_WEBUI_BUTTON_CONFIG_INIT;
         button.on_click = on_click;
-        k_webui_bind_button("按钮", NULL, &button);
+        k_webui_bind_button("group3", "按钮", NULL, &button);
     }
 
     return 0;
