@@ -23,7 +23,7 @@ struct k_component_entity_config {
     size_t data_size;
 
     /**
-     * \brief 创建组件实例后执行的回调
+     * \brief 创建组件实例时执行的回调
      *
      * 必须指定该回调，用于在组件创建后执行必要的初始化工作。
      * k_game 在创建组件实例，并将其挂载到对象上后，会执行此回调。
@@ -35,28 +35,28 @@ struct k_component_entity_config {
      * - 为组件添加事件回调
      * - ...
      *
-     * 函数返回 0 表示初始化成功，非 0 表示初始化失败。
-     * 若初始化失败，k_game 将卸载并销毁该组件。
+     * 函数返回 0 表示成功，非 0 表示失败。
+     * 若失败，k_game 将卸载并销毁该组件。
      */
-    int (*fn_init)(struct k_component *component, void *param);
+    int (*on_create)(struct k_component *component, void *param);
 
     /**
-     * \brief 销毁组件实例前执行的回调
+     * \brief 销毁组件实例时执行的回调
      *
-     * 若组件初始化失败，k_game 将直接销毁组件，不调用 `fn_fini()`。
-     * 请确保 `fn_init()` 能在初始化失败时自行回滚。
+     * 若组件创建失败，k_game 将直接销毁组件，不调用 `on_destroy()`。
+     * 请确保 `on_create()` 能在失败时自行回滚。
      *
      * 此回调是可选的，若不需要，可将该值设为 `NULL`。
      */
-    void (*fn_fini)(struct k_component *component);
+    void (*on_destroy)(struct k_component *component);
 };
 
 /** \brief 注册组件类型所需的组件配置的默认值 */
 #define K_COMPONENT_ENTITY_CONFIG_INIT \
 { \
-    .data_size = 0,    \
-    .fn_init   = NULL, \
-    .fn_fini   = NULL  \
+    .data_size  = 0,    \
+    .on_create  = NULL, \
+    .on_destroy = NULL  \
 }
 
 /** \brief 注册组件类型所需的组件管理器配置 */
@@ -76,7 +76,7 @@ struct k_component_manager_config {
     size_t data_size;
 
     /**
-     * \brief 创建组件管理器后执行的回调
+     * \brief 创建组件管理器时执行的回调
      *
      * k_game 在创建组件管理器，并将其添加到房间后，会执行此回调。
      *
@@ -87,30 +87,30 @@ struct k_component_manager_config {
      * - 为组件管理器添加事件回调
      * - ...
      *
-     * 函数返回 0 表示初始化成功，非 0 表示初始化失败。
-     * 若初始化失败，k_game 将移除并销毁该组件。
+     * 函数返回 0 表示成功，非 0 表示失败。
+     * 若失败，k_game 将移除并销毁该组件。
      *
      * 此回调是可选的，若不需要，可将该值设为 `NULL`。
      */
-    int (*fn_init)(struct k_component_manager *manager, void *param);
+    int (*on_create)(struct k_component_manager *manager, void *param);
 
     /**
-     * \brief 销毁组件管理器前执行的回调
+     * \brief 销毁组件管理器时执行的回调
      *
-     * 若组件管理器初始化失败，k_game 将直接销毁管理器，不调用 `fn_fini()`。
-     * 请确保 `fn_init()` 能在初始化失败时自行回滚。
+     * 若组件管理器创建失败，k_game 将直接销毁管理器，不调用 `on_destroy()`。
+     * 请确保 `on_create()` 能在失败时自行回滚。
      *
      * 此回调是可选的，若不需要，可将该值设为 `NULL`。
      */
-    void (*fn_fini)(struct k_component_manager *manager);
+    void (*on_destroy)(struct k_component_manager *manager);
 };
 
 /** \brief 注册组件类型所需的组件管理器配置的默认值 */
 #define K_COMPONENT_MANAGER_CONFIG_INIT \
 { \
-    .data_size = 0,    \
-    .fn_init   = NULL, \
-    .fn_fini   = NULL  \
+    .data_size  = 0,    \
+    .on_create  = NULL, \
+    .on_destroy = NULL  \
 }
 
 /**
@@ -162,7 +162,7 @@ struct k_component_type *k_component_type_find(const char *type_name);
  * \brief 往对象上挂载组件
  *
  * 函数创建组件实例，并将其挂载到指定对象上。
- * 入参 `param` 被转交给组件的初始化回调 `fn_init()`。
+ * 入参 `param` 被转交给组件的初始化回调 `on_create()`。
  *
  * 若挂载成功，函数返回组件的指针，否则返回 `NULL`。
  */
@@ -186,7 +186,7 @@ void k_object_del_component(struct k_component *component);
  * \brief 往当前房间添加组件管理器
  *
  * 函数创建组件管理器实例，并将其添加到当前房间中。
- * 入参 `param` 被转交给组件管理器的初始化回调 `fn_init()`。
+ * 入参 `param` 被转交给组件管理器的初始化回调 `on_create()`。
  *
  * 若添加成功，函数返回组件管理器的指针，否则返回 `NULL`。
  */

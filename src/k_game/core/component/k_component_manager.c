@@ -36,8 +36,8 @@ static int k__component_manager_create(struct k_room *room, struct k_component_t
 
     k_list_init(&manager->callback_list);
 
-    if (NULL != manager_type->fn_init) {
-        if (0 != manager_type->fn_init(manager, param))
+    if (NULL != manager_type->on_create) {
+        if (0 != manager_type->on_create(manager, param))
             goto fn_init_failed;
     }
 
@@ -54,9 +54,9 @@ void k__component_manager_destroy(struct k_component_manager *manager) {
 
     struct k_component_manager_type *manager_type = manager->component_type->manager_type;
 
-    if (NULL != manager_type->fn_fini) {
+    if (NULL != manager_type->on_destroy) {
         /* TODO 禁止在 `fn_fini()` 中再次删除自身 */
-        manager_type->fn_fini(manager);
+        manager_type->on_destroy(manager);
     }
 
     k__component_manager_del_all_callbacks(manager);

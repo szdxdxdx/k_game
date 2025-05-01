@@ -33,7 +33,7 @@ struct k_room_config {
     size_t data_size;
 
     /**
-     * \brief 创建房间后执行的回调
+     * \brief 创建房间时执行的回调
      *
      * 在此回调中，你可以对房间执行你所需的初始化工作：
      * - 初始化该房间自定义数据段的内存
@@ -42,32 +42,38 @@ struct k_room_config {
      * - 在房间中创建对象
      * - ...
      *
-     * 你需要通过返回值告诉 k_game 你的初始化是否成功，
-     * 若成功，回调函数应返回 0，否则应返回非 0。
-     * 房间初始化失败，也意味着房间创建失败。
+     * 函数返回 0 表示成功，非 0 表示失败。
+     * 若失败，k_game 将销毁该房间。
      *
      * 入参 `param` 由 `k_room_create()` 传入。
      *
      * 此回调是可选的，设为 `NULL` 则不执行回调。
      */
-    int (*fn_init)(void *param); /* TODO: 将前缀 fn_ 改为 on_ */
+    int (*on_create)(void *param);
 
     /**
-     * \brief 销毁房间前执行的回调
+     * \brief 销毁房间时执行的回调
      *
-     * 若你在房间运行过程中申请有不是由 k_game 管辖的资源，
-     * 你可以在此回调中释放这些资源。
-     *
-     * 若房间初始化失败，k_game 不会执行本回调，
-     * 请确保 `fn_init()` 能在初始化失败时自行回滚。
+     * 若房间创建失败，k_game 将直接销毁房间，不调用 `on_destroy()`。
+     * 请确保 `on_create()` 能在失败时自行回滚。
      *
      * 此回调是可选的，设为 `NULL` 则不执行回调。
      */
-    void (*fn_fini)(void);
+    void (*on_destroy)(void);
 
-    void (*fn_enter)(void);
+    /**
+     * \brief 进入房间时执行的回调
+     *
+     * 此回调是可选的，设为 `NULL` 则不执行回调。
+     */
+    void (*on_enter)(void);
 
-    void (*fn_leave)(void);
+    /**
+     * \brief 离开房间时执行的回调
+     *
+     * 此回调是可选的，设为 `NULL` 则不执行回调。
+     */
+    void (*on_leave)(void);
 };
 
 /** \brief 创建房间所需的配置参数的默认值 */
@@ -77,16 +83,16 @@ struct k_room_config {
     .room_h     = 480,  \
     .room_speed = 60,   \
     .data_size  = 0,    \
-    .fn_init    = NULL, \
-    .fn_fini    = NULL, \
-    .fn_enter   = NULL, \
-    .fn_leave   = NULL, \
+    .on_create  = NULL, \
+    .on_destroy = NULL, \
+    .on_enter   = NULL, \
+    .on_leave   = NULL, \
 }
 
 /**
  * \brief 创建房间
  *
- * 函数将入参 `param` 转交给房间的初始化回调 `fn_init()`。
+ * 函数将入参 `param` 转交给房间的初始化回调 `on_create()`。
  *
  * 若创建成功，函数返回房间指针，否则返回 `NULL`。
  */

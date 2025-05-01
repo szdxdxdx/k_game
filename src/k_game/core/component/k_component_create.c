@@ -40,9 +40,9 @@ static struct k_component *k__component_create(struct k_component_type *componen
     component->object = object;
     k_list_insert_tail(&object->component_list, &component->list_node);
 
-    if (NULL != entity_type->fn_init) {
+    if (NULL != entity_type->on_create) {
         /* TODO 应该允许在 `fn_init()` 回调中删除自身吗？ */
-        if (0 != entity_type->fn_init(component, param))
+        if (0 != entity_type->on_create(component, param))
             goto fn_create_failed;
     }
 
@@ -64,9 +64,9 @@ static void k__component_destroy(struct k_component *component) {
 
     struct k_component_entity_type *entity_type = &component->type->entity_type;
 
-    if (entity_type->fn_fini != NULL) {
+    if (entity_type->on_destroy != NULL) {
         /* TODO 禁止在 `fn_fini()` 回调中再次删除自身 */
-        entity_type->fn_fini(component);
+        entity_type->on_destroy(component);
     }
 
     k_list_remove(&component->list_node);

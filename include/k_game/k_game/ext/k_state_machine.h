@@ -36,22 +36,22 @@ void k_object_del_state_machine(struct k_state_machine *machine);
 /**
  * \brief 状态机的状态节点
  *
- * 切换状态机的状态节点时，先执行当前旧节点的 `fn_exit()`，
- * 然后将当前节点设为新节点，并执行新节点的 `fn_enter()`，
- * 之后每帧执行该节点的 `fn_step()`。
+ * 切换状态机的状态节点时，先执行当前旧节点的 `on_exit()`，
+ * 然后将当前节点设为新节点，并执行新节点的 `on_enter()`，
+ * 之后每帧执行该节点的 `on_step()`。
  *
  * 状态节点的回调都是可选的，设为 `NULL` 则不执行回调。
  */
 struct k_state_machine_state {
 
     /** \brief 进入该状态时触发的回调 */
-    void (*fn_enter)(struct k_object *object);
+    void (*on_enter)(struct k_object *object);
 
     /** \brief 该状态持续期间每帧触发的回调 */
-    void (*fn_step)(struct k_object *object);
+    void (*on_step)(struct k_object *object);
 
     /** \brief 退出该状态时触发的回调 */
-    void (*fn_exit)(struct k_object *object);
+    void (*on_exit)(struct k_object *object);
 };
 
 /** \brief 切换状态机的状态节点 */

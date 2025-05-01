@@ -25,10 +25,11 @@ struct k_room {
 
     struct k_list callback_list;
 
-    int  (*fn_init)(void *param);
-    void (*fn_fini)(void);
-    void (*fn_enter)(void);
-    void (*fn_leave)(void);
+    int  (*on_create)(void *param);
+    void (*on_destroy)(void);
+
+    void (*on_enter)(void);
+    void (*on_leave)(void);
 
     struct k_object_pool object_pool;
 

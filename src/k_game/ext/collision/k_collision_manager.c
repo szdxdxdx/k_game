@@ -1,6 +1,6 @@
 #include "./k_collision_internal.h"
 
-int k__collision_manager_init(struct k_component_manager *component_manager, void *param) {
+int k__collision_manager_on_create(struct k_component_manager *component_manager, void *param) {
     (void)param;
 
     struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
@@ -12,7 +12,7 @@ int k__collision_manager_init(struct k_component_manager *component_manager, voi
     return 0;
 }
 
-void k__collision_manager_fini(struct k_component_manager *component_manager) {
+void k__collision_manager_on_destroy(struct k_component_manager *component_manager) {
     struct k_collision_manager *manager = k_component_manager_get_data(component_manager);
 
     k__collision_manager_fini_group_map(manager);

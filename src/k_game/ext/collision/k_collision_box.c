@@ -4,7 +4,7 @@
 
 /* region [collision_box_init] */
 
-int k__collision_box_init(struct k_component *component, void *param) {
+int k__collision_box_on_create(struct k_component *component, void *param) {
     struct k_collision_box_config *box_config = param;
 
     struct k_collision_manager *manager = k_component_get_manager_data(component);
@@ -76,7 +76,7 @@ int k__collision_box_init(struct k_component *component, void *param) {
     return 0;
 }
 
-void k__collision_box_fini(struct k_component *component) {
+void k__collision_box_on_destroy(struct k_component *component) {
     struct k_collision_box *box = k_component_get_data(component);
 
     k_list_remove(&box->box_list_node);

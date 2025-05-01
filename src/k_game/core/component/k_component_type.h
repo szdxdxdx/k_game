@@ -10,9 +10,9 @@ struct k_component_entity_type {
 
     size_t data_size;
 
-    int (*fn_init)(struct k_component *component, void *param);
+    int (*on_create)(struct k_component *component, void *param);
 
-    void (*fn_fini)(struct k_component *component);
+    void (*on_destroy)(struct k_component *component);
 };
 
 struct k_component_manager_type {
@@ -21,9 +21,9 @@ struct k_component_manager_type {
 
     size_t data_size;
 
-    int (*fn_init)(struct k_component_manager *manager, void *param);
+    int (*on_create)(struct k_component_manager *manager, void *param);
 
-    void (*fn_fini)(struct k_component_manager *manager);
+    void (*on_destroy)(struct k_component_manager *manager);
 };
 
 struct k_component_type {

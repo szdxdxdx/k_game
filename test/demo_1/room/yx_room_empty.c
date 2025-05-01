@@ -42,7 +42,7 @@ static int set_int_val(void *data, int val) {
     return 0;
 }
 
-static void enter_room(void) {
+static int empty_room_on_create(void *param) {
 
     k_room_add_draw_callback(NULL, show_int_val, INT_MIN, INT_MIN);
 
@@ -90,6 +90,8 @@ static void enter_room(void) {
         button.on_click = on_click;
         //k_webui_bind_button("按钮", NULL, &button);
     }
+
+    return 0;
 }
 
 static void show_int_val(void *unused) {
@@ -103,7 +105,7 @@ static void show_int_val(void *unused) {
 struct k_room *yx_create_empty_room(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.fn_enter = enter_room;
+    config.on_create = empty_room_on_create;
 
     return k_room_create(&config, NULL);
 }

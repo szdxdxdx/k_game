@@ -20,7 +20,7 @@ struct k_WASD {
     float speed;
 };
 
-static void WASD_step(struct k_component *component) {
+static void k__WASD_on_step(struct k_component *component) {
     struct k_WASD *WASD = k_component_get_data(component);
 
     float delta_time = k_get_step_delta();
@@ -35,7 +35,7 @@ static void WASD_step(struct k_component *component) {
         *(WASD->x) += WASD->speed * delta_time;
 }
 
-static int WASD_init(struct k_component *component, void *param) {
+static int k__WASD_on_create(struct k_component *component, void *param) {
     struct k_WASD *WASD = k_component_get_data(component);
     struct k_WASD_config *config = param;
 
@@ -47,7 +47,7 @@ static int WASD_init(struct k_component *component, void *param) {
     WASD->x         = config->x;
     WASD->y         = config->y;
 
-    if (NULL == k_component_add_step_callback(component, WASD_step))
+    if (NULL == k_component_add_step_callback(component, k__WASD_on_step))
         return -1;
 
     return 0;
@@ -59,7 +59,7 @@ int k__component_type_register_WASD(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_WASD);
-    config.fn_init = WASD_init;
+    config.on_create = k__WASD_on_create;
 
     struct k_component_type *type = k_component_type_register(NULL, &config);
     if (NULL == type)

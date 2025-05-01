@@ -4,7 +4,7 @@
 
 /* region [renderer_init] */
 
-static int k__sprite_renderer_init(struct k_component *component, void *param) {
+static int k__sprite_renderer_on_create(struct k_component *component, void *param) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
     const struct k_sprite_renderer_config *config = param;
 
@@ -52,7 +52,7 @@ int k__component_type_register_sprite_renderer(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
     config.data_size = sizeof(struct k_sprite_renderer);
-    config.fn_init = k__sprite_renderer_init;
+    config.on_create = k__sprite_renderer_on_create;
 
     struct k_component_type *type = k_component_type_register(NULL, &config);
     if (NULL == type)

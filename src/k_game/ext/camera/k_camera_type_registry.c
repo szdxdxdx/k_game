@@ -5,7 +5,7 @@
 #include "./k_camera_internal.h"
 #include "./k_camera_type_registry.h"
 
-int k__camera_init(struct k_component_manager *manager, void *params) {
+int k__camera_on_create(struct k_component_manager *manager, void *params) {
     (void)params;
 
     struct k_camera *camera = k_component_manager_get_data(manager);
@@ -35,7 +35,7 @@ int k__camera_init(struct k_component_manager *manager, void *params) {
     return 0;
 }
 
-static void k__camera_fini(struct k_component_manager *manager) {
+static void k__camera_on_destroy(struct k_component_manager *manager) {
     struct k_camera *camera = k_component_manager_get_data(manager);
     k__camera_webui(camera, 0);
 }
@@ -45,14 +45,14 @@ struct k_component_type *k__camera_component_type;
 int k__component_type_register_camera(void) {
 
     struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
-    entity_config.data_size = sizeof(struct k_camera_target);
-    entity_config.fn_init = k__camera_target_init;
-    entity_config.fn_fini = k__camera_target_fini;
+    entity_config.data_size  = sizeof(struct k_camera_target);
+    entity_config.on_create  = k__camera_target_on_create;
+    entity_config.on_destroy = k__camera_target_on_destroy;
 
     struct k_component_manager_config manager_config = K_COMPONENT_MANAGER_CONFIG_INIT;
-    manager_config.data_size = sizeof(struct k_camera);
-    manager_config.fn_init = k__camera_init;
-    manager_config.fn_fini = k__camera_fini;
+    manager_config.data_size  = sizeof(struct k_camera);
+    manager_config.on_create  = k__camera_on_create;
+    manager_config.on_destroy = k__camera_on_destroy;
 
     struct k_component_type *type = k_component_type_register(&manager_config, &entity_config);
     if (NULL == type)

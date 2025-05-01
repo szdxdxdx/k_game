@@ -25,9 +25,9 @@ struct k_camera_target {
     float weight;
 };
 
-int k__camera_target_init(struct k_component *component, void *param);
+int k__camera_target_on_create(struct k_component *component, void *param);
 
-void k__camera_target_fini(struct k_component *component);
+void k__camera_target_on_destroy(struct k_component *component);
 
 /* endregion */
 

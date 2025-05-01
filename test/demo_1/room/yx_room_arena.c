@@ -157,7 +157,7 @@ static void set_debug(void *data) {
     }
 }
 
-static int init_arena_room(void *param) {
+static int arena_room_on_create(void *param) {
     (void)param;
 
     room_build_ui();
@@ -221,24 +221,24 @@ static int init_arena_room(void *param) {
     return 0;
 }
 
-static void fini_arena_room(void) {
+static void arena_room_on_destroy(void) {
 
     llk_ui_destroy_context(ui);
 }
 
-static void enter_arena_room(void) {
+static void arena_room_on_enter(void) {
     // k_window_set_always_on_top(1);
 }
 
 struct k_room *yx_create_arena_room(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_w    = 1920 * 1.5f;
-    config.room_h    = 1080 * 1.5f;
-    config.data_size = sizeof(struct yx_room_arena);
-    config.fn_init   = init_arena_room;
-    config.fn_fini   = fini_arena_room;
-    config.fn_enter  = enter_arena_room;
+    config.room_w     = 1920 * 1.5f;
+    config.room_h     = 1080 * 1.5f;
+    config.data_size  = sizeof(struct yx_room_arena);
+    config.on_create  = arena_room_on_create;
+    config.on_destroy = arena_room_on_destroy;
+    config.on_enter   = arena_room_on_enter;
 
     return k_room_create(&config, NULL);
 }

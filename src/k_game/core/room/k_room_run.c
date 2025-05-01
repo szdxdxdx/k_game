@@ -19,8 +19,8 @@ void k__room_run(struct k_room *room) {
     k_view_fit_rect(k__window.window_w, k__window.window_h);
     k_view_set_position(0, 0);
 
-    if (NULL != room->fn_enter) {
-        room->fn_enter();
+    if (NULL != room->on_enter) {
+        room->on_enter();
     }
 
     k__time.step_timestamp = k_get_timestamp();
@@ -48,8 +48,8 @@ void k__room_run(struct k_room *room) {
         k__canvas_present();
     }
 
-    if (NULL != room->fn_leave) {
-        room->fn_leave();
+    if (NULL != room->on_leave) {
+        room->on_leave();
     }
 
     k__current_room = NULL;

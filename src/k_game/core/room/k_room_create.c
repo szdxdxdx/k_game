@@ -60,10 +60,10 @@ static int step_set_properties(void *context) {
     const struct k_room_config *config = ctx->config;
     struct k_room *room = ctx->room;
 
-    room->fn_init  = config->fn_init;
-    room->fn_fini  = config->fn_fini;
-    room->fn_enter = config->fn_enter;
-    room->fn_leave = config->fn_leave;
+    room->on_create  = config->on_create;
+    room->on_destroy = config->on_destroy;
+    room->on_enter   = config->on_enter;
+    room->on_leave   = config->on_leave;
 
     if (config->room_w <= 0 || config->room_h <= 0) {
         k_log_error("Invalid room width or height");
@@ -167,11 +167,11 @@ static void step_registry_del(void *context) {
     }
 }
 
-static int step_call_fn_init(void *context) {
+static int step_run_on_create_callback(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    if (NULL == room->fn_init)
+    if (NULL == room->on_create)
         return 0;
 
     void *param = ctx->param;
@@ -179,7 +179,7 @@ static int step_call_fn_init(void *context) {
     struct k_room *tmp = k__current_room;
     k__current_room = room;
 
-    int result = room->fn_init(param);
+    int result = room->on_create(param);
 
     /* [?] fn_init() 可能销毁了 tmp 指向的房间 */
     k__current_room = tmp;
@@ -192,17 +192,17 @@ static int step_call_fn_init(void *context) {
     return 0;
 }
 
-static void step_call_fn_fini(void *context) {
+static void step_run_on_destroy_callback(void *context) {
     struct step_context *ctx = context;
     struct k_room *room = ctx->room;
 
-    if (NULL == room->fn_fini)
+    if (NULL == room->on_destroy)
         return;
 
     struct k_room *tmp = k__current_room;
     k__current_room = room;
 
-    room->fn_fini();
+    room->on_destroy();
 
     /* [?] fn_fini() 可能销毁了 tmp 指向的房间 */
     k__current_room = tmp;
@@ -216,7 +216,7 @@ static const struct k_seq_step steps[] = {
     { NULL,                        step_del_component_managers   },
     { step_init_object_pool,       step_cleanup_object_pool      },
     { step_registry_add,           step_registry_del             },
-    { step_call_fn_init,           step_call_fn_fini             },
+    { step_run_on_create_callback, step_run_on_destroy_callback  },
 };
 
 /* endregion */

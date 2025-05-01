@@ -146,28 +146,28 @@ static void step_cleanup_room_stack(void *unused) {
     k__cleanup_room_stack();
 }
 
-static int step_call_fn_init(void *context) {
+static int step_game_start(void *context) {
     const struct k_game_config *config = context;
 
-    if (NULL == config->fn_init) {
-        k_log_error("Game fn_init() callback is NULL");
+    if (NULL == config->on_start) {
+        k_log_error("game on_start() callback is NULL");
         return -1;
     }
 
-    int result = config->fn_init();
+    int result = config->on_start();
     if (0 != result) {
-        k_log_error("Game fn_init() callback returned %d", result);
+        k_log_error("game on_start() callback returned %d", result);
         return -1;
     }
 
     return 0;
 }
 
-static void step_call_fn_fini(void *context) {
+static void step_game_end(void *context) {
     const struct k_game_config *config = context;
 
-    if (NULL != config->fn_fini)
-        config->fn_fini();
+    if (NULL != config->on_end)
+        config->on_end();
 }
 
 static const struct k_seq_step steps[] = {
@@ -182,7 +182,7 @@ static const struct k_seq_step steps[] = {
     { step_define_components,          NULL                            },
     { step_init_room_registry,         step_cleanup_room_registry      },
     { step_init_room_stack,            step_cleanup_room_stack         },
-    { step_call_fn_init,               step_call_fn_fini               },
+    { step_game_start,                 step_game_end                   },
 };
 
 /* endregion */

@@ -50,19 +50,8 @@ static void world_init(void) {
 
 static void position_update(struct k_position *position) {
 
-#if 0
-    float old_x = *(position->world_x);
-    float old_y = *(position->world_y);
-
     *(position->world_x) = *(position->parent->world_x) + position->local_x;
     *(position->world_y) = *(position->parent->world_y) + position->local_y;
-
-    if (old_x == *(position->world_x) && old_y == *(position->world_y))
-        return;
-#else
-    *(position->world_x) = *(position->parent->world_x) + position->local_x;
-    *(position->world_y) = *(position->parent->world_y) + position->local_y;
-#endif
 
     struct k_position *child;
     struct k_list *list = &position->child_list;
@@ -96,9 +85,9 @@ void k_position_set_world_position(struct k_position *position, float world_x, f
 
 /* endregion */
 
-/* region [position_init] */
+/* region [position_on_create] */
 
-int position_init(struct k_component *component, void *param) {
+static int k__position_on_create(struct k_component *component, void *param) {
     struct k_position *position = k_component_get_data(component);
     const struct k_position_config *config = param;
 
@@ -122,7 +111,7 @@ int position_init(struct k_component *component, void *param) {
     return 0;
 }
 
-void position_fini(struct k_component *component) {
+static void k__position_on_destroy(struct k_component *component) {
     struct k_position *position = k_component_get_data(component);
 
     struct k_position *parent = position->parent;
@@ -149,9 +138,9 @@ static struct k_component_type *k__position_component_type = NULL;
 int k__component_type_register_position(void) {
 
     struct k_component_entity_config config = K_COMPONENT_ENTITY_CONFIG_INIT;
-    config.data_size = sizeof(struct k_position);
-    config.fn_init = position_init;
-    config.fn_fini = position_fini;
+    config.data_size  = sizeof(struct k_position);
+    config.on_create  = k__position_on_create;
+    config.on_destroy = k__position_on_destroy;
 
     struct k_component_type *type = k_component_type_register(NULL, &config);
     if (NULL == type)

@@ -7,14 +7,14 @@ struct k_component_type *k__collision_component_type = NULL;
 int k__component_type_register_collision_box(void) {
 
     struct k_component_entity_config entity_config = K_COMPONENT_ENTITY_CONFIG_INIT;
-    entity_config.data_size = sizeof(struct k_collision_box);
-    entity_config.fn_init = k__collision_box_init;
-    entity_config.fn_fini = k__collision_box_fini;
+    entity_config.data_size  = sizeof(struct k_collision_box);
+    entity_config.on_create  = k__collision_box_on_create;
+    entity_config.on_destroy = k__collision_box_on_destroy;
 
     struct k_component_manager_config manager_config = K_COMPONENT_MANAGER_CONFIG_INIT;
-    manager_config.data_size = sizeof(struct k_collision_manager);
-    manager_config.fn_init = k__collision_manager_init;
-    manager_config.fn_fini = k__collision_manager_fini;
+    manager_config.data_size  = sizeof(struct k_collision_manager);
+    manager_config.on_create  = k__collision_manager_on_create;
+    manager_config.on_destroy = k__collision_manager_on_destroy;
 
     struct k_component_type *type = k_component_type_register(&manager_config, &entity_config);
     if (NULL == type)

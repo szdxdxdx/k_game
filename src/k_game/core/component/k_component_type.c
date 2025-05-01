@@ -17,9 +17,16 @@ static int check_config(const struct k_component_manager_config *manager_config,
         return -1;
     }
 
-    if (NULL == entity_config->fn_init) {
-        k_log_error("`entity_config->fn_init` is NULL");
+    if (NULL == entity_config->on_create) {
+        k_log_error("`entity_config->on_create` is NULL");
         return -1;
+    }
+
+    if (NULL != manager_config) {
+        if (NULL == manager_config->on_create) {
+            k_log_error("`manager_config->on_create` is NULL");
+            return -1;
+        }
     }
 
     return 0;
@@ -50,16 +57,16 @@ struct k_component_type *k_component_type_register(const struct k_component_mana
     }
 
     struct k_component_entity_type *entity_type = &component_type->entity_type;
-    entity_type->data_size = entity_config->data_size;
-    entity_type->fn_init   = entity_config->fn_init;
-    entity_type->fn_fini   = entity_config->fn_fini;
+    entity_type->data_size  = entity_config->data_size;
+    entity_type->on_create  = entity_config->on_create;
+    entity_type->on_destroy = entity_config->on_destroy;
 
     struct k_component_manager_type *manager_type = component_type->manager_type;
     if (NULL != manager_type) {
-        manager_type->type_id   = id_counter++;
-        manager_type->data_size = manager_config->data_size;
-        manager_type->fn_init   = manager_config->fn_init;
-        manager_type->fn_fini   = manager_config->fn_fini;
+        manager_type->type_id    = id_counter++;
+        manager_type->data_size  = manager_config->data_size;
+        manager_type->on_create  = manager_config->on_create;
+        manager_type->on_destroy = manager_config->on_destroy;
     }
 
     k__component_type_registry_add(component_type);

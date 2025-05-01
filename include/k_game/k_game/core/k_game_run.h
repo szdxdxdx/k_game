@@ -8,18 +8,18 @@ struct k_game_config {
     int window_w;
     int window_h;
 
-    int (*fn_init)(void);
+    int (*on_start)(void);
 
-    void (*fn_fini)(void);
+    void (*on_end)(void);
 };
 
 #define K_GAME_CONFIG_INIT \
 { \
-    .window_title = "",   \
-    .window_h     = 480,  \
-    .window_w     = 640,  \
-    .fn_init      = NULL, \
-    .fn_fini      = NULL, \
+    .window_title = "", \
+    .window_h = 480,  \
+    .window_w = 640,  \
+    .on_start = NULL, \
+    .on_end   = NULL, \
 }
 
 int k_game_run(const struct k_game_config *config);
