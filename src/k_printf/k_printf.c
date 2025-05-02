@@ -567,7 +567,7 @@ static int k__printf(k_printf_spec_match_fn fn_match, struct k_printf_buf *buf, 
     const char *s = fmt;
     const char *p = s;
     for (;;) {
-        while ('\0' != *p && '%' != *p) {
+        while ('%' != *p && '\0' != *p) {
             ++p;
         }
 
