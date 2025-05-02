@@ -16,7 +16,7 @@ int k_webui_init(void) {
 
     k__webui.window = webui_new_window();
 
-    webui_set_size(k__webui.window, 480, 640);
+    webui_set_size(k__webui.window, 500, 640);
     webui_set_position(k__webui.window, 10, 10);
     webui_set_root_folder(k__webui.window, "./k_webui");
 

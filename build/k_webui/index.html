@@ -14,6 +14,7 @@
     }
     
     #webui-app {
+      width: 500px;
     
     }
     
@@ -22,7 +23,7 @@
     #binding-panel {
     
     }
-    
+
     /* endregion */
     
     /* region [log-panel] */
@@ -42,41 +43,46 @@
   <!-- [widget-panel] --><!-- region -->
   <div id="binding-panel">
     
-    <div style="border: 1px solid #f09; padding: 4px;">
+    <div>
+      <span>启用同步</span>
       <label>
-        <span>启用同步</span>
         <input type="checkbox" v-model="sync_enabled" @change="change_sync_enabled()"/>
       </label>
-      <label v-show="sync_enabled">
+  
+      <span>同步更新的时间间隔：</span>
+      <label>
         <input type="range" min="50" max="2000" step="50" v-model="sync_timer_interval" @change="change_sync_timer_interval()"/>
-        <span>同步更新的时间间隔：{{ sync_timer_interval }} 毫秒</span>
       </label>
+      <span>{{ sync_timer_interval }} 毫秒</span>
     </div>
 
+    <!-- 控件组 -->
     <fieldset v-for="[group_name, binding_group] in binding_groups" :key="group_name">
       <legend>{{ group_name }}</legend>
       
+      <!-- 控件 -->
       <div v-for="[label, binding] in binding_group" :key="label">
         
+        <span>bind_id={{ binding.bind_id }}</span>
+
         <!-- 滑动条 -->
         <div v-if="binding.type === 'range'">
           <button @click="unbind(binding)">删除</button>
           <span v-show="binding.out_of_range">out of range</span>
           <label>
             <span>{{ binding.label }}</span>
-            <input type="range" v-model.number="binding.val" :min="binding.min" :max="binding.max" :step="binding.step" @input="slider_set_c_val($event, binding)" />
+            <input type="range" v-model.number="binding.val" :min="binding.min" :max="binding.max" :step="binding.step" @input="slider_set_c_val(binding)" />
             <span>{{ binding.val }}</span>
           </label>
         </div>
-        
+
         <!-- 复选框 -->
         <div v-else-if="binding.type === 'checkbox'">
           <button @click="unbind(binding)">删除</button>
           <label>
-            <span>{{ binding.label }}</span>
-            <input type="checkbox" v-model="binding.checked"
-                @change="checkbox_set_c_val($event, binding)"/>
+            <input type="checkbox" v-model="binding.checked" @change="checkbox_set_c_val(binding)"/>
           </label>
+          <span>{{ binding.label }}</span>
         </div>
         
         <!-- 按钮 -->
@@ -84,7 +90,7 @@
           <button @click="unbind(binding)">删除</button>
           <label>
             <span>{{ binding.label }}</span>
-            <input type="button" @click="button_set_c_val($event, binding)"/>
+            <button @click="button_set_c_val(binding)">{{ binding.text }}</button>
           </label>
         </div>
         
@@ -94,7 +100,7 @@
           <span v-show="binding.out_of_range">out of range</span>
           <label>
             <span>{{ binding.label }}</span>
-            <select v-model.number="binding.selected" @change="select_set_c_val($event, binding)">
+            <select v-model.number="binding.selected" @change="select_set_c_val(binding)">
               <option v-for="(option, idx) in binding.options" :key="idx" :value="option.val">{{ option.text }}</option>
             </select>
           </label>
@@ -167,9 +173,16 @@
         else if (this.sync_enabled && ! this.sync_timer) {
           this.sync_timer = setInterval(this.get_c_val, this.sync_timer_interval);
         }
+        else {
+          console.assert(false);
+        }
       },
 
       change_sync_timer_interval() {
+        if ( ! this.sync_enabled) {
+          return;
+        }
+  
         if (this.sync_timer) {
             clearInterval(this.sync_timer);
             this.sync_timer = null;
@@ -184,51 +197,37 @@
       bind(widget_config) {
         
         let binding = reactive({});
+
+        binding.type     = widget_config.type;
+        binding.bind_id  = widget_config.bind_id;
+        binding.group    = widget_config.group;
+        binding.label    = widget_config.label;
         
         switch (widget_config.type) {
           case 'text': {
-            binding.type    = 'text';
-            binding.bind_id = widget_config.bind_id;
-            binding.group   = widget_config.group;
-            binding.label   = widget_config.label;
-            binding.text    = '';
+            binding.text = '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本\n文本文本文本文本文本文本';
             break;
           }
           case 'range': {
-            binding.type    = 'range';
-            binding.bind_id = widget_config.bind_id;
-            binding.group   = widget_config.group;
-            binding.label   = widget_config.label;
-            binding.min     = widget_config.min;
-            binding.max     = widget_config.max;
-            binding.step    = widget_config.step;
-            binding.val     = null;
+            binding.min  = widget_config.min;
+            binding.max  = widget_config.max;
+            binding.step = widget_config.step;
+            binding.val  = widget_config.min;
             binding.out_of_range = false;
             break;
           }
           case 'checkbox': {
-            binding.type    = 'checkbox';
-            binding.bind_id = widget_config.bind_id;
-            binding.group   = widget_config.group;
-            binding.label   = widget_config.label;
             binding.checked = false;
             break;
           }
           case 'button': {
-            binding.type    = 'button';
-            binding.bind_id = widget_config.bind_id;
-            binding.group   = widget_config.group;
-            binding.label   = widget_config.label;
+            binding.text = widget_config.text;
             break;
           }
           case 'select': {
-            binding.type     = 'select';
-            binding.bind_id  = widget_config.bind_id;
-            binding.group    = widget_config.group;
-            binding.label    = widget_config.label;
             binding.options  = widget_config.options;
             binding.selected = null;
-            binding.out_of_range = true;
+            binding.out_of_range = false;
             break;
           }
           default: {
@@ -246,7 +245,6 @@
         }
   
         group.set(binding.bind_id, binding);
-
         this.bindings.set(binding.bind_id, binding);
       },
       
@@ -279,26 +277,23 @@
       
       /* region [set_val] */
 
-      slider_set_c_val($event, binding) {
-        let value = $event.target.value;
-        this.set_c_val(binding.bind_id, value);
+      slider_set_c_val(binding) {
+        this.set_c_val(binding.bind_id, binding.val);
       },
 
-      checkbox_set_c_val($event, binding) {
-        let checked = $event.target.checked;
-        this.set_c_val(binding.bind_id, checked);
+      checkbox_set_c_val(binding) {
+        this.set_c_val(binding.bind_id, binding.checked);
       },
 
-      button_set_c_val($event, binding) {
-        this.set_c_val(binding.bind_id, "");
+      button_set_c_val(binding) {
+        this.set_c_val(binding.bind_id);
       },
 
-      select_set_c_val($event, binding) {
-        let selected = $event.target.value;
-        this.set_c_val(binding.bind_id, selected);
+      select_set_c_val(binding) {
+        this.set_c_val(binding.bind_id, binding.selected);
       },
       
-      set_c_val(bind_id_, val_=null) {
+      set_c_val(bind_id_, val_="") {
         if ( ! this.sync_enabled) {
           return;
         }
@@ -306,8 +301,15 @@
         const bind_id = bind_id_;
         const val = val_;
         k__webui_set_c_val(bind_id, val).then((resp) => {
-          if (0 !== Number(resp)) {
-            this.log_error(`无法将【bind_id=${bind_id}】的控件所绑定的值设为 \`${val}\``);
+          const ret_val = Number(resp);
+          if (0 !== ret_val) {
+            if (-1 === ret_val) {
+              this.log_error(`C 程序中，控件【bind_id=${bind_id}】已被移除`);
+            } else if (-2 === ret_val) {
+              this.log_error(`控件【bind_id=${bind_id}】拒绝接受值 \`${val}\``);
+            } else {
+              console.assert(false);
+            }
           }
         });
       },
@@ -319,8 +321,9 @@
       get_c_val() {
         for (const [bind_id, binding] of this.bindings) {
 
-          if (binding.type === 'button')
+          if (binding.type === 'button') {
             continue;
+          }
   
           k__webui_get_c_val(bind_id).then((resp) => {
 
@@ -394,16 +397,43 @@
 </script>
 
 
-<!-- tmp
+<!-- tmp-->
 <script>
+  k__webui.sync_enabled = false;
+  k__webui.change_sync_enabled(false);
+
   k__webui.log_info(`info`)
   k__webui.log_warn(`warn`)
   k__webui.log_error(`error`)
-  k__webui.bind({label: 'test range', type: 'range'})
-  k__webui.bind({label: 'test checkbox', type: 'checkbox'})
-  k__webui.bind({label: 'test select', type: 'select'})
-  k__webui.bind({label: 'test button', type: 'button'})
-</script>-->
+
+  let id = 1;
+
+  k__webui.bind({
+    bind_id: id++, group: '组1', label: '滑动条',
+    type: 'range', min: 1, max: 100, step: 1,
+  })
+  k__webui.bind({
+    bind_id: id++, group: '组1', label: '复选框',
+    type: 'checkbox'
+  })
+  k__webui.bind({
+    bind_id: id++, group: '组2', label: '下拉选择框',
+    type: 'select',
+    options: [
+      { text: '选项1', val: 1 },
+      { text: '选项2', val: 2 },
+      { text: '选项3', val: 3 },
+    ]
+  })
+  k__webui.bind({
+    bind_id: id++, group: '组2', label: '按钮',
+    type: 'button', text: '按钮a'
+  })
+  k__webui.bind({
+    bind_id: id++, group: '组3', label: '文本块',
+    type: 'text', text: '一段文本\n一段文本',
+  })
+</script>
 
 </body>
 </html>
