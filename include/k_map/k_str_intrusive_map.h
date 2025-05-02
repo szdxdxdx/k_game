@@ -18,7 +18,7 @@ struct k_str_intrusive_map_node {
 
     const char *key;
 
-    size_t hash;
+    size_t key_hash;
 };
 
 void k_str_intrusive_map_init(struct k_str_intrusive_map *map, struct k_hash_list *buckets, size_t buckets_num);

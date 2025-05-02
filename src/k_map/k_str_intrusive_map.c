@@ -13,14 +13,14 @@ static inline size_t str_hash(const char *str) {
     return hash;
 }
 
-static inline struct k_str_intrusive_map_node *find(struct k_hash_list *list, const char *key, size_t hash) {
+static inline struct k_str_intrusive_map_node *find(struct k_hash_list *list, const char *key, size_t key_hash) {
 
     struct k_str_intrusive_map_node *map_node;
     struct k_hash_list_node *iter;
     for (k_hash_list_for_each(list, iter)) {
         map_node = container_of(iter, struct k_str_intrusive_map_node, node_link);
 
-        if (map_node->hash == hash) {
+        if (map_node->key_hash == key_hash) {
             if (strcmp(map_node->key, key) == 0)
                 return map_node;
         }
@@ -51,8 +51,8 @@ int k_str_intrusive_map_add_if_absent(struct k_str_intrusive_map *map, const cha
     if (NULL != find(list, key, hash))
         return -1;
 
-    node->key = key;
-    node->hash = hash;
+    node->key      = key;
+    node->key_hash = hash;
     k_hash_list_add(list, &node->node_link);
 
     return 0;
@@ -66,8 +66,8 @@ void k_str_intrusive_map_add_directly(struct k_str_intrusive_map *map, const cha
     size_t hash = str_hash(key);
     struct k_hash_list *list = &(map->buckets[hash % map->buckets_num]);
 
-    node->key = key;
-    node->hash = hash;
+    node->key      = key;
+    node->key_hash = hash;
     k_hash_list_add(list, &node->node_link);
 }
 
@@ -103,7 +103,7 @@ struct k_hash_list *k_str_intrusive_map_rehash(struct k_str_intrusive_map *map, 
         for (k_hash_list_for_each_s(old_list, iter, next)) {
             map_node = container_of(iter, struct k_str_intrusive_map_node, node_link);
 
-            struct k_hash_list *new_list = &(new_buckets[map_node->hash % new_buckets_num]);
+            struct k_hash_list *new_list = &(new_buckets[map_node->key_hash % new_buckets_num]);
             k_hash_list_add(new_list, &map_node->node_link);
         }
     }

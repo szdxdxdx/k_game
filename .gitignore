@@ -6,5 +6,7 @@
 
 /libs/
 
+/docs/drawio/*.bkp
+
 /build/*
 !/build/k_webui
