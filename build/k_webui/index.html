@@ -7,21 +7,225 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   
   <style>
-    
+    ::-webkit-scrollbar {
+      height: 8px; /* 仅保留横向滚动条 */
+      width: 4px; /* 隐藏纵向滚动条 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #999; /* 滚动条颜色 */
+      width: 16px;
+      border-radius: 0;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent; /* 轨道透明 */
+    }
+
     body {
       margin: 0;
       padding: 0;
+      font-family: monospace;
+      font-size: 16px;
+      background-color: #efefef;
+
+      --color-primary: #0066cc;
+      --color-primary-hover: #0077dd11;
+      --color-primary-active: #0077dd33;
+      --color-error: #990000;
+      --color-warning: #dd9900;
+      --max-label-width: 200px;
     }
-    
+    button{
+      min-width: 2em;
+      height: 1em;
+      box-sizing: border-box;
+      border-radius: 0;
+      border: 1px solid gray;
+      transition: all 0.3s;
+      text-align: center;
+      font-family: monospace;
+      padding: 2px 15px;
+    }
+    button:hover{
+      border: 1px solid var(--color-primary);
+      background-color: var(--color-primary-hover);
+    }
+    button:active{
+      background-color: var(--color-primary-active);
+    }
+
+    input[type="checkbox"] {
+      position: relative;
+      border: 1px solid gray;
+      transition: all 0.3s;
+      cursor: pointer;
+      appearance: none;
+      height: 13px;
+      width: 13px;
+      margin-top: auto;
+      margin-bottom: auto;
+      background-color: #fff;
+    }
+    input[type="checkbox"]:active {
+      background-color: var(--color-primary-active);
+    }
+    input[type="checkbox"]:hover {
+      border: 1px solid var(--color-primary);
+    }
+    input[type="checkbox"]:checked {
+      border: 1px solid var(--color-primary);
+    }
+    input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      width: 3px;
+      height: 7px;
+      border: solid var(--color-primary);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    select{
+      border: 1px solid gray;
+      border-radius: 0;
+      outline: none;
+    }
+    select:focus-visible{
+      border: 1px solid #0066cc;
+    }
+
+
     #webui-app {
-      width: 500px;
-    
+      max-width: 500px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    
+
     /* region [binding-panel] */
     
     #binding-panel {
-    
+      flex: 3;
+      overflow-y: auto;
+    }
+
+    #binding-panel fieldset{
+      display: flex;
+      flex-direction: column;
+      padding: 2px;
+    }
+
+    #binding-panel .widget{
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      transition: background-color 0.3s;
+      padding: 2px 5px;
+    }
+    #binding-panel .widget:hover{
+      background-color: var(--color-primary-hover);
+    }
+    #binding-panel .widget_bind{
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      margin-left: auto;
+    }
+    #binding-panel .widget_bind_id{
+      right: 20px;
+      width: 68px;
+      color: gray;
+      font-size: xx-small;
+    }
+    #binding-panel .widget_bind_delete{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 50%;
+      height: 14px;
+      width: 14px;
+      font-family: Arial, serif;
+      color: gray;
+      font-size: 20px;
+      font-weight: bolder;
+      transition: all 0.3s;
+    }
+    #binding-panel .widget_bind_delete:hover{
+      color: #a60000;
+    }
+
+    #binding-panel .widget_range{
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+    }
+    #binding-panel .widget_range_label{
+      max-width: var(--max-label-width);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-lines: 1;
+    }
+    #binding-panel .widget_range_content{
+      margin: 0 10px;
+    }
+    #binding-panel .widget_range_warning{
+      color: var(--color-error);
+      margin-left: auto;
+      margin-right: 5px;
+    }
+
+    #binding-panel .widget_checkbox{
+
+    }
+    #binding-panel .widget_checkbox_content{
+
+    }
+    #binding-panel .widget_checkbox_label{
+      margin-left: 5px;
+    }
+
+
+    #binding-panel .widget_button{
+      display: flex;
+    }
+    #binding-panel .widget_button button{
+      margin-left: 5px;
+    }
+
+    #binding-panel .widget_select{
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+    }
+    #binding-panel .widget_select_label{
+      max-width: var(--max-label-width);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-lines: 1;
+
+    }
+    #binding-panel .widget_select_content{
+    }
+    #binding-panel .widget_select_warning{
+      color: var(--color-error);
+      margin-left: auto;
+      margin-right: 5px;
+    }
+
+    #binding-panel .widget_text{
+      width: 95%;
+      padding-bottom: 3px;
+    }
+    #binding-panel .widget_text_content{
+      white-space: pre-wrap;
+      word-break: break-all;
+      border: 1px solid gray;
+      background-color: white;
     }
 
     /* endregion */
@@ -29,9 +233,68 @@
     /* region [log-panel] */
     
     #log-panel {
-    
+      box-sizing: border-box;
+      border: 1px solid gray;
+      flex: 2;
+      overflow-y: auto;
+      background-color: white;
+    }
+    #log-panel table{
+      display: flex;
+      border-collapse: separate;
+      border-spacing:0 0;
+
+    }
+
+    #log-panel .level{
+      display: block;
+      color: white;
+      font-weight: bolder;
+    }
+    #log-panel .level.WARN{
+      color: var(--color-warning);
+    }
+    #log-panel .level.ERROR{
+      color: var(--color-error);
+    }
+    #log-panel .level.INFO{
+      color: var(--color-primary);
+    }
+
+    #log-panel .msg{
+      word-break: break-all;
+      white-space: pre-wrap;
     }
     
+    /* endregion */
+
+    /* region [tip-panel] */
+    #tip-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      border: 1px solid gray;
+      padding: 5px;
+      position: relative;
+    }
+    #tip-panel .label{
+      cursor: pointer;
+    }
+    #tip-panel .content{
+      position: absolute;
+      background-color: white;
+      border: 1px solid gray;
+      display: none;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+    #tip-panel .label:hover{
+
+    }
+    #tip-panel .label:hover > .content{
+      display: flex;
+    }
+
     /* endregion */
   
   </style>
@@ -39,7 +302,15 @@
 </head>
 <body>
 <div id="webui-app">
-  
+
+  <!--  [tip-panel] --><!-- region -->
+  <div style="display: none" id="tip-panel">
+    <div class="label">...
+      <div class="content">asdasd</div>
+    </div>
+  </div>
+  <!-- endregion -->
+
   <!-- [widget-panel] --><!-- region -->
   <div id="binding-panel">
     
@@ -61,33 +332,28 @@
       <legend>{{ group_name }}</legend>
       
       <!-- 控件 -->
-      <div v-for="[label, binding] in binding_group" :key="label">
-        
-        <span>bind_id={{ binding.bind_id }}</span>
+      <div class="widget" v-for="[label, binding] in binding_group" :key="label">
 
         <!-- 滑动条 -->
-        <div v-if="binding.type === 'range'">
-          <button @click="unbind(binding)">删除</button>
-          <span v-show="binding.out_of_range">out of range</span>
+        <div v-if="binding.type === 'range'" class="widget_range">
           <label>
-            <span>{{ binding.label }}</span>
-            <input type="range" v-model.number="binding.val" :min="binding.min" :max="binding.max" :step="binding.step" @input="slider_set_c_val(binding)" />
+            <span class="widget_range_label">{{ binding.label }}</span>
+            <input class="widget_range_content" type="range" v-model.number="binding.val" :min="binding.min" :max="binding.max" :step="binding.step" @input="slider_set_c_val(binding)" />
             <span>{{ binding.val }}</span>
           </label>
+          <span class="widget_range_warning" v-show="binding.out_of_range">out of range</span>
         </div>
 
         <!-- 复选框 -->
-        <div v-else-if="binding.type === 'checkbox'">
-          <button @click="unbind(binding)">删除</button>
-          <label>
-            <input type="checkbox" v-model="binding.checked" @change="checkbox_set_c_val(binding)"/>
+        <div v-else-if="binding.type === 'checkbox'" class="widget_checkbox">
+          <label class="widget_checkbox_content">
+            <input class="checkbox" type="checkbox" v-model="binding.checked" @change="checkbox_set_c_val(binding)"/>
           </label>
-          <span>{{ binding.label }}</span>
+          <span class="widget_checkbox_label">{{ binding.label }}</span>
         </div>
         
         <!-- 按钮 -->
-        <div v-else-if="binding.type === 'button'">
-          <button @click="unbind(binding)">删除</button>
+        <div v-else-if="binding.type === 'button'" class="widget_button">
           <label>
             <span>{{ binding.label }}</span>
             <button @click="button_set_c_val(binding)">{{ binding.text }}</button>
@@ -95,24 +361,25 @@
         </div>
         
         <!-- 下拉选择框 -->
-        <div v-else-if="binding.type === 'select'">
-          <button @click="unbind(binding)">删除</button>
-          <span v-show="binding.out_of_range">out of range</span>
+        <div v-else-if="binding.type === 'select'" class="widget_select">
+          <div class="widget_select_label">{{ binding.label }}</div>
           <label>
-            <span>{{ binding.label }}</span>
             <select v-model.number="binding.selected" @change="select_set_c_val(binding)">
               <option v-for="(option, idx) in binding.options" :key="idx" :value="option.val">{{ option.text }}</option>
             </select>
           </label>
+          <span class="widget_range_warning" v-show="binding.out_of_range">out of range</span>
         </div>
         
         <!-- 文本框 -->
-        <div v-else-if="binding.type === 'text'">
-          <button @click="unbind(binding)">删除</button>
-          <span>{{ binding.label }}</span>
-          <pre>{{ binding.text }}</pre>
+        <div v-else-if="binding.type === 'text'" class="widget_text">
+          <span class="widget_text_label">{{ binding.label }}</span>
+          <div class="widget_text_content">{{ binding.text }}</div>
         </div>
-  
+        <div class="widget_bind">
+          <div class="widget_bind_id">bind_id : {{ binding.bind_id }}</div>
+          <div class="widget_bind_delete" @click="unbind(binding)">×</div>
+        </div>
       </div>
     </fieldset>
   
@@ -123,12 +390,8 @@
   <div id="log-panel">
     <table>
       <tr v-for="(log, idx) in log_list" :key="idx">
-        <td>
-          <span>{{ log.level }}</span>
-        </td>
-        <td>
-          <pre>{{ log.msg }}</pre>
-        </td>
+        <td class="level" :class="log.level">{{ log.level }}</td>
+        <td class="msg">{{ log.msg }}</td>
       </tr>
     </table>
   </div>
@@ -205,7 +468,7 @@
         
         switch (widget_config.type) {
           case 'text': {
-            binding.text = '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本\n文本文本文本文本文本文本';
+            binding.text = '';
             break;
           }
           case 'range': {
@@ -396,8 +659,12 @@
   }).mount('#webui-app');
 </script>
 
+<script>
+  k__webui.log_info(`webui`)
+</script>
 
-<!-- tmp-->
+
+<!-- tmp
 <script>
   k__webui.sync_enabled = false;
   k__webui.change_sync_enabled(false);
@@ -433,7 +700,7 @@
     bind_id: id++, group: '组3', label: '文本块',
     type: 'text', text: '一段文本\n一段文本',
   })
-</script>
+</script>-->
 
 </body>
 </html>

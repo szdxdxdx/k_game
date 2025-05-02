@@ -21,7 +21,7 @@ static void k__SDL_poll_events(void) {
                 k__current_room->game_loop = 0;
                 break;
 
-            case SDL_WINDOWEVENT: {
+            case SDL_WINDOWEVENT:
                 switch (event.window.event) {
                     case SDL_WINDOWEVENT_RESIZED:
                         /* FIXME 无法改变窗口大小
@@ -43,7 +43,7 @@ static void k__SDL_poll_events(void) {
                     default:
                         break;
                 }
-            }
+                break;
 
             case SDL_MOUSEMOTION:
                 k__SDL_handle_event_mouse_motion(&event.motion);

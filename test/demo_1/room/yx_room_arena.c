@@ -12,6 +12,24 @@
 
 #include "../llk_ui/llk_ui.h"
 
+#include "k_webui.h"
+
+/* region [webui] */
+
+static int webui_text_mouse_xy(void *data, struct k_str_buf *buf) {
+
+    k_str_buf_printf(buf, "鼠标坐标 (%.2f, %.2f)\n", k_mouse_x(), k_mouse_y());
+    return 0;
+}
+
+static void webui_text_mouse_xy_bind(void) {
+    struct k_webui_text_config text = K_WEBUI_TEXT_CONFIG_INIT;
+    text.on_read = webui_text_mouse_xy;
+    k_webui_bind_text("", "", NULL, &text);
+}
+
+/* endregion */
+
 /* region [ui] */
 
 static const char *ui_xml_file_path = "./demo_1/ui/ui.xml";
@@ -227,6 +245,7 @@ static void arena_room_on_destroy(void) {
 
 static void arena_room_on_enter(void) {
     // k_window_set_always_on_top(1);
+    webui_text_mouse_xy_bind();
 }
 
 struct k_room *yx_create_arena_room(void) {
