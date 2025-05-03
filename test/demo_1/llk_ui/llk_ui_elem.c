@@ -35,7 +35,7 @@ int llk__ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_el
         goto err;
     }
 
-    copy->elem_struct_size         = type->elem_struct_size;
+    copy->elem_struct_size  = type->elem_struct_size;
     copy->type_name         = type_name;
     copy->fn_init           = type->fn_init;
     copy->fn_fini           = type->fn_fini;
@@ -196,7 +196,7 @@ static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val) {
     if (NULL == val || '\0' == val[0]) {
 
         if ('\0' != elem->id_map_node.key[0]) {
-            k_str_intrusive_map_del(&elem->id_map_node);
+            k_str_intrusive_map_remove(&elem->id_map_node);
 
             llk__ui_mem_free((void *)elem->id_map_node.key);
             elem->id_map_node.key = "";
@@ -217,7 +217,7 @@ static int llk__ui_elem_set_id(struct llk_ui_elem *elem, const char *val) {
         return -1;
 
     if ('\0' != elem->id_map_node.key[0]) {
-        k_str_intrusive_map_del(&elem->id_map_node);
+        k_str_intrusive_map_remove(&elem->id_map_node);
 
         llk__ui_mem_free((void *)elem->id_map_node.key);
     }

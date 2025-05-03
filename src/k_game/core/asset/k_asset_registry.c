@@ -49,7 +49,7 @@ void k__asset_registry_add(struct k_asset_registry *registry, struct k_asset_reg
 void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
 
     if ('\0' != registry_node->name_map_node.key[0]) {
-        k_str_intrusive_map_del(&registry_node->name_map_node);
+        k_str_intrusive_map_remove(&registry_node->name_map_node);
         k_hash_list_node_loop(&registry_node->name_map_node.node_link);
     }
 
@@ -64,7 +64,7 @@ int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry
     if (NULL == asset_name || '\0' == asset_name[0]) {
 
         if ('\0' != map_node->key[0]) {
-            k_str_intrusive_map_del(map_node);
+            k_str_intrusive_map_remove(map_node);
             k__mem_free((void *)map_node->key);
             map_node->key = "";
         }
@@ -81,7 +81,7 @@ int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry
             return -1;
 
         if ('\0' != map_node->key[0]) {
-            k_str_intrusive_map_del(map_node);
+            k_str_intrusive_map_remove(map_node);
             k__mem_free((void *)map_node->key);
         }
 

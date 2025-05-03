@@ -29,7 +29,7 @@ void k_str_intrusive_map_add_directly(struct k_str_intrusive_map *map, const cha
 
 struct k_str_intrusive_map_node *k_str_intrusive_map_get(struct k_str_intrusive_map *map, const char *key);
 
-void k_str_intrusive_map_del(struct k_str_intrusive_map_node *node);
+void k_str_intrusive_map_remove(struct k_str_intrusive_map_node *node);
 
 struct k_hash_list *k_str_intrusive_map_rehash(struct k_str_intrusive_map *map, struct k_hash_list *new_buckets, size_t new_buckets_num);
 

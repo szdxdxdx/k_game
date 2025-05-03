@@ -17,7 +17,7 @@ struct k_view k__view;
 int k_view_fit_rect(float w, float h) {
 
     if (w <= 0 || isnan(w) || isinf(w) || h <= 0 || isnan(h) || isinf(h)){
-        k_log_error("Invalid parameters, `w`=%f, `h`=%f", w, h);
+        k_log_error("invalid parameters, `w`=%f, `h`=%f", w, h);
         return -1;
     }
 
@@ -57,6 +57,9 @@ int k_view_fit_rect(float w, float h) {
         view_new_h = view_max_h;
     }
 
+    float cx = k__view.view_x + k__view.view_w / 2.0f;
+    float cy = k__view.view_y + k__view.view_h / 2.0f;
+
     k__view.view_w = view_new_w;
     k__view.view_h = view_new_h;
     k__view.view_window_ratio = k__view.view_w / k__window.window_w;
@@ -68,13 +71,14 @@ int k_view_fit_rect(float w, float h) {
 
     k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
 
+    k_view_set_position(cx, cy);
     return 0;
 }
 
 int k_view_set_position(float cx, float cy) {
 
     if (isnan(cx) || isinf(cx) || isnan(cy) || isinf(cy)) {
-        k_log_error("Invalid parameters, `cx`=%f, `cy`=%f", cx, cy);
+        k_log_error("invalid parameters, `cx`=%f, `cy`=%f", cx, cy);
         return -1;
     }
 

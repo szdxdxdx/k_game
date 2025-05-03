@@ -100,9 +100,6 @@ void k_sprite_destroy(struct k_sprite *sprite);
  *
  * 若名字设为空字符串 "" 或 `NULL`，则清除名字，并删除索引。
  *
- * 注意：k_game 不会复制名字，而仅是保存字符串指针。
- * 请确保该字符串的内存始终有效，且内容不被修改。
- *
  * 若成功，函数返回 0，否则返回非 0。
  */
 int k_sprite_set_name(struct k_sprite *sprite, const char *sprite_name);

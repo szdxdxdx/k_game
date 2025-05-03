@@ -80,7 +80,7 @@ struct k_str_intrusive_map_node *k_str_intrusive_map_get(struct k_str_intrusive_
     return find(list, key, hash);
 }
 
-void k_str_intrusive_map_del(struct k_str_intrusive_map_node *node) {
+void k_str_intrusive_map_remove(struct k_str_intrusive_map_node *node) {
     assert(NULL != node);
     k_hash_list_remove(&node->node_link);
 }

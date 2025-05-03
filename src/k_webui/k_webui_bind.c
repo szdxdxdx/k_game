@@ -29,7 +29,7 @@ static void k__webui_unbind(struct k_webui_widget *widget, int exec_js) {
         k__webui_exec_js_fmt("k__webui.c_unbind(%zu)", bind_id);
     }
 
-    k_int_intrusive_map_del(&widget->id_map_link);
+    k_int_intrusive_map_remove(&widget->id_map_link);
 
     widget->v_tbl->on_unbind(widget);
 }

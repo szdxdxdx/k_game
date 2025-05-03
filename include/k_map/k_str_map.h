@@ -48,6 +48,9 @@ struct k_str_map *k_str_map_create(const struct k_str_map_options *options);
  * \brief 销毁哈希表
  *
  * 若 `map` 为 `NULL`，则函数立即返回。
+ *
+ * 若哈希表中的元素持有外部资源需要处理，
+ * 可先调用 `k_str_map_clear_with_callback()`。
  */
 void k_str_map_destroy(struct k_str_map *map);
 
@@ -66,6 +69,9 @@ struct k_str_map *k_str_map_construct(struct k_str_map *map, const struct k_str_
  *
  * 原地析构 `map` 所指向的内存段上的哈希表。
  * 若 `map` 为 `NULL`，则函数立即返回。
+ *
+ * 若哈希表中的元素持有外部资源需要处理，
+ * 可先调用 `k_str_map_clear_with_callback()`。
  */
 void k_str_map_destruct(struct k_str_map *map);
 
@@ -138,11 +144,18 @@ void *k_str_map_get(struct k_str_map *map, const char *key);
  * \brief 清空哈希表
  *
  * 删除哈希表中的所有元素，并保留哈希桶数组的当前容量。
- *
- * 若哈希表中的元素持有外部资源，可提供回调 `fn_callback` 来在删除元素前处理这些资源，
- * 如果不需要处理，可以将 `fn_callback` 设为 `NULL`。
  */
-void k_str_map_clear(struct k_str_map *map, void (*fn_callback)(const char *key, void *val));
+void k_str_map_clear(struct k_str_map *map);
+
+/**
+ * \brief 清空哈希表
+ *
+ * 删除哈希表中的所有元素，并保留哈希桶数组的当前容量。
+ *
+ * 每删除一个元素前都会执行 `fn_callback()` 回调，传回待删除的元素的键和值，
+ * 若哈希表中的元素持有外部资源，可在该回调中处理这些资源。
+ */
+void k_str_map_clear_with_callback(struct k_str_map *map, void (*fn_callback)(const char *key, void *val));
 
 /** \brief 用于遍历哈希表的迭代器 */
 struct k_str_map_iter {

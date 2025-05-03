@@ -69,7 +69,6 @@ struct k_component_manager_config {
      * 关联数据的内存由 k_game 负责分配和释放，其生命周期与组件管理器一致。
      * 可通过 `k_component_manager_get_data()` 访问该内存。
      *
-     *
      * 若不需要关联数据，可将该值设为 0，
      * 之后 `k_component_manager_get_data()` 将返回 `NULL`。
      */
@@ -138,10 +137,6 @@ struct k_component_type *k_component_type_register(const struct k_component_mana
  * 名字不是必须的，你可以直接保存组件类型的指针。
  *
  * 若名字设为空字符串 "" 或 `NULL`，则清除名字。
- *
- * k_game 不会复制名字，而仅是保存字符串指针。
- * 请确保该字符串的内存始终有效，且内容不被修改。
- * 推荐使用字符串字面量或静态存储的字符串。
  *
  * 若设置成功，函数返回 0，否则返回非 0。
  */

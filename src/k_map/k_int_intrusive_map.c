@@ -63,7 +63,7 @@ struct k_int_intrusive_map_node *k_int_intrusive_map_get(struct k_int_intrusive_
     return find(list, key);
 }
 
-void k_int_intrusive_map_del(struct k_int_intrusive_map_node *node) {
+void k_int_intrusive_map_remove(struct k_int_intrusive_map_node *node) {
     assert(NULL != node);
     k_hash_list_remove(&node->node_link);
 }

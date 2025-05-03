@@ -66,7 +66,7 @@ void k__collision_manager_del_group(struct k_collision_group *group) {
 
         k_object_del_component(box->component);
     }
-    k_int_intrusive_map_del(&group->group_map_node);
+    k_int_intrusive_map_remove(&group->group_map_node);
 
     if (NULL != group->cb_debug_draw) {
         k_callback_del(group->cb_debug_draw);

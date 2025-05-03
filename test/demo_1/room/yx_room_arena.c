@@ -22,10 +22,43 @@ static int webui_text_mouse_xy(void *data, struct k_str_buf *buf) {
     return 0;
 }
 
-static void webui_text_mouse_xy_bind(void) {
+static void webui_text_bind_mouse_xy(void) {
     struct k_webui_text_config text = K_WEBUI_TEXT_CONFIG_INIT;
     text.on_read = webui_text_mouse_xy;
     k_webui_bind_text("", "", NULL, &text);
+}
+
+/* ------------------------------------------------------------------------ */
+
+static float view_scale = 1.0f;
+
+static int webui_slider_set_view_scale(void *data, float val) {
+
+    if (val < 0.1f) {
+        return -1;
+    }
+
+    view_scale = val;
+
+    float vw = k_canvas_ui_get_vw();
+    float vh = k_canvas_ui_get_vh();
+    k_view_fit_rect(vw * view_scale, vh * view_scale);
+    return 0;
+}
+
+static int webui_slider_get_view_scale(void *data, float *val) {
+    *val = view_scale;
+    return 0;
+}
+
+static void webui_slider_bind_view_size(void) {
+    struct k_webui_float_slider_config slider = K_WEBUI_FLOAT_SLIDER_CONFIG_INIT;
+    slider.max   = 2.0f;
+    slider.min   = 0.1f;
+    slider.step  = 0.005f;
+    slider.on_input = webui_slider_set_view_scale;
+    slider.on_read  = webui_slider_get_view_scale;
+    k_webui_bind_float_slider("", "视野大小", NULL, &slider);
 }
 
 /* endregion */
@@ -245,14 +278,15 @@ static void arena_room_on_destroy(void) {
 
 static void arena_room_on_enter(void) {
     // k_window_set_always_on_top(1);
-    webui_text_mouse_xy_bind();
+    webui_text_bind_mouse_xy();
+    webui_slider_bind_view_size();
 }
 
 struct k_room *yx_create_arena_room(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_w     = 1920 * 1.5f;
-    config.room_h     = 1080 * 1.5f;
+    config.room_w     = 1920 * 2.0f;
+    config.room_h     = 1080 * 2.0f;
     config.data_size  = sizeof(struct yx_room_arena);
     config.on_create  = arena_room_on_create;
     config.on_destroy = arena_room_on_destroy;
