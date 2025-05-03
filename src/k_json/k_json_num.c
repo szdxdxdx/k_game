@@ -4,49 +4,49 @@
 
 #include "./_internal.h"
 
-struct k__json_num *k__create_json_num_i(int num) {
+struct k_json_num *k__json_num_create_i(int num) {
 
-    struct k__json_num *json_num = k__json_mem_alloc(sizeof(struct k__json_num));
+    struct k_json_num *json_num = k__json_mem_alloc(sizeof(struct k_json_num));
     if (json_num == NULL)
         return NULL;
 
     json_num->json.type = K__JSON_NUM;
     json_num->num_i = num;
     json_num->num_s = NULL;
-    json_num->num_f = (double)num;
+    json_num->num_f = (float)num;
 
     return json_num;
 }
 
-struct k__json_num *k__create_json_num_f(double num) {
+struct k_json_num *k__json_num_create_f(float num) {
 
     if (isnan(num) || isinf(num))
         return NULL;
 
-   struct k__json_num *json_num = k__json_mem_alloc(sizeof(struct k__json_num));
+   struct k_json_num *json_num = k__json_mem_alloc(sizeof(struct k_json_num));
     if (json_num == NULL)
         return NULL;
 
     json_num->json.type = K__JSON_NUM;
     json_num->num_s = NULL;
     json_num->num_f = num;
-    json_num->num_i = num <= (double)INT_MIN ? INT_MIN :
-                      num >= (double)INT_MAX ? INT_MAX : (int)num;
+    json_num->num_i = num <= (float)INT_MIN ? INT_MIN :
+                      num >= (float)INT_MAX ? INT_MAX : (int)num;
 
     return json_num;
 }
 
-struct k__json_num *k__create_json_num_f_s(const char *num, size_t len) {
+struct k_json_num *k__json_num_create_f_s(const char *num, size_t len) {
 
     char *end;
-    double num_f = strtod(num, &end);
+    float num_f = (float)strtod(num, &end);
     if (end - num != len)
         return NULL; /* 要求数字末尾位于 num[len] */
 
-    int num_i = num_f <= (double)INT_MIN ? INT_MIN :
-                num_f >= (double)INT_MAX ? INT_MAX : (int)num_f;
+    int num_i = num_f <= (float)INT_MIN ? INT_MIN :
+                num_f >= (float)INT_MAX ? INT_MAX : (int)num_f;
 
-    struct k__json_num *json_num = k__json_mem_alloc(sizeof(struct k__json_num));
+    struct k_json_num *json_num = k__json_mem_alloc(sizeof(struct k_json_num));
     if (NULL == json_num)
         return NULL;
 
@@ -58,7 +58,7 @@ struct k__json_num *k__create_json_num_f_s(const char *num, size_t len) {
     else {
         char *alloc_buf = k__json_strdup(num, len);
         if (NULL == alloc_buf) {
-            k__destroy_json_num(json_num);
+            k__json_num_destroy(json_num);
             return NULL;
         }
 
@@ -73,7 +73,7 @@ struct k__json_num *k__create_json_num_f_s(const char *num, size_t len) {
     return json_num;
 }
 
-struct k__json_num *k__create_json_num_i_s(const char *num, size_t len) {
+struct k_json_num *k__json_num_create_i_s(const char *num, size_t len) {
 
     char *end;
     long num_l = strtol(num, &end, 10);
@@ -83,7 +83,7 @@ struct k__json_num *k__create_json_num_i_s(const char *num, size_t len) {
     int num_i = num_l <= INT_MIN ? INT_MIN :
                 num_l >= INT_MAX ? INT_MAX : (int)num_l;
 
-    struct k__json_num *json_num = k__json_mem_alloc(sizeof(struct k__json_num));
+    struct k_json_num *json_num = k__json_mem_alloc(sizeof(struct k_json_num));
     if (NULL == json_num)
         return NULL;
 
@@ -95,7 +95,7 @@ struct k__json_num *k__create_json_num_i_s(const char *num, size_t len) {
     else {
         char *alloc_buf = k__json_strdup(num, len);
         if (NULL == alloc_buf) {
-            k__destroy_json_num(json_num);
+            k__json_num_destroy(json_num);
             return NULL;
         }
 
@@ -105,12 +105,12 @@ struct k__json_num *k__create_json_num_i_s(const char *num, size_t len) {
     json_num->json.type = K__JSON_NUM;
     json_num->num_s = num_copy;
     json_num->num_i = num_i;
-    json_num->num_f = (double)num_i;
+    json_num->num_f = (float)num_i;
 
     return json_num;
 }
 
-void k__destroy_json_num(struct k__json_num *json_num) {
+void k__json_num_destroy(struct k_json_num *json_num) {
 
     if (json_num->num_s != json_num->buf)
         k__json_mem_free(json_num->num_s);
@@ -118,13 +118,13 @@ void k__destroy_json_num(struct k__json_num *json_num) {
     k__json_mem_free(json_num);
 }
 
-const char *k__json_num_get_s(struct k__json_num *json_num) {
+const char *k__json_num_get_s(struct k_json_num *json_num) {
 
     if (json_num->num_s != NULL)
         return json_num->num_s;
 
     int str_len;
-    if ((double)json_num->num_i == json_num->num_f) {
+    if ((float)json_num->num_i == json_num->num_f) {
         str_len = snprintf(json_num->buf, sizeof(json_num->buf), "%d", json_num->num_i);
     } else {
         str_len = snprintf(json_num->buf, sizeof(json_num->buf), "%g", json_num->num_f);
@@ -141,7 +141,7 @@ const char *k__json_num_get_s(struct k__json_num *json_num) {
         if (NULL == alloc_buf)
             return NULL;
 
-        if ((double)json_num->num_i == json_num->num_f)
+        if ((float)json_num->num_i == json_num->num_f)
             snprintf(alloc_buf, str_len, "%d", json_num->num_i);
         else
             snprintf(alloc_buf, str_len, "%g", json_num->num_f);

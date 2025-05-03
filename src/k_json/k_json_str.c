@@ -1,12 +1,12 @@
 
 #include "./_internal.h"
 
-struct k__json_str *k__create_json_str(const char *str, size_t len) {
+struct k_json_str *k__json_create_str(const char *str, size_t len) {
     char *str_copy = NULL;
-    struct k__json_str *json_str = NULL;
+    struct k_json_str *json_str = NULL;
 
     str_copy = k__json_strdup(str, len);
-    json_str = k__json_mem_alloc(sizeof(struct k__json_str));
+    json_str = k__json_mem_alloc(sizeof(struct k_json_str));
     if (str_copy == NULL || json_str == NULL)
         goto err;
 
@@ -20,7 +20,7 @@ err:
     return NULL;
 }
 
-void k__destroy_json_str(struct k__json_str *json_str) {
+void k__json_destroy_str(struct k_json_str *json_str) {
     k__json_mem_free(json_str->str);
     k__json_mem_free(json_str);
 }
