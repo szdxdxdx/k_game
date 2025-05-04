@@ -1,19 +1,19 @@
 #ifndef K_DYN_ARRAY_H
 #define K_DYN_ARRAY_H
 
-#define k_tmpl_array_struct_name k_int_array
-#define k_tmpl_array_elem_type   int
-#define k_tmpl_array_define_struct
+#define K_TMPL_ARRAY_STRUCT_NAME k_int_array
+#define K_TMPL_ARRAY_ELEM_TYPE   int
+#define K_TMPL_ARRAY_DEFINE_STRUCT
 #include "./k_array_tmpl.h"
 
-#define k_tmpl_array_struct_name k_float_array
-#define k_tmpl_array_elem_type   float
-#define k_tmpl_array_define_struct
+#define K_TMPL_ARRAY_STRUCT_NAME k_float_array
+#define K_TMPL_ARRAY_ELEM_TYPE   float
+#define K_TMPL_ARRAY_DEFINE_STRUCT
 #include "./k_array_tmpl.h"
 
-#define k_tmpl_array_struct_name k_ptr_array
-#define k_tmpl_array_elem_type   void *
-#define k_tmpl_array_define_struct
+#define K_TMPL_ARRAY_STRUCT_NAME k_ptr_array
+#define K_TMPL_ARRAY_ELEM_TYPE   void *
+#define K_TMPL_ARRAY_DEFINE_STRUCT
 #include "./k_array_tmpl.h"
 
 #endif

@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "k_str_buf.h"
-
 #if 0
 
 static void test(void) {

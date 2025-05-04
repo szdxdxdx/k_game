@@ -1,18 +1,18 @@
 
 /* 本头文件为动态数组的宏模板，支持以下参数：
  *
- * - k_tmpl_array_struct_name      必须定义此宏，用于指定数组结构体的名字
- * - k_tmpl_array_elem_type        必须定义此宏，指定数组中元素的类型
- * - k_tmpl_array_define_struct    若定义此宏，则定义结构体，否则只声明
- * - k_tmpl_array_define_fn        若定义此宏，则定义函数，否则只声明
- * - k_tmpl_array_fn_malloc        若定义此宏，则使用指定的内存分配函数，否则使用 `malloc()`
- * - k_tmpl_array_fn_free          若定义此宏，则使用指定的内存释放函数，否则使用 `free()`
- * - k_tmpl_array_pass_elem_by_ptr 若定义此宏，则操作单个元素（例如：插入单个元素）时传递指针，否则传值
- * - k_tmpl_array_static_fn        若定义此宏，则用 static 修饰函数
+ * - K_TMPL_ARRAY_STRUCT_NAME      必须定义此宏，用于指定数组结构体的名字
+ * - K_TMPL_ARRAY_ELEM_TYPE        必须定义此宏，指定数组中元素的类型
+ * - K_TMPL_ARRAY_DEFINE_STRUCT    若定义此宏，则定义结构体，否则只声明
+ * - K_TMPL_ARRAY_DEFINE_FUNCTION  若定义此宏，则定义函数，否则只声明
+ * - K_TMPL_ARRAY_FN_MALLOC        若定义此宏，则使用指定的内存分配函数，否则使用 `malloc()`
+ * - K_TMPL_ARRAY_FN_FREE          若定义此宏，则使用指定的内存释放函数，否则使用 `free()`
+ * - K_TMPL_ARRAY_PASS_ELEM_BY_PTR 若定义此宏，则操作单个元素（例如：插入单个元素）时传递指针，否则传值
+ * - K_TMPL_ARRAY_STATIC_FUNCTION  若定义此宏，则用 static 修饰函数
  */
 
-#if ! defined(k_tmpl_array_struct_name) || ! defined(k_tmpl_array_elem_type)
-#error "Must define `k_tmpl_array_struct_name` and `k_tmpl_array_elem_type` before including k_array_tmpl.h"
+#if ! defined(K_TMPL_ARRAY_STRUCT_NAME) || ! defined(K_TMPL_ARRAY_ELEM_TYPE)
+#error "Must define `K_TMPL_ARRAY_STRUCT_NAME` and `K_TMPL_ARRAY_ELEM_TYPE` before including k_array_tmpl.h"
 #else
 
 #include <assert.h>
@@ -20,12 +20,12 @@
 #include <stddef.h>
 #include <string.h>
 
-#if defined(k_tmpl_array_fn_malloc) && defined(k_tmpl_array_fn_free)
-#define k__tmpl_array_fn_malloc k_tmpl_array_fn_malloc
-#define k__tmpl_array_fn_free   k_tmpl_array_fn_free
-#elif defined(k_tmpl_array_fn_malloc) || defined(k_tmpl_array_fn_free)
+#if defined(K_TMPL_ARRAY_FN_MALLOC) && defined(K_TMPL_ARRAY_FN_FREE)
+#define k__tmpl_array_fn_malloc K_TMPL_ARRAY_FN_MALLOC
+#define k__tmpl_array_fn_free   K_TMPL_ARRAY_FN_FREE
+#elif defined(K_TMPL_ARRAY_FN_MALLOC) || defined(K_TMPL_ARRAY_FN_FREE)
 /* 必须同时指明内存分配函数和释放函数 */
-#error "Must set define `k_tmpl_array_fn_malloc` and `k_tmpl_array_fn_free`"
+#error "Must set define `K_TMPL_ARRAY_FN_MALLOC` and `K_TMPL_ARRAY_FN_FREE`"
 #else
 #include <stdlib.h>
 #define k__tmpl_array_fn_malloc malloc
@@ -38,14 +38,15 @@
 #define k__tmpl_array_fn
 #endif
 
-#define k__tmpl_array                    k_tmpl_array_struct_name
+#define k__tmpl_array                    K_TMPL_ARRAY_STRUCT_NAME
+#define k__tmpl_array_elem               K_TMPL_ARRAY_ELEM_TYPE
 #define k__tmpl_array_x_(array_name, x)  array_name##_##x
 #define k__tmpl_array_x(array_name, x)   k__tmpl_array_x_(array_name, x)
-#define k__tmpl_array_(x)                k__tmpl_array_x(k_tmpl_array_struct_name, x)
+#define k__tmpl_array_(x)                k__tmpl_array_x(K_TMPL_ARRAY_STRUCT_NAME, x)
 
 struct k__tmpl_array;
 
-#if defined(k_tmpl_array_define_struct)
+#if defined(K_TMPL_ARRAY_DEFINE_STRUCT)
 
 /** \brief 支持动态扩容的数组容器 */
 struct k__tmpl_array {
@@ -57,7 +58,7 @@ struct k__tmpl_array {
     size_t size;
 
     /** \brief [read-only] 指向存储元素的连续空间的指针 */
-    k_tmpl_array_elem_type *storage;
+    k__tmpl_array_elem *storage;
 };
 
 #endif
@@ -133,7 +134,7 @@ k__tmpl_array_fn int k__tmpl_array_(reserve)(struct k__tmpl_array *arr, size_t n
  * }
  * ```
  */
-k__tmpl_array_fn k_tmpl_array_elem_type *k__tmpl_array_(shift_right)(struct k__tmpl_array *arr, size_t idx, size_t n);
+k__tmpl_array_fn k__tmpl_array_elem *k__tmpl_array_(shift_right)(struct k__tmpl_array *arr, size_t idx, size_t n);
 
 /**
  * \brief 在数组指定位置插入多个元素
@@ -141,32 +142,32 @@ k__tmpl_array_fn k_tmpl_array_elem_type *k__tmpl_array_(shift_right)(struct k__t
  * 本函数将 `elems` 指向的内存段中的 `elems_num` 个元素复制插入到数组 `arr` 中索引为 `idx` 的位置，
  * 若成功，函数返回 0，否则返回非 0。
  */
-k__tmpl_array_fn int k__tmpl_array_(insert_all)(struct k__tmpl_array *arr, size_t idx, k_tmpl_array_elem_type *elems, size_t elems_num);
+k__tmpl_array_fn int k__tmpl_array_(insert_all)(struct k__tmpl_array *arr, size_t idx, k__tmpl_array_elem *elems, size_t elems_num);
 
-#if ! defined(k_tmpl_array_pass_elem_by_ptr)
+#if ! defined(K_TMPL_ARRAY_PASS_ELEM_BY_PTR)
 
 /** \brief 在数组指定位置插入一个元素。若成功，函数返回 0，否则返回非 0 */
-k__tmpl_array_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, k_tmpl_array_elem_type elem);
+k__tmpl_array_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, k__tmpl_array_elem elem);
 
 #else
 
 /** \brief 在数组指定位置插入一个元素，若成功，函数返回 0，否则返回非 0 */
-k__tmpl_array_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, const k_tmpl_array_elem_type *elem);
+k__tmpl_array_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, const k__tmpl_array_elem *elem);
 
 #endif
 
 /** \brief 在数组尾部追加多个元素。若成功，函数返回 0，否则返回非 0 */
-k__tmpl_array_fn int k__tmpl_array_(push_back_all)(struct k__tmpl_array *arr, k_tmpl_array_elem_type *elems, size_t elems_num);
+k__tmpl_array_fn int k__tmpl_array_(push_back_all)(struct k__tmpl_array *arr, k__tmpl_array_elem *elems, size_t elems_num);
 
-#if ! defined(k_tmpl_array_pass_elem_by_ptr)
+#if ! defined(K_TMPL_ARRAY_PASS_ELEM_BY_PTR)
 
 /** \brief 在数组尾部追加一个元素。若成功，函数返回 0，否则返回非 0 */
-k__tmpl_array_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, k_tmpl_array_elem_type elem);
+k__tmpl_array_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, k__tmpl_array_elem elem);
 
 #else
 
 /** \brief 在数组尾部追加一个元素，若成功，函数返回 0，否则返回非 0 */
-k__tmpl_array_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, const k_tmpl_array_elem_type *elem);
+k__tmpl_array_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, const k__tmpl_array_elem *elem);
 
 #endif
 
@@ -195,7 +196,7 @@ k__tmpl_array_fn void k__tmpl_array_(clear)(struct k__tmpl_array *arr);
 /** \brief 清空数组，并释放存储元素所用的内存 */
 k__tmpl_array_fn void k__tmpl_array_(free_storage)(struct k__tmpl_array *arr);
 
-#if defined(k_tmpl_array_define_fn)
+#if defined(K_TMPL_ARRAY_DEFINE_FUNCTION)
 
 k__tmpl_array_fn struct k__tmpl_array *k__tmpl_array_(create)(void) {
 
@@ -243,14 +244,14 @@ k__tmpl_array_fn int k__tmpl_array_(reserve)(struct k__tmpl_array *arr, size_t n
     if (n <= arr->capacity)
         return 0;
 
-    if (SIZE_MAX / sizeof(k_tmpl_array_elem_type) <= n)
+    if (SIZE_MAX / sizeof(k__tmpl_array_elem) <= n)
         return -1;
 
     size_t new_capacity = arr->capacity * 2;
     if (new_capacity < n)
         new_capacity = n;
 
-    k_tmpl_array_elem_type *new_storage = k__tmpl_array_fn_malloc(new_capacity * sizeof(k_tmpl_array_elem_type));
+    k__tmpl_array_elem *new_storage = k__tmpl_array_fn_malloc(new_capacity * sizeof(k__tmpl_array_elem));
     if (NULL == new_storage) {
         if (new_capacity == n) {
             return -1;
@@ -258,13 +259,13 @@ k__tmpl_array_fn int k__tmpl_array_(reserve)(struct k__tmpl_array *arr, size_t n
         else {
             new_capacity = n;
 
-            new_storage = k__tmpl_array_fn_malloc(new_capacity * sizeof(k_tmpl_array_elem_type));
+            new_storage = k__tmpl_array_fn_malloc(new_capacity * sizeof(k__tmpl_array_elem));
             if (NULL == new_storage)
                 return -1;
         }
     }
 
-    memcpy(new_storage, arr->storage, arr->size * sizeof(k_tmpl_array_elem_type));
+    memcpy(new_storage, arr->storage, arr->size * sizeof(k__tmpl_array_elem));
     k__tmpl_array_fn_free(arr->storage);
 
     arr->capacity = new_capacity;
@@ -272,7 +273,7 @@ k__tmpl_array_fn int k__tmpl_array_(reserve)(struct k__tmpl_array *arr, size_t n
     return 0;
 }
 
-k__tmpl_array_fn k_tmpl_array_elem_type *k__tmpl_array_(shift_right)(struct k__tmpl_array *arr, size_t idx, size_t n) {
+k__tmpl_array_fn k__tmpl_array_elem *k__tmpl_array_(shift_right)(struct k__tmpl_array *arr, size_t idx, size_t n) {
     assert(NULL != arr);
     assert(idx <= arr->size);
 
@@ -282,23 +283,23 @@ k__tmpl_array_fn k_tmpl_array_elem_type *k__tmpl_array_(shift_right)(struct k__t
 
     if (required_capacity <= arr->capacity) {
 
-        k_tmpl_array_elem_type *shift_from = &arr->storage[idx];
-        k_tmpl_array_elem_type *shift_to   = &arr->storage[idx + n];
-        size_t shift_size = (arr->size - idx) * sizeof(k_tmpl_array_elem_type);
+        k__tmpl_array_elem *shift_from = &arr->storage[idx];
+        k__tmpl_array_elem *shift_to   = &arr->storage[idx + n];
+        size_t shift_size = (arr->size - idx) * sizeof(k__tmpl_array_elem);
         memmove(shift_to, shift_from, shift_size);
 
         arr->size += n;
         return shift_from;
     }
 
-    if (SIZE_MAX / sizeof(k_tmpl_array_elem_type) <= required_capacity)
+    if (SIZE_MAX / sizeof(k__tmpl_array_elem) <= required_capacity)
         return NULL;
 
     size_t new_capacity = arr->capacity * 2;
     if (new_capacity < required_capacity)
         new_capacity = required_capacity;
 
-    k_tmpl_array_elem_type *new_storage = k__tmpl_array_fn_malloc(new_capacity * sizeof(k_tmpl_array_elem_type));
+    k__tmpl_array_elem *new_storage = k__tmpl_array_fn_malloc(new_capacity * sizeof(k__tmpl_array_elem));
     if (NULL == new_storage) {
         if (new_capacity == required_capacity) {
             return NULL;
@@ -306,21 +307,21 @@ k__tmpl_array_fn k_tmpl_array_elem_type *k__tmpl_array_(shift_right)(struct k__t
         else {
             new_capacity = required_capacity;
 
-            new_storage = k__tmpl_array_fn_malloc(new_capacity * sizeof(k_tmpl_array_elem_type));
+            new_storage = k__tmpl_array_fn_malloc(new_capacity * sizeof(k__tmpl_array_elem));
             if (NULL == new_storage)
                 return NULL;
         }
     }
 
     if (NULL != arr->storage) {
-        k_tmpl_array_elem_type *part_1_from = &arr->storage[0];
-        k_tmpl_array_elem_type *part_1_to   = &new_storage[0];
-        size_t part_1_size = idx * sizeof(k_tmpl_array_elem_type);
+        k__tmpl_array_elem *part_1_from = &arr->storage[0];
+        k__tmpl_array_elem *part_1_to   = &new_storage[0];
+        size_t part_1_size = idx * sizeof(k__tmpl_array_elem);
         memcpy(part_1_to, part_1_from, part_1_size);
 
-        k_tmpl_array_elem_type *part_2_from = &arr->storage[part_1_size];
-        k_tmpl_array_elem_type *part_2_to   = &new_storage[n];
-        size_t part_2_size = (arr->size - idx) * sizeof(k_tmpl_array_elem_type);
+        k__tmpl_array_elem *part_2_from = &arr->storage[part_1_size];
+        k__tmpl_array_elem *part_2_to   = &new_storage[n];
+        size_t part_2_size = (arr->size - idx) * sizeof(k__tmpl_array_elem);
         memcpy(part_2_to, part_2_from, part_2_size);
 
         k__tmpl_array_fn_free(arr->storage);
@@ -332,7 +333,7 @@ k__tmpl_array_fn k_tmpl_array_elem_type *k__tmpl_array_(shift_right)(struct k__t
     return &arr->storage[idx];
 }
 
-k__tmpl_array_fn int k__tmpl_array_(insert_all)(struct k__tmpl_array *arr, size_t idx, k_tmpl_array_elem_type *elems, size_t elems_num) {
+k__tmpl_array_fn int k__tmpl_array_(insert_all)(struct k__tmpl_array *arr, size_t idx, k__tmpl_array_elem *elems, size_t elems_num) {
     assert(NULL != arr);
     assert(idx <= arr->size);
     assert(NULL != elems);
@@ -349,37 +350,37 @@ k__tmpl_array_fn int k__tmpl_array_(insert_all)(struct k__tmpl_array *arr, size_
     if (NULL == insert_position)
         return -1;
 
-    memcpy(insert_position, elems, elems_num * sizeof(k_tmpl_array_elem_type));
+    memcpy(insert_position, elems, elems_num * sizeof(k__tmpl_array_elem));
     return 0;
 }
 
-#if ! defined(k_tmpl_array_pass_elem_by_ptr)
+#if ! defined(K_TMPL_ARRAY_PASS_ELEM_BY_PTR)
 
-k__tmpl_array_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, k_tmpl_array_elem_type elem) {
+k__tmpl_array_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, k__tmpl_array_elem elem) {
     return k__tmpl_array_(insert_all)(arr, idx, &elem, 1);
 }
 
 #else
 
-k__tmpl_array_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, const k_tmpl_array_elem_type *elem) {
+k__tmpl_array_fn int k__tmpl_array_(insert)(struct k__tmpl_array *arr, size_t idx, const k__tmpl_array_elem *elem) {
     return k__tmpl_array_(insert_all)(arr, idx, elem, 1);
 }
 
 #endif
 
-k__tmpl_array_fn int k__tmpl_array_(push_back_all)(struct k__tmpl_array *arr, k_tmpl_array_elem_type *elems, size_t elems_num) {
+k__tmpl_array_fn int k__tmpl_array_(push_back_all)(struct k__tmpl_array *arr, k__tmpl_array_elem *elems, size_t elems_num) {
     return k__tmpl_array_(insert_all)(arr, arr->size, elems, elems_num);
 }
 
-#if ! defined(k_tmpl_array_pass_elem_by_ptr)
+#if ! defined(K_TMPL_ARRAY_PASS_ELEM_BY_PTR)
 
-k__tmpl_array_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, k_tmpl_array_elem_type elem) {
+k__tmpl_array_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, k__tmpl_array_elem elem) {
     return k__tmpl_array_(insert_all)(arr, arr->size, &elem, 1);
 }
 
 #else
 
-k__tmpl_array_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, const k_tmpl_array_elem_type *elem) {
+k__tmpl_array_fn int k__tmpl_array_(push_back)(struct k__tmpl_array *arr, const k__tmpl_array_elem *elem) {
     return k__tmpl_array_(insert_all)(arr, arr->size, elem, 1);
 }
 
@@ -392,7 +393,7 @@ k__tmpl_array_fn void k__tmpl_array_(shift_left)(struct k__tmpl_array *arr, size
 
     void  *shift_from = &arr->storage[idx];
     void  *shift_to   = &arr->storage[idx - n];
-    size_t shift_size = (arr->size - idx) * sizeof(k_tmpl_array_elem_type);
+    size_t shift_size = (arr->size - idx) * sizeof(k__tmpl_array_elem);
     memmove(shift_to, shift_from, shift_size);
 
     arr->size -= n;
@@ -433,18 +434,19 @@ k__tmpl_array_fn void k__tmpl_array_(free_storage)(struct k__tmpl_array *arr) {
 
 #undef k__tmpl_array
 #undef k__tmpl_array_
+#undef k__tmpl_array_elem
 #undef k__tmpl_array_x_impl_
 #undef k__tmpl_array_x_impl
 #undef k__tmpl_array_fn_malloc
 #undef k__tmpl_array_fn_free
 #undef k__tmpl_array_fn
 
-#undef k_tmpl_array_struct_name
-#undef k_tmpl_array_elem_type
-#undef k_tmpl_array_define_struct
-#undef k_tmpl_array_define_fn
-#undef k_tmpl_array_fn_malloc
-#undef k_tmpl_array_fn_free
+#undef K_TMPL_ARRAY_STRUCT_NAME
+#undef K_TMPL_ARRAY_ELEM_TYPE
+#undef K_TMPL_ARRAY_DEFINE_STRUCT
+#undef K_TMPL_ARRAY_DEFINE_FUNCTION
+#undef K_TMPL_ARRAY_FN_MALLOC
+#undef K_TMPL_ARRAY_FN_FREE
 #undef k_tmpl_array_pass_elem_by_val
 #undef k_tmpl_array_static_fn
 

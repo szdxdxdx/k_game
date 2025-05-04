@@ -12,6 +12,23 @@
 
 ## 遍历链表
 
+```C
+
+struct my_data {
+    struct k_list_node link;
+    int val;
+};
+
+
+struct k_list *list = ...;
+struct k_list_node *p_node;
+for (k_list_for_each(list, p_node)) {
+    struct my_data *p_data = container_of(p_node, struct my_data, link);
+    
+    printf("%d\n", p_data->val);
+}
+```
+
 ## 节点自环
 
 ```C
