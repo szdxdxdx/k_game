@@ -6,10 +6,10 @@
 
 struct k_asset_registry {
 
-    /* 用链表存储注册表中的所有资产 */
+    /* 用链表存储注册表中的所有资源 */
     struct k_list asset_list;
 
-    /* 有名字的资产用哈希表建立映射 */
+    /* 有名字的资源用哈希表建立映射 */
     struct k_str_intrusive_map name_map;
 };
 

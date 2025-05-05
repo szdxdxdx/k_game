@@ -9,18 +9,18 @@
 #include "./k_font.h"
 #include "./k_font_registry.h"
 
-struct k_font *k_font_load(const char *file_path, int font_size) {
+struct k_font *k_font_load(const char *file_path, int point_size) {
 
     if (NULL == file_path || '\0' == file_path[0])
         return NULL;
-    if (font_size <= 0)
+    if (point_size <= 0)
         return NULL;
 
     struct k_font *font = k__mem_alloc(sizeof(struct k_font));
     if (NULL == font)
         return NULL;
 
-    TTF_Font *sdl_font = TTF_OpenFont(file_path, font_size);
+    TTF_Font *sdl_font = TTF_OpenFont(file_path, point_size);
     if (NULL == sdl_font) {
         k__mem_free(font);
         k_log_error("SDL error: %s\n", TTF_GetError());

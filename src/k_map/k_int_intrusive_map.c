@@ -48,6 +48,7 @@ void k_int_intrusive_map_add_directly(struct k_int_intrusive_map *map, int key, 
     assert(NULL != node);
 
     size_t hash = (size_t)key;
+
     struct k_hash_list *list = &(map->buckets[hash % map->buckets_num]);
 
     node->key = key;

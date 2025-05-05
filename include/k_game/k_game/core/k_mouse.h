@@ -30,4 +30,6 @@ int k_mouse_button_up(enum k_mouse_button button);
 /** \brief 检测鼠标按键是否处于空闲状态 */
 int k_mouse_button_idle(enum k_mouse_button button);
 
+/* TODO UI 层消费点击事件后拦截 */
+
 #endif
