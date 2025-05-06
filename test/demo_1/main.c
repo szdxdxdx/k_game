@@ -32,7 +32,7 @@ static int on_game_start(void) {
 
         struct k_room *room_title = yx_room_title_create();
 
-        k_room_goto(room_title);
+        k_room_nav_goto(room_title);
     }
 
     return 0;

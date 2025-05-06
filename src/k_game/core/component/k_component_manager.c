@@ -75,7 +75,7 @@ int k_room_add_component_manager(struct k_component_type *component_type, void *
     if (NULL == component_type)
         return -1;
 
-    return k__component_manager_create(k__current_room, component_type, param);
+    return k__component_manager_create(k__room_current, component_type, param);
 }
 
 void k__room_del_component_manager(struct k_room *room, struct k_component_type *component_type) {

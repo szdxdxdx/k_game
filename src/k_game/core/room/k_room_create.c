@@ -176,13 +176,13 @@ static int step_run_on_create_callback(void *context) {
 
     void *param = ctx->param;
 
-    struct k_room *tmp = k__current_room;
-    k__current_room = room;
+    struct k_room *tmp = k__room_current;
+    k__room_current = room;
 
     int result = room->on_create(param);
 
     /* [?] fn_init() 可能销毁了 tmp 指向的房间 */
-    k__current_room = tmp;
+    k__room_current = tmp;
 
     if (0 != result) {
         k_log_error("room on_create() callback returned %d", result);
@@ -199,13 +199,13 @@ static void step_run_on_destroy_callback(void *context) {
     if (NULL == room->on_destroy)
         return;
 
-    struct k_room *tmp = k__current_room;
-    k__current_room = room;
+    struct k_room *tmp = k__room_current;
+    k__room_current = room;
 
     room->on_destroy();
 
     /* [?] fn_fini() 可能销毁了 tmp 指向的房间 */
-    k__current_room = tmp;
+    k__room_current = tmp;
 }
 
 static const struct k_seq_step steps[] = {

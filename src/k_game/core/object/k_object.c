@@ -12,7 +12,7 @@
 
 struct k_object *k_object_create(size_t data_size) {
 
-    struct k_room *room = k__current_room;
+    struct k_room *room = k__room_current;
 
     struct k_object *object = k__object_pool_acquire(&room->object_pool);
     if (NULL == object)

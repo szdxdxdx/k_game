@@ -18,7 +18,7 @@ static void k__SDL_poll_events(void) {
 
             case SDL_QUIT:
                 k__game.quit_game = 1;
-                k__current_room->game_loop = 0;
+                k__room_current->game_loop = 0;
                 break;
 
             case SDL_WINDOWEVENT:

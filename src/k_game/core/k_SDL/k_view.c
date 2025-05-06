@@ -36,13 +36,13 @@ int k_view_fit_rect(float w, float h) {
     }
 
     float view_max_w = (float)k__canvas.room_viewport_w;
-    if (view_max_w > k__current_room->room_w) {
-        view_max_w = k__current_room->room_w;
+    if (view_max_w > k__room_current->room_w) {
+        view_max_w = k__room_current->room_w;
     }
 
     float view_max_h = (float)k__canvas.room_viewport_h;
-    if (view_max_h > k__current_room->room_h) {
-        view_max_h = k__current_room->room_h;
+    if (view_max_h > k__room_current->room_h) {
+        view_max_h = k__room_current->room_h;
     }
 
     w_ = view_max_h * aspect;
@@ -82,7 +82,7 @@ int k_view_set_position(float cx, float cy) {
         return -1;
     }
 
-    struct k_room *room = k__current_room;
+    struct k_room *room = k__room_current;
 
     float view_half_w = k__view.view_w / 2;
 

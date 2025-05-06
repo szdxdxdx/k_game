@@ -7,6 +7,7 @@
 
 #include "k_game/core/k_game_run.h"
 #include "./k_game_init.h"
+#include "./k_game_context.h"
 
 #include "../k_SDL/k_SDL_init.h"
 #include "../image/k_image_registry.h"
@@ -137,20 +138,20 @@ static void step_cleanup_room_registry(void *unused) {
 static int step_init_room_stack(void *unused) {
     (void)unused;
 
-    k__init_room_stack();
+    k__room_stack_init();
     return 0;
 }
 
-static void step_cleanup_room_stack(void *unused) {
+static void step_clear_room_stack(void *unused) {
     (void)unused;
-    k__cleanup_room_stack();
+    k__room_stack_clear();
 }
 
 static int step_game_start(void *context) {
     const struct k_game_config *config = context;
 
     if (NULL == config->on_start) {
-        k_log_error("game on_start() callback is NULL");
+        k_log_error("game on_start() callback is null");
         return -1;
     }
 
@@ -160,6 +161,7 @@ static int step_game_start(void *context) {
         return -1;
     }
 
+    k__game.quit_game = 0;
     return 0;
 }
 
@@ -181,7 +183,7 @@ static const struct k_seq_step steps[] = {
     { step_init_component_manager_map, step_free_component_manager_map },
     { step_define_components,          NULL                            },
     { step_init_room_registry,         step_cleanup_room_registry      },
-    { step_init_room_stack,            step_cleanup_room_stack         },
+    { step_init_room_stack,            step_clear_room_stack           },
     { step_game_start,                 step_game_end                   },
 };
 

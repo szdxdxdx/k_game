@@ -43,6 +43,6 @@ struct k_room {
     void *data;
 };
 
-extern struct k_room *k__current_room;
+extern struct k_room *k__room_current;
 
 #endif

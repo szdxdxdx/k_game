@@ -125,9 +125,13 @@ struct k_room *k_room_find(const char *room_name);
 
 /* endregion */
 
-/* region [room_goto] */
+/* region [room_nav] */
 
-int k_room_goto(struct k_room *room);
+void k_room_nav_goto(struct k_room *room);
+
+void k_room_nav_push(struct k_room *room);
+
+void k_room_nav_pop(void);
 
 /* endregion */
 

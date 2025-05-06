@@ -46,7 +46,7 @@ struct k_component_manager *k_room_get_component_manager(struct k_component_type
     if (NULL == component_type)
         return NULL;
 
-    return k__component_manager_map_find(k__current_room, component_type->manager_type);
+    return k__component_manager_map_find(k__room_current, component_type->manager_type);
 }
 
 void *k_room_get_component_manager_data(struct k_component_type *component_type) {
@@ -54,7 +54,7 @@ void *k_room_get_component_manager_data(struct k_component_type *component_type)
     if (NULL == component_type)
         return NULL;
 
-    struct k_component_manager *manager = k__component_manager_map_find(k__current_room, component_type->manager_type);
+    struct k_component_manager *manager = k__component_manager_map_find(k__room_current, component_type->manager_type);
     if (NULL == manager)
         return NULL;
 

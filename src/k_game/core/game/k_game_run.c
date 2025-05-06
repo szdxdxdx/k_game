@@ -5,6 +5,7 @@
 
 #include "k_game/core/k_game_run.h"
 #include "./k_game_init.h"
+#include "./k_game_context.h"
 
 #include "../room/k_room_stack.h"
 #include "../room/k_room_run.h"
@@ -17,7 +18,14 @@ static void run_game() {
         return;
     }
 
-    k__room_run(room);
+    while ( ! k__game.quit_game) {
+
+        room = k__room_stack_get_top();
+        if (NULL == room)
+            break;
+
+        k__room_run(room);
+    }
 }
 
 int k_game_run(const struct k_game_config *config) {

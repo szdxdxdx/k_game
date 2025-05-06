@@ -2,7 +2,7 @@
 #include "./k_room.h"
 
 void *k_room_get_data(void) {
-    return k__current_room->data;
+    return k__room_current->data;
 }
 
 void *k_room_get_data_of(struct k_room *room) {
@@ -10,9 +10,9 @@ void *k_room_get_data_of(struct k_room *room) {
 }
 
 float k_room_get_w(void) {
-    return k__current_room->room_w;
+    return k__room_current->room_w;
 }
 
 float k_room_get_h(void) {
-    return k__current_room->room_h;
+    return k__room_current->room_h;
 }

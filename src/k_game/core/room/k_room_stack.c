@@ -4,8 +4,7 @@
 #include "k_log.h"
 
 #include "./k_room_stack.h"
-
-/* region [room_stack] */
+#include "./k_room.h"
 
 #ifndef K_ROOM_STACK_MAX_SIZE
 #define K_ROOM_STACK_MAX_SIZE 32
@@ -20,61 +19,75 @@ struct k_room_stack {
 
 static struct k_room_stack room_stack;
 
-static void room_stack_clear(void) {
-    room_stack.top = 0;
-}
-
-static int room_stack_is_full(void) {
+static int k__room_stack_is_full(void) {
     return K_ROOM_STACK_MAX_SIZE == room_stack.top;
 }
 
-static int room_stack_is_empty(void) {
+static int k__room_stack_is_empty(void) {
     return 0 == room_stack.top;
 }
 
-static void room_stack_push(struct k_room *room) {
+static void k__room_stack_push(struct k_room *room) {
     room_stack.rooms[room_stack.top++] = room;
 }
 
-static void room_stack_pop(void) {
+static void k__room_stack_pop(void) {
     room_stack.top--;
 }
 
-static struct k_room *room_stack_get_top(void) {
-    return room_stack.rooms[room_stack.top - 1];
+void k__room_stack_init(void) {
+    room_stack.top = 0;
 }
 
-void k__init_room_stack(void) {
-    room_stack_clear();
+void k__room_stack_clear(void) {
+    room_stack.top = 0;
 }
-
-void k__cleanup_room_stack(void) {
-    room_stack_clear();
-}
-
-/* endregion */
-
-/* region [room_goto] */
 
 struct k_room *k__room_stack_get_top(void) {
-    return room_stack_is_empty() ? NULL : room_stack_get_top();
+    return k__room_stack_is_empty() ? NULL : room_stack.rooms[room_stack.top - 1];
 }
 
-int k_room_goto(struct k_room *room) {
+void k_room_nav_goto(struct k_room *room) {
 
     if (NULL == room) {
         k_log_error("room is null");
-        return -1;
+        return;
     }
 
-    if (room_stack_is_full()) {
-        k_log_error("room stack is full");
-        return -1;
+    if ( ! k__room_stack_is_empty()) {
+        k__room_stack_pop();
     }
+    k__room_stack_push(room);
 
-    room_stack_push(room);
-
-    return 0;
+    if (NULL != k__room_current) {
+        k__room_current->game_loop = 0;
+    }
 }
 
-/* endregion */
+void k_room_nav_push(struct k_room *room) {
+
+    if (NULL == room) {
+        k_log_error("room is null");
+        return;
+    }
+    else if (k__room_stack_is_full()) {
+        k_log_error("room stack is full");
+        return;
+    }
+
+    k__room_stack_push(room);
+
+    if (NULL != k__room_current) {
+        k__room_current->game_loop = 0;
+    }
+}
+
+void k_room_nav_pop(void) {
+    if ( ! k__room_stack_is_empty()) {
+        k__room_stack_pop();
+    }
+
+    if (NULL != k__room_current) {
+        k__room_current->game_loop = 0;
+    }
+}

@@ -3,9 +3,9 @@
 
 struct k_room;
 
-void k__init_room_stack(void);
+void k__room_stack_init(void);
 
-void k__cleanup_room_stack(void);
+void k__room_stack_clear(void);
 
 struct k_room *k__room_stack_get_top(void);
 

@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "k_game/core/k_view.h"
 #include "k_game/core/k_time.h"
 
@@ -9,12 +10,12 @@
 #include "../k_SDL/k_window.h"
 #include "../k_SDL/k_canvas.h"
 
-struct k_room *k__current_room = NULL;
+struct k_room *k__room_current = NULL;
 
 void k__room_run(struct k_room *room) {
-    k__current_room = room;
-
+    assert(0 == room->game_loop);
     room->game_loop = 1;
+    k__room_current = room;
 
     k_view_fit_rect(k__window.window_w, k__window.window_h);
     k_view_set_position(0, 0);
@@ -52,5 +53,6 @@ void k__room_run(struct k_room *room) {
         room->on_leave();
     }
 
-    k__current_room = NULL;
+    room->game_loop = 0;
+    k__room_current = NULL;
 }

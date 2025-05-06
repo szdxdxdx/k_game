@@ -9,9 +9,21 @@
 
 #include "../llk_ui/llk_ui.h"
 
+/* region [goto_room_arena] */
+
+static void yx__room_title_goto_room_arena(void) {
+    k_room_nav_goto(k_room_find("arena"));
+}
+
+/* endregion */
+
 /* region [ui] */
 
 static struct llk_ui_context *ui;
+
+static void yx__room_title_ui_on_click_goto_room_arena(struct llk_ui_elem *elem) {
+    yx__room_title_goto_room_arena();
+}
 
 static void yx__room_title_build_ui(void) {
 
@@ -24,6 +36,8 @@ static void yx__room_title_build_ui(void) {
         k_log_error("failed to build ui");
         goto err;
     }
+
+    llk_ui_register_callback(ui, "goto_room_arena", yx__room_title_ui_on_click_goto_room_arena);
 
     struct llk_ui_elem *root = llk_ui_get_root(ui);
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, "demo_1/ui/ui_title.xml");
