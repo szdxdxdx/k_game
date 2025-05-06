@@ -1,6 +1,6 @@
 #include "./yx_obj.h"
 
-struct k_object *yx_create_rival(const struct yx_obj_rival_config *config) {
+struct k_object *yx_obj_rival_create(const struct yx_obj_rival_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_rival));
 

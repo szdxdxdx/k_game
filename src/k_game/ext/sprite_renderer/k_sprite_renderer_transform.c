@@ -12,7 +12,7 @@ void k_sprite_renderer_set_w(struct k_sprite_renderer *renderer, float scaled_w)
     } else {
         renderer->scaled_w = scaled_w;
 
-        if (k_sprite_get_width(renderer->sprite) != (int)scaled_w)
+        if (k_sprite_get_w(renderer->sprite) != (int)scaled_w)
             renderer->transform_flags |= transform_scale_x;
         else
             renderer->transform_flags &= ~transform_scale_x;
@@ -29,7 +29,7 @@ void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x
         renderer->transform_flags |= transform_scale_x;
     }
     else {
-        float sprite_w = (float)k_sprite_get_width(renderer->sprite);
+        float sprite_w = (float)k_sprite_get_w(renderer->sprite);
 
         renderer->scaled_w = sprite_w * scale_x;
 
@@ -62,7 +62,7 @@ void k_sprite_renderer_set_h(struct k_sprite_renderer *renderer, float scaled_h)
     } else {
         renderer->scaled_h = scaled_h;
 
-        if (k_sprite_get_height(renderer->sprite) != (int)scaled_h)
+        if (k_sprite_get_h(renderer->sprite) != (int)scaled_h)
             renderer->transform_flags |= transform_scale_y;
         else
             renderer->transform_flags &= ~transform_scale_y;
@@ -79,7 +79,7 @@ void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y
         renderer->transform_flags |= transform_scale_y;
     }
     else {
-        float sprite_h = (float)k_sprite_get_height(renderer->sprite);
+        float sprite_h = (float)k_sprite_get_h(renderer->sprite);
 
         renderer->scaled_h = sprite_h * scale_y;
 
@@ -166,8 +166,8 @@ void k_sprite_renderer_reset_transforms(struct k_sprite_renderer *renderer) {
     if (NULL == renderer->sprite)
         return;
 
-    renderer->scaled_w = (float)k_sprite_get_width(renderer->sprite);
-    renderer->scaled_h = (float)k_sprite_get_height(renderer->sprite);
+    renderer->scaled_w = (float)k_sprite_get_w(renderer->sprite);
+    renderer->scaled_h = (float)k_sprite_get_h(renderer->sprite);
     renderer->angle = 0.0f;
     renderer->transform_flags = transform_none;
 }

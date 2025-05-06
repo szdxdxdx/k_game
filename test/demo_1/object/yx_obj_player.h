@@ -13,7 +13,7 @@ struct yx_obj_player_config {
     struct k_sprite *spr_run;
 };
 
-struct k_object *yx_create_player(const struct yx_obj_player_config *config);
+struct k_object *yx_obj_player_create(const struct yx_obj_player_config *config);
 
 struct yx_obj_player {
 

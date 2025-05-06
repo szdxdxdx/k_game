@@ -3,6 +3,6 @@
 
 #include "k_game/core/k_game_fwd.h"
 
-struct k_room *yx_create_empty_room(void);
+struct k_room *yx_room_empty_create(void);
 
 #endif

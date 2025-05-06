@@ -41,7 +41,7 @@ static int set_int_val(void *data, int val) {
     return 0;
 }
 
-static int empty_room_on_create(void *param) {
+static int yx_room_empty_on_create(void *param) {
 
     k_room_add_draw_callback(NULL, show_int_val, INT_MIN, INT_MIN);
 
@@ -101,10 +101,10 @@ static void show_int_val(void *unused) {
     k_canvas_ui_printf(NULL, 8, 32 * 2, "%f", float_val);
 }
 
-struct k_room *yx_create_empty_room(void) {
+struct k_room *yx_room_empty_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.on_create = empty_room_on_create;
+    config.on_create = yx_room_empty_on_create;
 
     return k_room_create(&config, NULL);
 }

@@ -112,10 +112,10 @@ int k_sprite_set_name(struct k_sprite *sprite, const char *sprite_name);
 struct k_sprite *k_sprite_find(const char *sprite_name);
 
 /** \brief 获取精灵的宽 */
-int k_sprite_get_width(struct k_sprite *sprite);
+int k_sprite_get_w(struct k_sprite *sprite);
 
 /** \brief 获取精灵的高 */
-int k_sprite_get_height(struct k_sprite *sprite);
+int k_sprite_get_h(struct k_sprite *sprite);
 
 /** \brief 获取精灵原点的水平偏移量 */
 float k_sprite_get_origin_x(struct k_sprite *sprite);

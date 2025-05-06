@@ -151,8 +151,8 @@ static int sprite_sheet_load(struct yx_sprite_sheet *sheet, const struct yx_spri
     }
 
     if (1.0f != config->scale) {
-        int scaled_w = (int)(config->scale * (float)k_image_get_width(image));
-        int scaled_h = (int)(config->scale * (float)k_image_get_height(image));
+        int scaled_w = (int)(config->scale * (float)k_image_get_w(image));
+        int scaled_h = (int)(config->scale * (float)k_image_get_h(image));
         struct k_image *scaled_image = k_image_scale(image, scaled_w, scaled_h);
         if (NULL == scaled_image) {
             goto err;

@@ -30,8 +30,8 @@ draw_rect:
     {
         float w       = renderer->scaled_w;
         float h       = renderer->scaled_h;
-        float scale_x = renderer->scaled_w / (float)k_sprite_get_width(renderer->sprite);
-        float scale_y = renderer->scaled_h / (float)k_sprite_get_height(renderer->sprite);
+        float scale_x = renderer->scaled_w / (float)k_sprite_get_w(renderer->sprite);
+        float scale_y = renderer->scaled_h / (float)k_sprite_get_h(renderer->sprite);
         float ox      = scale_x * k_sprite_get_origin_x(renderer->sprite);
         float oy      = scale_y * k_sprite_get_origin_y(renderer->sprite);
         int   flip_x  = renderer->transform_flags & transform_flip_x;

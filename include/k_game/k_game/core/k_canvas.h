@@ -60,10 +60,10 @@ static inline uint32_t k_canvas_get_draw_color_rgba(void) {
 
 /* region [get_vw] */
 
-/** \brief 获取 UI 界面的画布宽度 */
+/** \brief 获取 UI 画布的宽，即 UI 界面视口的宽 */
 float k_canvas_ui_get_vw(void);
 
-/** \brief 获取 UI 界面的画布高度 */
+/** \brief 获取 UI 画布的高，即 UI 界面视口的高 */
 float k_canvas_ui_get_vh(void);
 
 /* endregion */
@@ -73,8 +73,7 @@ float k_canvas_ui_get_vh(void);
 /**
  * \brief 清空房间的画布内容
  *
- * 用当前画笔的颜色覆盖画布。
- * 若颜色含透明度，则直接替换，不进行混合。
+ * 用当前画笔的颜色覆盖画布。若颜色含透明度，则直接替换，不进行混合。
  */
 void k_canvas_room_clear(void);
 
@@ -184,7 +183,7 @@ struct k_canvas_draw_image_options {
      *
      * 若目标宽高之一为 0 或负值，则图片被压缩至不可见。
      * 若不希望缩放图片，请指定目标宽高为图片原本的宽高，
-     * 使用 `k_image_get_width()` 和 `k_image_get_height()`。
+     * 使用 `k_image_get_w()` 和 `k_image_get_h()`。
      */
     float scaled_w;
     float scaled_h;
@@ -238,7 +237,7 @@ struct k_canvas_draw_sprite_options {
      *
      * 若目标宽高之一为 0 或负值，则精灵图被压缩至不可见。
      * 若不希望缩放精灵，请指定目标宽高为精灵原本的宽高，
-     * 使用 `k_sprite_get_width()` 和 `k_sprite_get_height()`。
+     * 使用 `k_sprite_get_w()` 和 `k_sprite_get_h()`。
      */
     float scaled_w;
     float scaled_h;

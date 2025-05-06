@@ -154,7 +154,7 @@ static void player_touch_bubble(struct k_object *object) {
     size_t n = k_collision_query_rect(box, 512, YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
     size_t i = 0;
     for (; i < n; i++) {
-        yx_pop_bubble(k_collision_box_get_object(box[i]));
+        yx_obj_bubble_pop(k_collision_box_get_object(box[i]));
     }
 
 #endif
@@ -167,7 +167,7 @@ static void player_draw_position(struct k_object *object) {
     k_canvas_ui_printf(NULL, 8, 56, "(%.2f, %.2f)", player->x, player->y);
 }
 
-struct k_object *yx_create_player(const struct yx_obj_player_config *config) {
+struct k_object *yx_obj_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
 
@@ -221,7 +221,7 @@ struct k_object *yx_create_player(const struct yx_obj_player_config *config) {
     {
         struct yx_obj_weapon_config weapon_config;
         weapon_config.parent = player->position;
-        player->weapon = yx_create_weapon(&weapon_config);
+        player->weapon = yx_obj_weapon_create(&weapon_config);
     }
 
     {

@@ -19,9 +19,9 @@ int k_image_set_name(struct k_image *image, const char *image_name);
 
 struct k_image *k_image_find(const char *image_name);
 
-int k_image_get_width(struct k_image *image);
+int k_image_get_w(struct k_image *image);
 
-int k_image_get_height(struct k_image *image);
+int k_image_get_h(struct k_image *image);
 
 struct k_image *k_image_scale(struct k_image *image, int scaled_w, int scaled_h);
 

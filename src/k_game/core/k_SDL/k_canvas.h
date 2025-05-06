@@ -47,7 +47,7 @@ struct k_canvas {
     /* 画布的 UI 视口
      *
      * UI 内容的绘制被限定在该矩形区域。
-     * 该矩形区域的宽高应该与游戏窗口宽高保持一致。
+     * 目前，该矩形区域的宽高与游戏窗口宽高保持一致。
      */
     int ui_viewport_x; // = 0 + room_viewport_w
     int ui_viewport_y; // = 0

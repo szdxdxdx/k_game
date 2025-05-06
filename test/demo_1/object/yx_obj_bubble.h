@@ -11,8 +11,8 @@ struct yx_obj_bubble {
     float y;
 };
 
-struct k_object *yx_create_bubble(float x, float y);
+struct k_object *yx_obj_bubble_create(float x, float y);
 
-void yx_pop_bubble(struct k_object *obj_bubble);
+void yx_obj_bubble_pop(struct k_object *obj_bubble);
 
 #endif

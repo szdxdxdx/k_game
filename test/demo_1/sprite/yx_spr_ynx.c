@@ -5,7 +5,7 @@
 struct k_sprite *yx_spr_ynx_idle = NULL;
 struct k_sprite *yx_spr_ynx_run  = NULL;
 
-int yx_load_spr_ynx(void) {
+int yx_spr_ynx_load(void) {
 
     struct yx_sprite_sheet_config config;
     config.image_file_path  = "./demo_1/sprite/ynx.png";

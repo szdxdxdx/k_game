@@ -6,7 +6,7 @@ struct k_sprite *yx_spr_bubble_appear = NULL;
 struct k_sprite *yx_spr_bubble_float  = NULL;
 struct k_sprite *yx_spr_bubble_pop    = NULL;
 
-int yx_load_spr_bubble(void) {
+int yx_spr_bubble_load(void) {
 
     struct yx_sprite_sheet_config config;
     config.image_file_path  = "./demo_1/sprite/bubble.png";

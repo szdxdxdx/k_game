@@ -28,7 +28,7 @@ static int step_malloc(void *context) {
     const struct k_room_config *config = ctx->config;
 
     if (SIZE_MAX - sizeof(struct k_room) <= config->data_size) {
-        k_log_error("Invalid room data size %zu", config->data_size);
+        k_log_error("invalid room data size %zu", config->data_size);
         return -1;
     }
 
@@ -66,7 +66,7 @@ static int step_set_properties(void *context) {
     room->on_leave   = config->on_leave;
 
     if (config->room_w <= 0 || config->room_h <= 0) {
-        k_log_error("Invalid room width or height");
+        k_log_error("invalid room width or height, w=%f, h=%f", config->room_w, config->room_h);
         return -1;
     }
     room->room_w = config->room_w;

@@ -19,8 +19,8 @@ struct yx_obj_weapon_config {
     struct k_position *parent;
 };
 
-struct yx_obj_weapon *yx_create_weapon(const struct yx_obj_weapon_config *config);
+struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *config);
 
-void yx_destroy_weapon(struct yx_obj_weapon *weapon);
+void yx_obj_weapon_destroy(struct yx_obj_weapon *weapon);
 
 #endif

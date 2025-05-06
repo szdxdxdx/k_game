@@ -7,7 +7,7 @@ struct yx_obj_bubble_maker_config {
 
 };
 
-struct k_object *yx_create_bubble_maker(const struct yx_obj_bubble_maker_config *config);
+struct k_object *yx_obj_bubble_maker_create(const struct yx_obj_bubble_maker_config *config);
 
 struct yx_obj_bubble_maker {
 

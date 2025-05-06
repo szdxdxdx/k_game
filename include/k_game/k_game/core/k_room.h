@@ -140,10 +140,10 @@ void *k_room_get_data(void);
 void *k_room_get_data_of(struct k_room *room);
 
 /** \brief 获取当前房间的宽 */
-float k_room_get_width(void);
+float k_room_get_w(void);
 
 /** \brief 获取当前房间的高 */
-float k_room_get_height(void);
+float k_room_get_h(void);
 
 /* endregion */
 

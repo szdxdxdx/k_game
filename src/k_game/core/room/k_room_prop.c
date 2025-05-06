@@ -9,10 +9,10 @@ void *k_room_get_data_of(struct k_room *room) {
     return room->data;
 }
 
-float k_room_get_width(void) {
+float k_room_get_w(void) {
     return k__current_room->room_w;
 }
 
-float k_room_get_height(void) {
+float k_room_get_h(void) {
     return k__current_room->room_h;
 }

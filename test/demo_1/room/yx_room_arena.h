@@ -7,6 +7,6 @@ struct yx_room_arena {
     struct k_object *player;
 };
 
-struct k_room *yx_create_arena_room(void);
+struct k_room *yx_room_arena_create(void);
 
 #endif

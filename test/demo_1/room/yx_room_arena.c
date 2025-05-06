@@ -166,8 +166,8 @@ static void room_draw_background(void *unused) {
 
     float grid_size = 48;
 
-    float w = k_room_get_width();
-    float h = k_room_get_height();
+    float w = k_room_get_w();
+    float h = k_room_get_h();
 
     k_canvas_set_draw_color_rgba(0x323333ff);
 
@@ -229,7 +229,7 @@ static int arena_room_on_create(void *param) {
 
     {
         struct yx_obj_bubble_maker_config config;
-        yx_create_bubble_maker(&config);
+        yx_obj_bubble_maker_create(&config);
     }
 
     {
@@ -238,7 +238,7 @@ static int arena_room_on_create(void *param) {
         config.y = 400;
         config.spr_idle = yx_spr_ynx_idle;
         config.spr_run  = yx_spr_ynx_run;
-        room_arena->player = yx_create_player(&config);
+        room_arena->player = yx_obj_player_create(&config);
     }
 
     {
@@ -247,7 +247,7 @@ static int arena_room_on_create(void *param) {
         config.y = 600;
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
-        yx_create_rival(&config);
+        yx_obj_rival_create(&config);
     }
 
     {
@@ -256,7 +256,7 @@ static int arena_room_on_create(void *param) {
         config.y = 300;
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
-        yx_create_rival(&config);
+        yx_obj_rival_create(&config);
     }
 
     {
@@ -265,7 +265,7 @@ static int arena_room_on_create(void *param) {
         config.y = 500;
         config.spr_idle = yx_spr_liliko_idle;
         config.spr_run  = yx_spr_liliko_run;
-        yx_create_rival(&config);
+        yx_obj_rival_create(&config);
     }
 
     return 0;
@@ -282,7 +282,7 @@ static void arena_room_on_enter(void) {
     webui_slider_bind_view_size();
 }
 
-struct k_room *yx_create_arena_room(void) {
+struct k_room *yx_room_arena_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.room_w     = 1920 * 2.0f;

@@ -34,9 +34,12 @@ void k__asset_registry_cleanup(struct k_asset_registry *registry, void (*fn_rele
         for (k_list_for_each_s(asset_list, iter, next)) {
             registry_node = container_of(iter, struct k_asset_registry_node, iter_node);
 
+            /* TODO 在 fn_release() 中一定要调用 k__asset_registry_del() */
             fn_release(registry_node);
         }
     }
+
+    /* TODO if NULL == fn_release, free( name_map_node.key ) */
 
     k__mem_free(registry->name_map.buckets);
 }

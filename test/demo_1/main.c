@@ -5,12 +5,13 @@
 #include "k_webui.h"
 
 #include "./sprite/yx_spr.h"
-#include "./room/yx_room.h"
+#include "./room/yx_room_arena.h"
+#include "./room/yx_room_empty.h"
 
 static void create_room(void) {
 
-    //  struct k_room *room = yx_create_arena_room();
-   struct k_room *room = yx_create_empty_room();
+   struct k_room *room = yx_room_arena_create();
+   struct k_room *room2 = yx_room_empty_create();
 
     k_room_goto(room);
 }
@@ -20,10 +21,10 @@ static int on_game_start(void) {
     struct k_image *szdxdxdx = k_image_load("./demo_1/image/szdxdxdx.jpg");
     k_image_set_name(szdxdxdx, "szdxdxdx");
 
-    yx_load_spr_ynx();
-    yx_load_spr_liliko();
-    yx_load_spr_bubble();
-    yx_load_spr_iris();
+    yx_spr_ynx_load();
+    yx_spr_liliko_load();
+    yx_spr_bubble_load();
+    yx_spr_iris_load();
 
     struct k_sound_bgm *bgm = k_sound_bgm_load("./demo_1/sound/bgm.wav");
     k_sound_bgm_loop(bgm, INT_MAX);
