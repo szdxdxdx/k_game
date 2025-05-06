@@ -31,7 +31,10 @@ void k__font_registry_del(struct k_font *font) {
 }
 
 int k_font_set_name(struct k_font *font, const char *font_name) {
-    return k__asset_set_name(&font_registry, &font->registry_node, font_name);
+    if (NULL == font)
+        return -1;
+    else
+        return k__asset_set_name(&font_registry, &font->registry_node, font_name);
 }
 
 struct k_font *k_font_find(const char *font_name) {

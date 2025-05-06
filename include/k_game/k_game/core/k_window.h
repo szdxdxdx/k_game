@@ -2,10 +2,10 @@
 #define K_WINDOW_H
 
 /** \brief 获取窗口的宽度 */
-int k_window_get_w(void);
+float k_window_get_w(void);
 
 /** \brief 获取窗口的高度 */
-int k_window_get_h(void);
+float k_window_get_h(void);
 
 /**
  * \brief 设置窗口保持置顶

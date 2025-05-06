@@ -10,6 +10,14 @@
 
 struct k_window_context k__window;
 
+float k_window_get_w(void) {
+    return k__window.window_w;
+}
+
+float k_window_get_h(void) {
+    return k__window.window_h;
+}
+
 int k_window_set_always_on_top(int enable) {
 
 #ifndef _WIN32

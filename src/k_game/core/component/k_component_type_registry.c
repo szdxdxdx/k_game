@@ -26,7 +26,10 @@ void k__component_type_registry_del(struct k_component_type *component_type) {
 }
 
 int k_component_type_set_name(struct k_component_type *component_type, const char *type_name) {
-    return k__asset_set_name(&component_type_registry, &component_type->registry_node, type_name);
+    if (NULL == component_type)
+        return -1;
+    else
+        return k__asset_set_name(&component_type_registry, &component_type->registry_node, type_name);
 }
 
 struct k_component_type *k_component_type_find(const char *type_name) {

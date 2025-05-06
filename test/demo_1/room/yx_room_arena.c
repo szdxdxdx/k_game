@@ -292,5 +292,9 @@ struct k_room *yx_room_arena_create(void) {
     config.on_destroy = arena_room_on_destroy;
     config.on_enter   = arena_room_on_enter;
 
-    return k_room_create(&config, NULL);
+    struct k_room *room = k_room_create(&config, NULL);
+
+    k_room_set_name(room, "arena");
+
+    return room;
 }

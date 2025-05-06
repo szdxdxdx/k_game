@@ -66,7 +66,7 @@ static int step_set_properties(void *context) {
     room->on_leave   = config->on_leave;
 
     if (config->room_w <= 0 || config->room_h <= 0) {
-        k_log_error("invalid room width or height, w=%f, h=%f", config->room_w, config->room_h);
+        k_log_error("invalid room w or h, w=%f, h=%f", config->room_w, config->room_h);
         return -1;
     }
     room->room_w = config->room_w;
@@ -75,7 +75,7 @@ static int step_set_properties(void *context) {
     room->game_loop = 0;
 
     if (config->room_speed <= 0) {
-        k_log_error("Invalid room speed %d", config->room_speed);
+        k_log_error("invalid room speed %d", config->room_speed);
         return -1;
     }
     room->step_interval_ms = (uint64_t)(1000 / config->room_speed);
@@ -185,7 +185,7 @@ static int step_run_on_create_callback(void *context) {
     k__current_room = tmp;
 
     if (0 != result) {
-        k_log_error("Room fn_init() callback returned %d", result);
+        k_log_error("room on_create() callback returned %d", result);
         return -1;
     }
 
@@ -224,7 +224,7 @@ static const struct k_seq_step steps[] = {
 struct k_room *k_room_create(const struct k_room_config *config, void *param) {
 
     if (NULL == config) {
-        k_log_error("Room config is NULL");
+        k_log_error("room config is null");
         goto err;
     }
 
@@ -238,7 +238,7 @@ struct k_room *k_room_create(const struct k_room_config *config, void *param) {
     return ctx.room;
 
 err:
-    k_log_error("Failed to create room");
+    k_log_error("failed to create room");
     return NULL;
 }
 

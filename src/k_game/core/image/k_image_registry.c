@@ -27,7 +27,10 @@ void k__image_registry_del(struct k_image *image) {
 }
 
 int k_image_set_name(struct k_image *image, const char *image_name) {
-    return k__asset_set_name(&image_registry, &image->registry_node, image_name);
+    if (NULL == image)
+        return -1;
+    else
+        return k__asset_set_name(&image_registry, &image->registry_node, image_name);
 }
 
 struct k_image *k_image_find(const char *image_name) {

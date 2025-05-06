@@ -56,7 +56,7 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui);
 /** \brief 添加 UI 子元素 */
 int llk_ui_elem_append_child(struct llk_ui_elem *parent, struct llk_ui_elem *child);
 
-/** \brief 解析 xml 文件，构建对应的 UI 元素 */
+/** \brief 解析 xml 文件，构建对应的 UI 元素，失败则返回 `NULL` */
 struct llk_ui_elem *llk_ui_build_elem_from_xml_file(struct llk_ui_context *ui, const char *file_path);
 
 /* endregion */

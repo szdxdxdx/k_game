@@ -1,6 +1,7 @@
 #ifndef K_GAME_H
 #define K_GAME_H
 
+#include "./k_game/core/k_window.h"
 #include "./k_game/core/k_image.h"
 #include "./k_game/core/k_sound.h"
 #include "./k_game/core/k_font.h"

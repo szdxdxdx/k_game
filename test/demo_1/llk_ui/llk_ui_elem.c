@@ -356,15 +356,9 @@ int llk_ui_elem_set_attr(struct llk_ui_elem *elem, const char *key, const char *
         return -1;
     }
 
-    int result;
-    if (NULL == elem->type->fn_set_attr) {
-        result = llk__ui_elem_set_attr_default(elem, key, val);
-    } else {
-        result = elem->type->fn_set_attr(elem, key, val);
-    }
-
+    int result = elem->type->fn_set_attr(elem, key, val);
     if (0 != result) {
-        k_log_warn("Elem `%s` unsupported attribute or invalid value, key: `%s` value: `%s`", elem->type->type_name, key, val);
+        k_log_warn("elem `%s` unsupported attribute or invalid value, key: `%s` value: `%s`", elem->type->type_name, key, val);
         return -1;
     }
 

@@ -30,7 +30,10 @@ void k__sound_bgm_registry_del(struct k_sound_bgm *bgm) {
 }
 
 int k_sound_bgm_set_name(struct k_sound_bgm *sound, const char *bgm_name) {
-    return k__asset_set_name(&bgm_registry, &sound->registry_node, bgm_name);
+    if (NULL == sound)
+        return -1;
+    else
+        return k__asset_set_name(&bgm_registry, &sound->registry_node, bgm_name);
 }
 
 struct k_sound_bgm *k_sound_bgm_find(const char *bgm_name) {
@@ -70,7 +73,10 @@ void k__sound_sfx_registry_del(struct k_sound_sfx *sfx) {
 }
 
 int k_sound_sfx_set_name(struct k_sound_sfx *sound, const char *sfx_name) {
-    return k__asset_set_name(&sfx_registry, &sound->registry_node, sfx_name);
+    if (NULL == sound)
+        return -1;
+    else
+        return k__asset_set_name(&sfx_registry, &sound->registry_node, sfx_name);
 }
 
 struct k_sound_sfx *k_sound_sfx_find(const char *sfx_name) {

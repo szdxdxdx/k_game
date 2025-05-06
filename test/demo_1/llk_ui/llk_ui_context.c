@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <assert.h>
 
 #define K_LOG_TAG "llk:UI"
 #include "k_log.h"
@@ -258,10 +259,11 @@ int llk_ui_register_callback(struct llk_ui_context *ui, const char *key, void *f
 }
 
 void *llk__ui_get_callback(struct llk_ui_context *ui, const char *key) {
+    assert(NULL != key && '\0' != key[0]);
 
     void *val = k_str_map_get(&ui->callback_fn_map, key);
     if (NULL == val) {
-        k_log_warn("Callback function `%s` not registered", val);
+        k_log_warn("callback function `%s` not registered", key);
         return NULL;
     }
 
