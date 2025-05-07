@@ -68,7 +68,7 @@ struct k_camera {
     void *webui;
 };
 
-void k__camera_move_on_step_begin(void *camera_);
+void k__camera_move_on_begin_step(void *camera_);
 
 int k__camera_set_debug_draw_enabled(struct k_camera *camera, int enabled);
 

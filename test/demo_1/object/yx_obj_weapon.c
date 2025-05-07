@@ -131,7 +131,7 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
     k_object_add_step_callback(object, draw_weapon);
     k_object_add_step_callback(object, shoot);
     k_object_add_step_callback(object, mouse_drag);
-    k_object_add_step_end_callback(object, after_move);
+    k_object_add_end_step_callback(object, after_move);
 
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 

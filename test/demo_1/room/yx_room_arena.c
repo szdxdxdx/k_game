@@ -75,6 +75,11 @@ static void btn_on_click(struct llk_ui_elem *elem) {
     hidden = !hidden;
     struct llk_ui_elem *panel = llk_ui_get_elem_by_id(ui, "state-panel");
     llk_ui_elem_set_attr(panel, "hidden", hidden ? "false" : "true");
+
+    static int count = 5;
+    if (0 == --count) {
+        k_room_nav_pop();
+    }
 }
 
 static void btn_on_draw(struct llk_ui_elem *elem) {

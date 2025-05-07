@@ -31,8 +31,8 @@ void k__room_run(struct k_room *room) {
 
         k__SDL_handle_event_with_frame_delay(room->step_interval_ms);
 
-        k__step_callback_manager_flush(&room->step_begin_callback_manager);
-        k__step_callback_manager_exec(&room->step_begin_callback_manager);
+        k__step_callback_manager_flush(&room->begin_step_callback_manager);
+        k__step_callback_manager_exec(&room->begin_step_callback_manager);
 
         k__alarm_callback_manager_flush(&room->alarm_callback_manager);
         k__alarm_callback_manager_exec(&room->alarm_callback_manager);
@@ -40,8 +40,8 @@ void k__room_run(struct k_room *room) {
         k__step_callback_manager_flush(&room->step_callback_manager);
         k__step_callback_manager_exec(&room->step_callback_manager);
 
-        k__step_callback_manager_flush(&room->step_end_callback_manager);
-        k__step_callback_manager_exec(&room->step_end_callback_manager);
+        k__step_callback_manager_flush(&room->end_step_callback_manager);
+        k__step_callback_manager_exec(&room->end_step_callback_manager);
 
         k__draw_callback_manager_flush(&room->draw_callback_manager);
         k__draw_callback_manager_exec(&room->draw_callback_manager);

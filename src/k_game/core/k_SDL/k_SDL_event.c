@@ -76,19 +76,36 @@ void k__SDL_handle_event_with_frame_delay(uint64_t room_step_interval_ms) {
     k__keyboard_refresh_state();
     k__mouse_refresh_state();
 
-    uint64_t current_time;
-    uint64_t elapsed_time;
+#if 0
 
-    do {
-        k__SDL_poll_events();
+    k__SDL_poll_events();
+
+    uint64_t current_time = SDL_GetTicks64();
+    uint64_t elapsed_time = current_time - k__time.step_timestamp;
+
+    if (elapsed_time < room_step_interval_ms) {
+
+        SDL_Delay(room_step_interval_ms - elapsed_time);
 
         current_time = SDL_GetTicks64();
         elapsed_time = current_time - k__time.step_timestamp;
+    }
+#else
+    uint64_t current_time;
+    uint64_t elapsed_time;
 
-        /* 不使用 `SDL_Delay()` 来控制帧率，是因为 delay 期间不执行代码，窗口无法响应操作。
-         * 例如，若极端地将帧率设为 1 秒 1 帧时，用户能明显感觉到拖动窗口的响应卡顿。
-         */
-    } while (elapsed_time < room_step_interval_ms);
+    while (1) {
+        current_time = SDL_GetTicks64();
+        elapsed_time = current_time - k__time.step_timestamp;
+
+        k__SDL_poll_events();
+
+        if (elapsed_time >= room_step_interval_ms)
+            break;
+
+        SDL_Delay(1);
+    }
+#endif
 
     k__time.step_timestamp = current_time;
     k__time.step_delta_ms  = (int)elapsed_time;

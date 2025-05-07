@@ -17,11 +17,11 @@ struct k_room {
 
     size_t room_id;
 
-    struct k_step_callback_manager  step_begin_callback_manager;
+    struct k_step_callback_manager  begin_step_callback_manager;
     struct k_alarm_callback_manager alarm_callback_manager;
     struct k_step_callback_manager  step_callback_manager;
     struct k_draw_callback_manager  draw_callback_manager;
-    struct k_step_callback_manager  step_end_callback_manager;
+    struct k_step_callback_manager  end_step_callback_manager;
 
     struct k_list callback_list;
 

@@ -13,7 +13,7 @@ int k__camera_on_create(struct k_component_manager *manager, void *params) {
 
     camera->state = K__CAMERA_AUTO_FOLLOW;
 
-    camera->cb_camera_move = k_component_manager_add_step_end_callback(manager, camera, k__camera_move_on_step_begin);
+    camera->cb_camera_move = k_component_manager_add_end_step_callback(manager, camera, k__camera_move_on_begin_step);
     if (NULL == camera->cb_camera_move)
         return -1;
 

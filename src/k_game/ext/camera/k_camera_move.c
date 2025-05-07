@@ -149,7 +149,7 @@ static void k__camera_auto_follow(struct k_camera *camera) {
     k__camera_move_towards(camera);
 }
 
-void k__camera_move_on_step_begin(void *camera_) {
+void k__camera_move_on_begin_step(void *camera_) {
     struct k_camera *camera = camera_;
 
     switch (camera->state) {

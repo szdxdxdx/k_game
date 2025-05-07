@@ -12,7 +12,7 @@
 /* region [goto_room_arena] */
 
 static void yx__room_title_goto_room_arena(void) {
-    k_room_nav_goto(k_room_find("arena"));
+    k_room_nav_push(k_room_find("arena"));
 }
 
 /* endregion */
@@ -64,7 +64,7 @@ static void yx__room_title_on_step_rebuild_ui(void *data) {
     }
 }
 
-static void yx__room_title_on_step_begin_update_ui(void *data) {
+static void yx__room_title_on_begin_step_update_ui(void *data) {
     if (NULL != ui) {
         llk_ui_update(ui);
     }
@@ -84,7 +84,7 @@ static int yx__room_title_on_create(void *param) {
 
     k_room_add_step_callback(NULL, yx__room_title_on_step_rebuild_ui);
 
-    k_room_add_step_callback(NULL, yx__room_title_on_step_begin_update_ui);
+    k_room_add_step_callback(NULL, yx__room_title_on_begin_step_update_ui);
     k_room_add_draw_callback(NULL, yx__room_title_on_draw_ui, INT_MIN, 0);
 
     return 0;
@@ -93,6 +93,7 @@ static int yx__room_title_on_create(void *param) {
 struct k_room *yx_room_title_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
+    config.room_speed = 5;
     config.room_w = k_window_get_w();
     config.room_h = k_window_get_h();
     config.on_create = yx__room_title_on_create;

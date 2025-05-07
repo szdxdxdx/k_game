@@ -12,6 +12,8 @@
 
 struct k_room_stack {
 
+    /* 当前不允许主动销毁房间，所以栈中的指针不会悬空。
+     * 若允许销毁房间，则栈应改为存储房间 ID */
     struct k_room *rooms[K_ROOM_STACK_MAX_SIZE];
 
     size_t top;
