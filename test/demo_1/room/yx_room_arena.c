@@ -5,27 +5,58 @@
 #define K_LOG_TAG "yx:room:arena"
 #include "k_log.h"
 
+#include "k_webui.h"
+
 #include "./yx_room_arena.h"
 
 #include "../sprite/yx_spr.h"
 #include "../object/yx_obj.h"
 
 #include "../llk_ui/llk_ui.h"
-
-#include "k_webui.h"
+#include "../utils/yx_math.h"
 
 /* region [webui] */
 
+#define WEBUI_GROUP "【关卡一】"
+
 static int webui_text_mouse_xy(void *data, struct k_str_buf *buf) {
 
-    k_str_buf_printf(buf, "鼠标坐标 (%.2f, %.2f)\n", k_mouse_x(), k_mouse_y());
+    k_str_buf_printf(buf, "(%.2f, %.2f)\n", k_mouse_x(), k_mouse_y());
     return 0;
 }
 
 static void webui_text_bind_mouse_xy(void) {
     struct k_webui_text_config text = K_WEBUI_TEXT_CONFIG_INIT;
     text.on_read = webui_text_mouse_xy;
-    k_webui_bind_text("", "", NULL, &text);
+    k_webui_bind_text(WEBUI_GROUP, "鼠标坐标", NULL, &text);
+}
+
+static int show_ui = 1;
+static int show_room = 1;
+
+static void webui_checkbox_show_ui_or_room(void) {
+
+    {
+        struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_CONFIG_INIT;
+        k_webui_bind_checkbox(WEBUI_GROUP, "绘制 UI", &show_ui, &checkbox);
+    }
+    {
+        struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_CONFIG_INIT;
+        k_webui_bind_checkbox(WEBUI_GROUP, "绘制房间", &show_room, &checkbox);
+    }
+}
+
+static void clear_room_or_ui(void *data) {
+
+    if ( ! show_ui) {
+        k_canvas_set_draw_color(0x00000000);
+        k_canvas_ui_clear();
+    }
+
+    if ( ! show_room) {
+        k_canvas_set_draw_color(0x666666ff);
+        k_canvas_room_clear();
+    }
 }
 
 /* ------------------------------------------------------------------------ */
@@ -58,7 +89,7 @@ static void webui_slider_bind_view_size(void) {
     slider.step  = 0.005f;
     slider.on_input = webui_slider_set_view_scale;
     slider.on_read  = webui_slider_get_view_scale;
-    k_webui_bind_float_slider("", "视野大小", NULL, &slider);
+    k_webui_bind_float_slider(WEBUI_GROUP, "视野大小", NULL, &slider);
 }
 
 /* endregion */
@@ -88,12 +119,12 @@ static void btn_on_draw(struct llk_ui_elem *elem) {
     llk_ui_elem_get_rect(elem, &x, &y, &w, &h);
 
     if (llk_ui_elem_is_pressed(elem)) {
-        k_canvas_set_draw_color_rgba(0x000000ff);
+        k_canvas_set_draw_color(0x000000ff);
     } else {
-        k_canvas_set_draw_color_rgba(0xffffffff);
+        k_canvas_set_draw_color(0xffffffff);
     }
 
-    k_canvas_ui_printf(NULL, x, y, "click me!");
+    k_canvas_ui_printf(NULL, x + 5, y + 5, "click me!");
 }
 
 static void slider_on_change(struct llk_ui_elem *elem, float old_val, float new_val) {
@@ -119,8 +150,8 @@ static void room_build_ui(void) {
         goto err;
 
     llk_ui_elem_set_attr(box, "background-color", "#ffffffaa");
-    llk_ui_elem_set_attr(box, "w", "160");
-    llk_ui_elem_set_attr(box, "h", "60");
+    llk_ui_elem_set_attr(box, "w", "120");
+    llk_ui_elem_set_attr(box, "h", "30");
     llk_ui_elem_set_attr(box, "top", "10");
     llk_ui_elem_set_attr(box, "right", "10");
     llk_ui_elem_set_attr(box, "on-click", "click");
@@ -150,7 +181,7 @@ static void room_draw_ui(void *unused) {
     if (NULL == ui)
         return;
 
-    k_canvas_set_draw_color_rgba(0x00000000);
+    k_canvas_set_draw_color(0x00000000);
     k_canvas_ui_clear();
 
     llk_ui_draw(ui);
@@ -160,7 +191,7 @@ static void room_draw_ui(void *unused) {
 
 static void room_draw_background(void *unused) {
 
-    k_canvas_set_draw_color_rgba(0x1e1e1eff);
+    k_canvas_set_draw_color(0x1e1e1eff);
     k_canvas_room_clear();
 
     float view_x;
@@ -174,7 +205,7 @@ static void room_draw_background(void *unused) {
     float w = k_room_get_w();
     float h = k_room_get_h();
 
-    k_canvas_set_draw_color_rgba(0x323333ff);
+    k_canvas_set_draw_color(0x323333ff);
 
     float x = floorf(view_x / grid_size) * grid_size;
     float x_to = ceilf((view_x + view_w) / grid_size) * grid_size;
@@ -213,6 +244,8 @@ static void set_debug(void *data) {
     }
 }
 
+
+
 static int arena_room_on_create(void *param) {
     (void)param;
 
@@ -228,6 +261,8 @@ static int arena_room_on_create(void *param) {
     k_room_add_draw_callback(NULL, room_draw_background, INT_MIN, 0);
     k_room_add_draw_callback(NULL, room_draw_text, INT_MIN, 1);
 
+    k_room_add_draw_callback(NULL, clear_room_or_ui, K_DEBUG_Z_GROUP, K_DEBUG_Z_LAYER - 1);
+
     k_room_add_camera();
 
     k_room_add_collision_manager();
@@ -235,6 +270,15 @@ static int arena_room_on_create(void *param) {
     {
         struct yx_obj_bubble_maker_config config;
         yx_obj_bubble_maker_create(&config);
+
+        int i = 0;
+        for (; i < 1000; ++i) {
+            float padding = 32;
+            float rand_x = yx_rand(padding, k_room_get_w() - padding);
+            float rand_y = yx_rand(padding, k_room_get_h() - padding);
+
+            yx_obj_bubble_create(rand_x, rand_y);
+        }
     }
 
     {
@@ -285,6 +329,7 @@ static void arena_room_on_enter(void) {
     // k_window_set_always_on_top(1);
     webui_text_bind_mouse_xy();
     webui_slider_bind_view_size();
+    webui_checkbox_show_ui_or_room();
 }
 
 struct k_room *yx_room_arena_create(void) {

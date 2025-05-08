@@ -107,7 +107,7 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
         background_color = box->background_color.computed_val;
     }
     if (0x00000000 != background_color) {
-        k_canvas_set_draw_color_rgba(background_color);
+        k_canvas_set_draw_color(background_color);
         k_canvas_ui_fill_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
     }
 
@@ -122,7 +122,7 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
         border_color = box->border_color.computed_val;
     }
     if (0x00000000 != border_color) {
-        k_canvas_set_draw_color_rgba(border_color);
+        k_canvas_set_draw_color(border_color);
         k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
     }
 

@@ -385,7 +385,7 @@ int llk__ui_parse_color_val(const char *str, uint32_t *get_val, enum llk_ui_unit
  * void on_draw(struct llk_ui_elem *elem) {
  *     float x, y, w, h;
  *     llk_ui_elem_get_rect(elem, &x, &y, &w, &h);
- *     k_canvas_set_draw_color_rgba(0xff6600ff)
+ *     k_canvas_set_draw_color(0xff6600ff)
  *     k_canvas_ui_fill_rect(x, y, w, h);
  * }
  * ```

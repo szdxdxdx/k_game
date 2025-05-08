@@ -287,16 +287,16 @@ static void llk__ui_elem_slider_draw(struct llk_ui_elem *elem) {
     float track_right_w = elem->w.computed_val - track_left_w - thumb_w;
 
     if (0x00000000 != track_color) {
-        k_canvas_set_draw_color_rgba(track_color);
+        k_canvas_set_draw_color(track_color);
         k_canvas_ui_fill_rect(track_left_x, track_y, track_left_w, track_h);
         k_canvas_ui_fill_rect(track_right_x, track_y, track_right_w, track_h);
     }
     if (0x00000000 != thumb_color) {
-        k_canvas_set_draw_color_rgba(thumb_color);
+        k_canvas_set_draw_color(thumb_color);
         k_canvas_ui_fill_rect(thumb_x, track_y, thumb_w, track_h);
     }
     if (0x00000000 != border_color) {
-        k_canvas_set_draw_color_rgba(border_color);
+        k_canvas_set_draw_color(border_color);
         k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
         k_canvas_ui_draw_rect(thumb_x, track_y, thumb_w, track_h);
     }

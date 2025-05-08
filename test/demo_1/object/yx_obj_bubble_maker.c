@@ -1,19 +1,13 @@
-#include <stdlib.h>
 
 #include "./yx_obj.h"
 
-static float my_rand(float min, float max) {
-    int min_ = (int)min;
-    int max_ = (int)max;
-    int r = min_ + rand() % (max_ - min_ + 1);
-    return (float)r;
-}
+#include "../utils/yx_math.h"
 
 static void yx_bubble_maker_create_bubble(struct k_object *object, int timeout_diff) {
 
     float padding = 32;
-    float rand_x = my_rand(padding, k_room_get_w() - padding);
-    float rand_y = my_rand(padding, k_room_get_h() - padding);
+    float rand_x = yx_rand(padding, k_room_get_w() - padding);
+    float rand_y = yx_rand(padding, k_room_get_h() - padding);
 
     yx_obj_bubble_create(rand_x, rand_y);
 

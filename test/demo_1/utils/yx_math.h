@@ -2,6 +2,7 @@
 #define YX_MATH_H
 
 #include <math.h>
+#include <stdlib.h>
 
 /**
  * \brief 计算向量方向角的余弦值和正弦值
@@ -36,6 +37,13 @@ static inline void yx_calc_vector_direction(float ox, float oy, float x, float y
             *get_sin = -sinf(angle);
         }
     }
+}
+
+static inline float yx_rand(float min, float max) {
+    int min_ = (int)min;
+    int max_ = (int)max;
+    int r = min_ + rand() % (max_ - min_ + 1);
+    return (float)r;
 }
 
 #endif

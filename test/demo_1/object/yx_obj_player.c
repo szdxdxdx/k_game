@@ -163,7 +163,7 @@ static void player_touch_bubble(struct k_object *object) {
 static void player_draw_position(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    k_canvas_set_draw_color_rgba(0xffffffff);
+    k_canvas_set_draw_color(0xffffffff);
     k_canvas_ui_printf(NULL, 8, 56, "(%.2f, %.2f)", player->x, player->y);
 }
 

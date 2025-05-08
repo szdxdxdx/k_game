@@ -94,9 +94,9 @@ static int yx_room_empty_on_create(void *param) {
 }
 
 static void show_int_val(void *unused) {
-    k_canvas_set_draw_color_rgba(0x000000ff);
+    k_canvas_set_draw_color(0x000000ff);
     k_canvas_ui_clear();
-    k_canvas_set_draw_color_rgba(0xffffffff);
+    k_canvas_set_draw_color(0xffffffff);
     k_canvas_ui_printf(NULL, 8, 32 * 1, "%d", int_val);
     k_canvas_ui_printf(NULL, 8, 32 * 2, "%f", float_val);
 }

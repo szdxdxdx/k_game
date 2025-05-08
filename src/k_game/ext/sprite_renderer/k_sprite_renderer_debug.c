@@ -7,7 +7,7 @@
 static void k__sprite_renderer_on_debug_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
 
-    k_canvas_set_draw_color_rgba(0xff6600ff);
+    k_canvas_set_draw_color(0xff6600ff);
 
     float dst_x = *(renderer->x);
     float dst_y = *(renderer->y);

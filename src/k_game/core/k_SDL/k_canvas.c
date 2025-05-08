@@ -123,7 +123,7 @@ float k_canvas_ui_get_vh(void) {
 
 /* region [draw_color] */
 
-void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+void k_canvas_set_draw_color_(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 
     if (0 != SDL_SetRenderDrawColor(k__window.renderer, r, g, b, a)) {
         k_log_error("SDL error: %s", SDL_GetError());
@@ -131,7 +131,7 @@ void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     }
 }
 
-void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
+void k_canvas_get_draw_color_(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a) {
     SDL_GetRenderDrawColor(k__window.renderer, r, g, b, a);
 }
 

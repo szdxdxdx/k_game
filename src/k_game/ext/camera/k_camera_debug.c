@@ -14,7 +14,7 @@ static void k__camera_debug_draw_auto_follow(struct k_camera *camera) {
     if (0 == camera->targets_num)
         goto draw_view_center;
 
-    k_canvas_set_draw_color_rgba(0x39c5bbff);
+    k_canvas_set_draw_color(0x39c5bbff);
     k_canvas_room_draw_circle(dst_x, dst_y, r);
 
     if (NULL == camera->primary_target) {
@@ -61,7 +61,7 @@ draw_view_center:
         float view_cy;
         k_view_get_position(&view_cx, &view_cy);
 
-        k_canvas_set_draw_color_rgba(0xffdd66ff);
+        k_canvas_set_draw_color(0xffdd66ff);
         k_canvas_room_draw_circle(view_cx, view_cy, 2 * r);
         if (dst_x != view_cx || dst_y != view_cy) {
             k_canvas_room_draw_line(view_cx, view_cy, dst_x, dst_y);

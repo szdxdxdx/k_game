@@ -16,7 +16,7 @@
  *
  * 若设置成功，函数返回 0，否则返回非 0。
  */
-void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+void k_canvas_set_draw_color_(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
 /**
  * \brief 获取画笔的颜色
@@ -24,19 +24,19 @@ void k_canvas_set_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
  * 函数通过参数列表返回当前画笔的颜色，若传 `NULL` 则不接受该出参。
  * `r, g, b, a` 分别返回红色通道、绿色通道、蓝色通道和透明度通道的值。
  */
-void k_canvas_get_draw_color(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
+void k_canvas_get_draw_color_(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a);
 
 /**
  * \brief 设置画笔的颜色
  *
  * 更改画笔颜色为 `hex_rgba` 所指定的十六进制 `0xRRGGBBAA` 格式的颜色值。
  */
-static inline void k_canvas_set_draw_color_rgba(uint32_t hex_rgba) {
+static inline void k_canvas_set_draw_color(uint32_t hex_rgba) {
     uint8_t r = 0xff & (hex_rgba >> 24);
     uint8_t g = 0xff & (hex_rgba >> 16);
     uint8_t b = 0xff & (hex_rgba >> 8);
     uint8_t a = 0xff & (hex_rgba);
-    k_canvas_set_draw_color(r, g, b, a);
+    k_canvas_set_draw_color_(r, g, b, a);
 }
 
 /**
@@ -44,12 +44,12 @@ static inline void k_canvas_set_draw_color_rgba(uint32_t hex_rgba) {
  *
  * 函数返回当前画笔的颜色值，为十六进制 `0xRRGGBBAA` 格式。
  */
-static inline uint32_t k_canvas_get_draw_color_rgba(void) {
+static inline uint32_t k_canvas_get_draw_color(void) {
     uint8_t r;
     uint8_t g;
     uint8_t b;
     uint8_t a;
-    k_canvas_get_draw_color(&r, &g, &b, &a);
+    k_canvas_get_draw_color_(&r, &g, &b, &a);
     return ((uint32_t)r << 24)
          | ((uint32_t)g << 16)
          | ((uint32_t)b << 8)
