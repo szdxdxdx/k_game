@@ -11,6 +11,8 @@ struct k_component_manager;
 
 struct k_component {
 
+    void *data;
+
     struct k_list_node list_node;
 
     struct k_component_type *type;
@@ -20,8 +22,6 @@ struct k_component {
     struct k_component_manager *manager;
 
     struct k_list callback_list;
-
-    void *data;
 };
 
 void k__object_del_all_components(struct k_object *object);

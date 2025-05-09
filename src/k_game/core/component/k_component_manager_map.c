@@ -80,7 +80,7 @@ int k__component_manager_map_add(struct k_room *room, struct k_component_manager
     assert(NULL != manager);
 
     size_t room_id = room->room_id;
-    size_t manager_type_id = manager->component_type->manager_type->type_id;
+    size_t manager_type_id = manager->type->manager_type->type_id;
 
     struct k_array *room_array = &component_manager_map.map;
     struct k_array **p_manager_array;

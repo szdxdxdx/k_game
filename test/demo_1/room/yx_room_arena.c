@@ -269,7 +269,7 @@ static int arena_room_on_create(void *param) {
 
     {
         struct yx_obj_bubble_maker_config config;
-        yx_obj_bubble_maker_create(&config);
+        //yx_obj_bubble_maker_create(&config);
 
         int i = 0;
         for (; i < 1000; ++i) {

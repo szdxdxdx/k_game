@@ -12,11 +12,10 @@ struct k_component_manager {
 
     void *data;
 
-    struct k_component_type *component_type;
+    struct k_component_type *type;
 
     struct k_room *room;
 
-    /* experimental */
     struct k_list callback_list;
 };
 

@@ -5,6 +5,8 @@
 
 struct k_object {
 
+    void *data;
+
     struct k_list_node pool_node;
 
     struct k_room *room;
@@ -12,8 +14,6 @@ struct k_object {
     struct k_list callback_list;
 
     struct k_list component_list;
-
-    void *data;
 
     void (*on_destroy)(struct k_object *object);
 };

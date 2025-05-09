@@ -22,7 +22,7 @@ static int k__component_manager_create(struct k_room *room, struct k_component_t
     if (NULL == manager)
         return -1;
 
-    manager->component_type = component_type;
+    manager->type = component_type;
     manager->room = room;
 
     if (0 != manager_type->data_size) {
@@ -52,7 +52,7 @@ map_add_failed:
 
 void k__component_manager_destroy(struct k_component_manager *manager) {
 
-    struct k_component_manager_type *manager_type = manager->component_type->manager_type;
+    struct k_component_manager_type *manager_type = manager->type->manager_type;
 
     if (NULL != manager_type->on_destroy) {
         /* TODO 禁止在 `fn_fini()` 中再次删除自身 */

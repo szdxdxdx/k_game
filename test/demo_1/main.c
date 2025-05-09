@@ -48,6 +48,8 @@ int main(int argc, char **argv) {
     k_webui_init();
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
+    config.window_w = 640 / 2;
+    config.window_h = 480 / 2;
     config.window_title = "demo 1";
     config.on_start = on_game_start;
 
