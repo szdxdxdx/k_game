@@ -15,7 +15,7 @@ enum k_collision_box_type;
 struct k_collision_box_config;
 
 struct k_collision_box;
-struct k_collision_rectangle;
+struct k_collision_rect;
 struct k_collision_circle;
 
 struct k_collision_group;
@@ -55,7 +55,7 @@ struct k_collision_line {
     float offset_y2;
 };
 
-struct k_collision_rectangle {
+struct k_collision_rect {
     float offset_x1;
     float offset_y1;
     float offset_x2;
@@ -80,10 +80,10 @@ struct k_collision_box {
     enum k_collision_box_type type;
 
     union {
-        struct k_collision_point     point;
-        struct k_collision_line      line;
-        struct k_collision_rectangle rect;
-        struct k_collision_circle    circle;
+        struct k_collision_point  point;
+        struct k_collision_line   line;
+        struct k_collision_rect   rect;
+        struct k_collision_circle circle;
     };
 };
 

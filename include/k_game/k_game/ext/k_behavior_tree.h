@@ -110,17 +110,17 @@ struct k_behavior_tree_node *k_behavior_tree_get_root(struct k_behavior_tree *tr
  *
  * 向 `node` 添加一个 [action] 子节点。若添加成功，函数返回 [action] 节点的指针，否则返回 `NULL`。
  *
- * [action] 在它的每一次 tick 中都会执行一次 `fn_tick()` 回调，
- * 你需要在 `fn_tick()` 中执行实际的行为动作，并返回该动作的执行结果：
+ * [action] 在它的每一次 tick 中都会执行一次 `fn_action()` 回调，
+ * 你需要在 `fn_action()` 中执行实际的行为动作，并返回该动作的执行结果：
  * - 若动作完成，且执行成功，`fn_tick()` 应返回 `K_BT_SUCCESS`。
  * - 若动作完成，且执行失败，`fn_tick()` 应返回 `K_BT_FAILURE`。
  * - 若动作还需要更多次 tick 才能得到结果，应返回 `K_BT_RUNNING`。
  *
- * `data` 为用户自定义数据，你可以在 `fn_tick()` 中使用它。
+ * `data` 为用户自定义数据，你可以在 `fn_action()` 中使用它。
  *
  * 无法给 [action] 添加子节点。
  */
-struct k_behavior_tree_node *k_behavior_tree_add_action(struct k_behavior_tree_node *node, void *data, enum k_behavior_tree_status (*fn_tick)(void *data), void (*fn_interrupt)(void *data));
+struct k_behavior_tree_node *k_behavior_tree_add_action(struct k_behavior_tree_node *node, void *data, enum k_behavior_tree_status (*fn_action)(void *data), void (*fn_interrupt)(void *data));
 
 /**
  * \brief 向行为树添加一个 [condition] 节点
