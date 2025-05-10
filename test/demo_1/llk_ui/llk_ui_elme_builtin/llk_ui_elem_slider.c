@@ -305,8 +305,8 @@ static void llk__ui_elem_slider_draw(struct llk_ui_elem *elem) {
 struct llk_ui_elem_type llk__ui_elem_slider = {
     .type_name         = "slider",
     .elem_struct_size  = sizeof(struct llk_ui_elem_slider),
-    .fn_init           = llk__ui_elem_slider_init,
-    .fn_fini           = NULL,
+    .on_create         = llk__ui_elem_slider_init,
+    .on_destroy        = NULL,
     .fn_set_attr       = llk__ui_elem_slider_set_attr,
     .fn_after_layout   = NULL,
     .fn_hit_test       = llk__ui_elem_slider_hit_test,

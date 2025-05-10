@@ -135,8 +135,8 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
 struct llk_ui_elem_type llk__ui_elem_box = {
     .type_name         = "box",
     .elem_struct_size  = sizeof(struct llk_ui_elem_box),
-    .fn_init           = llk__ui_elem_box_init,
-    .fn_fini           = NULL,
+    .on_create         = llk__ui_elem_box_init,
+    .on_destroy        = NULL,
     .fn_set_attr       = llk__ui_elem_box_set_attr,
     .fn_after_layout   = NULL,
     .fn_hit_test       = NULL,

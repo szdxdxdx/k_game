@@ -171,10 +171,10 @@ struct llk_ui_elem_type {
      *
      * 若初始化成功，函数应返回 0，否则应返回非 0。
      */
-    int (*fn_init)(struct llk_ui_elem *elem);
+    int (*on_create)(struct llk_ui_elem *elem);
 
     /* 析构函数，在销毁实例时调用 */
-    void (*fn_fini)(struct llk_ui_elem *elem);
+    void (*on_destroy)(struct llk_ui_elem *elem);
 
     /* 设置属性的函数，在设置属性时调用
      *

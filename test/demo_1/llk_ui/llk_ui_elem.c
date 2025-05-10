@@ -37,8 +37,8 @@ int llk__ui_register_elem_type(struct llk_ui_context *ui, const struct llk_ui_el
 
     copy->elem_struct_size  = type->elem_struct_size;
     copy->type_name         = type_name;
-    copy->fn_init           = type->fn_init;
-    copy->fn_fini           = type->fn_fini;
+    copy->on_create         = type->on_create;
+    copy->on_destroy        = type->on_destroy;
     copy->fn_set_attr       = type->fn_set_attr;
     copy->fn_after_layout   = type->fn_after_layout;
     copy->fn_hit_test       = type->fn_hit_test;
@@ -102,8 +102,8 @@ struct llk_ui_elem *llk_ui_elem_create(struct llk_ui_context *ui, const char *ty
 
     elem->flag_destroy = 0;
 
-    if (NULL != type->fn_init) {
-        if (0 != type->fn_init(elem))
+    if (NULL != type->on_create) {
+        if (0 != type->on_create(elem))
             goto err;
     }
 
@@ -119,8 +119,8 @@ err:
 
 void llk__ui_elem_destroy(struct llk_ui_elem *elem) {
 
-    if (elem->type->fn_fini != NULL) {
-        elem->type->fn_fini(elem);
+    if (elem->type->on_destroy != NULL) {
+        elem->type->on_destroy(elem);
     }
 
     struct llk_ui_context *ui = elem->ui;

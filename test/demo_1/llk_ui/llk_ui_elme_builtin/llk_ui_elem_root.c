@@ -8,8 +8,8 @@ struct llk_ui_elem_root {
 struct llk_ui_elem_type llk__ui_elem_root = {
     .type_name         = "root",
     .elem_struct_size  = sizeof(struct llk_ui_elem_root),
-    .fn_init           = NULL,
-    .fn_fini           = NULL,
+    .on_create         = NULL,
+    .on_destroy        = NULL,
     .fn_set_attr       = NULL,
     .fn_after_layout   = NULL,
     .fn_hit_test       = NULL,
