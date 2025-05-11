@@ -13,6 +13,7 @@ int yx_spr_liliko_load(void);
 
 extern struct k_sprite *yx_spr_iris_gun;
 extern struct k_sprite *yx_spr_iris_bullet;
+extern struct k_sprite *yx_spr_iris_apple;
 int yx_spr_iris_load(void);
 
 extern struct k_sprite *yx_spr_bubble_appear;

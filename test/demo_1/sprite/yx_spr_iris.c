@@ -2,8 +2,9 @@
 
 #include "../utils/sprite_sheet/yx_sprite_sheet.h"
 
-struct k_sprite *yx_spr_iris_gun = NULL;
+struct k_sprite *yx_spr_iris_gun    = NULL;
 struct k_sprite *yx_spr_iris_bullet = NULL;
+struct k_sprite *yx_spr_iris_apple  = NULL;
 
 int yx_spr_iris_load(void) {
 
@@ -14,6 +15,7 @@ int yx_spr_iris_load(void) {
     config.sprites = (struct yx_sprite_sheet_sprite_config[]){
         { &yx_spr_iris_gun,    "gun",    15, 23 },
         { &yx_spr_iris_bullet, "bullet", 16, 16 },
+        { &yx_spr_iris_apple,  "apple", 16, 16 },
         { NULL }
     };
 

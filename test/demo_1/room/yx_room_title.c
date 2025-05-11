@@ -37,7 +37,7 @@ static void yx__room_title_build_ui(void) {
         goto err;
     }
 
-    llk_ui_register_callback(ui, "goto_room_arena", yx__room_title_ui_on_click_goto_room_arena);
+    llk_ui_register_callback(ui, "goto_room_1", yx__room_title_ui_on_click_goto_room_arena);
 
     struct llk_ui_elem *root = llk_ui_get_root(ui);
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, "demo_1/ui/ui_title.xml");
@@ -93,7 +93,6 @@ static int yx__room_title_on_create(void *param) {
 struct k_room *yx_room_title_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_speed = 5;
     config.room_w = k_window_get_w();
     config.room_h = k_window_get_h();
     config.on_create = yx__room_title_on_create;

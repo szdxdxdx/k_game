@@ -65,6 +65,8 @@ void k__camera_webui(struct k_camera *camera, int enabled) {
         k_webui_unbind(webui->text);
         k_webui_unbind(webui->checkbox);
         free(webui);
+
+        k_webui_log_info("关闭[摄像机组件]调试");
     }
     else {
         if (NULL != camera->webui)
@@ -88,6 +90,8 @@ void k__camera_webui(struct k_camera *camera, int enabled) {
             checkbox.on_change = k__camera_webui_checkbox_debug_draw_on_change;
             webui->checkbox = k_webui_bind_checkbox("摄像机", "绘制跟随目标线", camera, &checkbox);
         }
+
+        k_webui_log_info("启用[摄像机组件]调试");
     }
 }
 

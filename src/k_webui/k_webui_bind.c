@@ -232,6 +232,9 @@ static int k__webui_text_on_get(struct k_webui_widget *widget, webui_event_t *e)
 
 size_t k_webui_bind_text(const char *group, const char *label, void *data, const struct k_webui_text_config *config) {
 
+    if ( ! k__webui_is_running())
+        goto err;
+
     if (NULL == label)
         label = "";
     if (NULL == config)
@@ -376,6 +379,9 @@ struct k_webui_slider_config {
 
 static size_t k__webui_bind_slider(const char *group, const char *label, void *data, const struct k_webui_slider_config *config) {
 
+    if ( ! k__webui_is_running())
+        goto err;
+
     if (NULL == label)
         label = "";
     if (NULL == config)
@@ -511,6 +517,9 @@ static int k__webui_checkbox_on_get(struct k_webui_widget *widget, webui_event_t
 
 size_t k_webui_bind_checkbox(const char *group, const char *label, void *data, const struct k_webui_checkbox_config *config) {
 
+    if ( ! k__webui_is_running())
+        goto err;
+
     if (NULL == label)
         label = "";
     if (NULL == config)
@@ -605,6 +614,9 @@ static int k__webui_int_select_on_get(struct k_webui_widget *widget, webui_event
 
 size_t k_webui_bind_int_select(const char *group, const char *label, void *data, const struct k_webui_int_select_config *config) {
 
+    if ( ! k__webui_is_running())
+        goto err;
+
     if (NULL == label)
         label = "";
     if (NULL == config)
@@ -694,6 +706,9 @@ static int k__webui_button_on_set(struct k_webui_widget *widget, webui_event_t *
 }
 
 size_t k_webui_bind_button(const char *group, const char *label, void *data, const struct k_webui_button_config *config) {
+
+    if ( ! k__webui_is_running())
+        goto err;
 
     if (NULL == label)
         label = "";

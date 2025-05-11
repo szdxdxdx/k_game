@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);
 
-    k_webui_init();
+    // k_webui_init();
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_w = 640;
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 
     k_game_run(&config);
 
-    k_webui_close();
+    // k_webui_close();
 
     return 0;
 }

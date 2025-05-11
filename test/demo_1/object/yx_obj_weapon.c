@@ -3,7 +3,7 @@
 #include "../utils/yx_math.h"
 #include "../sprite/yx_spr.h"
 
-/* region [bullet] */
+/* region [bullet]
 
 struct yx_obj_bullet {
 
@@ -78,17 +78,101 @@ static void bullet_create(struct yx_obj_weapon *weapon) {
 
 /* endregion */
 
-/* region [gun] */
+/* region [apple] */
 
-static void shoot(struct k_object *object) {
+struct yx_obj_apple {
 
-    if (k_mouse_button_down_or_held(K_BUTTON_LEFT) || k_mouse_button_down(K_BUTTON_RIGHT)) {
-        struct yx_obj_weapon *weapon = k_object_get_data(object);
-        bullet_create(weapon);
+    float velocity_x;
+    float velocity_y;
+    float x;
+    float y;
+
+    float angle;
+
+    struct k_sprite_renderer *spr_rdr;
+};
+
+static void yx_obj_apple_on_step_touch_bubble(struct k_object *object) {
+    struct yx_obj_apple *apple = k_object_get_data(object);
+
+    {
+        float padding = 2;
+        float x1 = apple->x - padding;
+        float y1 = apple->y - padding;
+        float x2 = apple->x + padding;
+        float y2 = apple->y + padding;
+        struct k_collision_box *box = k_collision_check_rect(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
+        if (NULL != box)
+            yx_obj_bubble_pop(k_collision_box_get_object(box));
     }
 }
 
-static void draw_weapon(struct k_object *object) {
+static void yx_obj_apple_on_step_move(struct k_object *object) {
+    struct yx_obj_apple *apple = k_object_get_data(object);
+
+    float delta = k_get_step_delta();
+    apple->x += apple->velocity_x * delta;
+    apple->y += apple->velocity_y * delta;
+
+    if (   apple->x < 0 || apple->x > k_room_get_w()
+        || apple->y < 0 || apple->y > k_room_get_h()
+    ) {
+        k_object_destroy(object);
+        return;
+    }
+
+    apple->angle += delta * 300.0f;
+    k_sprite_renderer_rotate(apple->spr_rdr, apple->angle);
+}
+
+/* 创建苹果 */
+static void yx_obj_apple_create(struct yx_obj_weapon *weapon) {
+
+    struct k_object *obj_apple = k_object_create(sizeof(struct yx_obj_apple));
+    struct yx_obj_apple *apple = k_object_get_data(obj_apple);
+
+    float mouse_x = k_mouse_x();
+    float mouse_y = k_mouse_y();
+    float weapon_x = weapon->x;
+    float weapon_y = weapon->y;
+    float cos_angle;
+    float sin_angle;
+    yx_calc_vector_direction(weapon_x, weapon_y, mouse_x, mouse_y, &cos_angle, &sin_angle);
+
+    float speed = 300.0f;
+
+    apple->velocity_x = cos_angle * speed;
+    apple->velocity_y = sin_angle * speed;
+
+    apple->x = weapon->x + cos_angle * 20;
+    apple->y = weapon->y + sin_angle * 20;
+
+    k_object_add_step_callback(obj_apple, yx_obj_apple_on_step_move);
+
+    struct k_sprite_renderer_config renderer_config;
+    renderer_config.x       = &apple->x;
+    renderer_config.y       = &apple->y;
+    renderer_config.sprite  = yx_spr_iris_apple;
+    renderer_config.z_group = 0;
+    renderer_config.z_layer = 10000;
+    apple->spr_rdr = k_object_add_sprite_renderer(obj_apple, &renderer_config);
+
+    k_object_add_step_callback(obj_apple, yx_obj_apple_on_step_touch_bubble);
+}
+
+/* endregion */
+
+/* region [gun] */
+
+static void yx_obj_weapon_on_step_shoot(struct k_object *object) {
+
+    if (k_mouse_button_down_or_held(K_BUTTON_LEFT) || k_mouse_button_down(K_BUTTON_RIGHT)) {
+        struct yx_obj_weapon *weapon = k_object_get_data(object);
+        yx_obj_apple_create(weapon);
+    }
+}
+
+static void yx_obj_weapon_on_draw(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
     float mouse_x = k_mouse_x();
@@ -109,7 +193,7 @@ static void draw_weapon(struct k_object *object) {
     }
 }
 
-void mouse_drag(struct k_object *object) {
+static void mouse_drag(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
     if (k_key_down_or_held(K_KEY_LEFT_SHIFT)) {
@@ -119,7 +203,7 @@ void mouse_drag(struct k_object *object) {
     }
 }
 
-void after_move(struct k_object *object) {
+static void yx_obj_weapon_on_end_step_reset_z_layer(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
     k_sprite_renderer_set_z_layer(weapon->spr_rdr, (int)weapon->y);
 }
@@ -128,10 +212,10 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_weapon));
 
-    k_object_add_step_callback(object, draw_weapon);
-    k_object_add_step_callback(object, shoot);
-   // k_object_add_step_callback(object, mouse_drag);
-    k_object_add_end_step_callback(object, after_move);
+    k_object_add_step_callback(object, yx_obj_weapon_on_draw);
+    k_object_add_step_callback(object, yx_obj_weapon_on_step_shoot);
+    // k_object_add_step_callback(object, mouse_drag);
+    k_object_add_end_step_callback(object, yx_obj_weapon_on_end_step_reset_z_layer);
 
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
