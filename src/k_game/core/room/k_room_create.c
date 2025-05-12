@@ -208,38 +208,32 @@ static void step_run_on_destroy_callback(void *context) {
     k__room_current = tmp;
 }
 
-static const struct k_seq_step steps[] = {
-    { step_malloc,                 step_free                     },
-    { step_set_properties,         NULL                          },
-    { step_init_callback_managers, step_deinit_callback_managers },
-    { step_init_callback_list,     step_del_all_callbacks        },
-    { NULL,                        step_del_component_managers   },
-    { step_init_object_pool,       step_cleanup_object_pool      },
-    { step_registry_add,           step_registry_del             },
-    { step_run_on_create_callback, step_run_on_destroy_callback  },
-};
-
 /* endregion */
+
+static const struct k_seq_step steps[] = {
+    { step_malloc,                 step_free                     }, /* 分配房间结构体和用户自定义关联数据的内存 */
+    { step_set_properties,         NULL                          }, /* 设置房间的基本属性，例如：宽高、帧率等 */
+    { step_init_callback_managers, step_deinit_callback_managers }, /* 初始化所有的事件回调管理器 */
+    { step_init_callback_list,     step_del_all_callbacks        }, /* 初始化房间的事件回调链表 */
+    { NULL,                        step_del_component_managers   }, /* 在销毁房间时，移除所有的组件管理器实例 */
+    { step_init_object_pool,       step_cleanup_object_pool      }, /* 初始化对象池 */
+    { step_registry_add,           step_registry_del             }, /* 将房间添加入资源注册表 */
+    { step_run_on_create_callback, step_run_on_destroy_callback  }, /* 执行回调，用户完成自定义的初始化工作 */
+};
 
 struct k_room *k_room_create(const struct k_room_config *config, void *param) {
 
     if (NULL == config) {
         k_log_error("room config is null");
-        goto err;
+        return NULL;
     }
 
-    struct step_context ctx;
-    ctx.config = config;
-    ctx.param  = param;
-    ctx.room   = NULL;
-    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx))
-        goto err;
-
+    /* 使用 k_seq_step 步骤链工具创建房间 */
+    struct step_context ctx = { .config=config, .param=param, .room=NULL};
+    if (0 != k_seq_step_exec(steps, k_seq_step_array_len(steps), &ctx)) {
+        return NULL;
+    }
     return ctx.room;
-
-err:
-    k_log_error("failed to create room");
-    return NULL;
 }
 
 void k__room_destroy(struct k_room *room) {

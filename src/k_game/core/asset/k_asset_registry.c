@@ -1,4 +1,5 @@
 #include <string.h>
+#include <assert.h>
 
 #include "k_game/core/k_mem_alloc.h"
 
@@ -25,21 +26,17 @@ int k__asset_registry_init(struct k_asset_registry *registry) {
     return 0;
 }
 
-void k__asset_registry_cleanup(struct k_asset_registry *registry, void (*fn_release)(struct k_asset_registry_node *registry_node)) {
+void k__asset_registry_cleanup(struct k_asset_registry *registry,
+                               void (*fn_release)(struct k_asset_registry_node *registry_node)) {
+    assert(NULL != fn_release);
 
-    if (NULL != fn_release) {
-        struct k_asset_registry_node *registry_node;
-        struct k_list *asset_list = &registry->asset_list;
-        struct k_list_node *iter, *next;
-        for (k_list_for_each_s(asset_list, iter, next)) {
-            registry_node = container_of(iter, struct k_asset_registry_node, iter_node);
+    struct k_list_node *iter, *next;
+    for (k_list_for_each_s(&registry->asset_list, iter, next)) {
+        struct k_asset_registry_node *registry_node = container_of(iter, struct k_asset_registry_node, iter_node);
 
-            /* TODO 在 fn_release() 中一定要调用 k__asset_registry_del() */
-            fn_release(registry_node);
-        }
+        /* 执行回调，由对应模块中专门的函数来负责释放资源 */
+        fn_release(registry_node);
     }
-
-    /* TODO if NULL == fn_release, free( name_map_node.key ) */
 
     k__mem_free(registry->name_map.buckets);
 }
@@ -60,7 +57,8 @@ void k__asset_registry_del(struct k_asset_registry_node *registry_node) {
     k_list_node_loop(&registry_node->iter_node);
 }
 
-int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry_node *registry_node, const char *asset_name) {
+int k__asset_set_name(struct k_asset_registry *registry,
+                      struct k_asset_registry_node *registry_node, const char *asset_name) {
 
     struct k_str_intrusive_map_node *map_node = &registry_node->name_map_node;
 

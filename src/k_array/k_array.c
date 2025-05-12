@@ -115,41 +115,40 @@ void *k_array_shift_right(struct k_array *arr, size_t idx, size_t n) {
     assert(NULL != arr);
     assert(idx <= arr->size);
 
-    size_t required_capacity = arr->size + n;
+    size_t required_capacity = arr->size + n; /* 计算插入 n 个所需的容量 */
     if (required_capacity < n)
         return NULL;
 
-    if (required_capacity <= arr->capacity) {
-
+    if (required_capacity <= arr->capacity) { /* 若当前容量足够，则直接腾挪元素，空出位置 */
         void  *shift_from = ptr_offset(arr->storage, idx * arr->elem_size);
         void  *shift_to   = ptr_offset(arr->storage, (idx + n) * arr->elem_size);
         size_t shift_size = (arr->size - idx) * arr->elem_size;
         memmove(shift_to, shift_from, shift_size);
-
         arr->size += n;
         return shift_from;
     }
 
-    if (SIZE_MAX / arr->elem_size <= required_capacity)
-        return NULL;
+    if (SIZE_MAX / arr->elem_size <= required_capacity) /* 若当前容量不足，在扩容之前先判断实际所需的容量是否超过最大上限 */
+        return NULL; /* 若超出了最大上限，则意味元素个数 required_capacity 乘以 elem_size 会发生整型上溢， */
 
-    size_t new_capacity = arr->capacity * 2;
+    size_t new_capacity = arr->capacity * 2; /* 先尝试 2 倍扩容 */
     if (new_capacity < required_capacity)
         new_capacity = required_capacity;
 
-    void *new_storage = arr->fn_malloc(new_capacity * arr->elem_size);
+    void *new_storage = arr->fn_malloc(new_capacity * arr->elem_size); /* 申请新内存段 */
     if (NULL == new_storage) {
         if (new_capacity == required_capacity) {
             return NULL;
         }
         else {
-            new_capacity = required_capacity;
-
-            new_storage = arr->fn_malloc(new_capacity * arr->elem_size);
+            new_capacity = required_capacity; /* 若申请失败，则尝试按需扩容 */
+            new_storage = arr->fn_malloc(new_capacity * arr->elem_size); /* 再次申请新内存段 */
             if (NULL == new_storage)
-                return NULL;
+                return NULL; /* 仍然申请失败，则扩容失败 */
         }
     }
+
+    /* 扩容成功，之后可以搬运元素到新内存，并腾挪元素空出位置，然后释放旧内存 */
 
     if (NULL != arr->storage) {
         void  *part_1_from = arr->storage;

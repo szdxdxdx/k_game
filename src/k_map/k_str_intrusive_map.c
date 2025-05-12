@@ -13,22 +13,6 @@ static inline size_t str_hash(const char *str) {
     return hash;
 }
 
-static inline struct k_str_intrusive_map_node *find(struct k_hash_list *list, const char *key, size_t key_hash) {
-
-    struct k_str_intrusive_map_node *map_node;
-    struct k_hash_list_node *iter;
-    for (k_hash_list_for_each(list, iter)) {
-        map_node = container_of(iter, struct k_str_intrusive_map_node, node_link);
-
-        if (map_node->key_hash == key_hash) {
-            if (strcmp(map_node->key, key) == 0)
-                return map_node;
-        }
-    }
-
-    return NULL;
-}
-
 void k_str_intrusive_map_init(struct k_str_intrusive_map *map, struct k_hash_list *buckets, size_t buckets_num) {
     assert(NULL != map);
     assert(NULL != buckets);
@@ -40,21 +24,34 @@ void k_str_intrusive_map_init(struct k_str_intrusive_map *map, struct k_hash_lis
     map->buckets_num = buckets_num;
 }
 
-int k_str_intrusive_map_add_if_absent(struct k_str_intrusive_map *map, const char *key, struct k_str_intrusive_map_node *node) {
+static inline struct k_str_intrusive_map_node *find(struct k_hash_list *bucket, const char *key, size_t key_hash) {
+
+    struct k_hash_list_node *iter;
+    for (k_hash_list_for_each(bucket, iter)) { // 遍历哈希桶，获取哈希表的节点
+        struct k_str_intrusive_map_node *map_node = container_of(iter, struct k_str_intrusive_map_node, node_link);
+
+        if (map_node->key_hash == key_hash) { // 判断 key 是否一致
+            if (strcmp(map_node->key, key) == 0)
+                return map_node;
+        }
+    }
+    return NULL;
+}
+
+int k_str_intrusive_map_add_if_absent(struct k_str_intrusive_map *map,
+                                      const char *key, struct k_str_intrusive_map_node *node) {
     assert(NULL != map);
     assert(NULL != key);
     assert(NULL != node);
 
-    size_t hash = str_hash(key);
-
-    struct k_hash_list *list = &(map->buckets[hash % map->buckets_num]);
-    if (NULL != find(list, key, hash))
+    size_t hash = str_hash(key); // 计算 key 的哈希值
+    struct k_hash_list *bucket = &(map->buckets[hash % map->buckets_num]); // 找到对应的哈希桶
+    if (NULL != find(bucket, key, hash)) // 若哈希桶中已存在该 key，则添加失败
         return -1;
 
     node->key      = key;
     node->key_hash = hash;
-    k_hash_list_add(list, &node->node_link);
-
+    k_hash_list_add(bucket, &node->node_link); // 将节点添加到哈希桶中
     return 0;
 }
 

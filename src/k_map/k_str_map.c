@@ -217,46 +217,37 @@ static struct k_str_map_node *k__str_map_bucket_find(struct k_hash_list *bucket,
 
 void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size) {
     assert(NULL != map);
-
-    if (NULL == key)
+    if (NULL == key || 0 == val_size || SIZE_MAX - sizeof(struct k_str_map_node) <= val_size)
         return NULL;
-    if (0 == val_size || SIZE_MAX - sizeof(struct k_str_map_node) <= val_size)
-        return NULL;
-
+    /* 计算 key 字符串的哈希值，同时计算字符串长度，然后获取哈希桶 */
     size_t get_key_len;
     size_t key_hash = k__str_map_key_hash(key, &get_key_len);
     struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
-
     size_t key_size = get_key_len + 1;
-
+    /* 创建容器的节点，节点结构体、复制保存的 key 字符串以及 value 都使用同一块内存 */
     struct k_str_map_node *new_node = map->fn_malloc(sizeof(struct k_str_map_node) + key_size + val_size);
     if (NULL == new_node)
         return NULL;
-
+    /* 保存 key 的哈希值和拷贝的 key 字符串的地址，然后复制 key 字符串 */
     new_node->key_hash = key_hash;
     new_node->key = ptr_offset(new_node, sizeof(struct k_str_map_node));
     strcpy(new_node->key, key);
-
+    /* 保存 value 的地址 */
     new_node->val = ptr_offset(new_node, sizeof(struct k_str_map_node) + key_size);
-
     struct k_str_map_node *old_node = k__str_map_bucket_find(bucket, key, key_hash);
-    if (NULL != old_node) {
-
+    if (NULL != old_node) { /* 若存在相同的 key，则释放旧节点（覆盖写入新值） */
         k_hash_list_remove(&old_node->node_link);
         map->fn_free(old_node);
-
         k_hash_list_add(bucket, &new_node->node_link);
     }
     else {
-        k_hash_list_add(bucket, &new_node->node_link);
+        k_hash_list_add(bucket, &new_node->node_link); /* 添加新节点 */
         map->size += 1;
-
-        if (map->rehash_threshold < map->size) {
+        if (map->rehash_threshold < map->size) { /* 判断是否需要扩容哈希桶 */
             k__str_map_rehash(map);
         }
     }
-
-    return new_node->val;
+    return new_node->val; /* 返回指向节点中用于存储 value 的内存段的指针，用户在此地址处写入新值 */
 }
 
 void *k_str_map_put_ref(struct k_str_map *map, const char *key, size_t val_size) {

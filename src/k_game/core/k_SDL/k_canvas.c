@@ -259,38 +259,23 @@ void k_canvas_ui_draw_point(float x, float y) {
 
 /* region [draw_points] */
 
-static int k__canvas_draw_points(enum k_canvas_viewport viewport, const struct k_float_point *points, size_t points_num) {
-
-    if (NULL == points)
-        return -1;
-
-    if (points_num == 0)
-        return 0;
-
-    if (0 != k__canvas_set_viewport(viewport))
-        return -1;
-
-    SDL_FPoint buf[80];
+static int k__canvas_draw_points(enum k_canvas_viewport viewport, const struct k_float_point *points,
+                                                                  size_t points_num) {
+    if (NULL == points || points_num == 0) return 0; /* 若点的数组为 null 或数组长度为 0，则不用绘制 */
+    if (0 != k__canvas_set_viewport(viewport)) return -1; /* 设置画布视口为 UI 视口或房间视口 */
+    SDL_FPoint buf[160]; /* 缓冲区 */
     int buf_size = 0;
-
     size_t count = 0;
     while (count < points_num) {
-
-        float x = points[count].x;
+        float x = points[count].x; /* 读取要绘制的点 */
         float y = points[count].y;
+        k__canvas_convert_to_viewport_xy(&x, &y); /* 转换该点的坐标（例如，如果是绘制在房间，则将房间坐标转换为画布中的坐标） */
         count++;
-
-        k__canvas_convert_to_viewport_xy(&x, &y);
-
-        if (k__canvas_cull_point(x, y))
-            continue;
-
-        buf[buf_size].x = x;
+        if (k__canvas_cull_point(x, y)) continue; /* 粗筛，如果点不在视野范围内，则不绘制它 */
+        buf[buf_size].x = x; /* 将要绘制的点移入缓冲区中 */
         buf[buf_size].y = y;
         buf_size++;
-
-        if (buf_size >= k__canvas_buf_capacity(buf)) {
-
+        if (buf_size >= k__canvas_buf_capacity(buf)) { /* 等到缓冲区满时再一并交给 SDL 绘制 */
             if (0 != SDL_RenderDrawPointsF(k__window.renderer, buf, buf_size)) {
                 k_log_error("SDL error: %s", SDL_GetError());
                 return -1;
@@ -872,37 +857,25 @@ void k_canvas_ui_printf(struct k_font *font, float x, float y, const char *fmt, 
 /* region [present] */
 
 void k__canvas_present(void) {
+    SDL_SetRenderTarget(k__window.renderer, NULL); /* 将渲染器绑定到游戏窗口 */
+    k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE; /* 将画布的当前视口标记为 NONE */
+    /* 之后游戏帧中执行绘制时，若画布的视口为 NONE，会重新绑定渲染器到画布，并且设置画布的视口区域 */
 
-    if (0 != SDL_SetRenderTarget(k__window.renderer, NULL)) {
-        k_log_error("SDL error: %s", SDL_GetError());
-        assert(0);
-    }
-
-    k__canvas.current_viewport = K__CANVAS_VIEWPORT_NONE;
-
-    SDL_Rect room_view;
+    SDL_Rect room_view; /* 渲染房间视野矩形中的内容，即画布的房间视口区域 */
     room_view.x = 0;
     room_view.y = 0;
     room_view.w = (int)(k__view.view_w);
     room_view.h = (int)(k__view.view_h);
+    SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &room_view, NULL);
 
-    if (0 != SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &room_view, NULL)) {
-        k_log_error("SDL error: %s", SDL_GetError());
-        assert(0);
-    }
-
-    SDL_Rect ui;
+    SDL_Rect ui; /* 叠加渲染 UI 界面，即画布的 UI 视口区域 */
     ui.x = k__canvas.ui_viewport_x;
     ui.y = k__canvas.ui_viewport_y;
     ui.w = k__canvas.ui_viewport_w;
     ui.h = k__canvas.ui_viewport_h;
+    SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &ui, NULL);
 
-    if (0 != SDL_RenderCopyF(k__window.renderer, k__canvas.canvas, &ui, NULL)) {
-        k_log_error("SDL error: %s", SDL_GetError());
-        assert(0);
-    }
-
-    SDL_RenderPresent(k__window.renderer);
+    SDL_RenderPresent(k__window.renderer); /* 将渲染结果呈现到游戏窗口中 */
 }
 
 /* endregion */

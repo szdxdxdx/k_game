@@ -20,45 +20,38 @@
 #include <stddef.h>
 #include <string.h>
 
-#if defined(K_TMPL_ARRAY_FN_MALLOC) && defined(K_TMPL_ARRAY_FN_FREE)
-#define k__tmpl_array_fn_malloc K_TMPL_ARRAY_FN_MALLOC
-#define k__tmpl_array_fn_free   K_TMPL_ARRAY_FN_FREE
-#elif defined(K_TMPL_ARRAY_FN_MALLOC) || defined(K_TMPL_ARRAY_FN_FREE)
+#if defined(K_TMPL_ARRAY_FN_MALLOC) && defined(K_TMPL_ARRAY_FN_FREE) /* 若定义了这两个宏，则使用用户自定义的内存分配函数 */
+    #define k__tmpl_array_fn_malloc K_TMPL_ARRAY_FN_MALLOC
+    #define k__tmpl_array_fn_free   K_TMPL_ARRAY_FN_FREE
+#elif defined(K_TMPL_ARRAY_FN_MALLOC) || defined(K_TMPL_ARRAY_FN_FREE) /* 若只定义了其中一个，则编译报错 */
 /* 必须同时指明内存分配函数和释放函数 */
-#error "Must set define `K_TMPL_ARRAY_FN_MALLOC` and `K_TMPL_ARRAY_FN_FREE`"
-#else
-#include <stdlib.h>
-#define k__tmpl_array_fn_malloc malloc
-#define k__tmpl_array_fn_free   free
+    #error "Must set define `K_TMPL_ARRAY_FN_MALLOC` and `K_TMPL_ARRAY_FN_FREE`"
+#else  /* 否则使用 C 标准库中的内存分配函数 */
+    #include <stdlib.h>
+    #define k__tmpl_array_fn_malloc malloc
+    #define k__tmpl_array_fn_free   free
 #endif
 
-#ifdef k_tmpl_array_static_fn
-#define k__tmpl_array_fn static
+#ifdef k_tmpl_array_static_fn /* 若定义了该宏，则使用 static 修饰函数 */
+    #define k__tmpl_array_fn static
 #else
-#define k__tmpl_array_fn
+    #define k__tmpl_array_fn
 #endif
 
-#define k__tmpl_array                    K_TMPL_ARRAY_STRUCT_NAME
-#define k__tmpl_array_elem               K_TMPL_ARRAY_ELEM_TYPE
+#define k__tmpl_array                    K_TMPL_ARRAY_STRUCT_NAME  /* 定义数组的结构体名字 */
+#define k__tmpl_array_elem               K_TMPL_ARRAY_ELEM_TYPE    /* 定义数组的中袁术的类型 */
 #define k__tmpl_array_x_(array_name, x)  array_name##_##x
 #define k__tmpl_array_x(array_name, x)   k__tmpl_array_x_(array_name, x)
 #define k__tmpl_array_(x)                k__tmpl_array_x(K_TMPL_ARRAY_STRUCT_NAME, x)
 
-struct k__tmpl_array;
+struct k__tmpl_array; /* 此处生成数组的声明 */
 
-#if defined(K_TMPL_ARRAY_DEFINE_STRUCT)
-
+#if defined(K_TMPL_ARRAY_DEFINE_STRUCT) /* 若定义了该宏，则生成数组的定义 */
 /** \brief 支持动态扩容的数组容器 */
 struct k__tmpl_array {
-
-    /** \brief [read-only] 数组容量，即在不重新分配存储的情况下最多能容纳的元素数量 */
-    size_t capacity;
-
-    /** \brief [read-only] 容器持有的元素的数量 */
-    size_t size;
-
-    /** \brief [read-only] 指向存储元素的连续空间的指针 */
-    k__tmpl_array_elem *storage;
+    size_t capacity;              /** \brief [read-only] 数组容量，即在不重新分配存储的情况下最多能容纳的元素数量 */
+    size_t size;                  /** \brief [read-only] 容器持有的元素的数量 */
+    k__tmpl_array_elem *storage;  /** \brief [read-only] 指向存储元素的连续空间的指针 */
 };
 
 #endif

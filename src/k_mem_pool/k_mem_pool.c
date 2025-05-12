@@ -206,34 +206,35 @@ static void *k__mem_pool_alloc_from_pool(struct k_mem_pool *pool, size_t size) {
         return ptr_offset(block, sizeof(struct k_mem_block));
     }
 
-    size_t available_size = pool->chunk_capacity - pool->chunk_used;
-    size_t required_size  = sizeof(struct k_mem_block) + block_size;
-    if (available_size < required_size) {
+    /* 在确定 free_list 中不存在空闲 block 后，需从 chunk 中切出新的 block */
 
+    size_t available_size = pool->chunk_capacity - pool->chunk_used; /* chunk 剩余的可用容量 */
+    size_t required_size  = sizeof(struct k_mem_block) + block_size; /* block 的大小（包含用户申请的大小和 block 的头部） */
+    if (available_size < required_size) {
+        /* 若 chunk 剩余空间不足，则需要申请新的 chunk */
         struct k_mem_chunk *new_chunk = pool->fn_malloc(sizeof(struct k_mem_chunk) + pool->chunk_capacity);
         if (NULL == new_chunk)
             return NULL;
-
+        /* 若旧的 chunk 的空间仍有剩余，则将这些空间切出一个 block，链入 free_list */
         if (sizeof(struct k_mem_block) < available_size) {
             size_t free_block_size = align_down(available_size - sizeof(struct k_mem_block), pool->alloc_size_align);
             if (pool->alloc_size_align <= free_block_size) {
-
                 struct k_mem_block **free_list = k__mem_pool_select_free_list(pool, free_block_size);
                 struct k_mem_block *free_block = ptr_offset(pool->chunk, sizeof(struct k_mem_chunk) + pool->chunk_used);
 
-                free_block->next = *free_list;
+                free_block->next = *free_list; /* 链入 free_list */
                 *free_list = free_block;
             }
         }
-
+        /* pool 使用新的 chunk */
         new_chunk->prev_used_up = pool->chunk;
         pool->chunk = new_chunk;
         pool->chunk_used = 0;
     }
-
+    /* 从 chunk 中切出一块 block */
     struct k_mem_block *block = ptr_offset(pool->chunk, sizeof(struct k_mem_chunk) + pool->chunk_used);
     pool->chunk_used += required_size;
-
+    /* 填写 block 的头部，然后偏移指针，指向用户可用的内存段地址，并返回给用户 */
     block->list = list;
     return ptr_offset(block, sizeof(struct k_mem_block));
 }
@@ -272,25 +273,23 @@ void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size) {
 }
 
 void k_mem_pool_free(void *p) {
-
-    if (NULL == p)
+    if (NULL == p) /* 和 C 标准的 `free()` 保持一致的行为，`free(NULL)` 是安全的 */
         return;
-
-    struct k_mem_block *block = ptr_offset(p, -sizeof(struct k_mem_block));
-    if (NULL != block->list) {
+    struct k_mem_block *block = ptr_offset(p, -sizeof(struct k_mem_block)); /* 往上偏移指针，得到内存块的头部 */
+    if (NULL != block->list) { /* 判断是不是从 chunk 中切出的，还是向堆区申请的 */
         struct k_mem_block **list = block->list;
-
-        block->next = *list;
+        block->next = *list; /* block 来自 chunk，则将其链入 free_list */
         *list = block;
     }
     else {
+        /* block 是向堆区申请的大内存块，这里再次往上偏移指针，得到完整的头部 */
         struct k_mem_heap_block *heap_block = ptr_offset(p, -sizeof(struct k_mem_heap_block));
-
+        /* 向堆区申请的大内存块 block 通过链表相连，这里释放掉该 block 前需要先摘链 */
         if (NULL != heap_block->next) {
             heap_block->next->pprev = heap_block->pprev;
         }
         *(heap_block->pprev) = heap_block->next;
-
+        /* 向堆区归还 block */
         heap_block->pool->fn_free(heap_block);
     }
 }

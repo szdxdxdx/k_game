@@ -10,29 +10,56 @@
 #include "../component/k_component_manager.h"
 
 static void k__callback_del(struct k_callback *callback) {
-
     switch (callback->event) {
-        case K__ALARM_CALLBACK:
-            k__alarm_callback_manager_del_callback(callback);
-            break;
-        case K__STEP_CALLBACK:
-            k__step_callback_manager_del_callback(callback);
-            break;
-        case K__DRAW_CALLBACK:
-            k__draw_callback_manager_del_callback(callback);
-            break;
-        default:
-            assert(0);
+        case K__ALARM_CALLBACK: k__alarm_callback_manager_del_callback(callback); break;
+        case K__STEP_CALLBACK:  k__step_callback_manager_del_callback(callback);  break;
+        case K__DRAW_CALLBACK:  k__draw_callback_manager_del_callback(callback);  break;
+        default: assert(0);
     }
 }
 
 void k_callback_del(struct k_callback *callback) {
-
     if (NULL == callback)
         return;
-
-    k__callback_del(callback);
+    /* k_callback 是所有事件类型回调的基础结构，所有的事件回调对外都统一表现为 k_callback，
+     * 此处需要根据该基础结构中记录的回调类型，交由实际的回调管理器来处理 */
+    switch (callback->event) {
+        case K__ALARM_CALLBACK: k__alarm_callback_manager_del_callback(callback); break;
+        case K__STEP_CALLBACK:  k__step_callback_manager_del_callback(callback);  break;
+        case K__DRAW_CALLBACK:  k__draw_callback_manager_del_callback(callback);  break;
+        default: assert(0);
+    }
 }
+
+/* region [tmp] */
+
+/* 添加房间（当前房间）步事件回调 */
+struct k_callback *k_room_add_step_callback(void *data, void (*fn_callback)(void *data)) {
+    return k__step_callback_manager_add_room_callback(&k__room_current->step_callback_manager,
+                                                      k__room_current, data, fn_callback);
+}
+/* 添加对象步事件回调 */
+struct k_callback *k_object_add_step_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
+    return k__step_callback_manager_add_object_callback(&object->room->step_callback_manager, object, fn_callback);
+}
+/* 添加组件步事件回调 */
+struct k_callback *k_component_add_step_callback(struct k_component *component,
+                                                 void (*fn_callback)(struct k_component *component)) {
+    return k__step_callback_manager_add_component_callback(&component->object->room->step_callback_manager,
+                                                            component, fn_callback);
+}
+/* 添加组件管理器步事件回调 */
+struct k_callback *k_component_manager_add_step_callback(struct k_component_manager *component_manager,
+                                                         void *data, void (*fn_callback)(void *data)) {
+    return k__step_callback_manager_add_component_manager_callback(&component_manager->room->step_callback_manager,
+                                                                    component_manager, data, fn_callback);
+}
+
+
+
+
+
+/* endregion */
 
 /* region [room_callback] */
 
@@ -44,11 +71,6 @@ struct k_callback *k_room_add_begin_step_callback(void *data, void (*fn_callback
 struct k_callback *k_room_add_alarm_callback(void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
     struct k_room *room = k__room_current;
     return k__alarm_callback_manager_add_room_callback(&room->alarm_callback_manager, room, data, fn_callback, delay_ms);
-}
-
-struct k_callback *k_room_add_step_callback(void *data, void (*fn_callback)(void *data)) {
-    struct k_room *room = k__room_current;
-    return k__step_callback_manager_add_room_callback(&room->step_callback_manager, room, data, fn_callback);
 }
 
 struct k_callback *k_room_add_end_step_callback(void *data, void (*fn_callback)(void *data)) {
@@ -87,10 +109,6 @@ struct k_callback *k_object_add_alarm_callback(struct k_object *object, void (*f
     return k__alarm_callback_manager_add_object_callback(&object->room->alarm_callback_manager, object, fn_callback, delay_ms);
 }
 
-struct k_callback *k_object_add_step_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
-    return k__step_callback_manager_add_object_callback(&object->room->step_callback_manager, object, fn_callback);
-}
-
 struct k_callback *k_object_add_end_step_callback(struct k_object *object, void (*fn_callback)(struct k_object *object)) {
     return k__step_callback_manager_add_object_callback(&object->room->end_step_callback_manager, object, fn_callback);
 }
@@ -123,10 +141,6 @@ struct k_callback *k_component_add_begin_step_callback(struct k_component *compo
 
 struct k_callback *k_component_add_alarm_callback(struct k_component *component, void (*fn_callback)(struct k_component *component, int timeout_diff), int delay_ms) {
     return k__alarm_callback_manager_add_component_callback(&component->object->room->alarm_callback_manager, component, fn_callback, delay_ms);
-}
-
-struct k_callback *k_component_add_step_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
-    return k__step_callback_manager_add_component_callback(&component->object->room->step_callback_manager, component, fn_callback);
 }
 
 struct k_callback *k_component_add_end_step_callback(struct k_component *component, void (*fn_callback)(struct k_component *component)) {
@@ -163,10 +177,6 @@ struct k_callback *k_component_manager_add_begin_step_callback(struct k_componen
 
 struct k_callback *k_component_manager_add_alarm_callback(struct k_component_manager *manager, void *data, void (*fn_callback)(void *data, int timeout_diff), int delay_ms) {
     return k__alarm_callback_manager_add_component_manager_callback(&manager->room->alarm_callback_manager, manager, data, fn_callback, delay_ms);
-}
-
-struct k_callback *k_component_manager_add_step_callback(struct k_component_manager *manager, void *data, void (*fn_callback)(void *data)) {
-    return k__step_callback_manager_add_component_manager_callback(&manager->room->step_callback_manager, manager, data, fn_callback);
 }
 
 struct k_callback *k_component_manager_add_end_step_callback(struct k_component_manager *manager, void *data, void (*fn_callback)(void *data)) {

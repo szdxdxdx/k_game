@@ -4,15 +4,12 @@
 struct k_keyboard_context k__keyboard;
 
 static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
-
     switch (SDL_key) {
-
-        case SDLK_BACKSPACE    : return K_KEY_BACKSPACE     ;
+        case SDLK_BACKSPACE    : return K_KEY_BACKSPACE     ; /* 本框架封装了 SDL 的键码 */
         case SDLK_TAB          : return K_KEY_TAB           ;
         case SDLK_RETURN       : return K_KEY_RETURN        ;
         case SDLK_ESCAPE       : return K_KEY_ESCAPE        ;
         case SDLK_SPACE        : return K_KEY_SPACE         ;
-
         case SDLK_EXCLAIM      : return K_KEY_EXCLAIM       ;
         case SDLK_QUOTEDBL     : return K_KEY_QUOTE_DBL     ;
         case SDLK_HASH         : return K_KEY_HASH          ;
@@ -144,34 +141,26 @@ static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
     }
 }
 
-static void refresh_key_state(enum k_keyboard_key key) {
-
-    switch (k__keyboard.key_state[key] & 0b11) {
-        case 0b00: k__keyboard.key_state[key] &= 0b100; break;
-        case 0b01: k__keyboard.key_state[key]  = 0b000; break;
-        case 0b10: k__keyboard.key_state[key]  = 0b100; break;
-        case 0b11: k__keyboard.key_state[key]  = 0b000; break;
+void k__keyboard_refresh_state(void) {  /* 每帧初始时，刷新按键状态，根据上一帧的状态推导出第三个 bit 的值 */
+    size_t key = 0;
+    for (; key < K_KEY_ENUM_END; key++) {
+        switch (k__keyboard.key_state[key] & 0b11) {
+            case 0b00: k__keyboard.key_state[key] &= 0b100; break;
+            case 0b01: k__keyboard.key_state[key]  = 0b000; break;
+            case 0b10: k__keyboard.key_state[key]  = 0b100; break;
+            case 0b11: k__keyboard.key_state[key]  = 0b000; break;
+        }
     }
 }
 
-void k__keyboard_refresh_state(void) {
-
-    size_t key = 0;
-    for (; key < K_KEY_ENUM_END; key++)
-        refresh_key_state(key);
+void k__SDL_handle_event_key_down(SDL_KeyboardEvent *event) { /* 接收到 SDL 的键盘事件时，则给对应状态的 bit 置 1 */
+    k__keyboard.key_state[SDL_key_to_k_key(event->keysym.sym)] |= 0b010;
 }
-
-void k__SDL_handle_event_key_down(SDL_KeyboardEvent *event) {
-    enum k_keyboard_key key = SDL_key_to_k_key(event->keysym.sym);
-    k__keyboard.key_state[key] |= 0b010;
-}
-
 void k__SDL_handle_event_key_up(SDL_KeyboardEvent *event) {
-    enum k_keyboard_key key = SDL_key_to_k_key(event->keysym.sym);
-    k__keyboard.key_state[key] |= 0b001;
+    k__keyboard.key_state[SDL_key_to_k_key(event->keysym.sym)] |= 0b001;
 }
 
-int k_key_down(enum k_keyboard_key key) {
+int k_key_down(enum k_keyboard_key key) { /* 本框架提供的按键检测函数，通过位运算来判断对应按键的状态 */
     return 0b010 == (k__keyboard.key_state[key] & 0b110);
 }
 
