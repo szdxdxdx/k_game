@@ -514,56 +514,41 @@ static int k__webui_checkbox_on_get(struct k_webui_widget *widget, webui_event_t
     webui_return_int(e, result);
     return 0;
 }
+static struct k_webui_widget_v_tbl v_tbl = {
+    .on_unbind    = k__webui_checkbox_on_unbind,
+    .on_webui_set = k__webui_checkbox_on_set,
+    .on_webui_get = k__webui_checkbox_on_get,
+};
 
-size_t k_webui_bind_checkbox(const char *group, const char *label, void *data, const struct k_webui_checkbox_config *config) {
+size_t k_webui_bind_checkbox(const char *group, const char *label,
+                             void *data, const struct k_webui_checkbox_config *config) {
+    /* region {...} */
+    if ( ! k__webui_is_running()) goto err;
+    if (NULL == label) label = "";
+    if (NULL == config) goto err;
+    /* endregion */
+    struct k_webui_checkbox *checkbox = k__webui_malloc(sizeof(struct k_webui_checkbox)); /* 分配复选框控件的结构体内存 */
+    if (NULL == checkbox) goto err;
+    size_t bind_id = k__webui_bindings_map_add(&checkbox->widget); /* 在 C 端注册空间，获取绑定 ID */
+    checkbox->widget.v_tbl = &v_tbl; /* 绑定虚函数表，该函数表中定义了与 webui 的读写交互逻辑和控件解绑逻辑 */
+    checkbox->data         = data;   /* 用户自定义要绑定的数据段的地址 */
+    checkbox->on_change    = config->on_change; /* 当 webui 中的复选框变化时执行的回调 */
+    checkbox->on_read      = config->on_read; /* webui 向 C 程序查询绑定遍历的值时执行的回调 */
 
-    if ( ! k__webui_is_running())
-        goto err;
+    struct k_str_buf str_buf; char buf[896]; /* 创建一个 str buf，以字符串拼接的方式构建一段 js 代码 */
+    k_str_buf_init(&str_buf, buf, sizeof(buf));
+    k_str_buf_puts(&str_buf, "k__webui.bind({");
+    k_str_buf_printf(&str_buf, "bind_id:%zu,", bind_id);
+    k_str_buf_k_printf(&str_buf, k__webui_fmt, "group:%'s,", group); /* <- 此处的 %'s 是自定义格式说明符 */
+    k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label); /* 用于转义字符串中的引号，确保 js 代码不出现语法错误 */
+    k_str_buf_puts(&str_buf, "type:'checkbox',");
+    k_str_buf_puts(&str_buf, "})");
 
-    if (NULL == label)
-        label = "";
-    if (NULL == config)
-        goto err;
+    char *js = k_str_buf_get(&str_buf);
+    k__webui_exec_js(js);  /* 将构建好的 js 代码发送给 web 浏览器  */
+    k_str_buf_free(&str_buf);
 
-    struct k_webui_checkbox *checkbox = k__webui_malloc(sizeof(struct k_webui_checkbox));
-    if (NULL == checkbox)
-        goto err;
-
-    size_t bind_id = k__webui_bindings_map_add(&checkbox->widget);
-
-    static struct k_webui_widget_v_tbl v_tbl = {
-        .on_unbind    = k__webui_checkbox_on_unbind,
-        .on_webui_set = k__webui_checkbox_on_set,
-        .on_webui_get = k__webui_checkbox_on_get,
-    };
-    checkbox->widget.v_tbl = &v_tbl;
-
-    checkbox->data = data;
-    checkbox->on_change = config->on_change;
-    checkbox->on_read   = config->on_read;
-
-    {
-        struct k_str_buf str_buf;
-        char buf[896];
-        k_str_buf_init(&str_buf, buf, sizeof(buf));
-
-        k_str_buf_puts(&str_buf, "k__webui.bind({");
-        {
-            k_str_buf_printf(&str_buf, "bind_id:%zu,", bind_id);
-            k_str_buf_k_printf(&str_buf, k__webui_fmt, "group:%'s,", group);
-            k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
-            k_str_buf_puts(&str_buf, "type:'checkbox',");
-        }
-        k_str_buf_puts(&str_buf, "})");
-
-        char *js = k_str_buf_get(&str_buf);
-        k__webui_exec_js(js);
-
-        k_str_buf_free(&str_buf);
-    }
-
-    return bind_id;
-
+    return bind_id; /* 返回绑定 ID，在 C 端需要靠此 ID 来解绑。或者也可以点击 webui 页面中的打叉按钮解绑 */
 err:
     return SIZE_MAX;
 }
@@ -744,7 +729,6 @@ size_t k_webui_bind_button(const char *group, const char *label, void *data, con
             k_str_buf_k_printf(&str_buf, k__webui_fmt, "group:%'s,", group);
             k_str_buf_k_printf(&str_buf, k__webui_fmt, "label:%'s,", label);
             k_str_buf_puts(&str_buf, "type:'button',");
-
             k_str_buf_k_printf(&str_buf, k__webui_fmt, "text:%'s,", config->text);
         }
         k_str_buf_puts(&str_buf, "})");

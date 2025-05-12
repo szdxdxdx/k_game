@@ -57,25 +57,19 @@ static int llk__ui_elem_box_set_attr_fn_callback(struct llk_ui_context *ui, void
 static int llk__ui_elem_box_set_attr(struct llk_ui_elem *elem, const char *key, const char *val) {
     struct llk_ui_elem_box *box = (struct llk_ui_elem_box *)elem;
 
-    if (0 == strcmp(key, "background-color"))
-        return llk__ui_elem_box_set_color(&box->background_color, val);
-    if (0 == strcmp(key, "background-color.hovered"))
-        return llk__ui_elem_box_set_color(&box->background_color_hovered, val);
-    if (0 == strcmp(key, "background-color.pressed"))
-        return llk__ui_elem_box_set_color(&box->background_color_pressed, val);
+    /* 判断 key 是不是自己的属性，若是，则自己解析 val 然后赋值（llk_ui 有提供关于长度值、颜色值的解析工具函数） */
+    if (0 == strcmp(key, "border-color")) return llk__ui_elem_box_set_color(&box->border_color, val);
+    if (0 == strcmp(key, "border-color.hovered")) return llk__ui_elem_box_set_color(&box->border_color_hovered, val);
+    if (0 == strcmp(key, "border-color.pressed")) return llk__ui_elem_box_set_color(&box->border_color_pressed, val);
+    if (0 == strcmp(key, "on-click")) return llk__ui_elem_box_set_attr_fn_callback(elem->ui, &box->fn_on_click, val);
+    if (0 == strcmp(key, "on-draw"))  return llk__ui_elem_box_set_attr_fn_callback(elem->ui, &box->fn_on_draw, val);
+    /* region {...} */
+    if (0 == strcmp(key, "background-color"))         return llk__ui_elem_box_set_color(&box->background_color, val);
+    if (0 == strcmp(key, "background-color.hovered")) return llk__ui_elem_box_set_color(&box->background_color_hovered, val);
+    if (0 == strcmp(key, "background-color.pressed")) return llk__ui_elem_box_set_color(&box->background_color_pressed, val);
+    /* endregion */
 
-    if (0 == strcmp(key, "border-color"))
-        return llk__ui_elem_box_set_color(&box->border_color, val);
-    if (0 == strcmp(key, "border-color.hovered"))
-        return llk__ui_elem_box_set_color(&box->border_color_hovered, val);
-    if (0 == strcmp(key, "border-color.pressed"))
-        return llk__ui_elem_box_set_color(&box->border_color_pressed, val);
-
-    if (0 == strcmp(key, "on-click"))
-        return llk__ui_elem_box_set_attr_fn_callback(elem->ui, &box->fn_on_click, val);
-    if (0 == strcmp(key, "on-draw"))
-        return llk__ui_elem_box_set_attr_fn_callback(elem->ui, &box->fn_on_draw, val);
-
+    /* 若不是自己的属性，在交由基类 llk_ui_elem 来进行赋值 */
     return llk__ui_elem_set_attr_default(elem, key, val);
 }
 

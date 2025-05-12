@@ -314,7 +314,7 @@ struct k_behavior_tree_node *k_behavior_tree_add_delay(struct k_behavior_tree_no
  * struct k_behavior_tree_builder *b;       // 定义构建器的指针，用于存储上下文
  * k_bt_builder(&tree, b)                   // 开始构建。`tree` 用于接收结果
  * {                                        // 当前上下文为 [root]
- *     k_bt_parallel(b)                     // 向 [root] 添加一个 [parallel]
+ *     k_bt_parallel(b, ...)                // 向 [root] 添加一个 [parallel]
  *     {                                    // 当前上下文为 [parallel]
  *         k_bt_action(b, ...);             // 向 [parallel] 添加一个 [action]
  *         k_bt_sequence(b)                 // 向 [parallel] 添加一个 [sequence]

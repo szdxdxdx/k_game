@@ -529,46 +529,33 @@ void llk__ui_elem_measure(struct llk_ui_elem *elem) {
 }
 
 void llk__ui_elem_layout(struct llk_ui_elem *elem) {
+    llk__ui_elem_destroy_if_marked(elem);  /* 如果元素被标记为删除，则销毁它
+    （若在事件分发阶段的回调中尝试删除元素，不能立即删除，因为此时正在遍历树结构，所以采用延迟删除机制） */
 
-    llk__ui_elem_destroy_if_marked(elem);
+    if (elem->is_hidden) return; /* 若元素被隐藏，则不参与布局（包括它的子元素） */
 
-    if (elem->is_hidden)
-        return;
-
-    struct llk_ui_elem *parent = elem->parent;
-
+    struct llk_ui_elem *parent = elem->parent; /* 根据父元素的位置，和自身相对父元素的偏移，确定自身在 UI 界面中的定位 */
     if (elem->left.unit != LLK_UI_UNIT_NO_VAL) {
-        elem->x = parent->x + elem->left.computed_val;
-    }
-    else if (elem->right.unit != LLK_UI_UNIT_NO_VAL) {
+        elem->x = parent->x + elem->left.computed_val; /* 水平方向有限按照 left 定位，其次是 right，若没有指定则默认左对齐 */
+    } else if (elem->right.unit != LLK_UI_UNIT_NO_VAL) {
         elem->x = parent->x + parent->w.computed_val - elem->w.computed_val - elem->right.computed_val;
-    }
-    else {
+    } else {
         elem->x = parent->x;
     }
-
     if (elem->top.unit != LLK_UI_UNIT_NO_VAL) {
-        elem->y = parent->y + elem->top.computed_val;
-    }
-    else if (elem->bottom.unit != LLK_UI_UNIT_NO_VAL) {
+        elem->y = parent->y + elem->top.computed_val; /* 竖直方向有限按照 top 定位，其次是 bottom，若没有指定则默认顶部对齐 */
+    } else if (elem->bottom.unit != LLK_UI_UNIT_NO_VAL) {
         elem->y = parent->y + parent->h.computed_val - elem->h.computed_val - elem->bottom.computed_val;
-    }
-    else {
+    } else {
         elem->y = parent->y;
     }
-
-    struct llk_ui_elem *child;
-    struct k_list *child_list = &elem->child_list;
-    struct k_list_node *iter;
-    for (k_list_for_each(child_list, iter)) {
-        child = container_of(iter, struct llk_ui_elem, sibling_link);
-
+    struct k_list_node *iter; /* 定位所有的子元素（递归） */
+    for (k_list_for_each(&elem->child_list, iter)) {
+        struct llk_ui_elem *child = container_of(iter, struct llk_ui_elem, sibling_link);
         llk__ui_elem_layout(child);
     }
-
-    if (NULL != elem->type->fn_after_layout) {
-        elem->type->fn_after_layout(elem);
-    }
+    /* 在该元素及其子元素都布局完成后，执行本阶段的回调 */
+    if (NULL != elem->type->fn_after_layout) { elem->type->fn_after_layout(elem); }
 }
 
 void llk__ui_elem_hit_test(struct llk_ui_elem *elem) {

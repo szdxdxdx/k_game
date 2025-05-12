@@ -34,7 +34,7 @@ static void k__camera_move_towards(struct k_camera *camera) {
         float dir_y = dist_y / dist;
         float dot_v = camera->vx * dir_x + camera->vy * dir_y;
 
-        float dt = k_get_step_delta();
+        float dt = k_time_get_step_delta();
         float a = camera->acceleration;
         float v;
         float stop_dist = (dot_v * dot_v) / (2.0f * a);
@@ -84,35 +84,29 @@ static void k__camera_auto_follow(struct k_camera *camera) {
         camera->dst_y = sum_wy / sum_w;
     }
     else {
-        float sum_wx = 0.0f;
-        float sum_wy = 0.0f;
-        float sum_w  = 0.0f;
+        /* 若摄像机有主跟随对象 */
+        float sum_wx = 0.0f, sum_wy = 0.0f, sum_w  = 0.0f;
+        /* region {...} */
 
-        float view_left;
-        float view_top;
-        float view_w;
-        float view_h;
+        float view_left, view_top, view_w, view_h;
         k_view_get_rect(&view_left, &view_top, &view_w, &view_h);
         float view_right  = view_left + view_w;
         float view_bottom = view_top + view_h;
 
-        size_t i = 0;
+        /* endregion */
+        size_t i = 0; /* 遍历所有跟随对象，计算它们的加权中心点 */
         for (; i < camera->targets_num; i++) {
             struct k_camera_target *target = camera->targets[i];
-
             float target_x = *target->x;
             float target_y = *target->y;
-
-            if (target_x < view_left)   continue;
+            if (target_x < view_left)   continue; /* 若跟随的对象不在视野范围内，则跳过计算 */
             if (target_y < view_top)    continue;
             if (target_x > view_right)  continue;
             if (target_y > view_bottom) continue;
-
             sum_wx += target_x * target->weight;
             sum_wy += target_y * target->weight;
             sum_w  += target->weight;
         }
-
         if (0.0f == sum_w) {
             camera->dst_x = *(camera->primary_target->x);
             camera->dst_y = *(camera->primary_target->y);
@@ -120,10 +114,9 @@ static void k__camera_auto_follow(struct k_camera *camera) {
         else {
             camera->dst_x = sum_wx / sum_w;
             camera->dst_y = sum_wy / sum_w;
-
             float view_half_w = view_w / 2;
             float view_half_h = view_h / 2;
-
+            /* 若将视野移动到该中心点处时，主对象不在视野内，则对中心点进行修正 */
             float max_cx = *(camera->primary_target->x) + view_half_w;
             if (camera->dst_x > max_cx) {
                 camera->dst_x = max_cx;
@@ -133,7 +126,6 @@ static void k__camera_auto_follow(struct k_camera *camera) {
                     camera->dst_x = min_cx;
                 }
             }
-
             float max_cy = *(camera->primary_target->y) + view_half_h;
             if (camera->dst_y > max_cy) {
                 camera->dst_y = max_cy;
@@ -145,8 +137,7 @@ static void k__camera_auto_follow(struct k_camera *camera) {
             }
         }
     }
-
-    k__camera_move_towards(camera);
+    k__camera_move_towards(camera); /* 摄像机操控视野矩形，往目标位置移动一小步 */
 }
 
 void k__camera_move_on_begin_step(void *camera_) {

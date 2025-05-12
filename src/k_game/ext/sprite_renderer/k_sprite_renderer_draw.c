@@ -9,46 +9,33 @@
 
 static void k__sprite_renderer_on_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
-
-    renderer->timer += k_get_step_delta() * renderer->speed;
-
+    renderer->timer += k_time_get_step_delta() * renderer->speed; /* 获取帧间隔的事件，同时乘以一个倍率，可以实现倍速播放 */
     void (*fn_loop_callback)(struct k_object *object) = NULL;
-
     struct k_sprite *sprite = renderer->sprite;
     size_t frame_idx_last = k_sprite_get_frames_num(sprite) - 1;
-    while (1) {
+    while (1) { /* 精灵渲染器内部的计时器累加时间，算出播放进度应该是到达哪一帧 */
         float delay = (float)k_sprite_get_frame_delay(sprite, renderer->frame_idx) / 1000.0f;
-
-        if (renderer->timer < delay) {
-            break;
-        }
-
+        if (renderer->timer < delay) break;
         renderer->timer -= delay;
-
         if (renderer->frame_idx < frame_idx_last) {
             renderer->frame_idx += 1;
-        }
-        else {
-            if (2 <= renderer->loop_count) {
+        } else {
+            if (2 <= renderer->loop_count) { /* loop_count 记录渲染器重复播放动画的次数（有的动画只播放一次，例如角色死亡的动画） */
                 fn_loop_callback = renderer->fn_loop_callback;
                 renderer->loop_count -= 1;
                 renderer->frame_idx = 0;
-            }
-            else if (1 == renderer->loop_count) {
+            } else if (1 == renderer->loop_count) {
                 fn_loop_callback = renderer->fn_loop_callback;
                 renderer->loop_count -= 1;
                 renderer->frame_idx = frame_idx_last;
-            }
-            else {
-                renderer->frame_idx = frame_idx_last;
+            } else {
+                renderer->frame_idx = frame_idx_last; /* 若该精灵 */
             }
         }
     }
-
-    if (transform_none == renderer->transform_flags) {
+    if (transform_none == renderer->transform_flags) { /* 绘制精灵帧。若渲染器没有应用缩放、旋转等变换，则使用简单绘制 */
         k_canvas_room_draw_sprite(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), NULL);
-    }
-    else {
+    } else {
         struct k_canvas_draw_sprite_options opts;
         opts.scaled_w = renderer->scaled_w;
         opts.scaled_h = renderer->scaled_h;
@@ -56,9 +43,8 @@ static void k__sprite_renderer_on_draw(struct k_component *component) {
         opts.flip_x   = renderer->transform_flags & transform_flip_x;
         opts.flip_y   = renderer->transform_flags & transform_flip_y;
         k_canvas_room_draw_sprite(sprite, renderer->frame_idx, *(renderer->x), *(renderer->y), &opts);
-    }
-
-    if (NULL != fn_loop_callback) {
+    } /* 否则启用复杂绘制 */
+    if (NULL != fn_loop_callback) { /* 执行回调，告知用户已播放完一轮精灵动画 */
         fn_loop_callback(k_component_get_object(component));
     }
 }

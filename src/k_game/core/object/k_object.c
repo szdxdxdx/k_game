@@ -12,13 +12,11 @@
 
 struct k_object *k_object_create(size_t data_size) {
 
-    struct k_room *room = k__room_current;
-
-    struct k_object *object = k__object_pool_acquire(&room->object_pool);
+    struct k_room *room = k__room_current; /* 获取当前房间 */
+    struct k_object *object = k__object_pool_acquire(&room->object_pool); /* 由对象池负责分配对象的内存 */
     if (NULL == object)
         return NULL;
-
-    if (0 == data_size) {
+    if (0 == data_size) { /* 分配对象的用户自定义关联数据的内存 */
         object->data = NULL;
     } else {
         object->data = k__mem_alloc(data_size);
@@ -28,12 +26,11 @@ struct k_object *k_object_create(size_t data_size) {
         }
     }
 
-    k_list_init(&object->callback_list);
+    k_list_init(&object->callback_list); /* 初始化对象的事件回调链表和组件链表。销毁对象时，遍历这两个链表，移除事件回调和组件 */
     k_list_init(&object->component_list);
 
     object->room = room;
     object->on_destroy = NULL;
-
     return object;
 }
 

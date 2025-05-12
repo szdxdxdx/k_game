@@ -5,6 +5,10 @@
 
 #include "./room/yx_room_1.h"
 
+
+
+
+
 static int yx_game_on_start(void) {
     struct k_room *room_1 = yx_room_1_create(); /* 在初始化时创建房间 */
     if (NULL == room_1)
@@ -26,7 +30,3 @@ int main(int argc, char **argv) {
     config.on_start     = yx_game_on_start; /* 游戏初始化时执行的回调 */
     return k_game_run(&config); /* 运行游戏 */
 }
-
-
-
-

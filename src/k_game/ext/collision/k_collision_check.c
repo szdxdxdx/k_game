@@ -8,29 +8,24 @@
 static float calc_vector_cross(float x1, float y1, float x2, float y2) {
     return x1 * y2 - x2 * y1;
 }
-
 /* 检测点与点是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是第两个点的坐标 */
 static int check_collision_point_point(float x1, float y1, float x2, float y2) {
     return (x1 == x2) && (y1 == y2);
 }
-
 /* 检测点与线段是否发生碰撞。`(x, y)` 是点的坐标，`(x1, y1)` 和 `(x2, y2)` 是线段的端点坐标 */
 static int check_collision_point_line(float x, float y, float x1, float y1, float x2, float y2) {
     return (x1 <= x == x <= x2)
         && (y1 <= y == y <= y2)
         && calc_vector_cross(x2 - x1, y - y1, y2 - y1, x - x1);
 }
-
 /* 检测点与矩形是否发生碰撞。`(x, y)` 是点的坐标，`(x1, y1)` 和 `(x2, y2)` 是矩形的一组对角坐标 */
 static int check_collision_point_rect(float x, float y, float x1, float y1, float x2, float y2) {
     return (x1 <= x == x <= x2) && (y1 <= y == y <= y2);
 }
-
 /* 检测点与圆是否发生碰撞。`(x, y)` 是点的坐标，`(cx, cy)` 和 `r` 是圆的圆心坐标和半径 */
 static int check_collision_point_circle(float x, float y, float cx, float cy, float r) {
     return (x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r;
 }
-
 /* 检测两条线段是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是第一条线段的端点坐标，`(x3, y3)` 和 `(x4, y4)` 是第二条线段的端点坐标 */
 static int check_collision_line_line(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
 
@@ -58,7 +53,6 @@ static int check_collision_line_line(float x1, float y1, float x2, float y2, flo
 
     return 0;
 }
-
 /* 检测线段与矩形是否发生碰撞。`(lx1, ly1)` 和 `(lx2, ly2)` 是条线段的端点坐标，`(rx1, ry1)` 和 `(rx2, ry2)` 是矩形的对角坐标 */
 static int check_collision_line_rect(float lx1, float ly1, float lx2, float ly2, float rx1, float ry1, float rx2, float ry2) {
     return check_collision_point_rect(lx1, ly1, rx1, ry1, rx2, ry2)
@@ -68,7 +62,6 @@ static int check_collision_line_rect(float lx1, float ly1, float lx2, float ly2,
         || check_collision_line_line(lx1, ly1, lx2, ly2, rx2, ry2, rx1, ry2)
         || check_collision_line_line(lx1, ly1, lx2, ly2, rx1, ry2, rx1, ry1);
 }
-
 /* 检测线段与圆是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是线段的端点坐标，`(cx, cy)` 和 `r` 是圆的圆心坐标和半径 */
 static int check_collision_line_circle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
 
@@ -84,13 +77,11 @@ static int check_collision_line_circle(float x1, float y1, float x2, float y2, f
 
     return check_collision_point_rect(px, py, x1, y1, x2, y2) && ((px - cx) * (px - cx) + (py - cy) * (py - cy) <= rr);
 }
-
 /* 检测两个矩形是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是第一个矩形的对角坐标，`(x3, y3)` 和 `(x4, y4)` 是第二个矩形的对角坐标 */
 static int check_collision_rect_rect(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
     return ( (x1 < x4) != (x2 < x3) && (y1 < y4) != (y2 < y3) )
         || ( (x1 < x3) != (x2 < x4) && (y1 < y3) != (y2 < y4) );
 }
-
 /* 检测矩形和圆是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是矩形的一组对角坐标，`(cx, cy)` 和 `r` 是圆形的圆心坐标和半径 */
 static int check_collision_rect_circle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
 
@@ -111,12 +102,10 @@ static int check_collision_rect_circle(float x1, float y1, float x2, float y2, f
 
     return 0;
 }
-
 /* 检测两个圆是否发生碰撞。`(x1, y1)` 和 `r1` 是第一个圆的圆心坐标和半径，`(x2, y2)` 和 `r2` 是第二个圆的圆心坐标和半径 */
 static int check_collision_circle_circle(float x1, float y1, float r1, float x2, float y2, float r2) {
     return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) <= (r1 + r2) * (r1 + r2);
 }
-
 /* 检测点和碰撞盒是否发生碰撞。`(x, y)` 是点的坐标，`box` 是碰撞盒 */
 static int check_collision_point_box(float x, float y, struct k_collision_box *box) {
     switch (box->type) {
@@ -151,7 +140,6 @@ static int check_collision_point_box(float x, float y, struct k_collision_box *b
         }
     }
 }
-
 /* 检测线段和碰撞盒是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是线段的端点坐标，`box` 是碰撞盒 */
 static int check_collision_line_box(float x1, float y1, float x2, float y2, struct k_collision_box *box) {
     switch (box->type) {
@@ -186,7 +174,6 @@ static int check_collision_line_box(float x1, float y1, float x2, float y2, stru
         }
     }
 }
-
 /* 检测矩形和碰撞盒是否发生碰撞。`(x1, y1)` 和 `(x2, y2)` 是矩形的对角坐标，`box` 是碰撞盒 */
 static int check_collision_rect_box(float x1, float y1, float x2, float y2, struct k_collision_box *box) {
     switch (box->type) {
@@ -221,7 +208,6 @@ static int check_collision_rect_box(float x1, float y1, float x2, float y2, stru
         }
     }
 }
-
 /* 检测圆和碰撞盒是否发生碰撞。`(cx, cy)` 是圆的圆心坐标，`r` 是圆的半径，`box` 是碰撞盒 */
 static int check_collision_circle_box(float cx, float cy, float r, struct k_collision_box *box) {
     switch (box->type) {

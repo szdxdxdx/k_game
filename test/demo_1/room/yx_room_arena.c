@@ -14,6 +14,7 @@
 
 #include "../llk_ui/llk_ui.h"
 #include "../utils/yx_math.h"
+#include "yx_bt_example.h"
 
 /* region [webui] */
 
@@ -231,11 +232,11 @@ static void set_debug(void *data) {
     if (k_key_down('B')) {
 
         if (k_key_down_or_held(K_KEY_LEFT_SHIFT)) {
-            k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 0);
+            //k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 0);
             k_camera_webui(0);
         }
         else {
-            k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 1);
+            //k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 1);
             k_camera_webui(1);
         }
         if (k_key_down_or_held(K_KEY_LEFT_CTRL)) {
@@ -267,9 +268,11 @@ static int arena_room_on_create(void *param) {
 
     k_room_add_collision_manager();
 
+    // yx_bt_run_example();
+
     {
         struct yx_obj_bubble_maker_config config;
-        //yx_obj_bubble_maker_create(&config);
+        yx_obj_bubble_maker_create(&config);
 
         int i = 0;
         for (; i < 1000; ++i) {
@@ -335,8 +338,8 @@ static void arena_room_on_enter(void) {
 struct k_room *yx_room_arena_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_w     = 1920 * 2.0f;
-    config.room_h     = 1080 * 2.0f;
+    config.room_w     = 1920;
+    config.room_h     = 1080;
     config.data_size  = sizeof(struct yx_room_arena);
     config.on_create  = arena_room_on_create;
     config.on_destroy = arena_room_on_destroy;

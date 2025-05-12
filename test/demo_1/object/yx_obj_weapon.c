@@ -31,7 +31,7 @@ static void bullet_touch_bubble(struct k_object *object) {
 static void bullet_move(struct k_object *object) {
     struct yx_obj_bullet *bullet = k_object_get_data(object);
 
-    float delta = k_get_step_delta();
+    float delta = k_time_get_step_delta();
     bullet->x += bullet->velocity_x * delta;
     bullet->y += bullet->velocity_y * delta;
 
@@ -110,7 +110,7 @@ static void yx_obj_apple_on_step_touch_bubble(struct k_object *object) {
 static void yx_obj_apple_on_step_move(struct k_object *object) {
     struct yx_obj_apple *apple = k_object_get_data(object);
 
-    float delta = k_get_step_delta();
+    float delta = k_time_get_step_delta();
     apple->x += apple->velocity_x * delta;
     apple->y += apple->velocity_y * delta;
 

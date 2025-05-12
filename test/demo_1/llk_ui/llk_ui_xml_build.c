@@ -10,32 +10,24 @@
 
 struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_context *ui, struct k_xml_node *xml) {
 
-    const char *tag = k_xml_get_tag(xml);
-
+    const char *tag = k_xml_get_tag(xml); /* 获取 xml 节点的 tag，根据该 tag 创建 UI 元素实例 */
     struct llk_ui_elem *elem = llk_ui_elem_create(ui, tag);
-    if (NULL == elem)
-        return NULL;
+    if (NULL == elem) return NULL;
 
-    struct k_xml_node *xml_child;
+    struct k_xml_node *xml_child; /* 遍历该 xml 节点的子节点 */
     for (k_xml_for_each_child(xml, xml_child)) {
-        if (K_XML_ELEM_NODE == k_xml_get_type(xml_child)) {
-
+        if (K_XML_ELEM_NODE == k_xml_get_type(xml_child)) {  /* 如果子节点是元素节点，则递归创建 UI 元素 */
             struct llk_ui_elem *child = llk__ui_build_elem_from_xml(ui, xml_child);
             if (NULL == child)
                 goto err;
-
-            llk_ui_elem_append_child(elem, child);
+            llk_ui_elem_append_child(elem, child); /* 给当前 UI 元素添加子元素 */
         }
     }
-
-    struct k_xml_attr *attr;
-    const char *key;
-    const char *val;
+    struct k_xml_attr *attr; /* 遍历该 xml 节点的属性 */
+    const char *key, *val;
     for (k_xml_for_each_attr(xml, attr, &key, &val)) {
-
-        llk_ui_elem_set_attr(elem, key, val);
+        llk_ui_elem_set_attr(elem, key, val); /* 给 UI 元素的属性赋值 */
     }
-
     return elem;
 
 err:

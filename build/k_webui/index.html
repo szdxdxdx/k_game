@@ -330,10 +330,8 @@
     <!-- 控件组 -->
     <fieldset v-for="[group_name, binding_group] in binding_groups" :key="group_name">
       <legend>{{ group_name }}</legend>
-      
       <!-- 控件 -->
       <div class="widget" v-for="[label, binding] in binding_group" :key="label">
-
         <!-- 滑动条 -->
         <div v-if="binding.type === 'range'" class="widget_range">
           <label>
@@ -343,7 +341,6 @@
           </label>
           <span class="widget_range_warning" v-show="binding.out_of_range">out of range</span>
         </div>
-
         <!-- 复选框 -->
         <div v-else-if="binding.type === 'checkbox'" class="widget_checkbox">
           <label class="widget_checkbox_content">
@@ -351,15 +348,14 @@
           </label>
           <span class="widget_checkbox_label">{{ binding.label }}</span>
         </div>
-        
         <!-- 按钮 -->
         <div v-else-if="binding.type === 'button'" class="widget_button">
           <label>
             <span>{{ binding.label }}</span>
-            <button @click="button_set_c_val(binding)">{{ binding.text }}</button>
+            <button style="height: fit-content;"
+                @click="button_set_c_val(binding)">{{ binding.text }}</button>
           </label>
         </div>
-        
         <!-- 下拉选择框 -->
         <div v-else-if="binding.type === 'select'" class="widget_select">
           <div class="widget_select_label">{{ binding.label }}</div>
@@ -370,7 +366,6 @@
           </label>
           <span class="widget_range_warning" v-show="binding.out_of_range">out of range</span>
         </div>
-        
         <!-- 文本框 -->
         <div v-else-if="binding.type === 'text'" class="widget_text">
           <span class="widget_text_label">{{ binding.label }}</span>

@@ -27,25 +27,25 @@ static int on_game_start(void) {
         k_sound_bgm_set_name(bgm, "bgm");
     }
     {
-        // struct k_room *room_empty = yx_room_empty_create();
+        struct k_room *room_empty = yx_room_empty_create();
         struct k_room *room_arena = yx_room_arena_create();
 
         struct k_room *room_title = yx_room_title_create();
 
-        k_room_nav_push(room_title);
+        k_room_nav_push(room_empty);
     }
 
     return 0;
 }
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
     system("chcp 65001");
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);
 
-    // k_webui_init();
+    k_webui_init();
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_w = 640;
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 
     k_game_run(&config);
 
-    // k_webui_close();
+    k_webui_close();
 
     return 0;
 }
