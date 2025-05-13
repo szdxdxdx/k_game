@@ -7,29 +7,30 @@
 
 /* region [draw_sprite] */
 
-static void k__sprite_renderer_on_draw(struct k_component *component) {
+static void k__sprite_renderer_on_draw(struct k_component *component) { /* 精灵渲染器组件的绘制事件回调 */
     struct k_sprite_renderer *renderer = k_component_get_data(component);
     renderer->timer += k_time_get_step_delta() * renderer->speed; /* 获取帧间隔的事件，同时乘以一个倍率，可以实现倍速播放 */
-    void (*fn_loop_callback)(struct k_object *object) = NULL;
+    void (*fn_loop_callback)(struct k_object *object) = NULL; /* 用于记录动画播放完一轮时的回调函数（如果有的话） */
     struct k_sprite *sprite = renderer->sprite;
     size_t frame_idx_last = k_sprite_get_frames_num(sprite) - 1;
-    while (1) { /* 精灵渲染器内部的计时器累加时间，算出播放进度应该是到达哪一帧 */
+    while (1) { /* 精灵渲染器内部的计时器累加时间，算出播放进度应该到达哪一帧，并循环推进帧索引（计时器可能在一次帧间隔内跨越多帧） */
         float delay = (float)k_sprite_get_frame_delay(sprite, renderer->frame_idx) / 1000.0f;
-        if (renderer->timer < delay) break;
+        if (renderer->timer < delay) break; /* 如果累计的时间不足以切换到下一帧，则退出循环，等待下一次绘制时再判断 */
         renderer->timer -= delay;
         if (renderer->frame_idx < frame_idx_last) {
-            renderer->frame_idx += 1;
+            renderer->frame_idx += 1; /* 还没播放到最后一帧，直接推进到下一帧 */
         } else {
+            /* 已经播放到最后一帧，根据 loop_count 判断是否继续循环播放 */
             if (2 <= renderer->loop_count) { /* loop_count 记录渲染器重复播放动画的次数（有的动画只播放一次，例如角色死亡的动画） */
                 fn_loop_callback = renderer->fn_loop_callback;
                 renderer->loop_count -= 1;
-                renderer->frame_idx = 0;
+                renderer->frame_idx = 0; /* 还需循环播放，回到第 0 帧并执行回调 */
             } else if (1 == renderer->loop_count) {
                 fn_loop_callback = renderer->fn_loop_callback;
                 renderer->loop_count -= 1;
-                renderer->frame_idx = frame_idx_last;
+                renderer->frame_idx = frame_idx_last; /* 最后一轮播放，播放完本帧后不再循环 */
             } else {
-                renderer->frame_idx = frame_idx_last; /* 若该精灵 */
+                renderer->frame_idx = frame_idx_last; /* loop_count == 0，保持在最后一帧，不再播放 */
             }
         }
     }

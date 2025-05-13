@@ -9,6 +9,7 @@ static int int_val;
 static float float_val;
 static int odd;
 static void show_int_val(void *unused);
+static int checked = 0;
 
 static int checkbox_change(void *data, int val) {
     odd = val;
@@ -42,28 +43,18 @@ static int set_int_val(void *data, int val) {
 }
 
 static int yx_room_empty_on_create(void *param) {
-
     k_room_add_draw_callback(NULL, show_int_val, INT_MIN, INT_MIN);
 
+    /* 将 int_val 变量同时和【文本框】、【滑动条】与【下拉菜单】绑定绑定 */
     {
         struct k_webui_text_config text = K_WEBUI_TEXT_CONFIG_INIT;
         text.on_read = text_read;
         k_webui_bind_text("group1", "文本框", &int_val, &text);
-    }
 
-    {
-        struct k_webui_int_slider_config slider = K_WEBUI_INT_SLIDER_CONFIG_INIT;
-        slider.max = 6;
-        slider.on_input = set_int_val;
-        k_webui_bind_int_slider("group1", "滑动条", &int_val, &slider);
-    }
+        struct k_webui_int_slider_config slider_i = K_WEBUI_INT_SLIDER_CONFIG_INIT;
+        slider_i.max = 6;
+        k_webui_bind_int_slider("group1", "滑动条", &int_val, &slider_i);
 
-    {
-        struct k_webui_float_slider_config slider = K_WEBUI_FLOAT_SLIDER_CONFIG_INIT;
-        k_webui_bind_float_slider("group2", "滑动条", &float_val, &slider);
-    }
-
-    {
         struct k_webui_int_select_option options[] = {
             { .val=1, .text="Option 1" },
             { .val=2, .text="Option 2" },
@@ -77,18 +68,19 @@ static int yx_room_empty_on_create(void *param) {
         k_webui_bind_int_select("group1", "下拉菜单", &int_val, &select);
     }
 
-    {
-        struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_CONFIG_INIT;
-        checkbox.on_change = checkbox_change;
-        checkbox.on_read   = checkbox_read;
-        k_webui_bind_checkbox("group1", "是奇数", NULL, &checkbox);
-    }
+    /* 将 float_val 变量和滑动条控件绑定 */
+    struct k_webui_float_slider_config slider_f = K_WEBUI_FLOAT_SLIDER_CONFIG_INIT;
+    k_webui_bind_float_slider("group2", "滑动条", &float_val, &slider_f);
 
-    {
-        struct k_webui_button_config button = K_WEBUI_BUTTON_CONFIG_INIT;
-        button.on_click = on_click;
-        k_webui_bind_button("group3", "按钮", NULL, &button);
-    }
+    /* 将 checked 变量和复选框绑定 */
+    struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_CONFIG_INIT;
+    checkbox.on_change = checkbox_change;
+    checkbox.on_read   = checkbox_read;
+    k_webui_bind_checkbox("group1", "复选框", &checked, &checkbox);
+
+    struct k_webui_button_config button = K_WEBUI_BUTTON_CONFIG_INIT;
+    button.on_click = on_click;
+    k_webui_bind_button("group3", "按钮", NULL, &button);
 
     return 0;
 }
