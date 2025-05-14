@@ -24,7 +24,7 @@ void k__room_run(struct k_room *room) {
         room->on_enter();
     }
 
-    k__time.step_timestamp = k_get_timestamp();
+    k__time.step_timestamp = k_time_get_timestamp();
     k__time.step_delta_ms  = 0;
     k__time.step_delta     = 0.0f;
     while (room->game_loop) {

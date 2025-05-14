@@ -31,7 +31,7 @@ static void bullet_touch_bubble(struct k_object *object) {
 static void bullet_move(struct k_object *object) {
     struct yx_obj_bullet *bullet = k_object_get_data(object);
 
-    float delta = k_get_step_delta();
+    float delta = k_time_get_step_delta();
     bullet->x += bullet->velocity_x * delta;
     bullet->y += bullet->velocity_y * delta;
 
@@ -95,22 +95,19 @@ struct yx_obj_apple {
 static void yx_obj_apple_on_step_touch_bubble(struct k_object *object) {
     struct yx_obj_apple *apple = k_object_get_data(object);
 
-    {
-        float padding = 2;
-        float x1 = apple->x - padding;
-        float y1 = apple->y - padding;
-        float x2 = apple->x + padding;
-        float y2 = apple->y + padding;
-        struct k_collision_box *box = k_collision_check_rect(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
-        if (NULL != box)
-            yx_obj_bubble_pop(k_collision_box_get_object(box));
-    }
+    float x1 = apple->x - 4;
+    float y1 = apple->y - 4;
+    float x2 = apple->x + 4;
+    float y2 = apple->y + 4;
+    struct k_collision_box *box = k_collision_check_rect(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
+    if (NULL != box)
+        yx_obj_bubble_pop(k_collision_box_get_object(box));
 }
 
 static void yx_obj_apple_on_step_move(struct k_object *object) {
     struct yx_obj_apple *apple = k_object_get_data(object);
 
-    float delta = k_get_step_delta();
+    float delta = k_time_get_step_delta();
     apple->x += apple->velocity_x * delta;
     apple->y += apple->velocity_y * delta;
 

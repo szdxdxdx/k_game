@@ -2,25 +2,25 @@
 
 /* region [state] */
 
-static void state_enter_idle(struct k_object *object);
-static void state_step_idle(struct k_object *object);
+static void yx_obj_player_on_idle_state_enter(struct k_object *object);
+static void yx_obj_player_on_idle_state_step(struct k_object *object);
 static struct k_state_machine_state STATE_IDLE = {
-    state_enter_idle,
-    state_step_idle,
-    NULL,
+    yx_obj_player_on_idle_state_enter,
+    yx_obj_player_on_idle_state_step,
+    NULL
 };
 
-static void state_enter_running(struct k_object *object);
-static void state_step_running(struct k_object *object);
+static void yx_obj_player_on_running_state_enter(struct k_object *object);
+static void yx_obj_player_on_running_state_step(struct k_object *object);
 static struct k_state_machine_state STATE_RUNNING = {
-    state_enter_running,
-    state_step_running,
-    NULL,
+    yx_obj_player_on_running_state_enter,
+    yx_obj_player_on_running_state_step,
+    NULL
 };
 
 /* region [state_idle] */
 
-static void state_enter_idle(struct k_object *object) {
+static void yx_obj_player_on_idle_state_enter(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     int flip_x = k_sprite_renderer_is_flipped_x(player->spr_rdr);
@@ -30,7 +30,7 @@ static void state_enter_idle(struct k_object *object) {
     k_sprite_renderer_flip_x(player->spr_rdr, flip_x);
 }
 
-static void state_step_idle(struct k_object *object) {
+static void yx_obj_player_on_idle_state_step(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     if (player->next_x != player->x || player->next_y != player->y) {
@@ -42,7 +42,7 @@ static void state_step_idle(struct k_object *object) {
 
 /* region [state_running] */
 
-static void state_enter_running(struct k_object *object) {
+static void yx_obj_player_on_running_state_enter(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     int flip_x = k_sprite_renderer_is_flipped_x(player->spr_rdr);
@@ -52,7 +52,7 @@ static void state_enter_running(struct k_object *object) {
     k_sprite_renderer_flip_x(player->spr_rdr, flip_x);
 }
 
-static void state_step_running(struct k_object *object) {
+static void yx_obj_player_on_running_state_step(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     if (player->next_x == player->x) {
@@ -83,7 +83,7 @@ static void state_step_running(struct k_object *object) {
 static void player_step(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    float delta = k_get_step_delta();
+    float delta = k_time_get_step_delta();
 
     /* 旋转 */
     if (k_key_down_or_held('R'))

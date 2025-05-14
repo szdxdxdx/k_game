@@ -144,21 +144,16 @@ static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
     }
 }
 
-static void refresh_key_state(enum k_keyboard_key key) {
-
-    switch (k__keyboard.key_state[key] & 0b11) {
-        case 0b00: k__keyboard.key_state[key] &= 0b100; break;
-        case 0b01: k__keyboard.key_state[key]  = 0b000; break;
-        case 0b10: k__keyboard.key_state[key]  = 0b100; break;
-        case 0b11: k__keyboard.key_state[key]  = 0b000; break;
-    }
-}
-
 void k__keyboard_refresh_state(void) {
-
     size_t key = 0;
-    for (; key < K_KEY_ENUM_END; key++)
-        refresh_key_state(key);
+    for (; key < K_KEY_ENUM_END; key++) {
+        switch (k__keyboard.key_state[key] & 0b11) {
+            case 0b00: k__keyboard.key_state[key] &= 0b100; break;
+            case 0b01: k__keyboard.key_state[key]  = 0b000; break;
+            case 0b10: k__keyboard.key_state[key]  = 0b100; break;
+            case 0b11: k__keyboard.key_state[key]  = 0b000; break;
+        }
+    }
 }
 
 void k__SDL_handle_event_key_down(SDL_KeyboardEvent *event) {

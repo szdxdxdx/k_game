@@ -48,7 +48,7 @@ struct k_callback *k__alarm_callback_manager_add_room_callback(struct k_alarm_ca
         return NULL;
 
     /* [?] 应该使用当前时间，还是当前帧时间 */
-    uint64_t timeout = k_get_step_timestamp() + delay_ms;
+    uint64_t timeout = k_time_get_step_timestamp() + delay_ms;
 
     callback->base.context = K__ROOM_CALLBACK;
     callback->base.event   = K__ALARM_CALLBACK;
@@ -73,7 +73,7 @@ struct k_callback *k__alarm_callback_manager_add_object_callback(struct k_alarm_
         return NULL;
 
     /* [?] 应该使用当前时间，还是当前帧时间 */
-    uint64_t timeout = k_get_step_timestamp() + delay_ms;
+    uint64_t timeout = k_time_get_step_timestamp() + delay_ms;
 
     callback->base.context = K__OBJECT_CALLBACK;
     callback->base.event   = K__ALARM_CALLBACK;
@@ -98,7 +98,7 @@ struct k_callback *k__alarm_callback_manager_add_component_callback(struct k_ala
         return NULL;
 
     /* [?] 应该使用当前时间，还是当前帧时间 */
-    uint64_t timeout = k_get_step_timestamp() + delay_ms;
+    uint64_t timeout = k_time_get_step_timestamp() + delay_ms;
 
     callback->base.context = K__COMPONENT_CALLBACK;
     callback->base.event   = K__ALARM_CALLBACK;
@@ -123,7 +123,7 @@ struct k_callback *k__alarm_callback_manager_add_component_manager_callback(stru
         return NULL;
 
     /* [?] 应该使用当前时间，还是当前帧时间 */
-    uint64_t timeout = k_get_step_timestamp() + delay_ms;
+    uint64_t timeout = k_time_get_step_timestamp() + delay_ms;
 
     callback->base.context = K__COMPONENT_MANAGER_CALLBACK;
     callback->base.event   = K__ALARM_CALLBACK;
@@ -240,7 +240,7 @@ void k__alarm_callback_manager_flush(struct k_alarm_callback_manager *manager) {
 void k__alarm_callback_manager_exec(struct k_alarm_callback_manager *manager) {
 
     /* [?] 应该使用当前时间，还是当前帧时间 */
-    const uint64_t current_ms = k_get_step_timestamp();
+    const uint64_t current_ms = k_time_get_step_timestamp();
 
     struct k_list *callback_list = &manager->callback_list;
     struct k_alarm_callback *callback;

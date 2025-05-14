@@ -23,7 +23,7 @@ struct k_WASD {
 static void k__WASD_on_step(struct k_component *component) {
     struct k_WASD *WASD = k_component_get_data(component);
 
-    float delta_time = k_get_step_delta();
+    float delta_time = k_time_get_step_delta();
 
     if (k_key_down_or_held(WASD->key_up))
         *(WASD->y) -= WASD->speed * delta_time;

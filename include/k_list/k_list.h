@@ -84,6 +84,23 @@ static inline struct k_list_node *k_list_head(struct k_list *list) {
     return &list->head;
 }
 
+/* 本宏用于遍历链表容器，示例：
+ * ```C
+ * // 自定义的数据节点
+ * struct my_data {
+ *     struct k_list_node link; // 嵌入链表节点，作为指针域
+ *     int val;                 // 节点的实际数据
+ * };
+ *
+ * struct k_list *list = ...; // 要遍历的链表
+ * struct k_list_node *p_node; // 定义用于迭代的遍历
+ * for (k_list_for_each(list, p_node)) { // 遍历链表
+ *     struct my_data *p_data = container_of(p_node, struct my_data, link); // 通过链表节点的指针，计算实际结构体的指针
+ *
+ *     printf("%d\n", p_data->val); // 获取并打印实际节点中的数据
+ * }
+ * ```
+ */
 #define k_list_for_each(list_, iter_) \
     iter_ = (list_)->head.next; \
     iter_ != &((list_)->head);  \

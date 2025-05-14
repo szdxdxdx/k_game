@@ -222,7 +222,7 @@ struct k_webui_button_config {
 /** \brief 用于初始化按钮控件配置 */
 #define K_WEBUI_BUTTON_CONFIG_INIT \
 { \
-    .text     = NULL, \
+    .text     = "click me", \
     .on_click = NULL, \
 }
 

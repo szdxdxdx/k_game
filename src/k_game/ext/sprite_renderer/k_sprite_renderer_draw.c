@@ -10,7 +10,7 @@
 static void k__sprite_renderer_on_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
 
-    renderer->timer += k_get_step_delta() * renderer->speed;
+    renderer->timer += k_time_get_step_delta() * renderer->speed;
 
     void (*fn_loop_callback)(struct k_object *object) = NULL;
 

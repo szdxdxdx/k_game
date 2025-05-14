@@ -34,7 +34,7 @@ static void k__camera_move_towards(struct k_camera *camera) {
         float dir_y = dist_y / dist;
         float dot_v = camera->vx * dir_x + camera->vy * dir_y;
 
-        float dt = k_get_step_delta();
+        float dt = k_time_get_step_delta();
         float a = camera->acceleration;
         float v;
         float stop_dist = (dot_v * dot_v) / (2.0f * a);
