@@ -80,6 +80,10 @@ static int k__canvas_set_viewport(enum k_canvas_viewport viewport) {
 
             return 0;
         }
+        default: {
+            assert(0);
+            return -1;
+        }
     }
 
     assert(0);
