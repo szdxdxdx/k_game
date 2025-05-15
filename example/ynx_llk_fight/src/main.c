@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "k_game.h"
+#include "k_array.h"
 
 static int on_game_start(void) {
 
