@@ -1,6 +1,8 @@
 #ifndef YX_OBJ_RIVAL_H
 #define YX_OBJ_RIVAL_H
 
+#include "k_game/core/k_game_fwd.h"
+
 struct yx_obj_rival_config {
     float x;
     float y;
@@ -10,6 +12,8 @@ struct yx_obj_rival_config {
 };
 
 struct k_object *yx_obj_rival_create(const struct yx_obj_rival_config *config);
+
+/* ------------------------------------------------------------------------ */
 
 struct yx_obj_rival {
 

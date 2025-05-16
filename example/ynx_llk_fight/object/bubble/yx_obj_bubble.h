@@ -3,6 +3,10 @@
 
 #include "k_game.h"
 
+enum yx_collision_group_id {
+    YX_COLLISION_GROUP_BUBBLE = 456,
+};
+
 struct yx_obj_bubble {
     struct k_sprite_renderer *spr_rdr;
     struct k_collision_box *collision_box;

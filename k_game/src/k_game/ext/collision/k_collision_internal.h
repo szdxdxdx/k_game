@@ -9,7 +9,7 @@
 #include "k_game/core/k_component.h"
 #include "k_game/core/k_callback.h"
 
-#include "k_game/ext/k_collision.h"
+#include "k_game/ext/k_collision_box.h"
 
 enum k_collision_box_type;
 struct k_collision_box_config;

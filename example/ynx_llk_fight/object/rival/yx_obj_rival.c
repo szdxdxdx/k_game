@@ -1,4 +1,6 @@
-#include "./yx_obj.h"
+#include "k_game.h"
+
+#include "object/rival/yx_obj_rival.h"
 
 struct k_object *yx_obj_rival_create(const struct yx_obj_rival_config *config) {
 

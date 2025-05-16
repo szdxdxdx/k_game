@@ -4,13 +4,13 @@
 #include "k_game.h"
 
 struct yx_obj_bubble_maker_config {
-
+    int _;
 };
 
-struct k_object *yx_obj_bubble_maker_create(const struct yx_obj_bubble_maker_config *config);
+struct k_object *yx_obj_bubble_maker_create(void);
 
 struct yx_obj_bubble_maker {
-
+    int _;
 };
 
 #endif

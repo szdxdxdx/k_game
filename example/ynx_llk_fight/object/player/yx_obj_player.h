@@ -15,6 +15,8 @@ struct yx_obj_player_config {
 
 struct k_object *yx_obj_player_create(const struct yx_obj_player_config *config);
 
+/* ------------------------------------------------------------------------ */
+
 struct yx_obj_player {
 
     struct k_position *position;

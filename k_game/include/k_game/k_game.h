@@ -20,7 +20,7 @@
 
 #include "./k_game/ext/k_wasd.h"
 #include "./k_game/ext/k_sprite_renderer.h"
-#include "./k_game/ext/k_collision.h"
+#include "./k_game/ext/k_collision_box.h"
 #include "./k_game/ext/k_position.h"
 #include "./k_game/ext/k_state_machine.h"
 #include "./k_game/ext/k_behavior_tree.h"

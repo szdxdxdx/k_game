@@ -1,5 +1,5 @@
-#ifndef K_COLLISION_H
-#define K_COLLISION_H
+#ifndef K_COLLISION_BOX_H
+#define K_COLLISION_BOX_H
 
 #include "k_game/core/k_game_fwd.h"
 

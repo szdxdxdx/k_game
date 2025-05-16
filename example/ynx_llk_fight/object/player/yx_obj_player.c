@@ -1,4 +1,5 @@
-#include "./yx_obj.h"
+#include "object/player/yx_obj_player.h"
+#include "object/weapon/yx_obj_weapon.h"
 
 /* region [state] */
 
@@ -143,20 +144,6 @@ static void player_touch_bubble(struct k_object *object) {
     struct k_collision_box *box = k_collision_check_rectangle(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
     if (NULL != box)
         yx_bubble_pop(k_collision_box_get_object(box));
-#else
-
-    float x1 = player->x;
-    float y1 = player->y;
-    float x2 = player->weapon->x;
-    float y2 = player->weapon->y;
-
-    struct k_collision_box *box[512];
-    size_t n = k_collision_query_rect(box, 512, YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
-    size_t i = 0;
-    for (; i < n; i++) {
-        yx_obj_bubble_pop(k_collision_box_get_object(box[i]));
-    }
-
 #endif
 }
 

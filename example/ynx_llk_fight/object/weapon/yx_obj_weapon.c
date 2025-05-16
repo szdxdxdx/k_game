@@ -1,7 +1,10 @@
-#include "./yx_obj.h"
+#include "k_game.h"
 
-#include "../utils/yx_math.h"
-#include "../sprite/yx_spr.h"
+#include "utils/yx_math.h"
+#include "sprite/yx_spr.h"
+
+#include "object/weapon/yx_obj_weapon.h"
+#include "object/bubble/yx_obj_bubble.h"
 
 /* region [bullet]
 

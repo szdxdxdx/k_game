@@ -6,14 +6,18 @@
 #include "k_log.h"
 
 #include "k_webui.h"
+#include "llk_ui.h"
+#include "k_game.h"
 
-#include "./yx_room_arena.h"
 
-#include "../sprite/yx_spr.h"
-#include "../object/yx_obj.h"
+#include "sprite/yx_spr.h"
 
-#include "../llk_ui/llk_ui.h"
-#include "../utils/yx_math.h"
+#include "object/bubble/yx_obj_bubble.h"
+#include "object/player/yx_obj_player.h"
+#include "object/rival/yx_obj_rival.h"
+
+#include "room/yx_room_arena.h"
+#include "object/bubble/yx_obj_bubble_maker.h"
 
 /* region [webui] */
 
@@ -231,11 +235,9 @@ static void set_debug(void *data) {
     if (k_key_down('B')) {
 
         if (k_key_down_or_held(K_KEY_LEFT_SHIFT)) {
-            k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 0);
             k_camera_webui(0);
         }
         else {
-            k_collision_set_debug(YX_COLLISION_GROUP_BUBBLE, 1);
             k_camera_webui(1);
         }
         if (k_key_down_or_held(K_KEY_LEFT_CTRL)) {
@@ -268,17 +270,7 @@ static int arena_room_on_create(void *param) {
     k_room_add_collision_manager();
 
     {
-        struct yx_obj_bubble_maker_config config;
-        //yx_obj_bubble_maker_create(&config);
-
-        int i = 0;
-        for (; i < 1000; ++i) {
-            float padding = 32;
-            float rand_x = yx_rand(padding, k_room_get_w() - padding);
-            float rand_y = yx_rand(padding, k_room_get_h() - padding);
-
-            yx_obj_bubble_create(rand_x, rand_y);
-        }
+        yx_obj_bubble_maker_create();
     }
 
     {

@@ -1,5 +1,6 @@
-#include "./yx_obj.h"
-#include "../sprite/yx_spr.h"
+#include "object/bubble/yx_obj_bubble.h"
+
+#include "sprite/yx_spr.h"
 
 static void yx_obj_bubble_on_state_change_float(struct k_object *object) {
     struct yx_obj_bubble *bubble = k_object_get_data(object);
