@@ -21,17 +21,6 @@ static int k__sprite_renderer_on_create(struct k_component *component, void *par
 
     renderer->sprite = NULL;
 
-    if (NULL == config->sprite) {
-        k__sprite_renderer_reset(renderer);
-    } else {
-        k_sprite_renderer_set_sprite(renderer, config->sprite);
-    }
-
-    return 0;
-}
-
-void k__sprite_renderer_reset(struct k_sprite_renderer *renderer) {
-
     renderer->loop_count = INT_MAX;
     renderer->fn_loop_callback = NULL;
 
@@ -39,7 +28,18 @@ void k__sprite_renderer_reset(struct k_sprite_renderer *renderer) {
     renderer->timer = 0.0f;
     renderer->speed = 1.0f;
 
-    k_sprite_renderer_reset_transforms(renderer);
+    renderer->scaled_w = 0.0f;
+    renderer->scaled_h = 0.0f;
+    renderer->scale_x  = 1.0f;
+    renderer->scale_y  = 1.0f;
+    renderer->angle    = 0.0f;
+    renderer->transform_flags = transform_none;
+
+    if (NULL != config->sprite) {
+        k_sprite_renderer_set_sprite(renderer, config->sprite);
+    }
+
+    return 0;
 }
 
 /* endregion */

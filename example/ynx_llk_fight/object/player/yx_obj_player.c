@@ -1,3 +1,7 @@
+
+#define K_LOG_TAG "yx:object:player"
+#include "k_log.h"
+
 #include "object/player/yx_obj_player.h"
 #include "object/weapon/yx_obj_weapon.h"
 
@@ -19,16 +23,11 @@ static struct k_state_machine_state STATE_RUNNING = {
     NULL
 };
 
-/* region [state_idle] */
+/* region [idle] */
 
 static void yx_obj_player_on_idle_state_enter(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
-
-    int flip_x = k_sprite_renderer_is_flipped_x(player->spr_rdr);
-
     k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_idle);
-
-    k_sprite_renderer_flip_x(player->spr_rdr, flip_x);
 }
 
 static void yx_obj_player_on_idle_state_step(struct k_object *object) {
@@ -41,16 +40,11 @@ static void yx_obj_player_on_idle_state_step(struct k_object *object) {
 
 /* endregion */
 
-/* region [state_running] */
+/* region [running] */
 
 static void yx_obj_player_on_running_state_enter(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
-
-    int flip_x = k_sprite_renderer_is_flipped_x(player->spr_rdr);
-
     k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_run);
-
-    k_sprite_renderer_flip_x(player->spr_rdr, flip_x);
 }
 
 static void yx_obj_player_on_running_state_step(struct k_object *object) {
@@ -81,7 +75,27 @@ static void yx_obj_player_on_running_state_step(struct k_object *object) {
 
 /* endregion */
 
-static void player_step(struct k_object *object) {
+/* region [collision] */
+
+static void yx__obj_player_touch_bubble(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+#if 0
+    float x1 = player->x;
+    float y1 = player->y;
+    float x2 = player->weapon->x;
+    float y2 = player->weapon->y;
+    struct k_collision_box *box = k_collision_check_rectangle(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
+    if (NULL != box)
+        yx_bubble_pop(k_collision_box_get_object(box));
+#endif
+}
+
+/* endregion */
+
+/* region [debug] */
+
+static void yx__obj_player_on_debug_step_spr_rdr(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     float delta = k_time_get_step_delta();
@@ -103,9 +117,9 @@ static void player_step(struct k_object *object) {
     /* 放缩 */
     if (k_key_down_or_held('Z')) {
         if (k_key_down_or_held('X'))
-            k_sprite_renderer_set_w(player->spr_rdr, 6 + k_sprite_renderer_get_w(player->spr_rdr));
+            k_sprite_renderer_set_scaled_w(player->spr_rdr, 6 + k_sprite_renderer_get_w(player->spr_rdr));
         if (k_key_down_or_held('Y'))
-            k_sprite_renderer_set_h(player->spr_rdr, 6 + k_sprite_renderer_get_h(player->spr_rdr));
+            k_sprite_renderer_set_scaled_h(player->spr_rdr, 6 + k_sprite_renderer_get_h(player->spr_rdr));
     }
 
     /* 加速减速 */
@@ -133,38 +147,36 @@ static void player_step(struct k_object *object) {
     }
 }
 
-static void player_touch_bubble(struct k_object *object) {
-    struct yx_obj_player *player = k_object_get_data(object);
-
-#if 0
-    float x1 = player->x;
-    float y1 = player->y;
-    float x2 = player->weapon->x;
-    float y2 = player->weapon->y;
-    struct k_collision_box *box = k_collision_check_rectangle(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
-    if (NULL != box)
-        yx_bubble_pop(k_collision_box_get_object(box));
-#endif
-}
-
-static void player_draw_position(struct k_object *object) {
+static void yx__obj_player_on_debug_draw_position(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     k_canvas_set_draw_color(0xffffffff);
     k_canvas_ui_printf(NULL, 8, 56, "(%.2f, %.2f)", player->x, player->y);
 }
 
+/* endregion */
+
+/* region [create] */
+
 struct k_object *yx_obj_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
-
-    k_object_add_step_callback(object, player_touch_bubble);
-    k_object_add_step_callback(object, player_step);
-
-    k_object_add_draw_callback(object, player_draw_position, 0, 0);
+    if (NULL == object)
+        goto err;
 
     struct yx_obj_player *player = k_object_get_data(object);
 
+    player->object = object;
+
+    /* region [event_callback] */
+    {
+        //k_object_add_step_callback(object, yx__obj_player_touch_bubble);
+        //k_object_add_step_callback(object, yx__obj_player_on_debug_step_spr_rdr);
+        //k_object_add_draw_callback(object, yx__obj_player_on_debug_draw_position, 0, 0);
+    }
+    /* endregion */
+
+    /* region [position] */
     {
         struct k_position_config position_config;
         position_config.parent = NULL;
@@ -173,8 +185,12 @@ struct k_object *yx_obj_player_create(const struct yx_obj_player_config *config)
         position_config.local_x = config->x;
         position_config.local_y = config->y;
         player->position = k_object_add_position(object, &position_config);
+        if (NULL == player->position)
+            goto err;
     }
+    /* endregion */
 
+    /* region [wasd] */
     {
         struct k_component_type *WASD = k_component_type_find("k/WASD");
         struct k_WASD_config WASD_config;
@@ -186,11 +202,15 @@ struct k_object *yx_obj_player_create(const struct yx_obj_player_config *config)
         WASD_config.x         = &player->next_x;
         WASD_config.y         = &player->next_y;
         player->WASD = k_object_add_component(object, WASD, &WASD_config);
+        if (NULL == player->WASD)
+            goto err;
 
         player->next_x = config->x;
         player->next_y = config->y;
     }
+    /* endregion */
 
+    /* region [sprite_renderer] */
     {
         player->spr_idle = config->spr_idle;
         player->spr_run  = config->spr_run;
@@ -202,25 +222,50 @@ struct k_object *yx_obj_player_create(const struct yx_obj_player_config *config)
         renderer_config.z_group = 0;
         renderer_config.z_layer = (int)config->y;
         player->spr_rdr = k_object_add_sprite_renderer(object, &renderer_config);
+        if (NULL == player->spr_rdr)
+            goto err;
+
         k_sprite_renderer_flip_x(player->spr_rdr, 1);
     }
+    /* endregion */
 
+    /* region [weapon] */
     {
         struct yx_obj_weapon_config weapon_config;
         weapon_config.parent = player->position;
         player->weapon = yx_obj_weapon_create(&weapon_config);
+        if (NULL == player->weapon)
+            goto err;
     }
+    /* endregion */
 
+    /* region [state_machine] */
     {
         player->state_machine = k_object_add_state_machine(object);
+        if (NULL == player->state_machine)
+            goto err;
+
         k_state_machine_change_state(player->state_machine, STATE_IDLE);
     }
+    /* endregion */
 
+    /* region [camera_target] */
     {
         struct k_camera_target *target = k_camera_add_follow_target(object, &player->x, &player->y);
+        if (NULL == target)
+            goto err;
+
         k_camera_set_primary_target(target);
         k_camera_set_target_weight(target, 4.0f);
     }
+    /* endregion */
 
     return object;
+
+err:
+    k_object_destroy(object);
+    k_log_error("failed to create yx_obj_player");
+    return NULL;
 }
+
+/* endregion */

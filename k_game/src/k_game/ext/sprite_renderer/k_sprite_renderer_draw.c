@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 
 #include "k_game/core/k_time.h"
 #include "k_game/core/k_canvas.h"
@@ -80,6 +81,14 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         renderer->cb_draw_sprite = NULL;
 
         renderer->sprite = NULL;
+
+        if ( ! (renderer->transform_flags & transform_scaled_w)) {
+            renderer->scaled_w = 0.0f;
+        }
+        if ( ! (renderer->transform_flags & transform_scaled_h)) {
+            renderer->scaled_h = 0.0f;
+        }
+
         return 0;
     }
     else {
@@ -98,7 +107,20 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         }
 
         renderer->sprite = sprite;
-        k__sprite_renderer_reset(renderer);
+
+        renderer->loop_count = INT_MAX;
+        renderer->fn_loop_callback = NULL;
+
+        renderer->frame_idx = 0;
+        renderer->timer = 0.0f;
+
+        if ( ! (renderer->transform_flags & transform_scaled_w)) {
+            renderer->scaled_w = (float)k_sprite_get_w(renderer->sprite) * renderer->scale_x;
+        }
+        if ( ! (renderer->transform_flags & transform_scaled_h)) {
+            renderer->scaled_h = (float)k_sprite_get_h(renderer->sprite) * renderer->scale_y;
+        }
+
         return 0;
     }
 }
@@ -175,11 +197,7 @@ void k_sprite_renderer_set_duration(struct k_sprite_renderer *renderer, float du
 }
 
 float k_sprite_renderer_get_speed(struct k_sprite_renderer *renderer) {
-
-    if (NULL == renderer->sprite)
-        return 0;
-    else
-        return renderer->speed;
+    return renderer->speed;
 }
 
 /* endregion */

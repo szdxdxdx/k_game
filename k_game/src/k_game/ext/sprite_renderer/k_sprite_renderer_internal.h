@@ -12,11 +12,13 @@
 
 enum renderer_transform {
     transform_none     = 0,
-    transform_scale_x  = 1 << 0,
-    transform_scale_y  = 1 << 1,
-    transform_rotate   = 1 << 2,
-    transform_flip_x   = 1 << 3,
-    transform_flip_y   = 1 << 4,
+    transform_scaled_w = 1 << 0,
+    transform_scaled_h = 1 << 1,
+    transform_scale_x  = 1 << 2,
+    transform_scale_y  = 1 << 3,
+    transform_rotate   = 1 << 4,
+    transform_flip_x   = 1 << 5,
+    transform_flip_y   = 1 << 6,
 };
 
 struct k_sprite_renderer {
@@ -42,10 +44,10 @@ struct k_sprite_renderer {
 
     float scaled_w;
     float scaled_h;
+    float scale_x;
+    float scale_y;
     float angle;
     int   transform_flags;
 };
-
-void k__sprite_renderer_reset(struct k_sprite_renderer *renderer);
 
 #endif
