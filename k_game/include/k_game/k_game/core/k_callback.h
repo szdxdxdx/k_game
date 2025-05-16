@@ -39,6 +39,8 @@ struct k_callback *k_object_add_end_step_callback(struct k_object *object, void 
 
 struct k_callback *k_object_add_draw_callback(struct k_object *object, void (*fn_callback)(struct k_object *object), int z_group, int z_layer);
 
+struct k_callback *k_object_add_destroy_callback(struct k_object *object, void (*fn_callback)(struct k_object *object));
+
 /* endregion */
 
 /* region [component_add_callback] */

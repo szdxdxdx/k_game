@@ -11,7 +11,7 @@
 #include "./k_room_registry.h"
 
 #include "../component/k_component_manager_map.h"
-#include "../callback/k_callback_context.h"
+#include "../callback/k_callback_base.h"
 
 /* region [steps] */
 

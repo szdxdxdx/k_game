@@ -20,14 +20,4 @@ void k__step_callback_manager_flush(struct k_step_callback_manager *manager);
 
 void k__step_callback_manager_exec(struct k_step_callback_manager *manager);
 
-struct k_callback *k__step_callback_manager_add_room_callback(struct k_step_callback_manager *manager, struct k_room *room, void *data, void (*fn_callback)(void *data));
-
-struct k_callback *k__step_callback_manager_add_object_callback(struct k_step_callback_manager *manager, struct k_object *object, void (*fn_callback)(struct k_object *object));
-
-struct k_callback *k__step_callback_manager_add_component_callback(struct k_step_callback_manager *manager, struct k_component *component, void (*fn_callback)(struct k_component *component));
-
-struct k_callback *k__step_callback_manager_add_component_manager_callback(struct k_step_callback_manager *manager, struct k_component_manager *component_manager, void *data, void (*fn_callback)(void *data));
-
-void k__step_callback_manager_del_callback(struct k_callback *callback);
-
 #endif

@@ -7,7 +7,7 @@
 #include "./k_component_type.h"
 
 #include "../object/k_object.h"
-#include "../callback/k_callback_context.h"
+#include "../callback/k_callback_base.h"
 
 /* region [component_create] */
 

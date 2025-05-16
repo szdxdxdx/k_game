@@ -6,7 +6,6 @@
 #include "./k_component_manager_map.h"
 
 #include "../room/k_room.h"
-#include "../callback/k_callback_context.h"
 
 /* region [component_manager_create] */
 
