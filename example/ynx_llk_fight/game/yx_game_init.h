@@ -1,3 +1,4 @@
+
 #ifndef YX_GAME_INIT_H
 #define YX_GAME_INIT_H
 

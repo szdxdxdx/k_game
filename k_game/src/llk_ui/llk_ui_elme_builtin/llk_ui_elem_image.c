@@ -4,7 +4,7 @@
 #include "k_game/core/k_canvas.h"
 #include "k_game/core/k_image.h"
 
-#include "../llk_ui_ext.h"
+#include "llk_ui_ext.h"
 
 static int llk__ui_elem_image_init(struct llk_ui_elem *elem) {
     struct llk_ui_elem_image *image = (struct llk_ui_elem_image *)elem;

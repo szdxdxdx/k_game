@@ -6,7 +6,7 @@
 #define K_LOG_TAG "llk:UI"
 #include "k_log.h"
 
-#include "./llk_ui_ext.h"
+#include "llk_ui_ext.h"
 
 struct llk_ui_elem *llk__ui_build_elem_from_xml(struct llk_ui_context *ui, struct k_xml_node *xml) {
 

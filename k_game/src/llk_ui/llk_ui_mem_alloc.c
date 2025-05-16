@@ -5,7 +5,7 @@
 
 #include "k_mem_pool.h"
 
-#include "./llk_ui_ext.h"
+#include "llk_ui_ext.h"
 
 void *llk__ui_mem_alloc(struct llk_ui_context *ui, size_t size) {
 

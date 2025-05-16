@@ -1,31 +1,25 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "k_game.h"
-#include "k_webui.h"
 
-#include "./sprite/yx_spr.h"
+#include "game/yx_game_init.h"
 
-#include "./room/yx_room_arena.h"
-#include "./room/yx_room_empty.h"
-#include "./room/yx_room_title.h"
+#include "sprite/yx_spr.h"
+#include "room/yx_room_arena.h"
+#include "room/yx_room_title.h"
 
 static int on_game_start(void) {
+
+    if (0 != yx_spr_load()) return -1;
 
     {
         struct k_image *img = k_image_load("./demo_1/image/szdxdxdx.jpg");
         k_image_set_name(img, "szdxdxdx");
     }
-    {
-        yx_spr_ynx_load();
-        yx_spr_liliko_load();
-        yx_spr_bubble_load();
-        yx_spr_iris_load();
-    }
+
     {
         struct k_sound_bgm *bgm = k_sound_bgm_load("./demo_1/sound/bgm.wav");
         k_sound_bgm_set_name(bgm, "bgm");
     }
+
     {
         // struct k_room *room_empty = yx_room_empty_create();
         struct k_room *room_arena = yx_room_arena_create();
@@ -38,14 +32,7 @@ static int on_game_start(void) {
     return 0;
 }
 
-#if 0
-
-int main(int argc, char **argv) {
-    system("chcp 65001");
-    setbuf(stdout, NULL);
-    setbuf(stderr, NULL);
-
-    // k_webui_init();
+int yx_game_run(void) {
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_w = 640;
@@ -53,11 +40,5 @@ int main(int argc, char **argv) {
     config.window_title = "demo 1";
     config.on_start = on_game_start;
 
-    k_game_run(&config);
-
-    // k_webui_close();
-
-    return 0;
+    return k_game_run(&config);
 }
-
-#endif

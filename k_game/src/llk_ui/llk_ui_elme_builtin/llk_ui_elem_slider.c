@@ -3,7 +3,7 @@
 
 #include "k_game/core/k_canvas.h"
 
-#include "../llk_ui_ext.h"
+#include "llk_ui_ext.h"
 
 /* 滑块最大宽 12 像素 */
 #define SLIDER_THUMB_MAX_W 12

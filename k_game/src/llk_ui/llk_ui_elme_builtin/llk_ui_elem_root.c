@@ -1,4 +1,4 @@
-#include "../llk_ui_ext.h"
+#include "llk_ui_ext.h"
 
 /* 作为 UI 元素树的根节点，元素的宽高与 UI 画布的宽高保持一致 */
 struct llk_ui_elem_root {

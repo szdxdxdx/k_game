@@ -1,6 +1,6 @@
 #include "k_game/core/k_canvas.h"
 
-#include "../llk_ui_ext.h"
+#include "llk_ui_ext.h"
 
 static int llk__ui_elem_box_init(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = (struct llk_ui_elem_box *)elem;
