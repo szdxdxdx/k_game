@@ -1,6 +1,8 @@
 #ifndef K_GAME_RUN_H
 #define K_GAME_RUN_H
 
+#include <stddef.h>
+
 struct k_game_config {
 
     const char *window_title;

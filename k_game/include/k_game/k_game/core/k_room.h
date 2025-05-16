@@ -65,6 +65,10 @@ struct k_room_config {
      * \brief 进入房间时执行的回调
      *
      * 此回调是可选的，设为 `NULL` 则不执行回调。
+     *
+     * TODO enter_event
+     * 将来增加 API `struct k_callback * k_room_add_enter_event(void *data, void (*fn)(void *data))`
+     * 进入房间时，先执行 `on_enter()` 回调，再执行事件回调
      */
     void (*on_enter)(void);
 
@@ -72,6 +76,10 @@ struct k_room_config {
      * \brief 离开房间时执行的回调
      *
      * 此回调是可选的，设为 `NULL` 则不执行回调。
+     *
+     * TODO leave_event
+     * 将来增加 API `struct k_callback * k_room_add_leave_event(void *data, void (*fn)(void *data))`
+     * 进入房间时，先执行事件回调，再执行 `on_leave()` 回调
      */
     void (*on_leave)(void);
 };

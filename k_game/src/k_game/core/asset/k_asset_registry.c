@@ -5,7 +5,11 @@
 
 #include "./k_asset_registry.h"
 
+#define K_LOG_TAG "k_game:asset"
+#include "k_log.h"
+
 static char *k__asset_registry_strdup(const char *str) {
+
     char *copy = k__mem_alloc(strlen(str) + 1);
     if (NULL == copy)
         return NULL;
@@ -74,7 +78,8 @@ int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry
     }
     else {
         if (NULL != k_str_intrusive_map_get(&registry->name_map, asset_name)) {
-            return -1; /* TODO log("同名资源已存在") */
+            k_log_error("failed to set name: asset with name \"%s\" already exists");
+            return -1;
         }
 
         char *name_copy = k__asset_registry_strdup(asset_name);
@@ -87,7 +92,6 @@ int k__asset_set_name(struct k_asset_registry *registry, struct k_asset_registry
         }
 
         k_str_intrusive_map_add_directly(&registry->name_map, name_copy, map_node);
-
         return 0;
     }
 }
@@ -98,8 +102,10 @@ const char *k__asset_get_name(struct k_asset_registry_node *registry_node) {
 
 struct k_asset_registry_node *k__asset_registry_find(struct k_asset_registry *registry, const char *asset_name) {
 
-    if (NULL == asset_name || '\0' == asset_name[0])
+    if (NULL == asset_name || '\0' == asset_name[0]) {
+        k_log_warn("cannot find asset: `asset_name` is empty or null");
         return NULL;
+    }
 
     struct k_str_intrusive_map_node *map_node = k_str_intrusive_map_get(&registry->name_map, asset_name);
     if (NULL == map_node)

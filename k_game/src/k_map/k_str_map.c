@@ -62,7 +62,7 @@ void k_str_map_destroy(struct k_str_map *map) {
     void (*fn_free)(void *p) = map->fn_free;
 
     struct k_hash_list *bucket = map->buckets;
-    struct k_hash_list *bucket_end = map->buckets + map->buckets_num;
+    struct k_hash_list *bucket_end = &bucket[map->buckets_num];
     for (;bucket < bucket_end; bucket++) {
 
         struct k_str_map_node *map_node;
@@ -110,7 +110,7 @@ void k_str_map_destruct(struct k_str_map *map) {
     void (*fn_free)(void *p) = map->fn_free;
 
     struct k_hash_list *bucket = map->buckets;
-    struct k_hash_list *bucket_end = map->buckets + map->buckets_num;
+    struct k_hash_list *bucket_end = &bucket[map->buckets_num];
     for (; bucket < bucket_end; bucket++) {
 
         struct k_str_map_node *map_node;
@@ -412,7 +412,7 @@ void k_str_map_clear(struct k_str_map *map) {
     void (*fn_free)(void *p) = map->fn_free;
 
     struct k_hash_list *bucket = map->buckets;
-    struct k_hash_list *bucket_end = map->buckets + map->buckets_num;
+    struct k_hash_list *bucket_end = &bucket[map->buckets_num];
     for (; bucket < bucket_end; bucket++) {
 
         struct k_hash_list_node *iter, *next;
@@ -439,7 +439,7 @@ void k_str_map_clear_with_callback(struct k_str_map *map, void (*fn_callback)(co
     void (*fn_free)(void *p) = map->fn_free;
 
     struct k_hash_list *bucket = map->buckets;
-    struct k_hash_list *bucket_end = map->buckets + map->buckets_num;
+    struct k_hash_list *bucket_end = &bucket[map->buckets_num];
     for (; bucket < bucket_end; bucket++) {
 
         struct k_hash_list_node *iter, *next;
@@ -463,7 +463,7 @@ void k_str_map_iter_init(struct k_str_map_iter *iter, struct k_str_map *map) {
     struct k_str_map_node *node = NULL;
 
     struct k_hash_list *bucket = map->buckets;
-    struct k_hash_list *bucket_end = map->buckets + map->buckets_num;
+    struct k_hash_list *bucket_end = &bucket[map->buckets_num];
     for (; bucket < bucket_end; bucket++) {
 
         if ( ! k_hash_list_is_empty(bucket)) {
@@ -505,18 +505,18 @@ void k_str_map_iter_next(struct k_str_map_iter *iter) {
 
     struct k_str_map *map = iter->map;
     struct k_hash_list *buckets = map->buckets;
-    struct k_hash_list *bucket_end = buckets + map->buckets_num;
-    struct k_hash_list *bucket = iter->bucket;
-    if (bucket < bucket_end) {
-        bucket++;
-        for (; bucket < bucket_end; bucket++) {
-            if ( ! k_hash_list_is_empty(bucket)) {
-                next_map_node = container_of(bucket->first, struct k_str_map_node, node_link);
+    struct k_hash_list *bucket_end = &buckets[map->buckets_num];
+    struct k_hash_list *iter_bucket = iter->bucket;
+    if (iter_bucket < bucket_end) {
+        iter_bucket++;
+        for (; iter_bucket < bucket_end; iter_bucket++) {
+            if ( ! k_hash_list_is_empty(iter_bucket)) {
+                next_map_node = container_of(iter_bucket->first, struct k_str_map_node, node_link);
                 break;
             }
         }
     }
 
-    iter->bucket = bucket;
+    iter->bucket = iter_bucket;
     iter->node   = next_map_node;
 }

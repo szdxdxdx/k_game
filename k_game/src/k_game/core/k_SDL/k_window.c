@@ -34,7 +34,7 @@ int k_window_set_always_on_top(int enable) {
 
     HWND hwnd = wmInfo.info.win.window;
 
-    WINBOOL success;
+    int success;
     if (enable) {
         success = SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     } else {
