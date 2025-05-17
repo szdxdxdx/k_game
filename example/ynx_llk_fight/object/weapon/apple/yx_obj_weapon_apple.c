@@ -30,7 +30,7 @@ static struct yx_obj_bullet_apple *yx__obj_bullet_apple_create(struct yx_obj_wea
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_bullet_apple));
     if (NULL == object)
-        return NULL;
+        goto err;
 
     struct yx_obj_bullet_apple *bullet = k_object_get_data(object);
     bullet->x = weapon_apple->x;
@@ -54,14 +54,22 @@ static struct yx_obj_bullet_apple *yx__obj_bullet_apple_create(struct yx_obj_wea
         config.z_group = YX_CONFIG_Z_GROUP_BULLET;
         config.z_layer = 0;
         bullet->spr_rdr = k_object_add_sprite_renderer(object, &config);
+        if (NULL == bullet->spr_rdr)
+            goto err;
 
         float angle = k_sprite_renderer_get_rotation(weapon_apple->spr_rdr);
         k_sprite_renderer_rotate(bullet->spr_rdr, angle);
     }
 
-    k_object_add_step_callback(object, yx__obj_bullet_apple_on_step);
+    if (NULL == k_object_add_step_callback(object, yx__obj_bullet_apple_on_step))
+        goto err;
 
     return bullet;
+
+err:
+    k_object_destroy(object);
+    k_log_error("failed to create object: bullet apple");
+    return NULL;
 }
 
 /* endregion */
@@ -99,10 +107,16 @@ static void yx__obj_weapon_apple_on_key_down(struct yx_obj_weapon_i *weapon) {
     struct yx_obj_weapon_apple *weapon_apple = container_of(weapon, struct yx_obj_weapon_apple, weapon);
 
     yx__obj_bullet_apple_create(weapon_apple);
+    weapon_apple->cd_timer = weapon_apple->cd_time;
 }
 
 static void yx__obj_weapon_apple_on_key_held(struct yx_obj_weapon_i *weapon) {
-    (void)weapon;
+    struct yx_obj_weapon_apple *weapon_apple = container_of(weapon, struct yx_obj_weapon_apple, weapon);
+
+    if (0.0f == weapon_apple->cd_timer) {
+        yx__obj_bullet_apple_create(weapon_apple);
+        weapon_apple->cd_timer = weapon_apple->cd_time;
+    }
 }
 
 static void yx__obj_weapon_apple_on_key_up(struct yx_obj_weapon_i *weapon) {
@@ -117,38 +131,64 @@ static struct yx_obj_weapon_v_tbl yx__obj_weapon_apple_v_tbl = {
     .on_key_up   = yx__obj_weapon_apple_on_key_up,
 };
 
+static void yx__obj_weapon_apple_on_step_cd_timer(struct k_object *object) {
+    struct yx_obj_weapon_apple *weapon_apple = k_object_get_data(object);
+
+    if (weapon_apple->cd_timer > 0) {
+        weapon_apple->cd_timer -= k_time_get_step_delta();
+
+        if (weapon_apple->cd_timer <= 0) {
+            weapon_apple->cd_timer = 0.0f;
+            k_sprite_renderer_scale_x(weapon_apple->spr_rdr, 1.0f);
+            k_sprite_renderer_scale_y(weapon_apple->spr_rdr, 1.0f);
+        }
+        else {
+            float scale = 1.0f - weapon_apple->cd_timer / weapon_apple->cd_time;
+            k_sprite_renderer_scale_x(weapon_apple->spr_rdr, scale);
+            k_sprite_renderer_scale_y(weapon_apple->spr_rdr, scale);
+        }
+    }
+}
+
 struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_weapon_apple));
     if (NULL == object)
         return NULL;
 
-    struct yx_obj_weapon_apple *apple = k_object_get_data(object);
-    struct yx_obj_weapon_i *weapon = &apple->weapon;
+    struct yx_obj_weapon_apple *weapon_apple = k_object_get_data(object);
+    struct yx_obj_weapon_i *weapon = &weapon_apple->weapon;
 
     weapon->object = object;
     weapon->v_tbl = &yx__obj_weapon_apple_v_tbl;
 
-    apple->x = 0;
-    apple->y = 0;
-    apple->aim_x = 0;
-    apple->aim_y = 0;
+    weapon_apple->x = 0;
+    weapon_apple->y = 0;
+    weapon_apple->aim_x = 0;
+    weapon_apple->aim_y = 0;
+
+    weapon_apple->cd_time = 0.2f;
+    weapon_apple->cd_timer = 0;
 
     {
         struct k_sprite_renderer_config config;
-        config.x       = &apple->x;
-        config.y       = &apple->y;
+        config.x       = &weapon_apple->x;
+        config.y       = &weapon_apple->y;
         config.sprite  = yx_spr_weapon_apple;
         config.z_group = YX_CONFIG_Z_GROUP_WEAPON;
         config.z_layer = 0;
-        apple->spr_rdr = k_object_add_sprite_renderer(object, &config);
-        if (NULL == apple->spr_rdr)
+        weapon_apple->spr_rdr = k_object_add_sprite_renderer(object, &config);
+        if (NULL == weapon_apple->spr_rdr)
             goto err;
     }
 
-    return &apple->weapon;
+    if (NULL == k_object_add_step_callback(object, yx__obj_weapon_apple_on_step_cd_timer))
+        goto err;
+
+    return &weapon_apple->weapon;
 
 err:
+    k_object_destroy(object);
     k_log_error("failed to create object: weapon apple");
     return NULL;
 }

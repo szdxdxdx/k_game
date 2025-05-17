@@ -4,9 +4,9 @@
 #include <math.h>
 #include <stdlib.h>
 
-/** \brief 计算向量方向角，单位：角度制 */
-static inline float yx_atan(float ox, float oy, float x, float y) {
-    return atan2f(y - oy, x - ox) * (180.0f / 3.1415926f);
+/** \brief 归一化，将 [a, b] 区间内的一个值 t 映射成 [0, 1] 区间内的值 */
+static inline float yx_normalized(float a, float b, float t) {
+    return (t - a) / (b - a);
 }
 
 /**

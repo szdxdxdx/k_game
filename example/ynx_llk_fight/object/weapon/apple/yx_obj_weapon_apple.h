@@ -15,6 +15,9 @@ struct yx_obj_weapon_apple {
     float aim_x;
     float aim_y;
 
+    float cd_time;
+    float cd_timer;
+
     struct k_sprite_renderer *spr_rdr;
 };
 
