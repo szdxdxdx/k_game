@@ -172,7 +172,7 @@ static void yx_obj_weapon_on_step_shoot(struct k_object *object) {
     }
 }
 
-static void yx_obj_weapon_on_draw(struct k_object *object) {
+static void yx_obj_weapon_on_end_step(struct k_object *object) {
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
     float mouse_x = k_mouse_x();
@@ -191,6 +191,8 @@ static void yx_obj_weapon_on_draw(struct k_object *object) {
             k_sprite_renderer_flip_x(weapon->spr_rdr, 0);
         }
     }
+
+    k_sprite_renderer_set_z_layer(weapon->spr_rdr, (int)weapon->y);
 }
 
 static void mouse_drag(struct k_object *object) {
@@ -203,19 +205,13 @@ static void mouse_drag(struct k_object *object) {
     }
 }
 
-static void yx_obj_weapon_on_end_step_reset_z_layer(struct k_object *object) {
-    struct yx_obj_weapon *weapon = k_object_get_data(object);
-    k_sprite_renderer_set_z_layer(weapon->spr_rdr, (int)weapon->y);
-}
-
 struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_weapon));
 
-    k_object_add_step_callback(object, yx_obj_weapon_on_draw);
     k_object_add_step_callback(object, yx_obj_weapon_on_step_shoot);
+    k_object_add_end_step_callback(object, yx_obj_weapon_on_end_step);
     // k_object_add_step_callback(object, mouse_drag);
-    k_object_add_end_step_callback(object, yx_obj_weapon_on_end_step_reset_z_layer);
 
     struct yx_obj_weapon *weapon = k_object_get_data(object);
 
@@ -223,11 +219,11 @@ struct yx_obj_weapon *yx_obj_weapon_create(const struct yx_obj_weapon_config *co
 
     {
         struct k_position_config position_config;
-        position_config.world_x      = &weapon->x;
-        position_config.world_y      = &weapon->y;
-        position_config.parent = config->parent;
-        position_config.local_x  = 0;
-        position_config.local_y  = 1;
+        position_config.world_x = &weapon->x;
+        position_config.world_y = &weapon->y;
+        position_config.parent  = config->parent;
+        position_config.local_x = 0;
+        position_config.local_y = 1;
         weapon->position = k_object_add_position(object, &position_config);
     }
 

@@ -158,7 +158,7 @@ static void yx__obj_player_on_debug_draw_position(struct k_object *object) {
 
 /* region [create] */
 
-struct k_object *yx_obj_player_create(const struct yx_obj_player_config *config) {
+struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
     if (NULL == object)
@@ -260,7 +260,7 @@ struct k_object *yx_obj_player_create(const struct yx_obj_player_config *config)
     }
     /* endregion */
 
-    return object;
+    return player;
 
 err:
     k_object_destroy(object);
