@@ -13,6 +13,10 @@
 
 /* region [bullet_apple] */
 
+static struct yx_obj_bullet_v_tbl yx__obj_bullet_apple_v_tbl = {
+
+};
+
 static void yx__obj_bullet_apple_on_step(struct k_object *object) {
     struct yx_obj_bullet_apple *bullet_apple = k_object_get_data(object);
 
@@ -44,39 +48,42 @@ static struct yx_obj_bullet_apple *yx__obj_bullet_apple_create(struct yx_obj_wea
     if (NULL == object)
         goto err;
 
-    struct yx_obj_bullet_apple *bullet = k_object_get_data(object);
-    bullet->x = weapon_apple->x;
-    bullet->y = weapon_apple->y;
+    struct yx_obj_bullet_apple *bullet_apple = k_object_get_data(object);
+    bullet_apple->bullet.object = object;
+    bullet_apple->bullet.v_tbl = &yx__obj_bullet_apple_v_tbl;
 
-    bullet->rotation_speed = yx_rand(300.0f, 800.0f);
+    bullet_apple->x = weapon_apple->x;
+    bullet_apple->y = weapon_apple->y;
+
+    bullet_apple->rotation_speed = yx_rand(300.0f, 800.0f);
 
     float sin_angle;
     float cos_angle;
     yx_calc_vector_direction(weapon_apple->x, weapon_apple->y, weapon_apple->aim_x, weapon_apple->aim_y, &cos_angle, &sin_angle);
 
     float speed = yx_rand(350.0f, 450.0f);
-    bullet->vx = cos_angle * speed;
-    bullet->vy = sin_angle * speed;
+    bullet_apple->vx = cos_angle * speed;
+    bullet_apple->vy = sin_angle * speed;
 
     {
         struct k_sprite_renderer_config config;
-        config.x       = &bullet->x;
-        config.y       = &bullet->y;
+        config.x       = &bullet_apple->x;
+        config.y       = &bullet_apple->y;
         config.sprite  = yx_spr_weapon_apple;
         config.z_group = YX_CONFIG_Z_GROUP_BULLET;
         config.z_layer = 0;
-        bullet->spr_rdr = k_object_add_sprite_renderer(object, &config);
-        if (NULL == bullet->spr_rdr)
+        bullet_apple->spr_rdr = k_object_add_sprite_renderer(object, &config);
+        if (NULL == bullet_apple->spr_rdr)
             goto err;
 
         float angle = k_sprite_renderer_get_rotation(weapon_apple->spr_rdr);
-        k_sprite_renderer_rotate(bullet->spr_rdr, angle);
+        k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);
     }
 
     if (NULL == k_object_add_step_callback(object, yx__obj_bullet_apple_on_step))
         goto err;
 
-    return bullet;
+    return bullet_apple;
 
 err:
     k_object_destroy(object);
@@ -196,10 +203,9 @@ struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void) {
         return NULL;
 
     struct yx_obj_weapon_apple *weapon_apple = k_object_get_data(object);
-    struct yx_obj_weapon_i *weapon = &weapon_apple->weapon;
 
-    weapon->object = object;
-    weapon->v_tbl = &yx__obj_weapon_apple_v_tbl;
+    weapon_apple->weapon.object = object;
+    weapon_apple->weapon.v_tbl = &yx__obj_weapon_apple_v_tbl;
 
     weapon_apple->x = 0;
     weapon_apple->y = 0;

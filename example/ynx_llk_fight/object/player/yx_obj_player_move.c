@@ -26,12 +26,15 @@ static void yx__obj_player_on_step_update_weapon(struct yx_obj_player *player) {
     float mouse_y = k_mouse_y();
     yx_obj_weapon_aim_at(player->weapon, mouse_x, mouse_y);
 
-    if (k_mouse_button_down(K_BUTTON_LEFT))
+    if (k_mouse_button_down(K_BUTTON_LEFT)) {
         yx_obj_weapon_on_key_down(player->weapon);
-    if (k_mouse_button_held(K_BUTTON_LEFT))
+    }
+    if (k_mouse_button_held(K_BUTTON_LEFT)) {
         yx_obj_weapon_on_key_held(player->weapon);
-    if (k_mouse_button_up(K_BUTTON_LEFT))
+    }
+    if (k_mouse_button_up(K_BUTTON_LEFT)) {
         yx_obj_weapon_on_key_up(player->weapon);
+    }
 }
 
 /* region [state] */

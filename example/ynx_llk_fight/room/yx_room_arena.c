@@ -284,8 +284,6 @@ static int arena_room_on_create(void *param) {
         struct yx_obj_rival_config config;
         config.x = 800;
         config.y = 600;
-        config.spr_idle = yx_spr_liliko_idle;
-        config.spr_run  = yx_spr_liliko_run;
         yx_obj_rival_create(&config);
     }
 
@@ -293,8 +291,6 @@ static int arena_room_on_create(void *param) {
         struct yx_obj_rival_config config;
         config.x = 400;
         config.y = 300;
-        config.spr_idle = yx_spr_liliko_idle;
-        config.spr_run  = yx_spr_liliko_run;
         yx_obj_rival_create(&config);
     }
 
@@ -302,8 +298,6 @@ static int arena_room_on_create(void *param) {
         struct yx_obj_rival_config config;
         config.x = 600;
         config.y = 500;
-        config.spr_idle = yx_spr_liliko_idle;
-        config.spr_run  = yx_spr_liliko_run;
         yx_obj_rival_create(&config);
     }
 

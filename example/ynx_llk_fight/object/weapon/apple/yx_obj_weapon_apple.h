@@ -29,6 +29,8 @@ struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void);
 
 struct yx_obj_bullet_apple {
 
+    struct yx_obj_bullet_i bullet;
+
     float x;
     float y;
 

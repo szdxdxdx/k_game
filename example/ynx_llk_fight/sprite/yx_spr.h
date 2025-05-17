@@ -6,8 +6,8 @@
 extern struct k_sprite *yx_spr_ynx_run;
 extern struct k_sprite *yx_spr_ynx_idle;
 
-extern struct k_sprite *yx_spr_liliko_run;
-extern struct k_sprite *yx_spr_liliko_idle;
+extern struct k_sprite *yx_spr_llk_run;
+extern struct k_sprite *yx_spr_llk_idle;
 
 extern struct k_sprite *yx_spr_iris_gun;
 extern struct k_sprite *yx_spr_iris_bullet;

@@ -1,0 +1,15 @@
+
+#define K_LOG_TAG "yx:object:rival"
+#include "k_log.h"
+
+#include "k_game.h"
+
+#include "object/rival/yx_obj_rival.h"
+
+int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival) {
+
+    if (NULL == k_camera_add_follow_target(rival->object, &rival->x, &rival->y))
+        return -1;
+
+    return 0;
+}

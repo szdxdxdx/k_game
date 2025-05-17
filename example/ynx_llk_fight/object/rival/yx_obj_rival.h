@@ -6,24 +6,31 @@
 struct yx_obj_rival_config {
     float x;
     float y;
-
-    struct k_sprite *spr_idle;
-    struct k_sprite *spr_run;
 };
 
-struct k_object *yx_obj_rival_create(const struct yx_obj_rival_config *config);
+struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *config);
 
 /* ------------------------------------------------------------------------ */
 
 struct yx_obj_rival {
+    struct k_object *object;
 
-    struct k_position *position;
     float x;
     float y;
+
+    float vx;
+    float vy;
+    float speed;
 
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;
     struct k_sprite *spr_run;
+
+    struct yx_obj_weapon_i *weapon;
 };
+
+int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival);
+
+int yx__obj_rival_on_create_add_draw(struct yx_obj_rival *rival);
 
 #endif

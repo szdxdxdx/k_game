@@ -44,4 +44,18 @@ static inline void yx_obj_weapon_on_key_up(struct yx_obj_weapon_i *weapon) {
     weapon->v_tbl->on_key_up(weapon);
 }
 
+struct yx_obj_bullet_i;
+struct yx_obj_bullet_v_tbl;
+
+struct yx_obj_bullet_i {
+
+    struct k_object *object;
+
+    struct yx_obj_bullet_v_tbl *v_tbl;
+};
+
+struct yx_obj_bullet_v_tbl {
+    int _;
+};
+
 #endif
