@@ -7,7 +7,6 @@
 #include "sprite/yx_spr.h"
 
 #include "object/rival/yx_obj_rival.h"
-#include "config/yx_config_z_index.h"
 
 struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *config) {
 

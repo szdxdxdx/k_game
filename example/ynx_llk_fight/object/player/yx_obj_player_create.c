@@ -6,8 +6,6 @@
 #include "object/player/yx_obj_player.h"
 #include "object/weapon/apple/yx_obj_weapon_apple.h"
 
-/* region [create] */
-
 struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
@@ -47,5 +45,3 @@ err:
     k_log_error("failed to create yx_obj_player");
     return NULL;
 }
-
-/* endregion */

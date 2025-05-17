@@ -4,7 +4,7 @@
 #include "k_game/core/k_game_fwd.h"
 
 struct yx_room_1 {
-    int _;
+    struct yx_obj_player *player;
 };
 
 struct k_room *yx_room_1_create(void);

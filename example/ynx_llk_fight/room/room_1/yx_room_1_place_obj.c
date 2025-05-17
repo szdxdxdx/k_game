@@ -12,16 +12,18 @@
 
 int yx__room_1_on_create_place_obj(void) {
 
+    struct yx_room_1 *room_1 = k_room_get_data();
+
     {
         struct yx_obj_player_config config;
-        config.x = 60.0f;
-        config.y = 60.0f;
-        yx_obj_player_create(&config);
+        config.x = 100.0f;
+        config.y = 100.0f;
+        room_1->player = yx_obj_player_create(&config);
     }
 
     {
         struct yx_obj_rival_config config;
-        config.x = 100.0f;
+        config.x = 200.0f;
         config.y = 100.0f;
         yx_obj_rival_create(&config);
     }

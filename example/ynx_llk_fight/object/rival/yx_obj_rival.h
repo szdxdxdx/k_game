@@ -2,6 +2,7 @@
 #define YX_OBJ_RIVAL_H
 
 #include "k_game/core/k_game_fwd.h"
+#include "utils/yx_float_vec.h"
 
 struct yx_obj_rival_config {
     float x;
@@ -18,9 +19,7 @@ struct yx_obj_rival {
     float x;
     float y;
 
-    float vx;
-    float vy;
-    float speed;
+    struct yx_float_vec2 v_move;
 
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;

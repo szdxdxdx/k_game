@@ -1,7 +1,7 @@
 
-#define K_LOG_TAG "yx:object:weapon_apple"
-
 #include <math.h>
+
+#define K_LOG_TAG "yx:object:weapon_apple"
 #include "k_log.h"
 
 #include "k_game.h"
