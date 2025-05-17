@@ -14,7 +14,8 @@ extern struct k_sprite *yx_spr_iris_bullet;
 extern struct k_sprite *yx_spr_iris_apple;
 
 extern struct k_sprite *yx_spr_weapon_apple;
-extern struct k_sprite *yx_spr_weapon_apple_crack;
+extern struct k_sprite *yx_spr_bullet_apple;
+extern struct k_sprite *yx_spr_bullet_apple_crack;
 
 extern struct k_sprite *yx_spr_bubble_appear;
 extern struct k_sprite *yx_spr_bubble_float;

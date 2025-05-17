@@ -4,6 +4,11 @@
 #include <math.h>
 #include <stdlib.h>
 
+/** \brief 计算向量方向角，单位：角度制 */
+static inline float yx_atan(float ox, float oy, float x, float y) {
+    return atan2f(y - oy, x - ox) * (180.0f / 3.1415926f);
+}
+
 /**
  * \brief 计算向量方向角的余弦值和正弦值
  *

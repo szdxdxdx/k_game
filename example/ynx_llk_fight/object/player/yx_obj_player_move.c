@@ -12,12 +12,26 @@ static void yx__obj_player_on_step_change_face(struct yx_obj_player *player) {
 
     if (mouse_x < player->x) {
         k_sprite_renderer_flip_x(player->spr_rdr, 0);
-        yx_obj_weapon_set_position(player->weapon, player->x - 12.0f, player->y, (int)player->y + 1);
     }
     else if (mouse_x > player->x) {
         k_sprite_renderer_flip_x(player->spr_rdr, 1);
-        yx_obj_weapon_set_position(player->weapon, player->x + 12.0f, player->y, (int)player->y + 1);
     }
+}
+
+static void yx__obj_player_on_step_update_weapon(struct yx_obj_player *player) {
+
+    yx_obj_weapon_set_position(player->weapon, player->x, player->y, (int)player->y + 1);
+
+    float mouse_x = k_mouse_x();
+    float mouse_y = k_mouse_y();
+    yx_obj_weapon_aim_at(player->weapon, mouse_x, mouse_y);
+
+    if (k_mouse_button_down(K_BUTTON_LEFT))
+        yx_obj_weapon_on_key_down(player->weapon);
+    if (k_mouse_button_held(K_BUTTON_LEFT))
+        yx_obj_weapon_on_key_held(player->weapon);
+    if (k_mouse_button_up(K_BUTTON_LEFT))
+        yx_obj_weapon_on_key_up(player->weapon);
 }
 
 /* region [state] */
@@ -49,6 +63,7 @@ static void yx__obj_player_on_idle_state_step(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
     yx__obj_player_on_step_change_face(player);
+    yx__obj_player_on_step_update_weapon(player);
 
     if (k_key_held(player->key_up)
      || k_key_held(player->key_left)
@@ -108,6 +123,7 @@ static void yx__obj_player_on_running_state_step(struct k_object *object) {
     }
 
     yx__obj_player_on_step_change_face(player);
+    yx__obj_player_on_step_update_weapon(player);
 
     if (0.0f == dx && 0.0f == dy) {
         k_state_machine_change_state(player->movement_sm, &STATE_IDLE);

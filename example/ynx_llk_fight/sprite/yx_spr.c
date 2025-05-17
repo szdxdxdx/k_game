@@ -76,7 +76,8 @@ static int yx__spr_bubble_load(void) {
 /* region [apple] */
 
 struct k_sprite *yx_spr_weapon_apple;
-struct k_sprite *yx_spr_weapon_apple_crack;
+struct k_sprite *yx_spr_bullet_apple;
+struct k_sprite *yx_spr_bullet_apple_crack;
 
 static int yx__spr_weapon_apple_load(void) {
 
@@ -86,7 +87,8 @@ static int yx__spr_weapon_apple_load(void) {
     config.scale = 2.0f;
     config.sprites = (struct yx_sprite_sheet_sprite_config[]) {
         { &yx_spr_weapon_apple,       "apple", 15, 15 },
-        { &yx_spr_weapon_apple_crack, "crack", 15, 15 },
+        { &yx_spr_bullet_apple,       "apple", 15, 15 },
+        { &yx_spr_bullet_apple_crack, "crack", 15, 15 },
         { NULL }
     };
 

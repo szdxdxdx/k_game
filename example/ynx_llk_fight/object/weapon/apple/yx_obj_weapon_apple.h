@@ -20,4 +20,17 @@ struct yx_obj_weapon_apple {
 
 struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void);
 
+struct yx_obj_bullet_apple {
+
+    float x;
+    float y;
+
+    float vx;
+    float vy;
+
+    float rotation_speed;
+
+    struct k_sprite_renderer *spr_rdr;
+};
+
 #endif
