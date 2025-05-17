@@ -8,8 +8,6 @@
 struct yx_obj_player_config {
     float x;
     float y;
-    struct k_sprite *spr_idle;
-    struct k_sprite *spr_run;
 };
 
 struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *config);

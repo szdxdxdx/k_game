@@ -277,8 +277,6 @@ static int arena_room_on_create(void *param) {
         struct yx_obj_player_config config;
         config.x = 300;
         config.y = 400;
-        config.spr_idle = yx_spr_ynx_idle;
-        config.spr_run  = yx_spr_ynx_run;
         room_arena->player = yx_obj_player_create(&config);
     }
 

@@ -6,8 +6,8 @@
 
 /* region [ynx] */
 
-struct k_sprite *yx_spr_ynx_idle = NULL;
-struct k_sprite *yx_spr_ynx_run  = NULL;
+struct k_sprite *yx_spr_ynx_idle;
+struct k_sprite *yx_spr_ynx_run;
 
 static int yx__spr_ynx_load(void) {
 
@@ -28,8 +28,8 @@ static int yx__spr_ynx_load(void) {
 
 /* region [llk] */
 
-struct k_sprite *yx_spr_liliko_idle = NULL;
-struct k_sprite *yx_spr_liliko_run  = NULL;
+struct k_sprite *yx_spr_liliko_idle;
+struct k_sprite *yx_spr_liliko_run;
 
 static int yx__spr_liliko_load(void) {
 
@@ -50,9 +50,9 @@ static int yx__spr_liliko_load(void) {
 
 /* region [bubble] */
 
-struct k_sprite *yx_spr_bubble_appear = NULL;
-struct k_sprite *yx_spr_bubble_float  = NULL;
-struct k_sprite *yx_spr_bubble_pop    = NULL;
+struct k_sprite *yx_spr_bubble_appear;
+struct k_sprite *yx_spr_bubble_float;
+struct k_sprite *yx_spr_bubble_pop;
 
 static int yx__spr_bubble_load(void) {
 
@@ -72,11 +72,34 @@ static int yx__spr_bubble_load(void) {
 
 /* endregion */
 
+
+/* region [apple] */
+
+struct k_sprite *yx_spr_weapon_apple;
+struct k_sprite *yx_spr_weapon_apple_crack;
+
+static int yx__spr_weapon_apple_load(void) {
+
+    struct yx_sprite_sheet_config config;
+    config.image_file_path  = "./demo_1/sprite/weapon_apple.png";
+    config.config_file_path = "./demo_1/sprite/weapon_apple.json";
+    config.scale = 2.0f;
+    config.sprites = (struct yx_sprite_sheet_sprite_config[]) {
+        { &yx_spr_weapon_apple,       "apple", 15, 15 },
+        { &yx_spr_weapon_apple_crack, "crack", 15, 15 },
+        { NULL }
+    };
+
+    return yx_sprite_load_from_sheet(&config);
+}
+
+/* endregion */
+
 /* region [iris] */
 
-struct k_sprite *yx_spr_iris_gun    = NULL;
-struct k_sprite *yx_spr_iris_bullet = NULL;
-struct k_sprite *yx_spr_iris_apple  = NULL;
+struct k_sprite *yx_spr_iris_gun;
+struct k_sprite *yx_spr_iris_bullet;
+struct k_sprite *yx_spr_iris_apple;
 
 static int yx__spr_iris_load(void) {
 
@@ -98,10 +121,16 @@ static int yx__spr_iris_load(void) {
 
 int yx_spr_load_on_game_start(void) {
 
-    if (0 != yx__spr_ynx_load())    return -1;
-    if (0 != yx__spr_liliko_load()) return -1;
-    if (0 != yx__spr_bubble_load()) return -1;
-    if (0 != yx__spr_iris_load())   return -1;
+    if (0 != yx__spr_ynx_load())
+        return -1;
+    if (0 != yx__spr_liliko_load())
+        return -1;
+    if (0 != yx__spr_bubble_load())
+        return -1;
+    if (0 != yx__spr_weapon_apple_load())
+        return -1;
+    if (0 != yx__spr_iris_load())
+        return -1;
 
     return 0;
 }

@@ -3,6 +3,7 @@
 #include "k_log.h"
 
 #include "object/player/yx_obj_player.h"
+#include "sprite/yx_spr.h"
 
 /* region [create] */
 
@@ -24,8 +25,8 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
     player->key_right = 'D';
     player->speed     = 200.0f;
 
-    player->spr_idle = config->spr_idle;
-    player->spr_run  = config->spr_run;
+    player->spr_idle = yx_spr_ynx_idle;
+    player->spr_run  = yx_spr_ynx_run;
 
     if (0 != yx__obj_player_on_create_add_draw(player))
         goto err;

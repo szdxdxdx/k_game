@@ -12,8 +12,6 @@
 int yx__room_1_on_create_place_obj(void) {
 
     struct yx_obj_player_config player_config = {
-        .spr_idle = yx_spr_ynx_idle,
-        .spr_run  = yx_spr_ynx_run,
         .x = 60.0f,
         .y = 60.0f,
     };
