@@ -1,3 +1,7 @@
+
+#define K_LOG_TAG "yx:object:bubble"
+#include "k_log.h"
+
 #include "object/bubble/yx_obj_bubble.h"
 
 #include "sprite/yx_spr.h"
@@ -21,6 +25,9 @@ static void yx_obj_bubble_on_state_change_float(struct k_object *object) {
 struct k_object *yx_obj_bubble_create(float x, float y) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_bubble));
+    if (NULL == object)
+        goto err;
+
     struct yx_obj_bubble *bubble = k_object_get_data(object);
     bubble->x = x;
     bubble->y = y;
@@ -39,6 +46,10 @@ struct k_object *yx_obj_bubble_create(float x, float y) {
     }
 
     return object;
+
+err:
+    k_log_error("failed to create object: bubble");
+    return NULL;
 }
 
 void yx_obj_bubble_pop(struct k_object *obj_bubble) {

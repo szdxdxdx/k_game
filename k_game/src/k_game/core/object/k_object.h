@@ -3,6 +3,11 @@
 
 #include "k_list.h"
 
+enum k_object_state {
+    K__OBJECT_STATE_ACTIVE,
+    K__OBJECT_STATE_DESTROYING,
+};
+
 struct k_object {
 
     void *data;
@@ -15,7 +20,10 @@ struct k_object {
 
     struct k_list component_list;
 
-    void (*on_destroy)(struct k_object *object);
+    enum k_object_state state;
+
+    /* tmp */
+    struct k_list destroy_callback_list;
 };
 
 #endif

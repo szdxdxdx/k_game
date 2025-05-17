@@ -29,11 +29,4 @@ void k_object_destroy(struct k_object *object);
 /** \brief 获取对象的关联数据 */
 void *k_object_get_data(struct k_object *object);
 
-/**
- * \brief 设置销毁对象时执行的回调
- *
- * `on_destroy` 指定在销毁对象时要执行的回调，若为 `NULL` 则取消回调。
- */
-void k_object_set_on_destroy(struct k_object *object, void (*on_destroy)(struct k_object *object));
-
 #endif

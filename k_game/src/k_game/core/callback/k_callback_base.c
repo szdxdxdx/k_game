@@ -9,13 +9,15 @@
 
 void k_callback_del(struct k_callback *callback) {
 
-    if (NULL != callback)
+    if (NULL == callback)
         return;
 
     callback->fn_del(callback);
 }
 
 /* region [del_all_callbacks] */
+
+/* TODO 目前，del_all_callbacks 值得是删除 step、draw 这类在游戏循环中的回调，之后还有其他事件类型回调，要更改名字以示区分 */
 
 void k__room_del_all_callbacks(struct k_room *room) {
 

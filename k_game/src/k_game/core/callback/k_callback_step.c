@@ -140,7 +140,6 @@ static struct k_callback *k__step_callback_manager_add_component_callback(struct
     k_list_insert_tail(&manager->pending_list, &callback->pending_list_node);
     k_list_node_loop(&callback->callback_list_node);
 
-
     callback->fn_component_callback = fn_callback;
     callback->component = component;
     k_list_insert_tail(&component->callback_list, &callback->base.context_callback_list_node);
