@@ -2,8 +2,9 @@
 #define K_LOG_TAG "yx:object:player"
 #include "k_log.h"
 
-#include "object/player/yx_obj_player.h"
 #include "sprite/yx_spr.h"
+#include "object/player/yx_obj_player.h"
+#include "object/weapon/apple/yx_obj_weapon_apple.h"
 
 /* region [create] */
 
@@ -36,6 +37,8 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
         goto err;
     if (0 != yx__obj_player_on_create_add_debug(player))
         goto err;
+
+    player->weapon = yx_obj_weapon_apple_create();
 
     return player;
 

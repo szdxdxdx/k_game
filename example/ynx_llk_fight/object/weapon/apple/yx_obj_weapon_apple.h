@@ -12,7 +12,12 @@ struct yx_obj_weapon_apple {
     float x;
     float y;
 
+    float aim_x;
+    float aim_y;
+
     struct k_sprite_renderer *spr_rdr;
 };
+
+struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void);
 
 #endif

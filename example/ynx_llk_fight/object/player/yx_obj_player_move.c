@@ -7,10 +7,17 @@
 #include "object/player/yx_obj_player.h"
 
 static void yx__obj_player_on_step_change_face(struct yx_obj_player *player) {
-    if (k_mouse_x() < player->x)
+
+    float mouse_x = k_mouse_x();
+
+    if (mouse_x < player->x) {
         k_sprite_renderer_flip_x(player->spr_rdr, 0);
-    else if (k_mouse_x() > player->x)
+        yx_obj_weapon_set_position(player->weapon, player->x - 12.0f, player->y, (int)player->y + 1);
+    }
+    else if (mouse_x > player->x) {
         k_sprite_renderer_flip_x(player->spr_rdr, 1);
+        yx_obj_weapon_set_position(player->weapon, player->x + 12.0f, player->y, (int)player->y + 1);
+    }
 }
 
 /* region [state] */
@@ -64,8 +71,6 @@ static void yx__obj_player_on_running_state_enter(struct k_object *object) {
 static void yx__obj_player_on_running_state_step(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    yx__obj_player_on_step_change_face(player);
-
     float dt = k_time_get_step_delta();
     float dx = 0.0f;
     float dy = 0.0f;
@@ -101,6 +106,8 @@ static void yx__obj_player_on_running_state_step(struct k_object *object) {
     if (old_y != player->y) {
         k_sprite_renderer_set_z_layer(player->spr_rdr, (int)player->y);
     }
+
+    yx__obj_player_on_step_change_face(player);
 
     if (0.0f == dx && 0.0f == dy) {
         k_state_machine_change_state(player->movement_sm, &STATE_IDLE);
