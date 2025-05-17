@@ -75,15 +75,32 @@ static void yx__obj_player_on_running_state_step(struct k_object *object) {
     if (k_key_held(player->key_down))  { dy =  player->speed * dt; }
     if (k_key_held(player->key_right)) { dx =  player->speed * dt; }
 
+#define inv_sqrt_2 0.70710678f
     if (dx != 0.0f && dy != 0.0f) {
-        dx *= 0.70710678f;
-        dy *= 0.70710678f;
+        dx *= inv_sqrt_2;
+        dy *= inv_sqrt_2;
     }
+
+    float old_y = player->y;
 
     player->x += dx;
     player->y += dy;
 
-    k_sprite_renderer_set_z_layer(player->spr_rdr, (int)player->y);
+    {
+        float room_padding = 16.0f;
+        float x_min = room_padding;
+        float x_max = k_room_get_w() - room_padding;
+        float y_min = room_padding;
+        float y_max = k_room_get_h() - room_padding;
+        if (player->x < x_min) player->x = x_min;
+        if (player->x > x_max) player->x = x_max;
+        if (player->y < y_min) player->y = y_min;
+        if (player->y > y_max) player->y = y_max;
+    }
+
+    if (old_y != player->y) {
+        k_sprite_renderer_set_z_layer(player->spr_rdr, (int)player->y);
+    }
 
     if (0.0f == dx && 0.0f == dy) {
         k_state_machine_change_state(player->movement_sm, &STATE_IDLE);

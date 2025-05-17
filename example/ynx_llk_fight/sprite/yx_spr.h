@@ -17,7 +17,6 @@ extern struct k_sprite *yx_spr_bubble_appear;
 extern struct k_sprite *yx_spr_bubble_float;
 extern struct k_sprite *yx_spr_bubble_pop;
 
-/* 本函数用于在游戏初始化时加载所有精灵资源 */
-int yx_spr_load(void);
+int yx_spr_load_on_game_start(void);
 
 #endif

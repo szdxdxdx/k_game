@@ -2,36 +2,29 @@
 
 #include "game/yx_game_init.h"
 
+#include "sound/yx_sound.h"
 #include "sprite/yx_spr.h"
 #include "room/yx_room_arena.h"
 #include "room/yx_room_title.h"
 #include "room/room_1/yx_room_1.h"
+#include "image/yx_image.h"
 
 static int on_game_start(void) {
 
-    if (0 != yx_spr_load()) return -1;
-
-    {
-        struct k_image *img = k_image_load("./demo_1/image/szdxdxdx.jpg");
-        k_image_set_name(img, "szdxdxdx");
-    }
-
-    {
-        struct k_sound_bgm *bgm = k_sound_bgm_load("./demo_1/sound/bgm.wav");
-        k_sound_bgm_set_name(bgm, "bgm");
-    }
+    if (0 != yx_sound_load_on_game_start()) return -1;
+    if (0 != yx_image_load_on_game_start()) return -1;
+    if (0 != yx_spr_load_on_game_start())   return -1;
 
     {
         // struct k_room *room_empty = yx_room_empty_create();
-        //struct k_room *room_arena = yx_room_arena_create();
-        //struct k_room *room_title = yx_room_title_create();
+        // struct k_room *room_arena = yx_room_arena_create();
+        // struct k_room *room_title = yx_room_title_create();
 
         if (NULL == yx_room_1_create())
             return -1;
-
-        k_room_nav_push(yx__room_1);
     }
 
+    k_room_nav_push(yx__room_1);
     return 0;
 }
 

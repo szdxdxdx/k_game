@@ -96,9 +96,7 @@ static int yx__spr_iris_load(void) {
 
 /* endregion */
 
-int yx_spr_load(void) {
-
-    /* 若资源加载失败则游戏无法启动，所以此处不需要考虑回滚 */
+int yx_spr_load_on_game_start(void) {
 
     if (0 != yx__spr_ynx_load())    return -1;
     if (0 != yx__spr_liliko_load()) return -1;
