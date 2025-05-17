@@ -12,7 +12,14 @@ static int k__sprite_renderer_on_create(struct k_component *component, void *par
 
     renderer->z_group = config->z_group;
     renderer->z_layer = config->z_layer;
-    renderer->cb_draw_sprite = NULL;
+    renderer->cb_draw_sprite = k_component_add_draw_callback(
+        component,
+        k__sprite_renderer_on_draw,
+        renderer->z_group,
+        renderer->z_layer
+    );
+    if (NULL == renderer->cb_draw_sprite)
+        return -1;
 
     renderer->cb_debug_draw = NULL;
 

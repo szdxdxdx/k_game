@@ -50,4 +50,6 @@ struct k_sprite_renderer {
     int   transform_flags;
 };
 
+void k__sprite_renderer_on_draw(struct k_component *component);
+
 #endif

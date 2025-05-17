@@ -280,10 +280,8 @@ void k_sprite_renderer_set_loop_callback(struct k_sprite_renderer *renderer, voi
  * \brief 设置渲染器引用的精灵
  *
  * 若指定新的精灵为 `NULL`，则仅移除当前引用的精灵。
- *
- * 若成功，函数返回 0，否则返回非 0。
  */
-int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite);
+void k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite);
 
 /**
  * \brief 获取渲染器当前引用的精灵

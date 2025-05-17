@@ -6,11 +6,7 @@
 
 #include "room/room_1/yx_room_1.h"
 
-static void yx__room_1_draw_background(void *data) {
-    (void)data;
-
-    k_canvas_set_draw_color(0x1e1e1eff);
-    k_canvas_room_clear();
+static void yx__room_1_draw_grid(void) {
 
     float view_x;
     float view_y;
@@ -38,6 +34,18 @@ static void yx__room_1_draw_background(void *data) {
         k_canvas_room_draw_line(0, y, w, y);
         y += grid_size;
     }
+}
+
+static void yx__room_1_draw_background(void *data) {
+    (void)data;
+
+    k_canvas_set_draw_color(0x00000000);
+    k_canvas_ui_clear();
+
+    k_canvas_set_draw_color(0x1e1e1eff);
+    k_canvas_room_clear();
+
+    yx__room_1_draw_grid();
 }
 
 int yx__room_1_on_create_set_bkgd(void) {

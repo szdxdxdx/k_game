@@ -22,7 +22,7 @@ void k_sprite_renderer_scale_x(struct k_sprite_renderer *renderer, float scale_x
         renderer->scale_x = scale_x;
     }
 
-    if (NULL != renderer->sprite && 0.0f != renderer->scale_x) {
+    if (NULL != renderer->sprite) {
         float sprite_w = (float)k_sprite_get_w(renderer->sprite);
         renderer->scaled_w = sprite_w * scale_x;
     }
@@ -64,7 +64,7 @@ void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y
         renderer->scale_y = scale_y;
     }
 
-    if (NULL != renderer->sprite && 0.0f != renderer->scale_y) {
+    if (NULL != renderer->sprite) {
         float sprite_h = (float)k_sprite_get_h(renderer->sprite);
         renderer->scaled_h = sprite_h * scale_y;
     }

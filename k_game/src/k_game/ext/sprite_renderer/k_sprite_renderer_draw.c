@@ -8,8 +8,11 @@
 
 /* region [draw_sprite] */
 
-static void k__sprite_renderer_on_draw(struct k_component *component) {
+void k__sprite_renderer_on_draw(struct k_component *component) {
     struct k_sprite_renderer *renderer = k_component_get_data(component);
+
+    if (NULL == renderer->sprite)
+        return;
 
     renderer->timer += k_time_get_step_delta() * renderer->speed;
 
@@ -68,17 +71,11 @@ static void k__sprite_renderer_on_draw(struct k_component *component) {
 
 /* region [ref_sprite] */
 
-int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite) {
+void k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sprite *sprite) {
 
     if (NULL == sprite) {
-
         if (NULL == renderer->sprite)
-            return 0;
-
-        assert(NULL != renderer->cb_draw_sprite);
-
-        k_callback_del(renderer->cb_draw_sprite);
-        renderer->cb_draw_sprite = NULL;
+            return;
 
         renderer->sprite = NULL;
 
@@ -88,24 +85,8 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         if ( ! (renderer->transform_flags & transform_scaled_h)) {
             renderer->scaled_h = 0.0f;
         }
-
-        return 0;
     }
     else {
-        if (NULL == renderer->sprite) {
-
-            assert(NULL == renderer->cb_draw_sprite);
-
-            renderer->cb_draw_sprite = k_component_add_draw_callback(
-                renderer->component,
-                k__sprite_renderer_on_draw,
-                renderer->z_group,
-                renderer->z_layer
-            );
-            if (NULL == renderer->cb_draw_sprite)
-                return -1;
-        }
-
         renderer->sprite = sprite;
 
         renderer->loop_count = INT_MAX;
@@ -120,8 +101,6 @@ int k_sprite_renderer_set_sprite(struct k_sprite_renderer *renderer, struct k_sp
         if ( ! (renderer->transform_flags & transform_scaled_h)) {
             renderer->scaled_h = (float)k_sprite_get_h(renderer->sprite) * renderer->scale_y;
         }
-
-        return 0;
     }
 }
 
