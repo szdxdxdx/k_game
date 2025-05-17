@@ -21,6 +21,18 @@ static void yx__obj_bullet_apple_on_step(struct k_object *object) {
     bullet_apple->x += bullet_apple->vx * dt;
     bullet_apple->y += bullet_apple->vy * dt;
 
+    float padding = -30.0f;
+    struct k_float_rect room_rect = {
+        .x = padding,
+        .y = padding,
+        .w = k_room_get_w() - padding,
+        .h = k_room_get_h() - padding
+    };
+    if ( ! yx_point_in_rect(bullet_apple->x, bullet_apple->y, &room_rect)) {
+        k_object_destroy(object);
+        return;
+    }
+
     float angle = k_sprite_renderer_get_rotation(bullet_apple->spr_rdr);
     angle += dt * bullet_apple->rotation_speed;
     k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);

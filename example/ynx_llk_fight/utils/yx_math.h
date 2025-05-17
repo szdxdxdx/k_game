@@ -9,6 +9,11 @@ static inline float yx_normalized(float a, float b, float t) {
     return (t - a) / (b - a);
 }
 
+/** \brief 判断点是否在矩形内 */
+static inline int yx_point_in_rect(float x, float y, struct k_float_rect *rect) {
+    return x >= rect->x && x <= rect->x + rect->w && y >= rect->y && y <= rect->y + rect->h;
+}
+
 /**
  * \brief 计算向量方向角的余弦值和正弦值
  *
