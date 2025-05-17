@@ -1,14 +1,22 @@
+
+#define K_LOG_TAG "k_game:camera"
+#include "k_log.h"
+
 #include "./k_camera_internal.h"
 
 int k__camera_target_on_create(struct k_component *component, void *param) {
     float **xy = (float **)param;
 
     struct k_camera *camera = k_component_get_manager_data(component);
-    if (NULL == camera)
+    if (NULL == camera) {
+        k_log_error("cannot add camera follow target: please add a camera to the room first");
         return -1;
+    }
 
-    if (K__CAMERA_TARGET_MAX <= camera->targets_num)
+    if (K__CAMERA_TARGET_MAX <= camera->targets_num) {
+        k_log_error("cannot add camera follow target: follow target limit reached (%d)", K__CAMERA_TARGET_MAX);
         return -1;
+    }
 
     struct k_camera_target *target = k_component_get_data(component);
     target->component = component;

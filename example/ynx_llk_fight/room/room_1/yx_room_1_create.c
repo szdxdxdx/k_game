@@ -13,6 +13,8 @@ static int arena_room_on_create(void *param) {
 
     if (0 != yx__room_1_on_create_set_bkgd())
         return -1;
+    if (0 != k_room_add_camera())
+        return -1;
     if (0 != yx__room_1_on_create_place_obj())
         return -1;
 
