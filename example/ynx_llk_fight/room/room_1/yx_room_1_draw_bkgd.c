@@ -1,7 +1,8 @@
 #include <math.h>
-#include <limits.h>
 
 #include "k_game.h"
+
+#include "config/yx_config_z_index.h"
 
 #include "room/room_1/yx_room_1.h"
 
@@ -40,6 +41,6 @@ static void yx__room_1_draw_background(void *data) {
 }
 
 int yx__room_1_on_create_set_bkgd(void) {
-    k_room_add_draw_callback(NULL, yx__room_1_draw_background, INT_MIN, INT_MIN);
+    k_room_add_draw_callback(NULL, yx__room_1_draw_background, YX_CONFIG_Z_GROUP_BKGD, YX_CONFIG_Z_LAYER_BKGD);
     return 0;
 }

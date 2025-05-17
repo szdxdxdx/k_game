@@ -1,0 +1,15 @@
+
+#ifndef YX_CONFIG_Z_INDEX_H
+#define YX_CONFIG_Z_INDEX_H
+
+#include <limits.h>
+
+enum yx_config_z_index {
+    YX_CONFIG_Z_GROUP_BKGD = INT_MIN,
+    YX_CONFIG_Z_LAYER_BKGD = 0,
+
+    YX_CONFIG_Z_GROUP_MAIN   = 0,
+    YX_CONFIG_Z_GROUP_PLAYER = YX_CONFIG_Z_GROUP_MAIN,
+};
+
+#endif
