@@ -6,17 +6,6 @@
 
 /* region [create] */
 
-static int yx__obj_player_on_create_add_camera_follow(struct yx_obj_player *player) {
-
-    struct k_camera_target *target = k_camera_add_follow_target(player->object, &player->x, &player->y);
-    if (NULL == target)
-        return -1;
-
-    k_camera_set_primary_target(target);
-    k_camera_set_target_weight(target, 4.0f);
-    return 0;
-}
-
 struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *config) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
@@ -29,12 +18,11 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
     player->x = config->x;
     player->y = config->y;
 
-    player->movement_state = YX__OBJ_PLAYER_STATE_IDLE;
     player->key_up    = 'W';
     player->key_left  = 'A';
     player->key_down  = 'S';
     player->key_right = 'D';
-    player->speed     = 100.0f;
+    player->speed     = 200.0f;
 
     player->spr_idle = config->spr_idle;
     player->spr_run  = config->spr_run;
@@ -42,8 +30,6 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
     if (0 != yx__obj_player_on_create_add_draw(player))
         goto err;
     if (0 != yx__obj_player_on_create_add_movement(player))
-        goto err;
-    if (0 != yx__obj_player_on_create_add_camera_follow(player))
         goto err;
     if (0 != yx__obj_player_on_create_add_collision(player))
         goto err;

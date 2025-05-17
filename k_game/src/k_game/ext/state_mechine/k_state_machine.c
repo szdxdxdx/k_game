@@ -17,7 +17,7 @@ struct k_state_machine {
 
 /* region [machine_state] */
 
-void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state state) {
+void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state *state) {
 
     /* FIXME 应限制  `machine->on_exit()` 和 `state->fn_enter()` 回调的行为
      * - 不能删除状态机组件自身，不能销毁对象，否则退出回调后会访问到无效内存
@@ -28,12 +28,18 @@ void k_state_machine_change_state(struct k_state_machine *machine, struct k_stat
         machine->on_exit = NULL;
     }
 
-    if (NULL != state.on_enter) {
-        state.on_enter(machine->object);
-    }
+    if (NULL != state) {
+        if (NULL != state->on_enter) {
+            state->on_enter(machine->object);
+        }
 
-    machine->on_step = state.on_step;
-    machine->on_exit = state.on_exit;
+        machine->on_step = state->on_step;
+        machine->on_exit = state->on_exit;
+    }
+    else {
+        machine->on_step = NULL;
+        machine->on_exit = NULL;
+    }
 }
 
 static void k__state_machine_step(struct k_component *component) {

@@ -55,6 +55,6 @@ struct k_state_machine_state {
 };
 
 /** \brief 切换状态机的状态节点 */
-void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state state);
+void k_state_machine_change_state(struct k_state_machine *machine, struct k_state_machine_state *state);
 
 #endif

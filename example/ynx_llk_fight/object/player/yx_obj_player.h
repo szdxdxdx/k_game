@@ -16,18 +16,13 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
 
 /* ------------------------------------------------------------------------ */
 
-enum yx_obj_player_movement_state {
-    YX__OBJ_PLAYER_STATE_IDLE,
-    YX__OBJ_PLAYER_STATE_RUNNING,
-};
-
 struct yx_obj_player {
     struct k_object *object;
 
     float x;
     float y;
 
-    enum yx_obj_player_movement_state movement_state;
+    struct k_state_machine *movement_sm;
     enum k_keyboard_key key_up;
     enum k_keyboard_key key_left;
     enum k_keyboard_key key_down;
