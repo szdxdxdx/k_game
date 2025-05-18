@@ -21,7 +21,6 @@ static void yx__obj_rival_on_step_ai_movement(struct yx_obj_rival *rival) {
     dir_to_player = yx_float_vec2_normalize(dir_to_player);
 
     float speed = 40.0f;
-    float dt = k_time_get_step_delta();
     struct yx_float_vec2 v_movement = yx_float_vec2_scale(dir_to_player, speed);
 
     rival->vx_movement = v_movement.x;

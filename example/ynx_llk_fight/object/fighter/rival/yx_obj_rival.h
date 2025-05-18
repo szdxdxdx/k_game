@@ -13,6 +13,16 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
 
 /* ------------------------------------------------------------------------ */
 
+enum yx_enemy_ai_state {
+    YX_ENEMY_AI_PATROL, /* 正在巡逻，没有发现玩家 */
+    YX_ENEMY_AI_ATTACK, /* 发现了玩家，靠近或攻击 */
+};
+
+enum yx_enemy_move_state {
+    YX_ENEMY_MOVE_IDLE,    /* 静止 */
+    YX_ENEMY_MOVE_RUNNING, /* 正在移动 */
+};
+
 struct yx_obj_rival {
     struct k_object *object;
 
@@ -26,6 +36,9 @@ struct yx_obj_rival {
 
     float vx_knockback;
     float vy_knockback;
+
+    uint8_t ai_state;
+    uint8_t move_state;
 
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;
