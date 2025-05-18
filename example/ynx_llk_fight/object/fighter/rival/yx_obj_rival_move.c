@@ -8,12 +8,47 @@
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
 
-enum yx_enemy_move_state {
-    YX_ENEMY_MOVE_IDLE,    /* 静止 */
-    YX_ENEMY_MOVE_RUNNING, /* 正在移动 */
+/* region [ai_move] */
+
+static void yx__obj_rival_on_state_idle_enter(struct k_object *object);
+static void yx__obj_rival_on_state_idle_update(struct k_object *object);
+static struct yx_state_machine_state YX_STATE_IDLE = {
+    .on_enter  = yx__obj_rival_on_state_idle_enter,
+    .on_update = yx__obj_rival_on_state_idle_update,
+    .on_leave  = NULL,
 };
 
-/* region [ai_move] */
+static void yx__obj_rival_on_state_running_enter(struct k_object *object);
+static void yx__obj_rival_on_state_running_update(struct k_object *object);
+static struct yx_state_machine_state YX_STATE_RUNNING = {
+    .on_enter  = yx__obj_rival_on_state_running_enter,
+    .on_update = yx__obj_rival_on_state_running_update,
+    .on_leave  = NULL,
+};
+
+/* region [idle] */
+
+static void yx__obj_rival_on_state_idle_enter(struct k_object *object) {
+
+}
+
+static void yx__obj_rival_on_state_idle_update(struct k_object *object) {
+
+}
+
+/* endregion */
+
+/* region [running] */
+
+static void yx__obj_rival_on_state_running_enter(struct k_object *object) {
+
+}
+
+static void yx__obj_rival_on_state_running_update(struct k_object *object) {
+
+}
+
+/* endregion */
 
 /* endregion */
 
@@ -72,12 +107,10 @@ static void yx__obj_rival_on_step_resolve_movement(struct yx_obj_rival *rival) {
     rival->y = rival->y + vy * dt;
 }
 
-static void yx__obj_rival_on_step(struct k_object *object) {
+static void yx__obj_rival_on_step_move(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
 
     yx_state_machine_tick(&rival->move_sm);
-
-    yx__obj_rival_on_step_ai_movement(rival);
     yx__obj_rival_on_step_hit_bullet_collision(rival);
     yx__obj_rival_on_step_resolve_movement(rival);
 }
@@ -87,8 +120,10 @@ int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival) {
     if (NULL == k_camera_add_follow_target(rival->object, &rival->x, &rival->y))
         return -1;
 
-    if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step))
+    if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_move))
         return -1;
+
+    yx_state_machine_change_state(&rival->move_sm, &YX_STATE_IDLE);
 
     return 0;
 }
