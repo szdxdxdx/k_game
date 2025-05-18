@@ -5,6 +5,7 @@
 #include "sprite/yx_spr.h"
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/weapon/apple/yx_obj_weapon_apple.h"
+#include "config/yx_config_arena_blackboard.h"
 
 struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *config) {
 
@@ -38,10 +39,18 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
 
     player->weapon = yx_obj_weapon_apple_create();
 
+    player->blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
+    if (NULL == player->blackboard) {
+        k_log_error("object yx_obj_player requires room to provide blackboard '%s'", YX_ARENA_BLACKBOARD_KEY);
+        goto err;
+    }
+
+    player->blackboard->player = player;
+
     return player;
 
 err:
     k_object_destroy(object);
-    k_log_error("failed to create yx_obj_player");
+    k_log_error("failed to create object yx_obj_player");
     return NULL;
 }

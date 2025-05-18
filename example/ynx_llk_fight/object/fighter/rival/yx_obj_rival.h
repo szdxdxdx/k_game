@@ -32,6 +32,8 @@ struct yx_obj_rival {
     struct k_sprite *spr_run;
 
     struct yx_obj_weapon_i *weapon;
+
+    struct yx_config_arena_blackboard *blackboard;
 };
 
 int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival);

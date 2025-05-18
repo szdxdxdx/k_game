@@ -7,6 +7,7 @@
 #include "sprite/yx_spr.h"
 
 #include "object/fighter/rival/yx_obj_rival.h"
+#include "config/yx_config_arena_blackboard.h"
 
 struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *config) {
 
@@ -32,10 +33,27 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
     if (0 != yx__obj_rival_on_create_add_draw(rival))
         goto err;
 
+    rival->blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
+    if (NULL == rival->blackboard) {
+        k_log_error("object yx_obj_rival requires room to provide blackboard '%s'", YX_ARENA_BLACKBOARD_KEY);
+        goto err;
+    }
+
+    if (NULL == rival->blackboard->rival_1)
+        rival->blackboard->rival_1 = rival;
+    else if (NULL == rival->blackboard->rival_2)
+        rival->blackboard->rival_2 = rival;
+    else if (NULL == rival->blackboard->rival_3)
+        rival->blackboard->rival_3 = rival;
+    else {
+        k_log_error("too many rivals in blackboard: all slots (rival_1 ~ rival_3) are occupied. cannot add another rival");
+        goto err;
+    }
+
     return rival;
 
 err:
     k_object_destroy(object);
-    k_log_error("failed to create object: rival");
+    k_log_error("failed to create object yx_obj_rival");
     return NULL;
 }
