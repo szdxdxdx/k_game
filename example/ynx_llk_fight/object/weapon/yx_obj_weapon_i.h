@@ -56,6 +56,12 @@ struct yx_obj_bullet_i {
 
 struct yx_obj_bullet_v_tbl {
     int _;
+
+    void (*on_hit)(struct yx_obj_bullet_i *bullet);
 };
+
+static inline void yx_obj_bullet_on_hit(struct yx_obj_bullet_i *bullet) {
+    bullet->v_tbl->on_hit(bullet);
+}
 
 #endif

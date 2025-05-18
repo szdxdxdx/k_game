@@ -6,8 +6,7 @@
 #include "object/weapon/yx_obj_weapon_i.h"
 
 struct yx_obj_weapon_apple {
-
-    struct yx_obj_weapon_i weapon;
+    struct yx_obj_weapon_i super;
 
     float x;
     float y;
@@ -28,8 +27,7 @@ struct yx_obj_weapon_apple {
 struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void);
 
 struct yx_obj_bullet_apple {
-
-    struct yx_obj_bullet_i bullet;
+    struct yx_obj_bullet_i super;
 
     float x;
     float y;
@@ -40,6 +38,7 @@ struct yx_obj_bullet_apple {
     float rotation_speed;
 
     struct k_sprite_renderer *spr_rdr;
+    struct k_collision_box *hit_box;
 };
 
 #endif

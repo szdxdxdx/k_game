@@ -20,6 +20,7 @@ int yx__room_1_on_create_place_obj(void) {
         return -1;
 
     k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_FIGHTER, 1);
+    k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_BULLET, 1);
 
     {
         struct yx_obj_player_config config;
