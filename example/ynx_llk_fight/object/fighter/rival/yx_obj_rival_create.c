@@ -22,9 +22,9 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
     rival->vy_movement  = 0.0f;
     rival->vx_knockback = 0.0f;
     rival->vy_knockback = 0.0f;
-
     rival->spr_idle = yx_spr_llk_idle;
     rival->spr_run  = yx_spr_llk_run;
+    rival->is_alert = 0;
 
     if (0 != yx__obj_rival_on_create_add_movement(rival))
         goto err;

@@ -143,24 +143,20 @@ static void yx__obj_rival_on_state_running_update(struct k_object *object) {
 
 /* endregion */
 
-static void yx__obj_rival_on_step_ai_movement(struct yx_obj_rival *rival) {
+/* region [ai_attack] */
 
+static void yx__obj_rival_on_step_observe_player(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
     struct yx_obj_player *player = rival->blackboard->player;
-    if (NULL == player)
-        return;
 
-    struct yx_float_vec2 dir_to_player;
-    dir_to_player.x = player->x - rival->x;
-    dir_to_player.y = player->y - rival->y;
-
-    dir_to_player = yx_float_vec2_normalize(dir_to_player);
-
-    float speed = 40.0f;
-    struct yx_float_vec2 v_movement = yx_float_vec2_scale(dir_to_player, speed);
-
-    rival->vx_movement = v_movement.x;
-    rival->vy_movement = v_movement.y;
+    if ( ! rival->is_alert) {
+        if (yx_float_vec2_length_squared(yx_float_vec2_new(rival->x - player->x, rival->y - player->y)) <= 50.0f * 50.0f) {
+            rival->is_alert = 1;
+        }
+    }
 }
+
+/* endregion */
 
 /* 将所有的速度向量合起来，求解出总速度，然后移动对象 */
 static void yx__obj_rival_on_step_resolve_movement(struct yx_obj_rival *rival) {
@@ -210,8 +206,9 @@ int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival) {
 
     if (NULL == k_camera_add_follow_target(rival->object, &rival->x, &rival->y))
         return -1;
-
     if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_move))
+        return -1;
+    if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_observe_player))
         return -1;
 
     yx_state_machine_init(&rival->move_sm, rival->object);
