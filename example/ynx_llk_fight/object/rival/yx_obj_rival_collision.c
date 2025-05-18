@@ -17,7 +17,11 @@ static void yx__obj_rival_on_step_bullet_collision(struct k_object *object) {
         return;
 
     struct yx_obj_bullet_i *bullet = k_object_get_data(k_collision_box_get_object(bullet_box));
-    yx_obj_bullet_on_hit(bullet);
+    struct yx_obj_bullet_on_hit_result hit_result;
+    yx_obj_bullet_on_hit(bullet, &hit_result);
+
+    rival->vx_knockback += hit_result.vx_knockback;
+    rival->vy_knockback += hit_result.vy_knockback;
 }
 
 int yx__obj_rival_on_create_add_collision(struct yx_obj_rival *rival) {

@@ -14,12 +14,16 @@
 
 /* region [bullet_apple] */
 
-static void yx__obj_bullet_apple_on_hit(struct yx_obj_bullet_i *bullet) {
+static void yx__obj_bullet_apple_on_hit(struct yx_obj_bullet_i *bullet, struct yx_obj_bullet_on_hit_result *get_result) {
     struct yx_obj_bullet_apple *bullet_apple = (struct yx_obj_bullet_apple *)bullet;
 
+    get_result->vx_knockback = bullet_apple->vx * 0.75f;
+    get_result->vy_knockback = bullet_apple->vy * 0.75f;
+    get_result->damage = 2.0f;
+
     k_object_del_collision_box(bullet_apple->hit_box);
-    bullet_apple->vx *= 0.12f;
-    bullet_apple->vy *= 0.12f;
+    bullet_apple->vx *= 0.3f;
+    bullet_apple->vy *= 0.3f;
     bullet_apple->rotation_speed *= 0.12f;
     k_sprite_renderer_set_sprite(bullet_apple->spr_rdr, yx_spr_bullet_apple_crack);
     k_sprite_renderer_set_loop_count(bullet_apple->spr_rdr, 1);

@@ -8,6 +8,8 @@ struct yx_float_vec2 {
     float y;
 };
 
+#define yx_float_vec2_zero ((struct yx_float_vec2) { 0.0f, 0.0f })
+
 static inline struct yx_float_vec2 yx_float_vec2_add(struct yx_float_vec2 v1, struct yx_float_vec2 v2) {
     struct yx_float_vec2 result;
     result.x = v1.x + v2.x;

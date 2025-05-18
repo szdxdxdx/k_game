@@ -17,6 +17,10 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
 
     rival->x = config->x;
     rival->y = config->y;
+    rival->vx_movement  = 0.0f;
+    rival->vy_movement  = 0.0f;
+    rival->vx_knockback = 0.0f;
+    rival->vy_knockback = 0.0f;
 
     rival->spr_idle = yx_spr_llk_idle;
     rival->spr_run  = yx_spr_llk_run;
