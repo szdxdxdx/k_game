@@ -199,14 +199,15 @@ static void yx__obj_weapon_apple_on_step(struct k_object *object) {
     float dt = k_time_get_step_delta();
 
     if (weapon_apple->ammo > 0 && weapon_apple->attack_cd_timer > 0.0f) {
-        weapon_apple->attack_cd_timer -= dt;
+        weapon_apple->attack_cd_timer -= dt;  /* CD 冷却 */
 
         if (weapon_apple->attack_cd_timer <= 0) {
-            weapon_apple->attack_cd_timer = 0.0f;
+            weapon_apple->attack_cd_timer = 0.0f; /* CD 冷却已结束 */
             k_sprite_renderer_scale_x(weapon_apple->spr_rdr, 1.0f);
             k_sprite_renderer_scale_y(weapon_apple->spr_rdr, 1.0f);
         }
         else {
+            /* CD 冷却中，苹果慢慢变大 */
             float scale = 1.0f - weapon_apple->attack_cd_timer / weapon_apple->attack_cd_time;
             k_sprite_renderer_scale_x(weapon_apple->spr_rdr, scale);
             k_sprite_renderer_scale_y(weapon_apple->spr_rdr, scale);
