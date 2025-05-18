@@ -257,6 +257,40 @@ static int check_collision_circle_box(float cx, float cy, float r, struct k_coll
     }
 }
 
+static int check_collision_box_box(struct k_collision_box *box_1, struct k_collision_box *box_2) {
+    switch (box_1->type) {
+        case K__COLLISION_POINT: {
+            float x = *box_1->x + box_1->point.offset_x;
+            float y = *box_1->y + box_1->point.offset_y;
+            return check_collision_point_box(x, y, box_2);
+        }
+        case K__COLLISION_LINE: {
+            float x1 = *box_1->x + box_1->line.offset_x1;
+            float y1 = *box_1->y + box_1->line.offset_y1;
+            float x2 = *box_1->x + box_1->line.offset_x2;
+            float y2 = *box_1->y + box_1->line.offset_y2;
+            return check_collision_line_box(x1, y1, x2, y2, box_2);
+        }
+        case K__COLLISION_RECTANGLE: {
+            float x1 = *box_1->x + box_1->rect.offset_x1;
+            float y1 = *box_1->y + box_1->rect.offset_y1;
+            float x2 = *box_1->x + box_1->rect.offset_x2;
+            float y2 = *box_1->y + box_1->rect.offset_y2;
+            return check_collision_rect_box(x1, y1, x2, y2, box_2);
+        }
+        case K__COLLISION_CIRCLE: {
+            float cx = *box_1->x + box_1->circle.offset_cx;
+            float cy = *box_1->y + box_1->circle.offset_cy;
+            float r  =  box_1->circle.r;
+            return check_collision_circle_box(cx, cy, r, box_2);
+        }
+        default: {
+            assert(0);
+            return 0;
+        }
+    }
+}
+
 /* endregion */
 
 /* region [collision_check] */

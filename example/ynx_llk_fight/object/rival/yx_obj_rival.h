@@ -19,6 +19,8 @@ struct yx_obj_rival {
     float x;
     float y;
 
+    struct k_collision_box *hp_collision_box;
+
     struct yx_float_vec2 v_move;
 
     struct k_sprite_renderer *spr_rdr;
