@@ -33,8 +33,6 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
     if (0 != yx__obj_rival_on_create_add_draw(rival))
         goto err;
 
-    yx_state_machine_init(&rival->move_sm, rival->object);
-
     rival->blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
     if (NULL == rival->blackboard) {
         k_log_error("object yx_obj_rival requires room to provide blackboard '%s'", YX_ARENA_BLACKBOARD_KEY);

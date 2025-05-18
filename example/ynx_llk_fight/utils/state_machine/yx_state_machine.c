@@ -12,10 +12,7 @@ void yx_state_machine_init(struct yx_state_machine *sm, struct k_object *object)
 
 void yx_state_machine_tick(struct yx_state_machine *sm) {
 
-    if (NULL == sm->curr_state)
-        return;
-
-    if (NULL != sm->curr_state->on_update) {
+    if (NULL != sm->curr_state && NULL != sm->curr_state->on_update) {
         sm->curr_state->on_update(sm->object);
     }
 
@@ -24,10 +21,10 @@ void yx_state_machine_tick(struct yx_state_machine *sm) {
 
     assert(NULL != sm->next_state);
 
-    if (NULL != sm->curr_state->on_leave) {
+    if (NULL != sm->curr_state && NULL != sm->curr_state->on_leave) {
         sm->curr_state->on_leave(sm->object);
     }
-    if (NULL != sm->next_state->on_enter) {
+    if (NULL != sm->next_state && NULL != sm->next_state->on_enter) {
         sm->next_state->on_enter(sm->object);
     }
 

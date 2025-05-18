@@ -35,6 +35,7 @@ struct yx_obj_rival {
     float vy_knockback;
 
     struct yx_state_machine move_sm;
+    float change_move_state_timer;
 
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;

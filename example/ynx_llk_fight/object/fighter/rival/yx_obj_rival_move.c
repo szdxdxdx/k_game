@@ -29,11 +29,21 @@ static struct yx_state_machine_state YX_STATE_RUNNING = {
 /* region [idle] */
 
 static void yx__obj_rival_on_state_idle_enter(struct k_object *object) {
-
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    rival->change_move_state_timer = 1.0f;
+    k_sprite_renderer_set_sprite(rival->spr_rdr, rival->spr_idle);
 }
 
 static void yx__obj_rival_on_state_idle_update(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
 
+    float dt = k_time_get_step_delta();
+    rival->change_move_state_timer -= dt;
+    if (rival->change_move_state_timer <= 0.0f) {
+        rival->change_move_state_timer = 0.0f;
+
+        yx_state_machine_change_state(&rival->move_sm, &YX_STATE_RUNNING);
+    }
 }
 
 /* endregion */
@@ -41,11 +51,21 @@ static void yx__obj_rival_on_state_idle_update(struct k_object *object) {
 /* region [running] */
 
 static void yx__obj_rival_on_state_running_enter(struct k_object *object) {
-
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    rival->change_move_state_timer = 1.0f;
+    k_sprite_renderer_set_sprite(rival->spr_rdr, rival->spr_run);
 }
 
 static void yx__obj_rival_on_state_running_update(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
 
+    float dt = k_time_get_step_delta();
+    rival->change_move_state_timer -= dt;
+    if (rival->change_move_state_timer <= 0.0f) {
+        rival->change_move_state_timer = 0.0f;
+
+        yx_state_machine_change_state(&rival->move_sm, &YX_STATE_IDLE);
+    }
 }
 
 /* endregion */
@@ -123,6 +143,7 @@ int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival) {
     if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_move))
         return -1;
 
+    yx_state_machine_init(&rival->move_sm, rival->object);
     yx_state_machine_change_state(&rival->move_sm, &YX_STATE_IDLE);
 
     return 0;
