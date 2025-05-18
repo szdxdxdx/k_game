@@ -217,6 +217,16 @@ struct k_collision_box *k_collision_check_rect(int group_id, float x1, float y1,
  */
 struct k_collision_box *k_collision_check_circle(int group_id, float cx, float cy, float r);
 
+/**
+ * \brief 检测是否有碰撞盒与指定的碰撞盒相交
+ *
+ * 指定一个碰撞盒，函数检查 `group_id` 指定的碰撞组中是否存在其他碰撞盒与该碰撞盒所在的区域相交，
+ * 若存在，函数返回找到的第一个碰撞盒，否则返回 `NULL`。
+ *
+ * 该碰撞盒不要求一定属于该碰撞组。若该碰撞盒在该属于该组，则碰撞检测时排除自身。
+ */
+struct k_collision_box *k_collision_check_box(int group_id, struct k_collision_box *box);
+
 /* endregion */
 
 /* region [collision_query] */

@@ -340,6 +340,98 @@ struct k_collision_box *k_collision_check_circle(int group_id, float cx, float c
     return NULL;
 }
 
+struct k_collision_box *k_collision_check_box(int group_id, struct k_collision_box *box) {
+
+    if (NULL == box)
+        return NULL;
+
+    struct k_collision_group *group = k__collision_find_group(group_id);
+    if (NULL == group)
+        return NULL;
+
+    switch (box->type) {
+        case K__COLLISION_POINT: {
+            float x = *box->x + box->point.offset_x;
+            float y = *box->y + box->point.offset_y;
+
+            struct k_collision_box *box_;
+            struct k_list *list = &group->box_list;
+            struct k_list_node *iter;
+            for (k_list_for_each(list, iter)) {
+                box_ = container_of(iter, struct k_collision_box, box_list_node);
+
+                if (box_ == box)
+                    continue;
+                if (check_collision_point_box(x, y, box_))
+                    return box_;
+            }
+
+            break;
+        }
+        case K__COLLISION_LINE: {
+            float x1 = *box->x + box->line.offset_x1;
+            float y1 = *box->y + box->line.offset_y1;
+            float x2 = *box->x + box->line.offset_x2;
+            float y2 = *box->y + box->line.offset_y2;
+
+            struct k_collision_box *box_;
+            struct k_list *list = &group->box_list;
+            struct k_list_node *iter;
+            for (k_list_for_each(list, iter)) {
+                box_ = container_of(iter, struct k_collision_box, box_list_node);
+
+                if (box_ == box)
+                    continue;
+                if (check_collision_line_box(x1, y1, x2, y2, box_))
+                    return box_;
+            }
+
+            break;
+        }
+        case K__COLLISION_RECTANGLE: {
+            float x1 = *box->x + box->rect.offset_x1;
+            float y1 = *box->y + box->rect.offset_y1;
+            float x2 = *box->x + box->rect.offset_x2;
+            float y2 = *box->y + box->rect.offset_y2;
+
+            struct k_collision_box *box_;
+            struct k_list *list = &group->box_list;
+            struct k_list_node *iter;
+            for (k_list_for_each(list, iter)) {
+                box_ = container_of(iter, struct k_collision_box, box_list_node);
+
+                if (box_ == box)
+                    continue;
+                if (check_collision_rect_box(x1, y1, x2, y2, box_))
+                    return box_;
+            }
+
+            break;
+        }
+        case K__COLLISION_CIRCLE: {
+            float cx = *box->x + box->circle.offset_cx;
+            float cy = *box->y + box->circle.offset_cy;
+            float r  =  box->circle.r;
+
+            struct k_collision_box *box_;
+            struct k_list *list = &group->box_list;
+            struct k_list_node *iter;
+            for (k_list_for_each(list, iter)) {
+                box_ = container_of(iter, struct k_collision_box, box_list_node);
+
+                if (box_ == box)
+                    continue;
+                if (check_collision_circle_box(cx, cy, r, box_))
+                    return box_;
+            }
+
+            break;
+        }
+    }
+
+    return NULL;
+}
+
 /* endregion */
 
 /* region [collision_query] */

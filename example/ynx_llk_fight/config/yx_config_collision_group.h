@@ -1,0 +1,9 @@
+
+#ifndef YX_CONFIG_COLLISION_GROUP_H
+#define YX_CONFIG_COLLISION_GROUP_H
+
+enum yx_config_collision_group {
+    YX_CONFIG_COLLISION_GROUP_FIGHTER = 0
+};
+
+#endif
