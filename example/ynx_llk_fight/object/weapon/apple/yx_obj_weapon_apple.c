@@ -249,7 +249,7 @@ struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void) {
 
     weapon_apple->ammo = 10;
     weapon_apple->ammo_timer = 0.0f;
-    weapon_apple->ammo_cd_time = 0.8f;
+    weapon_apple->ammo_cd_time = 2.0f;
 
     {
         struct k_sprite_renderer_config config;

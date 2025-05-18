@@ -3,7 +3,7 @@
 #include "k_game/core/k_callback.h"
 
 #include "./k_camera_internal.h"
-#include "./k_camera_type_registry.h"
+#include "./k_camera_register.h"
 
 int k__camera_on_create(struct k_component_manager *manager, void *params) {
     (void)params;

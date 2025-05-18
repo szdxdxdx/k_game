@@ -7,7 +7,7 @@
 #include "config/yx_config_collision_group.h"
 
 #include "object/weapon/yx_obj_weapon_i.h"
-#include "object/rival/yx_obj_rival.h"
+#include "object/fighter/rival/yx_obj_rival.h"
 #include "object/text_particle/yx_obj_text_particle.h"
 #include "utils/yx_math.h"
 

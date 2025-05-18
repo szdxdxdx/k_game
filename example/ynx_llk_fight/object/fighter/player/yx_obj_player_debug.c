@@ -4,7 +4,7 @@
 
 #include "k_game.h"
 
-#include "object/player/yx_obj_player.h"
+#include "object/fighter/player/yx_obj_player.h"
 
 static void yx__obj_player_on_debug_step_spr_rdr(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);

@@ -4,7 +4,7 @@
 
 #include "k_game.h"
 
-#include "object/player/yx_obj_player.h"
+#include "object/fighter/player/yx_obj_player.h"
 #include "config/yx_config_z_index.h"
 
 int yx__obj_player_on_create_add_draw(struct yx_obj_player *player) {

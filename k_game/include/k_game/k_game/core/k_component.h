@@ -117,8 +117,8 @@ struct k_component_manager_config {
  *
  * 向 k_game 注册一个新的组件类型，此后可通过该类型创建组件实例。
  *
- * 必须提供组件实例的配置 `entity_config`。
- * 管理器配置 `manager_config` 则是可选的，为 `NULL` 表示该组件类型无需管理器。
+ * `entity_config` 为组件实例的配置，`manager_config` 为管理器的配置。
+ * 配置是可选的，为 `NULL` 表示该组件类型无需管理器。
  *
  * 若注册成功，函数返回组件类型指针，注册失败则返回 NULL。
  */

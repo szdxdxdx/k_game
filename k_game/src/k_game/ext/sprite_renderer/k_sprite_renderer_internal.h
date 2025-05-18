@@ -8,7 +8,7 @@
 #include "k_game/core/k_callback.h"
 
 #include "k_game/ext/k_sprite_renderer.h"
-#include "./k_sprite_renderer_type_register.h"
+#include "./k_sprite_renderer_register.h"
 
 enum renderer_transform {
     transform_none     = 0,

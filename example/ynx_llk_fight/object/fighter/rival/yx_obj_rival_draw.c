@@ -3,9 +3,8 @@
 #include "k_log.h"
 
 #include "k_game.h"
-
-#include "object/rival/yx_obj_rival.h"
 #include "config/yx_config_z_index.h"
+#include "object/fighter/rival/yx_obj_rival.h"
 
 int yx__obj_rival_on_create_add_draw(struct yx_obj_rival *rival) {
 

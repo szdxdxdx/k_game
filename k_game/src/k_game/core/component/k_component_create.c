@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "k_game/core/k_mem_alloc.h"
 
 #include "k_game/core/k_component.h"
@@ -40,11 +42,9 @@ static struct k_component *k__component_create(struct k_component_type *componen
     component->object = object;
     k_list_insert_tail(&object->component_list, &component->list_node);
 
-    if (NULL != entity_type->on_create) {
-        /* TODO 应该允许在 `fn_init()` 回调中删除自身吗？ */
-        if (0 != entity_type->on_create(component, param))
-            goto fn_create_failed;
-    }
+    assert(NULL != entity_type->on_create);
+    if (0 != entity_type->on_create(component, param)) /* TODO 不允许在 `fn_init()` 回调中删除自身吗？ */
+        goto fn_create_failed;
 
     return component;
 

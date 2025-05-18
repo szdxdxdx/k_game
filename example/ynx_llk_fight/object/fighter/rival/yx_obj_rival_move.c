@@ -4,7 +4,7 @@
 
 #include "k_game.h"
 
-#include "object/rival/yx_obj_rival.h"
+#include "object/fighter/rival/yx_obj_rival.h"
 
 static void yx__obj_rival_on_step_ai_movement(struct yx_obj_rival *rival) {
 

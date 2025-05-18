@@ -6,7 +6,7 @@
 
 #include "sprite/yx_spr.h"
 
-#include "object/rival/yx_obj_rival.h"
+#include "object/fighter/rival/yx_obj_rival.h"
 
 struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *config) {
 
@@ -36,6 +36,6 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
 
 err:
     k_object_destroy(object);
-    k_log_error("yx_obj_rival_create failed");
+    k_log_error("failed to create object: rival");
     return NULL;
 }

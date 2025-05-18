@@ -7,8 +7,8 @@
 
 #include "sprite/yx_spr.h"
 
-#include "object/player/yx_obj_player.h"
-#include "object/rival/yx_obj_rival.h"
+#include "object/fighter/player/yx_obj_player.h"
+#include "object/fighter/rival/yx_obj_rival.h"
 
 #include "room/room_1/yx_room_1.h"
 

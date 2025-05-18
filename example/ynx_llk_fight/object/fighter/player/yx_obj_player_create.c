@@ -3,7 +3,7 @@
 #include "k_log.h"
 
 #include "sprite/yx_spr.h"
-#include "object/player/yx_obj_player.h"
+#include "object/fighter/player/yx_obj_player.h"
 #include "object/weapon/apple/yx_obj_weapon_apple.h"
 
 struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *config) {

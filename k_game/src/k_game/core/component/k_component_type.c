@@ -12,19 +12,16 @@
 
 static int check_config(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
 
-    if (NULL == entity_config) {
-        k_log_error("`entity_config` is NULL");
-        return -1;
-    }
-
-    if (NULL == entity_config->on_create) {
-        k_log_error("`entity_config->on_create` is NULL");
-        return -1;
+    if (NULL != entity_config) {
+        if (NULL == entity_config->on_create) {
+            k_log_error("`entity_config->on_create` is null");
+            return -1;
+        }
     }
 
     if (NULL != manager_config) {
         if (NULL == manager_config->on_create) {
-            k_log_error("`manager_config->on_create` is NULL");
+            k_log_error("`manager_config->on_create` is null");
             return -1;
         }
     }
@@ -33,6 +30,12 @@ static int check_config(const struct k_component_manager_config *manager_config,
 }
 
 static int id_counter = 0;
+
+static int k__component_on_create_default(struct k_component *component, void *param) {
+    (void)component;
+    (void)param;
+    return 0;
+}
 
 struct k_component_type *k_component_type_register(const struct k_component_manager_config *manager_config, const struct k_component_entity_config *entity_config) {
 
@@ -57,9 +60,15 @@ struct k_component_type *k_component_type_register(const struct k_component_mana
     }
 
     struct k_component_entity_type *entity_type = &component_type->entity_type;
-    entity_type->data_size  = entity_config->data_size;
-    entity_type->on_create  = entity_config->on_create;
-    entity_type->on_destroy = entity_config->on_destroy;
+    if (NULL != entity_config) {
+        entity_type->data_size  = entity_config->data_size;
+        entity_type->on_create  = entity_config->on_create;
+        entity_type->on_destroy = entity_config->on_destroy;
+    } else {
+        entity_type->data_size  = 0;
+        entity_type->on_create  = k__component_on_create_default;
+        entity_type->on_destroy = NULL;
+    }
 
     struct k_component_manager_type *manager_type = component_type->manager_type;
     if (NULL != manager_type) {

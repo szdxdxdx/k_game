@@ -4,7 +4,7 @@
 
 #include "k_game.h"
 
-#include "object/player/yx_obj_player.h"
+#include "object/fighter/player/yx_obj_player.h"
 
 static void yx__obj_player_on_step_change_face(struct yx_obj_player *player) {
 

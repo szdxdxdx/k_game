@@ -3,7 +3,7 @@
 
 #include "k_game/core/k_game_fwd.h"
 
-#include "object/player/yx_obj_player.h"
+#include "object/fighter/player/yx_obj_player.h"
 
 struct yx_room_arena {
     struct yx_obj_player *player;
