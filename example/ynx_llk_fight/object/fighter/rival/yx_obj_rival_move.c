@@ -8,6 +8,15 @@
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
 
+enum yx_enemy_move_state {
+    YX_ENEMY_MOVE_IDLE,    /* 静止 */
+    YX_ENEMY_MOVE_RUNNING, /* 正在移动 */
+};
+
+/* region [ai_move] */
+
+/* endregion */
+
 static void yx__obj_rival_on_step_ai_movement(struct yx_obj_rival *rival) {
 
     struct yx_obj_player *player = rival->blackboard->player;
@@ -65,6 +74,8 @@ static void yx__obj_rival_on_step_resolve_movement(struct yx_obj_rival *rival) {
 
 static void yx__obj_rival_on_step(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
+
+    yx_state_machine_tick(&rival->move_sm);
 
     yx__obj_rival_on_step_ai_movement(rival);
     yx__obj_rival_on_step_hit_bullet_collision(rival);

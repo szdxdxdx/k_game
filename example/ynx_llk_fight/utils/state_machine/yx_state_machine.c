@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <assert.h>
 
 #include "yx_state_machine.h"
 
@@ -11,12 +12,17 @@ void yx_state_machine_init(struct yx_state_machine *sm, struct k_object *object)
 
 void yx_state_machine_tick(struct yx_state_machine *sm) {
 
+    if (NULL == sm->curr_state)
+        return;
+
     if (NULL != sm->curr_state->on_update) {
         sm->curr_state->on_update(sm->object);
     }
 
     if ( ! sm->change_state)
         return;
+
+    assert(NULL != sm->next_state);
 
     if (NULL != sm->curr_state->on_leave) {
         sm->curr_state->on_leave(sm->object);
