@@ -4,6 +4,8 @@
 
 #include "k_game.h"
 
+#include "config/yx_config_arena_blackboard.h"
+#include "config/yx_config_collision_group.h"
 #include "room/room_1/yx_room_1.h"
 
 struct k_room *yx__room_1 = NULL;
@@ -13,10 +15,27 @@ static int arena_room_on_create(void *param) {
 
     if (0 != yx__room_1_on_create_set_bkgd())
         return -1;
+    if (0 != k_room_add_blackboard())
+        return -1;
+    {
+        struct yx_config_arena_blackboard *ctx = k_room_blackboard_add(YX_ARENA_BLACKBOARD_KEY, sizeof(struct yx_config_arena_blackboard));
+        if (NULL == ctx)
+            return -1;
+        ctx->player  = NULL;
+        ctx->rival_1 = NULL;
+        ctx->rival_2 = NULL;
+        ctx->rival_3 = NULL;
+    }
     if (0 != k_room_add_camera())
+        return -1;
+    if (0 != k_room_add_collision_manager())
         return -1;
     if (0 != yx__room_1_on_create_place_obj())
         return -1;
+
+    /* tmp */
+    k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_FIGHTER, 1);
+    k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_BULLET, 1);
 
     return 0;
 }

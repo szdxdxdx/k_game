@@ -25,5 +25,6 @@
 #include "./k_game/ext/k_state_machine.h"
 #include "./k_game/ext/k_behavior_tree.h"
 #include "./k_game/ext/k_camera.h"
+#include "./k_game/ext/k_room_blackboard.h"
 
 #endif
