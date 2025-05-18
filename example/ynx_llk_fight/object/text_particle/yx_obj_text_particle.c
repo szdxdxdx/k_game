@@ -60,7 +60,7 @@ void yx_obj_text_particle_create(const struct yx_obj_text_particle_config *confi
         goto err;
     if (NULL == k_object_add_draw_callback(object, yx__obj_text_particle_on_draw, YX_CONFIG_Z_GROUP_TEXT, 0))
         goto err;
-    if (NULL == k_object_add_alarm_callback(object, yx__obj_text_particle_on_alarm_destroy, 3000))
+    if (NULL == k_object_add_alarm_callback(object, yx__obj_text_particle_on_alarm_destroy, 1200))
         goto err;
 
     return;

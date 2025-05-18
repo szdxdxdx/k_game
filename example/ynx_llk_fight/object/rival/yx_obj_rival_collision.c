@@ -23,12 +23,23 @@ static void yx__obj_rival_on_step_hit_bullet_collision(struct k_object *object) 
     yx_obj_bullet_on_hit(bullet, &hit_result);
 
     {
+        struct yx_float_vec2 v_knockback = {
+            .x = hit_result.vx_knockback,
+            .y = hit_result.vy_knockback
+        };
+        struct yx_float_vec2 v_dir_knockback = yx_float_vec2_normalize(v_knockback);
+        struct yx_float_vec2 v_text = yx_float_vec2_perp_right(v_dir_knockback);
+        if (rand() % 2)
+            v_text = yx_float_vec2_neg(v_text);
+
+        v_text = yx_float_vec2_scale(v_text, yx_rand(40.0f, 60.0f));
+
         struct yx_obj_text_particle_config config;
         config.x = rival->x;
         config.y = rival->y;
-        config.vx = yx_rand(10.0f, 20.0f) * ((rand() % 2) ? 1.0f : -1.0f);
-        config.vy = yx_rand(10.0f, 20.0f) * ((rand() % 2) ? 1.0f : -1.0f);
-        config.color = 0xee3333ff;
+        config.vx = v_text.x;
+        config.vy = v_text.y;
+        config.color = 0xff1111ff;
         yx_obj_text_particle_create(&config, "-%d", (int)hit_result.damage);
     }
 
