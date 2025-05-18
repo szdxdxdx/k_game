@@ -13,6 +13,8 @@ enum yx_config_z_index {
     YX_CONFIG_Z_GROUP_WEAPON  = YX_CONFIG_Z_GROUP_MAIN,
     YX_CONFIG_Z_GROUP_BULLET  = YX_CONFIG_Z_GROUP_MAIN + 1,
 
+    YX_CONFIG_Z_GROUP_TEXT    = 1,
+
 };
 
 #endif
