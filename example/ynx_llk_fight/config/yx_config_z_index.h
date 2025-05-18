@@ -15,6 +15,7 @@ enum yx_config_z_index {
 
     YX_CONFIG_Z_GROUP_TEXT    = 1,
 
+    YX_CONFIG_Z_GROUP_DEBUG   = 1000,
 };
 
 #endif

@@ -10,6 +10,13 @@ struct yx_float_vec2 {
 
 #define yx_float_vec2_zero ((struct yx_float_vec2) { 0.0f, 0.0f })
 
+static inline struct yx_float_vec2 yx_float_vec2_new(float x, float y) {
+    struct yx_float_vec2 result;
+    result.x = x;
+    result.y = y;
+    return result;
+}
+
 /* 加 */
 static inline struct yx_float_vec2 yx_float_vec2_add(struct yx_float_vec2 v1, struct yx_float_vec2 v2) {
     struct yx_float_vec2 result;

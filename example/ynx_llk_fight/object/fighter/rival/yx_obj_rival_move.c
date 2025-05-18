@@ -7,6 +7,7 @@
 #include "config/yx_config_arena_blackboard.h"
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
+#include "utils/yx_math.h"
 
 /* region [ai_move] */
 
@@ -30,7 +31,11 @@ static struct yx_state_machine_state YX_STATE_RUNNING = {
 
 static void yx__obj_rival_on_state_idle_enter(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
-    rival->change_move_state_timer = 1.0f;
+    rival->change_move_state_timer = yx_rand(2.0f, 4.0f);
+    rival->target_position_x = rival->x;
+    rival->target_position_y = rival->y;
+    rival->vx_movement = 0.0f;
+    rival->vy_movement = 0.0f;
     k_sprite_renderer_set_sprite(rival->spr_rdr, rival->spr_idle);
 }
 
@@ -50,20 +55,86 @@ static void yx__obj_rival_on_state_idle_update(struct k_object *object) {
 
 /* region [running] */
 
+static void yx__obj_rival_random_target_position(struct yx_obj_rival *rival) {
+
+    float target_position_x;
+    float target_position_y;
+
+    int max_attempts = 20;
+
+try_again:
+
+    {
+        /* 若多次尝试都找不到合适的点，则原地不动 */
+
+        if (--max_attempts == 0) {
+            target_position_x = rival->x;
+            target_position_y = rival->y;
+            goto end;
+        }
+    }
+
+    {
+        /* 函数在人物周围（大于 r1 且 小于 r2 的圆环范围内）取一个随机点 */
+
+        float r1 = 160.0f;
+        float r2 = 240.0f;
+        float theta = yx_rand(0.0f, 2.0f * 3.1415926f);
+        float radius = sqrtf(yx_rand(0.0f, 1.0f) * (r2 * r2 - r1 * r1) + r1 * r1);
+        target_position_x = rival->x + radius * cosf(theta);
+        target_position_y = rival->y + radius * sinf(theta);
+    }
+    {
+        /* 要求新的目标点必须在房间内 */
+
+        float padding = -30.0f;
+        struct k_float_rect room_rect = {
+            .x = padding,
+            .y = padding,
+            .w = k_room_get_w() - padding,
+            .h = k_room_get_h() - padding
+        };
+        if ( ! yx_point_in_rect(target_position_x, target_position_y, &room_rect))
+            goto try_again;
+    }
+
+end:
+    rival->target_position_x = target_position_x;
+    rival->target_position_y = target_position_y;
+}
+
 static void yx__obj_rival_on_state_running_enter(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
-    rival->change_move_state_timer = 1.0f;
+
+    yx__obj_rival_random_target_position(rival);
+
+    float speed = yx_rand(140.0f, 160.0f);
+
+    struct yx_float_vec2 dir = yx_float_vec2_new(rival->target_position_x - rival->x, rival->target_position_y - rival->y);
+    float need_time = yx_float_vec2_length(dir) / speed;
+    struct yx_float_vec2 v = yx_float_vec2_scale(yx_float_vec2_normalize(dir), speed);
+    rival->vx_movement = v.x;
+    rival->vy_movement = v.y;
+
+    rival->change_move_state_timer = need_time;
     k_sprite_renderer_set_sprite(rival->spr_rdr, rival->spr_run);
 }
 
 static void yx__obj_rival_on_state_running_update(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
 
-    float dt = k_time_get_step_delta();
-    rival->change_move_state_timer -= dt;
-    if (rival->change_move_state_timer <= 0.0f) {
-        rival->change_move_state_timer = 0.0f;
+    int reached_target = 0;
+    if (fabsf(rival->x - rival->target_position_x) <= 0.1f && fabsf(rival->y - rival->target_position_y) <= 0.1f) {
+        reached_target = 1;
+    } else {
+        float dt = k_time_get_step_delta();
+        rival->change_move_state_timer -= dt;
+        if (rival->change_move_state_timer <= 0.0f) {
+            reached_target = 1;
+        }
+    }
 
+    if (reached_target) {
         yx_state_machine_change_state(&rival->move_sm, &YX_STATE_IDLE);
     }
 }

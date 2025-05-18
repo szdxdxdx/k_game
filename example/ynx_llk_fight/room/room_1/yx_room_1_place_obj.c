@@ -27,8 +27,8 @@ int yx__room_1_on_create_place_obj(void) {
 
     {
         struct yx_obj_rival_config config;
-        config.x = 200.0f;
-        config.y = 100.0f;
+        config.x = 400.0f;
+        config.y = 400.0f;
         yx_obj_rival_create(&config);
     }
 

@@ -28,14 +28,15 @@ struct yx_obj_rival {
 
     struct k_collision_box *hp_collision_box;
 
+    struct yx_state_machine move_sm;
+    float change_move_state_timer;
     float vx_movement;
     float vy_movement;
+    float target_position_x;
+    float target_position_y;
 
     float vx_knockback;
     float vy_knockback;
-
-    struct yx_state_machine move_sm;
-    float change_move_state_timer;
 
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;
@@ -53,5 +54,7 @@ void yx__obj_rival_on_step_hit_bullet_collision(struct yx_obj_rival *rival);
 int yx__obj_rival_on_create_add_collision(struct yx_obj_rival *rival);
 
 int yx__obj_rival_on_create_add_draw(struct yx_obj_rival *rival);
+
+int yx__obj_rival_on_create_add_debug(struct yx_obj_rival *rival);
 
 #endif

@@ -247,7 +247,7 @@ struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void) {
     weapon_apple->attack_cd_time = 0.25f;
     weapon_apple->attack_cd_timer = 0;
 
-    weapon_apple->ammo = 10;
+    weapon_apple->ammo = 1000;
     weapon_apple->ammo_timer = 0.0f;
     weapon_apple->ammo_cd_time = 2.0f;
 

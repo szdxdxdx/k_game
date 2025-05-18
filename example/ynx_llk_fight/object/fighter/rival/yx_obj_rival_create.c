@@ -32,6 +32,8 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
         goto err;
     if (0 != yx__obj_rival_on_create_add_draw(rival))
         goto err;
+    if (0 != yx__obj_rival_on_create_add_debug(rival))
+        goto err;
 
     rival->blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
     if (NULL == rival->blackboard) {
