@@ -101,7 +101,7 @@ static void yx__obj_rival_on_step_attack(struct k_object *object) {
     yx_state_machine_tick(&rival->attack_sm);
 }
 
-int yx__obj_rival_on_create_add_attack(struct yx_obj_rival *rival) {
+int yx__obj_rival_on_create_init_attack(struct yx_obj_rival *rival) {
 
     if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_attack))
         return -1;

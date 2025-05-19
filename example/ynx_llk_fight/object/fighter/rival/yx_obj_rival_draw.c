@@ -34,7 +34,7 @@ static void yx__obj_rival_on_step_end(struct k_object *object) {
     }
 }
 
-int yx__obj_rival_on_create_add_draw(struct yx_obj_rival *rival) {
+int yx__obj_rival_on_create_init_draw(struct yx_obj_rival *rival) {
 
     struct k_sprite_renderer_config renderer_config;
     renderer_config.x       = &rival->x;

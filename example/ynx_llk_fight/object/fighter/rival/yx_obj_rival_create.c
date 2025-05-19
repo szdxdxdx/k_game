@@ -29,15 +29,15 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
     rival->face = (rand() % 2) ? -1 : 1;
     rival->attack_state = YX_OBJ_RIVAL_STATE_PATROL;
 
-    if (0 != yx__obj_rival_on_create_add_movement(rival))
+    if (0 != yx__obj_rival_on_create_init_movement(rival))
         goto err;
-    if (0 != yx__obj_rival_on_create_add_attack(rival))
+    if (0 != yx__obj_rival_on_create_init_attack(rival))
         goto err;
-    if (0 != yx__obj_rival_on_create_add_collision(rival))
+    if (0 != yx__obj_rival_on_create_init_collision(rival))
         goto err;
-    if (0 != yx__obj_rival_on_create_add_draw(rival))
+    if (0 != yx__obj_rival_on_create_init_draw(rival))
         goto err;
-    if (0 != yx__obj_rival_on_create_add_debug(rival))
+    if (0 != yx__obj_rival_on_create_init_debug(rival))
         goto err;
 
     {

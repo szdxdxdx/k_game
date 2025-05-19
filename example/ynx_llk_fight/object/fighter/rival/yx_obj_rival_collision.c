@@ -34,7 +34,7 @@ static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_rival *rival
 }
 
 /* 判断自身有没有被子弹击中 */
-void yx__obj_rival_on_step_hit_bullet_collision(struct yx_obj_rival *rival) {
+void yx__obj_rival_on_step_check_hit_bullet(struct yx_obj_rival *rival) {
 
     struct k_collision_box *bullet_box = k_collision_check_box(YX_CONFIG_COLLISION_GROUP_PLAYER_BULLET, rival->hp_collision_box);
     if (NULL == bullet_box)
@@ -50,7 +50,7 @@ void yx__obj_rival_on_step_hit_bullet_collision(struct yx_obj_rival *rival) {
     rival->vy_knockback += hit_result.vy_knockback;
 }
 
-int yx__obj_rival_on_create_add_collision(struct yx_obj_rival *rival) {
+int yx__obj_rival_on_create_init_collision(struct yx_obj_rival *rival) {
 
     {
         struct k_collision_rect_config config;

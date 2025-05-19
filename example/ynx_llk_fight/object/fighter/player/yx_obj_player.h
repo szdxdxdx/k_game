@@ -29,6 +29,8 @@ struct yx_obj_player {
     enum k_keyboard_key key_left;
     enum k_keyboard_key key_down;
     enum k_keyboard_key key_right;
+    float vx_movement;
+    float vy_movement;
     float speed;
 
     float vx_knockback;
@@ -43,11 +45,13 @@ struct yx_obj_player {
     struct yx_config_arena_blackboard *blackboard;
 };
 
-int yx__obj_player_on_create_add_movement(struct yx_obj_player *player);
+int yx__obj_player_on_create_init_movement(struct yx_obj_player *player);
 
-int yx__obj_player_on_create_add_collision(struct yx_obj_player *player);
+void yx__obj_player_on_step_check_hit_bullet(struct yx_obj_player *player);
 
-int yx__obj_player_on_create_add_draw(struct yx_obj_player *player);
+int yx__obj_player_on_create_init_collision(struct yx_obj_player *player);
+
+int yx__obj_player_on_create_init_draw(struct yx_obj_player *player);
 
 int yx__obj_player_on_create_add_debug(struct yx_obj_player *player);
 

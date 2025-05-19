@@ -232,7 +232,7 @@ static void yx__obj_rival_on_step_move(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
 
     yx_state_machine_tick(&rival->move_sm);
-    yx__obj_rival_on_step_hit_bullet_collision(rival);
+    yx__obj_rival_on_step_check_hit_bullet(rival);
     yx__obj_rival_on_step_resolve_movement(rival);
 
     k_position_set_local_position(rival->position, rival->x, rival->y);
@@ -242,7 +242,7 @@ static void yx__obj_rival_on_step_move(struct k_object *object) {
 
 /* endregion */
 
-int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival) {
+int yx__obj_rival_on_create_init_movement(struct yx_obj_rival *rival) {
 
     if (NULL == k_camera_add_follow_target(rival->object, &rival->x, &rival->y))
         return -1;

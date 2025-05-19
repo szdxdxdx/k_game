@@ -7,7 +7,7 @@
 #include "object/fighter/player/yx_obj_player.h"
 #include "config/yx_config_z_index.h"
 
-int yx__obj_player_on_create_add_draw(struct yx_obj_player *player) {
+int yx__obj_player_on_create_init_draw(struct yx_obj_player *player) {
 
     struct k_sprite_renderer_config renderer_config;
     renderer_config.x       = &player->x;

@@ -289,8 +289,8 @@ err:
 static void yx__obj_rival_bullet_apple_on_hit(struct yx_obj_rival_bullet *bullet, struct yx_bullet_on_hit_result *get_result) {
     struct yx_obj_rival_bullet_apple *bullet_apple = (struct yx_obj_rival_bullet_apple *)bullet;
 
-    get_result->vx_knockback = bullet_apple->vx * 0.65f;
-    get_result->vy_knockback = bullet_apple->vy * 0.65f;
+    get_result->vx_knockback = bullet_apple->vx * 0.75f;
+    get_result->vy_knockback = bullet_apple->vy * 0.75f;
     get_result->damage = 2.0f;
 
     k_object_del_collision_box(bullet_apple->hit_box);
@@ -427,6 +427,17 @@ static void yx__obj_rival_weapon_apple_aim_at(struct yx_obj_rival_weapon *weapon
 
 static void yx__obj_rival_weapon_apple_attack(struct yx_obj_rival_weapon *weapon) {
     struct yx_obj_rival_weapon_apple *weapon_apple = (struct yx_obj_rival_weapon_apple *)weapon;
+
+    {
+        /* 函数在瞄准点周围（小于 r 的圆范围内）取一个随机点，让 ai 瞄准得并不是那么准 */
+
+        float r = 10.0f;
+        float theta = yx_rand(0.0f, 2.0f * 3.1415926f);
+        float radius = sqrtf(yx_rand(0.0f, 1.0f) * (r * r));
+        weapon_apple->aim_x += radius * cosf(theta);
+        weapon_apple->aim_y += radius * sinf(theta);
+    }
+
     yx__obj_rival_bullet_apple_create(weapon_apple);
     weapon_apple->attack_cd_timer = weapon_apple->attack_cd_time;
 }
