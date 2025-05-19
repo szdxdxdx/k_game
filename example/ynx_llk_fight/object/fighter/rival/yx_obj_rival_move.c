@@ -1,7 +1,7 @@
 
-#define K_LOG_TAG "yx:object:rival"
-
 #include <assert.h>
+
+#define K_LOG_TAG "yx:object:rival"
 #include "k_log.h"
 
 #include "k_game.h"
@@ -115,6 +115,17 @@ try_again:
         };
         if ( ! yx_point_in_rect(target_position_x, target_position_y, &room_rect))
             goto try_again;
+    }
+
+    {
+        /* 若正在发现了玩家，则不要跑得离玩家太远，且与玩家保持一定距离 */
+
+        if (rival->attack_state == YX_OBJ_RIVAL_STATE_ATTACK) {
+            float len = yx_float_vec2_length(yx_float_vec2_new(target_position_x - rival->x, target_position_y - rival->y));
+            if (len < YX__OBJ_RIVAL_AGGRO_RADIUS / 2.0f || YX__OBJ_RIVAL_LOSE_TARGET_RADIUS < len) {
+                goto try_again;
+            }
+        }
     }
 
 end:

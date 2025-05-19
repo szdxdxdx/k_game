@@ -57,7 +57,12 @@ struct yx_obj_rival {
     struct yx_config_arena_blackboard *blackboard;
 
     struct k_position *position;
+
+    /* ------------------------------------------------------------------------ */
 };
+
+#define YX__OBJ_RIVAL_AGGRO_RADIUS       500.0f
+#define YX__OBJ_RIVAL_LOSE_TARGET_RADIUS 850.0f
 
 int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival);
 
