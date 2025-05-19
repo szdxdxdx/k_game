@@ -43,6 +43,7 @@ struct yx_obj_rival {
     float vy_knockback;
 
     enum yx_obj_rival_attack_state attack_state;
+    struct yx_state_machine attack_sm; /* 状态机，负责控制角色的巡逻和攻击 */
 
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;
