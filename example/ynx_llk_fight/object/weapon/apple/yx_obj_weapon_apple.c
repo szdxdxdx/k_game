@@ -19,11 +19,15 @@
 static void yx__obj_player_bullet_apple_on_hit(struct yx_obj_player_bullet *bullet, struct yx_bullet_on_hit_result *get_result) {
     struct yx_obj_player_bullet_apple *bullet_apple = (struct yx_obj_player_bullet_apple *)bullet;
 
-    get_result->vx_knockback = bullet_apple->vx * 0.75f;
-    get_result->vy_knockback = bullet_apple->vy * 0.75f;
-    get_result->damage = 2.0f;
+    if(NULL != get_result) {
+        get_result->vx_knockback = bullet_apple->vx * 0.75f;
+        get_result->vy_knockback = bullet_apple->vy * 0.75f;
+        get_result->damage = 2.0f;
+    }
 
     k_object_del_collision_box(bullet_apple->hit_box);
+    bullet_apple->hit_box = NULL;
+
     bullet_apple->vx *= 0.3f;
     bullet_apple->vy *= 0.3f;
     bullet_apple->rotation_speed *= 0.12f;
@@ -59,6 +63,20 @@ static void yx__obj_player_bullet_apple_on_step(struct k_object *object) {
     float angle = k_sprite_renderer_get_rotation(bullet_apple->spr_rdr);
     angle += dt * bullet_apple->rotation_speed;
     k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);
+
+    {
+        /* 玩家的苹果可以击碎敌人的苹果，此处是临时的实现方案 */
+
+        if (NULL != bullet_apple->hit_box) {
+            struct k_collision_box *hit = k_collision_check_box(YX_CONFIG_COLLISION_GROUP_RIVAL_BULLET, bullet_apple->hit_box);
+            if (NULL != hit) {
+                struct yx_obj_rival_bullet *bullet = k_object_get_data(k_collision_box_get_object(hit));
+                yx_obj_rival_bullet_on_hit(bullet, NULL);
+                yx__obj_player_bullet_apple_on_hit(&bullet_apple->super, NULL);
+                return;
+            }
+        }
+    }
 }
 
 static struct yx_obj_player_bullet_apple *yx__obj_player_bullet_apple_create(struct yx_obj_player_weapon_apple *weapon_apple) {
@@ -289,11 +307,15 @@ err:
 static void yx__obj_rival_bullet_apple_on_hit(struct yx_obj_rival_bullet *bullet, struct yx_bullet_on_hit_result *get_result) {
     struct yx_obj_rival_bullet_apple *bullet_apple = (struct yx_obj_rival_bullet_apple *)bullet;
 
-    get_result->vx_knockback = bullet_apple->vx * 0.75f;
-    get_result->vy_knockback = bullet_apple->vy * 0.75f;
-    get_result->damage = 2.0f;
+    if(NULL != get_result) {
+        get_result->vx_knockback = bullet_apple->vx * 0.75f;
+        get_result->vy_knockback = bullet_apple->vy * 0.75f;
+        get_result->damage = 2.0f;
+    }
 
     k_object_del_collision_box(bullet_apple->hit_box);
+    bullet_apple->hit_box = NULL;
+
     bullet_apple->vx *= 0.3f;
     bullet_apple->vy *= 0.3f;
     bullet_apple->rotation_speed *= 0.12f;
