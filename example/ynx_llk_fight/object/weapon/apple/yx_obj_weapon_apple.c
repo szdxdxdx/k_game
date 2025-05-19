@@ -187,7 +187,7 @@ static void yx__obj_player_weapon_apple_on_key_up(struct yx_obj_player_weapon *w
     (void)weapon;
 }
 
-static struct yx_obj_player_weapon_v_tbl yx__obj_weapon_apple_v_tbl = {
+static struct yx_obj_player_weapon_v_tbl yx__obj_player_weapon_apple_v_tbl = {
     .fn_set_position = yx__obj_player_weapon_apple_fn_set_position,
     .fn_aim_at       = yx__obj_player_weapon_apple_fn_aim_at,
     .on_key_down     = yx__obj_player_weapon_apple_on_key_down,
@@ -239,7 +239,7 @@ struct yx_obj_player_weapon *yx_obj_player_weapon_apple_create(void) {
     struct yx_obj_player_weapon_apple *weapon_apple = k_object_get_data(object);
 
     weapon_apple->super.object = object;
-    weapon_apple->super.v_tbl = &yx__obj_weapon_apple_v_tbl;
+    weapon_apple->super.v_tbl = &yx__obj_player_weapon_apple_v_tbl;
 
     weapon_apple->x = 0;
     weapon_apple->y = 0;
@@ -375,6 +375,45 @@ err:
 /* endregion */
 
 /* region [weapon_apple] */
+
+static void yx__obj_rival_weapon_apple_set_position(struct yx_obj_rival_weapon *weapon, float x, float y, int z) {
+
+}
+
+static void yx__obj_rival_weapon_apple_aim_at(struct yx_obj_rival_weapon *weapon, float x, float y) {
+
+}
+
+static void yx__obj_rival_weapon_apple_attack(struct yx_obj_rival_weapon *weapon) {
+
+}
+
+static struct yx_obj_rival_weapon_v_tbl yx__obj_rival_weapon_apple_v_tbl = {
+    .fn_set_position = yx__obj_rival_weapon_apple_set_position,
+    .fn_aim_at = yx__obj_rival_weapon_apple_aim_at,
+    .fn_attack = yx__obj_rival_weapon_apple_attack,
+};
+
+struct yx_obj_rival_weapon *yx_obj_rival_weapon_apple_create(void) {
+
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_rival_weapon_apple));
+    if (NULL == object)
+        goto err;
+
+    struct yx_obj_rival_weapon_apple *weapon_apple = k_object_get_data(object);
+    weapon_apple->super.object = object;
+    weapon_apple->super.v_tbl = &yx__obj_rival_weapon_apple_v_tbl;
+
+    weapon_apple->x = 0;
+    weapon_apple->y = 0;
+    weapon_apple->aim_x = 0;
+    weapon_apple->aim_y = 0;
+
+    return &weapon_apple->super;
+err:
+    k_log_error("failed to create object: yx_obj_rival_weapon_apple");
+    return NULL;
+}
 
 /* endregion */
 

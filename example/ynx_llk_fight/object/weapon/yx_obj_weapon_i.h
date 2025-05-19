@@ -107,6 +107,12 @@ static inline void yx_obj_rival_weapon_attack(struct yx_obj_rival_weapon *weapon
     weapon->v_tbl->fn_attack(weapon);
 }
 
+/* ------------------------------------------------------------------------ */
+
+struct yx_obj_rival_bullet {
+    int _;
+};
+
 /* endregion */
 
 #endif

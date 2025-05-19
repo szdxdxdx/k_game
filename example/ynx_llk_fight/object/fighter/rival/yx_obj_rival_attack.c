@@ -14,6 +14,7 @@
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
 #include "object/alert_marker/yx_obj_alert_marker.h"
+#include "object/weapon/apple/yx_obj_weapon_apple.h"
 
 #include "utils/yx_math.h"
 
@@ -97,6 +98,10 @@ static void yx__obj_rival_on_step_attack(struct k_object *object) {
 int yx__obj_rival_on_create_add_attack(struct yx_obj_rival *rival) {
 
     if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_attack))
+        return -1;
+
+    rival->weapon = yx_obj_rival_weapon_apple_create();
+    if (NULL == rival->weapon)
         return -1;
 
     yx_state_machine_init(&rival->attack_sm, rival->object);

@@ -44,6 +44,7 @@ struct yx_obj_player_bullet_apple {
 /* region [rival_weapon] */
 
 struct yx_obj_rival_weapon_apple {
+    struct yx_obj_rival_weapon super;
 
     float x;
     float y;
@@ -61,9 +62,10 @@ struct yx_obj_rival_weapon_apple {
     struct k_sprite_renderer *spr_rdr;
 };
 
-struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void);
+struct yx_obj_rival_weapon *yx_obj_rival_weapon_apple_create(void);
 
 struct yx_obj_rival_bullet_apple {
+    struct yx_obj_rival_bullet super;
     float x;
     float y;
     float vx;
