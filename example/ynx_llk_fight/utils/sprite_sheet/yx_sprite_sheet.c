@@ -146,7 +146,7 @@ static int sprite_sheet_load(struct yx_sprite_sheet *sheet, const struct yx_spri
 
     image = k_image_load(config->image_file_path);
     if (NULL == image) {
-        k_log_error("Failed to load image");
+        k_log_error("failed to load image");
         goto err;
     }
 
@@ -164,13 +164,13 @@ static int sprite_sheet_load(struct yx_sprite_sheet *sheet, const struct yx_spri
 
     buf = k_read_txt_file(config->config_file_path, NULL, 0, NULL);
     if (NULL == buf) {
-        k_log_error("Failed to read config (.json) file");
+        k_log_error("failed to read config (.json) file");
         goto err;
     }
 
     j_config = k_json_parse(buf);
     if (NULL == j_config) {
-        k_log_error("Failed to parse json");
+        k_log_error("failed to parse json: '%s'", config->config_file_path);
         goto err;
     }
 

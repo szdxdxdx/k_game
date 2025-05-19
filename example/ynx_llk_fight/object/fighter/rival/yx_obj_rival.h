@@ -2,8 +2,10 @@
 #define YX_OBJ_RIVAL_H
 
 #include "k_game/core/k_game_fwd.h"
-#include "utils/yx_float_vec.h"
 
+#include "config/yx_config_arena_blackboard.h"
+
+#include "utils/yx_float_vec.h"
 #include "utils/state_machine/yx_state_machine.h"
 
 struct yx_obj_rival_config {
@@ -43,6 +45,8 @@ struct yx_obj_rival {
     struct yx_obj_weapon_i *weapon;
 
     struct yx_config_arena_blackboard *blackboard;
+
+    struct k_positionn *position;
 };
 
 int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival);

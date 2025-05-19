@@ -35,20 +35,19 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
     if (0 != yx__obj_rival_on_create_add_debug(rival))
         goto err;
 
+    {
+        struct k_position_config position_config;
+        position_config.world_x = &rival->x;
+        position_config.world_y = &rival->y;
+        position_config.parent  = NULL;
+        position_config.local_x = 0.0f;
+        position_config.local_y = 0.0f;
+        k_object_add_position(object, &position_config);
+    }
+
     rival->blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
     if (NULL == rival->blackboard) {
         k_log_error("object yx_obj_rival requires room to provide blackboard '%s'", YX_ARENA_BLACKBOARD_KEY);
-        goto err;
-    }
-
-    if (NULL == rival->blackboard->rival_1)
-        rival->blackboard->rival_1 = rival;
-    else if (NULL == rival->blackboard->rival_2)
-        rival->blackboard->rival_2 = rival;
-    else if (NULL == rival->blackboard->rival_3)
-        rival->blackboard->rival_3 = rival;
-    else {
-        k_log_error("too many rivals in blackboard: all slots (rival_1 ~ rival_3) are occupied. cannot add another rival");
         goto err;
     }
 

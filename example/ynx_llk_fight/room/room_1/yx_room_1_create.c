@@ -21,10 +21,7 @@ static int arena_room_on_create(void *param) {
         struct yx_config_arena_blackboard *ctx = k_room_blackboard_add(YX_ARENA_BLACKBOARD_KEY, sizeof(struct yx_config_arena_blackboard));
         if (NULL == ctx)
             return -1;
-        ctx->player  = NULL;
-        ctx->rival_1 = NULL;
-        ctx->rival_2 = NULL;
-        ctx->rival_3 = NULL;
+        ctx->player = NULL;
     }
     if (0 != k_room_add_camera())
         return -1;
