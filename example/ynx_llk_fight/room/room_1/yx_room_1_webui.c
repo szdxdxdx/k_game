@@ -109,11 +109,13 @@ static void webui_add_checkbox_bind_draw_background(void) {
 
 /* endregion */
 
-int yx__room_1_on_create_init_webui(void) {
+int yx__room_1_on_enter_init_webui(void) {
     webui_add_text_bind_mouse_xy();
     webui_add_slider_bind_view_size();
     webui_add_checkbox_bind_collision_group();
     webui_add_checkbox_bind_draw_background();
+
+    k_camera_webui(1);
 
     return 0;
 }

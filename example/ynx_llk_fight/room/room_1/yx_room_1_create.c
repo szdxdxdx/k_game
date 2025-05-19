@@ -35,8 +35,6 @@ static int yx__room_1_on_create(void *param) {
         return -1;
     if (0 != yx__room_1_on_create_place_obj())
         return -1;
-    if (0 != yx__room_1_on_create_init_webui())
-        return -1;
 
     /* tmp */
 
@@ -45,6 +43,7 @@ static int yx__room_1_on_create(void *param) {
 
 static void yx__room_1_on_enter(void) {
     k_sound_bgm_loop(yx_bgm_music, INT_MAX);
+    yx__room_1_on_enter_init_webui();
 }
 
 struct k_room *yx_room_1_create(void) {
