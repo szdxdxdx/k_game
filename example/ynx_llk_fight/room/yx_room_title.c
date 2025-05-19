@@ -55,6 +55,10 @@ static void yx__room_title_goto_room_arena(void) {
     k_room_add_alarm_callback(NULL, yx__room_title_on_alarm_goto_next_room, 800);
 }
 
+static void yx__room_title_ui_on_click_goto_room_arena(struct llk_ui_elem *elem) {
+    yx__room_title_goto_room_arena();
+}
+
 /* endregion */
 
 /* region [点击按钮，切换显示] */
@@ -69,7 +73,7 @@ static void yx__room_title_ui_btn1_on_click(struct llk_ui_elem *elem) {
 
 /* endregion */
 
-/* region [] */
+/* region [新增、删除盒子] */
 
 static int count = 4;
 
@@ -93,9 +97,21 @@ static void yx__room_title_ui_btn3_on_click(struct llk_ui_elem *elem) {
 
 /* endregion */
 
-static void yx__room_title_ui_on_click_goto_room_arena(struct llk_ui_elem *elem) {
-    yx__room_title_goto_room_arena();
+/* region [滑动条] */
+
+static float slider_val;
+
+static void slider_on_change(struct llk_ui_elem *elem, float old_val, float new_val) {
+    struct llk_ui_elem_slider *slider = (struct llk_ui_elem_slider *)elem;
+    slider_val = new_val;
 }
+
+static void print_slider_val(void *data) {
+    k_canvas_set_draw_color(0xffffffff);
+    k_canvas_ui_printf(NULL, 8, 390, "slider_val: %.2f", slider_val);
+}
+
+/* endregion */
 
 static void yx__room_title_build_ui(void) {
 
@@ -114,6 +130,7 @@ static void yx__room_title_build_ui(void) {
     llk_ui_register_callback(ui, "btn1_on_click", yx__room_title_ui_btn1_on_click);
     llk_ui_register_callback(ui, "btn2_on_click", yx__room_title_ui_btn2_on_click);
     llk_ui_register_callback(ui, "btn3_on_click", yx__room_title_ui_btn3_on_click);
+    llk_ui_register_callback(ui, "slider_on_change", slider_on_change);
 
     struct llk_ui_elem *root = llk_ui_get_root(ui);
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, "demo_1/ui/ui_title.xml");
@@ -161,6 +178,7 @@ static int yx__room_title_on_create(void *param) {
 
     k_room_add_step_callback(NULL, yx__room_title_on_begin_step_update_ui);
     k_room_add_draw_callback(NULL, yx__room_title_on_draw_ui, INT_MIN, 0);
+    k_room_add_draw_callback(NULL, print_slider_val, INT_MIN, 1);
 
     return 0;
 }
