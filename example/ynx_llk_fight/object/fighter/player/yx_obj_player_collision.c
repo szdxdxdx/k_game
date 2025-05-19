@@ -1,4 +1,6 @@
 
+#include <stdlib.h>
+
 #define K_LOG_TAG "yx:object:player"
 #include "k_log.h"
 
@@ -6,6 +8,10 @@
 
 #include "config/yx_config_collision_group.h"
 #include "object/fighter/player/yx_obj_player.h"
+#include "object/text_particle/yx_obj_text_particle.h"
+#include "utils/yx_math.h"
+
+/* region [bubble] */
 
 static void yx__obj_player_touch_bubble(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
@@ -19,6 +25,48 @@ static void yx__obj_player_touch_bubble(struct k_object *object) {
     if (NULL != box)
         yx_bubble_pop(k_collision_box_get_object(box));
 #endif
+}
+
+/* endregion */
+
+/* 被子弹击中时，创建一个受伤的文字粒子效果 */
+static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_player *player, struct yx_bullet_on_hit_result *hit_result) {
+    struct yx_float_vec2 v_knockback = {
+        .x = hit_result->vx_knockback,
+        .y = hit_result->vy_knockback
+    };
+    struct yx_float_vec2 v_dir_knockback = yx_float_vec2_normalize(v_knockback);
+    struct yx_float_vec2 v_text = yx_float_vec2_perp_right(v_dir_knockback);
+    if (rand() % 2)
+        v_text = yx_float_vec2_neg(v_text);
+
+    v_text = yx_float_vec2_scale(v_text, yx_rand(40.0f, 60.0f));
+
+    struct yx_obj_text_particle_config config;
+    config.x = player->x;
+    config.y = player->y;
+    config.vx = v_text.x;
+    config.vy = v_text.y;
+    config.color = 0xff1111ff;
+    yx_obj_text_particle_create(&config, "-%d", (int)hit_result->damage);
+}
+
+/* 判断自身有没有被子弹击中 */
+void yx__obj_player_on_step_hit_bullet_collision(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    struct k_collision_box *bullet_box = k_collision_check_box(YX_CONFIG_COLLISION_GROUP_RIVAL_BULLET, player->hp_collision_box);
+    if (NULL == bullet_box)
+        return;
+
+    struct yx_obj_player_bullet *bullet = k_object_get_data(k_collision_box_get_object(bullet_box));
+    struct yx_bullet_on_hit_result hit_result;
+    yx_obj_player_bullet_on_hit(bullet, &hit_result);
+
+    yx__obj_rival_create_text_particle_on_hit(player, &hit_result);
+
+    player->vx_knockback += hit_result.vx_knockback;
+    player->vy_knockback += hit_result.vy_knockback;
 }
 
 int yx__obj_player_on_create_add_collision(struct yx_obj_player *player) {
@@ -35,6 +83,8 @@ int yx__obj_player_on_create_add_collision(struct yx_obj_player *player) {
     if (NULL == player->hp_collision_box)
         return -1;
 
+    if (NULL == k_object_add_step_callback(player->object, yx__obj_player_on_step_hit_bullet_collision))
+        return -1;
 
     return 0;
 }

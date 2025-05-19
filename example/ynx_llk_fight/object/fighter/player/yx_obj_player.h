@@ -30,6 +30,9 @@ struct yx_obj_player {
     enum k_keyboard_key key_right;
     float speed;
 
+    float vx_knockback;
+    float vy_knockback;
+
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;
     struct k_sprite *spr_run;
