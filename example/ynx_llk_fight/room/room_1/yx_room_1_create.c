@@ -34,7 +34,7 @@ static int arena_room_on_create(void *param) {
     k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_RIVAL_HP, 1);
     k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_PLAYER_HP, 1);
     k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_RIVAL_PATROL, 1);
-    k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_BULLET, 1);
+    k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_PLAYER_BULLET, 1);
 
     return 0;
 }

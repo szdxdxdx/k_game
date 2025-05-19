@@ -75,7 +75,7 @@ static struct yx_obj_player_bullet_apple *yx__obj_player_bullet_apple_create(str
         struct k_collision_rect_config config;
         config.x = &bullet_apple->x;
         config.y = &bullet_apple->y;
-        config.group_id = YX_CONFIG_COLLISION_GROUP_BULLET;
+        config.group_id = YX_CONFIG_COLLISION_GROUP_PLAYER_BULLET;
         config.offset_x1 = -16.0f;
         config.offset_y1 = -16.0f;
         config.offset_x2 = 16.0f;
@@ -277,6 +277,104 @@ err:
     k_log_error("failed to create object: weapon apple");
     return NULL;
 }
+
+/* endregion */
+
+/* endregion */
+
+/* region [rival_weapon] */
+
+/* region [bullet_apple] */
+
+static void yx__obj_rival_bullet_apple_on_step(struct k_object *object) {
+    struct yx_obj_rival_bullet_apple *bullet_apple = k_object_get_data(object);
+
+    float dt = k_time_get_step_delta();
+
+    bullet_apple->x += bullet_apple->vx * dt;
+    bullet_apple->y += bullet_apple->vy * dt;
+
+    float padding = -30.0f;
+    struct k_float_rect room_rect = {
+        .x = padding,
+        .y = padding,
+        .w = k_room_get_w() - padding,
+        .h = k_room_get_h() - padding
+    };
+    if ( ! yx_point_in_rect(bullet_apple->x, bullet_apple->y, &room_rect)) {
+        k_object_destroy(object);
+        return;
+    }
+
+    float angle = k_sprite_renderer_get_rotation(bullet_apple->spr_rdr);
+    angle += dt * bullet_apple->rotation_speed;
+    k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);
+}
+
+static struct yx_obj_rival_bullet_apple *yx__obj_rival_bullet_apple_create(struct yx_obj_rival_weapon_apple *weapon_apple) {
+
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_rival_bullet_apple));
+    if (NULL == object)
+        goto err;
+
+    struct yx_obj_rival_bullet_apple *bullet_apple = k_object_get_data(object);
+
+    {
+        struct k_collision_rect_config config;
+        config.x = &bullet_apple->x;
+        config.y = &bullet_apple->y;
+        config.group_id = YX_CONFIG_COLLISION_GROUP_RIVAL_BULLET;
+        config.offset_x1 = -16.0f;
+        config.offset_y1 = -16.0f;
+        config.offset_x2 = 16.0f;
+        config.offset_y2 = 16.0f;
+        bullet_apple->hit_box = k_object_add_collision_rect(object, &config);
+        if (NULL == bullet_apple->hit_box)
+            goto err;
+    }
+
+    bullet_apple->x = weapon_apple->x;
+    bullet_apple->y = weapon_apple->y;
+
+    bullet_apple->rotation_speed = yx_rand(300.0f, 800.0f);
+
+    float sin_angle;
+    float cos_angle;
+    yx_calc_vector_direction(weapon_apple->x, weapon_apple->y, weapon_apple->aim_x, weapon_apple->aim_y, &cos_angle, &sin_angle);
+
+    float speed = yx_rand(300.0f, 380.0f);
+    bullet_apple->vx = cos_angle * speed;
+    bullet_apple->vy = sin_angle * speed;
+
+    {
+        struct k_sprite_renderer_config config;
+        config.x       = &bullet_apple->x;
+        config.y       = &bullet_apple->y;
+        config.sprite  = yx_spr_bullet_apple;
+        config.z_group = YX_CONFIG_Z_GROUP_BULLET;
+        config.z_layer = 0;
+        bullet_apple->spr_rdr = k_object_add_sprite_renderer(object, &config);
+        if (NULL == bullet_apple->spr_rdr)
+            goto err;
+
+        float angle = 0.0f;// k_sprite_renderer_get_rotation(weapon_apple->spr_rdr);
+        k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);
+    }
+
+    if (NULL == k_object_add_step_callback(object, yx__obj_rival_bullet_apple_on_step))
+        goto err;
+
+    return bullet_apple;
+
+err:
+    k_object_destroy(object);
+    k_log_error("failed to create object: yx_obj_rival_bullet_apple");
+    return NULL;
+}
+
+/* endregion */
+
+/* region [weapon_apple] */
 
 /* endregion */
 

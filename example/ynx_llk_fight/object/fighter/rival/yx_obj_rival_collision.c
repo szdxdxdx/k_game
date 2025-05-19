@@ -36,7 +36,7 @@ static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_rival *rival
 /* 判断自身有没有被子弹击中 */
 void yx__obj_rival_on_step_hit_bullet_collision(struct yx_obj_rival *rival) {
 
-    struct k_collision_box *bullet_box = k_collision_check_box(YX_CONFIG_COLLISION_GROUP_BULLET, rival->hp_collision_box);
+    struct k_collision_box *bullet_box = k_collision_check_box(YX_CONFIG_COLLISION_GROUP_PLAYER_BULLET, rival->hp_collision_box);
     if (NULL == bullet_box)
         return;
 
