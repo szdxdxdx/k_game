@@ -20,6 +20,9 @@ struct yx_obj_player {
     float x;
     float y;
 
+    int hp;
+    struct k_collision_box *hp_collision_box;
+
     struct k_state_machine *movement_sm;
     enum k_keyboard_key key_up;
     enum k_keyboard_key key_left;

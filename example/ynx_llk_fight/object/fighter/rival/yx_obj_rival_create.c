@@ -31,6 +31,8 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
 
     if (0 != yx__obj_rival_on_create_add_movement(rival))
         goto err;
+    if (0 != yx__obj_rival_on_create_add_attack(rival))
+        goto err;
     if (0 != yx__obj_rival_on_create_add_collision(rival))
         goto err;
     if (0 != yx__obj_rival_on_create_add_draw(rival))

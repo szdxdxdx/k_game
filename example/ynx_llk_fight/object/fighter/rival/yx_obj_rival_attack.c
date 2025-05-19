@@ -1,0 +1,94 @@
+
+#define K_LOG_TAG "yx:object:rival"
+
+#include <assert.h>
+#include "k_log.h"
+
+#include "k_game.h"
+
+#include "config/yx_config_arena_blackboard.h"
+#include "object/fighter/player/yx_obj_player.h"
+#include "object/fighter/rival/yx_obj_rival.h"
+#include "object/alert_marker/yx_obj_alert_marker.h"
+#include "utils/yx_math.h"
+#include "config/yx_config_collision_group.h"
+
+/* region [attack] */
+
+static void yx__obj_rival_on_state_patrol_enter(struct k_object *object);
+static void yx__obj_rival_on_state_patrol_update(struct k_object *object);
+static struct yx_state_machine_state YX_STATE_PATROL = {
+    .on_enter  = yx__obj_rival_on_state_patrol_enter,
+    .on_update = yx__obj_rival_on_state_patrol_update,
+    .on_leave  = NULL,
+};
+
+static void yx__obj_rival_on_state_attack_enter(struct k_object *object);
+static void yx__obj_rival_on_state_attack_update(struct k_object *object);
+static struct yx_state_machine_state YX_STATE_ATTACK = {
+    .on_enter  = yx__obj_rival_on_state_attack_enter,
+    .on_update = yx__obj_rival_on_state_attack_update,
+    .on_leave  = NULL,
+};
+
+/* region [patrol] */
+
+static void yx__obj_rival_on_state_patrol_enter(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    rival->attack_state = YX_OBJ_RIVAL_STATE_PATROL;
+}
+
+static void yx__obj_rival_on_state_patrol_update(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    struct yx_obj_player *player = rival->blackboard->player;
+
+    struct yx_float_vec2 dir = yx_float_vec2_new(player->x - rival->x, player->y - rival->y);
+
+    if (yx_float_vec2_length_squared(dir) <= 300.0f * 300.0f) { /* 与玩家距离太近，切换成攻击状态 */
+        yx_state_machine_change_state(&rival->attack_sm, &YX_STATE_ATTACK);
+    }
+}
+
+/* endregion */
+
+/* region [attack] */
+
+static void yx__obj_rival_on_state_attack_enter(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    rival->attack_state = YX_OBJ_RIVAL_STATE_ATTACK;
+
+    yx_obj_alert_marker_create(rival->position, -30, -16); /* 感叹号气泡 */
+}
+
+static void yx__obj_rival_on_state_attack_update(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    struct yx_obj_player *player = rival->blackboard->player;
+
+    struct yx_float_vec2 dir = yx_float_vec2_new(player->x - rival->x, player->y - rival->y);
+
+    if (yx_float_vec2_length_squared(dir) >= 500.0f * 500.0f) { /* 与玩家距离太远，切换成巡逻状态 */
+        yx_state_machine_change_state(&rival->attack_sm, &YX_STATE_PATROL);
+        return;
+    }
+
+}
+
+/* endregion */
+
+/* endregion */
+
+static void yx__obj_rival_on_step_attack(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    yx_state_machine_tick(&rival->attack_sm);
+}
+
+int yx__obj_rival_on_create_add_attack(struct yx_obj_rival *rival) {
+
+    if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_attack))
+        return -1;
+
+    yx_state_machine_init(&rival->attack_sm, rival->object);
+    yx_state_machine_change_state(&rival->attack_sm, &YX_STATE_PATROL);
+
+    return 0;
+}

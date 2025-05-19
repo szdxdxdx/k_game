@@ -50,6 +50,9 @@ struct yx_obj_rival {
     struct k_sprite *spr_run;
 
     struct yx_obj_weapon_i *weapon;
+    float attack_timer;
+    float aim_x;
+    float aim_y;
 
     struct yx_config_arena_blackboard *blackboard;
 
@@ -65,5 +68,7 @@ int yx__obj_rival_on_create_add_collision(struct yx_obj_rival *rival);
 int yx__obj_rival_on_create_add_draw(struct yx_obj_rival *rival);
 
 int yx__obj_rival_on_create_add_debug(struct yx_obj_rival *rival);
+
+int yx__obj_rival_on_create_add_attack(struct yx_obj_rival *rival);
 
 #endif
