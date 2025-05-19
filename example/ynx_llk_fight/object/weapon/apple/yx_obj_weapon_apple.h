@@ -55,10 +55,6 @@ struct yx_obj_rival_weapon_apple {
     float attack_cd_time;
     float attack_cd_timer;
 
-    size_t ammo;
-    float ammo_cd_time;
-    float ammo_timer;
-
     struct k_sprite_renderer *spr_rdr;
 };
 

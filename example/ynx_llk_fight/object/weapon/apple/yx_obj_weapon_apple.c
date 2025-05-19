@@ -336,7 +336,7 @@ static struct yx_obj_rival_bullet_apple *yx__obj_rival_bullet_apple_create(struc
     bullet_apple->x = weapon_apple->x;
     bullet_apple->y = weapon_apple->y;
 
-    bullet_apple->rotation_speed = yx_rand(300.0f, 800.0f);
+    bullet_apple->rotation_speed = yx_rand(100.0f, 600.0f);
 
     float sin_angle;
     float cos_angle;
@@ -357,7 +357,7 @@ static struct yx_obj_rival_bullet_apple *yx__obj_rival_bullet_apple_create(struc
         if (NULL == bullet_apple->spr_rdr)
             goto err;
 
-        float angle = 0.0f;// k_sprite_renderer_get_rotation(weapon_apple->spr_rdr);
+        float angle = k_sprite_renderer_get_rotation(weapon_apple->spr_rdr);
         k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);
     }
 
@@ -404,7 +404,9 @@ static void yx__obj_rival_weapon_apple_aim_at(struct yx_obj_rival_weapon *weapon
 }
 
 static void yx__obj_rival_weapon_apple_attack(struct yx_obj_rival_weapon *weapon) {
-
+    struct yx_obj_rival_weapon_apple *weapon_apple = (struct yx_obj_rival_weapon_apple *)weapon;
+    yx__obj_rival_bullet_apple_create(weapon_apple);
+    weapon_apple->attack_cd_timer = weapon_apple->attack_cd_time;
 }
 
 static struct yx_obj_rival_weapon_v_tbl yx__obj_rival_weapon_apple_v_tbl = {
@@ -412,6 +414,33 @@ static struct yx_obj_rival_weapon_v_tbl yx__obj_rival_weapon_apple_v_tbl = {
     .fn_aim_at = yx__obj_rival_weapon_apple_aim_at,
     .fn_attack = yx__obj_rival_weapon_apple_attack,
 };
+
+static void yx__obj_rival_weapon_apple_on_step(struct k_object *object) {
+    struct yx_obj_rival_weapon_apple *weapon_apple = k_object_get_data(object);
+
+    if (weapon_apple->attack_cd_timer <= 0.0f)
+        return;
+
+    float dt = k_time_get_step_delta();
+    weapon_apple->attack_cd_timer -= dt;
+
+    if (weapon_apple->attack_cd_timer <= 0.0f) {
+        weapon_apple->attack_cd_timer = 0.0f;
+        k_sprite_renderer_scale_x(weapon_apple->spr_rdr, 1.0f);
+        k_sprite_renderer_scale_y(weapon_apple->spr_rdr, 1.0f);
+    } else {
+        float t = 0.2f;
+        if (weapon_apple->attack_cd_timer > t) {
+            k_sprite_renderer_scale_x(weapon_apple->spr_rdr, 0.0f);
+            k_sprite_renderer_scale_y(weapon_apple->spr_rdr, 0.0f);
+        }
+        else {
+            float scale = 1.0f - weapon_apple->attack_cd_timer / t;
+            k_sprite_renderer_scale_x(weapon_apple->spr_rdr, scale);
+            k_sprite_renderer_scale_y(weapon_apple->spr_rdr, scale);
+        }
+    }
+}
 
 struct yx_obj_rival_weapon *yx_obj_rival_weapon_apple_create(void) {
 
@@ -427,6 +456,7 @@ struct yx_obj_rival_weapon *yx_obj_rival_weapon_apple_create(void) {
     weapon_apple->y = 0;
     weapon_apple->aim_x = 0;
     weapon_apple->aim_y = 0;
+    weapon_apple->attack_cd_time = 0.9f;
 
     {
         struct k_sprite_renderer_config config;
@@ -439,6 +469,9 @@ struct yx_obj_rival_weapon *yx_obj_rival_weapon_apple_create(void) {
         if (NULL == weapon_apple->spr_rdr)
             goto err;
     }
+
+    if (NULL == k_object_add_step_callback(object, yx__obj_rival_weapon_apple_on_step))
+        goto err;
 
     return &weapon_apple->super;
 
