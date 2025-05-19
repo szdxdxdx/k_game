@@ -43,6 +43,10 @@ struct yx_obj_player {
     struct yx_obj_player_weapon *weapon;
 
     struct yx_config_arena_blackboard *blackboard;
+
+    struct k_position *position;
+
+    struct k_object *object_shadow;
 };
 
 int yx__obj_player_on_create_init_movement(struct yx_obj_player *player);

@@ -5,6 +5,7 @@
 #include "config/yx_config_z_index.h"
 
 #include "room/room_1/yx_room_1.h"
+#include "image/yx_image.h"
 
 static void yx__room_1_draw_grid(void) {
 
@@ -42,10 +43,12 @@ static void yx__room_1_draw_background(void *data) {
     k_canvas_set_draw_color(0x00000000);
     k_canvas_ui_clear();
 
-    k_canvas_set_draw_color(0x1e1e1eff);
-    k_canvas_room_clear();
+    k_canvas_room_draw_image(img_bkgd, NULL, 0, 0, NULL);
 
-    yx__room_1_draw_grid();
+    // k_canvas_set_draw_color(0x1e1e1eff);
+    // k_canvas_room_clear();
+
+    // yx__room_1_draw_grid();
 }
 
 int yx__room_1_on_create_set_bkgd(void) {

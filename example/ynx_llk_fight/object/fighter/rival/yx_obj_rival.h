@@ -58,6 +58,8 @@ struct yx_obj_rival {
 
     struct k_position *position;
 
+    struct k_object *object_shadow;
+
     /* ------------------------------------------------------------------------ */
 };
 

@@ -21,6 +21,9 @@ extern struct k_sprite *yx_spr_bubble_appear;
 extern struct k_sprite *yx_spr_bubble_float;
 extern struct k_sprite *yx_spr_bubble_pop;
 
+extern struct k_sprite *yx_spr_fighter_shadow;
+extern struct k_sprite *yx_spr_apple_shadow;
+
 extern struct k_sprite *yx_spr_alert_marker;
 
 int yx_spr_load_on_game_start(void);

@@ -12,6 +12,7 @@
 #include "utils/yx_math.h"
 #include "config/yx_config_collision_group.h"
 #include "sound/yx_sound.h"
+#include "object/shadow/yx_obj_shadow.h"
 
 /* region [player_weapon] */
 
@@ -35,6 +36,8 @@ static void yx__obj_player_bullet_apple_on_hit(struct yx_obj_player_bullet *bull
     k_sprite_renderer_set_sprite(bullet_apple->spr_rdr, yx_spr_bullet_apple_crack);
     k_sprite_renderer_set_loop_count(bullet_apple->spr_rdr, 1);
     k_sprite_renderer_set_loop_callback(bullet_apple->spr_rdr, k_object_destroy);
+
+    k_object_destroy(bullet_apple->object_shadow);
 }
 
 static struct yx_obj_player_bullet_v_tbl yx__obj_player_bullet_apple_v_tbl = {
@@ -57,6 +60,7 @@ static void yx__obj_player_bullet_apple_on_step(struct k_object *object) {
         .h = k_room_get_h() - padding
     };
     if ( ! yx_point_in_rect(bullet_apple->x, bullet_apple->y, &room_rect)) {
+        k_object_destroy(bullet_apple->object_shadow);
         k_object_destroy(object);
         return;
     }
@@ -64,6 +68,8 @@ static void yx__obj_player_bullet_apple_on_step(struct k_object *object) {
     float angle = k_sprite_renderer_get_rotation(bullet_apple->spr_rdr);
     angle += dt * bullet_apple->rotation_speed;
     k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);
+
+    k_position_set_local_position(bullet_apple->position, bullet_apple->x, bullet_apple->y);
 
     {
         /* 玩家的苹果可以击碎敌人的苹果，此处是临时的实现方案 */
@@ -134,6 +140,24 @@ static struct yx_obj_player_bullet_apple *yx__obj_player_bullet_apple_create(str
 
     if (NULL == k_object_add_step_callback(object, yx__obj_player_bullet_apple_on_step))
         goto err;
+
+    {
+        struct k_position_config position_config;
+        position_config.world_x = &bullet_apple->x;
+        position_config.world_y = &bullet_apple->y;
+        position_config.parent = NULL;
+        position_config.local_x = bullet_apple->x;
+        position_config.local_y = bullet_apple->y;
+        bullet_apple->position = k_object_add_position(object, &position_config);
+        if (NULL == bullet_apple->position)
+            goto err;
+    }
+
+    {
+        bullet_apple->object_shadow = yx_obj_shadow_create(yx_spr_apple_shadow, bullet_apple->position, 0, -4);
+        if (NULL == bullet_apple->object_shadow)
+            goto err;
+    }
 
     return bullet_apple;
 
@@ -325,6 +349,8 @@ static void yx__obj_rival_bullet_apple_on_hit(struct yx_obj_rival_bullet *bullet
     k_sprite_renderer_set_sprite(bullet_apple->spr_rdr, yx_spr_bullet_apple_crack);
     k_sprite_renderer_set_loop_count(bullet_apple->spr_rdr, 1);
     k_sprite_renderer_set_loop_callback(bullet_apple->spr_rdr, k_object_destroy);
+
+    k_object_destroy(bullet_apple->object_shadow);
 }
 
 static struct yx_obj_rival_bullet_v_tbl yx__obj_rival_bullet_apple_v_tbl = {
@@ -347,6 +373,7 @@ static void yx__obj_rival_bullet_apple_on_step(struct k_object *object) {
         .h = k_room_get_h() - padding
     };
     if ( ! yx_point_in_rect(bullet_apple->x, bullet_apple->y, &room_rect)) {
+        k_object_destroy(bullet_apple->object_shadow);
         k_object_destroy(object);
         return;
     }
@@ -354,6 +381,8 @@ static void yx__obj_rival_bullet_apple_on_step(struct k_object *object) {
     float angle = k_sprite_renderer_get_rotation(bullet_apple->spr_rdr);
     angle += dt * bullet_apple->rotation_speed;
     k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);
+
+    k_position_set_local_position(bullet_apple->position, bullet_apple->x, bullet_apple->y);
 }
 
 static struct yx_obj_rival_bullet_apple *yx__obj_rival_bullet_apple_create(struct yx_obj_rival_weapon_apple *weapon_apple) {
@@ -410,6 +439,24 @@ static struct yx_obj_rival_bullet_apple *yx__obj_rival_bullet_apple_create(struc
 
     if (NULL == k_object_add_step_callback(object, yx__obj_rival_bullet_apple_on_step))
         goto err;
+
+    {
+        struct k_position_config position_config;
+        position_config.world_x = &bullet_apple->x;
+        position_config.world_y = &bullet_apple->y;
+        position_config.parent = NULL;
+        position_config.local_x = bullet_apple->x;
+        position_config.local_y = bullet_apple->y;
+        bullet_apple->position = k_object_add_position(object, &position_config);
+        if (NULL == bullet_apple->position)
+            goto err;
+    }
+
+    {
+        bullet_apple->object_shadow = yx_obj_shadow_create(yx_spr_apple_shadow, bullet_apple->position, 0, -4);
+        if (NULL == bullet_apple->object_shadow)
+            goto err;
+    }
 
     return bullet_apple;
 

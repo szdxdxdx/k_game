@@ -162,6 +162,8 @@ static void yx__obj_player_resolve_movement(struct yx_obj_player *player) {
 
     yx_obj_player_weapon_set_position(player->weapon, player->x, player->y, (int)player->y + 1); /* 移动武器 */
 
+    k_position_set_local_position(player->position, player->x, player->y);
+
     yx__obj_player_on_step_update_weapon(player);
 }
 

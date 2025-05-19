@@ -37,6 +37,9 @@ struct yx_obj_player_bullet_apple {
     float rotation_speed;
     struct k_sprite_renderer *spr_rdr;
     struct k_collision_box *hit_box;
+
+    struct k_position *position;
+    struct k_object *object_shadow;
 };
 
 /* endregion */
@@ -69,6 +72,9 @@ struct yx_obj_rival_bullet_apple {
     float rotation_speed;
     struct k_sprite_renderer *spr_rdr;
     struct k_collision_box *hit_box;
+
+    struct k_position *position;
+    struct k_object *object_shadow;
 };
 
 /* endregion */

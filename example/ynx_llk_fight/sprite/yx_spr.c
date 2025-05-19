@@ -72,7 +72,6 @@ static int yx__spr_bubble_load(void) {
 
 /* endregion */
 
-
 /* region [apple] */
 
 struct k_sprite *yx_spr_weapon_apple;
@@ -117,6 +116,28 @@ static int yx__spr_alert_marker_load(void) {
 
 /* endregion */
 
+/* region [shadow] */
+
+struct k_sprite *yx_spr_fighter_shadow;
+struct k_sprite *yx_spr_apple_shadow;
+
+static int yx__spr_shadow_load(void) {
+
+    struct yx_sprite_sheet_config config;
+    config.image_file_path  = "./demo_1/sprite/shadow.png";
+    config.config_file_path = "./demo_1/sprite/shadow.json";
+    config.scale = 2.0f;
+    config.sprites = (struct yx_sprite_sheet_sprite_config[]) {
+        { &yx_spr_fighter_shadow, "fighter_shadow", 15, 15 },
+        { &yx_spr_apple_shadow,   "apple_shadow",   15, 15 },
+        { NULL }
+    };
+
+    return yx_sprite_load_from_sheet(&config);
+}
+
+/* endregion */
+
 /* region [iris] */
 
 struct k_sprite *yx_spr_iris_gun;
@@ -152,6 +173,8 @@ int yx_spr_load_on_game_start(void) {
     if (0 != yx__spr_weapon_apple_load())
         return -1;
     if (0 != yx__spr_alert_marker_load())
+        return -1;
+    if (0 != yx__spr_shadow_load())
         return -1;
     if (0 != yx__spr_iris_load())
         return -1;
