@@ -16,6 +16,8 @@
 
 /* region [ui] */
 
+static struct llk_ui_context *ui;
+
 /* region [开始游戏的按钮] */
 
 static void yx__room_title_ui_on_draw_button(struct llk_ui_elem *elem) {
@@ -55,7 +57,41 @@ static void yx__room_title_goto_room_arena(void) {
 
 /* endregion */
 
-static struct llk_ui_context *ui;
+/* region [点击按钮，切换显示] */
+
+static void yx__room_title_ui_btn1_on_click(struct llk_ui_elem *elem) {
+
+    static int hidden = 1;
+    hidden = !hidden;
+    struct llk_ui_elem *panel = llk_ui_get_elem_by_id(ui, "area");
+    llk_ui_elem_set_attr(panel, "hidden", hidden ? "false" : "true");
+}
+
+/* endregion */
+
+/* region [] */
+
+static int count = 4;
+
+static void yx__room_title_ui_btn2_on_click(struct llk_ui_elem *elem) {
+    switch (count) {
+        case 4: { struct llk_ui_elem *box = llk_ui_get_elem_by_id(ui, "box4"); llk_ui_elem_set_attr(box, "hidden", "true"); count=3; break; }
+        case 3: { struct llk_ui_elem *box = llk_ui_get_elem_by_id(ui, "box3"); llk_ui_elem_set_attr(box, "hidden", "true"); count=2; break; }
+        case 2: { struct llk_ui_elem *box = llk_ui_get_elem_by_id(ui, "box2"); llk_ui_elem_set_attr(box, "hidden", "true"); count=1; break; }
+        case 1: { struct llk_ui_elem *box = llk_ui_get_elem_by_id(ui, "box1"); llk_ui_elem_set_attr(box, "hidden", "true"); count=0; break; }
+    }
+}
+
+static void yx__room_title_ui_btn3_on_click(struct llk_ui_elem *elem) {
+    switch (count) {
+        case 3: { struct llk_ui_elem *box = llk_ui_get_elem_by_id(ui, "box4"); llk_ui_elem_set_attr(box, "hidden", "false"); count=4; break; }
+        case 2: { struct llk_ui_elem *box = llk_ui_get_elem_by_id(ui, "box3"); llk_ui_elem_set_attr(box, "hidden", "false"); count=3; break; }
+        case 1: { struct llk_ui_elem *box = llk_ui_get_elem_by_id(ui, "box2"); llk_ui_elem_set_attr(box, "hidden", "false"); count=2; break; }
+        case 0: { struct llk_ui_elem *box = llk_ui_get_elem_by_id(ui, "box1"); llk_ui_elem_set_attr(box, "hidden", "false"); count=1; break; }
+    }
+}
+
+/* endregion */
 
 static void yx__room_title_ui_on_click_goto_room_arena(struct llk_ui_elem *elem) {
     yx__room_title_goto_room_arena();
@@ -75,6 +111,9 @@ static void yx__room_title_build_ui(void) {
 
     llk_ui_register_callback(ui, "goto_room_1", yx__room_title_ui_on_click_goto_room_arena);
     llk_ui_register_callback(ui, "ui_draw_start_game_button", yx__room_title_ui_on_draw_button);
+    llk_ui_register_callback(ui, "btn1_on_click", yx__room_title_ui_btn1_on_click);
+    llk_ui_register_callback(ui, "btn2_on_click", yx__room_title_ui_btn2_on_click);
+    llk_ui_register_callback(ui, "btn3_on_click", yx__room_title_ui_btn3_on_click);
 
     struct llk_ui_elem *root = llk_ui_get_root(ui);
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, "demo_1/ui/ui_title.xml");
