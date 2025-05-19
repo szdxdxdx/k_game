@@ -1,5 +1,7 @@
 
 #define K_LOG_TAG "yx:object:rival"
+
+#include <assert.h>
 #include "k_log.h"
 
 #include "k_game.h"
@@ -11,12 +13,23 @@
 static void yx__obj_rival_on_step_end(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
 
-    if (rival->is_alert) {
-        struct yx_obj_player *player = rival->blackboard->player;
-        if (player->x < rival->x) {
-            k_sprite_renderer_flip_x(rival->spr_rdr, 0);
-        } else {
-            k_sprite_renderer_flip_x(rival->spr_rdr, 1);
+    switch (rival->attack_state) {
+        case YX_OBJ_RIVAL_STATE_PATROL: {
+            k_sprite_renderer_flip_x(rival->spr_rdr, rival->face == -1 ? 0 : 1);
+            break;
+        }
+        case YX_OBJ_RIVAL_STATE_ATTACK: {
+            struct yx_obj_player *player = rival->blackboard->player;
+            if (player->x < rival->x) {
+                k_sprite_renderer_flip_x(rival->spr_rdr, 0);
+            } else {
+                k_sprite_renderer_flip_x(rival->spr_rdr, 1);
+            }
+            break;
+        }
+        default: {
+            assert(0);
+            return;
         }
     }
 }

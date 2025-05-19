@@ -1,4 +1,6 @@
 
+#include <stdlib.h>
+
 #define K_LOG_TAG "yx:object:rival"
 #include "k_log.h"
 
@@ -24,7 +26,8 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
     rival->vy_knockback = 0.0f;
     rival->spr_idle = yx_spr_llk_idle;
     rival->spr_run  = yx_spr_llk_run;
-    rival->is_alert = 0;
+    rival->face = (rand() % 2) ? -1 : 1;
+    rival->attack_state = YX_OBJ_RIVAL_STATE_PATROL;
 
     if (0 != yx__obj_rival_on_create_add_movement(rival))
         goto err;

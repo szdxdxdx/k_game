@@ -37,3 +37,7 @@ void yx_state_machine_change_state(struct yx_state_machine *sm, struct yx_state_
     sm->next_state = state;
     sm->change_state = 1;
 }
+
+struct yx_state_machine_state *yx_state_machine_get_current_state(struct yx_state_machine *sm) {
+    return sm->curr_state;
+}

@@ -1,5 +1,7 @@
 
 #define K_LOG_TAG "yx:object:rival"
+
+#include <assert.h>
 #include "k_log.h"
 
 #include "k_game.h"
@@ -10,7 +12,9 @@
 #include "object/alert_marker/yx_obj_alert_marker.h"
 #include "utils/yx_math.h"
 
-/* region [ai_move] */
+/* region [move] */
+
+/* region [random_move] */
 
 static void yx__obj_rival_on_state_idle_enter(struct k_object *object);
 static void yx__obj_rival_on_state_idle_update(struct k_object *object);
@@ -32,7 +36,20 @@ static struct yx_state_machine_state YX_STATE_RUNNING = {
 
 static void yx__obj_rival_on_state_idle_enter(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
-    rival->change_move_state_timer = yx_rand(2.0f, 4.0f);
+
+    switch (rival->attack_state) {
+        case YX_OBJ_RIVAL_STATE_PATROL:
+            rival->change_move_state_timer = yx_rand(2.0f, 4.0f);
+            break;
+        case YX_OBJ_RIVAL_STATE_ATTACK:
+            rival->change_move_state_timer = yx_rand(1.0f, 2.5f);
+            break;
+        default:
+            assert(0);
+            rival->change_move_state_timer = 1.0f;
+            break;
+    }
+
     rival->target_position_x = rival->x;
     rival->target_position_y = rival->y;
     rival->vx_movement = 0.0f;
@@ -109,15 +126,30 @@ static void yx__obj_rival_on_state_running_enter(struct k_object *object) {
 
     yx__obj_rival_random_target_position(rival);
 
-    float speed = yx_rand(140.0f, 160.0f);
+    float speed;
+    switch (rival->attack_state) {
+        case YX_OBJ_RIVAL_STATE_PATROL:
+            speed = yx_rand(140.0f, 160.0f);
+            break;
+        case YX_OBJ_RIVAL_STATE_ATTACK:
+            speed = yx_rand(160.0f, 200.0f);
+            break;
+        default:
+            assert(0);
+            speed = 100.0f;
+            break;
+    }
 
     struct yx_float_vec2 dir = yx_float_vec2_new(rival->target_position_x - rival->x, rival->target_position_y - rival->y);
+    rival->face = dir.x < 0 ? -1 : 1;
+
     float need_time = yx_float_vec2_length(dir) / speed;
+    rival->change_move_state_timer = need_time;
+
     struct yx_float_vec2 v = yx_float_vec2_scale(yx_float_vec2_normalize(dir), speed);
     rival->vx_movement = v.x;
     rival->vy_movement = v.y;
 
-    rival->change_move_state_timer = need_time;
     k_sprite_renderer_set_sprite(rival->spr_rdr, rival->spr_run);
 }
 
@@ -141,22 +173,6 @@ static void yx__obj_rival_on_state_running_update(struct k_object *object) {
 }
 
 /* endregion */
-
-/* endregion */
-
-/* region [ai_attack] */
-
-static void yx__obj_rival_on_step_observe_player(struct k_object *object) {
-    struct yx_obj_rival *rival = k_object_get_data(object);
-    struct yx_obj_player *player = rival->blackboard->player;
-
-    if ( ! rival->is_alert) {
-        if (yx_float_vec2_length_squared(yx_float_vec2_new(rival->x - player->x, rival->y - player->y)) <= 50.0f * 50.0f) {
-            rival->is_alert = 1;
-            yx_obj_alert_marker_create(rival->position, -30, -16);
-        }
-    }
-}
 
 /* endregion */
 
@@ -206,13 +222,83 @@ static void yx__obj_rival_on_step_move(struct k_object *object) {
     k_position_set_local_position(rival->position, rival->x, rival->y);
 }
 
+/* endregion */
+
+/* region [attack] */
+
+static void yx__obj_rival_on_state_patrol_enter(struct k_object *object);
+static void yx__obj_rival_on_state_patrol_update(struct k_object *object);
+static struct yx_state_machine_state YX_STATE_PATROL = {
+    .on_enter  = yx__obj_rival_on_state_patrol_enter,
+    .on_update = yx__obj_rival_on_state_patrol_update,
+    .on_leave  = NULL,
+};
+
+static void yx__obj_rival_on_state_attack_enter(struct k_object *object);
+static void yx__obj_rival_on_state_attack_update(struct k_object *object);
+static struct yx_state_machine_state YX_STATE_ATTACK = {
+    .on_enter  = yx__obj_rival_on_state_attack_enter,
+    .on_update = yx__obj_rival_on_state_attack_update,
+    .on_leave  = NULL,
+};
+
+/* region [observe_player] */
+
+static int yx__obj_rival_on_step_observe_player(struct yx_obj_rival *rival) {
+    struct yx_obj_player *player = rival->blackboard->player;
+
+    if (YX_OBJ_RIVAL_STATE_PATROL == rival->attack_state) {
+        if (fabsf(rival->x - player->x) <= 250.0f && fabsf(rival->y - player->y) <= 250.0f) {
+            rival->attack_state = YX_OBJ_RIVAL_STATE_ATTACK;
+            yx_obj_alert_marker_create(rival->position, -30, -16);
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+/* endregion */
+
+/* region [patrol] */
+
+static void yx__obj_rival_on_state_patrol_enter(struct k_object *object) {
+
+}
+
+static void yx__obj_rival_on_state_patrol_update(struct k_object *object) {
+
+}
+
+/* endregion */
+
+/* region [attack] */
+
+static void yx__obj_rival_on_state_attack_enter(struct k_object *object) {
+
+}
+
+static void yx__obj_rival_on_state_attack_update(struct k_object *object) {
+
+}
+
+/* endregion */
+
+static void yx__obj_rival_on_step_attack(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+
+
+}
+
+/* endregion */
+
 int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival) {
 
     if (NULL == k_camera_add_follow_target(rival->object, &rival->x, &rival->y))
         return -1;
     if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_move))
         return -1;
-    if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_observe_player))
+    if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_attack))
         return -1;
 
     yx_state_machine_init(&rival->move_sm, rival->object);

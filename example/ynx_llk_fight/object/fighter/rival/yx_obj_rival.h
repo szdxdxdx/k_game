@@ -17,6 +17,11 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
 
 /* ------------------------------------------------------------------------ */
 
+enum yx_obj_rival_attack_state {
+    YX_OBJ_RIVAL_STATE_PATROL, /* 巡逻 */
+    YX_OBJ_RIVAL_STATE_ATTACK, /* 攻击 */
+};
+
 struct yx_obj_rival {
     struct k_object *object;
 
@@ -26,6 +31,7 @@ struct yx_obj_rival {
     int hp;
     struct k_collision_box *hp_collision_box;
 
+    int face; /* 朝向，-1 朝左，1 朝右 */
     struct yx_state_machine move_sm; /* 状态机，负责控制角色的移动和站立 */
     float change_move_state_timer;  /* 计时器，控制切换移动和站立状态 */
     float vx_movement;  /* 移动的速度 */
@@ -36,7 +42,7 @@ struct yx_obj_rival {
     float vx_knockback; /* 被子弹击中时，被临时赋予的击退速度 */
     float vy_knockback;
 
-    unsigned int is_alert; /* 是否察觉到玩家的存在，变得有攻击欲望 */
+    enum yx_obj_rival_attack_state attack_state;
 
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;

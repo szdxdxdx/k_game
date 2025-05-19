@@ -40,8 +40,8 @@ static int arena_room_on_create(void *param) {
 struct k_room *yx_room_1_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
-    config.room_w     = 640; // 1920;
-    config.room_h     = 480; // 1080;
+    config.room_w     = 1920;
+    config.room_h     = 1080;
     config.data_size  = sizeof(struct yx_room_1);
     config.on_create  = arena_room_on_create;
 

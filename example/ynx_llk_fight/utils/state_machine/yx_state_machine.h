@@ -22,4 +22,6 @@ void yx_state_machine_tick(struct yx_state_machine *sm);
 
 void yx_state_machine_change_state(struct yx_state_machine *sm, struct yx_state_machine_state *state);
 
+struct yx_state_machine_state *yx_state_machine_get_current_state(struct yx_state_machine *sm);
+
 #endif
