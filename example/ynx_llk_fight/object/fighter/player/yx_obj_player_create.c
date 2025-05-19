@@ -37,7 +37,7 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
     if (0 != yx__obj_player_on_create_add_debug(player))
         goto err;
 
-    player->weapon = yx_obj_weapon_apple_create();
+    player->weapon = yx_obj_player_weapon_apple_create();
 
     player->blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
     if (NULL == player->blackboard) {

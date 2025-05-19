@@ -20,20 +20,20 @@ static void yx__obj_player_on_step_change_face(struct yx_obj_player *player) {
 
 static void yx__obj_player_on_step_update_weapon(struct yx_obj_player *player) {
 
-    yx_obj_weapon_set_position(player->weapon, player->x, player->y, (int)player->y + 1);
+    yx_obj_player_weapon_set_position(player->weapon, player->x, player->y, (int)player->y + 1);
 
     float mouse_x = k_mouse_x();
     float mouse_y = k_mouse_y();
-    yx_obj_weapon_aim_at(player->weapon, mouse_x, mouse_y);
+    yx_obj_player_weapon_aim_at(player->weapon, mouse_x, mouse_y);
 
     if (k_mouse_button_down(K_BUTTON_LEFT)) {
-        yx_obj_weapon_on_key_down(player->weapon);
+        yx_obj_player_weapon_on_key_down(player->weapon);
     }
     if (k_mouse_button_held(K_BUTTON_LEFT)) {
-        yx_obj_weapon_on_key_held(player->weapon);
+        yx_obj_player_weapon_on_key_held(player->weapon);
     }
     if (k_mouse_button_up(K_BUTTON_LEFT)) {
-        yx_obj_weapon_on_key_up(player->weapon);
+        yx_obj_player_weapon_on_key_up(player->weapon);
     }
 }
 

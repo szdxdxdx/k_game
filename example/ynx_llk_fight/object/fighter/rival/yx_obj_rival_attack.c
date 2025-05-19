@@ -6,13 +6,16 @@
 #include "k_game.h"
 
 #include "config/yx_config_arena_blackboard.h"
+#include "config/yx_config_collision_group.h"
+#include "config/yx_config_z_index.h"
+
+#include "sprite/yx_spr.h"
+
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
 #include "object/alert_marker/yx_obj_alert_marker.h"
+
 #include "utils/yx_math.h"
-#include "config/yx_config_collision_group.h"
-#include "sprite/yx_spr.h"
-#include "config/yx_config_z_index.h"
 
 /* region [bullet_apple] */
 

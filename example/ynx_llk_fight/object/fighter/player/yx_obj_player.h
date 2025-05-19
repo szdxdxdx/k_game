@@ -34,7 +34,7 @@ struct yx_obj_player {
     struct k_sprite *spr_idle;
     struct k_sprite *spr_run;
 
-    struct yx_obj_weapon_i *weapon;
+    struct yx_obj_player_weapon *weapon;
 
     struct yx_config_arena_blackboard *blackboard;
 };

@@ -12,7 +12,7 @@
 #include "utils/yx_math.h"
 
 /* 被子弹击中时，创建一个受伤的文字粒子效果 */
-static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_rival *rival, struct yx_obj_bullet_on_hit_result *hit_result) {
+static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_rival *rival, struct yx_obj_player_bullet_on_hit_result *hit_result) {
     struct yx_float_vec2 v_knockback = {
             .x = hit_result->vx_knockback,
             .y = hit_result->vy_knockback
@@ -40,9 +40,9 @@ void yx__obj_rival_on_step_hit_bullet_collision(struct yx_obj_rival *rival) {
     if (NULL == bullet_box)
         return;
 
-    struct yx_obj_bullet_i *bullet = k_object_get_data(k_collision_box_get_object(bullet_box));
-    struct yx_obj_bullet_on_hit_result hit_result;
-    yx_obj_bullet_on_hit(bullet, &hit_result);
+    struct yx_obj_player_bullet *bullet = k_object_get_data(k_collision_box_get_object(bullet_box));
+    struct yx_obj_player_bullet_on_hit_result hit_result;
+    yx_obj_player_bullet_on_hit(bullet, &hit_result);
 
     yx__obj_rival_create_text_particle_on_hit(rival, &hit_result);
 

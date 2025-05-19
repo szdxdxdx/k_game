@@ -12,10 +12,12 @@
 #include "utils/yx_math.h"
 #include "config/yx_config_collision_group.h"
 
+/* region [player_weapon] */
+
 /* region [bullet_apple] */
 
-static void yx__obj_bullet_apple_on_hit(struct yx_obj_bullet_i *bullet, struct yx_obj_bullet_on_hit_result *get_result) {
-    struct yx_obj_bullet_apple *bullet_apple = (struct yx_obj_bullet_apple *)bullet;
+static void yx__obj_player_bullet_apple_on_hit(struct yx_obj_player_bullet *bullet, struct yx_obj_player_bullet_on_hit_result *get_result) {
+    struct yx_obj_player_bullet_apple *bullet_apple = (struct yx_obj_player_bullet_apple *)bullet;
 
     get_result->vx_knockback = bullet_apple->vx * 0.75f;
     get_result->vy_knockback = bullet_apple->vy * 0.75f;
@@ -30,12 +32,12 @@ static void yx__obj_bullet_apple_on_hit(struct yx_obj_bullet_i *bullet, struct y
     k_sprite_renderer_set_loop_callback(bullet_apple->spr_rdr, k_object_destroy);
 }
 
-static struct yx_obj_bullet_v_tbl yx__obj_bullet_apple_v_tbl = {
-    .on_hit = yx__obj_bullet_apple_on_hit
+static struct yx_obj_player_bullet_v_tbl yx__obj_bullet_apple_v_tbl = {
+    .on_hit = yx__obj_player_bullet_apple_on_hit
 };
 
-static void yx__obj_bullet_apple_on_step(struct k_object *object) {
-    struct yx_obj_bullet_apple *bullet_apple = k_object_get_data(object);
+static void yx__obj_player_bullet_apple_on_step(struct k_object *object) {
+    struct yx_obj_player_bullet_apple *bullet_apple = k_object_get_data(object);
 
     float dt = k_time_get_step_delta();
 
@@ -59,13 +61,13 @@ static void yx__obj_bullet_apple_on_step(struct k_object *object) {
     k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);
 }
 
-static struct yx_obj_bullet_apple *yx__obj_bullet_apple_create(struct yx_obj_weapon_apple *weapon_apple) {
+static struct yx_obj_player_bullet_apple *yx__obj_player_bullet_apple_create(struct yx_obj_player_weapon_apple *weapon_apple) {
 
-    struct k_object *object = k_object_create(sizeof(struct yx_obj_bullet_apple));
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_player_bullet_apple));
     if (NULL == object)
         goto err;
 
-    struct yx_obj_bullet_apple *bullet_apple = k_object_get_data(object);
+    struct yx_obj_player_bullet_apple *bullet_apple = k_object_get_data(object);
     bullet_apple->super.object = object;
     bullet_apple->super.v_tbl = &yx__obj_bullet_apple_v_tbl;
 
@@ -111,7 +113,7 @@ static struct yx_obj_bullet_apple *yx__obj_bullet_apple_create(struct yx_obj_wea
         k_sprite_renderer_rotate(bullet_apple->spr_rdr, angle);
     }
 
-    if (NULL == k_object_add_step_callback(object, yx__obj_bullet_apple_on_step))
+    if (NULL == k_object_add_step_callback(object, yx__obj_player_bullet_apple_on_step))
         goto err;
 
     return bullet_apple;
@@ -126,15 +128,15 @@ err:
 
 /* region [weapon_apple] */
 
-static void yx__obj_weapon_apple_fn_set_position(struct yx_obj_weapon_i *weapon, float x, float y, int z) {
-    struct yx_obj_weapon_apple *weapon_apple = (struct yx_obj_weapon_apple *)weapon;
+static void yx__obj_player_weapon_apple_fn_set_position(struct yx_obj_player_weapon *weapon, float x, float y, int z) {
+    struct yx_obj_player_weapon_apple *weapon_apple = (struct yx_obj_player_weapon_apple *)weapon;
     weapon_apple->x = x;
     weapon_apple->y = y;
     k_sprite_renderer_set_z_layer(weapon_apple->spr_rdr, z);
 }
 
-static void yx__obj_weapon_apple_fn_aim_at(struct yx_obj_weapon_i *weapon, float x, float y) {
-    struct yx_obj_weapon_apple *weapon_apple = (struct yx_obj_weapon_apple *)weapon;
+static void yx__obj_player_weapon_apple_fn_aim_at(struct yx_obj_player_weapon *weapon, float x, float y) {
+    struct yx_obj_player_weapon_apple *weapon_apple = (struct yx_obj_player_weapon_apple *)weapon;
     weapon_apple->aim_x = x;
     weapon_apple->aim_y = y;
 
@@ -153,10 +155,10 @@ static void yx__obj_weapon_apple_fn_aim_at(struct yx_obj_weapon_i *weapon, float
     }
 }
 
-static void yx__obj_weapon_apple_attack(struct yx_obj_weapon_apple *weapon_apple) {
+static void yx__obj_player_weapon_apple_attack(struct yx_obj_player_weapon_apple *weapon_apple) {
 
     if (weapon_apple->ammo > 0) {
-        yx__obj_bullet_apple_create(weapon_apple);
+        yx__obj_player_bullet_apple_create(weapon_apple);
         weapon_apple->attack_cd_timer = weapon_apple->attack_cd_time;
         weapon_apple->ammo -= 1;
 
@@ -167,34 +169,34 @@ static void yx__obj_weapon_apple_attack(struct yx_obj_weapon_apple *weapon_apple
     }
 }
 
-static void yx__obj_weapon_apple_on_key_down(struct yx_obj_weapon_i *weapon) {
-    struct yx_obj_weapon_apple *weapon_apple = (struct yx_obj_weapon_apple *)weapon;
+static void yx__obj_player_weapon_apple_on_key_down(struct yx_obj_player_weapon *weapon) {
+    struct yx_obj_player_weapon_apple *weapon_apple = (struct yx_obj_player_weapon_apple *)weapon;
 
-    yx__obj_weapon_apple_attack(weapon_apple);
+    yx__obj_player_weapon_apple_attack(weapon_apple);
 }
 
-static void yx__obj_weapon_apple_on_key_held(struct yx_obj_weapon_i *weapon) {
-    struct yx_obj_weapon_apple *weapon_apple = (struct yx_obj_weapon_apple *)weapon;
+static void yx__obj_player_weapon_apple_on_key_held(struct yx_obj_player_weapon *weapon) {
+    struct yx_obj_player_weapon_apple *weapon_apple = (struct yx_obj_player_weapon_apple *)weapon;
 
     if (0.0f == weapon_apple->attack_cd_timer) {
-        yx__obj_weapon_apple_attack(weapon_apple);
+        yx__obj_player_weapon_apple_attack(weapon_apple);
     }
 }
 
-static void yx__obj_weapon_apple_on_key_up(struct yx_obj_weapon_i *weapon) {
+static void yx__obj_player_weapon_apple_on_key_up(struct yx_obj_player_weapon *weapon) {
     (void)weapon;
 }
 
-static struct yx_obj_weapon_v_tbl yx__obj_weapon_apple_v_tbl = {
-    .fn_set_position = yx__obj_weapon_apple_fn_set_position,
-    .fn_aim_at   = yx__obj_weapon_apple_fn_aim_at,
-    .on_key_down = yx__obj_weapon_apple_on_key_down,
-    .on_key_held = yx__obj_weapon_apple_on_key_held,
-    .on_key_up   = yx__obj_weapon_apple_on_key_up,
+static struct yx_obj_player_weapon_v_tbl yx__obj_weapon_apple_v_tbl = {
+    .fn_set_position = yx__obj_player_weapon_apple_fn_set_position,
+    .fn_aim_at       = yx__obj_player_weapon_apple_fn_aim_at,
+    .on_key_down     = yx__obj_player_weapon_apple_on_key_down,
+    .on_key_held     = yx__obj_player_weapon_apple_on_key_held,
+    .on_key_up       = yx__obj_player_weapon_apple_on_key_up,
 };
 
-static void yx__obj_weapon_apple_on_step(struct k_object *object) {
-    struct yx_obj_weapon_apple *weapon_apple = k_object_get_data(object);
+static void yx__obj_player_weapon_apple_on_step(struct k_object *object) {
+    struct yx_obj_player_weapon_apple *weapon_apple = k_object_get_data(object);
 
     float dt = k_time_get_step_delta();
 
@@ -221,20 +223,20 @@ static void yx__obj_weapon_apple_on_step(struct k_object *object) {
     }
 }
 
-static void yx__obj_weapon_apple_on_draw(struct k_object *object) {
-    struct yx_obj_weapon_apple *weapon_apple = k_object_get_data(object);
+static void yx__obj_player_weapon_apple_on_draw(struct k_object *object) {
+    struct yx_obj_player_weapon_apple *weapon_apple = k_object_get_data(object);
 
     k_canvas_set_draw_color(0xffffffff);
     k_canvas_ui_printf(NULL, 0, 0, "%zu", weapon_apple->ammo);
 }
 
-struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void) {
+struct yx_obj_player_weapon *yx_obj_player_weapon_apple_create(void) {
 
-    struct k_object *object = k_object_create(sizeof(struct yx_obj_weapon_apple));
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_player_weapon_apple));
     if (NULL == object)
         return NULL;
 
-    struct yx_obj_weapon_apple *weapon_apple = k_object_get_data(object);
+    struct yx_obj_player_weapon_apple *weapon_apple = k_object_get_data(object);
 
     weapon_apple->super.object = object;
     weapon_apple->super.v_tbl = &yx__obj_weapon_apple_v_tbl;
@@ -263,10 +265,10 @@ struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void) {
             goto err;
     }
 
-    if (NULL == k_object_add_step_callback(object, yx__obj_weapon_apple_on_step))
+    if (NULL == k_object_add_step_callback(object, yx__obj_player_weapon_apple_on_step))
         goto err;
 
-    k_object_add_draw_callback(object, yx__obj_weapon_apple_on_draw, 0, 0);
+    k_object_add_draw_callback(object, yx__obj_player_weapon_apple_on_draw, 0, 0);
 
     return &weapon_apple->super;
 
@@ -275,5 +277,7 @@ err:
     k_log_error("failed to create object: weapon apple");
     return NULL;
 }
+
+/* endregion */
 
 /* endregion */
