@@ -1,6 +1,7 @@
-#define K_LOG_TAG "yx:room:title"
 
 #include <limits.h>
+
+#define K_LOG_TAG "yx:room:title"
 #include "k_log.h"
 
 #include "k_game.h"
@@ -8,11 +9,12 @@
 #include "./yx_room_title.h"
 
 #include "../llk_ui/llk_ui.h"
+#include "room/room_1/yx_room_1.h"
 
 /* region [goto_room_arena] */
 
 static void yx__room_title_goto_room_arena(void) {
-    k_room_nav_push(k_room_find("arena"));
+    k_room_nav_push(yx_room_1);
 }
 
 /* endregion */
@@ -90,6 +92,8 @@ static int yx__room_title_on_create(void *param) {
     return 0;
 }
 
+struct k_room *yx_room_title;
+
 struct k_room *yx_room_title_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
@@ -100,6 +104,8 @@ struct k_room *yx_room_title_create(void) {
     struct k_room *room = k_room_create(&config, NULL);
 
     k_room_set_name(room, "title");
+
+    yx_room_title = room;
 
     return room;
 }

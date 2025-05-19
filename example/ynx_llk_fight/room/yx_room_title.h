@@ -3,8 +3,10 @@
 
 #include "k_game/core/k_game_fwd.h"
 
-struct yx_room_title {
+extern struct k_room *yx_room_title;
 
+struct yx_room_title {
+    int _;
 };
 
 struct k_room *yx_room_title_create(void);

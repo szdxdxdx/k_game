@@ -18,13 +18,14 @@ static int on_game_start(void) {
     {
         // struct k_room *room_empty = yx_room_empty_create();
         // struct k_room *room_arena = yx_room_arena_create();
-        // struct k_room *room_title = yx_room_title_create();
+        if (NULL == yx_room_title_create())
+            return -1;
 
         if (NULL == yx_room_1_create())
             return -1;
     }
 
-    k_room_nav_push(yx__room_1);
+    k_room_nav_push(yx_room_title);
     return 0;
 }
 

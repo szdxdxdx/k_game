@@ -8,7 +8,7 @@
 #include "config/yx_config_collision_group.h"
 #include "room/room_1/yx_room_1.h"
 
-struct k_room *yx__room_1 = NULL;
+struct k_room *yx_room_1 = NULL;
 
 static int arena_room_on_create(void *param) {
     (void)param;
@@ -53,7 +53,7 @@ struct k_room *yx_room_1_create(void) {
 
     k_room_set_name(room, "room_1");
 
-    yx__room_1 = room;
+    yx_room_1 = room;
     return room;
 
 err:
