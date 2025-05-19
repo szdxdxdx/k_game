@@ -2,6 +2,7 @@
 #include "k_webui.h"
 
 #include "k_str_buf.h"
+#include "config/yx_config_collision_group.h"
 
 /* region [webui] */
 
@@ -56,11 +57,50 @@ static void webui_add_slider_bind_view_size(void) {
 
 /* endregion */
 
+/* region [碰撞组] */
+
+struct enable_collision_group {
+    int group_id;
+    int enable;
+};
+
+static struct enable_collision_group enable_collision_group_player_hp     = { .group_id=YX_CONFIG_COLLISION_GROUP_PLAYER_HP     , .enable=0 };
+static struct enable_collision_group enable_collision_group_rival_hp      = { .group_id=YX_CONFIG_COLLISION_GROUP_RIVAL_HP      , .enable=0 };
+static struct enable_collision_group enable_collision_group_player_bullet = { .group_id=YX_CONFIG_COLLISION_GROUP_PLAYER_BULLET , .enable=0 };
+static struct enable_collision_group enable_collision_group_rival_bullet  = { .group_id=YX_CONFIG_COLLISION_GROUP_RIVAL_BULLET  , .enable=0 };
+
+static int webui_checkbox_enable_collision_group_on_change(void *data, int checked) {
+    struct enable_collision_group *enable = data;
+    enable->enable = checked;
+    k_collision_set_debug(enable->group_id, enable->enable);
+    return 0;
+}
+
+static int webui_checkbox_enable_collision_group_on_read(void *data, int *result) {
+    struct enable_collision_group *enable = data;
+    *result = enable->enable;
+    return 0;
+}
+
+static void webui_add_checkbox_bind_collision_group(void) {
+
+    struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_CONFIG_INIT;
+    checkbox.on_change = webui_checkbox_enable_collision_group_on_change;
+    checkbox.on_read   = webui_checkbox_enable_collision_group_on_read;
+    k_webui_bind_checkbox(WEBUI_GROUP, "【碰撞盒】敌人", &enable_collision_group_rival_hp, &checkbox);
+    k_webui_bind_checkbox(WEBUI_GROUP, "【碰撞盒】玩家", &enable_collision_group_player_hp, &checkbox);
+    k_webui_bind_checkbox(WEBUI_GROUP, "【碰撞盒】敌人子弹", &enable_collision_group_rival_bullet, &checkbox);
+    k_webui_bind_checkbox(WEBUI_GROUP, "【碰撞盒】玩家子弹", &enable_collision_group_player_bullet, &checkbox);
+}
+
+/* endregion */
+
 /* endregion */
 
 int yx__room_1_on_create_init_webui(void) {
     webui_add_text_bind_mouse_xy();
     webui_add_slider_bind_view_size();
+    webui_add_checkbox_bind_collision_group();
 
     return 0;
 }
