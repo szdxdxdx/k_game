@@ -38,6 +38,7 @@ static void yx__obj_player_bullet_apple_on_hit(struct yx_obj_player_bullet *bull
     k_sprite_renderer_set_loop_callback(bullet_apple->spr_rdr, k_object_destroy);
 
     k_object_destroy(bullet_apple->object_shadow);
+    bullet_apple->object_shadow = NULL;
 }
 
 static struct yx_obj_player_bullet_v_tbl yx__obj_player_bullet_apple_v_tbl = {
@@ -61,6 +62,7 @@ static void yx__obj_player_bullet_apple_on_step(struct k_object *object) {
     };
     if ( ! yx_point_in_rect(bullet_apple->x, bullet_apple->y, &room_rect)) {
         k_object_destroy(bullet_apple->object_shadow);
+        bullet_apple->object_shadow = NULL;
         k_object_destroy(object);
         return;
     }
@@ -351,6 +353,7 @@ static void yx__obj_rival_bullet_apple_on_hit(struct yx_obj_rival_bullet *bullet
     k_sprite_renderer_set_loop_callback(bullet_apple->spr_rdr, k_object_destroy);
 
     k_object_destroy(bullet_apple->object_shadow);
+    bullet_apple->object_shadow = NULL;
 }
 
 static struct yx_obj_rival_bullet_v_tbl yx__obj_rival_bullet_apple_v_tbl = {
@@ -374,6 +377,7 @@ static void yx__obj_rival_bullet_apple_on_step(struct k_object *object) {
     };
     if ( ! yx_point_in_rect(bullet_apple->x, bullet_apple->y, &room_rect)) {
         k_object_destroy(bullet_apple->object_shadow);
+        bullet_apple->object_shadow = NULL;
         k_object_destroy(object);
         return;
     }

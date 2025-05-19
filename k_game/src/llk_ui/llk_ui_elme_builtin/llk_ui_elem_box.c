@@ -93,6 +93,11 @@ static void llk__ui_elem_box_dispatch_event(struct llk_ui_elem *elem) {
 static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     struct llk_ui_elem_box *box = (struct llk_ui_elem_box *)elem;
 
+    if (NULL != box->fn_on_draw) {
+        box->fn_on_draw(elem);
+        return;
+    }
+
     int pressed = llk_ui_elem_is_pressed(elem);
     int hovered = llk_ui_elem_is_hovered(elem);
 
@@ -124,11 +129,6 @@ static void llk__ui_elem_box_draw(struct llk_ui_elem *elem) {
     if (0x00000000 != border_color) {
         k_canvas_set_draw_color(border_color);
         k_canvas_ui_draw_rect(elem->x, elem->y, elem->w.computed_val, elem->h.computed_val);
-    }
-
-    if (NULL != box->fn_on_draw) {
-        box->fn_on_draw(elem);
-        return;
     }
 }
 

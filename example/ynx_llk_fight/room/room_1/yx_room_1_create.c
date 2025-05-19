@@ -1,5 +1,7 @@
 
 #define K_LOG_TAG "yx:room:room_1"
+
+#include <limits.h>
 #include "k_log.h"
 
 #include "k_game.h"
@@ -7,10 +9,11 @@
 #include "config/yx_config_arena_blackboard.h"
 #include "config/yx_config_collision_group.h"
 #include "room/room_1/yx_room_1.h"
+#include "sound/yx_sound.h"
 
 struct k_room *yx_room_1 = NULL;
 
-static int arena_room_on_create(void *param) {
+static int yx__room_1_on_create(void *param) {
     (void)param;
 
     if (0 != yx__room_1_on_create_set_bkgd())
@@ -39,13 +42,18 @@ static int arena_room_on_create(void *param) {
     return 0;
 }
 
+static void yx__room_1_on_enter(void) {
+    k_sound_bgm_loop(yx_bgm_music, INT_MAX);
+}
+
 struct k_room *yx_room_1_create(void) {
 
     struct k_room_config config = K_ROOM_CONFIG_INIT;
     config.room_w     = 640 * 2.0f;
     config.room_h     = 480 * 2.0f;
     config.data_size  = sizeof(struct yx_room_1);
-    config.on_create  = arena_room_on_create;
+    config.on_create  = yx__room_1_on_create;
+    config.on_enter   = yx__room_1_on_enter;
 
     struct k_room *room = k_room_create(&config, NULL);
     if (NULL == room)

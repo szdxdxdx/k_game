@@ -8,18 +8,52 @@
 
 #include "./yx_room_title.h"
 
-#include "../llk_ui/llk_ui.h"
+#include "llk_ui.h"
+
+#include "image/yx_image.h"
+#include "sound/yx_sound.h"
 #include "room/room_1/yx_room_1.h"
 
-/* region [goto_room_arena] */
+/* region [ui] */
+
+/* region [开始游戏的按钮] */
+
+static void yx__room_title_ui_on_draw_button(struct llk_ui_elem *elem) {
+
+    int is_hovered = llk_ui_elem_is_hovered(elem);
+    int is_pressed = llk_ui_elem_is_pressed(elem);
+    float x, y, w, h;
+    llk_ui_elem_get_rect(elem, &x, &y, &w, &h);
+
+    if (is_pressed) {
+        k_canvas_ui_draw_image(img_ui_start_pushed, NULL, x, y, NULL);
+    } else if (is_hovered) {
+        k_canvas_ui_draw_image(img_ui_start_hovered, NULL, x, y, NULL);
+    } else {
+        k_canvas_ui_draw_image(img_ui_start_idle, NULL, x, y, NULL);
+    }
+}
+
+static int lock = 0;
+
+static void yx__room_title_on_alarm_goto_next_room(void *data, int timeout_diff) {
+    k_room_nav_push(yx_room_1);
+    lock = 0;
+}
 
 static void yx__room_title_goto_room_arena(void) {
-    k_room_nav_push(yx_room_1);
+
+    k_sound_sfx_play(yx_sfx_click);
+
+    if (lock)
+        return;
+    else
+        lock = 1;
+
+    k_room_add_alarm_callback(NULL, yx__room_title_on_alarm_goto_next_room, 800);
 }
 
 /* endregion */
-
-/* region [ui] */
 
 static struct llk_ui_context *ui;
 
@@ -40,6 +74,7 @@ static void yx__room_title_build_ui(void) {
     }
 
     llk_ui_register_callback(ui, "goto_room_1", yx__room_title_ui_on_click_goto_room_arena);
+    llk_ui_register_callback(ui, "ui_draw_start_game_button", yx__room_title_ui_on_draw_button);
 
     struct llk_ui_elem *root = llk_ui_get_root(ui);
     struct llk_ui_elem *xml = llk_ui_build_elem_from_xml_file(ui, "demo_1/ui/ui_title.xml");
@@ -49,7 +84,6 @@ static void yx__room_title_build_ui(void) {
     }
 
     llk_ui_elem_append_child(root, xml);
-
 
     return;
 
