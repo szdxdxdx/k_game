@@ -21,13 +21,15 @@ int k_webui_init(void) {
 
     webui_set_size(k__webui.window, 500, 640);
     webui_set_position(k__webui.window, 10, 10);
-    r = webui_set_root_folder(k__webui.window, "./k_webui");
-    k_log_info("webui_set_root_folder: %d", r);
+    webui_set_root_folder(k__webui.window, "./k_webui");
 
     k__webui_binding_init();
 
     r = webui_show(k__webui.window, "./index.html");
-    k_log_info("webui_show: %d", r);
+    if ( ! r) {
+        k_log_error("failed to show webui window. unknown error");
+        return -1;
+    }
 
     k__webui.is_inited = 1;
 }

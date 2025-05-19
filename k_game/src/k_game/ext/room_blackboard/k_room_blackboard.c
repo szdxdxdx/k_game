@@ -12,7 +12,7 @@
 static struct k_component_type *k__room_blackboard_component_type;
 
 struct k_room_blackboard {
-    struct k_str_map map
+    struct k_str_map map;
 };
 
 void *k_room_blackboard_add(const char *key, size_t value_size) {

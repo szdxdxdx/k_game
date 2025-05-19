@@ -33,6 +33,8 @@ static int on_game_start(void) {
 
 int yx_game_run(void) {
 
+    // k_webui_init();
+
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_w = 768;
     config.window_h = 576;
