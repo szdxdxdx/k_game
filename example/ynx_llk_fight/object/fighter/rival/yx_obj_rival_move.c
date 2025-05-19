@@ -39,10 +39,10 @@ static void yx__obj_rival_on_state_idle_enter(struct k_object *object) {
 
     switch (rival->attack_state) {
         case YX_OBJ_RIVAL_STATE_PATROL:
-            rival->change_move_state_timer = yx_rand(2.0f, 4.0f);
+            rival->change_move_state_timer = yx_rand(0.0f, 4.0f);
             break;
         case YX_OBJ_RIVAL_STATE_ATTACK:
-            rival->change_move_state_timer = yx_rand(1.0f, 2.5f);
+            rival->change_move_state_timer = yx_rand(0.0f, 2.5f);
             break;
         default:
             assert(0);
@@ -95,8 +95,8 @@ try_again:
     {
         /* 函数在人物周围（大于 r1 且 小于 r2 的圆环范围内）取一个随机点 */
 
-        float r1 = 160.0f;
-        float r2 = 240.0f;
+        float r1 = 200.0f;
+        float r2 = 600.0f;
         float theta = yx_rand(0.0f, 2.0f * 3.1415926f);
         float radius = sqrtf(yx_rand(0.0f, 1.0f) * (r2 * r2 - r1 * r1) + r1 * r1);
         target_position_x = rival->x + radius * cosf(theta);
@@ -242,10 +242,6 @@ static struct yx_state_machine_state YX_STATE_ATTACK = {
     .on_leave  = NULL,
 };
 
-/* region [observe_player] */
-
-/* endregion */
-
 /* region [patrol] */
 
 static void yx__obj_rival_on_state_patrol_enter(struct k_object *object) {
@@ -283,6 +279,8 @@ static void yx__obj_rival_on_state_attack_update(struct k_object *object) {
         yx_state_machine_change_state(&rival->attack_sm, &YX_STATE_PATROL);
         return;
     }
+
+
 }
 
 /* endregion */

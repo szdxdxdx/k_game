@@ -11,6 +11,7 @@
 #include "object/fighter/rival/yx_obj_rival.h"
 
 #include "room/room_1/yx_room_1.h"
+#include "utils/yx_math.h"
 
 int yx__room_1_on_create_place_obj(void) {
 
@@ -26,10 +27,18 @@ int yx__room_1_on_create_place_obj(void) {
     }
 
     {
-        struct yx_obj_rival_config config;
-        config.x = 400.0f;
-        config.y = 400.0f;
-        yx_obj_rival_create(&config);
+        float x_min = 0.0f;
+        float y_min = 0.0f;
+        float x_max = k_room_get_w();
+        float y_max = k_room_get_h();
+
+        int i = 0;
+        for (; i < 6; ++i) {
+            struct yx_obj_rival_config config;
+            config.x = yx_rand(x_min, x_max);
+            config.y = yx_rand(y_min, y_max);
+            yx_obj_rival_create(&config);
+        }
     }
 
     return 0;

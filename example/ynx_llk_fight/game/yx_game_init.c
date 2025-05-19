@@ -31,8 +31,8 @@ static int on_game_start(void) {
 int yx_game_run(void) {
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
-    config.window_w = 640;
-    config.window_h = 480;
+    config.window_w = 768;
+    config.window_h = 576;
     config.window_title = "ynx! llk! fight!";
     config.on_start = on_game_start;
 
