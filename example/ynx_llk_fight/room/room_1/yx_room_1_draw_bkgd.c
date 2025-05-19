@@ -43,12 +43,15 @@ static void yx__room_1_draw_background(void *data) {
     k_canvas_set_draw_color(0x00000000);
     k_canvas_ui_clear();
 
-    k_canvas_room_draw_image(img_bkgd, NULL, 0, 0, NULL);
-
-    // k_canvas_set_draw_color(0x1e1e1eff);
-    // k_canvas_room_clear();
-
-    // yx__room_1_draw_grid();
+    struct yx_room_1 *room_1 = k_room_get_data();
+    if (room_1->draw_background) {
+        k_canvas_room_draw_image(img_bkgd, NULL, 0, 0, NULL);
+    }
+    else {
+        k_canvas_set_draw_color(0x1e1e1eff);
+        k_canvas_room_clear();
+        yx__room_1_draw_grid();
+    }
 }
 
 int yx__room_1_on_create_set_bkgd(void) {

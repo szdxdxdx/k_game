@@ -5,6 +5,7 @@
 
 struct yx_room_1 {
     struct yx_obj_player *player;
+    int draw_background;
 };
 
 struct k_room *yx_room_1_create(void);

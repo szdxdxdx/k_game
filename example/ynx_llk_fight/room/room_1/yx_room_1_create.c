@@ -16,6 +16,9 @@ struct k_room *yx_room_1 = NULL;
 static int yx__room_1_on_create(void *param) {
     (void)param;
 
+    struct yx_room_1 *room_1 = k_room_get_data();
+    room_1->draw_background = 1;
+
     if (0 != yx__room_1_on_create_set_bkgd())
         return -1;
     if (0 != k_room_add_blackboard())

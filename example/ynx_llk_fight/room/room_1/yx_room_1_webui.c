@@ -4,6 +4,8 @@
 #include "k_str_buf.h"
 #include "config/yx_config_collision_group.h"
 
+#include "yx_room_1.h"
+
 /* region [webui] */
 
 #define WEBUI_GROUP "【示例 Demo】"
@@ -95,12 +97,23 @@ static void webui_add_checkbox_bind_collision_group(void) {
 
 /* endregion */
 
+/* region [绘制背景] */
+
+static void webui_add_checkbox_bind_draw_background(void) {
+    struct k_webui_checkbox_config checkbox = K_WEBUI_CHECKBOX_CONFIG_INIT;
+    struct yx_room_1 *room_1 = k_room_get_data();
+    k_webui_bind_checkbox(WEBUI_GROUP, "绘制房间背景", &room_1->draw_background, &checkbox);
+}
+
+/* endregion */
+
 /* endregion */
 
 int yx__room_1_on_create_init_webui(void) {
     webui_add_text_bind_mouse_xy();
     webui_add_slider_bind_view_size();
     webui_add_checkbox_bind_collision_group();
+    webui_add_checkbox_bind_draw_background();
 
     return 0;
 }

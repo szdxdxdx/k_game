@@ -21,8 +21,7 @@ int yx__room_1_on_create_place_obj(void) {
         struct yx_obj_player_config config;
         config.x = 100.0f;
         config.y = 100.0f;
-        room_1->player = yx_obj_player_create(&config);
-        if (NULL == room_1->player)
+        if (NULL == yx_obj_player_create(&config))
             return -1;
     }
 
@@ -37,7 +36,8 @@ int yx__room_1_on_create_place_obj(void) {
             struct yx_obj_rival_config config;
             config.x = yx_rand(x_min, x_max);
             config.y = yx_rand(y_min, y_max);
-            yx_obj_rival_create(&config);
+            if (NULL == yx_obj_rival_create(&config))
+                return -1;
         }
     }
 
