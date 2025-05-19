@@ -8,6 +8,8 @@
 #include "room/yx_room_title.h"
 #include "room/room_1/yx_room_1.h"
 #include "image/yx_image.h"
+#include "k_webui.h"
+#include "room/yx_room_empty.h"
 
 static int on_game_start(void) {
 

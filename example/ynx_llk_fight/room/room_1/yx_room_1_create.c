@@ -32,6 +32,8 @@ static int yx__room_1_on_create(void *param) {
         return -1;
     if (0 != yx__room_1_on_create_place_obj())
         return -1;
+   // if (0 != yx__room_1_on_create_init_webui())
+   //     return -1;
 
     /* tmp */
     k_collision_set_debug(YX_CONFIG_COLLISION_GROUP_RIVAL_HP, 1);

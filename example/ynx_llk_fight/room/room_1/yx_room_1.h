@@ -13,6 +13,8 @@ int yx__room_1_on_create_set_bkgd(void);
 
 int yx__room_1_on_create_place_obj(void);
 
+int yx__room_1_on_create_init_webui(void);
+
 extern struct k_room *yx_room_1;
 
 #endif

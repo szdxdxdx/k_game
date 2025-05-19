@@ -15,14 +15,19 @@ int k_webui_init(void) {
     }
 
     k__webui.window = webui_new_window();
+    k_log_info("webui window id: %zu", k__webui.window);
+
+    int r;
 
     webui_set_size(k__webui.window, 500, 640);
     webui_set_position(k__webui.window, 10, 10);
-    webui_set_root_folder(k__webui.window, "./k_webui");
+    r = webui_set_root_folder(k__webui.window, "./k_webui");
+    k_log_info("webui_set_root_folder: %d", r);
 
     k__webui_binding_init();
 
-    webui_show(k__webui.window, "./index.html");
+    r = webui_show(k__webui.window, "./index.html");
+    k_log_info("webui_show: %d", r);
 
     k__webui.is_inited = 1;
 }
