@@ -121,7 +121,8 @@ try_again:
         /* 若正在发现了玩家，则不要跑得离玩家太远，且与玩家保持一定距离 */
 
         if (rival->attack_state == YX_OBJ_RIVAL_STATE_ATTACK) {
-            float len = yx_float_vec2_length(yx_float_vec2_new(target_position_x - rival->x, target_position_y - rival->y));
+            struct yx_obj_player *player = rival->blackboard->player;
+            float len = yx_float_vec2_length(yx_float_vec2_new(target_position_x - player->x, target_position_y - player->y));
             if (len < YX__OBJ_RIVAL_AGGRO_RADIUS / 2.0f || YX__OBJ_RIVAL_LOSE_TARGET_RADIUS < len) {
                 goto try_again;
             }

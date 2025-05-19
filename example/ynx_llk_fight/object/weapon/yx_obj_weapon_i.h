@@ -73,4 +73,6 @@ static inline void yx_obj_bullet_on_hit(struct yx_obj_bullet_i *bullet, struct y
     bullet->v_tbl->on_hit(bullet, get_result);
 }
 
+/* ------------------------------------------------------------------------ */
+
 #endif

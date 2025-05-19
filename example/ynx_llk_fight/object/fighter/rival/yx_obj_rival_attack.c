@@ -16,15 +16,7 @@
 
 /* region [bullet_apple] */
 
-struct yx_obj_rival_bullet_apple {
-    float x;
-    float y;
-    float vx;
-    float vy;
-    float rotation_speed;
-    struct k_sprite_renderer *spr_rdr;
-    struct k_collision_box *hit_box;
-};
+
 
 static void yx__obj_rival_bullet_apple_on_step(struct k_object *object) {
     struct yx_obj_rival_bullet_apple *bullet_apple = k_object_get_data(object);

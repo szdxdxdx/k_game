@@ -61,8 +61,8 @@ struct yx_obj_rival {
     /* ------------------------------------------------------------------------ */
 };
 
-#define YX__OBJ_RIVAL_AGGRO_RADIUS       500.0f
-#define YX__OBJ_RIVAL_LOSE_TARGET_RADIUS 850.0f
+#define YX__OBJ_RIVAL_AGGRO_RADIUS       500.0f /* 与玩家之间距离小于该值时进入攻击状态 */
+#define YX__OBJ_RIVAL_LOSE_TARGET_RADIUS 850.0f /* 与玩家之间距离大于该值时进入巡逻状态 */
 
 int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival);
 
@@ -75,5 +75,37 @@ int yx__obj_rival_on_create_add_draw(struct yx_obj_rival *rival);
 int yx__obj_rival_on_create_add_debug(struct yx_obj_rival *rival);
 
 int yx__obj_rival_on_create_add_attack(struct yx_obj_rival *rival);
+
+/* ------------------------------------------------------------------------ */
+
+struct yx_obj_rival_weapon_apple {
+
+    float x;
+    float y;
+
+    float aim_x;
+    float aim_y;
+
+    float attack_cd_time;
+    float attack_cd_timer;
+
+    size_t ammo;
+    float ammo_cd_time;
+    float ammo_timer;
+
+    struct k_sprite_renderer *spr_rdr;
+};
+
+struct yx_obj_weapon_i *yx_obj_weapon_apple_create(void);
+
+struct yx_obj_rival_bullet_apple {
+    float x;
+    float y;
+    float vx;
+    float vy;
+    float rotation_speed;
+    struct k_sprite_renderer *spr_rdr;
+    struct k_collision_box *hit_box;
+};
 
 #endif
