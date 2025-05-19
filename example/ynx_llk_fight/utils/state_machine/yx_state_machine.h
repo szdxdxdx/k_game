@@ -16,7 +16,7 @@ struct yx_state_machine {
     int change_state;
 };
 
-void yx_state_machine_init(struct yx_state_machine *sm, struct k_object *object);
+void yx_state_machine_init(struct k_object *object, struct yx_state_machine *sm);
 
 void yx_state_machine_tick(struct yx_state_machine *sm);
 

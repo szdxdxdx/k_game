@@ -4,6 +4,7 @@
 #include "k_game.h"
 
 #include "object/weapon/yx_obj_weapon_i.h"
+#include "utils/state_machine/yx_state_machine.h"
 
 struct yx_obj_player_config {
     float x;
@@ -23,7 +24,7 @@ struct yx_obj_player {
     int hp;
     struct k_collision_box *hp_collision_box;
 
-    struct k_state_machine *movement_sm;
+    struct yx_state_machine movement_sm;
     enum k_keyboard_key key_up;
     enum k_keyboard_key key_left;
     enum k_keyboard_key key_down;

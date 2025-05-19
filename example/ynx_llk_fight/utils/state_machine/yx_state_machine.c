@@ -3,7 +3,7 @@
 
 #include "yx_state_machine.h"
 
-void yx_state_machine_init(struct yx_state_machine *sm, struct k_object *object) {
+void yx_state_machine_init(struct k_object *object, struct yx_state_machine *sm) {
     sm->object       = object;
     sm->curr_state   = NULL;
     sm->next_state   = NULL;

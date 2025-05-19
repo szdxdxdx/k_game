@@ -37,11 +37,11 @@ static void yx__obj_player_on_step_update_weapon(struct yx_obj_player *player) {
     }
 }
 
-/* region [state] */
+/* region [movement_sm] */
 
 static void yx__obj_player_on_idle_state_enter(struct k_object *object);
 static void yx__obj_player_on_idle_state_step(struct k_object *object);
-static struct k_state_machine_state STATE_IDLE = {
+static struct yx_state_machine_state STATE_IDLE = {
     yx__obj_player_on_idle_state_enter,
     yx__obj_player_on_idle_state_step,
     NULL
@@ -49,7 +49,7 @@ static struct k_state_machine_state STATE_IDLE = {
 
 static void yx__obj_player_on_running_state_enter(struct k_object *object);
 static void yx__obj_player_on_running_state_step(struct k_object *object);
-static struct k_state_machine_state STATE_RUNNING = {
+static struct yx_state_machine_state STATE_RUNNING = {
     yx__obj_player_on_running_state_enter,
     yx__obj_player_on_running_state_step,
     NULL
@@ -65,15 +65,12 @@ static void yx__obj_player_on_idle_state_enter(struct k_object *object) {
 static void yx__obj_player_on_idle_state_step(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
-    yx__obj_player_on_step_change_face(player);
-    yx__obj_player_on_step_update_weapon(player);
-
     if (k_key_held(player->key_up)
      || k_key_held(player->key_left)
      || k_key_held(player->key_down)
      || k_key_held(player->key_right)
     ) {
-        k_state_machine_change_state(player->movement_sm, &STATE_RUNNING);
+        yx_state_machine_change_state(&player->movement_sm, &STATE_RUNNING);
     }
 }
 
@@ -125,11 +122,8 @@ static void yx__obj_player_on_running_state_step(struct k_object *object) {
         k_sprite_renderer_set_z_layer(player->spr_rdr, (int)player->y);
     }
 
-    yx__obj_player_on_step_change_face(player);
-    yx__obj_player_on_step_update_weapon(player);
-
     if (0.0f == dx && 0.0f == dy) {
-        k_state_machine_change_state(player->movement_sm, &STATE_IDLE);
+        yx_state_machine_change_state(&player->movement_sm, &STATE_IDLE);
     }
 }
 
@@ -137,15 +131,24 @@ static void yx__obj_player_on_running_state_step(struct k_object *object) {
 
 /* endregion */
 
+static void yx__obj_player_on_step_resolve_movement(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    yx_state_machine_tick(&player->movement_sm);
+
+    yx__obj_player_on_step_change_face(player);
+    yx__obj_player_on_step_update_weapon(player);
+}
+
 int yx__obj_player_on_create_add_movement(struct yx_obj_player *player) {
 
     {
-        player->movement_sm = k_object_add_state_machine(player->object);
-        if (NULL == player->movement_sm)
-            return -1;
-
-        k_state_machine_change_state(player->movement_sm, &STATE_IDLE);
+        yx_state_machine_init(player->object, &player->movement_sm);
+        yx_state_machine_change_state(&player->movement_sm, &STATE_IDLE);
     }
+
+    if (NULL == k_object_add_step_callback(player->object, yx__obj_player_on_step_resolve_movement))
+        return -1;
 
     {
         struct k_camera_target *target = k_camera_add_follow_target(player->object, &player->x, &player->y);

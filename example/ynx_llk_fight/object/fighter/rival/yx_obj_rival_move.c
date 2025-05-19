@@ -249,7 +249,7 @@ int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival) {
     if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_move))
         return -1;
 
-    yx_state_machine_init(&rival->move_sm, rival->object);
+    yx_state_machine_init(rival->object, &rival->move_sm);
     yx_state_machine_change_state(&rival->move_sm, &YX_STATE_IDLE);
 
     return 0;

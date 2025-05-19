@@ -110,7 +110,7 @@ int yx__obj_rival_on_create_add_attack(struct yx_obj_rival *rival) {
     if (NULL == rival->weapon)
         return -1;
 
-    yx_state_machine_init(&rival->attack_sm, rival->object);
+    yx_state_machine_init(rival->object, &rival->attack_sm);
     yx_state_machine_change_state(&rival->attack_sm, &YX_STATE_PATROL);
 
     return 0;
