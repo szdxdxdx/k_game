@@ -11,6 +11,7 @@
 #include "config/yx_config_z_index.h"
 #include "utils/yx_math.h"
 #include "config/yx_config_collision_group.h"
+#include "sound/yx_sound.h"
 
 /* region [player_weapon] */
 
@@ -179,6 +180,8 @@ static void yx__obj_player_weapon_apple_attack(struct yx_obj_player_weapon_apple
         yx__obj_player_bullet_apple_create(weapon_apple);
         weapon_apple->attack_cd_timer = weapon_apple->attack_cd_time;
         weapon_apple->ammo -= 1;
+
+        k_sound_sfx_play(yx_sfx_fire);
 
         if (0 == weapon_apple->ammo) {
             k_sprite_renderer_scale_x(weapon_apple->spr_rdr, 0.0f);
@@ -462,6 +465,8 @@ static void yx__obj_rival_weapon_apple_attack(struct yx_obj_rival_weapon *weapon
 
     yx__obj_rival_bullet_apple_create(weapon_apple);
     weapon_apple->attack_cd_timer = weapon_apple->attack_cd_time;
+
+    k_sound_sfx_play(yx_sfx_fire);
 }
 
 static struct yx_obj_rival_weapon_v_tbl yx__obj_rival_weapon_apple_v_tbl = {
