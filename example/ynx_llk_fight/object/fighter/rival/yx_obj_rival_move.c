@@ -223,6 +223,9 @@ static void yx__obj_rival_on_step_resolve_movement(struct yx_obj_rival *rival) {
 
     rival->x = rival->x + vx * dt; /* 移动对象 */
     rival->y = rival->y + vy * dt;
+    k_sprite_renderer_set_z_layer(rival->spr_rdr, (int)rival->y);
+
+    yx_obj_rival_weapon_set_position(rival->weapon, rival->x, rival->y, (int)rival->y + 1); /* 移动武器 */
 }
 
 static void yx__obj_rival_on_step_move(struct k_object *object) {

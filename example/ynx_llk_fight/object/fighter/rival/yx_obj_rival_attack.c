@@ -51,7 +51,10 @@ static void yx__obj_rival_on_state_patrol_update(struct k_object *object) {
 
     if (yx_float_vec2_length(dir) <= YX__OBJ_RIVAL_AGGRO_RADIUS) { /* 与玩家距离太近，切换成攻击状态 */
         yx_state_machine_change_state(&rival->attack_sm, &YX_STATE_ATTACK);
+        return;
     }
+
+    yx_obj_rival_weapon_aim_at(rival->weapon, rival->target_position_x, rival->target_position_y);
 }
 
 /* endregion */
@@ -78,11 +81,14 @@ static void yx__obj_rival_on_state_attack_update(struct k_object *object) {
         return;
     }
 
+    yx_obj_rival_weapon_aim_at(rival->weapon, player->x, player->y);
+
     float dt = k_time_get_step_delta();
     rival->attack_timer -= dt;
     if (rival->attack_timer <= 0.0f) {
         rival->attack_timer = yx_rand(0.4f, 2.5f);
 
+        yx_obj_rival_weapon_attack(rival->weapon);
     }
 }
 

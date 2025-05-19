@@ -223,7 +223,7 @@ static void yx__obj_player_weapon_apple_on_step(struct k_object *object) {
     }
 }
 
-static void yx__obj_player_weapon_apple_on_draw(struct k_object *object) {
+static void yx__obj_player_weapon_apple_on_debug_draw(struct k_object *object) {
     struct yx_obj_player_weapon_apple *weapon_apple = k_object_get_data(object);
 
     k_canvas_set_draw_color(0xffffffff);
@@ -268,7 +268,7 @@ struct yx_obj_player_weapon *yx_obj_player_weapon_apple_create(void) {
     if (NULL == k_object_add_step_callback(object, yx__obj_player_weapon_apple_on_step))
         goto err;
 
-    k_object_add_draw_callback(object, yx__obj_player_weapon_apple_on_draw, 0, 0);
+    k_object_add_draw_callback(object, yx__obj_player_weapon_apple_on_debug_draw, 0, 0);
 
     return &weapon_apple->super;
 
@@ -377,11 +377,30 @@ err:
 /* region [weapon_apple] */
 
 static void yx__obj_rival_weapon_apple_set_position(struct yx_obj_rival_weapon *weapon, float x, float y, int z) {
-
+    struct yx_obj_rival_weapon_apple *weapon_apple = (struct yx_obj_rival_weapon_apple *)weapon;
+    weapon_apple->x = x;
+    weapon_apple->y = y;
+    k_sprite_renderer_set_z_layer(weapon_apple->spr_rdr, z);
 }
 
 static void yx__obj_rival_weapon_apple_aim_at(struct yx_obj_rival_weapon *weapon, float x, float y) {
+    struct yx_obj_rival_weapon_apple *weapon_apple = (struct yx_obj_rival_weapon_apple *)weapon;
+    weapon_apple->aim_x = x;
+    weapon_apple->aim_y = y;
 
+    if (weapon_apple->aim_x != weapon_apple->x) {
+        float angle = atanf((weapon_apple->aim_y - weapon_apple->y) / (weapon_apple->aim_x - weapon_apple->x));
+        angle *= 180.0f / 3.1415926f;
+
+        k_sprite_renderer_rotate(weapon_apple->spr_rdr, angle);
+
+        if (weapon_apple->aim_x < weapon_apple->x) {
+            k_sprite_renderer_flip_x(weapon_apple->spr_rdr, 1);
+        }
+        else {
+            k_sprite_renderer_flip_x(weapon_apple->spr_rdr, 0);
+        }
+    }
 }
 
 static void yx__obj_rival_weapon_apple_attack(struct yx_obj_rival_weapon *weapon) {
@@ -409,7 +428,20 @@ struct yx_obj_rival_weapon *yx_obj_rival_weapon_apple_create(void) {
     weapon_apple->aim_x = 0;
     weapon_apple->aim_y = 0;
 
+    {
+        struct k_sprite_renderer_config config;
+        config.x       = &weapon_apple->x;
+        config.y       = &weapon_apple->y;
+        config.sprite  = yx_spr_weapon_apple;
+        config.z_group = YX_CONFIG_Z_GROUP_WEAPON;
+        config.z_layer = 0;
+        weapon_apple->spr_rdr = k_object_add_sprite_renderer(object, &config);
+        if (NULL == weapon_apple->spr_rdr)
+            goto err;
+    }
+
     return &weapon_apple->super;
+
 err:
     k_log_error("failed to create object: yx_obj_rival_weapon_apple");
     return NULL;

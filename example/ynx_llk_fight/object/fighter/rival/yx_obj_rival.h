@@ -49,7 +49,7 @@ struct yx_obj_rival {
     struct k_sprite *spr_idle;
     struct k_sprite *spr_run;
 
-    struct yx_obj_weapon_i *weapon;
+    struct yx_obj_rival_weapon *weapon;
     float attack_timer;
     float aim_x;
     float aim_y;
