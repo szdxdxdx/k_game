@@ -1,6 +1,4 @@
-# Headline
-
-> An awesome project.
+# k_game API 文档
 
 ```C
 #include <stdio.h>
