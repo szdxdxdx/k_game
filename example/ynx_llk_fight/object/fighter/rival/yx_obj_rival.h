@@ -46,7 +46,7 @@ struct yx_obj_rival {
 
     struct yx_config_arena_blackboard *blackboard;
 
-    struct k_positionn *position;
+    struct k_position *position;
 };
 
 int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival);

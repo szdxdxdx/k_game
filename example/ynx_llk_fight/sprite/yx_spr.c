@@ -108,7 +108,7 @@ static int yx__spr_alert_marker_load(void) {
     config.config_file_path = "./demo_1/sprite/alert_marker.json";
     config.scale = 2.0f;
     config.sprites = (struct yx_sprite_sheet_sprite_config[]) {
-        { &yx_spr_alert_marker, "alert_marker", 4, 4 },
+        { &yx_spr_alert_marker, "alert_marker", 12, 12 },
         { NULL }
     };
 

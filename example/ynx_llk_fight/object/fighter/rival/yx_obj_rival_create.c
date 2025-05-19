@@ -37,12 +37,14 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
 
     {
         struct k_position_config position_config;
+        position_config.parent  = NULL;
         position_config.world_x = &rival->x;
         position_config.world_y = &rival->y;
-        position_config.parent  = NULL;
-        position_config.local_x = 0.0f;
-        position_config.local_y = 0.0f;
-        k_object_add_position(object, &position_config);
+        position_config.local_x = rival->x;
+        position_config.local_y = rival->y;
+        rival->position = k_object_add_position(object, &position_config);
+        if (NULL == rival->position)
+            goto err;
     }
 
     rival->blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);

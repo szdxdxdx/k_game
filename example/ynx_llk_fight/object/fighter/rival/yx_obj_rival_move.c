@@ -7,6 +7,7 @@
 #include "config/yx_config_arena_blackboard.h"
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
+#include "object/alert_marker/yx_obj_alert_marker.h"
 #include "utils/yx_math.h"
 
 /* region [ai_move] */
@@ -152,6 +153,7 @@ static void yx__obj_rival_on_step_observe_player(struct k_object *object) {
     if ( ! rival->is_alert) {
         if (yx_float_vec2_length_squared(yx_float_vec2_new(rival->x - player->x, rival->y - player->y)) <= 50.0f * 50.0f) {
             rival->is_alert = 1;
+            yx_obj_alert_marker_create(rival->position, -30, -16);
         }
     }
 }
@@ -200,6 +202,8 @@ static void yx__obj_rival_on_step_move(struct k_object *object) {
     yx_state_machine_tick(&rival->move_sm);
     yx__obj_rival_on_step_hit_bullet_collision(rival);
     yx__obj_rival_on_step_resolve_movement(rival);
+
+    k_position_set_local_position(rival->position, rival->x, rival->y);
 }
 
 int yx__obj_rival_on_create_add_movement(struct yx_obj_rival *rival) {

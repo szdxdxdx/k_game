@@ -116,6 +116,8 @@ static void k__position_on_destroy(struct k_component *component) {
 
     struct k_position *parent = position->parent;
 
+    k_list_remove(&position->sibling_link);
+
     struct k_position *child;
     struct k_list *list = &position->child_list;
     struct k_list_node *iter, *next;
