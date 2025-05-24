@@ -225,9 +225,9 @@ static void yx__obj_player_weapon_apple_on_key_down(struct yx_obj_player_weapon 
 static void yx__obj_player_weapon_apple_on_key_held(struct yx_obj_player_weapon *weapon) {
     struct yx_obj_player_weapon_apple *weapon_apple = (struct yx_obj_player_weapon_apple *)weapon;
 
-    if (0.0f == weapon_apple->attack_cd_timer) {
+   // if (0.0f == weapon_apple->attack_cd_timer) {
         yx__obj_player_weapon_apple_attack(weapon_apple);
-    }
+   // }
 }
 
 static void yx__obj_player_weapon_apple_on_key_up(struct yx_obj_player_weapon *weapon) {
