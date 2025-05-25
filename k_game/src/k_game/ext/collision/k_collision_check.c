@@ -257,6 +257,7 @@ static int check_collision_circle_box(float cx, float cy, float r, struct k_coll
     }
 }
 
+/* 检测两个碰撞盒是否发生碰撞 */
 static int check_collision_box_box(struct k_collision_box *box_1, struct k_collision_box *box_2) {
     switch (box_1->type) {
         case K__COLLISION_POINT: {
