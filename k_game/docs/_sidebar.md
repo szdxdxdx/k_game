@@ -1,6 +1,7 @@
 
-* API 示例 / 基础 API
+* API 文档 / 基础 API
   * [从零开始](/k_game/quick_start/getting_started.md)
+  * [基础概念](/k_game/quick_start/basic_concepts.md)
   * [配置开发环境](/k_game/quick_start/setup_dev_env.md)
   * [启动游戏](/k_game/quick_start/start_game.md)
   * [创建房间](/k_game/quick_start/create_room.md)
@@ -19,7 +20,7 @@
   * [给房间添加组件管理器](/k_game/quick_start/room_add_component_manager.md)
   * [房间视野](/k_game/quick_start/view.md)
 
-* API 示例 / 内建组件
+* API 文档 / 内建组件
   * ...
   * 精灵渲染器
   * 碰撞盒
@@ -27,7 +28,7 @@
   * 行为树
   * 调试
 
-* API 示例 / 内置工具
+* API 文档 / 内置工具
   * [侵入式链表](/k_list/)
   * [动态数组](/k_array/)
   * [格式化输出](/k_printf/)
