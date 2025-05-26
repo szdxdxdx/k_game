@@ -10,30 +10,30 @@
 #include "object/fighter/rival/yx_obj_rival.h"
 #include "object/text_particle/yx_obj_text_particle.h"
 #include "utils/yx_math.h"
+#include "object/particle_on_hit/yx_obj_particle_on_hit.h"
 
-/* 被子弹击中时，创建一个受伤的文字粒子效果 */
 static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_rival *rival, struct yx_bullet_on_hit_result *hit_result) {
+
     struct yx_float_vec2 v_knockback = {
-            .x = hit_result->vx_knockback,
-            .y = hit_result->vy_knockback
-        };
-        struct yx_float_vec2 v_dir_knockback = yx_float_vec2_normalize(v_knockback);
-        struct yx_float_vec2 v_text = yx_float_vec2_perp_right(v_dir_knockback);
-        if (rand() % 2)
-            v_text = yx_float_vec2_neg(v_text);
+        .x = hit_result->vx_knockback,
+        .y = hit_result->vy_knockback
+    };
+    struct yx_float_vec2 v_dir_knockback = yx_float_vec2_normalize(v_knockback);
+    struct yx_float_vec2 v_text = yx_float_vec2_perp_right(v_dir_knockback);
+    if (rand() % 2)
+        v_text = yx_float_vec2_neg(v_text);
 
-        v_text = yx_float_vec2_scale(v_text, yx_rand(40.0f, 60.0f));
+    v_text = yx_float_vec2_scale(v_text, yx_rand(40.0f, 60.0f));
 
-        struct yx_obj_text_particle_config config;
-        config.x = rival->x;
-        config.y = rival->y;
-        config.vx = v_text.x;
-        config.vy = v_text.y;
-        config.color = 0x660000ff;
-        yx_obj_text_particle_create(&config, "-%d", (int)hit_result->damage);
+    struct yx_obj_text_particle_config config;
+    config.x = rival->x;
+    config.y = rival->y;
+    config.vx = v_text.x;
+    config.vy = v_text.y;
+    config.color = 0x660000ff;
+    yx_obj_text_particle_create(&config, "-%d", (int)hit_result->damage);
 }
 
-/* 判断自身有没有被子弹击中 */
 void yx__obj_rival_on_step_check_hit_bullet(struct yx_obj_rival *rival) {
 
     struct k_collision_box *bullet_box = k_collision_check_box(YX_CONFIG_COLLISION_GROUP_PLAYER_BULLET, rival->hp_collision_box);
@@ -45,6 +45,7 @@ void yx__obj_rival_on_step_check_hit_bullet(struct yx_obj_rival *rival) {
     yx_obj_player_bullet_on_hit(bullet, &hit_result);
 
     yx__obj_rival_create_text_particle_on_hit(rival, &hit_result);
+    yx_obj_particle_on_hit_create(rival->x, rival->y);
 
     rival->vx_knockback += hit_result.vx_knockback;
     rival->vy_knockback += hit_result.vy_knockback;

@@ -9,6 +9,7 @@
 #include "config/yx_config_collision_group.h"
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/text_particle/yx_obj_text_particle.h"
+#include "object/particle_on_hit/yx_obj_particle_on_hit.h"
 #include "utils/yx_math.h"
 
 /* region [bubble] */
@@ -29,7 +30,6 @@ static void yx__obj_player_touch_bubble(struct k_object *object) {
 
 /* endregion */
 
-/* 被子弹击中时，创建一个受伤的文字粒子效果 */
 static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_player *player, struct yx_bullet_on_hit_result *hit_result) {
     struct yx_float_vec2 v_knockback = {
         .x = hit_result->vx_knockback,
@@ -63,6 +63,7 @@ void yx__obj_player_on_step_check_hit_bullet(struct yx_obj_player *player) {
     yx_obj_player_bullet_on_hit(bullet, &hit_result);
 
     yx__obj_rival_create_text_particle_on_hit(player, &hit_result);
+    yx_obj_particle_on_hit_create(player->x, player->y);
 
     player->vx_knockback += hit_result.vx_knockback;
     player->vy_knockback += hit_result.vy_knockback;

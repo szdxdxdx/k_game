@@ -138,6 +138,50 @@ static int yx__spr_shadow_load(void) {
 
 /* endregion */
 
+/* region [particle_on_hit] */
+
+struct k_sprite *yx_spr_particle_on_hit;
+
+static int yx__spr_particle_on_hit_load(void) {
+
+    struct yx_sprite_sheet_config config;
+    config.image_file_path  = "./demo_1/sprite/particle_on_hit.png";
+    config.config_file_path = "./demo_1/sprite/particle_on_hit.json";
+    config.scale = 2.0f;
+    config.sprites = (struct yx_sprite_sheet_sprite_config[]) {
+        { &yx_spr_particle_on_hit, "particle_on_hit", 15, 15 },
+        { NULL }
+    };
+
+    return yx_sprite_load_from_sheet(&config);
+}
+
+/* endregion */
+
+/* region [particle_on_create_fighter] */
+
+struct k_sprite *yx_spr_particle_on_create_fighter_anim_1;
+struct k_sprite *yx_spr_particle_on_create_fighter_anim_2;
+
+
+static int yx__spr_particle_on_create_fighter_load(void) {
+
+    struct yx_sprite_sheet_config config;
+    config.image_file_path  = "./demo_1/sprite/particle_on_create_fighter.png";
+    config.config_file_path = "./demo_1/sprite/particle_on_create_fighter.json";
+    config.scale = 2.0f;
+    config.sprites = (struct yx_sprite_sheet_sprite_config[]) {
+        { &yx_spr_particle_on_create_fighter_anim_1, "1", 16, 80 },
+        { &yx_spr_particle_on_create_fighter_anim_2, "2", 16, 80 },
+        { NULL }
+    };
+
+    return yx_sprite_load_from_sheet(&config);
+}
+
+
+/* endregion */
+
 /* region [iris] */
 
 struct k_sprite *yx_spr_iris_gun;
@@ -164,20 +208,14 @@ static int yx__spr_iris_load(void) {
 
 int yx_spr_load_on_game_start(void) {
 
-    if (0 != yx__spr_ynx_load())
-        return -1;
-    if (0 != yx__spr_liliko_load())
-        return -1;
-    if (0 != yx__spr_bubble_load())
-        return -1;
-    if (0 != yx__spr_weapon_apple_load())
-        return -1;
-    if (0 != yx__spr_alert_marker_load())
-        return -1;
-    if (0 != yx__spr_shadow_load())
-        return -1;
-    if (0 != yx__spr_iris_load())
-        return -1;
-
-    return 0;
+    return yx__spr_ynx_load()
+        || yx__spr_liliko_load()
+        || yx__spr_bubble_load()
+        || yx__spr_weapon_apple_load()
+        || yx__spr_alert_marker_load()
+        || yx__spr_shadow_load()
+        || yx__spr_particle_on_hit_load()
+        || yx__spr_particle_on_create_fighter_load()
+        || yx__spr_iris_load()
+    ? -1 : 0;
 }
