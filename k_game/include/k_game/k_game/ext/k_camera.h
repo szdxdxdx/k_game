@@ -60,10 +60,8 @@ void k_camera_del_target(struct k_camera_target *target);
  *
  * 最多只能有一个主跟随目标，每次调用都将指定新的主跟随目标，
  * 若 `target` 为 `NULL` 则取消跟随主目标。
- *
- * 若设置成功，函数返回 0，否则返回非 0。
  */
-int k_camera_set_primary_target(struct k_camera_target *target);
+void k_camera_set_primary_target(struct k_camera_target *target);
 
 /**
  * \brief 设置摄像机跟随目标的权重
@@ -71,9 +69,8 @@ int k_camera_set_primary_target(struct k_camera_target *target);
  * 跟随目标的权重越大，视野中心越靠近该目标。
  *
  * 权重必须为正值。
- * 设置成功返回 0，失败返回非 0。
  */
-int k_camera_set_target_weight(struct k_camera_target *target, float weight);
+void k_camera_set_target_weight(struct k_camera_target *target, float weight);
 
 /* endregion */
 
@@ -82,23 +79,21 @@ int k_camera_set_target_weight(struct k_camera_target *target, float weight);
 /** \brief 设置摄像机的最大移动速度，单位：像素/秒
  *
  * 最大移动速度必须为正值。
- * 若设置成功，函数返回 0，否则返回非 0。
  */
-int k_camera_set_max_speed(float max_speed);
+void k_camera_set_max_speed(float max_speed);
 
 /**
  * \brief 设置摄像机的加速度，单位：像素/秒^2
  *
  * 加速度必须为正值。
- * 若设置成功，函数返回 0，否则返回非 0。
  */
-int k_camera_set_acceleration(float acceleration);
+void k_camera_set_acceleration(float acceleration);
 
 /* endregion */
 
 /* region [shake] */
 
-void k_camera_shake(float duration, float intensity);
+void k_camera_shake(float intensity, float duration);
 
 /* endregion */
 

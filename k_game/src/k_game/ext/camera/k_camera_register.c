@@ -22,14 +22,15 @@ int k__camera_on_create(struct k_component_manager *manager, void *params) {
     camera->vx = 0.0f;
     camera->vy = 0.0f;
 
-    camera->dst_x = 0.0f;
-    camera->dst_y = 0.0f;
+    camera->curr_x = 0.0f;
+    camera->curr_y = 0.0f;
+    camera->dst_x  = 0.0f;
+    camera->dst_y  = 0.0f;
 
-    camera->shake_duration  = 0.0f;
     camera->shake_intensity = 0.0f;
+    camera->shake_decay     = 0.0f;
+    camera->shake_duration  = 0.0f;
     camera->shake_time      = 0.0f;
-    camera->shake_offset_x  = 0.0f;
-    camera->shake_offset_y  = 0.0f;
 
     camera->primary_target = NULL;
     camera->targets[0]     = NULL;

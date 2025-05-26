@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2025-05-24T14:10:39.544Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.2 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="JJb5M-tF8Y2wQpPXKwKL" version="22.0.2" type="device" pages="19">
+<mxfile host="Electron" modified="2025-05-26T07:37:32.163Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.2 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="4202pdubrtrRVbzmFTIH" version="22.0.2" type="device" pages="19">
   <diagram id="TXXtwv0X5EwfsT0D_gnJ" name="用例">
     <mxGraphModel dx="1276" dy="614" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -5736,7 +5736,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="967_nMaoJKoi_HzWycTS" name="摄像机">
-    <mxGraphModel dx="1290" dy="663" grid="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="1" shadow="0">
+    <mxGraphModel dx="724" dy="457" grid="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -5747,22 +5747,22 @@
           <mxGeometry x="150" y="120" width="100" height="30" as="geometry" />
         </mxCell>
         <mxCell id="-Dx7rM8NxOyGlTClh9wx-31" value="遍历所有跟随标，计算它们坐标的&lt;br&gt;加权中心点" style="rounded=1;whiteSpace=wrap;html=1;arcSize=18;align=left;spacingLeft=6;fontFamily=Times New Roman;spacingRight=2;" parent="1" vertex="1">
-          <mxGeometry x="210" y="160" width="110" height="60" as="geometry" />
+          <mxGeometry x="210" y="160" width="110" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="-Dx7rM8NxOyGlTClh9wx-32" value="遍历所有的在视野范围内的跟随目标，&lt;br&gt;计算它们与主跟随目标的加权中心点" style="rounded=1;whiteSpace=wrap;html=1;arcSize=18;align=left;spacingLeft=5;fontFamily=Times New Roman;spacingRight=2;" parent="1" vertex="1">
-          <mxGeometry x="40" y="160" width="120" height="80" as="geometry" />
+        <mxCell id="-Dx7rM8NxOyGlTClh9wx-32" value="遍历所有的在视野范围内的跟随目标，计算它们与主跟随目标的加权中心点" style="rounded=1;whiteSpace=wrap;html=1;arcSize=18;align=left;spacingLeft=5;fontFamily=Times New Roman;spacingRight=2;" parent="1" vertex="1">
+          <mxGeometry x="40" y="160" width="160" height="50" as="geometry" />
         </mxCell>
         <mxCell id="-Dx7rM8NxOyGlTClh9wx-34" value="将摄像机的目标位置设为该中心点" style="rounded=1;whiteSpace=wrap;html=1;arcSize=18;align=center;spacingLeft=0;fontFamily=Times New Roman;" parent="1" vertex="1">
-          <mxGeometry x="60" y="420" width="200" height="20" as="geometry" />
+          <mxGeometry x="60" y="410" width="200" height="20" as="geometry" />
         </mxCell>
         <mxCell id="-Dx7rM8NxOyGlTClh9wx-35" value="&lt;span style=&quot;font-size: 10px; font-weight: 400;&quot;&gt;主跟随目标在该目标点&lt;br&gt;确定的视野范围内&lt;/span&gt;" style="strokeWidth=1;html=1;shape=mxgraph.flowchart.decision;whiteSpace=wrap;strokeColor=#000000;fontStyle=1;labelBackgroundColor=none;fontColor=default;fontFamily=Times New Roman;spacingRight=30;spacingLeft=30;" parent="1" vertex="1">
-          <mxGeometry x="70" y="270" width="180" height="50" as="geometry" />
+          <mxGeometry x="70" y="230" width="180" height="50" as="geometry" />
         </mxCell>
         <mxCell id="-Dx7rM8NxOyGlTClh9wx-36" value="修正目标位置，使其确定的视野范围一定包含主跟随目标" style="rounded=1;whiteSpace=wrap;html=1;arcSize=18;align=left;spacingLeft=2;fontFamily=Times New Roman;spacingRight=2;" parent="1" vertex="1">
-          <mxGeometry x="70" y="340" width="180" height="50" as="geometry" />
+          <mxGeometry x="70" y="310" width="180" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="-Dx7rM8NxOyGlTClh9wx-37" value="将视野中心坐标往往目标位置移动一小步" style="rounded=1;whiteSpace=wrap;html=1;arcSize=18;align=left;spacingLeft=2;fontFamily=Times New Roman;spacingRight=2;" parent="1" vertex="1">
-          <mxGeometry x="60" y="460" width="140" height="40" as="geometry" />
+        <mxCell id="-Dx7rM8NxOyGlTClh9wx-37" value="将视野中心坐标往往目标位置移动一小步，并按需附加抖动效果" style="rounded=1;whiteSpace=wrap;html=1;arcSize=18;align=left;spacingLeft=2;fontFamily=Times New Roman;spacingRight=2;" parent="1" vertex="1">
+          <mxGeometry x="60" y="450" width="140" height="50" as="geometry" />
         </mxCell>
         <mxCell id="-Dx7rM8NxOyGlTClh9wx-38" value="结束" style="strokeWidth=1;html=1;shape=mxgraph.flowchart.start_2;whiteSpace=wrap;fontFamily=Times New Roman;" parent="1" vertex="1">
           <mxGeometry x="120" y="520" width="80" height="20" as="geometry" />
@@ -5806,8 +5806,8 @@
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="-40" y="300" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="90" y="250" />
-              <mxPoint x="160" y="250" />
+              <mxPoint x="160" y="220" />
+              <mxPoint x="160" y="220" />
             </Array>
             <mxPoint x="100" y="270" as="sourcePoint" />
           </mxGeometry>
@@ -5816,15 +5816,15 @@
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="160" y="400" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="160" y="370" />
-              <mxPoint x="160" y="370" />
+              <mxPoint x="160" y="320" />
+              <mxPoint x="160" y="320" />
             </Array>
             <mxPoint x="220" y="195" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="-Dx7rM8NxOyGlTClh9wx-48" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Times New Roman;" parent="-Dx7rM8NxOyGlTClh9wx-47" vertex="1" connectable="0">
           <mxGeometry x="-0.2833" relative="1" as="geometry">
-            <mxPoint x="-20" y="-1" as="offset" />
+            <mxPoint x="15" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="-Dx7rM8NxOyGlTClh9wx-49" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=1;fontFamily=Times New Roman;" parent="1" source="-Dx7rM8NxOyGlTClh9wx-36" target="-Dx7rM8NxOyGlTClh9wx-34" edge="1">
@@ -5841,8 +5841,8 @@
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="180" y="270" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="270" y="400" />
-              <mxPoint x="160" y="400" />
+              <mxPoint x="270" y="380" />
+              <mxPoint x="160" y="380" />
             </Array>
             <mxPoint x="180" y="240" as="sourcePoint" />
           </mxGeometry>
@@ -5871,16 +5871,16 @@
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="100" y="170" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="40" y="295" />
-              <mxPoint x="40" y="400" />
-              <mxPoint x="160" y="400" />
+              <mxPoint x="40" y="255" />
+              <mxPoint x="40" y="380" />
+              <mxPoint x="160" y="380" />
             </Array>
             <mxPoint x="120" y="145" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="-Dx7rM8NxOyGlTClh9wx-57" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Times New Roman;" parent="-Dx7rM8NxOyGlTClh9wx-56" vertex="1" connectable="0">
           <mxGeometry x="-0.2833" relative="1" as="geometry">
-            <mxPoint x="20" y="-84" as="offset" />
+            <mxPoint x="12" y="-92" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="Yv_PmiRn7EpD5srbFhKG-1" value="&lt;font face=&quot;Times New Roman&quot;&gt;k_camera_target&lt;/font&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=20;fillColor=#FFFFFF;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;labelBackgroundColor=default;" parent="1" vertex="1">
@@ -6128,7 +6128,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="XFoRVJVBhzwAENdqihIH-3" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;移动视野时，摄像机是匀加速匀减速运动&lt;br&gt;&lt;/span&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=7;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;spacingLeft=2;align=left;spacingRight=2;spacing=0;fontFamily=Times New Roman;" parent="1" vertex="1">
-          <mxGeometry x="220" y="460" width="90" height="50" as="geometry" />
+          <mxGeometry x="220" y="450" width="90" height="50" as="geometry" />
         </mxCell>
         <mxCell id="XFoRVJVBhzwAENdqihIH-4" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;考虑到实际游戏中不会有太多目标要跟随，因此这里使用定长数组，限制摄像机最多关联 16 个跟随目标&lt;br&gt;&lt;/span&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=7;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;spacingLeft=2;align=left;spacingRight=2;spacing=0;fontFamily=Times New Roman;" parent="1" vertex="1">
           <mxGeometry x="290" y="230" width="90" height="100" as="geometry" />
@@ -6144,8 +6144,8 @@
             <mxPoint x="443" y="180" as="sourcePoint" />
             <mxPoint x="409" y="150" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="330" y="480" />
-              <mxPoint x="330" y="480" />
+              <mxPoint x="320" y="475" />
+              <mxPoint x="320" y="475" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -6154,8 +6154,8 @@
             <mxPoint x="350" y="495" as="sourcePoint" />
             <mxPoint x="320" y="507" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="220" y="490" />
-              <mxPoint x="220" y="490" />
+              <mxPoint x="240" y="450" />
+              <mxPoint x="240" y="450" />
             </Array>
           </mxGeometry>
         </mxCell>

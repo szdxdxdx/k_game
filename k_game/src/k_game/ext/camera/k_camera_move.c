@@ -1,68 +1,43 @@
 #include <math.h>
 #include <assert.h>
 
+#define K_LOG_TAG "k_game:camera"
+#include "k_log.h"
+
 #include "k_game/core/k_view.h"
 #include "k_game/core/k_time.h"
 
 #include "./k_camera_internal.h"
 
-/* 往摄像机的目标位置 `(dst_x, dst_y)` 移动一小步 */
-static void k__camera_move_towards(struct k_camera *camera) {
+void k_camera_shake(float intensity, float duration) {
 
-    float curr_x;
-    float curr_y;
-    k_view_get_position(&curr_x, &curr_y);
-
-    if (curr_x == camera->dst_x && curr_y == camera->dst_y)
+    struct k_camera *camera = k_room_get_component_manager_data(k__camera_component_type);
+    if (NULL == camera) {
+        k_log_error("please add a camera to the room first");
         return;
-
-    float dist_x = camera->dst_x - curr_x;
-    float dist_y = camera->dst_y - curr_y;
-    float dist = sqrtf(dist_x * dist_x + dist_y * dist_y);
-
-    float next_x;
-    float next_y;
-
-    if (dist < 1.0f) {
-        camera->vx = 0.0f;
-        camera->vy = 0.0f;
-        next_x = camera->dst_x;
-        next_y = camera->dst_y;
     }
-    else {
-        float dir_x = dist_x / dist;
-        float dir_y = dist_y / dist;
-        float dot_v = camera->vx * dir_x + camera->vy * dir_y;
 
-        float dt = k_time_get_step_delta();
-        float a = camera->acceleration;
-        float v;
-        float stop_dist = (dot_v * dot_v) / (2.0f * a);
-        if (dist <= stop_dist) {
-            v = dot_v - a * dt;
-            if (v < 0.0f) {
-                v = 0.0f;
-            }
+    if (camera->shake_duration < camera->shake_time + duration) {
+        camera->shake_duration = camera->shake_time + duration;
+
+        if (camera->shake_decay < intensity) {
+            camera->shake_intensity = intensity;
         } else {
-            v = dot_v + a * dt;
-            if (v > camera->max_speed) {
-                v = camera->max_speed;
-            }
+            camera->shake_intensity = camera->shake_decay;
         }
-
-        camera->vx = dir_x * v;
-        camera->vy = dir_y * v;
-        next_x = curr_x + camera->vx * dt;
-        next_y = curr_y + camera->vy * dt;
     }
-
-    k_view_set_position(next_x, next_y);
+    else if (camera->shake_decay < intensity) {
+        camera->shake_intensity = intensity;
+    }
 }
 
-static void k__camera_auto_follow(struct k_camera *camera) {
+static void k__camera_auto_follow_calc_dst(struct k_camera *camera) {
 
-    if (0 == camera->targets_num)
+    if (0 == camera->targets_num) {
+        camera->dst_x = camera->curr_x;
+        camera->dst_y = camera->curr_y;
         return;
+    }
 
     if (NULL == camera->primary_target) {
         float sum_wx = 0.0f;
@@ -145,8 +120,92 @@ static void k__camera_auto_follow(struct k_camera *camera) {
             }
         }
     }
+}
 
-    k__camera_move_towards(camera);
+static void k__camera_auto_follow_calc_step(struct k_camera *camera) {
+
+    if (camera->curr_x == camera->dst_x && camera->curr_y == camera->dst_y)
+        return;
+
+    float dt = k_time_get_step_delta();
+
+    float dist_x = camera->dst_x - camera->curr_x;
+    float dist_y = camera->dst_y - camera->curr_y;
+    float dist = sqrtf(dist_x * dist_x + dist_y * dist_y);
+
+    if (dist < 1.0f) {
+        camera->vx = 0.0f;
+        camera->vy = 0.0f;
+        camera->curr_x = camera->dst_x;
+        camera->curr_y = camera->dst_y;
+    }
+    else {
+        float dir_x = dist_x / dist;
+        float dir_y = dist_y / dist;
+        float dot_v = camera->vx * dir_x + camera->vy * dir_y;
+
+        float a = camera->acceleration;
+        float v;
+        float stop_dist = (dot_v * dot_v) / (2.0f * a);
+        if (dist <= stop_dist) {
+            v = dot_v - a * dt;
+            if (v < 0.0f) {
+                v = 0.0f;
+            }
+        } else {
+            v = dot_v + a * dt;
+            if (v > camera->max_speed) {
+                v = camera->max_speed;
+            }
+        }
+
+        camera->vx = dir_x * v;
+        camera->vy = dir_y * v;
+        camera->curr_x += camera->vx * dt;
+        camera->curr_y += camera->vy * dt;
+    }
+}
+
+static void k__camera_auto_follow_set_view(struct k_camera *camera) {
+
+    if (0.0f == camera->shake_duration) {
+        k_view_set_position(camera->curr_x, camera->curr_y);
+        return;
+    }
+
+    float dt = k_time_get_step_delta();
+    camera->shake_time += dt;
+
+    if (camera->shake_duration <= camera->shake_time) {
+        camera->shake_intensity = 0.0f;
+        camera->shake_decay     = 0.0f;
+        camera->shake_duration  = 0.0f;
+        camera->shake_time      = 0.0f;
+        k_view_set_position(camera->curr_x, camera->curr_y);
+    }
+    else {
+        camera->shake_decay = camera->shake_intensity * (1.0f - camera->shake_time / camera->shake_duration);
+        float pi_t = camera->shake_time * 3.1415926f;
+        float offset_x = camera->shake_decay * sinf(pi_t * 19.0f);
+        float offset_y = camera->shake_decay * cosf(pi_t * 17.0f);
+        float view_cx = camera->curr_x + offset_x;
+        float view_cy = camera->curr_y + offset_y;
+        k_view_set_position(camera->curr_x, camera->curr_y);
+
+        float curr_view_cx;
+        float curr_view_cy;
+        k_view_get_position(&curr_view_cx, &curr_view_cy);
+
+        if (curr_view_cx != view_cx || curr_view_cy != view_cy) {
+            k_view_set_position(curr_view_cx + offset_x, curr_view_cy + offset_y);
+        }
+    }
+}
+
+static void k__camera_auto_follow(struct k_camera *camera) {
+    k__camera_auto_follow_calc_dst(camera);
+    k__camera_auto_follow_calc_step(camera);
+    k__camera_auto_follow_set_view(camera);
 }
 
 void k__camera_move_on_begin_step(void *camera_) {

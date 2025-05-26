@@ -13,8 +13,17 @@
 
 struct k_room *yx_room_1 = NULL;
 
+static void yx__room_1_on_debug_step(void *data) {
+    if (k_key_down('B'))
+        k_camera_shake(16.0f, 0.5f);
+    if (k_key_down_or_held('N'))
+        k_camera_shake(16.0f, 0.5f);
+}
+
 static int yx__room_1_on_create(void *param) {
     (void)param;
+
+    k_room_add_step_callback(NULL, yx__room_1_on_debug_step);
 
     struct yx_room_1 *room_1 = k_room_get_data();
     room_1->draw_background = 1;

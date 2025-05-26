@@ -75,28 +75,34 @@ void k_camera_del_target(struct k_camera_target *target) {
     }
 }
 
-int k_camera_set_primary_target(struct k_camera_target *target) {
+void k_camera_set_primary_target(struct k_camera_target *target) {
 
     struct k_camera *camera = k_room_get_component_manager_data(k__camera_component_type);
-    if (NULL == camera)
-        return -1;
+    if (NULL == camera) {
+        k_log_error("please add a camera to the room first");
+        return;
+    }
 
     if (NULL == target) {
         camera->primary_target = NULL;
-        return 0;
     }
-
-    /* TODO assert( camera follow this target ) */
-
-    camera->primary_target = target;
-    return 0;
+    else {
+        /* TODO assert( camera follow this target ) */
+        camera->primary_target = target;
+    }
 }
 
-int k_camera_set_target_weight(struct k_camera_target *target, float weight) {
+void k_camera_set_target_weight(struct k_camera_target *target, float weight) {
 
-    if (NULL == target || weight <= 0.0f)
-        return -1;
+    if (NULL == target) {
+        k_log_error("camera target is null");
+        return;
+    }
+
+    if (weight <= 0.0f) {
+        k_log_error("camera target weight must be positive");
+        return;
+    }
 
     target->weight = weight;
-    return 0;
 }
