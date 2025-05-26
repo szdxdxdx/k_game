@@ -4,6 +4,7 @@
 #include "k_game.h"
 
 struct yx_fx_fighter_appear {
+    struct k_object *object;
     float x;
     float y;
     struct k_sprite_renderer *spr_rdr;
@@ -12,5 +13,7 @@ struct yx_fx_fighter_appear {
 };
 
 struct yx_fx_fighter_appear *yx_fx_fighter_appear_create(float x, float y);
+
+void yx_fx_fighter_appear_destroy(struct yx_fx_fighter_appear *fx);
 
 #endif
