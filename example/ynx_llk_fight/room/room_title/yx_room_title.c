@@ -6,13 +6,12 @@
 
 #include "k_game.h"
 
-#include "./yx_room_title.h"
-
 #include "llk_ui.h"
 
 #include "image/yx_image.h"
 #include "sound/yx_sound.h"
 #include "room/room_1/yx_room_1.h"
+#include "room/room_title/yx_room_title.h"
 
 /* region [ui] */
 
@@ -52,7 +51,7 @@ static void yx__room_title_goto_room_arena(void) {
     else
         lock = 1;
 
-    k_room_add_alarm_callback(NULL, yx__room_title_on_alarm_goto_next_room, 800);
+    k_room_add_alarm_callback(NULL, yx__room_title_on_alarm_goto_next_room, 300);
 }
 
 static void yx__room_title_ui_on_click_goto_room_arena(struct llk_ui_elem *elem) {

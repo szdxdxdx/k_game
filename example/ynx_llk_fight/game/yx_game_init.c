@@ -1,15 +1,13 @@
 #include "k_game.h"
+#include "k_webui.h"
 
 #include "game/yx_game_init.h"
 
+#include "image/yx_image.h"
 #include "sound/yx_sound.h"
 #include "sprite/yx_spr.h"
-#include "room/yx_room_arena.h"
-#include "room/yx_room_title.h"
+#include "room/room_title/yx_room_title.h"
 #include "room/room_1/yx_room_1.h"
-#include "image/yx_image.h"
-#include "k_webui.h"
-#include "room/yx_room_empty.h"
 
 static int on_game_start(void) {
 
@@ -27,13 +25,11 @@ static int on_game_start(void) {
             return -1;
     }
 
-    k_room_nav_push(yx_room_title);
+    k_room_nav_push(yx_room_1);
     return 0;
 }
 
 int yx_game_run(void) {
-
-
 
     struct k_game_config config = K_GAME_CONFIG_INIT;
     config.window_w = 768;

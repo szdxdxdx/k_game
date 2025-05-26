@@ -16,7 +16,7 @@
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
 
-#include "room/yx_room_arena.h"
+#include "room/room_arena/yx_room_arena.h"
 #include "object/bubble/yx_obj_bubble_maker.h"
 
 /* region [webui] */

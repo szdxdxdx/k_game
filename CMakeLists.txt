@@ -9,4 +9,4 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
 
 add_subdirectory("k_game")
 
-add_subdirectory("example/demo_test")
+add_subdirectory("example/ynx_llk_fight")

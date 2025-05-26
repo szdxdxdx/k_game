@@ -43,7 +43,7 @@ static int yx__room_1_on_create(void *param) {
 
 static void yx__room_1_on_enter(void) {
     k_sound_bgm_loop(yx_bgm_music, INT_MAX);
-    yx__room_1_on_enter_init_webui();
+    // yx__room_1_on_enter_init_webui();
 }
 
 struct k_room *yx_room_1_create(void) {

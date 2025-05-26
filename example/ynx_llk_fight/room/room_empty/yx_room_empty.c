@@ -3,7 +3,7 @@
 #include "k_game.h"
 #include "k_webui.h"
 
-#include "./yx_room_empty.h"
+#include "room/room_empty/yx_room_empty.h"
 
 static int int_val;
 static float float_val;
