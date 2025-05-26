@@ -33,14 +33,15 @@ static int yx__room_1_on_create(void *param) {
     if (0 != k_room_add_blackboard())
         return -1;
     {
-        struct yx_config_arena_blackboard *ctx = k_room_blackboard_add(YX_ARENA_BLACKBOARD_KEY, sizeof(struct yx_config_arena_blackboard));
-        if (NULL == ctx)
+        struct yx_config_arena_blackboard *blackboard = k_room_blackboard_add(YX_ARENA_BLACKBOARD_KEY, sizeof(struct yx_config_arena_blackboard));
+        if (NULL == blackboard)
             return -1;
-        ctx->player = NULL;
+        blackboard->player = NULL;
+        blackboard->rivals_num = 0;
     }
     if (0 != k_room_add_camera())
         return -1;
-    k_camera_set_debug_draw_enabled(1);
+    // k_camera_set_debug_draw_enabled(1);
     if (0 != k_room_add_collision_manager())
         return -1;
     if (0 != yx__room_1_on_create_place_obj())

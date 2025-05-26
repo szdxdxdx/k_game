@@ -25,7 +25,7 @@ struct yx_obj_rival {
     float x;
     float y;
 
-    int hp;
+    float hp;
     struct k_collision_box *hp_collision_box;
 
     int face; /* 朝向，-1 朝左，1 朝右 */
@@ -80,5 +80,12 @@ int yx__obj_rival_on_create_init_debug(struct yx_obj_rival *rival);
 int yx__obj_rival_on_create_init_attack(struct yx_obj_rival *rival);
 
 /* ------------------------------------------------------------------------ */
+
+struct yx_obj_rival_spawner {
+
+    struct yx_config_arena_blackboard *blackboard;
+};
+
+void yx_obj_rival_spawner_create(void);
 
 #endif

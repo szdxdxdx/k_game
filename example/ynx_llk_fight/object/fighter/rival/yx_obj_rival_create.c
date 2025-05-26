@@ -20,7 +20,7 @@ struct yx_obj_rival *yx_obj_rival_create(float x, float y) {
     struct yx_obj_rival *rival = k_object_get_data(object);
     rival->object = object;
 
-    rival->hp = 10;
+    rival->hp = 3.0f;
     rival->x = x;
     rival->y = y;
     rival->vx_movement  = 0.0f;
@@ -78,7 +78,8 @@ err:
 
 /* ------------------------------------------------------------------------ */
 
-struct yx_obj_rival_spawner {
+/* 创建敌人时的粒子效果 */
+struct yx_obj_rival_appear_fx {
     float x;
     float y;
     struct yx_fx_fighter_appear *fx;
@@ -86,23 +87,23 @@ struct yx_obj_rival_spawner {
 };
 
 static void yx__obj_rival_spawner_fx_callback(struct k_object *object) {
-    struct yx_obj_rival_spawner *spawner = k_object_get_data(object);
+    struct yx_obj_rival_appear_fx *fx = k_object_get_data(object);
 
-    struct yx_obj_rival *rival = yx_obj_rival_create(spawner->x, spawner->y);
+    struct yx_obj_rival *rival = yx_obj_rival_create(fx->x, fx->y);
 }
 
 void yx_obj_rival_spawn(float x, float y) {
 
-    struct k_object *object = k_object_create(sizeof(struct yx_obj_rival_spawner));
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_rival_appear_fx));
     if (NULL == object)
         goto err;
 
-    struct yx_obj_rival_spawner *spawner = k_object_get_data(object);
-    spawner->x = x;
-    spawner->y = y;
+    struct yx_obj_rival_appear_fx *fx = k_object_get_data(object);
+    fx->x = x;
+    fx->y = y;
 
-    spawner->fx = yx_fx_fighter_appear_create(x, y, yx__obj_rival_spawner_fx_callback, object);
-    if (NULL == spawner->fx)
+    fx->fx = yx_fx_fighter_appear_create(x, y, yx__obj_rival_spawner_fx_callback, object);
+    if (NULL == fx->fx)
         goto err;
 
     return;

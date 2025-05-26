@@ -9,6 +9,7 @@ struct yx_obj_rival;
 
 struct yx_config_arena_blackboard {
     struct yx_obj_player *player;
+    size_t rivals_num;
 };
 
 #endif

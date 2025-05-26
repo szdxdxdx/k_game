@@ -2,7 +2,6 @@
 #include "k_game/core/k_object.h"
 
 #include "./k_object.h"
-#include "./k_object_pool.h"
 
 #include "../room/k_room.h"
 #include "../component/k_component.h"
@@ -60,6 +59,20 @@ static void k__object_exec_and_del_destroy_callback(struct k_object *object) {
 /* endregion */
 
 /* region [object_create] */
+
+#ifdef K__OBJECT_DEBUG_INFO
+#undef k_object_create
+
+struct k_object *k_object_debug_create(size_t data_size, const char *debug_info) {
+    struct k_object *object = k_object_create(data_size);
+    if (NULL == object)
+        return NULL;
+
+    object->debug_info = debug_info;
+    return object;
+}
+
+#endif
 
 struct k_object *k_object_create(size_t data_size) {
     struct k_room *room = k__room_current;

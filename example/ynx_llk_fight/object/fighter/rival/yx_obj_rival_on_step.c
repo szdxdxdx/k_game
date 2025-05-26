@@ -251,13 +251,6 @@ static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_rival *rival
     config.vy = v_text.y;
     config.color = 0x660000ff;
     yx_obj_particle_text_on_hit_create(&config, "-%d", (int)hit_result->damage);
-
-    rival->hp -= 2;
-    if (rival->hp <= 0) {
-        rival->hp = 0;
-
-        yx_state_machine_change_state(&rival->move_sm, &YX_STATE_DEAD);
-    }
 }
 
 static void yx__obj_rival_on_step_check_hit_bullet(struct yx_obj_rival *rival) {
@@ -275,6 +268,13 @@ static void yx__obj_rival_on_step_check_hit_bullet(struct yx_obj_rival *rival) {
 
     rival->vx_knockback += hit_result.vx_knockback;
     rival->vy_knockback += hit_result.vy_knockback;
+
+    rival->hp -= hit_result.damage;
+    if (rival->hp <= 0.0f) {
+        rival->hp = 0.0f;
+
+        yx_state_machine_change_state(&rival->move_sm, &YX_STATE_DEAD);
+    }
 }
 
 int yx__obj_rival_on_create_init_collision(struct yx_obj_rival *rival) {

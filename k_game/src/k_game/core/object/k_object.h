@@ -23,6 +23,11 @@ struct k_object {
     /* tmp */
     enum k_object_state state;
     struct k_list destroy_callback_list;
+
+#ifdef K__OBJECT_DEBUG_INFO
+    const char *debug_info;
+#endif
+
 };
 
 #endif
