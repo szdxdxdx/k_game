@@ -8,11 +8,6 @@
 #include "utils/yx_float_vec.h"
 #include "utils/state_machine/yx_state_machine.h"
 
-struct yx_obj_rival_config {
-    float x;
-    float y;
-};
-
 struct yx_obj_rival *yx_obj_rival_create(float x, float y);
 
 void yx_obj_rival_spawn(float x, float y);
@@ -50,15 +45,21 @@ struct yx_obj_rival {
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;
     struct k_sprite *spr_run;
+    struct k_sprite *spr_dead;
 
     struct yx_obj_rival_weapon *weapon;
     float attack_timer;
     float aim_x;
     float aim_y;
 
+    struct k_callback *cb_on_step_move;
+    struct k_callback *cb_on_step_attack;
+    struct k_callback *cb_on_step_end_set_face;
+
     struct yx_config_arena_blackboard *blackboard;
 
     struct k_position *position;
+    struct k_camera_target *camera_target;
 
     struct k_object *object_shadow;
 

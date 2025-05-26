@@ -33,6 +33,14 @@ static struct yx_state_machine_state YX_STATE_RUNNING = {
     .on_leave  = NULL,
 };
 
+static void yx__obj_rival_on_state_dead_enter(struct k_object *object);
+static void yx__obj_rival_on_state_dead_update(struct k_object *object);
+static struct yx_state_machine_state YX_STATE_DEAD = {
+    .on_enter  = yx__obj_rival_on_state_dead_enter,
+    .on_update = yx__obj_rival_on_state_dead_update,
+    .on_leave  = NULL,
+};
+
 /* region [idle] */
 
 static void yx__obj_rival_on_state_idle_enter(struct k_object *object) {
@@ -187,6 +195,38 @@ static void yx__obj_rival_on_state_running_update(struct k_object *object) {
 
 /* endregion */
 
+/* region [dead] */
+
+static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+
+    k_sprite_renderer_set_sprite(rival->spr_rdr, rival->spr_dead);
+    k_sprite_renderer_set_loop_count(rival->spr_rdr, 1);
+
+    yx_state_machine_change_state(&rival->attack_sm, NULL);
+
+    k_object_del_collision_box(rival->hp_collision_box);
+    rival->hp_collision_box = NULL;
+
+    rival->vx_movement = 0.0f;
+    rival->vy_movement = 0.0f;
+
+    yx_obj_rival_weapon_destroy(rival->weapon);
+    rival->weapon = NULL;
+
+    k_camera_del_target(rival->camera_target);
+
+    k_callback_del(rival->cb_on_step_attack);
+    k_callback_del(rival->cb_on_step_move);
+    k_callback_del(rival->cb_on_step_end_set_face);
+}
+
+static void yx__obj_rival_on_state_dead_update(struct k_object *object) {
+
+}
+
+/* endregion */
+
 /* endregion */
 
 /* region [collision] */
@@ -211,6 +251,13 @@ static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_rival *rival
     config.vy = v_text.y;
     config.color = 0x660000ff;
     yx_obj_particle_text_on_hit_create(&config, "-%d", (int)hit_result->damage);
+
+    rival->hp -= 2;
+    if (rival->hp <= 0) {
+        rival->hp = 0;
+
+        yx_state_machine_change_state(&rival->move_sm, &YX_STATE_DEAD);
+    }
 }
 
 static void yx__obj_rival_on_step_check_hit_bullet(struct yx_obj_rival *rival) {
@@ -287,7 +334,9 @@ static void yx__obj_rival_on_step_resolve_movement(struct yx_obj_rival *rival) {
     rival->y = rival->y + vy * dt;
     k_sprite_renderer_set_z_layer(rival->spr_rdr, (int)rival->y);
 
-    yx_obj_rival_weapon_set_position(rival->weapon, rival->x, rival->y, (int)rival->y + 1); /* 移动武器 */
+    if (NULL != rival->weapon) { /* 移动武器 */
+        yx_obj_rival_weapon_set_position(rival->weapon, rival->x, rival->y, (int)rival->y + 1);
+    }
 }
 
 static void yx__obj_rival_on_step_move(struct k_object *object) {
@@ -302,10 +351,13 @@ static void yx__obj_rival_on_step_move(struct k_object *object) {
 
 int yx__obj_rival_on_create_init_movement(struct yx_obj_rival *rival) {
 
-    if (NULL == k_camera_add_follow_target(rival->object, &rival->x, &rival->y)) {
+    rival->camera_target = k_camera_add_follow_target(rival->object, &rival->x, &rival->y);
+    if (NULL == rival->camera_target) {
         k_log_warn("failed to add camera follow target");
     }
-    if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_move))
+
+    rival->cb_on_step_move = k_object_add_step_callback(rival->object, yx__obj_rival_on_step_move);
+    if (NULL == rival->cb_on_step_move)
         return -1;
 
     yx_state_machine_init(rival->object, &rival->move_sm);

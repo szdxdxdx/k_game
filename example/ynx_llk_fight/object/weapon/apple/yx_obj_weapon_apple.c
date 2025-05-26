@@ -518,7 +518,14 @@ static void yx__obj_rival_weapon_apple_attack(struct yx_obj_rival_weapon *weapon
     k_sound_sfx_play(yx_sfx_fire);
 }
 
+static void yx__obj_rival_weapon_apple_destroy(struct yx_obj_rival_weapon *weapon) {
+    struct yx_obj_rival_weapon_apple *weapon_apple = (struct yx_obj_rival_weapon_apple *)weapon;
+
+    k_object_destroy(weapon_apple->super.object);
+}
+
 static struct yx_obj_rival_weapon_v_tbl yx__obj_rival_weapon_apple_v_tbl = {
+    .fn_destroy = yx__obj_rival_weapon_apple_destroy,
     .fn_set_position = yx__obj_rival_weapon_apple_set_position,
     .fn_aim_at = yx__obj_rival_weapon_apple_aim_at,
     .fn_attack = yx__obj_rival_weapon_apple_attack,

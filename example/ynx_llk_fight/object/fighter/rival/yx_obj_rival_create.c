@@ -29,6 +29,7 @@ struct yx_obj_rival *yx_obj_rival_create(float x, float y) {
     rival->vy_knockback = 0.0f;
     rival->spr_idle = yx_spr_llk_idle;
     rival->spr_run  = yx_spr_llk_run;
+    rival->spr_dead = yx_spr_llk_dead;
     rival->face = (rand() % 2) ? -1 : 1;
     rival->attack_state = YX_OBJ_RIVAL_STATE_PATROL;
 

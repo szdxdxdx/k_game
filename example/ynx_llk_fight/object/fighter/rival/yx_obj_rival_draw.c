@@ -10,7 +10,7 @@
 #include "object/fighter/rival/yx_obj_rival.h"
 #include "object/fighter/player/yx_obj_player.h"
 
-static void yx__obj_rival_on_step_end(struct k_object *object) {
+static void yx__obj_rival_on_step_end_set_face(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
 
     switch (rival->attack_state) {
@@ -46,7 +46,8 @@ int yx__obj_rival_on_create_init_draw(struct yx_obj_rival *rival) {
     if (NULL == rival->spr_rdr)
         return -1;
 
-    if (NULL == k_object_add_end_step_callback(rival->object, yx__obj_rival_on_step_end))
+    rival->cb_on_step_end_set_face = k_object_add_end_step_callback(rival->object, yx__obj_rival_on_step_end_set_face);
+    if (NULL == rival->cb_on_step_end_set_face)
         return -1;
 
     return 0;

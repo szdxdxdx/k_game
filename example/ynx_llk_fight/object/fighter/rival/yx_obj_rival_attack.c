@@ -103,7 +103,8 @@ static void yx__obj_rival_on_step_attack(struct k_object *object) {
 
 int yx__obj_rival_on_create_init_attack(struct yx_obj_rival *rival) {
 
-    if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_attack))
+    rival->cb_on_step_attack = k_object_add_step_callback(rival->object, yx__obj_rival_on_step_attack);
+    if (NULL == rival->cb_on_step_attack)
         return -1;
 
     rival->weapon = yx_obj_rival_weapon_apple_create();

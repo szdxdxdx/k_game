@@ -89,10 +89,15 @@ struct yx_obj_rival_weapon {
 };
 
 struct yx_obj_rival_weapon_v_tbl {
+    void (*fn_destroy)(struct yx_obj_rival_weapon *weapon);
     void (*fn_set_position)(struct yx_obj_rival_weapon *weapon, float x, float y, int z);
     void (*fn_aim_at)(struct yx_obj_rival_weapon *weapon, float x, float y);
     void (*fn_attack)(struct yx_obj_rival_weapon *weapon);
 };
+
+static inline void yx_obj_rival_weapon_destroy(struct yx_obj_rival_weapon *weapon) {
+    weapon->v_tbl->fn_destroy(weapon);
+}
 
 static inline void yx_obj_rival_weapon_set_position(struct yx_obj_rival_weapon *weapon, float x, float y, int z) {
     weapon->v_tbl->fn_set_position(weapon, x, y, z);
