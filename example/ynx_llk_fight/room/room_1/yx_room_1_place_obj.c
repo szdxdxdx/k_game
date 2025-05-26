@@ -22,8 +22,7 @@ int yx__room_1_on_create_place_obj(void) {
         struct yx_obj_player_config config;
         config.x = 100.0f;
         config.y = 100.0f;
-        if (NULL == yx_obj_player_create(&config))
-            return -1;
+        yx_obj_player_create(&config);
     }
 
     {
@@ -33,16 +32,10 @@ int yx__room_1_on_create_place_obj(void) {
         float y_max = k_room_get_h();
 
         int i = 0;
-        for (; i < 30; ++i) {
-            struct yx_obj_rival_config config;
-            config.x = yx_rand(x_min, x_max);
-            config.y = yx_rand(y_min, y_max);
-            if (NULL == yx_obj_rival_create(&config))
-                return -1;
-        }
-
-        for (i = 0; i < 30; ++i) {
-            yx_fx_fighter_appear_create(yx_rand(x_min, x_max), yx_rand(y_min, y_max));
+        for (; i < 20; ++i) {
+            float x = yx_rand(x_min, x_max);
+            float y = yx_rand(y_min, y_max);
+            yx_obj_rival_spawn(x, y);
         }
     }
 

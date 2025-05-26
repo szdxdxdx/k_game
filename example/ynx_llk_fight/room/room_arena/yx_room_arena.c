@@ -280,32 +280,10 @@ static int arena_room_on_create(void *param) {
         room_arena->player = yx_obj_player_create(&config);
     }
 
-    {
-        struct yx_obj_rival_config config;
-        config.x = 800;
-        config.y = 600;
-        yx_obj_rival_create(&config);
-    }
-
-    {
-        struct yx_obj_rival_config config;
-        config.x = 400;
-        config.y = 300;
-        yx_obj_rival_create(&config);
-    }
-
-    {
-        struct yx_obj_rival_config config;
-        config.x = 600;
-        config.y = 500;
-        yx_obj_rival_create(&config);
-    }
-
     return 0;
 }
 
 static void arena_room_on_destroy(void) {
-
     llk_ui_destroy_context(ui);
 }
 

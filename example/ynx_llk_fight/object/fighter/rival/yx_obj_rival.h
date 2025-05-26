@@ -13,7 +13,9 @@ struct yx_obj_rival_config {
     float y;
 };
 
-struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *config);
+struct yx_obj_rival *yx_obj_rival_create(float x, float y);
+
+void yx_obj_rival_spawn(float x, float y);
 
 /* ------------------------------------------------------------------------ */
 

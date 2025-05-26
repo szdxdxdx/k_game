@@ -11,16 +11,17 @@
 #include "object/fighter/rival/yx_obj_rival.h"
 #include "config/yx_config_arena_blackboard.h"
 #include "object/particle/yx_obj_shadow.h"
+#include "object/particle/yx_fx_fighter_appear.h"
 
-struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *config) {
+struct yx_obj_rival *yx_obj_rival_create(float x, float y) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_rival));
 
     struct yx_obj_rival *rival = k_object_get_data(object);
     rival->object = object;
 
-    rival->x = config->x;
-    rival->y = config->y;
+    rival->x = x;
+    rival->y = y;
     rival->vx_movement  = 0.0f;
     rival->vy_movement  = 0.0f;
     rival->vx_knockback = 0.0f;
@@ -71,4 +72,39 @@ err:
     k_object_destroy(object);
     k_log_error("failed to create object yx_obj_rival");
     return NULL;
+}
+
+/* ------------------------------------------------------------------------ */
+
+struct yx_obj_rival_spawner {
+    float x;
+    float y;
+    struct yx_fx_fighter_appear *fx;
+    struct k_callback *cb_step;
+};
+
+static void yx__obj_rival_spawner_fx_callback(struct k_object *object) {
+    struct yx_obj_rival_spawner *spawner = k_object_get_data(object);
+
+    struct yx_obj_rival *rival = yx_obj_rival_create(spawner->x, spawner->y);
+}
+
+void yx_obj_rival_spawn(float x, float y) {
+
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_rival_spawner));
+    if (NULL == object)
+        goto err;
+
+    struct yx_obj_rival_spawner *spawner = k_object_get_data(object);
+    spawner->x = x;
+    spawner->y = y;
+
+    spawner->fx = yx_fx_fighter_appear_create(x, y, yx__obj_rival_spawner_fx_callback, object);
+    if (NULL == spawner->fx)
+        goto err;
+
+    return;
+
+err:
+    k_object_destroy(object);
 }
