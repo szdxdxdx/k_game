@@ -62,7 +62,6 @@ static void yx__obj_player_bullet_apple_on_step(struct k_object *object) {
     };
     if ( ! yx_point_in_rect(bullet_apple->x, bullet_apple->y, &room_rect)) {
         k_object_destroy(bullet_apple->object_shadow);
-        bullet_apple->object_shadow = NULL;
         k_object_destroy(object);
         return;
     }
@@ -377,7 +376,6 @@ static void yx__obj_rival_bullet_apple_on_step(struct k_object *object) {
     };
     if ( ! yx_point_in_rect(bullet_apple->x, bullet_apple->y, &room_rect)) {
         k_object_destroy(bullet_apple->object_shadow);
-        bullet_apple->object_shadow = NULL;
         k_object_destroy(object);
         return;
     }

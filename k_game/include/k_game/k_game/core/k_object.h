@@ -29,4 +29,8 @@ void k_object_destroy(struct k_object *object);
 /** \brief 获取对象的关联数据 */
 void *k_object_get_data(struct k_object *object);
 
+size_t k_object_get_id(struct k_object *object);
+
+struct k_object *k_object_find_by_id(size_t id);
+
 #endif

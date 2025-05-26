@@ -244,8 +244,9 @@ static void yx__obj_rival_on_step_move(struct k_object *object) {
 
 int yx__obj_rival_on_create_init_movement(struct yx_obj_rival *rival) {
 
-    if (NULL == k_camera_add_follow_target(rival->object, &rival->x, &rival->y))
-        return -1;
+    if (NULL == k_camera_add_follow_target(rival->object, &rival->x, &rival->y)) {
+        k_log_warn("failed to add camera follow target");
+    }
     if (NULL == k_object_add_step_callback(rival->object, yx__obj_rival_on_step_move))
         return -1;
 

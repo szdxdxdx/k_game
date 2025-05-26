@@ -1,7 +1,7 @@
 #ifndef K__OBJECT_H
 #define K__OBJECT_H
 
-#include "k_list.h"
+#include "k_object_pool.h"
 
 enum k_object_state {
     K__OBJECT_STATE_ACTIVE,
@@ -12,7 +12,7 @@ struct k_object {
 
     void *data;
 
-    struct k_list_node pool_node;
+    struct k_object_pool_node pool_node;
 
     struct k_room *room;
 
@@ -20,9 +20,8 @@ struct k_object {
 
     struct k_list component_list;
 
-    enum k_object_state state;
-
     /* tmp */
+    enum k_object_state state;
     struct k_list destroy_callback_list;
 };
 
