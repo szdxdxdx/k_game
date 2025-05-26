@@ -56,6 +56,8 @@ void k_object_del_sprite_renderer(struct k_sprite_renderer *renderer);
 
 /* region [transform] */
 
+/* region [scale] */
+
 /* region [scale_x] */
 
 /**
@@ -117,6 +119,15 @@ void k_sprite_renderer_scale_y(struct k_sprite_renderer *renderer, float scale_y
  * 与 `k_sprite_renderer_get_w()` 类似。
  */
 float k_sprite_renderer_get_h(struct k_sprite_renderer *renderer);
+
+/* endregion */
+
+/**
+ * \brief 设置渲染器竖直方向的缩放比率
+ *
+ * 将该缩放比率同时应用于 `k_sprite_renderer_scale_x()` 与 `k_sprite_renderer_scale_y()`。
+ */
+void k_sprite_renderer_scale(struct k_sprite_renderer *renderer, float scale);
 
 /* endregion */
 

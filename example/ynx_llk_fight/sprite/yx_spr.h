@@ -28,8 +28,7 @@ extern struct k_sprite *yx_spr_alert_marker;
 
 extern struct k_sprite *yx_spr_particle_on_hit;
 
-extern struct k_sprite *yx_spr_particle_on_create_fighter_anim_1;
-extern struct k_sprite *yx_spr_particle_on_create_fighter_anim_2;
+extern struct k_sprite *yx_spr_fx_fighter_appear;
 
 int yx_spr_load_on_game_start(void);
 

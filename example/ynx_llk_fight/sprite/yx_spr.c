@@ -160,9 +160,7 @@ static int yx__spr_particle_on_hit_load(void) {
 
 /* region [particle_on_create_fighter] */
 
-struct k_sprite *yx_spr_particle_on_create_fighter_anim_1;
-struct k_sprite *yx_spr_particle_on_create_fighter_anim_2;
-
+struct k_sprite *yx_spr_fx_fighter_appear;
 
 static int yx__spr_particle_on_create_fighter_load(void) {
 
@@ -171,8 +169,7 @@ static int yx__spr_particle_on_create_fighter_load(void) {
     config.config_file_path = "./demo_1/sprite/particle_on_create_fighter.json";
     config.scale = 2.0f;
     config.sprites = (struct yx_sprite_sheet_sprite_config[]) {
-        { &yx_spr_particle_on_create_fighter_anim_1, "1", 16, 80 },
-        { &yx_spr_particle_on_create_fighter_anim_2, "2", 16, 80 },
+        { &yx_spr_fx_fighter_appear, "fx_fighter_appear", 16, 80 },
         { NULL }
     };
 

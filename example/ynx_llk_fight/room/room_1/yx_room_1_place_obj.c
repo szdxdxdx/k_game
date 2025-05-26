@@ -12,6 +12,7 @@
 
 #include "room/room_1/yx_room_1.h"
 #include "utils/yx_math.h"
+#include "object/particle/yx_fx_fighter_appear.h"
 
 int yx__room_1_on_create_place_obj(void) {
 
@@ -38,6 +39,10 @@ int yx__room_1_on_create_place_obj(void) {
             config.y = yx_rand(y_min, y_max);
             if (NULL == yx_obj_rival_create(&config))
                 return -1;
+        }
+
+        for (i = 0; i < 30; ++i) {
+            yx_fx_fighter_appear_create(yx_rand(x_min, x_max), yx_rand(y_min, y_max));
         }
     }
 
