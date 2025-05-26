@@ -70,8 +70,6 @@ struct yx_obj_rival {
 
 int yx__obj_rival_on_create_init_movement(struct yx_obj_rival *rival);
 
-void yx__obj_rival_on_step_check_hit_bullet(struct yx_obj_rival *rival);
-
 int yx__obj_rival_on_create_init_collision(struct yx_obj_rival *rival);
 
 int yx__obj_rival_on_create_init_draw(struct yx_obj_rival *rival);

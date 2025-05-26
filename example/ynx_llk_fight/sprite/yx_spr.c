@@ -30,16 +30,18 @@ static int yx__spr_ynx_load(void) {
 
 struct k_sprite *yx_spr_llk_idle;
 struct k_sprite *yx_spr_llk_run;
+struct k_sprite *yx_spr_llk_dead;
 
 static int yx__spr_liliko_load(void) {
 
     struct yx_sprite_sheet_config config;
-    config.image_file_path  = "./demo_1/sprite/llk.png";
-    config.config_file_path = "./demo_1/sprite/llk.json";
+    config.image_file_path  = "./demo_1/sprite/liliko.png";
+    config.config_file_path = "./demo_1/sprite/liliko.json";
     config.scale = 2.0f;
     config.sprites = (struct yx_sprite_sheet_sprite_config[]){
         { &yx_spr_llk_idle, "idle", 15, 23 },
         { &yx_spr_llk_run,  "run",  15, 23 },
+        { &yx_spr_llk_dead, "dead",  15, 23 },
         { NULL }
     };
 

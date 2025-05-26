@@ -20,6 +20,7 @@ struct yx_obj_rival *yx_obj_rival_create(float x, float y) {
     struct yx_obj_rival *rival = k_object_get_data(object);
     rival->object = object;
 
+    rival->hp = 10;
     rival->x = x;
     rival->y = y;
     rival->vx_movement  = 0.0f;
