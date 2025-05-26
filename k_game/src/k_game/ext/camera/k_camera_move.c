@@ -23,7 +23,7 @@ static void k__camera_move_towards(struct k_camera *camera) {
     float next_x;
     float next_y;
 
-    if (dist < 0.25f) {
+    if (dist < 1.0f) {
         camera->vx = 0.0f;
         camera->vy = 0.0f;
         next_x = camera->dst_x;

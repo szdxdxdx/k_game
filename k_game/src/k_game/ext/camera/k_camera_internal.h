@@ -50,8 +50,15 @@ struct k_camera {
     float max_speed;
     float vx;
     float vy;
+
     float dst_x;
     float dst_y;
+
+    float shake_duration;
+    float shake_intensity;
+    float shake_time;
+    float shake_offset_x;
+    float shake_offset_y;
 
     struct k_camera_target *primary_target;
     struct k_camera_target *targets[K__CAMERA_TARGET_MAX];

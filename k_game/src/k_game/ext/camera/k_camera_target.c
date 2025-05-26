@@ -42,6 +42,7 @@ void k__camera_target_on_destroy(struct k_component *component) {
     for (; idx < camera->targets_num; idx++) {
         if (camera->targets[idx] == target) {
             camera->targets[idx] = camera->targets[camera->targets_num - 1];
+            break;
         }
     }
 

@@ -96,6 +96,12 @@ int k_camera_set_acceleration(float acceleration);
 
 /* endregion */
 
+/* region [shake] */
+
+void k_camera_shake(float duration, float intensity);
+
+/* endregion */
+
 /* region [camera_debug] */
 
 int k_camera_set_debug_draw_enabled(int debug);
