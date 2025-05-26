@@ -1,12 +1,10 @@
 
 * API 文档 / 基础 API
-  * [从零开始](/k_game/quick_start/getting_started.md)
-  * [基础概念](/k_game/quick_start/basic_concepts.md)
   * [配置开发环境](/k_game/quick_start/setup_dev_env.md)
+  * [基础概念](/k_game/quick_start/basic_concepts.md)
   * [启动游戏](/k_game/quick_start/start_game.md)
   * [创建房间](/k_game/quick_start/create_room.md)
-  * [切换房间](/k_game/quick_start/switch_room.md)
-  * [给房间添加事件回调](/k_game/quick_start/room_add_callback.md)
+  * [事件回调](/k_game/quick_start/room_add_callback.md)
   * [按键检测](/k_game/quick_start/keyboard_input.md)
   * [绘制图片](/k_game/quick_start/draw_image.md)
   * [播放声音](/k_game/quick_start/play_sound.md)
