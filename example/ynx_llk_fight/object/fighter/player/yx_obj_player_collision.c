@@ -8,8 +8,8 @@
 
 #include "config/yx_config_collision_group.h"
 #include "object/fighter/player/yx_obj_player.h"
-#include "object/text_particle/yx_obj_text_particle.h"
-#include "object/particle_on_hit/yx_obj_particle_on_hit.h"
+#include "object/particle/yx_obj_text_particle.h"
+#include "object/particle/yx_obj_particle_on_hit.h"
 #include "utils/yx_math.h"
 
 /* region [bubble] */
@@ -42,13 +42,13 @@ static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_player *play
 
     v_text = yx_float_vec2_scale(v_text, yx_rand(40.0f, 60.0f));
 
-    struct yx_obj_text_particle_config config;
+    struct yx_obj_particle_text_on_hit_config config;
     config.x = player->x;
     config.y = player->y;
     config.vx = v_text.x;
     config.vy = v_text.y;
     config.color = 0x660000ff;
-    yx_obj_text_particle_create(&config, "-%d", (int)hit_result->damage);
+    yx_obj_particle_text_on_hit_create(&config, "-%d", (int)hit_result->damage);
 }
 
 /* 判断自身有没有被子弹击中 */

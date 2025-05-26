@@ -118,8 +118,8 @@ static int yx__spr_alert_marker_load(void) {
 
 /* region [shadow] */
 
-struct k_sprite *yx_spr_fighter_shadow;
-struct k_sprite *yx_spr_apple_shadow;
+struct k_sprite *yx_spr_shadow_1;
+struct k_sprite *yx_spr_shadow_2;
 
 static int yx__spr_shadow_load(void) {
 
@@ -128,8 +128,8 @@ static int yx__spr_shadow_load(void) {
     config.config_file_path = "./demo_1/sprite/shadow.json";
     config.scale = 2.0f;
     config.sprites = (struct yx_sprite_sheet_sprite_config[]) {
-        { &yx_spr_fighter_shadow, "fighter_shadow", 15, 15 },
-        { &yx_spr_apple_shadow,   "apple_shadow",   15, 15 },
+        { &yx_spr_shadow_1, "shadow_1", 15, 15 },
+        { &yx_spr_shadow_2, "shadow_2", 15, 15 },
         { NULL }
     };
 
@@ -179,7 +179,6 @@ static int yx__spr_particle_on_create_fighter_load(void) {
     return yx_sprite_load_from_sheet(&config);
 }
 
-
 /* endregion */
 
 /* region [iris] */
@@ -197,7 +196,7 @@ static int yx__spr_iris_load(void) {
     config.sprites = (struct yx_sprite_sheet_sprite_config[]){
         { &yx_spr_iris_gun,    "gun",    15, 23 },
         { &yx_spr_iris_bullet, "bullet", 16, 16 },
-        { &yx_spr_iris_apple,  "apple", 16, 16 },
+        { &yx_spr_iris_apple,  "apple",  16, 16 },
         { NULL }
     };
 

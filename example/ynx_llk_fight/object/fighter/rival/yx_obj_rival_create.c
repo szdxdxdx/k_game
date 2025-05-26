@@ -10,7 +10,7 @@
 
 #include "object/fighter/rival/yx_obj_rival.h"
 #include "config/yx_config_arena_blackboard.h"
-#include "object/shadow/yx_obj_shadow.h"
+#include "object/particle/yx_obj_shadow.h"
 
 struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *config) {
 
@@ -54,7 +54,7 @@ struct yx_obj_rival *yx_obj_rival_create(const struct yx_obj_rival_config *confi
     }
 
     {
-        rival->object_shadow = yx_obj_shadow_create(yx_spr_fighter_shadow, rival->position, 0, -15);
+        rival->object_shadow = yx_obj_shadow_create(yx_spr_shadow_1, rival->position, 0, -15);
         if (NULL == rival->object_shadow)
             goto err;
     }

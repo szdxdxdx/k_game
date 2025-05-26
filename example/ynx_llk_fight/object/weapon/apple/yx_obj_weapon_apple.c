@@ -12,7 +12,7 @@
 #include "utils/yx_math.h"
 #include "config/yx_config_collision_group.h"
 #include "sound/yx_sound.h"
-#include "object/shadow/yx_obj_shadow.h"
+#include "object/particle/yx_obj_shadow.h"
 
 /* region [player_weapon] */
 
@@ -155,7 +155,7 @@ static struct yx_obj_player_bullet_apple *yx__obj_player_bullet_apple_create(str
     }
 
     {
-        bullet_apple->object_shadow = yx_obj_shadow_create(yx_spr_apple_shadow, bullet_apple->position, 0, -4);
+        bullet_apple->object_shadow = yx_obj_shadow_create(yx_spr_shadow_2, bullet_apple->position, 0, -4);
         if (NULL == bullet_apple->object_shadow)
             goto err;
     }
@@ -455,7 +455,7 @@ static struct yx_obj_rival_bullet_apple *yx__obj_rival_bullet_apple_create(struc
     }
 
     {
-        bullet_apple->object_shadow = yx_obj_shadow_create(yx_spr_apple_shadow, bullet_apple->position, 0, -4);
+        bullet_apple->object_shadow = yx_obj_shadow_create(yx_spr_shadow_2, bullet_apple->position, 0, -4);
         if (NULL == bullet_apple->object_shadow)
             goto err;
     }

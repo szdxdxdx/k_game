@@ -1,7 +1,7 @@
 
 #include "config/yx_config_z_index.h"
 #include "sprite/yx_spr.h"
-#include "object/alert_marker/yx_obj_alert_marker.h"
+#include "object/particle/yx_obj_alert_marker.h"
 
 static void yx__obj_alert_marker_on_alarm(struct k_object *object, int timeout_diff) {
     k_object_destroy(object);

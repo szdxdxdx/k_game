@@ -1,7 +1,7 @@
 
 #include "config/yx_config_z_index.h"
 #include "sprite/yx_spr.h"
-#include "object/particle_on_hit/yx_obj_particle_on_hit.h"
+#include "object/particle/yx_obj_particle_on_hit.h"
 
 struct yx_obj_particle_on_hit *yx_obj_particle_on_hit_create(float x, float y) {
 

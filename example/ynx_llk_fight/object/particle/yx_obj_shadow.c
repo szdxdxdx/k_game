@@ -2,7 +2,7 @@
 #define K_LOG_TAG "yx:object:shadow"
 #include "k_log.h"
 
-#include "object/shadow/yx_obj_shadow.h"
+#include "object/particle/yx_obj_shadow.h"
 
 #include "config/yx_config_z_index.h"
 

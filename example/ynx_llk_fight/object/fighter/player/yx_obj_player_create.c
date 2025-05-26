@@ -6,7 +6,7 @@
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/weapon/apple/yx_obj_weapon_apple.h"
 #include "config/yx_config_arena_blackboard.h"
-#include "object/shadow/yx_obj_shadow.h"
+#include "object/particle/yx_obj_shadow.h"
 
 struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *config) {
 
@@ -66,7 +66,7 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
     }
 
     {
-        player->object_shadow = yx_obj_shadow_create(yx_spr_fighter_shadow, player->position, 0, -15);
+        player->object_shadow = yx_obj_shadow_create(yx_spr_shadow_1, player->position, 0, -15);
         if (NULL == player->object_shadow)
             goto err;
     }

@@ -13,7 +13,7 @@
 
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
-#include "object/alert_marker/yx_obj_alert_marker.h"
+#include "object/particle/yx_obj_alert_marker.h"
 #include "object/weapon/apple/yx_obj_weapon_apple.h"
 
 #include "utils/yx_math.h"
