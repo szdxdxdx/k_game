@@ -18,6 +18,7 @@ static void yx__fx_fighter_appear_on_step(struct k_object *object) {
             float scale = start_scale - (start_scale - 1.0f) / t1 * fx->timer;
             k_sprite_renderer_scale(fx->spr_rdr, scale);
         } else {
+            k_camera_shake(14.0f, 0.75f);
             k_sprite_renderer_scale(fx->spr_rdr, 1.0f);
         }
     }

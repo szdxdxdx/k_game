@@ -204,6 +204,28 @@ static int yx__spr_iris_load(void) {
 
 /* endregion */
 
+/* region [banner_you_win] */
+
+struct k_sprite *yx_spr_banner_you_win;
+struct k_sprite *yx_spr_banner_you_died;
+
+static int yx__spr_banner_you_win_load(void) {
+
+    struct yx_sprite_sheet_config config;
+    config.image_file_path  = "./demo_1/sprite/banner_you_died.png";
+    config.config_file_path = "./demo_1/sprite/banner_you_died.json";
+    config.scale = 2.0f;
+    config.sprites = (struct yx_sprite_sheet_sprite_config[]) {
+        { &yx_spr_banner_you_win,  "you_win",  64, 16 },
+        { &yx_spr_banner_you_died, "you_died", 64, 16 },
+        { NULL }
+    };
+
+    return yx_sprite_load_from_sheet(&config);
+}
+
+/* endregion */
+
 int yx_spr_load_on_game_start(void) {
 
     return yx__spr_ynx_load()
@@ -214,6 +236,6 @@ int yx_spr_load_on_game_start(void) {
         || yx__spr_shadow_load()
         || yx__spr_particle_on_hit_load()
         || yx__spr_particle_on_create_fighter_load()
-        || yx__spr_iris_load()
+        || yx__spr_banner_you_win_load()
     ? -1 : 0;
 }

@@ -31,6 +31,9 @@ extern struct k_sprite *yx_spr_particle_on_hit;
 
 extern struct k_sprite *yx_spr_fx_fighter_appear;
 
+extern struct k_sprite *yx_spr_banner_you_win;
+extern struct k_sprite *yx_spr_banner_you_died;
+
 int yx_spr_load_on_game_start(void);
 
 #endif

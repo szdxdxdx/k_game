@@ -243,8 +243,6 @@ static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {
     k_callback_del(rival->cb_on_step_end_set_face);
 
     yx_arena_manager_notify_rival_dead(rival->blackboard->manager);
-
-
 }
 
 static void yx__obj_rival_on_state_dead_update(struct k_object *object) {
@@ -297,6 +295,7 @@ static void yx__obj_rival_on_step_check_hit_bullet(struct yx_obj_rival *rival) {
 
         rival->hp -= hit_result.damage;
         yx__obj_rival_create_text_particle_on_hit(rival, &hit_result);
+        k_camera_shake(3.2f, 0.65f);
 
         if (rival->hp <= 0.0f) {
             rival->hp = 0.0f;
