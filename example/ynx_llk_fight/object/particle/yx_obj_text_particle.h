@@ -8,7 +8,6 @@ struct yx_obj_particle_text_on_hit_config {
     float y;
     float vx;
     float vy;
-    uint32_t color;
 };
 
 void yx_obj_particle_text_on_hit_create(const struct yx_obj_particle_text_on_hit_config *config, const char *fmt, ...);

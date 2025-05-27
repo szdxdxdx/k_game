@@ -21,7 +21,16 @@ static void yx__obj_particle_text_on_hit_on_step(struct k_object *object) {
 
 static void yx__obj_particle_text_on_hit_on_draw(struct k_object *object) {
     struct yx_obj_particle_text_on_hit *particle = k_object_get_data(object);
-    k_canvas_set_draw_color(particle->color);
+    k_canvas_set_draw_color(0x330b0bff);
+    k_canvas_room_printf(NULL, particle->x - 2, particle->y, "%s", particle->text);
+    k_canvas_room_printf(NULL, particle->x + 2, particle->y, "%s", particle->text);
+    k_canvas_room_printf(NULL, particle->x, particle->y - 2, "%s", particle->text);
+    k_canvas_room_printf(NULL, particle->x, particle->y + 2, "%s", particle->text);
+    k_canvas_room_printf(NULL, particle->x - 2, particle->y - 2, "%s", particle->text);
+    k_canvas_room_printf(NULL, particle->x + 2, particle->y - 2, "%s", particle->text);
+    k_canvas_room_printf(NULL, particle->x - 2, particle->y + 2, "%s", particle->text);
+    k_canvas_room_printf(NULL, particle->x + 2, particle->y + 2, "%s", particle->text);
+    k_canvas_set_draw_color(0xf00b0bff);
     k_canvas_room_printf(NULL, particle->x, particle->y, "%s", particle->text);
 }
 
@@ -49,7 +58,6 @@ void yx_obj_particle_text_on_hit_create(const struct yx_obj_particle_text_on_hit
         goto err;
 
     struct yx_obj_particle_text_on_hit *particle = k_object_get_data(object);
-    particle->color = config->color;
     particle->text = text_copy;
     particle->x = config->x;
     particle->y = config->y;
