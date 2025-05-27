@@ -88,6 +88,6 @@ struct yx_obj_rival_wave_spawner {
 
 struct yx_obj_rival_wave_spawner *yx_obj_rival_wave_spawner_create(void);
 
-void yx_obj_rival_wave_spawner_new_wave(struct yx_obj_rival_wave_spawner *spawner);
+void yx_obj_rival_wave_spawner_new_wave(struct yx_obj_rival_wave_spawner *spawner, size_t new_rivals_num);
 
 #endif

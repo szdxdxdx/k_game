@@ -24,7 +24,7 @@ struct yx_obj_player *yx_obj_player_create(void) {
     player->key_left  = 'A';
     player->key_down  = 'S';
     player->key_right = 'D';
-    player->speed     = 200.0f;
+    player->speed     = 220.0f;
     player->vx_movement  = 0.0f;
     player->vy_movement  = 0.0f;
     player->vx_knockback = 0.0f;

@@ -34,6 +34,10 @@ void yx_arena_manager_notify_rival_dead(struct yx_arena_manager *manager) {
     struct yx_obj_rival_wave_spawner *spawner = manager->rival_wave_spawner;
     spawner->rivals_num -= 1;
     if (0 == spawner->rivals_num) {
-        yx_obj_rival_wave_spawner_new_wave(spawner);
+        yx_obj_rival_wave_spawner_new_wave(spawner, 10);
     }
+}
+
+void yx_arena_manager_notify_enter_room(struct yx_arena_manager *manager) {
+    yx_obj_rival_wave_spawner_new_wave(manager->rival_wave_spawner, 10);
 }

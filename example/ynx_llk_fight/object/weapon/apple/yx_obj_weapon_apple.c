@@ -24,7 +24,7 @@ static void yx__obj_player_bullet_apple_on_hit(struct yx_obj_player_bullet *bull
     if(NULL != get_result) {
         get_result->vx_knockback = bullet_apple->vx * 0.75f;
         get_result->vy_knockback = bullet_apple->vy * 0.75f;
-        get_result->damage = 2.0f;
+        get_result->damage = rand() % 2 ? 2.0f : 3.0f;
     }
 
     k_object_del_collision_box(bullet_apple->hit_box);
@@ -338,7 +338,7 @@ static void yx__obj_rival_bullet_apple_on_hit(struct yx_obj_rival_bullet *bullet
     if(NULL != get_result) {
         get_result->vx_knockback = bullet_apple->vx * 0.75f;
         get_result->vy_knockback = bullet_apple->vy * 0.75f;
-        get_result->damage = 2.0f;
+        get_result->damage = rand() % 2 ? 2.0f : 3.0f;
     }
 
     k_object_del_collision_box(bullet_apple->hit_box);

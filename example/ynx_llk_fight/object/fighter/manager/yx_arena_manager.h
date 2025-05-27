@@ -15,4 +15,6 @@ void yx_arena_manager_notify_new_rival(struct yx_arena_manager *manager);
 
 void yx_arena_manager_notify_rival_dead(struct yx_arena_manager *manager);
 
+void yx_arena_manager_notify_enter_room(struct yx_arena_manager *manager);
+
 #endif

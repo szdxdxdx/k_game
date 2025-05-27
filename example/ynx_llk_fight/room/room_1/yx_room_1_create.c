@@ -58,6 +58,8 @@ static void yx__room_1_on_enter(void) {
     float player_y = blackboard->manager->player->y;
     k_camera_set_view_position(player_x, player_y);
 
+    yx_arena_manager_notify_enter_room(blackboard->manager);
+
     //k_camera_set_debug_draw_enabled(1);
     //yx__room_1_on_enter_init_webui();
 }

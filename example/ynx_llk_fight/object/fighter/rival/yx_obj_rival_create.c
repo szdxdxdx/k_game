@@ -157,15 +157,16 @@ err:
     return NULL;
 }
 
-void yx_obj_rival_wave_spawner_new_wave(struct yx_obj_rival_wave_spawner *spawner) {
+void yx_obj_rival_wave_spawner_new_wave(struct yx_obj_rival_wave_spawner *spawner, size_t new_rivals_num) {
 
-    float x_min = 0.0f;
-    float y_min = 0.0f;
-    float x_max = k_room_get_w();
-    float y_max = k_room_get_h();
+    float padding = 10.0f;
+    float x_min = 0.0f + padding;
+    float y_min = 0.0f + padding;
+    float x_max = k_room_get_w() - padding;
+    float y_max = k_room_get_h() - padding;
 
-    int i = 0;
-    for (; i < 10; ++i) {
+    size_t i = 0;
+    for (; i < new_rivals_num; ++i) {
         float x = yx_rand(x_min, x_max);
         float y = yx_rand(y_min, y_max);
         yx_obj_rival_spawn(x, y);
