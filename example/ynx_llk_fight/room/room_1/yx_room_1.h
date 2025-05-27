@@ -10,6 +10,8 @@ struct yx_room_1 {
 
 struct k_room *yx_room_1_create(void);
 
+int yx__room_1_init_ui(void);
+
 int yx__room_1_on_create_set_bkgd(void);
 
 int yx__room_1_on_enter_init_webui(void);

@@ -66,7 +66,7 @@ void yx_obj_particle_text_on_hit_create(const struct yx_obj_particle_text_on_hit
 
     if (NULL == k_object_add_step_callback(object, yx__obj_particle_text_on_hit_on_step))
         goto err;
-    if (NULL == k_object_add_draw_callback(object, yx__obj_particle_text_on_hit_on_draw, YX_CONFIG_Z_GROUP_TEXT, 0))
+    if (NULL == k_object_add_draw_callback(object, yx__obj_particle_text_on_hit_on_draw, YX_CONFIG_Z_GROUP_FX, 0))
         goto err;
     if (NULL == k_object_add_alarm_callback(object, yx__obj_particle_text_on_hit_on_alarm_destroy, 1200))
         goto err;

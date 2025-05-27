@@ -40,9 +40,6 @@ static void yx__room_1_draw_grid(void) {
 static void yx__room_1_draw_background(void *data) {
     (void)data;
 
-    k_canvas_set_draw_color(0x00000000);
-    k_canvas_ui_clear();
-
     struct yx_room_1 *room_1 = k_room_get_data();
     if (room_1->draw_background) {
         k_canvas_room_draw_image(img_bkgd, NULL, 0, 0, NULL);

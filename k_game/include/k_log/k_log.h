@@ -14,7 +14,7 @@
 #define K_LOG_LEVEL_OFF   6
 
 #ifndef K_LOG_LEVEL
-#define K_LOG_LEVEL K_LOG_LEVEL_OFF
+#define K_LOG_LEVEL K_LOG_LEVEL_TRACE
 #endif
 
 #ifndef K_LOG_COLOR

@@ -67,7 +67,7 @@ struct yx_fx_fighter_appear *yx_fx_fighter_appear_create(float x, float y, void 
         spr_rdr_config.x = &fx->x;
         spr_rdr_config.y = &fx->y;
         spr_rdr_config.sprite = yx_spr_fx_fighter_appear;
-        spr_rdr_config.z_group = YX_CONFIG_Z_GROUP_TEXT;
+        spr_rdr_config.z_group = YX_CONFIG_Z_GROUP_FX;
         spr_rdr_config.z_layer = 0;
         fx->spr_rdr = k_object_add_sprite_renderer(object, &spr_rdr_config);
         if (NULL == fx->spr_rdr)

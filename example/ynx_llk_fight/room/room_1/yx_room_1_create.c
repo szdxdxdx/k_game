@@ -1,7 +1,7 @@
 
-#define K_LOG_TAG "yx:room:room_1"
-
 #include <limits.h>
+
+#define K_LOG_TAG "yx:room:room_1"
 #include "k_log.h"
 
 #include "k_game.h"
@@ -38,6 +38,8 @@ static int yx__room_1_on_create(void *param) {
     if (0 != k_room_add_camera())
         return -1;
     if (0 != k_room_add_collision_manager())
+        return -1;
+    if (0 != yx__room_1_init_ui())
         return -1;
 
     struct yx_config_arena_blackboard *blackboard = k_room_blackboard_add(YX_ARENA_BLACKBOARD_KEY, sizeof(struct yx_config_arena_blackboard));
@@ -83,7 +85,6 @@ struct k_room *yx_room_1_create(void) {
     return room;
 
 err:
-
     k_log_error("failed to create room_1");
     return NULL;
 }
