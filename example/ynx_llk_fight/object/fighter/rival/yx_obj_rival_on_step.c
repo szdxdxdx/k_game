@@ -236,6 +236,12 @@ static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {
     k_callback_del(rival->cb_on_step_attack);
    // k_callback_del(rival->cb_on_step_move);
     k_callback_del(rival->cb_on_step_end_set_face);
+    
+    struct yx_obj_rival_wave_spawner *spawner = rival->blackboard->rival_wave_spawner;
+    spawner->rivals_num -= 1;
+    if (0 == spawner->rivals_num) {
+        yx_obj_rival_wave_spawner_new_wave(spawner);
+    }
 }
 
 static void yx__obj_rival_on_state_dead_update(struct k_object *object) {

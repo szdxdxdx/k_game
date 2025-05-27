@@ -15,7 +15,6 @@
 #include "object/particle/yx_fx_fighter_appear.h"
 
 int yx__room_1_on_create_place_obj(void) {
-
     struct yx_room_1 *room_1 = k_room_get_data();
 
     {
@@ -26,17 +25,7 @@ int yx__room_1_on_create_place_obj(void) {
     }
 
     {
-        float x_min = 0.0f;
-        float y_min = 0.0f;
-        float x_max = k_room_get_w();
-        float y_max = k_room_get_h();
-
-        int i = 0;
-        for (; i < 10; ++i) {
-            float x = yx_rand(x_min, x_max);
-            float y = yx_rand(y_min, y_max);
-            yx_obj_rival_spawn(x, y);
-        }
+        yx_obj_rival_wave_spawner_create();
     }
 
     return 0;

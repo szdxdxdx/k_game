@@ -83,11 +83,14 @@ int yx__obj_rival_on_create_init_attack(struct yx_obj_rival *rival);
 
 /* ------------------------------------------------------------------------ */
 
-struct yx_obj_rival_spawner {
-
+struct yx_obj_rival_wave_spawner {
     struct yx_config_arena_blackboard *blackboard;
+
+    size_t rivals_num;
 };
 
-void yx_obj_rival_spawner_create(void);
+struct yx_obj_rival_wave_spawner *yx_obj_rival_wave_spawner_create(void);
+
+void yx_obj_rival_wave_spawner_new_wave(struct yx_obj_rival_wave_spawner *spawner);
 
 #endif

@@ -37,7 +37,7 @@ static int yx__room_1_on_create(void *param) {
         if (NULL == blackboard)
             return -1;
         blackboard->player = NULL;
-        blackboard->rivals_num = 0;
+        blackboard->rival_wave_spawner = NULL;
     }
     if (0 != k_room_add_camera())
         return -1;

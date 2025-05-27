@@ -13,6 +13,7 @@
 #include "object/particle/yx_obj_shadow.h"
 #include "object/particle/yx_fx_fighter_appear.h"
 #include "object/weapon/yx_obj_weapon_i.h"
+#include "utils/yx_math.h"
 
 struct yx_obj_rival *yx_obj_rival_create(float x, float y) {
 
@@ -69,6 +70,8 @@ struct yx_obj_rival *yx_obj_rival_create(float x, float y) {
         goto err;
     }
 
+    rival->blackboard->rival_wave_spawner->rivals_num += 1;
+
     return rival;
 
 err:
@@ -78,12 +81,14 @@ err:
 }
 
 void yx_obj_rival_destroy(struct yx_obj_rival *rival) {
+
     if (NULL != rival->weapon) {
         yx_obj_rival_weapon_destroy(rival->weapon);
     }
     if (NULL != rival->object_shadow) {
         k_object_destroy(rival->object_shadow);
     }
+
     k_object_destroy(rival->object);
 }
 
@@ -101,6 +106,9 @@ static void yx__obj_rival_spawner_fx_callback(struct k_object *object) {
     struct yx_obj_rival_appear_fx *fx = k_object_get_data(object);
 
     struct yx_obj_rival *rival = yx_obj_rival_create(fx->x, fx->y);
+    if (NULL == rival) {
+        k_log_warn("failed to create rival");
+    }
 }
 
 void yx_obj_rival_spawn(float x, float y) {
@@ -121,4 +129,48 @@ void yx_obj_rival_spawn(float x, float y) {
 
 err:
     k_object_destroy(object);
+}
+
+/* ------------------------------------------------------------------------ */
+
+struct yx_obj_rival_wave_spawner *yx_obj_rival_wave_spawner_create(void) {
+
+    struct k_object *object = k_object_create(sizeof(struct yx_obj_rival));
+    if (NULL == object)
+        goto err;
+
+    struct yx_obj_rival_wave_spawner *spawner = k_object_get_data(object);
+
+    spawner->blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
+    if (NULL == spawner->blackboard) {
+        k_log_error("object yx_obj_rival_wave_spawner requires room to provide blackboard '%s'", YX_ARENA_BLACKBOARD_KEY);
+        goto err;
+    }
+
+    spawner->blackboard->rival_wave_spawner = spawner;
+
+    spawner->rivals_num = 0;
+
+    yx_obj_rival_wave_spawner_new_wave(spawner);
+
+    return spawner;
+
+err:
+    k_log_error("failed to create object yx_obj_rival_wave_spawner");
+    return NULL;
+}
+
+void yx_obj_rival_wave_spawner_new_wave(struct yx_obj_rival_wave_spawner *spawner) {
+
+    float x_min = 0.0f;
+    float y_min = 0.0f;
+    float x_max = k_room_get_w();
+    float y_max = k_room_get_h();
+
+    int i = 0;
+    for (; i < 10; ++i) {
+        float x = yx_rand(x_min, x_max);
+        float y = yx_rand(y_min, y_max);
+        yx_obj_rival_spawn(x, y);
+    }
 }

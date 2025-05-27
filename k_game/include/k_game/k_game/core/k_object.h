@@ -33,6 +33,8 @@ size_t k_object_get_id(struct k_object *object);
 
 struct k_object *k_object_find_by_id(size_t id);
 
+/* ------------------------------------------------------------------------ */
+
 #if 1 /* <- 这部分 API 是可选的，开启后，k_object 结构体增多一个 const char *debug_info 字段，用于记录调试信息 */
 
 #define K__OBJECT_DEBUG_INFO
@@ -40,7 +42,11 @@ struct k_object *k_object_debug_create(size_t data_size, const char *debug_info)
 #define k__object_create_debug_info_(object_data_size, file, line)  "" #object_data_size " " file ": " #line
 #define k__object_create_debug_info(object_data_size, file, line)  k__object_create_debug_info_(object_data_size, file, line)
 
-/** \brief 在当前房间中创建一个对象，同时记录调试信息（创建该对象的代码所在的文件与行号）*/
+/**
+ * \brief 在当前房间中创建一个对象
+ *
+ * 此宏仅是对函数 `k_object_create()` 的简单包装，在创建对象时记录调试信息（创建该对象的代码所在的文件与行号）
+ */
 #define k_object_create(data_size) \
     k_object_debug_create(data_size, k__object_create_debug_info(data_size, __FILE__, __LINE__))
 

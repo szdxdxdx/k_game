@@ -3,13 +3,13 @@
 #define YX_CONFIG_ARENA_BLACKBOARD_H
 
 struct yx_obj_player;
-struct yx_obj_rival;
+struct yx_obj_rival_wave_spawner;
 
 #define YX_ARENA_BLACKBOARD_KEY "yx_config_arena_blackboard"
 
 struct yx_config_arena_blackboard {
     struct yx_obj_player *player;
-    size_t rivals_num;
+    struct yx_obj_rival_wave_spawner *rival_wave_spawner;
 };
 
 #endif

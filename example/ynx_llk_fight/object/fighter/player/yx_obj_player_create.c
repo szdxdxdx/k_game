@@ -52,7 +52,6 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
 
     player->blackboard->player = player;
 
-
     {
         struct k_position_config position_config;
         position_config.world_x = &player->x;
