@@ -10,7 +10,7 @@
 #include "../room/k_room_stack.h"
 #include "../room/k_room_run.h"
 
-static void run_game() {
+static void k__game_run() {
 
     struct k_room *room = k__room_stack_get_top();
     if (NULL == room) {
@@ -35,7 +35,7 @@ int k_game_run(const struct k_game_config *config) {
         return -1;
     }
 
-    run_game();
+    k__game_run();
 
     k__game_deinit(config);
     return 0;

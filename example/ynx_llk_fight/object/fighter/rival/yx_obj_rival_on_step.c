@@ -197,16 +197,26 @@ static void yx__obj_rival_on_state_running_update(struct k_object *object) {
 
 /* region [dead] */
 
+static void yx__obj_rival_on_state_dead_sprite_renderer_callback(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+
+    k_object_del_collision_box(rival->hp_collision_box);
+    rival->hp_collision_box = NULL;
+
+    k_callback_del(rival->cb_on_step_move);
+}
+
 static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
 
     k_sprite_renderer_set_sprite(rival->spr_rdr, rival->spr_dead);
     k_sprite_renderer_set_loop_count(rival->spr_rdr, 1);
+    k_sprite_renderer_set_loop_callback(rival->spr_rdr, yx__obj_rival_on_state_dead_sprite_renderer_callback);
 
     yx_state_machine_change_state(&rival->attack_sm, NULL);
 
-    k_object_del_collision_box(rival->hp_collision_box);
-    rival->hp_collision_box = NULL;
+   // k_object_del_collision_box(rival->hp_collision_box);
+   // rival->hp_collision_box = NULL;
 
     rival->vx_movement = 0.0f;
     rival->vy_movement = 0.0f;
@@ -217,7 +227,7 @@ static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {
     k_camera_del_target(rival->camera_target);
 
     k_callback_del(rival->cb_on_step_attack);
-    k_callback_del(rival->cb_on_step_move);
+   // k_callback_del(rival->cb_on_step_move);
     k_callback_del(rival->cb_on_step_end_set_face);
 }
 
@@ -263,17 +273,20 @@ static void yx__obj_rival_on_step_check_hit_bullet(struct yx_obj_rival *rival) {
     struct yx_bullet_on_hit_result hit_result;
     yx_obj_player_bullet_on_hit(bullet, &hit_result);
 
-    yx__obj_rival_create_text_particle_on_hit(rival, &hit_result);
     yx_obj_particle_on_hit_create(rival->x, rival->y);
 
     rival->vx_knockback += hit_result.vx_knockback;
     rival->vy_knockback += hit_result.vy_knockback;
 
-    rival->hp -= hit_result.damage;
-    if (rival->hp <= 0.0f) {
-        rival->hp = 0.0f;
+    if (&YX_STATE_DEAD != yx_state_machine_get_current_state(&rival->move_sm)) {
 
-        yx_state_machine_change_state(&rival->move_sm, &YX_STATE_DEAD);
+        rival->hp -= hit_result.damage;
+        yx__obj_rival_create_text_particle_on_hit(rival, &hit_result);
+
+        if (rival->hp <= 0.0f) {
+            rival->hp = 0.0f;
+            yx_state_machine_change_state(&rival->move_sm, &YX_STATE_DEAD);
+        }
     }
 }
 

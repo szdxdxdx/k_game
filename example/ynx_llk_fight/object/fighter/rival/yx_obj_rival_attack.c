@@ -67,7 +67,7 @@ static void yx__obj_rival_on_state_attack_enter(struct k_object *object) {
 
     yx_obj_alert_marker_create(rival->position, -30, -16); /* 感叹号气泡 */
 
-    rival->attack_timer = yx_rand(0.8f, 2.5f);
+    rival->attack_timer = yx_rand(1.8f, 6.5f);
 }
 
 static void yx__obj_rival_on_state_attack_update(struct k_object *object) {
@@ -86,7 +86,7 @@ static void yx__obj_rival_on_state_attack_update(struct k_object *object) {
     float dt = k_time_get_step_delta();
     rival->attack_timer -= dt;
     if (rival->attack_timer <= 0.0f) {
-        rival->attack_timer = yx_rand(1.2f, 2.8f);
+        rival->attack_timer = yx_rand(1.8f, 5.5f);
 
         yx_obj_rival_weapon_attack(rival->weapon);
     }
