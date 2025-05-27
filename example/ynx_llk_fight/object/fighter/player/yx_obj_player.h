@@ -3,6 +3,8 @@
 
 #include "k_game.h"
 
+#include "config/yx_config_arena_blackboard.h"
+
 #include "object/weapon/yx_obj_weapon_i.h"
 #include "utils/state_machine/yx_state_machine.h"
 

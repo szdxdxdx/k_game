@@ -120,7 +120,7 @@ static struct yx_obj_player_bullet_apple *yx__obj_player_bullet_apple_create(str
     float cos_angle;
     yx_calc_vector_direction(weapon_apple->x, weapon_apple->y, weapon_apple->aim_x, weapon_apple->aim_y, &cos_angle, &sin_angle);
 
-    float speed = yx_rand(350.0f, 450.0f);
+    float speed = yx_rand(550.0f, 650.0f);
     bullet_apple->vx = cos_angle * speed;
     bullet_apple->vy = sin_angle * speed;
 

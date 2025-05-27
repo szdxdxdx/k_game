@@ -148,8 +148,8 @@ static void yx__obj_player_on_step_update_weapon(struct yx_obj_player *player) {
 
     if (player->ammo <= player->ammo_max) {
         player->ammo_timer += k_time_get_step_delta();
-        if (player->ammo_timer >= 3.0f) {
-            player->ammo_timer -= 3.0f;
+        if (player->ammo_timer >= 1.2f) {
+            player->ammo_timer -= 1.2f;
             player->ammo += 1;
         }
     }
