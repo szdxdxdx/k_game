@@ -201,6 +201,7 @@ static void yx__obj_player_weapon_apple_fn_aim_at(struct yx_obj_player_weapon *w
 
 static void yx__obj_player_weapon_apple_attack(struct yx_obj_player_weapon_apple *weapon_apple) {
 
+    /*
     if (weapon_apple->ammo > 0) {
         yx__obj_player_bullet_apple_create(weapon_apple);
         weapon_apple->attack_cd_timer = weapon_apple->attack_cd_time;
@@ -213,6 +214,12 @@ static void yx__obj_player_weapon_apple_attack(struct yx_obj_player_weapon_apple
             k_sprite_renderer_scale_y(weapon_apple->spr_rdr, 0.0f);
         }
     }
+    */
+
+    yx__obj_player_bullet_apple_create(weapon_apple);
+    weapon_apple->attack_cd_timer = weapon_apple->attack_cd_time;
+
+    k_sound_sfx_play(yx_sfx_fire);
 }
 
 static void yx__obj_player_weapon_apple_on_key_down(struct yx_obj_player_weapon *weapon) {
@@ -246,7 +253,7 @@ static void yx__obj_player_weapon_apple_on_step(struct k_object *object) {
 
     float dt = k_time_get_step_delta();
 
-    if (weapon_apple->ammo > 0 && weapon_apple->attack_cd_timer > 0.0f) {
+    if (/*weapon_apple->ammo > 0 && */weapon_apple->attack_cd_timer > 0.0f) {
         weapon_apple->attack_cd_timer -= dt;  /* CD 冷却 */
 
         if (weapon_apple->attack_cd_timer <= 0) {
@@ -262,18 +269,13 @@ static void yx__obj_player_weapon_apple_on_step(struct k_object *object) {
         }
     }
 
+    /*
     weapon_apple->ammo_timer += dt;
     if (weapon_apple->ammo_timer >= weapon_apple->ammo_cd_time) {
         weapon_apple->ammo += 1;
         weapon_apple->ammo_timer -= weapon_apple->ammo_cd_time;
     }
-}
-
-static void yx__obj_player_weapon_apple_on_debug_draw(struct k_object *object) {
-    struct yx_obj_player_weapon_apple *weapon_apple = k_object_get_data(object);
-
-    k_canvas_set_draw_color(0xffffffff);
-    k_canvas_ui_printf(NULL, 0, 0, "%zu", weapon_apple->ammo);
+    */
 }
 
 struct yx_obj_player_weapon *yx_obj_player_weapon_apple_create(void) {
@@ -292,12 +294,14 @@ struct yx_obj_player_weapon *yx_obj_player_weapon_apple_create(void) {
     weapon_apple->aim_x = 0;
     weapon_apple->aim_y = 0;
 
-    weapon_apple->attack_cd_time = 0.25f;
+    weapon_apple->attack_cd_time = 0.35f;
     weapon_apple->attack_cd_timer = 0;
 
+    /*
     weapon_apple->ammo = 1000;
     weapon_apple->ammo_timer = 0.0f;
     weapon_apple->ammo_cd_time = 2.0f;
+    */
 
     {
         struct k_sprite_renderer_config config;
@@ -313,8 +317,6 @@ struct yx_obj_player_weapon *yx_obj_player_weapon_apple_create(void) {
 
     if (NULL == k_object_add_step_callback(object, yx__obj_player_weapon_apple_on_step))
         goto err;
-
-    k_object_add_draw_callback(object, yx__obj_player_weapon_apple_on_debug_draw, 0, 0);
 
     return &weapon_apple->super;
 
