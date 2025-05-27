@@ -34,10 +34,15 @@ void yx_arena_manager_notify_new_rival(struct yx_arena_manager *manager) {
     manager->rival_wave_spawner->rivals_num += 1;
 }
 
-static void yx__arena_manager_new_wave(struct yx_arena_manager *manager) {
+static void yx__arena_manager_on_room_alarm_new_wave(void *manager_, int timeout_diff) {
+    struct yx_arena_manager *manager = manager_;
 
     yx_obj_rival_wave_spawner_new_wave(10 + manager->wave_count * 5);
     manager->wave_count += 1;
+}
+
+static void yx__arena_manager_new_wave(struct yx_arena_manager *manager) {
+    k_room_add_alarm_callback(manager,  yx__arena_manager_on_room_alarm_new_wave, 2000);
 }
 
 void yx_arena_manager_notify_rival_dead(struct yx_arena_manager *manager) {
