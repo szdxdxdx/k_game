@@ -32,7 +32,7 @@ int yx__room_1_on_create_place_obj(void) {
         float y_max = k_room_get_h();
 
         int i = 0;
-        for (; i < 20; ++i) {
+        for (; i < 10; ++i) {
             float x = yx_rand(x_min, x_max);
             float y = yx_rand(y_min, y_max);
             yx_obj_rival_spawn(x, y);

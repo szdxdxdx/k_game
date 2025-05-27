@@ -167,7 +167,6 @@ static void yx__obj_player_resolve_movement(struct yx_obj_player *player) {
     yx__obj_player_on_step_update_weapon(player);
 }
 
-
 static void yx__obj_player_on_step_resolve_movement(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 

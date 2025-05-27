@@ -12,6 +12,7 @@
 #include "config/yx_config_arena_blackboard.h"
 #include "object/particle/yx_obj_shadow.h"
 #include "object/particle/yx_fx_fighter_appear.h"
+#include "object/weapon/yx_obj_weapon_i.h"
 
 struct yx_obj_rival *yx_obj_rival_create(float x, float y) {
 
@@ -74,6 +75,16 @@ err:
     k_object_destroy(object);
     k_log_error("failed to create object yx_obj_rival");
     return NULL;
+}
+
+void yx_obj_rival_destroy(struct yx_obj_rival *rival) {
+    if (NULL != rival->weapon) {
+        yx_obj_rival_weapon_destroy(rival->weapon);
+    }
+    if (NULL != rival->object_shadow) {
+        k_object_destroy(rival->object_shadow);
+    }
+    k_object_destroy(rival->object);
 }
 
 /* ------------------------------------------------------------------------ */

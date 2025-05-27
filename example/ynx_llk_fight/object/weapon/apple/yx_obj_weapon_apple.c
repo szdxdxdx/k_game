@@ -114,7 +114,7 @@ static struct yx_obj_player_bullet_apple *yx__obj_player_bullet_apple_create(str
     bullet_apple->x = weapon_apple->x;
     bullet_apple->y = weapon_apple->y;
 
-    bullet_apple->rotation_speed = yx_rand(300.0f, 800.0f);
+    bullet_apple->rotation_speed = yx_rand(450.0f, 700.0f);
 
     float sin_angle;
     float cos_angle;

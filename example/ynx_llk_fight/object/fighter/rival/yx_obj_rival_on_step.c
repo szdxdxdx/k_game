@@ -37,7 +37,7 @@ static void yx__obj_rival_on_state_dead_enter(struct k_object *object);
 static void yx__obj_rival_on_state_dead_update(struct k_object *object);
 static struct yx_state_machine_state YX_STATE_DEAD = {
     .on_enter  = yx__obj_rival_on_state_dead_enter,
-    .on_update = yx__obj_rival_on_state_dead_update,
+    .on_update = NULL,
     .on_leave  = NULL,
 };
 
@@ -197,6 +197,11 @@ static void yx__obj_rival_on_state_running_update(struct k_object *object) {
 
 /* region [dead] */
 
+static void yx__obj_rival_on_state_dead_alarm_destroy(struct k_object *object, int timeout_diff) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    yx_obj_rival_destroy(rival);
+}
+
 static void yx__obj_rival_on_state_dead_sprite_renderer_callback(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
 
@@ -204,6 +209,8 @@ static void yx__obj_rival_on_state_dead_sprite_renderer_callback(struct k_object
     rival->hp_collision_box = NULL;
 
     k_callback_del(rival->cb_on_step_move);
+
+    // k_object_add_alarm_callback(object, yx__obj_rival_on_state_dead_alarm_destroy, 60000);
 }
 
 static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {

@@ -12,6 +12,8 @@ struct yx_obj_rival *yx_obj_rival_create(float x, float y);
 
 void yx_obj_rival_spawn(float x, float y);
 
+void yx_obj_rival_destroy(struct yx_obj_rival *rival);
+
 /* ------------------------------------------------------------------------ */
 
 enum yx_obj_rival_attack_state {
