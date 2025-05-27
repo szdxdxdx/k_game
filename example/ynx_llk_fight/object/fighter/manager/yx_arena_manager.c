@@ -1,6 +1,8 @@
 
 #include <stdlib.h>
 
+#include "k_log.h"
+
 #include "object/fighter/manager/yx_arena_manager.h"
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
@@ -19,6 +21,8 @@ struct yx_arena_manager *yx_arena_manager_create(void) {
     if (NULL == manager->rival_wave_spawner)
         goto err;
 
+    manager->wave_count = 0;
+
     return manager;
 
 err:
@@ -30,14 +34,27 @@ void yx_arena_manager_notify_new_rival(struct yx_arena_manager *manager) {
     manager->rival_wave_spawner->rivals_num += 1;
 }
 
+static void yx__arena_manager_new_wave(struct yx_arena_manager *manager) {
+
+    yx_obj_rival_wave_spawner_new_wave(10 + manager->wave_count * 5);
+    manager->wave_count += 1;
+}
+
 void yx_arena_manager_notify_rival_dead(struct yx_arena_manager *manager) {
+
     struct yx_obj_rival_wave_spawner *spawner = manager->rival_wave_spawner;
     spawner->rivals_num -= 1;
+
     if (0 == spawner->rivals_num) {
-        yx_obj_rival_wave_spawner_new_wave(spawner, 10);
+        if (manager->wave_count >= 3) {
+            k_log_info("You win!");
+            k_room_nav_pop();
+        } else {
+            yx__arena_manager_new_wave(manager);
+        }
     }
 }
 
 void yx_arena_manager_notify_enter_room(struct yx_arena_manager *manager) {
-    yx_obj_rival_wave_spawner_new_wave(manager->rival_wave_spawner, 10);
+    yx__arena_manager_new_wave(manager);
 }

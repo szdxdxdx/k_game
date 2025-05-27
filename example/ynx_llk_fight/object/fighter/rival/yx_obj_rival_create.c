@@ -157,7 +157,7 @@ err:
     return NULL;
 }
 
-void yx_obj_rival_wave_spawner_new_wave(struct yx_obj_rival_wave_spawner *spawner, size_t new_rivals_num) {
+void yx_obj_rival_wave_spawner_new_wave(size_t new_rivals_num) {
 
     float padding = 10.0f;
     float x_min = 0.0f + padding;
