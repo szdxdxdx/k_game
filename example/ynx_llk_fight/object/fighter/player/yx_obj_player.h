@@ -17,6 +17,9 @@ struct yx_obj_player {
     float y;
 
     float hp;
+    int ammo;
+    int ammo_max;
+    float ammo_timer;
     struct k_collision_box *hp_collision_box;
 
     struct yx_state_machine movement_sm;

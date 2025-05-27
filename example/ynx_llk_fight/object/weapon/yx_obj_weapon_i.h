@@ -27,9 +27,9 @@ struct yx_obj_player_weapon_v_tbl {
 
     void (*fn_aim_at)(struct yx_obj_player_weapon *weapon, float x, float y);
 
-    void (*on_key_down)(struct yx_obj_player_weapon *weapon);
-    void (*on_key_held)(struct yx_obj_player_weapon *weapon);
-    void (*on_key_up)(struct yx_obj_player_weapon *weapon);
+    void (*on_key_down)(struct yx_obj_player_weapon *weapon, int *in_out_ammo);
+    void (*on_key_held)(struct yx_obj_player_weapon *weapon, int *in_out_ammo);
+    void (*on_key_up)(struct yx_obj_player_weapon *weapon, int *in_out_ammo);
 };
 
 /* ------------------------------------------------------------------------ */
@@ -42,16 +42,16 @@ static inline void yx_obj_player_weapon_aim_at(struct yx_obj_player_weapon *weap
     weapon->v_tbl->fn_aim_at(weapon, x, y);
 }
 
-static inline void yx_obj_player_weapon_on_key_down(struct yx_obj_player_weapon *weapon) {
-    weapon->v_tbl->on_key_down(weapon);
+static inline void yx_obj_player_weapon_on_key_down(struct yx_obj_player_weapon *weapon, int *in_out_ammo) {
+    weapon->v_tbl->on_key_down(weapon, in_out_ammo);
 }
 
-static inline void yx_obj_player_weapon_on_key_held(struct yx_obj_player_weapon *weapon) {
-    weapon->v_tbl->on_key_held(weapon);
+static inline void yx_obj_player_weapon_on_key_held(struct yx_obj_player_weapon *weapon, int *in_out_ammo) {
+    weapon->v_tbl->on_key_held(weapon, in_out_ammo);
 }
 
-static inline void yx_obj_player_weapon_on_key_up(struct yx_obj_player_weapon *weapon) {
-    weapon->v_tbl->on_key_up(weapon);
+static inline void yx_obj_player_weapon_on_key_up(struct yx_obj_player_weapon *weapon, int *in_out_ammo) {
+    weapon->v_tbl->on_key_up(weapon, in_out_ammo);
 }
 
 /* ------------------------------------------------------------------------ */

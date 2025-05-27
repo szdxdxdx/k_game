@@ -6,25 +6,6 @@
 
 #include "object/fighter/player/yx_obj_player.h"
 
-static void yx__obj_player_on_step_update_weapon(struct yx_obj_player *player) {
-
-    yx_obj_player_weapon_set_position(player->weapon, player->x, player->y, (int)player->y + 1);
-
-    float mouse_x = k_mouse_x();
-    float mouse_y = k_mouse_y();
-    yx_obj_player_weapon_aim_at(player->weapon, mouse_x, mouse_y);
-
-    if (k_mouse_button_down(K_BUTTON_LEFT)) {
-        yx_obj_player_weapon_on_key_down(player->weapon);
-    }
-    if (k_mouse_button_held(K_BUTTON_LEFT)) {
-        yx_obj_player_weapon_on_key_held(player->weapon);
-    }
-    if (k_mouse_button_up(K_BUTTON_LEFT)) {
-        yx_obj_player_weapon_on_key_up(player->weapon);
-    }
-}
-
 /* region [movement_sm] */
 
 static void yx__obj_player_on_idle_state_enter(struct k_object *object);
@@ -160,11 +141,34 @@ static void yx__obj_player_resolve_movement(struct yx_obj_player *player) {
         }
     }
 
-    yx_obj_player_weapon_set_position(player->weapon, player->x, player->y, (int)player->y + 1); /* 移动武器 */
-
     k_position_set_local_position(player->position, player->x, player->y);
+}
 
-    yx__obj_player_on_step_update_weapon(player);
+static void yx__obj_player_on_step_update_weapon(struct yx_obj_player *player) {
+
+    if (player->ammo <= player->ammo_max) {
+        player->ammo_timer += k_time_get_step_delta();
+        if (player->ammo_timer >= 3.0f) {
+            player->ammo_timer -= 3.0f;
+            player->ammo += 1;
+        }
+    }
+
+    yx_obj_player_weapon_set_position(player->weapon, player->x, player->y, (int)player->y + 1);
+
+    float mouse_x = k_mouse_x();
+    float mouse_y = k_mouse_y();
+    yx_obj_player_weapon_aim_at(player->weapon, mouse_x, mouse_y);
+
+    if (k_mouse_button_down(K_BUTTON_LEFT)) {
+        yx_obj_player_weapon_on_key_down(player->weapon, &player->ammo);
+    }
+    if (k_mouse_button_held(K_BUTTON_LEFT)) {
+        yx_obj_player_weapon_on_key_held(player->weapon, &player->ammo);
+    }
+    if (k_mouse_button_up(K_BUTTON_LEFT)) {
+        yx_obj_player_weapon_on_key_up(player->weapon, &player->ammo);
+    }
 }
 
 static void yx__obj_player_on_step_resolve_movement(struct k_object *object) {
@@ -173,6 +177,7 @@ static void yx__obj_player_on_step_resolve_movement(struct k_object *object) {
     yx_state_machine_tick(&player->movement_sm);
     yx__obj_player_on_step_check_hit_bullet(player);
     yx__obj_player_resolve_movement(player);
+    yx__obj_player_on_step_update_weapon(player);
 }
 
 int yx__obj_player_on_create_init_movement(struct yx_obj_player *player) {

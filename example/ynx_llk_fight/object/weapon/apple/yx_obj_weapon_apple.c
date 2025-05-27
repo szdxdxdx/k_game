@@ -199,7 +199,7 @@ static void yx__obj_player_weapon_apple_fn_aim_at(struct yx_obj_player_weapon *w
     }
 }
 
-static void yx__obj_player_weapon_apple_attack(struct yx_obj_player_weapon_apple *weapon_apple) {
+static void yx__obj_player_weapon_apple_attack(struct yx_obj_player_weapon_apple *weapon_apple, int *in_out_ammo) {
 
     /*
     if (weapon_apple->ammo > 0) {
@@ -216,28 +216,34 @@ static void yx__obj_player_weapon_apple_attack(struct yx_obj_player_weapon_apple
     }
     */
 
+    if (*in_out_ammo <= 0)
+        return;
+
     yx__obj_player_bullet_apple_create(weapon_apple);
     weapon_apple->attack_cd_timer = weapon_apple->attack_cd_time;
 
     k_sound_sfx_play(yx_sfx_fire);
+
+    *in_out_ammo -= 1;
 }
 
-static void yx__obj_player_weapon_apple_on_key_down(struct yx_obj_player_weapon *weapon) {
+static void yx__obj_player_weapon_apple_on_key_down(struct yx_obj_player_weapon *weapon, int *in_out_ammo) {
     struct yx_obj_player_weapon_apple *weapon_apple = (struct yx_obj_player_weapon_apple *)weapon;
 
-    yx__obj_player_weapon_apple_attack(weapon_apple);
+    yx__obj_player_weapon_apple_attack(weapon_apple, in_out_ammo);
 }
 
-static void yx__obj_player_weapon_apple_on_key_held(struct yx_obj_player_weapon *weapon) {
+static void yx__obj_player_weapon_apple_on_key_held(struct yx_obj_player_weapon *weapon, int *in_out_ammo) {
     struct yx_obj_player_weapon_apple *weapon_apple = (struct yx_obj_player_weapon_apple *)weapon;
 
    if (0.0f == weapon_apple->attack_cd_timer) {
-        yx__obj_player_weapon_apple_attack(weapon_apple);
+        yx__obj_player_weapon_apple_attack(weapon_apple, in_out_ammo);
    }
 }
 
-static void yx__obj_player_weapon_apple_on_key_up(struct yx_obj_player_weapon *weapon) {
+static void yx__obj_player_weapon_apple_on_key_up(struct yx_obj_player_weapon *weapon, int *in_out_ammo) {
     (void)weapon;
+    (void)in_out_ammo;
 }
 
 static struct yx_obj_player_weapon_v_tbl yx__obj_player_weapon_apple_v_tbl = {

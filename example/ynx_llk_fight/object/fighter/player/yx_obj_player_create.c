@@ -42,6 +42,9 @@ struct yx_obj_player *yx_obj_player_create(void) {
     if (0 != yx__obj_player_on_create_add_debug(player))
         goto err;
 
+    player->ammo       = 80;
+    player->ammo_max   = 100;
+    player->ammo_timer = 0.0f;
     player->weapon = yx_obj_player_weapon_apple_create();
 
     player->blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
