@@ -144,6 +144,9 @@ struct llk_ui_elem *llk_ui_get_root(struct llk_ui_context *ui) {
 
 struct llk_ui_elem *llk_ui_get_elem_by_id(struct llk_ui_context *ui, const char *id) {
 
+    if (NULL == ui || NULL == id)
+        return NULL;
+
     struct k_str_intrusive_map_node *node = k_str_intrusive_map_get(&ui->elem_id_map, id);
     if (NULL == node)
         return NULL;

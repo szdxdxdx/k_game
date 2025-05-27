@@ -45,6 +45,8 @@ static int yx__room_1_on_create(void *param) {
     struct yx_config_arena_blackboard *blackboard = k_room_blackboard_add(YX_ARENA_BLACKBOARD_KEY, sizeof(struct yx_config_arena_blackboard));
     if (NULL == blackboard)
         return -1;
+    room_1->arena_blackboard = blackboard;
+
     blackboard->manager = yx_arena_manager_create();
     if (NULL == blackboard->manager)
         return -1;

@@ -20,6 +20,9 @@ struct yx_obj_player *yx_obj_player_create(void) {
     player->x = k_room_get_w() / 2.0f;
     player->y = k_room_get_h() / 2.0f;
 
+    player->hp_max = 20.0f;
+    player->hp = player->hp_max;
+
     player->key_up    = 'W';
     player->key_left  = 'A';
     player->key_down  = 'S';
@@ -42,8 +45,8 @@ struct yx_obj_player *yx_obj_player_create(void) {
     if (0 != yx__obj_player_on_create_add_debug(player))
         goto err;
 
-    player->ammo       = 80;
-    player->ammo_max   = 100;
+    player->ammo_max = 100;
+    player->ammo     = 80;
     player->ammo_timer = 0.0f;
     player->weapon = yx_obj_player_weapon_apple_create();
 

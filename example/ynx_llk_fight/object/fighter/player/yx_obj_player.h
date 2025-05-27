@@ -19,6 +19,7 @@ struct yx_obj_player {
     float y;
 
     float hp;
+    float hp_max;
     int ammo;
     int ammo_max;
     float ammo_timer;

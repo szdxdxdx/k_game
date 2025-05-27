@@ -189,7 +189,7 @@ static int llk__ui_elem_slider_set_attr(struct llk_ui_elem *elem, const char *ke
     return llk__ui_elem_set_attr_default(elem, key, val);
 }
 
-static float clamp(float min, float val, float max) {
+static float llk__ui_float_clamp(float min, float val, float max) {
     return fmaxf(min, fminf(val, max));
 }
 
@@ -211,7 +211,7 @@ static void llk__ui_elem_slider_hit_test(struct llk_ui_elem *elem) {
     }
 
     float thumb_w = fminf(elem->w.computed_val, SLIDER_THUMB_MAX_W);
-    float thumb_x = clamp(elem->x, ui->mouse_x - thumb_w / 2, elem->x + elem->w.computed_val - thumb_w);
+    float thumb_x = llk__ui_float_clamp(elem->x, ui->mouse_x - thumb_w / 2, elem->x + elem->w.computed_val - thumb_w);
 
     float new_val = slider->min + roundf((slider->max - slider->min) * (thumb_x - elem->x) / (elem->w.computed_val - thumb_w) / slider->step) * slider->step;
     if (new_val != slider->val) {

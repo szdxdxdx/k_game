@@ -345,7 +345,7 @@ int llk__ui_parse_color_val(const char *str, uint32_t *get_val, enum llk_ui_unit
  *
  * # `llk_ui_elem_set()` 支持的属性：
  *
- * ## 背景颜色 `background-color`
+ * ## 背景颜色
  * - `background-color`         默认
  * - `background-color.hovered` 鼠标悬浮时
  * - `background-color.pressed` 鼠标按住时
@@ -355,12 +355,12 @@ int llk__ui_parse_color_val(const char *str, uint32_t *get_val, enum llk_ui_unit
  * llk_ui_elem_set(elem, "background-color.hovered", "#ee0000")
  * ```
  *
- * ## 边框颜色 `border-color`
+ * ## 边框颜色
  * - `border-color`         默认
  * - `border-color.hovered` 鼠标悬浮时
  * - `border-color.pressed` 鼠标按住时
  *
- * ## 点击事件 `on-click`
+ * ## 事件回调
  * - `on-click` 鼠标点击元素时执行该事件回调
  * 示例
  * ```C
@@ -372,7 +372,7 @@ int llk__ui_parse_color_val(const char *str, uint32_t *get_val, enum llk_ui_unit
  *
  * // 注册回调
  * llk_ui_register_callback(ui, "my_click_fn", (void *)on_click);
- **
+ *
  * // 绑定回调
  * llk_ui_elem_set(elem, "on-click", "my_click_fn")
  * ```
@@ -412,23 +412,29 @@ struct llk_ui_elem_box {
  *
  * # `llk_ui_elem_set()` 支持的属性：
  *
- * ## 滑槽颜色 `track-color`
+ * ## 滑槽颜色
  * - `track-color`         默认
  * - `track-color.hovered` 鼠标悬浮时
  * - `track-color.pressed` 鼠标按住时
  *
- * ## 滑块颜色 `thumb-color`
+ * ## 滑块颜色
  * - `thumb-color`         默认
  * - `thumb-color.hovered` 鼠标悬浮时
  * - `thumb-color.pressed` 鼠标按住时
  *
- * ## 边框颜色 `border-color`
+ * ## 边框颜色
  * - `border-color`         默认
  * - `border-color.hovered` 鼠标悬浮时
  * - `border-color.pressed` 鼠标按住时
  *
- * ## 输入事件 `on-change`
- * 滑动条的值发生变化时要执行的回调。
+ * ## 取值范围、步长
+ * - `min`  最小值
+ * - `max`  最大值
+ * - `val`  当前值
+ * - `step` 步长
+ *
+ * ## 事件回调
+ * - `on-change` 滑动条的值发生变化时要执行的回调
  * 示例
  * ```C
  * void on_change(struct llk_ui_elem *elem, float old_val, float new_val) {
