@@ -97,6 +97,8 @@ void k_camera_shake(float intensity, float duration);
 
 /* endregion */
 
+void k_camera_set_view_position(float cx, float cy);
+
 /* region [camera_debug] */
 
 int k_camera_set_debug_draw_enabled(int debug);

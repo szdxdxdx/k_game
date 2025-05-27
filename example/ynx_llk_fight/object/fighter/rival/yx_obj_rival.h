@@ -68,9 +68,6 @@ struct yx_obj_rival {
     /* ------------------------------------------------------------------------ */
 };
 
-#define YX__OBJ_RIVAL_AGGRO_RADIUS       500.0f /* 与玩家之间距离小于该值时进入攻击状态 */
-#define YX__OBJ_RIVAL_LOSE_TARGET_RADIUS 850.0f /* 与玩家之间距离大于该值时进入巡逻状态 */
-
 int yx__obj_rival_on_create_init_movement(struct yx_obj_rival *rival);
 
 int yx__obj_rival_on_create_init_collision(struct yx_obj_rival *rival);

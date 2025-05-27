@@ -14,8 +14,14 @@
 #include "object/particle/yx_obj_text_particle.h"
 #include "object/particle/yx_obj_particle_on_hit.h"
 #include "utils/yx_math.h"
+#include "object/weapon/apple/yx_obj_weapon_apple.h"
+
+/* region [move] */
 
 /* region [random_move] */
+
+#define YX__OBJ_RIVAL_AGGRO_RADIUS       500.0f /* 与玩家之间距离小于该值时进入攻击状态 */
+#define YX__OBJ_RIVAL_LOSE_TARGET_RADIUS 850.0f /* 与玩家之间距离大于该值时进入巡逻状态 */
 
 static void yx__obj_rival_on_state_idle_enter(struct k_object *object);
 static void yx__obj_rival_on_state_idle_update(struct k_object *object);
@@ -97,6 +103,7 @@ try_again:
         if (--max_attempts == 0) {
             target_position_x = rival->x;
             target_position_y = rival->y;
+            k_log_warn("no valid position found for rival after multiple attempts");
             goto end;
         }
     }
@@ -111,10 +118,11 @@ try_again:
         target_position_x = rival->x + radius * cosf(theta);
         target_position_y = rival->y + radius * sinf(theta);
     }
+
     {
         /* 要求新的目标点必须在房间内 */
 
-        float padding = -30.0f;
+        float padding = 10.0f;
         struct k_float_rect room_rect = {
             .x = padding,
             .y = padding,
@@ -210,7 +218,7 @@ static void yx__obj_rival_on_state_dead_sprite_renderer_callback(struct k_object
 
     k_callback_del(rival->cb_on_step_move);
 
-    // k_object_add_alarm_callback(object, yx__obj_rival_on_state_dead_alarm_destroy, 60000);
+    k_object_add_alarm_callback(object, yx__obj_rival_on_state_dead_alarm_destroy, 60000);
 }
 
 static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {
@@ -222,9 +230,6 @@ static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {
 
     yx_state_machine_change_state(&rival->attack_sm, NULL);
 
-   // k_object_del_collision_box(rival->hp_collision_box);
-   // rival->hp_collision_box = NULL;
-
     rival->vx_movement = 0.0f;
     rival->vy_movement = 0.0f;
 
@@ -234,9 +239,8 @@ static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {
     k_camera_del_target(rival->camera_target);
 
     k_callback_del(rival->cb_on_step_attack);
-   // k_callback_del(rival->cb_on_step_move);
     k_callback_del(rival->cb_on_step_end_set_face);
-    
+
     struct yx_obj_rival_wave_spawner *spawner = rival->blackboard->rival_wave_spawner;
     spawner->rivals_num -= 1;
     if (0 == spawner->rivals_num) {
@@ -391,3 +395,108 @@ int yx__obj_rival_on_create_init_movement(struct yx_obj_rival *rival) {
 
     return 0;
 }
+
+/* endregion */
+
+/* region [attack] */
+
+/* region [attack_sm] */
+
+static void yx__obj_rival_on_state_patrol_enter(struct k_object *object);
+static void yx__obj_rival_on_state_patrol_update(struct k_object *object);
+static struct yx_state_machine_state YX_STATE_PATROL = {
+    .on_enter  = yx__obj_rival_on_state_patrol_enter,
+    .on_update = yx__obj_rival_on_state_patrol_update,
+    .on_leave  = NULL,
+};
+
+static void yx__obj_rival_on_state_attack_enter(struct k_object *object);
+static void yx__obj_rival_on_state_attack_update(struct k_object *object);
+static struct yx_state_machine_state YX_STATE_ATTACK = {
+    .on_enter  = yx__obj_rival_on_state_attack_enter,
+    .on_update = yx__obj_rival_on_state_attack_update,
+    .on_leave  = NULL,
+};
+
+/* region [patrol] */
+
+static void yx__obj_rival_on_state_patrol_enter(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    rival->attack_state = YX_OBJ_RIVAL_STATE_PATROL;
+}
+
+static void yx__obj_rival_on_state_patrol_update(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    struct yx_obj_player *player = rival->blackboard->player;
+
+    struct yx_float_vec2 dir = yx_float_vec2_new(player->x - rival->x, player->y - rival->y);
+
+    if (yx_float_vec2_length(dir) <= YX__OBJ_RIVAL_AGGRO_RADIUS) { /* 与玩家距离太近，切换成攻击状态 */
+        yx_state_machine_change_state(&rival->attack_sm, &YX_STATE_ATTACK);
+        return;
+    }
+
+    yx_obj_rival_weapon_aim_at(rival->weapon, rival->target_position_x, rival->target_position_y);
+}
+
+/* endregion */
+
+/* region [attack] */
+
+static void yx__obj_rival_on_state_attack_enter(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    rival->attack_state = YX_OBJ_RIVAL_STATE_ATTACK;
+
+    yx_obj_alert_marker_create(rival->position, -30, -16); /* 感叹号气泡 */
+
+    rival->attack_timer = yx_rand(1.0f, 3.5f);
+}
+
+static void yx__obj_rival_on_state_attack_update(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    struct yx_obj_player *player = rival->blackboard->player;
+
+    struct yx_float_vec2 dir = yx_float_vec2_new(player->x - rival->x, player->y - rival->y);
+
+    if (yx_float_vec2_length(dir) >= YX__OBJ_RIVAL_LOSE_TARGET_RADIUS) { /* 与玩家距离太远，切换成巡逻状态 */
+        yx_state_machine_change_state(&rival->attack_sm, &YX_STATE_PATROL);
+        return;
+    }
+
+    yx_obj_rival_weapon_aim_at(rival->weapon, player->x, player->y);
+
+    float dt = k_time_get_step_delta();
+    rival->attack_timer -= dt;
+    if (rival->attack_timer <= 0.0f) {
+        rival->attack_timer = yx_rand(1.5f, 5.5f);
+
+        yx_obj_rival_weapon_attack(rival->weapon);
+    }
+}
+
+/* endregion */
+
+/* endregion */
+
+static void yx__obj_rival_on_step_attack(struct k_object *object) {
+    struct yx_obj_rival *rival = k_object_get_data(object);
+    yx_state_machine_tick(&rival->attack_sm);
+}
+
+int yx__obj_rival_on_create_init_attack(struct yx_obj_rival *rival) {
+
+    rival->cb_on_step_attack = k_object_add_step_callback(rival->object, yx__obj_rival_on_step_attack);
+    if (NULL == rival->cb_on_step_attack)
+        return -1;
+
+    rival->weapon = yx_obj_rival_weapon_apple_create();
+    if (NULL == rival->weapon)
+        return -1;
+
+    yx_state_machine_init(rival->object, &rival->attack_sm);
+    yx_state_machine_change_state(&rival->attack_sm, &YX_STATE_PATROL);
+
+    return 0;
+}
+
+/* endregion */

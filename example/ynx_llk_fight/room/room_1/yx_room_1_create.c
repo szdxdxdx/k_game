@@ -8,8 +8,10 @@
 
 #include "config/yx_config_arena_blackboard.h"
 #include "config/yx_config_collision_group.h"
+#include "object/fighter/player/yx_obj_player.h"
 #include "room/room_1/yx_room_1.h"
 #include "sound/yx_sound.h"
+#include "object/fighter/rival/yx_obj_rival.h"
 
 struct k_room *yx_room_1 = NULL;
 
@@ -41,20 +43,25 @@ static int yx__room_1_on_create(void *param) {
     }
     if (0 != k_room_add_camera())
         return -1;
-    // k_camera_set_debug_draw_enabled(1);
     if (0 != k_room_add_collision_manager())
         return -1;
     if (0 != yx__room_1_on_create_place_obj())
         return -1;
-
-    /* tmp */
 
     return 0;
 }
 
 static void yx__room_1_on_enter(void) {
     k_sound_bgm_loop(yx_bgm_music, INT_MAX);
-    // yx__room_1_on_enter_init_webui();
+
+    struct yx_config_arena_blackboard *blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
+    float player_x = blackboard->player->x;
+    float player_y = blackboard->player->y;
+    k_camera_set_view_position(player_x, player_y);
+
+    yx_obj_rival_wave_spawner_new_wave(blackboard->rival_wave_spawner);
+    //k_camera_set_debug_draw_enabled(1);
+    //yx__room_1_on_enter_init_webui();
 }
 
 struct k_room *yx_room_1_create(void) {

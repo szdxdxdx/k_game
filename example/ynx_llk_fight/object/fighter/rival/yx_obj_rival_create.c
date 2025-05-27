@@ -151,8 +151,6 @@ struct yx_obj_rival_wave_spawner *yx_obj_rival_wave_spawner_create(void) {
 
     spawner->rivals_num = 0;
 
-    yx_obj_rival_wave_spawner_new_wave(spawner);
-
     return spawner;
 
 err:

@@ -223,3 +223,23 @@ void k__camera_move_on_begin_step(void *camera_) {
             break;
     }
 }
+
+void k_camera_set_view_position(float cx, float cy) {
+
+    struct k_camera *camera = k_room_get_component_manager_data(k__camera_component_type);
+    if (NULL == camera) {
+        k_log_error("please add a camera to the room first");
+        return;
+    }
+
+    k_view_set_position(cx, cy);
+
+    float view_cx;
+    float view_cy;
+    k_view_get_position(&view_cx, &view_cy);
+
+    camera->curr_x = view_cx;
+    camera->curr_y = view_cy;
+    camera->dst_x  = view_cx;
+    camera->dst_y  = view_cy;
+}

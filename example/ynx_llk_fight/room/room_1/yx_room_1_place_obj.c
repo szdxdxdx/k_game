@@ -19,8 +19,8 @@ int yx__room_1_on_create_place_obj(void) {
 
     {
         struct yx_obj_player_config config;
-        config.x = 100.0f;
-        config.y = 100.0f;
+        config.x = k_room_get_w() / 2.0f;
+        config.y = k_room_get_h() / 2.0f;
         yx_obj_player_create(&config);
     }
 
