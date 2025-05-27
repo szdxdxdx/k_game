@@ -31,15 +31,11 @@ static void yx__obj_player_touch_bubble(struct k_object *object) {
 /* endregion */
 
 static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_player *player, struct yx_bullet_on_hit_result *hit_result) {
-    struct yx_float_vec2 v_knockback = {
-        .x = hit_result->vx_knockback,
-        .y = hit_result->vy_knockback
-    };
-    struct yx_float_vec2 v_dir_knockback = yx_float_vec2_normalize(v_knockback);
-    struct yx_float_vec2 v_text = yx_float_vec2_perp_right(v_dir_knockback);
-    if (rand() % 2)
-        v_text = yx_float_vec2_neg(v_text);
 
+    struct yx_float_vec2 v_text = yx_float_vec2_new(hit_result->vx_knockback, hit_result->vy_knockback);
+    v_text = yx_float_vec2_perp_right(v_text);
+    v_text = (rand() % 2) ? v_text : yx_float_vec2_neg(v_text);
+    v_text = yx_float_vec2_normalize(v_text);
     v_text = yx_float_vec2_scale(v_text, yx_rand(40.0f, 60.0f));
 
     struct yx_obj_particle_text_on_hit_config config;
@@ -66,6 +62,14 @@ void yx__obj_player_on_step_check_hit_bullet(struct yx_obj_player *player) {
 
     player->vx_knockback += hit_result.vx_knockback;
     player->vy_knockback += hit_result.vy_knockback;
+
+    if (0.0f < player->hp) {
+        player->hp -= hit_result.damage;
+        if (player->hp <= 0.0f) {
+            player->hp = 0.0f;
+            k_log_info("you dead");
+        }
+    }
 }
 
 int yx__obj_player_on_create_init_collision(struct yx_obj_player *player) {

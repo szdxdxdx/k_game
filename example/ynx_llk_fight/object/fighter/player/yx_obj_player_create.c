@@ -20,7 +20,7 @@ struct yx_obj_player *yx_obj_player_create(void) {
     player->x = k_room_get_w() / 2.0f;
     player->y = k_room_get_h() / 2.0f;
 
-    player->hp_max = 20.0f;
+    player->hp_max = 30.0f;
     player->hp = player->hp_max;
 
     player->key_up    = 'W';
