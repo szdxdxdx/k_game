@@ -6,6 +6,7 @@
 #include "object/fighter/manager/yx_arena_manager.h"
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
+#include "object/particle/yx_ui_banner.h"
 
 struct yx_arena_manager *yx_arena_manager_create(void) {
 
@@ -52,8 +53,7 @@ void yx_arena_manager_notify_rival_dead(struct yx_arena_manager *manager) {
 
     if (0 == spawner->rivals_num) {
         if (manager->wave_count >= 3) {
-            k_log_info("You win!");
-            k_room_nav_pop();
+            yx_ui_banner_show_YOU_WIN();
         } else {
             yx__arena_manager_new_wave(manager);
         }
