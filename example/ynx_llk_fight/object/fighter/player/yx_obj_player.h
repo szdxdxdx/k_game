@@ -6,12 +6,7 @@
 #include "object/weapon/yx_obj_weapon_i.h"
 #include "utils/state_machine/yx_state_machine.h"
 
-struct yx_obj_player_config {
-    float x;
-    float y;
-};
-
-struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *config);
+struct yx_obj_player *yx_obj_player_create(void);
 
 /* ------------------------------------------------------------------------ */
 

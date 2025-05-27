@@ -8,7 +8,7 @@
 #include "config/yx_config_arena_blackboard.h"
 #include "object/particle/yx_obj_shadow.h"
 
-struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *config) {
+struct yx_obj_player *yx_obj_player_create(void) {
 
     struct k_object *object = k_object_create(sizeof(struct yx_obj_player));
     if (NULL == object)
@@ -17,8 +17,8 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
     struct yx_obj_player *player = k_object_get_data(object);
 
     player->object = object;
-    player->x = config->x;
-    player->y = config->y;
+    player->x = k_room_get_w() / 2.0f;
+    player->y = k_room_get_h() / 2.0f;
 
     player->key_up    = 'W';
     player->key_left  = 'A';
@@ -49,8 +49,6 @@ struct yx_obj_player *yx_obj_player_create(const struct yx_obj_player_config *co
         k_log_error("object yx_obj_player requires room to provide blackboard '%s'", YX_ARENA_BLACKBOARD_KEY);
         goto err;
     }
-
-    player->blackboard->player = player;
 
     {
         struct k_position_config position_config;

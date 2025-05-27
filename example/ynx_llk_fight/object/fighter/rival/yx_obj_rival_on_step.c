@@ -10,11 +10,12 @@
 #include "config/yx_config_arena_blackboard.h"
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/fighter/rival/yx_obj_rival.h"
+#include "object/fighter/manager/yx_arena_manager.h"
 #include "object/particle/yx_obj_alert_marker.h"
 #include "object/particle/yx_obj_text_particle.h"
 #include "object/particle/yx_obj_particle_on_hit.h"
-#include "utils/yx_math.h"
 #include "object/weapon/apple/yx_obj_weapon_apple.h"
+#include "utils/yx_math.h"
 
 /* region [move] */
 
@@ -137,7 +138,7 @@ try_again:
         /* 若正在发现了玩家，则不要跑得离玩家太远，且与玩家保持一定距离 */
 
         if (rival->attack_state == YX_OBJ_RIVAL_STATE_ATTACK) {
-            struct yx_obj_player *player = rival->blackboard->player;
+            struct yx_obj_player *player = rival->blackboard->manager->player;
             float len = yx_float_vec2_length(yx_float_vec2_new(target_position_x - player->x, target_position_y - player->y));
             if (len < YX__OBJ_RIVAL_AGGRO_RADIUS / 2.0f || YX__OBJ_RIVAL_LOSE_TARGET_RADIUS < len) {
                 goto try_again;
@@ -241,11 +242,9 @@ static void yx__obj_rival_on_state_dead_enter(struct k_object *object) {
     k_callback_del(rival->cb_on_step_attack);
     k_callback_del(rival->cb_on_step_end_set_face);
 
-    struct yx_obj_rival_wave_spawner *spawner = rival->blackboard->rival_wave_spawner;
-    spawner->rivals_num -= 1;
-    if (0 == spawner->rivals_num) {
-        yx_obj_rival_wave_spawner_new_wave(spawner);
-    }
+    yx_arena_manager_notify_rival_dead(rival->blackboard->manager);
+
+
 }
 
 static void yx__obj_rival_on_state_dead_update(struct k_object *object) {
@@ -427,7 +426,7 @@ static void yx__obj_rival_on_state_patrol_enter(struct k_object *object) {
 
 static void yx__obj_rival_on_state_patrol_update(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
-    struct yx_obj_player *player = rival->blackboard->player;
+    struct yx_obj_player *player = rival->blackboard->manager->player;
 
     struct yx_float_vec2 dir = yx_float_vec2_new(player->x - rival->x, player->y - rival->y);
 
@@ -454,7 +453,7 @@ static void yx__obj_rival_on_state_attack_enter(struct k_object *object) {
 
 static void yx__obj_rival_on_state_attack_update(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
-    struct yx_obj_player *player = rival->blackboard->player;
+    struct yx_obj_player *player = rival->blackboard->manager->player;
 
     struct yx_float_vec2 dir = yx_float_vec2_new(player->x - rival->x, player->y - rival->y);
 

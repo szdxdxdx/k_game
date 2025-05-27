@@ -1,7 +1,7 @@
 
-#define K_LOG_TAG "yx:object:rival"
-
 #include <assert.h>
+
+#define K_LOG_TAG "yx:object:rival"
 #include "k_log.h"
 
 #include "k_game.h"
@@ -9,6 +9,7 @@
 #include "config/yx_config_arena_blackboard.h"
 #include "object/fighter/rival/yx_obj_rival.h"
 #include "object/fighter/player/yx_obj_player.h"
+#include "object/fighter/manager/yx_arena_manager.h"
 
 static void yx__obj_rival_on_step_end_set_face(struct k_object *object) {
     struct yx_obj_rival *rival = k_object_get_data(object);
@@ -19,7 +20,7 @@ static void yx__obj_rival_on_step_end_set_face(struct k_object *object) {
             break;
         }
         case YX_OBJ_RIVAL_STATE_ATTACK: {
-            struct yx_obj_player *player = rival->blackboard->player;
+            struct yx_obj_player *player = rival->blackboard->manager->player;
             if (player->x < rival->x) {
                 k_sprite_renderer_flip_x(rival->spr_rdr, 0);
             } else {

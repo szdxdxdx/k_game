@@ -13,6 +13,7 @@
 #include "object/particle/yx_obj_shadow.h"
 #include "object/particle/yx_fx_fighter_appear.h"
 #include "object/weapon/yx_obj_weapon_i.h"
+#include "object/fighter/manager/yx_arena_manager.h"
 #include "utils/yx_math.h"
 
 struct yx_obj_rival *yx_obj_rival_create(float x, float y) {
@@ -70,7 +71,7 @@ struct yx_obj_rival *yx_obj_rival_create(float x, float y) {
         goto err;
     }
 
-    rival->blackboard->rival_wave_spawner->rivals_num += 1;
+    yx_arena_manager_notify_new_rival(rival->blackboard->manager);
 
     return rival;
 
@@ -146,8 +147,6 @@ struct yx_obj_rival_wave_spawner *yx_obj_rival_wave_spawner_create(void) {
         k_log_error("object yx_obj_rival_wave_spawner requires room to provide blackboard '%s'", YX_ARENA_BLACKBOARD_KEY);
         goto err;
     }
-
-    spawner->blackboard->rival_wave_spawner = spawner;
 
     spawner->rivals_num = 0;
 
