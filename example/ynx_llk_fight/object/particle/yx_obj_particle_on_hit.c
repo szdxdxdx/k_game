@@ -19,7 +19,7 @@ struct yx_obj_particle_on_hit *yx_obj_particle_on_hit_create(float x, float y) {
         spr_rdr_config.y = &particle->y;
         spr_rdr_config.sprite = yx_spr_particle_on_hit;
         spr_rdr_config.z_group = YX_CONFIG_Z_GROUP_FX;
-        spr_rdr_config.z_layer = 0;
+        spr_rdr_config.z_layer = YX_CONFIG_Z_LAYER_FX;
         struct k_sprite_renderer *spr_rdr = k_object_add_sprite_renderer(object, &spr_rdr_config);
         if (NULL == spr_rdr)
             goto err;

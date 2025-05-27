@@ -14,6 +14,7 @@ enum yx_config_z_index {
     YX_CONFIG_Z_GROUP_BULLET  = YX_CONFIG_Z_GROUP_MAIN + 1,
 
     YX_CONFIG_Z_GROUP_FX      = 1,
+    YX_CONFIG_Z_LAYER_FX      = 0,
 
     YX_CONFIG_Z_GROUP_DEBUG   = 1000,
 };

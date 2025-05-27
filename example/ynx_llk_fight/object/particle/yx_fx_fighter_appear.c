@@ -18,7 +18,7 @@ static void yx__fx_fighter_appear_on_step(struct k_object *object) {
             float scale = start_scale - (start_scale - 1.0f) / t1 * fx->timer;
             k_sprite_renderer_scale(fx->spr_rdr, scale);
         } else {
-            k_camera_shake(14.0f, 0.75f);
+            k_camera_shake(12.0f, 0.65f);
             k_sprite_renderer_scale(fx->spr_rdr, 1.0f);
         }
     }
@@ -69,7 +69,7 @@ struct yx_fx_fighter_appear *yx_fx_fighter_appear_create(float x, float y, void 
         spr_rdr_config.y = &fx->y;
         spr_rdr_config.sprite = yx_spr_fx_fighter_appear;
         spr_rdr_config.z_group = YX_CONFIG_Z_GROUP_FX;
-        spr_rdr_config.z_layer = 0;
+        spr_rdr_config.z_layer = YX_CONFIG_Z_LAYER_FX;
         fx->spr_rdr = k_object_add_sprite_renderer(object, &spr_rdr_config);
         if (NULL == fx->spr_rdr)
             goto err;

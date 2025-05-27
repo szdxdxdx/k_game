@@ -10,6 +10,7 @@
 #include "object/fighter/player/yx_obj_player.h"
 #include "object/particle/yx_obj_text_particle.h"
 #include "object/particle/yx_obj_particle_on_hit.h"
+#include "object/particle/yx_ui_banner.h"
 #include "utils/yx_math.h"
 
 /* region [bubble] */
@@ -68,6 +69,8 @@ void yx__obj_player_on_step_check_hit_bullet(struct yx_obj_player *player) {
         if (player->hp <= 0.0f) {
             player->hp = 0.0f;
             k_log_info("you dead");
+
+            yx_ui_banner_show_YOU_DIED();
         }
     }
 }
