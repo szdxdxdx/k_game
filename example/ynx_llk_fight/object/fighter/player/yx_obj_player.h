@@ -47,6 +47,7 @@ struct yx_obj_player {
     struct yx_config_arena_blackboard *blackboard;
 
     struct k_position *position;
+    struct k_camera_target *camera_follow;
 
     struct k_object *object_shadow;
 };

@@ -32,6 +32,12 @@ int k_webui_init(void) {
     }
 
     k__webui.is_inited = 1;
+
+    return 0;
+}
+
+int k_webui_is_shown(void) {
+    return k__webui.is_inited != 0 && webui_is_shown(k__webui.window);
 }
 
 int k__webui_is_running(void) {

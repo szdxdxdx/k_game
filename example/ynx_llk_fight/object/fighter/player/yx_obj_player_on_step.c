@@ -117,6 +117,7 @@ static void yx__obj_player_on_dead_state_enter(struct k_object *object) {
 
     player->hp = 0;
     player->ammo = 0;
+    k_camera_set_target_weight(player->camera_follow, 3.0f);
 }
 
 static void yx__obj_player_on_dead_state_step(struct k_object *object) {
@@ -157,6 +158,7 @@ static void yx__obj_player_on_dead_state_leave(struct k_object *object) {
     k_camera_shake(8.0f, 0.5f);
 
     player->weapon = yx_obj_player_weapon_apple_create();
+    k_camera_set_target_weight(player->camera_follow, 12.0f);
 }
 
 /* endregion */
@@ -280,11 +282,13 @@ static void yx__obj_player_resolve_movement(struct yx_obj_player *player) {
     player->y = player->y + vy * dt;
     k_sprite_renderer_set_z_layer(player->spr_rdr, (int)player->y);
     {
-        float mouse_x = k_mouse_x();
-        if (mouse_x < player->x) {
-            k_sprite_renderer_flip_x(player->spr_rdr, 0);
-        } else if (mouse_x > player->x) {
-            k_sprite_renderer_flip_x(player->spr_rdr, 1);
+        if (&STATE_DEAD != yx_state_machine_get_current_state(&player->movement_sm)) {
+            float mouse_x = k_mouse_x();
+            if (mouse_x < player->x) {
+                k_sprite_renderer_flip_x(player->spr_rdr, 0);
+            } else if (mouse_x > player->x) {
+                k_sprite_renderer_flip_x(player->spr_rdr, 1);
+            }
         }
     }
 
@@ -338,12 +342,12 @@ int yx__obj_player_on_create_init_movement(struct yx_obj_player *player) {
     if (NULL == k_object_add_step_callback(player->object, yx__obj_player_on_step_resolve_movement))
         return -1;
 
-    struct k_camera_target *target = k_camera_add_follow_target(player->object, &player->x, &player->y);
-    if (NULL == target)
+    player->camera_follow = k_camera_add_follow_target(player->object, &player->x, &player->y);
+    if (NULL == player->camera_follow)
         return -1;
 
-    k_camera_set_primary_target(target);
-    k_camera_set_target_weight(target, 4.0f);
+    k_camera_set_primary_target(player->camera_follow);
+    k_camera_set_target_weight(player->camera_follow, 12.0f);
 
     return 0;
 }

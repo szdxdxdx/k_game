@@ -13,6 +13,8 @@ int k_webui_init(void);
 /** \brief 关闭 webui */
 void k_webui_close(void);
 
+int k_webui_is_shown(void);
+
 /* endregion */
 
 /* region [log] */

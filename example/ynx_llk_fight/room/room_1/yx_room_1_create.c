@@ -55,6 +55,9 @@ static int yx__room_1_on_create(void *param) {
 }
 
 static void yx__room_1_on_enter(void) {
+    //k_camera_set_debug_draw_enabled(1);
+    yx__room_1_on_enter_init_webui();
+
     k_sound_bgm_loop(yx_bgm_music, INT_MAX);
 
     struct yx_config_arena_blackboard *blackboard = k_room_blackboard_get(YX_ARENA_BLACKBOARD_KEY);
@@ -63,9 +66,6 @@ static void yx__room_1_on_enter(void) {
     k_camera_set_view_position(player_x, player_y);
 
     yx_arena_manager_notify_enter_room(blackboard->manager);
-
-    //k_camera_set_debug_draw_enabled(1);
-    //yx__room_1_on_enter_init_webui();
 }
 
 struct k_room *yx_room_1_create(void) {

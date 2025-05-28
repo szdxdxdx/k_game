@@ -110,7 +110,10 @@ static void webui_add_checkbox_bind_draw_background(void) {
 /* endregion */
 
 int yx__room_1_on_enter_init_webui(void) {
-    k_webui_init();
+
+    if (k_webui_is_shown())
+        return 0;
+
     webui_add_text_bind_mouse_xy();
     webui_add_slider_bind_view_size();
     webui_add_checkbox_bind_collision_group();
