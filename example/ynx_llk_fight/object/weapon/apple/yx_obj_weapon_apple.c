@@ -39,6 +39,8 @@ static void yx__obj_player_bullet_apple_on_hit(struct yx_obj_player_bullet *bull
 
     k_object_destroy(bullet_apple->object_shadow);
     bullet_apple->object_shadow = NULL;
+
+    k_sound_sfx_play(yx_sfx_apple_break[rand() % 3]);
 }
 
 static struct yx_obj_player_bullet_v_tbl yx__obj_player_bullet_apple_v_tbl = {
@@ -222,9 +224,9 @@ static void yx__obj_player_weapon_apple_attack(struct yx_obj_player_weapon_apple
     yx__obj_player_bullet_apple_create(weapon_apple);
     weapon_apple->attack_cd_timer = weapon_apple->attack_cd_time;
 
-    k_sound_sfx_play(yx_sfx_fire);
-
     *in_out_ammo -= 1;
+
+    k_sound_sfx_play(yx_sfx_fire);
 }
 
 static void yx__obj_player_weapon_apple_on_key_down(struct yx_obj_player_weapon *weapon, int *in_out_ammo) {
@@ -367,6 +369,8 @@ static void yx__obj_rival_bullet_apple_on_hit(struct yx_obj_rival_bullet *bullet
 
     k_object_destroy(bullet_apple->object_shadow);
     bullet_apple->object_shadow = NULL;
+
+    k_sound_sfx_play(yx_sfx_apple_break[rand() % 3]);
 }
 
 static struct yx_obj_rival_bullet_v_tbl yx__obj_rival_bullet_apple_v_tbl = {

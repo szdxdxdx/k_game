@@ -6,7 +6,9 @@
 #include "object/weapon/yx_obj_weapon.h"
 #include "object/bubble/yx_obj_bubble.h"
 
-/* region [bullet]
+#if 0
+
+/* region [bullet] */
 
 struct yx_obj_bullet {
 
@@ -97,13 +99,12 @@ struct yx_obj_apple {
 
 static void yx_obj_apple_on_step_touch_bubble(struct k_object *object) {
     struct yx_obj_apple *apple = k_object_get_data(object);
-
     float x1 = apple->x - 4;
     float y1 = apple->y - 4;
     float x2 = apple->x + 4;
-    float y2 = apple->y + 4;
-    struct k_collision_box *box = k_collision_check_rect(YX_COLLISION_GROUP_BUBBLE, x1, y1, x2, y2);
-    if (NULL != box)
+    float y2 = apple->y + 4; /* 指定一个以苹果对象为中心的矩形区域 */
+    struct k_collision_box *box = k_collision_check_rect(0, x1, y1, x2, y2); /* 主动查询与该区域相交的碰撞盒 */
+    if (NULL != box) /* 本示例中，该碰撞盒是绑定绑定在泡泡对象上的，所以直接获取该碰撞盒绑定的泡泡对象，然后戳破泡泡 */
         yx_obj_bubble_pop(k_collision_box_get_object(box));
 }
 
@@ -247,3 +248,5 @@ void yx_obj_weapon_destroy(struct yx_obj_weapon *weapon) {
 }
 
 /* endregion */
+
+#endif

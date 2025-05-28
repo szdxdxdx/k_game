@@ -47,6 +47,7 @@ struct k_camera_target *k_camera_add_follow_target(struct k_object *object, floa
  *
  * 若 `target` 为 `NULL`，则函数立即返回。
  */
+void k_camera_del_target(struct k_camera_target *target);
 
 /**
  * \brief 指定摄像机的主跟随目标
@@ -95,8 +96,6 @@ void k_camera_set_acceleration(float acceleration);
 void k_camera_shake(float intensity, float duration);
 
 /* endregion */
-
-void k_camera_set_view_position(float cx, float cy);
 
 /* region [camera_debug] */
 

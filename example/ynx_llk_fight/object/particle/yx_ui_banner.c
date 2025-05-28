@@ -7,6 +7,7 @@
 #include "config/yx_config_z_index.h"
 #include "sprite/yx_spr.h"
 #include "object/particle/yx_ui_banner.h"
+#include "sound/yx_sound.h"
 
 struct yx_ui_banner {
     struct k_sprite *spr_banner;
@@ -35,6 +36,8 @@ static void yx_ui_banner_on_draw(struct k_object *object) {
         } else {
             scale = banner->scale_1;
             k_camera_shake(20.0f, 0.85f);
+
+            k_sound_sfx_play(yx_sfx_banner);
         }
     } else {
         banner->timer += dt;
