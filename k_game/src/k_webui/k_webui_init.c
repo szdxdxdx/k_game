@@ -25,7 +25,7 @@ int k_webui_init(void) {
 
     k__webui_binding_init();
 
-    r = webui_show(k__webui.window, "./index.html");
+    r = webui_show_browser(k__webui.window, "./index.html", Firefox);
     if ( ! r) {
         k_log_error("failed to show webui window. unknown error");
         return -1;
@@ -37,7 +37,7 @@ int k_webui_init(void) {
 }
 
 int k_webui_is_shown(void) {
-    return k__webui.is_inited != 0 && webui_is_shown(k__webui.window);
+    return 0 != k__webui.is_inited && webui_is_shown(k__webui.window);
 }
 
 int k__webui_is_running(void) {

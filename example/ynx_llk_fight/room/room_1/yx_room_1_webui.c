@@ -111,7 +111,7 @@ static void webui_add_checkbox_bind_draw_background(void) {
 
 int yx__room_1_on_enter_init_webui(void) {
 
-    if (k_webui_is_shown())
+    if ( ! k_webui_is_shown())
         return 0;
 
     webui_add_text_bind_mouse_xy();
