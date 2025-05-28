@@ -11,6 +11,7 @@
 struct yx_ui_banner {
     struct k_sprite *spr_banner;
     float timer;
+    float step_t0;
     float step_t1;
     float step_t2;
     float scale_0;
@@ -23,13 +24,17 @@ static void yx_ui_banner_on_draw(struct k_object *object) {
     float dt = k_time_get_step_delta();
 
     float scale;
-    if (banner->timer < banner->step_t1) {
+    if (banner->timer < banner->step_t0) {
+        banner->timer += dt;
+        return;
+    }
+    else if (banner->timer < banner->step_t1) {
         banner->timer += dt;
         if (banner->timer < banner->step_t1) {
             scale = banner->scale_0 - (banner->scale_0 - banner->scale_1) / banner->step_t1 * banner->timer;
         } else {
             scale = banner->scale_1;
-            k_camera_shake(14.0f, 0.7f);
+            k_camera_shake(20.0f, 0.85f);
         }
     } else {
         banner->timer += dt;
@@ -60,9 +65,10 @@ static struct yx_ui_banner *yx_ui_banner_create(struct k_sprite *spr_banner) {
     struct yx_ui_banner *banner = k_object_get_data(object);
     banner->spr_banner = spr_banner;
     banner->timer = 0.0f;
-    banner->step_t1 = 0.45f;
-    banner->step_t2 = 3.8f;
-    banner->scale_0 = 30.0f;
+    banner->step_t0 = 1.4f;
+    banner->step_t1 = 0.3f + banner->step_t0;
+    banner->step_t2 = 3.5f + banner->step_t1;
+    banner->scale_0 = 50.0f;
     banner->scale_1 = 2.8f;
 
     struct k_callback *callback = k_object_add_draw_callback(object, yx_ui_banner_on_draw, YX_CONFIG_Z_GROUP_FX + 1, YX_CONFIG_Z_LAYER_FX);

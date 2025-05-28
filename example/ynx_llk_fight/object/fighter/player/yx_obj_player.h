@@ -40,6 +40,7 @@ struct yx_obj_player {
     struct k_sprite_renderer *spr_rdr;
     struct k_sprite *spr_idle;
     struct k_sprite *spr_run;
+    struct k_sprite *spr_dead;
 
     struct yx_obj_player_weapon *weapon;
 

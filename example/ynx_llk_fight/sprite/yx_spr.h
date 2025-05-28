@@ -5,6 +5,7 @@
 
 extern struct k_sprite *yx_spr_ynx_run;
 extern struct k_sprite *yx_spr_ynx_idle;
+extern struct k_sprite *yx_spr_ynx_dead;
 
 extern struct k_sprite *yx_spr_llk_run;
 extern struct k_sprite *yx_spr_llk_idle;

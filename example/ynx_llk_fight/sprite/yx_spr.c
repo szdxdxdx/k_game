@@ -8,6 +8,7 @@
 
 struct k_sprite *yx_spr_ynx_idle;
 struct k_sprite *yx_spr_ynx_run;
+struct k_sprite *yx_spr_ynx_dead;
 
 static int yx__spr_ynx_load(void) {
 
@@ -18,6 +19,7 @@ static int yx__spr_ynx_load(void) {
     config.sprites = (struct yx_sprite_sheet_sprite_config[]){
         { &yx_spr_ynx_idle, "idle", 15, 23 },
         { &yx_spr_ynx_run,  "run",  15, 23 },
+        { &yx_spr_ynx_dead, "dead", 15, 23 },
         { NULL }
     };
 

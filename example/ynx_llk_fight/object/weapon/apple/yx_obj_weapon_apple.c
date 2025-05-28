@@ -246,7 +246,13 @@ static void yx__obj_player_weapon_apple_on_key_up(struct yx_obj_player_weapon *w
     (void)in_out_ammo;
 }
 
+static void yx__obj_player_weapon_apple_destroy(struct yx_obj_player_weapon *weapon) {
+    struct yx_obj_player_weapon_apple *weapon_apple = (struct yx_obj_player_weapon_apple *)weapon;
+    k_object_destroy(weapon_apple->super.object);
+}
+
 static struct yx_obj_player_weapon_v_tbl yx__obj_player_weapon_apple_v_tbl = {
+    .fn_destroy      = yx__obj_player_weapon_apple_destroy,
     .fn_set_position = yx__obj_player_weapon_apple_fn_set_position,
     .fn_aim_at       = yx__obj_player_weapon_apple_fn_aim_at,
     .on_key_down     = yx__obj_player_weapon_apple_on_key_down,
@@ -528,7 +534,6 @@ static void yx__obj_rival_weapon_apple_attack(struct yx_obj_rival_weapon *weapon
 
 static void yx__obj_rival_weapon_apple_destroy(struct yx_obj_rival_weapon *weapon) {
     struct yx_obj_rival_weapon_apple *weapon_apple = (struct yx_obj_rival_weapon_apple *)weapon;
-
     k_object_destroy(weapon_apple->super.object);
 }
 

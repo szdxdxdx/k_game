@@ -22,6 +22,7 @@ struct yx_obj_player_weapon {
 };
 
 struct yx_obj_player_weapon_v_tbl {
+    void (*fn_destroy)(struct yx_obj_player_weapon *weapon);
 
     void (*fn_set_position)(struct yx_obj_player_weapon *weapon, float x, float y, int z);
 
@@ -33,6 +34,10 @@ struct yx_obj_player_weapon_v_tbl {
 };
 
 /* ------------------------------------------------------------------------ */
+
+static inline void yx_obj_player_weapon_destroy(struct yx_obj_player_weapon *weapon) {
+    weapon->v_tbl->fn_destroy(weapon);
+}
 
 static inline void yx_obj_player_weapon_set_position(struct yx_obj_player_weapon *weapon, float x, float y, int z) {
     weapon->v_tbl->fn_set_position(weapon, x, y, z);

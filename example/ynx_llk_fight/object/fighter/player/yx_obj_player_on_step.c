@@ -1,10 +1,20 @@
 
+#include <stdlib.h>
+
 #define K_LOG_TAG "yx:object:player"
 #include "k_log.h"
 
 #include "k_game.h"
 
+#include "config/yx_config_collision_group.h"
+#include "object/particle/yx_obj_text_particle.h"
+#include "object/particle/yx_obj_particle_on_hit.h"
+#include "object/particle/yx_ui_banner.h"
 #include "object/fighter/player/yx_obj_player.h"
+#include "utils/yx_math.h"
+#include "object/weapon/apple/yx_obj_weapon_apple.h"
+
+/* region [move] */
 
 /* region [movement_sm] */
 
@@ -22,6 +32,15 @@ static struct yx_state_machine_state STATE_RUNNING = {
     yx__obj_player_on_running_state_enter,
     yx__obj_player_on_running_state_step,
     NULL
+};
+
+static void yx__obj_player_on_dead_state_enter(struct k_object *object);
+static void yx__obj_player_on_dead_state_step(struct k_object *object);
+static void yx__obj_player_on_dead_state_leave(struct k_object *object);
+static struct yx_state_machine_state STATE_DEAD = {
+    yx__obj_player_on_dead_state_enter,
+    yx__obj_player_on_dead_state_step,
+    yx__obj_player_on_dead_state_leave,
 };
 
 /* region [idle] */
@@ -80,6 +99,105 @@ static void yx__obj_player_on_running_state_step(struct k_object *object) {
 }
 
 /* endregion */
+
+/* region [dead] */
+
+static void yx__obj_player_on_dead_state_enter(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    k_sprite_renderer_set_sprite(player->spr_rdr, player->spr_dead);
+    k_sprite_renderer_set_loop_count(player->spr_rdr, 1);
+
+    yx_obj_player_weapon_destroy(player->weapon);
+    player->weapon = NULL;
+
+    player->vx_movement = 0.0f;
+    player->vy_movement = 0.0f;
+}
+
+static void yx__obj_player_on_dead_state_step(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    player->hp += (player->hp_max / 6.0f) * k_time_get_step_delta();
+    if (player->hp >= player->hp_max) {
+        player->hp = player->hp_max;
+        yx_state_machine_change_state(&player->movement_sm, &STATE_IDLE);
+    }
+}
+
+static void yx__obj_player_on_dead_state_leave(struct k_object *object) {
+    struct yx_obj_player *player = k_object_get_data(object);
+
+    player->weapon = yx_obj_player_weapon_apple_create();
+}
+
+/* endregion */
+
+/* endregion */
+
+/* region [collision] */
+
+static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_player *player, struct yx_bullet_on_hit_result *hit_result) {
+
+    struct yx_float_vec2 v_text = yx_float_vec2_new(hit_result->vx_knockback, hit_result->vy_knockback);
+    v_text = yx_float_vec2_perp_right(v_text);
+    v_text = (rand() % 2) ? v_text : yx_float_vec2_neg(v_text);
+    v_text = yx_float_vec2_normalize(v_text);
+    v_text = yx_float_vec2_scale(v_text, yx_rand(40.0f, 60.0f));
+
+    struct yx_obj_particle_text_on_hit_config config;
+    config.x = player->x;
+    config.y = player->y;
+    config.vx = v_text.x;
+    config.vy = v_text.y;
+    yx_obj_particle_text_on_hit_create(&config, "-%d", (int)hit_result->damage);
+}
+
+/* 判断自身有没有被子弹击中 */
+void yx__obj_player_on_step_check_hit_bullet(struct yx_obj_player *player) {
+
+    struct k_collision_box *bullet_box = k_collision_check_box(YX_CONFIG_COLLISION_GROUP_RIVAL_BULLET, player->hp_collision_box);
+    if (NULL == bullet_box)
+        return;
+
+    struct yx_obj_player_bullet *bullet = k_object_get_data(k_collision_box_get_object(bullet_box));
+    struct yx_bullet_on_hit_result hit_result;
+    yx_obj_player_bullet_on_hit(bullet, &hit_result);
+
+    yx__obj_rival_create_text_particle_on_hit(player, &hit_result);
+    yx_obj_particle_on_hit_create(player->x, player->y);
+
+    player->vx_knockback += hit_result.vx_knockback;
+    player->vy_knockback += hit_result.vy_knockback;
+
+    if (&STATE_DEAD != yx_state_machine_get_current_state(&player->movement_sm)) {
+        if (0.0f < player->hp) {
+            player->hp -= hit_result.damage;
+            if (player->hp <= 0.0f) {
+                player->hp = 0.0f;
+                yx_ui_banner_show_YOU_DIED();
+                yx_state_machine_change_state(&player->movement_sm, &STATE_DEAD);
+            }
+        }
+    }
+}
+
+int yx__obj_player_on_create_init_collision(struct yx_obj_player *player) {
+
+    struct k_collision_rect_config config;
+    config.x = &player->x;
+    config.y = &player->y;
+    config.group_id = YX_CONFIG_COLLISION_GROUP_PLAYER_HP;
+    config.offset_x1 = -14.0f;
+    config.offset_y1 = -20.0f;
+    config.offset_x2 =  14.0f;
+    config.offset_y2 =  10.0f;
+    player->hp_collision_box = k_object_add_collision_rect(player->object, &config);
+    if (NULL == player->hp_collision_box)
+        return -1;
+
+    return 0;
+}
 
 /* endregion */
 
@@ -146,6 +264,9 @@ static void yx__obj_player_resolve_movement(struct yx_obj_player *player) {
 
 static void yx__obj_player_on_step_update_weapon(struct yx_obj_player *player) {
 
+    if (NULL == player->weapon)
+        return;
+
     if (player->ammo < player->ammo_max) {
         player->ammo_timer += k_time_get_step_delta();
         if (player->ammo_timer >= 1.2f) {
@@ -197,3 +318,5 @@ int yx__obj_player_on_create_init_movement(struct yx_obj_player *player) {
 
     return 0;
 }
+
+/* endregion */

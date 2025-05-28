@@ -35,6 +35,7 @@ struct yx_obj_player *yx_obj_player_create(void) {
 
     player->spr_idle = yx_spr_ynx_idle;
     player->spr_run  = yx_spr_ynx_run;
+    player->spr_dead = yx_spr_ynx_dead;
 
     if (0 != yx__obj_player_on_create_init_draw(player))
         goto err;
