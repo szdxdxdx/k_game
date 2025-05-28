@@ -7,14 +7,14 @@
 static void yx__fx_fighter_appear_on_step(struct k_object *object) {
     struct yx_fx_fighter_appear *fx = k_object_get_data(object);
 
-    float t1 = 0.5f;  /* 0 ~ t1 光标由大到小 */
+    float t1 = 0.45f;  /* 0 ~ t1 光标由大到小 */
     float t2 = 0.75f; /* t1 ~ t2 光标不动，超过 t2 后出现闪光特效 */
     float t3 = 1.0f;
 
     if (fx->timer < t1) {
         fx->timer += k_time_get_step_delta();
         if (fx->timer < t1) {
-            float start_scale = 6.0f;
+            float start_scale = 10.0f;
             float scale = start_scale - (start_scale - 1.0f) / t1 * fx->timer;
             k_sprite_renderer_scale(fx->spr_rdr, scale);
         } else {

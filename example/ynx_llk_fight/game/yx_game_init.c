@@ -25,7 +25,7 @@ static int on_game_start(void) {
             return -1;
     }
 
-    k_room_nav_push(yx_room_1);
+    k_room_nav_push(yx_room_title);
     return 0;
 }
 

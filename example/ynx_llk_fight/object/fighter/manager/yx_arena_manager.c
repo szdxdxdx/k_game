@@ -43,7 +43,7 @@ static void yx__arena_manager_on_room_alarm_new_wave(void *manager_, int timeout
 }
 
 static void yx__arena_manager_new_wave(struct yx_arena_manager *manager) {
-    k_room_add_alarm_callback(manager,  yx__arena_manager_on_room_alarm_new_wave, 2000);
+    k_room_add_alarm_callback(manager,  yx__arena_manager_on_room_alarm_new_wave, 1200);
 }
 
 void yx_arena_manager_notify_rival_dead(struct yx_arena_manager *manager) {
