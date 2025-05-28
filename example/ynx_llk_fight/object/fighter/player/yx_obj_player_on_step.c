@@ -11,6 +11,7 @@
 #include "object/particle/yx_obj_particle_on_hit.h"
 #include "object/particle/yx_ui_banner.h"
 #include "object/fighter/player/yx_obj_player.h"
+#include "object/fighter/rival/yx_obj_rival.h"
 #include "utils/yx_math.h"
 #include "object/weapon/apple/yx_obj_weapon_apple.h"
 
@@ -113,20 +114,47 @@ static void yx__obj_player_on_dead_state_enter(struct k_object *object) {
 
     player->vx_movement = 0.0f;
     player->vy_movement = 0.0f;
+
+    player->hp = 0;
+    player->ammo = 0;
 }
 
 static void yx__obj_player_on_dead_state_step(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
 
+    int old_hp = (int)player->hp;
     player->hp += (player->hp_max / 6.0f) * k_time_get_step_delta();
-    if (player->hp >= player->hp_max) {
+    int new_hp = (int)player->hp;
+
+    if (player->hp_max <= player->hp) {
         player->hp = player->hp_max;
+        player->ammo = player->ammo_max;
         yx_state_machine_change_state(&player->movement_sm, &STATE_IDLE);
+    }
+    else {
+        player->ammo = (int)(player->hp / player->hp_max * (float)player->ammo_max);
+    }
+
+    if (new_hp % 3 == 0 && old_hp % 3 != 0) {
+        struct yx_float_vec2 v_text = yx_float_vec2_new(0, -yx_rand(65.0f, 80.0f));
+        struct yx_obj_particle_text_on_hit_config config;
+        config.x = player->x + yx_rand(-20.0f, 20.0f);
+        config.y = player->y + yx_rand(-4.0f, 4.0f);
+        config.vx = v_text.x;
+        config.vy = v_text.y;
+        config.color = 0x0bf00bff;
+        yx_obj_particle_text_on_hit_create(&config, "+HP");
     }
 }
 
 static void yx__obj_player_on_dead_state_leave(struct k_object *object) {
     struct yx_obj_player *player = k_object_get_data(object);
+
+    struct yx_obj_particle_on_hit *fx = yx_obj_particle_on_hit_create(player->x, player->y);
+    k_sprite_renderer_scale(fx->spr_rdr, 3.2f);
+    k_sprite_renderer_set_duration(fx->spr_rdr, 0.65f);
+
+    k_camera_shake(8.0f, 0.5f);
 
     player->weapon = yx_obj_player_weapon_apple_create();
 }
@@ -150,10 +178,10 @@ static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_player *play
     config.y = player->y;
     config.vx = v_text.x;
     config.vy = v_text.y;
+    config.color = 0xf00b0bff;
     yx_obj_particle_text_on_hit_create(&config, "-%d", (int)hit_result->damage);
 }
 
-/* 判断自身有没有被子弹击中 */
 void yx__obj_player_on_step_check_hit_bullet(struct yx_obj_player *player) {
 
     struct k_collision_box *bullet_box = k_collision_check_box(YX_CONFIG_COLLISION_GROUP_RIVAL_BULLET, player->hp_collision_box);
@@ -164,7 +192,6 @@ void yx__obj_player_on_step_check_hit_bullet(struct yx_obj_player *player) {
     struct yx_bullet_on_hit_result hit_result;
     yx_obj_player_bullet_on_hit(bullet, &hit_result);
 
-    yx__obj_rival_create_text_particle_on_hit(player, &hit_result);
     yx_obj_particle_on_hit_create(player->x, player->y);
 
     player->vx_knockback += hit_result.vx_knockback;
@@ -173,6 +200,8 @@ void yx__obj_player_on_step_check_hit_bullet(struct yx_obj_player *player) {
     if (&STATE_DEAD != yx_state_machine_get_current_state(&player->movement_sm)) {
         if (0.0f < player->hp) {
             player->hp -= hit_result.damage;
+            yx__obj_rival_create_text_particle_on_hit(player, &hit_result);
+
             if (player->hp <= 0.0f) {
                 player->hp = 0.0f;
                 yx_ui_banner_show_YOU_DIED();

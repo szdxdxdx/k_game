@@ -30,7 +30,7 @@ static void yx__obj_particle_text_on_hit_on_draw(struct k_object *object) {
     k_canvas_room_printf(NULL, particle->x + 2, particle->y - 2, "%s", particle->text);
     k_canvas_room_printf(NULL, particle->x - 2, particle->y + 2, "%s", particle->text);
     k_canvas_room_printf(NULL, particle->x + 2, particle->y + 2, "%s", particle->text);
-    k_canvas_set_draw_color(0xf00b0bff);
+    k_canvas_set_draw_color(particle->color);
     k_canvas_room_printf(NULL, particle->x, particle->y, "%s", particle->text);
 }
 
@@ -63,6 +63,7 @@ void yx_obj_particle_text_on_hit_create(const struct yx_obj_particle_text_on_hit
     particle->y = config->y;
     particle->vx = config->vx;
     particle->vy = config->vy;
+    particle->color = config->color;
 
     if (NULL == k_object_add_step_callback(object, yx__obj_particle_text_on_hit_on_step))
         goto err;

@@ -273,6 +273,7 @@ static void yx__obj_rival_create_text_particle_on_hit(struct yx_obj_rival *rival
     config.y = rival->y;
     config.vx = v_text.x;
     config.vy = v_text.y;
+    config.color = 0xf00b0bff;
     yx_obj_particle_text_on_hit_create(&config, "-%d", (int)hit_result->damage);
 }
 

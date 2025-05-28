@@ -38,8 +38,8 @@ void yx_arena_manager_notify_new_rival(struct yx_arena_manager *manager) {
 static void yx__arena_manager_on_room_alarm_new_wave(void *manager_, int timeout_diff) {
     struct yx_arena_manager *manager = manager_;
 
-    yx_obj_rival_wave_spawner_new_wave(10 + manager->wave_count * 5);
     manager->wave_count += 1;
+    yx_obj_rival_wave_spawner_new_wave(4 + manager->wave_count * 8);
 }
 
 static void yx__arena_manager_new_wave(struct yx_arena_manager *manager) {
@@ -54,6 +54,8 @@ void yx_arena_manager_notify_rival_dead(struct yx_arena_manager *manager) {
     if (0 == spawner->rivals_num) {
         if (manager->wave_count >= 3) {
             yx_ui_banner_show_YOU_WIN();
+            yx_obj_player_weapon_destroy(manager->player->weapon);
+            manager->player->weapon = NULL;
         } else {
             yx__arena_manager_new_wave(manager);
         }

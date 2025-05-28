@@ -7,6 +7,7 @@
 struct yx_obj_particle_on_hit {
     float x;
     float y;
+    struct k_sprite_renderer *spr_rdr;
 };
 
 struct yx_obj_particle_on_hit *yx_obj_particle_on_hit_create(float x, float y);
