@@ -2,6 +2,10 @@
 #include "./k_image.h"
 
 int k_image_get_w(struct k_image *image) {
+
+    if (NULL == image)
+        return 0;
+
     return image->image_w;
 }
 

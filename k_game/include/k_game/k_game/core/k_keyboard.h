@@ -23,14 +23,15 @@ enum k_keyboard_key {
     K_KEY_UNUSED_6       ,
     K_KEY_UNUSED_7       ,
 
-    K_KEY_BACKSPACE      = '\b',
-    K_KEY_TAB            = '\t',
-    K_KEY_RETURN         = '\n',
+    K_KEY_BACKSPACE      = '\b', // 退格键
+    K_KEY_TAB            = '\t', // tab 键
+    K_KEY_RETURN         = '\n', // 回车键
 
-    K_KEY_CAPSLOCK       ,
-    K_KEY_DELETE         ,
-    K_KEY_PRINT_SCREEN   ,
+    K_KEY_CAPSLOCK       , // 大小写锁定键
+    K_KEY_DELETE         , // 删除键
+    K_KEY_UNUSED_13      ,
 
+    // 左右 ctrl、shift、alt
     K_KEY_LEFT_CTRL      ,
     K_KEY_LEFT_SHIFT     ,
     K_KEY_LEFT_ALT       ,
@@ -46,13 +47,15 @@ enum k_keyboard_key {
     K_KEY_UNUSED_25      ,
     K_KEY_UNUSED_26      ,
 
-    K_KEY_ESCAPE         = '\x1B',
+    K_KEY_ESCAPE         = '\x1B', // ESC 键
 
+    // 方向键
     K_KEY_RIGHT          ,
     K_KEY_LEFT           ,
     K_KEY_DOWN           ,
     K_KEY_UP             ,
 
+    // 主键盘
     K_KEY_SPACE          = ' ',
     K_KEY_EXCLAIM        = '!',
     K_KEY_QUOTE_DBL      = '"',
@@ -119,12 +122,12 @@ enum k_keyboard_key {
     K_KEY_UNDERSCORE     = '_',
     K_KEY_BACK_QUOTE     = '`',
 
-    K_KEY_NUM_LOCK_CLEAR ,
-    K_KEY_KP_DIVIDE      ,
-    K_KEY_KP_MULTIPLY    ,
-    K_KEY_KP_MINUS       ,
-    K_KEY_KP_PLUS        ,
-    K_KEY_KP_ENTER       ,
+    // 小键盘
+    K_KEY_KP_DIVIDE      , // 除号键 /
+    K_KEY_KP_MULTIPLY    , // 乘号键 *
+    K_KEY_KP_MINUS       , // 减号键 -
+    K_KEY_KP_PLUS        , // 加号键 +
+    K_KEY_KP_ENTER       , // 回车键
     K_KEY_KP_0           ,
     K_KEY_KP_1           ,
     K_KEY_KP_2           ,
@@ -135,8 +138,9 @@ enum k_keyboard_key {
     K_KEY_KP_7           ,
     K_KEY_KP_8           ,
     K_KEY_KP_9           ,
-    K_KEY_KP_PERIOD      ,
+    K_KEY_KP_PERIOD      , // 点号键 .
 
+    // 功能键
     K_KEY_F1             ,
     K_KEY_F2             ,
     K_KEY_F3             ,

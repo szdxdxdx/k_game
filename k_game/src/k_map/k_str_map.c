@@ -3,16 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "k_hash_list.h"
-
 #include "k_str_map.h"
 
 struct k_str_map_node {
-
     struct k_hash_list_node node_link;
 
     char *key;
-
     size_t key_hash;
 
     void *val;
@@ -125,7 +121,27 @@ void k_str_map_destruct(struct k_str_map *map) {
     fn_free(map->buckets);
 }
 
-static void k__str_map_rehash(struct k_str_map *map) {
+static size_t str_hash(const char *key, size_t *get_len) {
+
+    size_t hash = 5381;
+
+    const char *p = key;
+    for (; '\0' != *p; p++) {
+        hash = hash * 33 + *p;
+    }
+
+    if (NULL != get_len) {
+        *get_len = p - key;
+    }
+
+    return hash;
+}
+
+static struct k_hash_list *select_bucket(struct k_hash_list *buckets, size_t buckets_num, size_t key_hash) {
+    return &(buckets[key_hash % buckets_num]);
+}
+
+static void rehash(struct k_str_map *map) {
 
     static const size_t primes[] = {
         53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317,
@@ -167,7 +183,7 @@ static void k__str_map_rehash(struct k_str_map *map) {
         for (k_hash_list_for_each_s(old_list, iter, next)) {
             struct k_str_map_node *node = container_of(iter, struct k_str_map_node, node_link);
 
-            struct k_hash_list *new_list = &(new_buckets[node->key_hash % new_buckets_num]);
+            struct k_hash_list *new_list = select_bucket(new_buckets, new_buckets_num, node->key_hash);
             k_hash_list_add(new_list, &node->node_link);
         }
     }
@@ -179,28 +195,7 @@ static void k__str_map_rehash(struct k_str_map *map) {
     map->fn_free(old_buckets);
 }
 
-static size_t k__str_map_key_hash(const char *key, size_t *get_len) {
-
-    size_t hash = 5381;
-
-    const char *p = key;
-    for (; '\0' != *p; p++) {
-        hash = hash * 33 + *p;
-    }
-
-    if (NULL != get_len) {
-        *get_len = p - key;
-    }
-
-    return hash;
-}
-
-static struct k_hash_list *k__str_map_select_bucket(struct k_str_map *map, size_t key_hash) {
-    struct k_hash_list *buckets = map->buckets;
-    return &(buckets[key_hash % map->buckets_num]);
-}
-
-static struct k_str_map_node *k__str_map_bucket_find(struct k_hash_list *bucket, const char *key, size_t hash) {
+static struct k_str_map_node *find(struct k_hash_list *bucket, const char *key, size_t hash) {
 
     struct k_hash_list_node *iter;
     for (k_hash_list_for_each(bucket, iter)) {
@@ -224,8 +219,8 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size) {
         return NULL;
 
     size_t get_key_len;
-    size_t key_hash = k__str_map_key_hash(key, &get_key_len);
-    struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
+    size_t key_hash = str_hash(key, &get_key_len);
+    struct k_hash_list *bucket = select_bucket(map->buckets, map->buckets_num, key_hash);
 
     size_t key_size = get_key_len + 1;
 
@@ -239,7 +234,7 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size) {
 
     new_node->val = ptr_offset(new_node, sizeof(struct k_str_map_node) + key_size);
 
-    struct k_str_map_node *old_node = k__str_map_bucket_find(bucket, key, key_hash);
+    struct k_str_map_node *old_node = find(bucket, key, key_hash);
     if (NULL != old_node) {
 
         k_hash_list_remove(&old_node->node_link);
@@ -252,7 +247,7 @@ void *k_str_map_put(struct k_str_map *map, const char *key, size_t val_size) {
         map->size += 1;
 
         if (map->rehash_threshold < map->size) {
-            k__str_map_rehash(map);
+            rehash(map);
         }
     }
 
@@ -267,8 +262,8 @@ void *k_str_map_put_ref(struct k_str_map *map, const char *key, size_t val_size)
     if (0 == val_size || SIZE_MAX - sizeof(struct k_str_map_node) <= val_size)
         return NULL;
 
-    size_t key_hash = k__str_map_key_hash(key, NULL);
-    struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
+    size_t key_hash = str_hash(key, NULL);
+    struct k_hash_list *bucket = select_bucket(map->buckets, map->buckets_num, key_hash);
 
     struct k_str_map_node *new_node = map->fn_malloc(sizeof(struct k_str_map_node) + val_size);
     if (NULL == new_node)
@@ -279,7 +274,7 @@ void *k_str_map_put_ref(struct k_str_map *map, const char *key, size_t val_size)
 
     new_node->val = ptr_offset(new_node, sizeof(struct k_str_map_node));
 
-    struct k_str_map_node *old_node = k__str_map_bucket_find(bucket, key, key_hash);
+    struct k_str_map_node *old_node = find(bucket, key, key_hash);
     if (NULL != old_node) {
 
         k_hash_list_remove(&old_node->node_link);
@@ -292,7 +287,7 @@ void *k_str_map_put_ref(struct k_str_map *map, const char *key, size_t val_size)
         map->size += 1;
 
         if (map->rehash_threshold < map->size) {
-            k__str_map_rehash(map);
+            rehash(map);
         }
     }
 
@@ -308,10 +303,10 @@ void *k_str_map_add(struct k_str_map *map, const char *key, size_t val_size) {
         return NULL;
 
     size_t get_key_len;
-    size_t key_hash = k__str_map_key_hash(key, &get_key_len);
-    struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
+    size_t key_hash = str_hash(key, &get_key_len);
+    struct k_hash_list *bucket = select_bucket(map->buckets, map->buckets_num, key_hash);
 
-    struct k_str_map_node *old_node = k__str_map_bucket_find(bucket, key, key_hash);
+    struct k_str_map_node *old_node = find(bucket, key, key_hash);
     if (NULL != old_node)
         return NULL;
 
@@ -331,7 +326,7 @@ void *k_str_map_add(struct k_str_map *map, const char *key, size_t val_size) {
     map->size += 1;
 
     if (map->rehash_threshold < map->size) {
-        k__str_map_rehash(map);
+        rehash(map);
     }
 
     return new_node->val;
@@ -345,10 +340,10 @@ void *k_str_map_add_ref(struct k_str_map *map, const char *key, size_t val_size)
     if (0 == val_size || SIZE_MAX - sizeof(struct k_str_map_node) <= val_size)
         return NULL;
 
-    size_t key_hash = k__str_map_key_hash(key, NULL);
-    struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
+    size_t key_hash = str_hash(key, NULL);
+    struct k_hash_list *bucket = select_bucket(map->buckets, map->buckets_num, key_hash);
 
-    struct k_str_map_node *old_node = k__str_map_bucket_find(bucket, key, key_hash);
+    struct k_str_map_node *old_node = find(bucket, key, key_hash);
     if (NULL != old_node)
         return NULL;
 
@@ -365,7 +360,7 @@ void *k_str_map_add_ref(struct k_str_map *map, const char *key, size_t val_size)
     map->size += 1;
 
     if (map->rehash_threshold < map->size) {
-        k__str_map_rehash(map);
+        rehash(map);
     }
 
     return new_node->val;
@@ -377,10 +372,10 @@ void k_str_map_remove(struct k_str_map *map, const char *key) {
     if (NULL == key)
         return;
 
-    size_t key_hash = k__str_map_key_hash(key, NULL);
-    struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
+    size_t key_hash = str_hash(key, NULL);
+    struct k_hash_list *bucket = select_bucket(map->buckets, map->buckets_num, key_hash);
 
-    struct k_str_map_node *node = k__str_map_bucket_find(bucket, key, key_hash);
+    struct k_str_map_node *node = find(bucket, key, key_hash);
     if (NULL == node)
         return;
 
@@ -396,10 +391,10 @@ void *k_str_map_get(struct k_str_map *map, const char *key) {
     if (NULL == key)
         return NULL;
 
-    size_t key_hash = k__str_map_key_hash(key, NULL);
-    struct k_hash_list *bucket = k__str_map_select_bucket(map, key_hash);
+    size_t hash = str_hash(key, NULL);
+    struct k_hash_list *bucket = select_bucket(map->buckets, map->buckets_num, hash);
 
-    struct k_str_map_node *node = k__str_map_bucket_find(bucket, key, key_hash);
+    struct k_str_map_node *node = find(bucket, key, hash);
     if (NULL == node)
         return NULL;
 

@@ -5,6 +5,11 @@
 
 #include "./k_game_fwd.h"
 
+/**
+ * \brief 加载一张图片
+ *
+ * 若加载成功，函数返回图片的指针，否则返回 `NULL`。
+ */
 struct k_image *k_image_load(const char *file_path);
 
 /**
@@ -19,6 +24,7 @@ int k_image_set_name(struct k_image *image, const char *image_name);
 
 struct k_image *k_image_find(const char *image_name);
 
+/** \brief 获取图片的宽 */
 int k_image_get_w(struct k_image *image);
 
 int k_image_get_h(struct k_image *image);

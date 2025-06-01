@@ -324,11 +324,21 @@ static void k__printf_c_spec_print(struct k_printf_buf *buf, const struct k_prin
                     break;
             }
             break;
-        case 'L': va_arg(*args, long double); break;
-        case 'p': va_arg(*args, void *);      break;
-        case 's': va_arg(*args, char *);      break;
-        case 't': va_arg(*args, ptrdiff_t);   break;
-        case 'z': va_arg(*args, size_t);      break;
+        case 'L':
+            va_arg(*args, long double);
+            break;
+        case 'p':
+            va_arg(*args, void *);
+            break;
+        case 's':
+            va_arg(*args, char *);
+            break;
+        case 't':
+            va_arg(*args, ptrdiff_t);
+            break;
+        case 'z':
+            va_arg(*args, size_t);
+            break;
     }
 }
 
@@ -436,6 +446,8 @@ static k_printf_spec_print_fn match_c_std_spec(const char **str) {
 /* region [user_spec] */
 
 k_printf_spec_print_fn k_printf_spec_match_helper(const struct k_printf_spec_print_pair *pairs, const char **str) {
+    assert(NULL != pairs);
+    assert(NULL != str);
 
     const struct k_printf_spec_print_pair *pair = pairs;
     while (NULL != pair->spec_type) {
@@ -465,32 +477,37 @@ k_printf_spec_print_fn k_printf_spec_match_helper(const struct k_printf_spec_pri
 
 /* region [k__printf] */
 
-/* 提取字符串开头的非负整数值（最大返回 `INT_MAX`），并移动字符串指针跳过数字 */
-static int extract_non_negative_int(const char **str) {
+static int extract_int(const char **str) {
 
     unsigned long long num = 0;
 
     const char *ch = *str;
+    assert('1' <= *ch && *ch <= '9');
+
     for (; '0' <= *ch && *ch <= '9'; ch++) {
-        num = num * 10 + (*ch - '0');
+        num *= 10;
+        num += *ch - '0';
 
         if (INT_MAX <= num) {
-            while ('0' <= *ch && *ch <= '9')
+
+            while ('0' <= *ch && *ch <= '9') {
                 ch++;
+            }
 
             num = INT_MAX;
             break;
         }
     }
 
+    assert(0 <= num && num <= INT_MAX);
+
     *str = ch;
     return (int)num;
 }
 
-/* 提取格式说明符，若提取成功则移动字符串指针，并返回对应的回调 */
 static k_printf_spec_print_fn extract_spec(k_printf_spec_match_fn fn_match, const char **str, struct k_printf_spec *get_spec) {
+    assert('%' == **str);
 
-    /* assert( '%' == **str ) */
     const char *ch = *str + 1;
 
     struct k_printf_spec spec;
@@ -514,7 +531,7 @@ static k_printf_spec_print_fn extract_spec(k_printf_spec_match_fn fn_match, cons
 
     if ('1' <= *ch && *ch <= '9') {
         spec.use_min_width = 1;
-        spec.min_width     = extract_non_negative_int(&ch);
+        spec.min_width     = extract_int(&ch);
     } else if ('*' == *ch) {
         ch++;
         spec.use_min_width = 1;
@@ -528,7 +545,7 @@ static k_printf_spec_print_fn extract_spec(k_printf_spec_match_fn fn_match, cons
         ch++;
         if ('0' <= *ch && *ch <= '9') {
             spec.use_precision = 1;
-            spec.precision     = extract_non_negative_int(&ch);
+            spec.precision     = extract_int(&ch);
         } else if ('*' == *ch) {
             ch++;
             spec.use_precision = 1;

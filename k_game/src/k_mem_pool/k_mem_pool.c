@@ -9,7 +9,7 @@ struct k_mem_chunk {
     /* 指向之前一个已用尽的 chunk
      *
      * pool 所指向的第一个 chunk 是仍有剩余空间的 chunk，
-     * 此后链上的 chunk 都是已用尽的 chunk。
+     * 此后链上的 chunk 都是先前已用尽的 chunk。
      */
     struct k_mem_chunk *prev_used_up;
 };
@@ -53,7 +53,10 @@ struct k_mem_heap_block {
 #define align_up(n, x)   (((n) + (x) - 1) / (x) * (x))
 #define align_down(n, x) ((n) / (x) * (x))
 
-static int k__mem_pool_check_config(const struct k_mem_pool_config *config) {
+static int check_config(const struct k_mem_pool_config *config) {
+
+    if (NULL == config)
+        return -1;
 
     if (NULL == config->fn_malloc || NULL == config->fn_free)
         return -1;
@@ -85,7 +88,7 @@ static int k__mem_pool_check_config(const struct k_mem_pool_config *config) {
 struct k_mem_pool *k_mem_pool_create(const struct k_mem_pool_config *config) {
     assert(NULL != config);
 
-    if (0 != k__mem_pool_check_config(config))
+    if (0 != check_config(config))
         return NULL;
 
     size_t lists_num  = config->block_size_max / config->alloc_size_align + 1;
@@ -121,7 +124,7 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
     assert(NULL != pool);
     assert(NULL != config);
 
-    if (0 != k__mem_pool_check_config(config))
+    if (0 != check_config(config))
         return NULL;
 
     size_t lists_num  = config->block_size_max / config->alloc_size_align + 1;
@@ -150,7 +153,7 @@ struct k_mem_pool *k_mem_pool_construct(struct k_mem_pool *pool, const struct k_
     return pool;
 }
 
-static void k__mem_pool_free_all_chunks(struct k_mem_pool *pool) {
+static void free_all_chunks(struct k_mem_pool *pool) {
     struct k_mem_chunk *chunk = pool->chunk;
     while (NULL != chunk) {
         struct k_mem_chunk *prev = chunk->prev_used_up;
@@ -159,7 +162,7 @@ static void k__mem_pool_free_all_chunks(struct k_mem_pool *pool) {
     }
 }
 
-static void k__mem_pool_free_all_heap_blocks(struct k_mem_pool *pool) {
+static void free_all_heap_blocks(struct k_mem_pool *pool) {
     struct k_mem_heap_block *heap_block = pool->heap_block_list;
     while (NULL != heap_block) {
         struct k_mem_heap_block *next = heap_block->next;
@@ -173,8 +176,8 @@ void k_mem_pool_destroy(struct k_mem_pool *pool) {
     if (NULL == pool)
         return;
 
-    k__mem_pool_free_all_chunks(pool);
-    k__mem_pool_free_all_heap_blocks(pool);
+    free_all_chunks(pool);
+    free_all_heap_blocks(pool);
     pool->fn_free(pool);
 }
 
@@ -183,21 +186,21 @@ void k_mem_pool_destruct(struct k_mem_pool *pool) {
     if (NULL == pool)
         return;
 
-    k__mem_pool_free_all_chunks(pool);
-    k__mem_pool_free_all_heap_blocks(pool);
+    free_all_chunks(pool);
+    free_all_heap_blocks(pool);
     pool->fn_free(pool->free_lists);
 }
 
-static struct k_mem_block **k__mem_pool_select_free_list(struct k_mem_pool *pool, size_t block_size) {
+static struct k_mem_block **select_free_list(struct k_mem_pool *pool, size_t block_size) {
     struct k_mem_block **free_lists = pool->free_lists;
     return &free_lists[(block_size + pool->alloc_size_align - 1) / pool->alloc_size_align];
 }
 
-static void *k__mem_pool_alloc_from_pool(struct k_mem_pool *pool, size_t size) {
+static void *alloc_from_pool(struct k_mem_pool *pool, size_t size) {
 
     size_t block_size = align_up(size, pool->alloc_size_align);
 
-    struct k_mem_block **list = k__mem_pool_select_free_list(pool, block_size);
+    struct k_mem_block **list = select_free_list(pool, block_size);
     if (NULL != *list) {
         struct k_mem_block *block = *list;
         *list = block->next;
@@ -218,7 +221,7 @@ static void *k__mem_pool_alloc_from_pool(struct k_mem_pool *pool, size_t size) {
             size_t free_block_size = align_down(available_size - sizeof(struct k_mem_block), pool->alloc_size_align);
             if (pool->alloc_size_align <= free_block_size) {
 
-                struct k_mem_block **free_list = k__mem_pool_select_free_list(pool, free_block_size);
+                struct k_mem_block **free_list = select_free_list(pool, free_block_size);
                 struct k_mem_block *free_block = ptr_offset(pool->chunk, sizeof(struct k_mem_chunk) + pool->chunk_used);
 
                 free_block->next = *free_list;
@@ -238,7 +241,7 @@ static void *k__mem_pool_alloc_from_pool(struct k_mem_pool *pool, size_t size) {
     return ptr_offset(block, sizeof(struct k_mem_block));
 }
 
-static void *k__mem_pool_alloc_from_heap(struct k_mem_pool *pool, size_t size) {
+static void *alloc_from_heap(struct k_mem_pool *pool, size_t size) {
 
     struct k_mem_heap_block *block = pool->fn_malloc(sizeof(struct k_mem_heap_block) + size);
         if (NULL == block)
@@ -261,10 +264,10 @@ void *k_mem_pool_alloc(struct k_mem_pool *pool, size_t size) {
     assert(NULL != pool);
 
     if (size <= pool->block_size_max) {
-        return k__mem_pool_alloc_from_pool(pool, size);
+        return alloc_from_pool(pool, size);
     }
     else if (size < SIZE_MAX - sizeof(struct k_mem_heap_block)) {
-        return k__mem_pool_alloc_from_heap(pool, size);
+        return alloc_from_heap(pool, size);
     }
     else {
         return NULL;

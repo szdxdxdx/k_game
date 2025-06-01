@@ -3,12 +3,28 @@
  *
  * - K_TMPL_ARRAY_STRUCT_NAME      必须定义此宏，用于指定数组结构体的名字
  * - K_TMPL_ARRAY_ELEM_TYPE        必须定义此宏，指定数组中元素的类型
- * - K_TMPL_ARRAY_DEFINE_STRUCT    若定义此宏，则定义结构体，否则只声明
- * - K_TMPL_ARRAY_DEFINE_FUNCTION  若定义此宏，则定义函数，否则只声明
+ * - K_TMPL_ARRAY_DEFINE_STRUCT    若定义此宏，则生成结构体定义，否则只声明
+ * - K_TMPL_ARRAY_DEFINE_FUNCTION  若定义此宏，则生成函数定义，否则只声明
  * - K_TMPL_ARRAY_FN_MALLOC        若定义此宏，则使用指定的内存分配函数，否则使用 `malloc()`
  * - K_TMPL_ARRAY_FN_FREE          若定义此宏，则使用指定的内存释放函数，否则使用 `free()`
  * - K_TMPL_ARRAY_PASS_ELEM_BY_PTR 若定义此宏，则操作单个元素（例如：插入单个元素）时传递指针，否则传值
  * - K_TMPL_ARRAY_STATIC_FUNCTION  若定义此宏，则用 static 修饰函数
+ *
+ *
+ * 本头文件的使用方式如下：
+ * ```C
+ * // my_int_array.h
+ * #define K_TMPL_ARRAY_STRUCT_NAME my_int_array // 定义数组结构体名字
+ * #define K_TMPL_ARRAY_ELEM_TYPE   int          // 指定数组中元素的类型
+ * #define K_TMPL_ARRAY_DEFINE_STRUCT            // 生成结构体定义
+ * #include "k_array_tmpl.h"                     // 引入头文件，生成代码
+ *
+ * // my_int_array.c
+ * #define K_TMPL_ARRAY_STRUCT_NAME my_int_array // 定义数组结构体名字，与 my_int_array.h 中指定的名字保持一致
+ * #define K_TMPL_ARRAY_ELEM_TYPE   int          // 指定数组中元素的类型
+ * #define K_TMPL_ARRAY_DEFINE_FUNCTION          // 生成函数定义
+ * #include "./k_array_tmpl.h"                   // 引入头文件，生成代码
+ * ```
  */
 
 #if ! defined(K_TMPL_ARRAY_STRUCT_NAME) || ! defined(K_TMPL_ARRAY_ELEM_TYPE)

@@ -114,6 +114,9 @@ static int step_create_window(void *config_) {
     }
 
     const char *title = config->window_title;
+    if (NULL == title)
+        title = "";
+
     int x = SDL_WINDOWPOS_CENTERED;
     int y = SDL_WINDOWPOS_CENTERED;
     int w = config->window_w;

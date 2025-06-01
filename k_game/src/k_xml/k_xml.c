@@ -21,7 +21,7 @@ struct k_xml_doc {
     struct k_mem_pool mem_pool;
 };
 
-/* 节点的基类 */
+/* 节点基类 */
 struct k_xml_node {
 
     struct k_list_node sibling_link;
@@ -163,6 +163,8 @@ static int k__xml_elem_node_add_attr(struct k_xml_elem_node *node, const char *k
     struct k_xml_attr *attr = k__xml_mem_alloc(node->super.doc, sizeof(struct k_xml_attr));
     if (NULL == attr)
         return -1;
+
+    /* TODO 此处未检查 key 是否已存在 */
 
     k_list_insert_tail(&node->attr_list, &attr->node_link);
     attr->elem = node;

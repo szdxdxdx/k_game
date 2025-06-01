@@ -1,7 +1,6 @@
 #include "k_game/core/k_sound.h"
 
-#include "./k_sound_bgm.h"
-#include "./k_sound_sfx.h"
+#include "./k_sound.h"
 #include "./k_sound_registry.h"
 
 /* region [sound_bgm_registry] */

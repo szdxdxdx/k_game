@@ -28,15 +28,17 @@ static void k__game_run() {
     }
 }
 
-int k_game_run(const struct k_game_config *config) {
+void k_game_run(const struct k_game_config *config) {
 
     if (0 != k__game_init(config)) {
         k_log_error("failed to init game");
-        return -1;
+        goto err;
     }
 
     k__game_run();
 
     k__game_deinit(config);
-    return 0;
+
+    return;
+err:;
 }

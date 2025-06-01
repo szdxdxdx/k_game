@@ -1,7 +1,7 @@
 #ifndef K_STR_MAP_H
 #define K_STR_MAP_H
 
-#include <stddef.h>
+#include "k_hash_list.h"
 
 /** \brief 哈希表容器 */
 struct k_str_map {
@@ -16,7 +16,7 @@ struct k_str_map {
     size_t size;
 
     /** \brief [private] 哈希桶数组 */
-    void *buckets;
+    struct k_hash_list *buckets;
 
     /** \brief [private] 哈希桶的数量 */
     size_t buckets_num;
@@ -180,15 +180,15 @@ void k_str_map_iter_init(struct k_str_map_iter *iter, struct k_str_map *map);
 /**
  * \brief 获取迭代器指向的元素的键和值
  *
- * 若迭代器已到达末尾，此时迭代器不指向任何一个元素，函数立即返回 0，
- * 否则函数返回 1，出参 `get_key` 和 `get_val` 返回迭代器指向的元素的键和值。
+ * 若迭代器未到达末尾，则函数返回 1，出参 `get_key` 和 `get_val` 返回迭代器指向的元素的键和值。
+ * 若迭代器到达末尾，此时迭代器不指向任何一个元素，函数返回 0。
  */
 int k_str_map_iter_get(struct k_str_map_iter *iter, const char **get_key, void *get_val);
 
 /**
  * \brief 迭代器向后移动到下一个元素
  *
- * 若迭代器已到达末尾，则保持则函数立即返回，否则迭代器向后移动到下一个元素。
+ * 若迭代器未到达末尾，则迭代器向后移动到下一个元素。
  */
 void k_str_map_iter_next(struct k_str_map_iter *iter);
 

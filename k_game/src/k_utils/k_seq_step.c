@@ -1,6 +1,9 @@
+#include <assert.h>
+
 #include "k_seq_step.h"
 
 size_t k_seq_step_exec_forward(const struct k_seq_step *steps, size_t steps_num, void *context) {
+    assert(NULL != steps);
 
     const struct k_seq_step *step = steps;
     for (; step < steps + steps_num; step++) {
@@ -12,6 +15,7 @@ size_t k_seq_step_exec_forward(const struct k_seq_step *steps, size_t steps_num,
 }
 
 void k_seq_step_exec_backward(const struct k_seq_step *steps, size_t steps_num, void *context) {
+    assert(NULL != steps);
 
     const struct k_seq_step *step = steps + steps_num - 1;
     for (; step >= steps; step--) {
@@ -21,6 +25,7 @@ void k_seq_step_exec_backward(const struct k_seq_step *steps, size_t steps_num, 
 }
 
 int k_seq_step_exec(const struct k_seq_step *steps, size_t steps_num, void *context) {
+    assert(NULL != steps);
 
     size_t completed_count = k_seq_step_exec_forward(steps, steps_num, context);
 

@@ -97,7 +97,7 @@ static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
         case SDLK_F11          : return K_KEY_F11           ;
         case SDLK_F12          : return K_KEY_F12           ;
 
-        case SDLK_PRINTSCREEN  : return K_KEY_PRINT_SCREEN  ;
+        case SDLK_PRINTSCREEN  : goto   k_key_no_support    ;
         case SDLK_SCROLLLOCK   : goto   k_key_no_support    ;
         case SDLK_PAUSE        : goto   k_key_no_support    ;
         case SDLK_INSERT       : goto   k_key_no_support    ;
@@ -112,7 +112,7 @@ static enum k_keyboard_key SDL_key_to_k_key(SDL_Keycode SDL_key) {
         case SDLK_DOWN         : return K_KEY_DOWN          ;
         case SDLK_UP           : return K_KEY_UP            ;
 
-        case SDLK_NUMLOCKCLEAR : return K_KEY_NUM_LOCK_CLEAR;
+        case SDLK_NUMLOCKCLEAR : goto   k_key_no_support    ;
         case SDLK_KP_DIVIDE    : return K_KEY_KP_DIVIDE     ;
         case SDLK_KP_MULTIPLY  : return K_KEY_KP_MULTIPLY   ;
         case SDLK_KP_MINUS     : return K_KEY_KP_MINUS      ;

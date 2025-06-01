@@ -39,5 +39,7 @@ int yx_game_run(void) {
     config.window_title = "ynx! llk! fight!";
     config.on_start = on_game_start;
 
-    return k_game_run(&config);
+    k_game_run(&config);
+
+    return 0;
 }
