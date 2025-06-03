@@ -2,7 +2,7 @@
 #define K__COLLISION_INTERNAL_H
 
 #include "k_list.h"
-#include "k_int_intrusive_map.h"
+#include "k_intrusive_map.h"
 
 #include "k_game/core/k_mem_alloc.h"
 #include "k_game/core/k_object.h"

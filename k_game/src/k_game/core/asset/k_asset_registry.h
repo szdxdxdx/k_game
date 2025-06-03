@@ -2,7 +2,7 @@
 #define K__ASSET_REGISTRY_H
 
 #include "k_list.h"
-#include "k_str_intrusive_map.h"
+#include "k_intrusive_map.h"
 
 struct k_asset_registry {
 

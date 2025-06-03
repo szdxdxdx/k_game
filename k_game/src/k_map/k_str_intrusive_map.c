@@ -1,7 +1,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "k_str_intrusive_map.h"
+#include "k_intrusive_map.h"
 
 void k_str_intrusive_map_init(struct k_str_intrusive_map *map, struct k_hash_list *buckets, size_t buckets_num) {
     assert(NULL != map);

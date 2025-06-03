@@ -2,7 +2,7 @@
 #define K__OBJECT_POOL_H
 
 #include "k_list.h"
-#include "k_int_intrusive_map.h"
+#include "k_intrusive_map.h"
 
 struct k_object;
 

@@ -1,9 +1,11 @@
-#ifndef K_INT_INTRUSIVE_MAP_H
-#define K_INT_INTRUSIVE_MAP_H
+#ifndef K_INTRUSIVE_MAP_H
+#define K_INTRUSIVE_MAP_H
 
 #include <stddef.h>
 
 #include "k_hash_list.h"
+
+/* region [int_map] */
 
 /** \brief 键为 int 类型的侵入式哈希表容器 */
 struct k_int_intrusive_map {
@@ -25,6 +27,35 @@ struct k_int_intrusive_map_node {
     int key;
 };
 
+/* endregion */
+
+/* region [str_map] */
+
+/** \brief 键为 const char * 字符串类型的侵入式哈希表容器 */
+struct k_str_intrusive_map {
+
+    /** \brief [read-only] 哈希桶 */
+    struct k_hash_list *buckets;
+
+    /** \brief [read-only] 哈希桶的个数 */
+    size_t buckets_num;
+};
+
+/** \brief 哈希表的节点 */
+struct k_str_intrusive_map_node {
+
+    /** \brief [private] 哈希表节点的指针域 */
+    struct k_hash_list_node node_link;
+
+    /** \brief [read-only] 哈希表节点的字符串键 */
+    const char *key;
+
+    /** \brief [read-only] 字符串键的哈希值 */
+    size_t key_hash;
+};
+
+/* endregion */
+
 /**
  * \brief 初始化哈希表
  *
@@ -44,6 +75,7 @@ struct k_int_intrusive_map_node {
  * ```
  */
 void k_int_intrusive_map_init(struct k_int_intrusive_map *map, struct k_hash_list *buckets, size_t buckets_num);
+void k_str_intrusive_map_init(struct k_str_intrusive_map *map, struct k_hash_list *buckets, size_t buckets_num);
 
 /**
  * \brief 往哈希表中添加新节点
@@ -51,6 +83,7 @@ void k_int_intrusive_map_init(struct k_int_intrusive_map *map, struct k_hash_lis
  * 若哈希表中不存在 key 相同的节点，则添加成功，函数返回 0，否则返回非 0。
  */
 int k_int_intrusive_map_add_if_absent(struct k_int_intrusive_map *map, int key, struct k_int_intrusive_map_node *node);
+int k_str_intrusive_map_add_if_absent(struct k_str_intrusive_map *map, const char *key, struct k_str_intrusive_map_node *node);
 
 /**
  * \brief 往哈希表中直接添加新节点
@@ -58,6 +91,7 @@ int k_int_intrusive_map_add_if_absent(struct k_int_intrusive_map *map, int key, 
  * 直接往哈希表中添加新节点，请调用者自行确保 key 不重复。
  */
 void k_int_intrusive_map_add_directly(struct k_int_intrusive_map *map, int key, struct k_int_intrusive_map_node *node);
+void k_str_intrusive_map_add_directly(struct k_str_intrusive_map *map, const char *key, struct k_str_intrusive_map_node *node);
 
 /**
  * \brief 查找指定键的节点
@@ -65,13 +99,17 @@ void k_int_intrusive_map_add_directly(struct k_int_intrusive_map *map, int key, 
  * 在哈希表中查找 key 对应的节点。若找到，函数返回该节点，否则返回 `NULL`。
  */
 struct k_int_intrusive_map_node *k_int_intrusive_map_get(struct k_int_intrusive_map *map, int key);
+struct k_str_intrusive_map_node *k_str_intrusive_map_get(struct k_str_intrusive_map *map, const char *key);
 
 /**
  * \brief 从哈希表中移除节点
  *
- * 不需要指定 key，只要提供节点指针即可。注意不要重复移除节点。
+ * 不需要指定 key，只要提供节点指针即可。
+ *
+ * 不要重复移除节点！
  */
 void k_int_intrusive_map_remove(struct k_int_intrusive_map_node *node);
+void k_str_intrusive_map_remove(struct k_str_intrusive_map_node *node);
 
 /**
  * \brief 重新哈希
@@ -80,6 +118,7 @@ void k_int_intrusive_map_remove(struct k_int_intrusive_map_node *node);
  * 新桶数组由调用者提供，必须在调用前分配好。
  */
 struct k_hash_list *k_int_intrusive_map_rehash(struct k_int_intrusive_map *map, struct k_hash_list *new_buckets, size_t new_buckets_num);
+struct k_hash_list *k_str_intrusive_map_rehash(struct k_str_intrusive_map *map, struct k_hash_list *new_buckets, size_t new_buckets_num);
 
 /**
  * \brief 遍历哈希表中所有桶
@@ -109,17 +148,21 @@ struct k_hash_list *k_int_intrusive_map_rehash(struct k_int_intrusive_map *map, 
  * }
  * ```
  */
-#define k_int_intrusive_map_for_each_bucket(map, bucket) \
+#define k_intrusive_map_for_each_bucket(map, bucket) \
     bucket = (map)->buckets; \
     bucket < (map)->buckets + (map)->buckets_num; \
     bucket++
 
-/**
- * \brief 通过哈希链表的迭代器的指针，反推出用户自定义结构体的指针
- *
- * 用法详见宏 `k_int_intrusive_map_for_each_bucket()` 的示例。
- */
+#define k_int_intrusive_map_for_each_bucket(map, bucket) k_intrusive_map_for_each_bucket(map, bucket)
+#define k_str_intrusive_map_for_each_bucket(map, bucket) k_intrusive_map_for_each_bucket(map, bucket)
+
+/** \brief 通过哈希链表的迭代器的指针，反推出用户自定义结构体的指针 */
+#define k_intrusive_map_node_container_of(hash_list_iter, map_type, node_type, member) \
+    container_of(container_of((hash_list_iter), map_type, node_link), node_type, member)
+
 #define k_int_intrusive_map_node_container_of(hash_list_iter, type, member) \
-    container_of(container_of((hash_list_iter), struct k_int_intrusive_map_node, node_link), type, member)
+    k_intrusive_map_node_container_of(hash_list_iter, struct k_int_intrusive_map_node, type, member)
+#define k_str_intrusive_map_node_container_of(hash_list_iter, type, member) \
+    k_intrusive_map_node_container_of(hash_list_iter, struct k_str_intrusive_map_node, type, member)
 
 #endif

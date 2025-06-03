@@ -1,6 +1,5 @@
 #include "k_str_buf.h"
-#include "k_str_intrusive_map.h"
-#include "k_int_intrusive_map.h"
+#include "k_intrusive_map.h"
 
 #include "./k_webui_internal.h"
 
