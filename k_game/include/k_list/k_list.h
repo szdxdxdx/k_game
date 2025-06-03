@@ -41,8 +41,9 @@ struct k_list {
     /**
      * \brief [read-only] 链表头节点
      *
-     * 头节点不存储数据。链表的第一个有效节点是 `head.next`，
-     * 最后一个有效节点是 `head.prev`。
+     * 头节点不存储数据。链表的第一个有效节点是 `head.next`，最后一个有效节点是 `head.prev`。
+     *
+     * 若链表为空，则头节点自环。
      */
     struct k_list_node head;
 };
@@ -70,10 +71,7 @@ static inline void k_list_init(struct k_list *list) {
 /**
  * \brief 在某个节点之后插入一个节点
  *
- * 请确保 `prev` 是某个链表中的有效节点。
- *
- * 无论 `node` 是游离的节点，还是已插入其他链表，该函数都会将其插入到 `prev` 之后，
- * 并建立 `prev` 和 `node` 之间的前后指针关系。
+ * 请确保 `prev` 是链表中的有效节点，`node` 是游离的节点。
  * 若 `node` 不是游离的节点，会破坏 `node` 原先所在的链表的结构。
  */
 static inline void k_list_insert_after(struct k_list_node *prev, struct k_list_node *node) {
@@ -150,19 +148,19 @@ static inline struct k_list_node *k_list_tail(struct k_list *list) {
  * // 自定义的数据节点
  * struct my_data {
  *     struct k_list_node link; // 嵌入链表节点，作为指针域
- *     int val;                 // 节点的实际数据
+ *     int val; // 节点的实际数据
  * };
  *
  * struct k_list *list = ...; // 要遍历的链表
  * struct k_list_node *iter; // 迭代器
  * for (k_list_for_each(list, iter)) { // 遍历链表
- *     struct my_data *p_data = container_of(iter, struct my_data, link); // 通过链表节点的指针，计算实际结构体的指针
+ *     struct my_data *p_data = container_of(iter, struct my_data, link);
  *
  *     printf("%d ", p_data->val); // 获取并打印实际节点中的数据
  * }
  * ```
  *
- * 遍历过程中不应删除链表中的节点，否则迭代器可能失效。
+ * 遍历过程中不应增删节点，否则迭代器可能失效。
  */
 #define k_list_for_each(list, iter) \
     iter =  k_list_get_first(list); \
@@ -183,7 +181,7 @@ static inline struct k_list_node *k_list_tail(struct k_list *list) {
  * }
  * ```
  *
- * 遍历过程中不应删除除了 `iter` 之外的节点，否则迭代器可能失效。
+ * 遍历过程中不应删除 `iter` 之外的节点，否则迭代器可能失效。
  */
 #define k_list_for_each_s(list, iter, next_) \
     iter =  k_list_get_first(list), next_ = iter->next; \

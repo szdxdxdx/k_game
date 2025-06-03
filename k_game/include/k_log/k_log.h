@@ -29,6 +29,14 @@
 
 void k__log(int level, const char *file, int line, const char *fn, const char *fmt, ...);
 
+/**
+ * \brief 格式化打印日志
+ *
+ * `fmt` 为格式字符串，用法类似于 `printf()`，示例：
+ * ```C
+ * k_log_info("1+1=%d", 2);
+ * ```
+ */
 #define k_log_trace(fmt, ...) k__log(K_LOG_LEVEL_TRACE, K__FILE_PATH, __LINE__, __func__, K__LOG_TAG fmt, ##__VA_ARGS__)
 #define k_log_debug(fmt, ...) k__log(K_LOG_LEVEL_DEBUG, K__FILE_PATH, __LINE__, __func__, K__LOG_TAG fmt, ##__VA_ARGS__)
 #define k_log_info(fmt, ...)  k__log(K_LOG_LEVEL_INFO , K__FILE_PATH, __LINE__, __func__, K__LOG_TAG fmt, ##__VA_ARGS__)
