@@ -3,18 +3,35 @@
 
 #include <stddef.h>
 
-#ifndef container_of
-#define container_of(p, type, member) \
-    ((type *)((char *)(p) - offsetof(type, member)))
-#endif
+#include "k_container_of.h"
 
-/** \brief 链表节点结构 */
+/**
+ * \brief 链表节点
+ *
+ * 链表节点只含指针域，不含数据域。
+ * 使用链表时，把节点结构和实际要存储的数据字段一起组合成一个大结构体。示例：
+ * ```C
+ * // 自定义的数据节点
+ * struct my_data {
+ *     struct k_list_node link; // 嵌入链表节点，作为指针域
+ *     int val; // 实际要存储的数据
+ * };
+ *
+ * struct k_list_node *p_node = ...; // 指向节点的指针
+ *
+ * // 通过指向节点的指针，计算得到指向实际结构体的指针
+ * struct my_data *p_data = container_of(p_node, struct my_data, link);
+ *
+ * // 如果 struct k_list_node 是实际结构体的第一个成员，则可以直接显示类型转换
+ * struct my_data *p_data = (struct my_data *)p_node;
+ * ```
+ */
 struct k_list_node {
 
-    /** \brief 指向后一个节点 */
+    /** \brief [read-only] 指向后一个节点 */
     struct k_list_node *next;
 
-    /** \brief 指向前一个节点 */
+    /** \brief [read-only] 指向前一个节点 */
     struct k_list_node *prev;
 };
 
@@ -22,7 +39,7 @@ struct k_list_node {
 struct k_list {
 
     /**
-     * \brief 链表头节点
+     * \brief [read-only] 链表头节点
      *
      * 头节点不存储数据。链表的第一个有效节点是 `head.next`，
      * 最后一个有效节点是 `head.prev`。
@@ -33,7 +50,7 @@ struct k_list {
 /**
  * \brief 将节点自环
  *
- * 可用于初始化一个未插入任何链表的独立节点。
+ * 可用于初始化一个尚未插入任何链表的游离节点。
  */
 static inline void k_list_node_loop(struct k_list_node *node) {
     node->prev = node;
@@ -190,5 +207,15 @@ static inline struct k_list_node *k_list_get_last(struct k_list *list) {
 static inline struct k_list_node *k_list_head(struct k_list *list) {
     return &list->head;
 }
+
+/**
+ * \brief 反向遍历链表
+ *
+ * 与 `k_list_for_each()` 类似，但反向遍历链表。
+ */
+#define k_list_reversed_for_each(list, iter) \
+    iter =  k_list_get_last(list); \
+    iter != k_list_head(list);  \
+    iter =  iter->prev
 
 #endif

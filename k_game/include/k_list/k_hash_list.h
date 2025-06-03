@@ -3,16 +3,26 @@
 
 #include <stddef.h>
 
-#ifndef container_of
-#define container_of(p, type, member) \
-    ((type *)((char *)(p) - offsetof(type, member)))
-#endif
+#include "k_container_of.h"
 
+/**
+ * \brief 链表节点
+ *
+ * 示例：
+ * ```C
+ *
+ * ```
+ */
 struct k_hash_list_node {
+
+    /** \brief [read-only] 指向后一个节点 */
     struct k_hash_list_node *next;
+
+    /** \brief [read-only] 指向前一个节点的 `next` 的指针 */
     struct k_hash_list_node **pprev;
 };
 
+/** \brief 侵入式哈希链表容器 */
 struct k_hash_list {
     struct k_hash_list_node *first;
 };

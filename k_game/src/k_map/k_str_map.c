@@ -404,8 +404,6 @@ void *k_str_map_get(struct k_str_map *map, const char *key) {
 void k_str_map_clear(struct k_str_map *map) {
     assert(NULL != map);
 
-    void (*fn_free)(void *p) = map->fn_free;
-
     struct k_hash_list *bucket = map->buckets;
     struct k_hash_list *bucket_end = &bucket[map->buckets_num];
     for (; bucket < bucket_end; bucket++) {
@@ -414,7 +412,7 @@ void k_str_map_clear(struct k_str_map *map) {
         for (k_hash_list_for_each_s(bucket, iter, next)) {
             struct k_str_map_node *node = container_of(iter, struct k_str_map_node, node_link);
 
-            fn_free(node);
+            map->fn_free(node);
         }
     }
 
@@ -431,8 +429,6 @@ void k_str_map_clear_with_callback(struct k_str_map *map, void (*fn_callback)(co
         return;
     }
 
-    void (*fn_free)(void *p) = map->fn_free;
-
     struct k_hash_list *bucket = map->buckets;
     struct k_hash_list *bucket_end = &bucket[map->buckets_num];
     for (; bucket < bucket_end; bucket++) {
@@ -442,7 +438,7 @@ void k_str_map_clear_with_callback(struct k_str_map *map, void (*fn_callback)(co
             struct k_str_map_node *node = container_of(iter, struct k_str_map_node, node_link);
 
             fn_callback(node->key, node->val);
-            fn_free(node);
+            map->fn_free(node);
         }
     }
 
