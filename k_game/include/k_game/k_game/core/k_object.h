@@ -29,8 +29,19 @@ void k_object_destroy(struct k_object *object);
 /** \brief 获取对象的关联数据 */
 void *k_object_get_data(struct k_object *object);
 
+/**
+ * \brief 获取对象的 ID
+ *
+ * 每个对象在被创建时都会被分配一个 ID。该 ID 在房间内唯一性，并按照创建顺序递增生成。
+ * 即使对象被销毁，其 ID 不会立即复用。ID 可以避免出现悬垂指针问题。
+ */
 size_t k_object_get_id(struct k_object *object);
 
+/**
+ * \brief 通过 ID 查找对象
+ *
+ * 若 ID 有效且对象仍存在，则函数返回对象指针，否则返回 `NULL`。
+ */
 struct k_object *k_object_find_by_id(size_t id);
 
 /* ------------------------------------------------------------------------ */

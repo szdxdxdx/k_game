@@ -1,14 +1,15 @@
 #ifndef K_MOUSE_H
 #define K_MOUSE_H
 
+/** \brief 获取鼠标在房间中的坐标 */
 float k_mouse_x(void);
-
 float k_mouse_y(void);
 
+/** \brief 获取鼠标在窗口中的坐标 */
 float k_mouse_window_x(void);
-
 float k_mouse_window_y(void);
 
+/** \brief 鼠标按键的键码 */
 enum k_mouse_button {
     K_BUTTON_LEFT   = 0,
     K_BUTTON_MIDDLE = 1,

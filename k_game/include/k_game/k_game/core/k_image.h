@@ -21,10 +21,8 @@ struct k_image *k_image_load(const char *file_path);
  */
 void k_image_release(struct k_image *image);
 
-/** \brief 获取图片的宽 */
+/** \brief 获取图片的宽高 */
 int k_image_get_w(struct k_image *image);
-
-/** \brief 获取图片的高 */
 int k_image_get_h(struct k_image *image);
 
 /**

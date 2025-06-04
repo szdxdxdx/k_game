@@ -1,28 +1,16 @@
 #ifndef K_GAME_FWD_H
 #define K_GAME_FWD_H
 
-/**
- * \brief 图片资源
- *
- */
+/** \brief 图片资源 */
 struct k_image;
 
-/**
- * \brief 字体资源
- *
- */
+/** \brief 字体资源 */
 struct k_font;
 
-/**
- * \brief 音乐资源
- *
- */
+/** \brief 音乐资源（通常是一个较长的音频文件，用作背景音乐，烘托游戏氛围） */
 struct k_sound_bgm;
 
-/**
- * \brief 音效资源
- *
- */
+/** \brief 音效资源（通常是短促的音频片段，用于强化交互反馈，如按钮点击、攻击命中、爆炸等） */
 struct k_sound_sfx;
 
 /**
@@ -69,13 +57,10 @@ struct k_object;
  */
 struct k_component;
 
-/**
- * \brief 组件类型
- *
- * 组件类型定义了组件实例要遵循的行为。
- */
+/** \brief 组件类型 */
 struct k_component_type;
 
+/** \brief 组件管理器 */
 struct k_component_manager;
 
 /**

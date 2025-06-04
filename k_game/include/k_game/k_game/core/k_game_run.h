@@ -9,7 +9,7 @@ struct k_game_config {
     /** \brief 游戏窗口的标题 */
     const char *window_title;
 
-    /** \brief 游戏窗口的 */
+    /** \brief 游戏窗口的宽高 */
     int window_w;
     int window_h;
 

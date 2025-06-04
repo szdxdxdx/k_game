@@ -48,7 +48,7 @@ void *k_room_blackboard_get(const char *key) {
     return k_str_map_get(&blackboard->map, key);
 }
 
-void k_room_blackboard_del(const char *key) {
+void k_room_blackboard_remove(const char *key) {
 
     struct k_room_blackboard *blackboard = k_room_get_component_manager_data(k__room_blackboard_component_type);
     if (NULL == blackboard) {
