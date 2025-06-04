@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "k_game/core/k_component.h"
 #include "./k_component.h"
 #include "./k_component_type.h"
@@ -10,18 +11,22 @@
 /* region [component_get] */
 
 void *k_component_get_data(struct k_component *component) {
+    assert(NULL != component);
     return component->data;
 }
 
 struct k_object *k_component_get_object(struct k_component *component) {
+    assert(NULL != component);
     return component->object;
 }
 
 struct k_component_manager *k_component_get_manager(struct k_component *component) {
+    assert(NULL != component);
     return component->manager;
 }
 
 void *k_component_get_manager_data(struct k_component *component) {
+    assert(NULL != component);
 
     if (NULL == component->manager)
         return NULL;
@@ -30,6 +35,7 @@ void *k_component_get_manager_data(struct k_component *component) {
 }
 
 void *k_component_get_object_data(struct k_component *component) {
+    assert(NULL != component);
     return component->object->data;
 }
 
@@ -42,6 +48,7 @@ void *k_component_manager_get_data(struct k_component_manager *manager) {
 }
 
 struct k_component_manager *k_room_get_component_manager(struct k_component_type *component_type) {
+    assert(NULL != component_type);
 
     if (NULL == component_type)
         return NULL;
@@ -50,6 +57,7 @@ struct k_component_manager *k_room_get_component_manager(struct k_component_type
 }
 
 void *k_room_get_component_manager_data(struct k_component_type *component_type) {
+    assert(NULL != component_type);
 
     if (NULL == component_type)
         return NULL;

@@ -3,7 +3,7 @@
 
 #include "k_log.h"
 
-#if K_LOG_COLOR == 1
+#if K_LOG_COLOR
 #define C_RESET   "\033[0m"
 #define C_RED     "\033[91m"
 #define C_GREEN   "\033[32m"

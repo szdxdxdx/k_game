@@ -126,31 +126,6 @@ struct k_component_type *k_component_type_register(const struct k_component_mana
 
 /* endregion */
 
-/* region [component_type_find] */
-
-/**
- * \brief 设置组件类型的名字
- *
- * 你可以为已注册的组件类型指定一个名字，名字必须唯一。
- * 之后可使用 `k_component_type_find()` 查找该组件类型。
- *
- * 名字不是必须的，你可以直接保存组件类型的指针。
- *
- * 若名字设为空字符串 "" 或 `NULL`，则清除名字。
- *
- * 若设置成功，函数返回 0，否则返回非 0。
- */
-int k_component_type_set_name(struct k_component_type *component_type, const char *type_name);
-
-/**
- * \brief 根据名字查找组件类型
- *
- * 若找到，函数返回组件类型的指针，找不到则返回 `NULL`。
- */
-struct k_component_type *k_component_type_find(const char *type_name);
-
-/* endregion */
-
 /* region [object_add_component] */
 
 /**

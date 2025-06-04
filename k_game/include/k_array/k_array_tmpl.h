@@ -36,6 +36,8 @@
 #include <stddef.h>
 #include <string.h>
 
+/* region [malloc] */
+
 #if defined(K_TMPL_ARRAY_FN_MALLOC) && defined(K_TMPL_ARRAY_FN_FREE)
 #define k__tmpl_array_fn_malloc K_TMPL_ARRAY_FN_MALLOC
 #define k__tmpl_array_fn_free   K_TMPL_ARRAY_FN_FREE
@@ -48,20 +50,37 @@
 #define k__tmpl_array_fn_free   free
 #endif
 
+/* endregion */
+
+/* region [static fn] */
+
 #ifdef k_tmpl_array_static_fn
 #define k__tmpl_array_fn static
 #else
 #define k__tmpl_array_fn
 #endif
 
-#define k__tmpl_array                    K_TMPL_ARRAY_STRUCT_NAME
-#define k__tmpl_array_elem               K_TMPL_ARRAY_ELEM_TYPE
-#define k__tmpl_array_x_(array_name, x)  array_name##_##x
-#define k__tmpl_array_x(array_name, x)   k__tmpl_array_x_(array_name, x)
-#define k__tmpl_array_(x)                k__tmpl_array_x(K_TMPL_ARRAY_STRUCT_NAME, x)
+/* endregion */
 
+/* region */
+
+/* 数组结构体的名字，和数组中元素的类型 */
+#define k__tmpl_array      K_TMPL_ARRAY_STRUCT_NAME
+#define k__tmpl_array_elem K_TMPL_ARRAY_ELEM_TYPE
+
+/* 用于将结构体名与其他标识符拼接 */
+#define k__tmpl_array_x_(array_name, x) array_name##_##x
+#define k__tmpl_array_x(array_name, x)  k__tmpl_array_x_(array_name, x)
+#define k__tmpl_array_(x)               k__tmpl_array_x(K_TMPL_ARRAY_STRUCT_NAME, x)
+
+/* endregion */
+
+/* region [def_struct] */
+
+/* 生成结构体声明 */
 struct k__tmpl_array;
 
+/* 生成结构体定义 */
 #if defined(K_TMPL_ARRAY_DEFINE_STRUCT)
 
 /** \brief 支持动态扩容的数组容器 */
@@ -78,6 +97,12 @@ struct k__tmpl_array {
 };
 
 #endif
+
+/* endregion */
+
+/* region [function] */
+
+/* 生成函数声明 */
 
 /**
  * \brief 创建数组
@@ -212,6 +237,11 @@ k__tmpl_array_fn void k__tmpl_array_(clear)(struct k__tmpl_array *arr);
 /** \brief 清空数组，并释放存储元素所用的内存 */
 k__tmpl_array_fn void k__tmpl_array_(free_storage)(struct k__tmpl_array *arr);
 
+/* endregion */
+
+/* region [function] */
+
+/* 生成函数实现 */
 #if defined(K_TMPL_ARRAY_DEFINE_FUNCTION)
 
 k__tmpl_array_fn struct k__tmpl_array *k__tmpl_array_(create)(void) {
@@ -447,6 +477,8 @@ k__tmpl_array_fn void k__tmpl_array_(free_storage)(struct k__tmpl_array *arr) {
 }
 
 #endif
+
+/* endregion */
 
 #undef k__tmpl_array
 #undef k__tmpl_array_

@@ -11,16 +11,21 @@
 #define K_LOG_LEVEL_WARN  3
 #define K_LOG_LEVEL_ERROR 4
 #define K_LOG_LEVEL_FATAL 5
+
+#define K_LOG_LEVEL_ALL   0
 #define K_LOG_LEVEL_OFF   6
 
+/* 定义日志的级别，低于此级别的日志输出不参与编译 */
 #ifndef K_LOG_LEVEL
-#define K_LOG_LEVEL K_LOG_LEVEL_TRACE
+#define K_LOG_LEVEL K_LOG_LEVEL_ALL
 #endif
 
+/* 是否彩色打印日志，1 为彩色打印，0 为 */
 #ifndef K_LOG_COLOR
 #define K_LOG_COLOR 1
 #endif
 
+/* 日志的标签前缀 */
 #ifndef K_LOG_TAG
 #define K__LOG_TAG ""
 #else

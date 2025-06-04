@@ -210,6 +210,11 @@ struct k_canvas_draw_image_options {
      */
     int flip_x;
     int flip_y;
+
+    /* TODO 透明度
+     *
+     * float alpha;
+     */
 };
 
 struct k_canvas_draw_sprite_options;
@@ -262,6 +267,11 @@ struct k_canvas_draw_sprite_options {
      */
     int flip_x;
     int flip_y;
+
+    /* TODO 透明度
+     *
+     * float alpha;
+     */
 };
 
 /**

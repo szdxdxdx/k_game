@@ -108,38 +108,29 @@ struct k_room *k_room_create(const struct k_room_config *config, void *param);
 
 /* endregion */
 
-/* region [room_find] */
-
-/**
- * \brief 设置房间的名字
- *
- * 房间名字是可选的，默认情况下房间没有名字。
- *
- * 你可以为房间设置唯一名字，k_game 将基于该名字为房间建立索引，
- * 之后可使用 `k_room_find()` 根据名字查找房间。
- *
- * 若名字设为空字符串 "" 或 `NULL`，则清除名字，并删除索引。
- *
- * 若成功，函数返回 0，否则返回非 0。
- */
-int k_room_set_name(struct k_room *room, const char *room_name);
-
-/**
- * \brief 通过房间名称查找房间
- *
- * 若找到，函数返回房间指针，否则返回 `NULL`。
- */
-struct k_room *k_room_find(const char *room_name);
-
-/* endregion */
-
 /* region [room_nav] */
 
+/**
+ * \brief 切换房间
+ *
+ * k_game 框架使用类似页面栈来管理房间的切换。初始时房间栈为空。
+ * 用户在游戏的初始化回调中创建房间，之后必须从中指定一个初始房间，进入该房间后，游戏才正式开始。
+ *
+ * 同一时间只能有一个房间正在运行。处于栈顶的房间即为当前正在运行的房间。
+ *
+ * @{
+ */
+
+/** \brief 直接用新房间替换当前运行的房间 */
 void k_room_nav_goto(struct k_room *room);
 
+/** \brief 将一个新房间压入房间栈顶，而原有的房间依然保留在栈中 */
 void k_room_nav_push(struct k_room *room);
 
+/** \brief 弹出栈顶房间，回到上一个房间继续运行，若房间栈已空则结束游戏 */
 void k_room_nav_pop(void);
+
+/** @} */
 
 /* endregion */
 
