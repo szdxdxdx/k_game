@@ -1,5 +1,6 @@
 
 #define K_LOG_TAG "k_game:camera"
+#define K_LOG_LEVEL K_LOG_LEVEL_OFF
 #include "k_log.h"
 
 #include "./k_camera_internal.h"
