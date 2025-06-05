@@ -4,7 +4,7 @@
   * [基础概念](/k_game/quick_start/basic_concepts.md)
   * [启动游戏](/k_game/quick_start/start_game.md)
   * [创建房间](/k_game/quick_start/create_room.md)
-  * [事件回调](/k_game/quick_start/room_add_callback.md)
+  * [事件回调](/k_game/quick_start/event_callback.md)
   * [按键检测](/k_game/quick_start/keyboard_input.md)
   * [绘制图片](/k_game/quick_start/draw_image.md)
   * [播放声音](/k_game/quick_start/play_sound.md)
