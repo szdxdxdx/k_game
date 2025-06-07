@@ -1,8 +1,17 @@
 
+* API 文档
+  * [基础概念](/k_game/文档/基础概念.md)
+  * [头文件引入](/k_game/文档/头文件引入.md)
+  * [入口函数](/k_game/文档/入口函数.md)
+  * [房间](/k_game/文档/房间.md)
+  * [事件回调](/k_game/文档/事件回调.md)
+
+
+
 * API 文档 / 基础 API
   * [配置开发环境](/k_game/quick_start/setup_dev_env.md)
-  * [基础概念](/k_game/quick_start/basic_concepts.md)
-  * [启动游戏](/k_game/quick_start/start_game.md)
+  * [基础概念](/k_game/quick_start/基础概念.md)
+  * [启动游戏](/k_game/quick_start/启动游戏.md)
   * [创建房间](/k_game/quick_start/create_room.md)
   * [事件回调](/k_game/quick_start/event_callback.md)
   * [按键检测](/k_game/quick_start/keyboard_input.md)

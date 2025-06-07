@@ -47,8 +47,10 @@ struct k_game_config {
 /**
  * \brief 启动并运行游戏
  *
- * 本函数为 k_game 框架的入口函数
+ * 本函数为 k_game 框架的入口函数。
+ *
+ * 不必理会此函数的返回值。
  */
-void k_game_run(const struct k_game_config *config);
+int k_game_run(const struct k_game_config *config);
 
 #endif
