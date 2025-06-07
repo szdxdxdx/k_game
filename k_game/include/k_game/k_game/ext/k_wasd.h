@@ -3,6 +3,8 @@
 
 #include "k_game/core/k_keyboard.h"
 
+/* 已弃用 */
+
 struct k_WASD_config {
 
     float *x;

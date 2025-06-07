@@ -19,13 +19,15 @@
 #include "./k_game/core/k_named_lookup.h"
 #include "./k_game/core/k_game_run.h"
 
-#include "./k_game/ext/k_wasd.h"
+/* 内建组件 */
 #include "./k_game/ext/k_sprite_renderer.h"
 #include "./k_game/ext/k_collision_box.h"
 #include "./k_game/ext/k_position.h"
 #include "./k_game/ext/k_state_machine.h"
-#include "./k_game/ext/k_behavior_tree.h"
 #include "./k_game/ext/k_camera.h"
 #include "./k_game/ext/k_room_blackboard.h"
+
+/* 其他工具 */
+#include "./k_game/ext/k_behavior_tree.h"
 
 #endif
