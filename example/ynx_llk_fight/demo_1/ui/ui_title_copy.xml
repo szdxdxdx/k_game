@@ -1,0 +1,37 @@
+
+
+<box w="100vw" h="100vh" background-color="#674e28" >
+  <box h="100px" left="20%" right="20%" top="80px"/>
+
+  <!-- 开始游戏 -->
+  <box w="192" h="75" left="286" bottom="40%"
+       id="start_game"
+       on-draw="ui_draw_start_game_button"
+  />
+
+  <box w="100%" h="160" bottom="0" border-color="#00000000">
+
+    <box w="460" h="150" left="0" bottom="0">
+      <!-- 滑动条，区间在 0 到 100，滑槽和滑块颜色为红色 -->
+      <slider h="20" left="20" right="10" top="10"
+              min="0" max="100" step="1" border-color="#ff6600"
+              track-color="#ee000022" thumb-color="#ee0000" />
+      <!-- 滑动条的四个正方形 -->
+      <box w="450" h="120" left="10" bottom="0"
+           border-color="#00000000" background-color="#00000000">
+        <box w="100" h="100" top="10" left="10"/>
+        <box w="100" h="100" top="10" left="120"/>
+        <box w="100" h="100" top="10" left="230"/>
+        <box w="100" h="100" top="10" left="340"/>
+      </box>
+    </box>
+
+    <!-- 右下方的按钮，鼠标悬浮时为紫色，点击后执行回调，进入下一个房间 -->
+    <box w="160" h="40" right="10" bottom="110"
+         background-color.hovered="#ff009922"
+         border-color.hovered="#ff0099"
+         on-click="goto_room_1"/>
+    <box w="160" h="40" right="10" bottom="60" />
+    <box w="160" h="40" right="10" bottom="10" />
+  </box>
+</box>

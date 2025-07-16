@@ -1,0 +1,9 @@
+<box w="100%" h="100%">
+    <box w="100px" h="100px"
+         background-color="#00ff00"
+         background-color.pressed="#0000ff"
+         background-color.hovered="#ee00ff"
+    >
+
+    </box>
+</box>

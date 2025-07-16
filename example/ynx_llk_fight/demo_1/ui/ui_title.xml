@@ -1,0 +1,36 @@
+
+<box w="100vw" h="100vh" background-color="#674e28" >
+  <!--<box h="100px" left="20%" right="20%" top="80px"/>-->
+
+  <!-- 开始游戏 -->
+  <box w="192" h="75" left="286" bottom="40%"
+       id="start_game"
+       on-draw="ui_draw_start_game_button"
+       on-click="goto_room_1"
+  />
+
+  <box w="100%" h="160" bottom="0" border-color="#00000000">
+
+    <box w="460" h="150" left="0" bottom="0" id="area">
+      <!-- 滑动条，区间在 0 到 100，滑槽和滑块颜色为红色 -->
+      <slider h="20" left="20" right="10" top="10"
+              min="0" max="100" step="1" border-color="#ff6600"
+              border-color.hovered="#330000"
+              track-color="#ee000022" thumb-color="#ee0000"
+              on-change="slider_on_change"
+      />
+      <!-- 滑动条的四个正方形 -->
+      <box w="450" h="120" left="10" bottom="0"
+           border-color="#00000000" background-color="#00000000">
+        <box w="100" h="100" top="10" left="10"  id="box1" background-color.hovered="#ff009922" border-color.hovered="#ff0099"/>
+        <box w="100" h="100" top="10" left="120" id="box2" background-color.hovered="#7287fa22" border-color.hovered="#7287fa"/>
+        <box w="100" h="100" top="10" left="230" id="box3" background-color.hovered="#1f883d22" border-color.hovered="#1f883d"/>
+        <box w="100" h="100" top="10" left="340" id="box4" background-color.hovered="#7287fa22" border-color.hovered="#7287fa"/>
+      </box>
+    </box>
+
+    <box w="160" h="40" right="10" bottom="110" id="btn1" on-click="btn1_on_click" background-color.hovered="#ff009922" border-color.hovered="#ff0099" background-color.pressed="#ff009966" />
+    <box w="160" h="40" right="10" bottom="60"  id="btn2" on-click="btn2_on_click" background-color.hovered="#7287fa22" border-color.hovered="#7287fa" background-color.pressed="#7287fa66" />
+    <box w="160" h="40" right="10" bottom="10"  id="btn3" on-click="btn3_on_click" background-color.hovered="#1f883d22" border-color.hovered="#1f883d" background-color.pressed="#1f883d66" />
+  </box>
+</box>

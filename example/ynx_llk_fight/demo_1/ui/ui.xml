@@ -1,0 +1,38 @@
+<box id="state-panel"
+    w="140px" h="40px"
+    top="10px" left="10px"
+    background-color="#2a2b2baa"
+    background-color.hovered="#2a2b2b"
+    border-color="#434a4a" >
+
+    <!-- 图片 -->
+    <image w="24" h="24"
+        left="8px" top="8px"
+        src="szdxdxdx" />
+
+    <!-- 红 -->
+    <box id="hp"
+        h="8px"
+        top="8px" left="40px" right="8px"
+        background-color="#ee0000aa"
+        background-color.hovered="#ee0000"
+        border-color="#ee0000"
+        border-color.hovered="#ffffff" />
+
+    <!-- 蓝 -->
+    <box id="mana"
+        h="8px"
+        top="24px" left="40px" right="8px"
+        background-color="#66ccffaa"
+        background-color.hovered="#66ccff"
+        border-color="#66ccff"
+        border-color.hovered="#ffffff" />
+
+    <!--<slider id="slider"
+            min="5" max="106" val="6" step="13"
+            w="300px" h="15px"
+            thumb-color="#ff6600dd"
+            thumb-color.hovered="#ff6600"
+            left="150px" top="30px"
+            on-change="on_change" />-->
+</box>

@@ -1,0 +1,26 @@
+<box id="state-panel"
+    w="200px" h="50px" top="10px" left="10px"
+    background-color="#2a2b2baa" background-color.hovered="#2a2b2b"
+    border-color="#434a4a">
+
+    <box left="8px" right="8px" h="12px" top="8px"
+        border-color="#ee0000"
+        background-color="#220000aa">
+        <box id="hp"
+            left="0" top="0" h="100%"
+            background-color="#ee0000aa" background-color.hovered="#ee0000"
+            border-color="#ff0000" border-color.hovered="#ffffff" />
+
+        <box left="0" top="0" right="0" bottom="0"
+            background-color="#00000000" background-color.hovered="#00000000"
+            border-color="#00000000" border-color.hovered="#ffffff66" />
+    </box>
+
+    <slider id="slider_player_ammo"
+        min="0" max="100" val="80" step="1" on-change="slider_player_ammo_on_change"
+        left="8px" right="8px" h="15px" bottom="8px"
+        border-color="#4d90fe"
+        track-color="#66ccffaa" track-color.hovered="#66ccffcc"
+        thumb-color="#77ddffdd" thumb-color.hovered="#66ccff" />
+
+</box>
